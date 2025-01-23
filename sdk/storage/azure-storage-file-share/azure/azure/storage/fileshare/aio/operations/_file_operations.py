@@ -7,8 +7,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, IO, Iterator, Literal, Optional, TypeVar, Union
+from typing import Any, AsyncIterator, Callable, Dict, IO, Literal, Optional, TypeVar, Union
 
+from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -20,1279 +21,43 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.rest import HttpRequest, HttpResponse
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
-from .._serialization import Serializer
+from ... import models as _models
+from ..._serialization import Deserializer, Serializer
+from ...operations._file_operations import (
+    build_abort_copy_request,
+    build_acquire_lease_request,
+    build_break_lease_request,
+    build_change_lease_request,
+    build_create_hard_link_request,
+    build_create_request,
+    build_create_symbolic_link_request,
+    build_delete_request,
+    build_download_request,
+    build_force_close_handles_request,
+    build_get_properties_request,
+    build_get_range_list_request,
+    build_get_symbolic_link_request,
+    build_list_handles_request,
+    build_release_lease_request,
+    build_rename_request,
+    build_set_http_headers_request,
+    build_set_metadata_request,
+    build_start_copy_request,
+    build_upload_range_from_url_request,
+    build_upload_range_request,
+)
+from .._configuration import AzureFileStorageConfiguration
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
-
-
-def build_create_request(
-    url: str,
-    *,
-    file_content_length: int,
-    timeout: Optional[int] = None,
-    file_content_type: Optional[str] = None,
-    file_content_encoding: Optional[str] = None,
-    file_content_language: Optional[str] = None,
-    file_cache_control: Optional[str] = None,
-    file_content_md5: Optional[bytes] = None,
-    file_content_disposition: Optional[str] = None,
-    metadata: Optional[Dict[str, str]] = None,
-    file_permission: str = "inherit",
-    file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
-    file_permission_key: Optional[str] = None,
-    file_attributes: str = "none",
-    file_creation_time: str = "now",
-    file_last_write_time: str = "now",
-    file_change_time: Optional[str] = None,
-    lease_id: Optional[str] = None,
-    owner: Optional[str] = None,
-    group: Optional[str] = None,
-    file_mode: Optional[str] = None,
-    nfs_file_type: Optional[Union[str, _models.NfsFileType]] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    file_type_constant: Literal["file"] = kwargs.pop("file_type_constant", _headers.pop("x-ms-type", "file"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    _headers["x-ms-content-length"] = _SERIALIZER.header("file_content_length", file_content_length, "int")
-    _headers["x-ms-type"] = _SERIALIZER.header("file_type_constant", file_type_constant, "str")
-    if file_content_type is not None:
-        _headers["x-ms-content-type"] = _SERIALIZER.header("file_content_type", file_content_type, "str")
-    if file_content_encoding is not None:
-        _headers["x-ms-content-encoding"] = _SERIALIZER.header("file_content_encoding", file_content_encoding, "str")
-    if file_content_language is not None:
-        _headers["x-ms-content-language"] = _SERIALIZER.header("file_content_language", file_content_language, "str")
-    if file_cache_control is not None:
-        _headers["x-ms-cache-control"] = _SERIALIZER.header("file_cache_control", file_cache_control, "str")
-    if file_content_md5 is not None:
-        _headers["x-ms-content-md5"] = _SERIALIZER.header("file_content_md5", file_content_md5, "bytearray")
-    if file_content_disposition is not None:
-        _headers["x-ms-content-disposition"] = _SERIALIZER.header(
-            "file_content_disposition", file_content_disposition, "str"
-        )
-    if metadata is not None:
-        _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
-    if file_permission is not None:
-        _headers["x-ms-file-permission"] = _SERIALIZER.header("file_permission", file_permission, "str")
-    if file_permission_format is not None:
-        _headers["x-ms-file-permission-format"] = _SERIALIZER.header(
-            "file_permission_format", file_permission_format, "str"
-        )
-    if file_permission_key is not None:
-        _headers["x-ms-file-permission-key"] = _SERIALIZER.header("file_permission_key", file_permission_key, "str")
-    if file_attributes is not None:
-        _headers["x-ms-file-attributes"] = _SERIALIZER.header("file_attributes", file_attributes, "str")
-    if file_creation_time is not None:
-        _headers["x-ms-file-creation-time"] = _SERIALIZER.header("file_creation_time", file_creation_time, "str")
-    if file_last_write_time is not None:
-        _headers["x-ms-file-last-write-time"] = _SERIALIZER.header("file_last_write_time", file_last_write_time, "str")
-    if file_change_time is not None:
-        _headers["x-ms-file-change-time"] = _SERIALIZER.header("file_change_time", file_change_time, "str")
-    if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    if owner is not None:
-        _headers["x-ms-owner"] = _SERIALIZER.header("owner", owner, "str")
-    if group is not None:
-        _headers["x-ms-group"] = _SERIALIZER.header("group", group, "str")
-    if file_mode is not None:
-        _headers["x-ms-mode"] = _SERIALIZER.header("file_mode", file_mode, "str")
-    if nfs_file_type is not None:
-        _headers["x-ms-file-file-type"] = _SERIALIZER.header("nfs_file_type", nfs_file_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_download_request(
-    url: str,
-    *,
-    timeout: Optional[int] = None,
-    range: Optional[str] = None,
-    range_get_content_md5: Optional[bool] = None,
-    structured_body_type: Optional[str] = None,
-    lease_id: Optional[str] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if range is not None:
-        _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
-    if range_get_content_md5 is not None:
-        _headers["x-ms-range-get-content-md5"] = _SERIALIZER.header(
-            "range_get_content_md5", range_get_content_md5, "bool"
-        )
-    if structured_body_type is not None:
-        _headers["x-ms-structured-body"] = _SERIALIZER.header("structured_body_type", structured_body_type, "str")
-    if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_get_properties_request(
-    url: str,
-    *,
-    sharesnapshot: Optional[str] = None,
-    timeout: Optional[int] = None,
-    lease_id: Optional[str] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if sharesnapshot is not None:
-        _params["sharesnapshot"] = _SERIALIZER.query("sharesnapshot", sharesnapshot, "str")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_delete_request(
-    url: str,
-    *,
-    timeout: Optional[int] = None,
-    lease_id: Optional[str] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_set_http_headers_request(
-    url: str,
-    *,
-    timeout: Optional[int] = None,
-    file_content_length: Optional[int] = None,
-    file_content_type: Optional[str] = None,
-    file_content_encoding: Optional[str] = None,
-    file_content_language: Optional[str] = None,
-    file_cache_control: Optional[str] = None,
-    file_content_md5: Optional[bytes] = None,
-    file_content_disposition: Optional[str] = None,
-    file_permission: str = "inherit",
-    file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
-    file_permission_key: Optional[str] = None,
-    file_attributes: str = "none",
-    file_creation_time: str = "now",
-    file_last_write_time: str = "now",
-    file_change_time: Optional[str] = None,
-    lease_id: Optional[str] = None,
-    owner: Optional[str] = None,
-    group: Optional[str] = None,
-    file_mode: Optional[str] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if file_content_length is not None:
-        _headers["x-ms-content-length"] = _SERIALIZER.header("file_content_length", file_content_length, "int")
-    if file_content_type is not None:
-        _headers["x-ms-content-type"] = _SERIALIZER.header("file_content_type", file_content_type, "str")
-    if file_content_encoding is not None:
-        _headers["x-ms-content-encoding"] = _SERIALIZER.header("file_content_encoding", file_content_encoding, "str")
-    if file_content_language is not None:
-        _headers["x-ms-content-language"] = _SERIALIZER.header("file_content_language", file_content_language, "str")
-    if file_cache_control is not None:
-        _headers["x-ms-cache-control"] = _SERIALIZER.header("file_cache_control", file_cache_control, "str")
-    if file_content_md5 is not None:
-        _headers["x-ms-content-md5"] = _SERIALIZER.header("file_content_md5", file_content_md5, "bytearray")
-    if file_content_disposition is not None:
-        _headers["x-ms-content-disposition"] = _SERIALIZER.header(
-            "file_content_disposition", file_content_disposition, "str"
-        )
-    if file_permission is not None:
-        _headers["x-ms-file-permission"] = _SERIALIZER.header("file_permission", file_permission, "str")
-    if file_permission_format is not None:
-        _headers["x-ms-file-permission-format"] = _SERIALIZER.header(
-            "file_permission_format", file_permission_format, "str"
-        )
-    if file_permission_key is not None:
-        _headers["x-ms-file-permission-key"] = _SERIALIZER.header("file_permission_key", file_permission_key, "str")
-    if file_attributes is not None:
-        _headers["x-ms-file-attributes"] = _SERIALIZER.header("file_attributes", file_attributes, "str")
-    if file_creation_time is not None:
-        _headers["x-ms-file-creation-time"] = _SERIALIZER.header("file_creation_time", file_creation_time, "str")
-    if file_last_write_time is not None:
-        _headers["x-ms-file-last-write-time"] = _SERIALIZER.header("file_last_write_time", file_last_write_time, "str")
-    if file_change_time is not None:
-        _headers["x-ms-file-change-time"] = _SERIALIZER.header("file_change_time", file_change_time, "str")
-    if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    if owner is not None:
-        _headers["x-ms-owner"] = _SERIALIZER.header("owner", owner, "str")
-    if group is not None:
-        _headers["x-ms-group"] = _SERIALIZER.header("group", group, "str")
-    if file_mode is not None:
-        _headers["x-ms-mode"] = _SERIALIZER.header("file_mode", file_mode, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_set_metadata_request(
-    url: str,
-    *,
-    timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
-    lease_id: Optional[str] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    if metadata is not None:
-        _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_acquire_lease_request(
-    url: str,
-    *,
-    timeout: Optional[int] = None,
-    duration: Optional[int] = None,
-    proposed_lease_id: Optional[str] = None,
-    request_id_parameter: Optional[str] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
-    action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    _headers["x-ms-lease-action"] = _SERIALIZER.header("action", action, "str")
-    if duration is not None:
-        _headers["x-ms-lease-duration"] = _SERIALIZER.header("duration", duration, "int")
-    if proposed_lease_id is not None:
-        _headers["x-ms-proposed-lease-id"] = _SERIALIZER.header("proposed_lease_id", proposed_lease_id, "str")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_release_lease_request(
-    url: str,
-    *,
-    lease_id: str,
-    timeout: Optional[int] = None,
-    request_id_parameter: Optional[str] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
-    action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    _headers["x-ms-lease-action"] = _SERIALIZER.header("action", action, "str")
-    _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_change_lease_request(
-    url: str,
-    *,
-    lease_id: str,
-    timeout: Optional[int] = None,
-    proposed_lease_id: Optional[str] = None,
-    request_id_parameter: Optional[str] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
-    action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    _headers["x-ms-lease-action"] = _SERIALIZER.header("action", action, "str")
-    _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    if proposed_lease_id is not None:
-        _headers["x-ms-proposed-lease-id"] = _SERIALIZER.header("proposed_lease_id", proposed_lease_id, "str")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_break_lease_request(
-    url: str,
-    *,
-    timeout: Optional[int] = None,
-    lease_id: Optional[str] = None,
-    request_id_parameter: Optional[str] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
-    action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    _headers["x-ms-lease-action"] = _SERIALIZER.header("action", action, "str")
-    if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_upload_range_request(
-    url: str,
-    *,
-    range: str,
-    content_length: int,
-    timeout: Optional[int] = None,
-    file_range_write: Union[str, _models.FileRangeWriteType] = "update",
-    content_md5: Optional[bytes] = None,
-    lease_id: Optional[str] = None,
-    file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
-    structured_body_type: Optional[str] = None,
-    structured_content_length: Optional[int] = None,
-    content: Optional[IO[bytes]] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp: Literal["range"] = kwargs.pop("comp", _params.pop("comp", "range"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
-    _headers["x-ms-write"] = _SERIALIZER.header("file_range_write", file_range_write, "str")
-    _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
-    if content_md5 is not None:
-        _headers["Content-MD5"] = _SERIALIZER.header("content_md5", content_md5, "bytearray")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    if file_last_written_mode is not None:
-        _headers["x-ms-file-last-write-time"] = _SERIALIZER.header(
-            "file_last_written_mode", file_last_written_mode, "str"
-        )
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    if structured_body_type is not None:
-        _headers["x-ms-structured-body"] = _SERIALIZER.header("structured_body_type", structured_body_type, "str")
-    if structured_content_length is not None:
-        _headers["x-ms-structured-content-length"] = _SERIALIZER.header(
-            "structured_content_length", structured_content_length, "int"
-        )
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
-
-
-def build_upload_range_from_url_request(
-    url: str,
-    *,
-    range: str,
-    copy_source: str,
-    content_length: int,
-    timeout: Optional[int] = None,
-    source_range: Optional[str] = None,
-    source_content_crc64: Optional[bytes] = None,
-    source_if_match_crc64: Optional[bytes] = None,
-    source_if_none_match_crc64: Optional[bytes] = None,
-    lease_id: Optional[str] = None,
-    copy_source_authorization: Optional[str] = None,
-    file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    allow_source_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp: Literal["range"] = kwargs.pop("comp", _params.pop("comp", "range"))
-    file_range_write_from_url: Literal["update"] = kwargs.pop(
-        "file_range_write_from_url", _headers.pop("x-ms-write", "update")
-    )
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
-    _headers["x-ms-copy-source"] = _SERIALIZER.header("copy_source", copy_source, "str")
-    if source_range is not None:
-        _headers["x-ms-source-range"] = _SERIALIZER.header("source_range", source_range, "str")
-    _headers["x-ms-write"] = _SERIALIZER.header("file_range_write_from_url", file_range_write_from_url, "str")
-    _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
-    if source_content_crc64 is not None:
-        _headers["x-ms-source-content-crc64"] = _SERIALIZER.header(
-            "source_content_crc64", source_content_crc64, "bytearray"
-        )
-    if source_if_match_crc64 is not None:
-        _headers["x-ms-source-if-match-crc64"] = _SERIALIZER.header(
-            "source_if_match_crc64", source_if_match_crc64, "bytearray"
-        )
-    if source_if_none_match_crc64 is not None:
-        _headers["x-ms-source-if-none-match-crc64"] = _SERIALIZER.header(
-            "source_if_none_match_crc64", source_if_none_match_crc64, "bytearray"
-        )
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    if copy_source_authorization is not None:
-        _headers["x-ms-copy-source-authorization"] = _SERIALIZER.header(
-            "copy_source_authorization", copy_source_authorization, "str"
-        )
-    if file_last_written_mode is not None:
-        _headers["x-ms-file-last-write-time"] = _SERIALIZER.header(
-            "file_last_written_mode", file_last_written_mode, "str"
-        )
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    if allow_source_trailing_dot is not None:
-        _headers["x-ms-source-allow-trailing-dot"] = _SERIALIZER.header(
-            "allow_source_trailing_dot", allow_source_trailing_dot, "bool"
-        )
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_get_range_list_request(
-    url: str,
-    *,
-    sharesnapshot: Optional[str] = None,
-    prevsharesnapshot: Optional[str] = None,
-    timeout: Optional[int] = None,
-    range: Optional[str] = None,
-    lease_id: Optional[str] = None,
-    support_rename: Optional[bool] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp: Literal["rangelist"] = kwargs.pop("comp", _params.pop("comp", "rangelist"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
-    if sharesnapshot is not None:
-        _params["sharesnapshot"] = _SERIALIZER.query("sharesnapshot", sharesnapshot, "str")
-    if prevsharesnapshot is not None:
-        _params["prevsharesnapshot"] = _SERIALIZER.query("prevsharesnapshot", prevsharesnapshot, "str")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if range is not None:
-        _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
-    if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    if support_rename is not None:
-        _headers["x-ms-file-support-rename"] = _SERIALIZER.header("support_rename", support_rename, "bool")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_start_copy_request(
-    url: str,
-    *,
-    copy_source: str,
-    timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
-    file_permission: str = "inherit",
-    file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
-    file_permission_key: Optional[str] = None,
-    file_permission_copy_mode: Optional[Union[str, _models.PermissionCopyModeType]] = None,
-    ignore_read_only: Optional[bool] = None,
-    file_attributes: Optional[str] = None,
-    file_creation_time: Optional[str] = None,
-    file_last_write_time: Optional[str] = None,
-    file_change_time: Optional[str] = None,
-    set_archive_attribute: Optional[bool] = None,
-    lease_id: Optional[str] = None,
-    owner: Optional[str] = None,
-    group: Optional[str] = None,
-    file_mode: Optional[str] = None,
-    file_mode_copy_mode: Optional[Union[str, _models.ModeCopyMode]] = None,
-    file_owner_copy_mode: Optional[Union[str, _models.OwnerCopyMode]] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    allow_source_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if metadata is not None:
-        _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
-    _headers["x-ms-copy-source"] = _SERIALIZER.header("copy_source", copy_source, "str")
-    if file_permission is not None:
-        _headers["x-ms-file-permission"] = _SERIALIZER.header("file_permission", file_permission, "str")
-    if file_permission_format is not None:
-        _headers["x-ms-file-permission-format"] = _SERIALIZER.header(
-            "file_permission_format", file_permission_format, "str"
-        )
-    if file_permission_key is not None:
-        _headers["x-ms-file-permission-key"] = _SERIALIZER.header("file_permission_key", file_permission_key, "str")
-    if file_permission_copy_mode is not None:
-        _headers["x-ms-file-permission-copy-mode"] = _SERIALIZER.header(
-            "file_permission_copy_mode", file_permission_copy_mode, "str"
-        )
-    if ignore_read_only is not None:
-        _headers["x-ms-file-copy-ignore-readonly"] = _SERIALIZER.header("ignore_read_only", ignore_read_only, "bool")
-    if file_attributes is not None:
-        _headers["x-ms-file-attributes"] = _SERIALIZER.header("file_attributes", file_attributes, "str")
-    if file_creation_time is not None:
-        _headers["x-ms-file-creation-time"] = _SERIALIZER.header("file_creation_time", file_creation_time, "str")
-    if file_last_write_time is not None:
-        _headers["x-ms-file-last-write-time"] = _SERIALIZER.header("file_last_write_time", file_last_write_time, "str")
-    if file_change_time is not None:
-        _headers["x-ms-file-change-time"] = _SERIALIZER.header("file_change_time", file_change_time, "str")
-    if set_archive_attribute is not None:
-        _headers["x-ms-file-copy-set-archive"] = _SERIALIZER.header(
-            "set_archive_attribute", set_archive_attribute, "bool"
-        )
-    if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    if allow_source_trailing_dot is not None:
-        _headers["x-ms-source-allow-trailing-dot"] = _SERIALIZER.header(
-            "allow_source_trailing_dot", allow_source_trailing_dot, "bool"
-        )
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    if owner is not None:
-        _headers["x-ms-owner"] = _SERIALIZER.header("owner", owner, "str")
-    if group is not None:
-        _headers["x-ms-group"] = _SERIALIZER.header("group", group, "str")
-    if file_mode is not None:
-        _headers["x-ms-mode"] = _SERIALIZER.header("file_mode", file_mode, "str")
-    if file_mode_copy_mode is not None:
-        _headers["x-ms-file-mode-copy-mode"] = _SERIALIZER.header("file_mode_copy_mode", file_mode_copy_mode, "str")
-    if file_owner_copy_mode is not None:
-        _headers["x-ms-file-owner-copy-mode"] = _SERIALIZER.header("file_owner_copy_mode", file_owner_copy_mode, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_abort_copy_request(
-    url: str,
-    *,
-    copy_id: str,
-    timeout: Optional[int] = None,
-    lease_id: Optional[str] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp: Literal["copy"] = kwargs.pop("comp", _params.pop("comp", "copy"))
-    copy_action_abort_constant: Literal["abort"] = kwargs.pop(
-        "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
-    )
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
-    _params["copyid"] = _SERIALIZER.query("copy_id", copy_id, "str")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    _headers["x-ms-copy-action"] = _SERIALIZER.header("copy_action_abort_constant", copy_action_abort_constant, "str")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_list_handles_request(
-    url: str,
-    *,
-    marker: Optional[str] = None,
-    maxresults: Optional[int] = None,
-    timeout: Optional[int] = None,
-    sharesnapshot: Optional[str] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp: Literal["listhandles"] = kwargs.pop("comp", _params.pop("comp", "listhandles"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
-    if marker is not None:
-        _params["marker"] = _SERIALIZER.query("marker", marker, "str")
-    if maxresults is not None:
-        _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int", minimum=1)
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-    if sharesnapshot is not None:
-        _params["sharesnapshot"] = _SERIALIZER.query("sharesnapshot", sharesnapshot, "str")
-
-    # Construct headers
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_force_close_handles_request(
-    url: str,
-    *,
-    handle_id: str,
-    timeout: Optional[int] = None,
-    marker: Optional[str] = None,
-    sharesnapshot: Optional[str] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp: Literal["forceclosehandles"] = kwargs.pop("comp", _params.pop("comp", "forceclosehandles"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-    if marker is not None:
-        _params["marker"] = _SERIALIZER.query("marker", marker, "str")
-    if sharesnapshot is not None:
-        _params["sharesnapshot"] = _SERIALIZER.query("sharesnapshot", sharesnapshot, "str")
-
-    # Construct headers
-    _headers["x-ms-handle-id"] = _SERIALIZER.header("handle_id", handle_id, "str")
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_rename_request(
-    url: str,
-    *,
-    rename_source: str,
-    timeout: Optional[int] = None,
-    replace_if_exists: Optional[bool] = None,
-    ignore_read_only: Optional[bool] = None,
-    source_lease_id: Optional[str] = None,
-    destination_lease_id: Optional[str] = None,
-    file_attributes: Optional[str] = None,
-    file_creation_time: Optional[str] = None,
-    file_last_write_time: Optional[str] = None,
-    file_change_time: Optional[str] = None,
-    file_permission: str = "inherit",
-    file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
-    file_permission_key: Optional[str] = None,
-    metadata: Optional[Dict[str, str]] = None,
-    file_content_type: Optional[str] = None,
-    allow_trailing_dot: Optional[bool] = None,
-    allow_source_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    _headers["x-ms-file-rename-source"] = _SERIALIZER.header("rename_source", rename_source, "str")
-    if replace_if_exists is not None:
-        _headers["x-ms-file-rename-replace-if-exists"] = _SERIALIZER.header(
-            "replace_if_exists", replace_if_exists, "bool"
-        )
-    if ignore_read_only is not None:
-        _headers["x-ms-file-rename-ignore-readonly"] = _SERIALIZER.header("ignore_read_only", ignore_read_only, "bool")
-    if source_lease_id is not None:
-        _headers["x-ms-source-lease-id"] = _SERIALIZER.header("source_lease_id", source_lease_id, "str")
-    if destination_lease_id is not None:
-        _headers["x-ms-destination-lease-id"] = _SERIALIZER.header("destination_lease_id", destination_lease_id, "str")
-    if file_attributes is not None:
-        _headers["x-ms-file-attributes"] = _SERIALIZER.header("file_attributes", file_attributes, "str")
-    if file_creation_time is not None:
-        _headers["x-ms-file-creation-time"] = _SERIALIZER.header("file_creation_time", file_creation_time, "str")
-    if file_last_write_time is not None:
-        _headers["x-ms-file-last-write-time"] = _SERIALIZER.header("file_last_write_time", file_last_write_time, "str")
-    if file_change_time is not None:
-        _headers["x-ms-file-change-time"] = _SERIALIZER.header("file_change_time", file_change_time, "str")
-    if file_permission is not None:
-        _headers["x-ms-file-permission"] = _SERIALIZER.header("file_permission", file_permission, "str")
-    if file_permission_format is not None:
-        _headers["x-ms-file-permission-format"] = _SERIALIZER.header(
-            "file_permission_format", file_permission_format, "str"
-        )
-    if file_permission_key is not None:
-        _headers["x-ms-file-permission-key"] = _SERIALIZER.header("file_permission_key", file_permission_key, "str")
-    if metadata is not None:
-        _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
-    if file_content_type is not None:
-        _headers["x-ms-content-type"] = _SERIALIZER.header("file_content_type", file_content_type, "str")
-    if allow_trailing_dot is not None:
-        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
-    if allow_source_trailing_dot is not None:
-        _headers["x-ms-source-allow-trailing-dot"] = _SERIALIZER.header(
-            "allow_source_trailing_dot", allow_source_trailing_dot, "bool"
-        )
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_create_symbolic_link_request(
-    url: str,
-    *,
-    link_text: str,
-    timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
-    file_creation_time: str = "now",
-    file_last_write_time: str = "now",
-    request_id_parameter: Optional[str] = None,
-    lease_id: Optional[str] = None,
-    owner: Optional[str] = None,
-    group: Optional[str] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    restype: Literal["symboliclink"] = kwargs.pop("restype", _params.pop("restype", "symboliclink"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["restype"] = _SERIALIZER.query("restype", restype, "str")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if metadata is not None:
-        _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
-    if file_creation_time is not None:
-        _headers["x-ms-file-creation-time"] = _SERIALIZER.header("file_creation_time", file_creation_time, "str")
-    if file_last_write_time is not None:
-        _headers["x-ms-file-last-write-time"] = _SERIALIZER.header("file_last_write_time", file_last_write_time, "str")
-    if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
-    if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    if owner is not None:
-        _headers["x-ms-owner"] = _SERIALIZER.header("owner", owner, "str")
-    if group is not None:
-        _headers["x-ms-group"] = _SERIALIZER.header("group", group, "str")
-    _headers["x-ms-link-text"] = _SERIALIZER.header("link_text", link_text, "str")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_get_symbolic_link_request(
-    url: str,
-    *,
-    timeout: Optional[int] = None,
-    sharesnapshot: Optional[str] = None,
-    request_id_parameter: Optional[str] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    restype: Literal["symboliclink"] = kwargs.pop("restype", _params.pop("restype", "symboliclink"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["restype"] = _SERIALIZER.query("restype", restype, "str")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-    if sharesnapshot is not None:
-        _params["sharesnapshot"] = _SERIALIZER.query("sharesnapshot", sharesnapshot, "str")
-
-    # Construct headers
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_create_hard_link_request(
-    url: str,
-    *,
-    target_file: str,
-    timeout: Optional[int] = None,
-    request_id_parameter: Optional[str] = None,
-    lease_id: Optional[str] = None,
-    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    restype: Literal["hardlink"] = kwargs.pop("restype", _params.pop("restype", "hardlink"))
-    file_type_constant: Literal["file"] = kwargs.pop("file_type_constant", _headers.pop("x-ms-type", "file"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = kwargs.pop("template_url", "{url}")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["restype"] = _SERIALIZER.query("restype", restype, "str")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
-
-    # Construct headers
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    _headers["x-ms-type"] = _SERIALIZER.header("file_type_constant", file_type_constant, "str")
-    if request_id_parameter is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
-    if lease_id is not None:
-        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
-    _headers["x-ms-file-target-file"] = _SERIALIZER.header("target_file", target_file, "str")
-    if file_request_intent is not None:
-        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 class FileOperations:  # pylint: disable=too-many-public-methods
@@ -1301,21 +66,21 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.fileshare.AzureFileStorage`'s
+        :class:`~azure.storage.fileshare.aio.AzureFileStorage`'s
         :attr:`file` attribute.
     """
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureFileStorageConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace
-    def create(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def create(
         self,
         file_content_length: int,
         timeout: Optional[int] = None,
@@ -1342,7 +107,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type file_content_length: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object. Default value is
@@ -1461,7 +226,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1506,8 +271,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def download(
+    @distributed_trace_async
+    async def download(
         self,
         timeout: Optional[int] = None,
         range: Optional[str] = None,
@@ -1515,13 +280,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         structured_body_type: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> AsyncIterator[bytes]:
         # pylint: disable=line-too-long
         """Reads or downloads a file from the system, including its metadata and properties.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param range: Return file data only from the specified byte range. Default value is None.
@@ -1535,8 +300,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type structured_body_type: str
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :return: Iterator[bytes] or the result of cls(response)
-        :rtype: Iterator[bytes]
+        :return: AsyncIterator[bytes] or the result of cls(response)
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1550,7 +315,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _lease_id = None
         if lease_access_conditions is not None:
@@ -1573,7 +338,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _decompress = kwargs.pop("decompress", True)
         _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1581,7 +346,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 206]:
             try:
-                response.read()  # Load the body in memory and close the socket
+                await response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
@@ -1656,8 +421,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def get_properties(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def get_properties(
         self,
         sharesnapshot: Optional[str] = None,
         timeout: Optional[int] = None,
@@ -1673,7 +438,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type sharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -1713,7 +478,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1781,8 +546,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def delete(
         self,
         timeout: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -1793,7 +558,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -1832,7 +597,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1852,8 +617,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def set_http_headers(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def set_http_headers(
         self,
         timeout: Optional[int] = None,
         file_content_length: Optional[int] = None,
@@ -1876,7 +641,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param file_content_length: Resizes a file to the specified size. If the specified byte value
@@ -1991,7 +756,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2036,8 +801,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def set_metadata(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def set_metadata(
         self,
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -2049,7 +814,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object. Default value is
@@ -2094,7 +859,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2117,8 +882,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def acquire_lease(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def acquire_lease(
         self,
         timeout: Optional[int] = None,
         duration: Optional[int] = None,
@@ -2132,7 +897,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param duration: Specifies the duration of the lease, in seconds, or negative one (-1) for a
@@ -2183,7 +948,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2208,8 +973,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def release_lease(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def release_lease(
         self, lease_id: str, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long
@@ -2220,7 +985,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -2262,7 +1027,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2286,8 +1051,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def change_lease(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def change_lease(
         self,
         lease_id: str,
         timeout: Optional[int] = None,
@@ -2303,7 +1068,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param proposed_lease_id: Proposed lease ID, in a GUID string format. The File service returns
@@ -2350,7 +1115,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2375,8 +1140,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def break_lease(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def break_lease(
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -2389,7 +1154,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -2437,7 +1202,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2462,8 +1227,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def upload_range(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def upload_range(
         self,
         range: str,
         content_length: int,
@@ -2492,7 +1257,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type content_length: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param file_range_write: Specify one of the following options: - Update: Writes the bytes
@@ -2568,7 +1333,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2599,8 +1364,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def upload_range_from_url(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def upload_range_from_url(
         self,
         range: str,
         copy_source: str,
@@ -2633,7 +1398,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type content_length: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param source_range: Bytes of source data in the specified range. Default value is None.
@@ -2704,7 +1469,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2734,8 +1499,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def get_range_list(
+    @distributed_trace_async
+    async def get_range_list(
         self,
         sharesnapshot: Optional[str] = None,
         prevsharesnapshot: Optional[str] = None,
@@ -2756,7 +1521,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type prevsharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param range: Specifies the range of bytes over which to list ranges, inclusively. Default
@@ -2811,7 +1576,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2837,8 +1602,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def start_copy(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def start_copy(
         self,
         copy_source: str,
         timeout: Optional[int] = None,
@@ -2868,7 +1633,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type copy_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object. Default value is
@@ -2982,7 +1747,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3005,8 +1770,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def abort_copy(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def abort_copy(
         self,
         copy_id: str,
         timeout: Optional[int] = None,
@@ -3022,7 +1787,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type copy_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -3068,7 +1833,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3087,8 +1852,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def list_handles(
+    @distributed_trace_async
+    async def list_handles(
         self,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
@@ -3110,7 +1875,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type maxresults: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
@@ -3150,7 +1915,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3174,8 +1939,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def force_close_handles(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def force_close_handles(
         self,
         handle_id: str,
         timeout: Optional[int] = None,
@@ -3191,7 +1956,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type handle_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param marker: A string value that identifies the portion of the list to be returned with the
@@ -3236,7 +2001,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3262,8 +2027,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def rename(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def rename(
         self,
         rename_source: str,
         timeout: Optional[int] = None,
@@ -3287,7 +2052,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :type rename_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param replace_if_exists: Optional. A boolean value for if the destination file already exists,
@@ -3397,7 +2162,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3438,8 +2203,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def create_symbolic_link(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def create_symbolic_link(
         self,
         link_text: str,
         timeout: Optional[int] = None,
@@ -3527,7 +2292,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3566,8 +2331,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def get_symbolic_link(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def get_symbolic_link(
         self,
         timeout: Optional[int] = None,
         sharesnapshot: Optional[str] = None,
@@ -3621,7 +2386,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3646,8 +2411,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    @distributed_trace
-    def create_hard_link(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def create_hard_link(
         self,
         target_file: str,
         timeout: Optional[int] = None,
@@ -3712,7 +2477,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
