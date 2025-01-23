@@ -1072,7 +1072,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._datalake_client_for_blob_operation.file_system.list_blob_hierarchy_segment,
-            showonly=ListBlobsIncludeItem.deleted,
+            showonly=ListBlobsIncludeItem.deleted,  # type: ignore [arg-type]
             timeout=timeout,
             **kwargs)
         return AsyncItemPaged(
