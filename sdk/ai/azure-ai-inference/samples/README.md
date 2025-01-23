@@ -45,8 +45,6 @@ To construct any of the clients, you will need to pass in the endpoint URL. If y
 
 * For Azure OpenAI endpoints, the endpoint URL has the form `https://your-unique-resouce-name.openai.azure.com/openai/deployments/your-deployment-name`, where `your-unique-resource-name` is your globally unique Azure OpenAI resource name, and `your-deployment-name` is your AI Model deployment name.
 
-* The key is a 32-character string.
-
 For convenience, and to promote the practice of not hard-coding secrets in your source code, all samples here assume the endpoint URL and key are stored in environment variables. You will need to set these environment variables before running the samples as-is. The environment variables are mentioned in the tables below.
 
 Note that the client library does not directly read these environment variable at run time. The sample code reads the environment variables and constructs the relevant client with these values.

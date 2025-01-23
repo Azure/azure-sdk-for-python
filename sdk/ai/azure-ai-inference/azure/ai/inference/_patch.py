@@ -98,8 +98,10 @@ def _get_internal_response_format(
                 _models._models.ChatCompletionsResponseFormatJsonObject()  # pylint: disable=protected-access
             )
         elif isinstance(response_format, _models.JsonSchemaFormat):
-            internal_response_format = _models._models.ChatCompletionsResponseFormatJsonSchema(  # pylint: disable=protected-access
-                json_schema=response_format
+            internal_response_format = (
+                _models._models.ChatCompletionsResponseFormatJsonSchema(  # pylint: disable=protected-access
+                    json_schema=response_format
+                )
             )
         else:
             raise ValueError(f"Unsupported `response_format` {response_format}")
@@ -272,6 +274,14 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
      behavior.
     :paramtype api_version: str
     """
+
+    @overload
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        **kwargs: Any,
+    ) -> None: ...
 
     def __init__(
         self,
@@ -787,6 +797,14 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
     :paramtype api_version: str
     """
 
+    @overload
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        **kwargs: Any,
+    ) -> None: ...
+
     def __init__(
         self,
         endpoint: str,
@@ -1082,6 +1100,14 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
      behavior.
     :paramtype api_version: str
     """
+
+    @overload
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        **kwargs: Any,
+    ) -> None: ...
 
     def __init__(
         self,

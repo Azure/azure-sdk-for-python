@@ -215,6 +215,14 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     :paramtype api_version: str
     """
 
+    @overload
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        **kwargs: Any,
+    ) -> None: ...
+
     def __init__(
         self,
         endpoint: str,
@@ -728,6 +736,14 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
     :paramtype api_version: str
     """
 
+    @overload
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        **kwargs: Any,
+    ) -> None: ...
+
     def __init__(
         self,
         endpoint: str,
@@ -1023,6 +1039,14 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
      behavior.
     :paramtype api_version: str
     """
+
+    @overload
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        **kwargs: Any,
+    ) -> None: ...
 
     def __init__(
         self,

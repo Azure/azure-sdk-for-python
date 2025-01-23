@@ -34,7 +34,7 @@ if LOGGING_ENABLED:
 # Define these environment variables. They should point to a Mistral Large model
 # hosted on MaaS, or any other MaaS model that suppots chat completions with tools.
 # AZURE_AI_CHAT_ENDPOINT=https://<endpoint-name>.<azure-region>.models.ai.azure.com
-# AZURE_AI_CHAT_KEY=<32-char-api-key>
+# AZURE_AI_CHAT_KEY=<api-key>
 #
 ServicePreparerChatCompletions = functools.partial(
     EnvironmentVariableLoader,
@@ -51,7 +51,7 @@ ServicePreparerChatCompletions = functools.partial(
 # TODO: When we have a MaaS model that supports chat completions with image input,
 # use that instead.
 # AZURE_OPENAI_CHAT_ENDPOINT=https://<endpont-name>.openai.azure.com/openai/deployments/gpt-4o
-# AZURE_OPENAI_CHAT_KEY=<32-char-api-key>
+# AZURE_OPENAI_CHAT_KEY=<api-key>
 #
 ServicePreparerAOAIChatCompletions = functools.partial(
     EnvironmentVariableLoader,
@@ -65,7 +65,7 @@ ServicePreparerAOAIChatCompletions = functools.partial(
 # Define these environment variables for text embeddings. They should point to a Cohere model
 # hosted on MaaS, or any other MaaS model that text embeddings.
 # AZURE_AI_EMBEDDINGS_ENDPOINT=https://<endpoint-name>.<azure-region>.models.ai.azure.com
-# AZURE_AI_EMBEDDINGS_KEY=<32-char-api-key>
+# AZURE_AI_EMBEDDINGS_KEY=<pi-key>
 #
 ServicePreparerEmbeddings = functools.partial(
     EnvironmentVariableLoader,
@@ -78,7 +78,7 @@ ServicePreparerEmbeddings = functools.partial(
 # Define these environment variables for image embeddings. They should point to a Cohere model
 # hosted on MaaS, or any other MaaS model that text embeddings.
 # AZURE_AI_IMAGE_EMBEDDINGS_ENDPOINT=https://<endpoint-name>.<azure-region>.models.ai.azure.com
-# AZURE_AI_IMAGE_EMBEDDINGS_KEY=<32-char-api-key>
+# AZURE_AI_IMAGE_EMBEDDINGS_KEY=<api-key>
 #
 ServicePreparerImageEmbeddings = functools.partial(
     EnvironmentVariableLoader,
