@@ -100,7 +100,7 @@ class TableAnalyticsLogging(GeneratedLogging):
 
     def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
         # type: (Any)-> None
-        self.version = kwargs.get("version", u"1.0")
+        self.version = kwargs.get("version", "1.0")
         self.delete = kwargs.get("delete", False)
         self.read = kwargs.get("read", False)
         self.write = kwargs.get("write", False)
@@ -522,7 +522,7 @@ class TableItem(object):
 class TablePayloadFormat(object):
     """
     Specifies the accepted content type of the response payload. More information
-    can be found here: https://msdn.microsoft.com/en-us/library/azure/dn535600.aspx
+    can be found here: https://msdn.microsoft.com/library/azure/dn535600.aspx
     """
 
     JSON_NO_METADATA = "application/json;odata=nometadata"

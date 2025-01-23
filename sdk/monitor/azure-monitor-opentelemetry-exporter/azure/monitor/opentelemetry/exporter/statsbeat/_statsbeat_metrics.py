@@ -230,7 +230,6 @@ class _StatsbeatMetrics:
         return True
 
     # pylint: disable=unused-argument
-    # pylint: disable=protected-access
     def _get_feature_metric(self, options: CallbackOptions) -> Iterable[Observation]:
         observations: List[Observation] = []
         # Check if it is time to observe long interval metrics
@@ -240,6 +239,9 @@ class _StatsbeatMetrics:
         # Check if any features were enabled during runtime
         if get_statsbeat_custom_events_feature_set():
             self._feature |= _StatsbeatFeature.CUSTOM_EVENTS_EXTENSION
+            _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
+        if get_statsbeat_live_metrics_feature_set():
+            self._feature |= _StatsbeatFeature.LIVE_METRICS
             _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
 
         # Don't send observation if no features enabled
@@ -311,7 +313,6 @@ class _StatsbeatMetrics:
         )
 
     # pylint: disable=unused-argument
-    # pylint: disable=protected-access
     def _get_success_count(self, options: CallbackOptions) -> Iterable[Observation]:
         # get_success_count is special in such that it is the indicator of when
         # a short interval collection has happened, which is why we increment
@@ -332,7 +333,6 @@ class _StatsbeatMetrics:
         return observations
 
     # pylint: disable=unused-argument
-    # pylint: disable=protected-access
     def _get_failure_count(self, options: CallbackOptions) -> Iterable[Observation]:
         observations = []
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
@@ -347,7 +347,6 @@ class _StatsbeatMetrics:
         return observations
 
     # pylint: disable=unused-argument
-    # pylint: disable=protected-access
     def _get_average_duration(self, options: CallbackOptions) -> Iterable[Observation]:
         observations = []
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
@@ -364,7 +363,6 @@ class _StatsbeatMetrics:
         return observations
 
     # pylint: disable=unused-argument
-    # pylint: disable=protected-access
     def _get_retry_count(self, options: CallbackOptions) -> Iterable[Observation]:
         observations = []
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
@@ -379,7 +377,6 @@ class _StatsbeatMetrics:
         return observations
 
     # pylint: disable=unused-argument
-    # pylint: disable=protected-access
     def _get_throttle_count(self, options: CallbackOptions) -> Iterable[Observation]:
         observations = []
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
@@ -394,7 +391,6 @@ class _StatsbeatMetrics:
         return observations
 
     # pylint: disable=unused-argument
-    # pylint: disable=protected-access
     def _get_exception_count(self, options: CallbackOptions) -> Iterable[Observation]:
         observations = []
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)

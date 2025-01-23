@@ -246,6 +246,14 @@ class DefaultPriorityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LOW = "Low"
 
 
+class DistanceFunction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The distance function to use for distance calculation in between vectors."""
+
+    EUCLIDEAN = "euclidean"
+    COSINE = "cosine"
+    DOTPRODUCT = "dotproduct"
+
+
 class EnableFullTextQuery(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describe the level of detail with which queries are to be logged."""
 
@@ -592,3 +600,19 @@ class UnitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COUNT_PER_SECOND = "CountPerSecond"
     BYTES_PER_SECOND = "BytesPerSecond"
     MILLISECONDS = "Milliseconds"
+
+
+class VectorDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the data type of vector."""
+
+    FLOAT32 = "float32"
+    UINT8 = "uint8"
+    INT8 = "int8"
+
+
+class VectorIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The index type of the vector. Currently, flat, diskANN, and quantizedFlat are supported."""
+
+    FLAT = "flat"
+    DISK_ANN = "diskANN"
+    QUANTIZED_FLAT = "quantizedFlat"

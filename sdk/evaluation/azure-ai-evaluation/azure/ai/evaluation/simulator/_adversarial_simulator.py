@@ -6,8 +6,7 @@
 import asyncio
 import logging
 import random
-from typing import Any, Callable, Dict, List, Literal, Optional, Union, cast
-from itertools import zip_longest
+from typing import Any, Callable, Dict, List, Optional, Union, cast
 
 from tqdm import tqdm
 
@@ -16,13 +15,19 @@ from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation.simulator import AdversarialScenario
+from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialScenarioJailbreak
 from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
 from ._constants import SupportedLanguages
-from ._conversation import CallbackConversationBot, ConversationBot, ConversationRole, ConversationTurn
+from ._conversation import (
+    CallbackConversationBot,
+    MultiModalConversationBot,
+    ConversationBot,
+    ConversationRole,
+    ConversationTurn,
+)
 from ._conversation._conversation import simulate_conversation
 from ._model_tools import (
     AdversarialTemplateHandler,
@@ -205,7 +210,6 @@ class AdversarialSimulator:
             ncols=100,
             unit="simulations",
         )
-
         if randomize_order:
             # The template parameter lists are persistent across sim runs within a session,
             # So randomize a the selection instead of the parameter list directly,
@@ -214,11 +218,11 @@ class AdversarialSimulator:
                 random.seed(randomization_seed)
             random.shuffle(templates)
         parameter_lists = [t.template_parameters for t in templates]
-        zipped_parameters = list(zip_longest(*parameter_lists))
+        zipped_parameters = list(zip(*parameter_lists))
         for param_group in zipped_parameters:
             for template, parameter in zip(templates, param_group):
                 if _jailbreak_type == "upia":
-                    parameter = self._join_conversation_starter(parameter, random.choice(jailbreak_dataset))
+                    parameter = self._add_jailbreak_parameter(parameter, random.choice(jailbreak_dataset))
                 tasks.append(
                     asyncio.create_task(
                         self._simulate_async(
@@ -231,6 +235,7 @@ class AdversarialSimulator:
                             api_call_delay_sec=api_call_delay_sec,
                             language=language,
                             semaphore=semaphore,
+                            scenario=scenario,
                         )
                     )
                 )
@@ -292,10 +297,13 @@ class AdversarialSimulator:
         api_call_delay_sec: int,
         language: SupportedLanguages,
         semaphore: asyncio.Semaphore,
+        scenario: Union[AdversarialScenario, AdversarialScenarioJailbreak],
     ) -> List[Dict]:
-        user_bot = self._setup_bot(role=ConversationRole.USER, template=template, parameters=parameters)
+        user_bot = self._setup_bot(
+            role=ConversationRole.USER, template=template, parameters=parameters, scenario=scenario
+        )
         system_bot = self._setup_bot(
-            target=target, role=ConversationRole.ASSISTANT, template=template, parameters=parameters
+            target=target, role=ConversationRole.ASSISTANT, template=template, parameters=parameters, scenario=scenario
         )
         bots = [user_bot, system_bot]
         session = get_async_http_client().with_policies(
@@ -341,6 +349,7 @@ class AdversarialSimulator:
         template: AdversarialTemplate,
         parameters: TemplateParameters,
         target: Optional[Callable] = None,
+        scenario: Union[AdversarialScenario, AdversarialScenarioJailbreak],
     ) -> ConversationBot:
         if role is ConversationRole.USER:
             model = self._get_user_proxy_completion_model(
@@ -372,6 +381,21 @@ class AdversarialSimulator:
                 def __call__(self) -> None:
                     pass
 
+            if scenario in [
+                _UnstableAdversarialScenario.ADVERSARIAL_IMAGE_GEN,
+                _UnstableAdversarialScenario.ADVERSARIAL_IMAGE_MULTIMODAL,
+            ]:
+                return MultiModalConversationBot(
+                    callback=target,
+                    role=role,
+                    model=DummyModel(),
+                    user_template=str(template),
+                    user_template_parameters=parameters,
+                    rai_client=self.rai_client,
+                    conversation_template="",
+                    instantiation_parameters={},
+                )
+
             return CallbackConversationBot(
                 callback=target,
                 role=role,
@@ -391,13 +415,8 @@ class AdversarialSimulator:
             blame=ErrorBlame.SYSTEM_ERROR,
         )
 
-    def _join_conversation_starter(self, parameters: TemplateParameters, to_join: str) -> TemplateParameters:
-        key: Literal["conversation_starter"] = "conversation_starter"
-        if key in parameters.keys():
-            parameters[key] = f"{to_join} {parameters[key]}"
-        else:
-            parameters[key] = to_join
-
+    def _add_jailbreak_parameter(self, parameters: TemplateParameters, to_join: str) -> TemplateParameters:
+        parameters["jailbreak_string"] = to_join
         return parameters
 
     def call_sync(

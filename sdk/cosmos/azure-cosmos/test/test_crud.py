@@ -1767,7 +1767,7 @@ class TestCRUDOperations(unittest.TestCase):
             ]
         }
 
-        custom_logger = logging.getLogger("CustomLogger")
+        # TODO:  custom_logger = logging.getLogger("CustomLogger") was in old code, check on later
         created_container = db.create_container(
             id='composite_index_spatial_index' + str(uuid.uuid4()),
             indexing_policy=indexing_policy,
@@ -1776,9 +1776,9 @@ class TestCRUDOperations(unittest.TestCase):
             user_agent="blah",
             user_agent_overwrite=True,
             logging_enable=True,
-            logger=custom_logger,
         )
-        created_properties = created_container.read(logger=custom_logger)
+        # TODO: logger was passed into read previously
+        created_properties = created_container.read()
         read_indexing_policy = created_properties['indexingPolicy']
 
         if 'localhost' in self.host or '127.0.0.1' in self.host:  # TODO: Differing result between live and emulator

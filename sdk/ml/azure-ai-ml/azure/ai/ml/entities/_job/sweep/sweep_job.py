@@ -214,7 +214,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         )
 
     def _to_dict(self) -> Dict:
-        res: dict = SweepJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        res: dict = SweepJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 
     def _to_rest_object(self) -> JobBase:
@@ -227,7 +227,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
 
         if self.trial is not None:
             validate_inputs_for_command(self.trial.command, self.inputs)
-        for key in search_space.keys():
+        for key in search_space.keys():  # pylint: disable=possibly-used-before-assignment
             validate_key_contains_allowed_characters(key)
 
         if self.trial is not None:
@@ -263,7 +263,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             properties=self.properties,
             compute_id=self.compute,
             objective=self.objective._to_rest_object() if self.objective else None,
-            trial=trial_component,
+            trial=trial_component,  # pylint: disable=possibly-used-before-assignment
             tags=self.tags,
             inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
             outputs=to_rest_data_outputs(self.outputs),

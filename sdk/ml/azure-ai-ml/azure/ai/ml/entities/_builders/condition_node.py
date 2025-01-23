@@ -29,7 +29,7 @@ class ConditionNode(ControlFlowNode):
 
     def __init__(
         self, condition: Any, *, true_block: Optional[List] = None, false_block: Optional[List] = None, **kwargs: Any
-    ) -> None:  # pylint: disable=unused-argument
+    ) -> None:
         kwargs.pop("type", None)
         super(ConditionNode, self).__init__(type=ControlFlowType.IF_ELSE, **kwargs)
         self.condition = condition
@@ -41,7 +41,7 @@ class ConditionNode(ControlFlowNode):
         self._false_block = false_block
 
     @classmethod
-    def _create_schema_for_validation(cls, context: Any) -> PathAwareSchema:  # pylint: disable=unused-argument
+    def _create_schema_for_validation(cls, context: Any) -> PathAwareSchema:
         from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
 
         return ConditionNodeSchema(context=context)

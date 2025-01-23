@@ -827,7 +827,7 @@ Advanced scenarios
 
 ### Additional documentation
 
-For more extensive documentation on Azure Cognitive Service for Language, see the [Language Service documentation][language_product_documentation] on docs.microsoft.com.
+For more extensive documentation on Azure Cognitive Service for Language, see the [Language Service documentation][language_product_documentation] on learn.microsoft.com.
 
 ## Contributing
 
@@ -843,24 +843,24 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [ta_pypi]: https://pypi.org/project/azure-ai-textanalytics/
 [ta_ref_docs]: https://aka.ms/azsdk-python-textanalytics-ref-docs
 [ta_samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples
-[language_product_documentation]: https://docs.microsoft.com/azure/cognitive-services/language-service
+[language_product_documentation]: https://learn.microsoft.com/azure/cognitive-services/language-service
 [azure_subscription]: https://azure.microsoft.com/free/
-[ta_or_cs_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
+[ta_or_cs_resource]: https://learn.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [pip]: https://pypi.org/project/pip/
 [azure_portal_create_ta_resource]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics
-[azure_cli]: https://docs.microsoft.com/cli/azure
+[azure_cli]: https://learn.microsoft.com/cli/azure
 [azure_cli_create_ta_resource]: https://learn.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli
-[multi_and_single_service]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
-[azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
-[azure_portal_get_endpoint]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
-[cognitive_authentication]: https://docs.microsoft.com/azure/cognitive-services/authentication
-[cognitive_authentication_api_key]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
+[multi_and_single_service]: https://learn.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
+[azure_cli_endpoint_lookup]: https://learn.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
+[azure_portal_get_endpoint]: https://learn.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
+[cognitive_authentication]: https://learn.microsoft.com/azure/cognitive-services/authentication
+[cognitive_authentication_api_key]: https://learn.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
 [install_azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#install-the-package
-[register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
-[grant_role_access]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
-[cognitive_custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-custom-subdomains
-[custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
-[cognitive_authentication_aad]: https://docs.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
+[register_aad_app]: https://learn.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
+[grant_role_access]: https://learn.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
+[cognitive_custom_subdomain]: https://learn.microsoft.com/azure/cognitive-services/cognitive-services-custom-subdomains
+[custom_subdomain]: https://learn.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
+[cognitive_authentication_aad]: https://learn.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [service_limits]: https://aka.ms/azsdk/textanalytics/data-limits
@@ -883,14 +883,14 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [recognize_linked_entities]: https://aka.ms/azsdk-python-textanalytics-recognizelinkedentities
 [extract_key_phrases]: https://aka.ms/azsdk-python-textanalytics-extractkeyphrases
 [detect_language]: https://aka.ms/azsdk-python-textanalytics-detectlanguage
-[language_detection]: https://docs.microsoft.com/azure/cognitive-services/language-service/language-detection/overview
-[language_and_regional_support]: https://docs.microsoft.com/azure/cognitive-services/language-service/language-detection/language-support
-[sentiment_analysis]: https://docs.microsoft.com/azure/cognitive-services/language-service/sentiment-opinion-mining/overview
-[key_phrase_extraction]: https://docs.microsoft.com/azure/cognitive-services/language-service/key-phrase-extraction/overview
+[language_detection]: https://learn.microsoft.com/azure/cognitive-services/language-service/language-detection/overview
+[language_and_regional_support]: https://learn.microsoft.com/azure/cognitive-services/language-service/language-detection/language-support
+[sentiment_analysis]: https://learn.microsoft.com/azure/cognitive-services/language-service/sentiment-opinion-mining/overview
+[key_phrase_extraction]: https://learn.microsoft.com/azure/cognitive-services/language-service/key-phrase-extraction/overview
 [linked_entities_categories]: https://aka.ms/taner
-[linked_entity_recognition]: https://docs.microsoft.com/azure/cognitive-services/language-service/entity-linking/overview
+[linked_entity_recognition]: https://learn.microsoft.com/azure/cognitive-services/language-service/entity-linking/overview
 [pii_entity_categories]: https://aka.ms/azsdk/language/pii
-[named_entity_recognition]: https://docs.microsoft.com/azure/cognitive-services/language-service/named-entity-recognition/overview
+[named_entity_recognition]: https://learn.microsoft.com/azure/cognitive-services/language-service/named-entity-recognition/overview
 [named_entity_categories]: https://aka.ms/taner
 [azure_core_ref_docs]: https://aka.ms/azsdk-python-core-policies
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md

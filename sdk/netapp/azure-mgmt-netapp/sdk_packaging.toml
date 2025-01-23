@@ -2,6 +2,6 @@
 package_name = "azure-mgmt-netapp"
 package_pprint_name = "NetApp Files Management"
 package_doc_id = ""
-is_stable = true
+is_stable = false
 is_arm = true
 title = "NetAppManagementClient"

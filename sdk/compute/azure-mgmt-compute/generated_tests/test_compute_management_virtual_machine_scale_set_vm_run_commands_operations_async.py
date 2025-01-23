@@ -21,7 +21,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_virtual_machine_scale_set_vm_run_commands_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.virtual_machine_scale_set_vm_run_commands.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -80,7 +80,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_virtual_machine_scale_set_vm_run_commands_begin_update(self, resource_group):
         response = await (
             await self.client.virtual_machine_scale_set_vm_run_commands.begin_update(
                 resource_group_name=resource_group.name,
@@ -135,7 +135,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_virtual_machine_scale_set_vm_run_commands_begin_delete(self, resource_group):
         response = await (
             await self.client.virtual_machine_scale_set_vm_run_commands.begin_delete(
                 resource_group_name=resource_group.name,
@@ -151,7 +151,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_virtual_machine_scale_set_vm_run_commands_get(self, resource_group):
         response = await self.client.virtual_machine_scale_set_vm_run_commands.get(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -165,7 +165,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_virtual_machine_scale_set_vm_run_commands_list(self, resource_group):
         response = self.client.virtual_machine_scale_set_vm_run_commands.list(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",

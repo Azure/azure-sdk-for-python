@@ -9,15 +9,15 @@ DESCRIPTION:
     AsyncAzureOpenAI client from the azure.ai.inference package.
 
 USAGE:
-    python sample_get_azure_openai_client.py
+    python sample_chat_completions_with_azure_openai_client.py
 
     Before running the sample:
 
     pip install azure-ai-projects openai
 
     Set these environment variables with your own values:
-    * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
-    * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Studio Project.
+    * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
+    * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project.
 
     Update the Azure OpenAI api-version as needed (see `api_version=` below). Values can be found here:
     https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs

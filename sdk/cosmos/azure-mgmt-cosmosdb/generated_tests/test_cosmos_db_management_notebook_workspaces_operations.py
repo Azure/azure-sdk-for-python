@@ -20,11 +20,11 @@ class TestCosmosDBManagementNotebookWorkspacesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_database_account(self, resource_group):
+    def test_notebook_workspaces_list_by_database_account(self, resource_group):
         response = self.client.notebook_workspaces.list_by_database_account(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestCosmosDBManagementNotebookWorkspacesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_notebook_workspaces_get(self, resource_group):
         response = self.client.notebook_workspaces.get(
             resource_group_name=resource_group.name,
             account_name="str",
             notebook_workspace_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,13 +45,13 @@ class TestCosmosDBManagementNotebookWorkspacesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_notebook_workspaces_begin_create_or_update(self, resource_group):
         response = self.client.notebook_workspaces.begin_create_or_update(
             resource_group_name=resource_group.name,
             account_name="str",
             notebook_workspace_name="str",
             notebook_create_update_parameters={"id": "str", "name": "str", "type": "str"},
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -59,12 +59,12 @@ class TestCosmosDBManagementNotebookWorkspacesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_notebook_workspaces_begin_delete(self, resource_group):
         response = self.client.notebook_workspaces.begin_delete(
             resource_group_name=resource_group.name,
             account_name="str",
             notebook_workspace_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -72,12 +72,12 @@ class TestCosmosDBManagementNotebookWorkspacesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_connection_info(self, resource_group):
+    def test_notebook_workspaces_list_connection_info(self, resource_group):
         response = self.client.notebook_workspaces.list_connection_info(
             resource_group_name=resource_group.name,
             account_name="str",
             notebook_workspace_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -85,12 +85,12 @@ class TestCosmosDBManagementNotebookWorkspacesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_regenerate_auth_token(self, resource_group):
+    def test_notebook_workspaces_begin_regenerate_auth_token(self, resource_group):
         response = self.client.notebook_workspaces.begin_regenerate_auth_token(
             resource_group_name=resource_group.name,
             account_name="str",
             notebook_workspace_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -98,12 +98,12 @@ class TestCosmosDBManagementNotebookWorkspacesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_start(self, resource_group):
+    def test_notebook_workspaces_begin_start(self, resource_group):
         response = self.client.notebook_workspaces.begin_start(
             resource_group_name=resource_group.name,
             account_name="str",
             notebook_workspace_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

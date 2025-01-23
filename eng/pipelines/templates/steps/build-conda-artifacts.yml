@@ -18,8 +18,9 @@ steps:
   - pwsh: |
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
-      pip install "tools/azure-sdk-tools[build,conda]"
-      pip install disutils
+      python -m pip install "tools/azure-sdk-tools[build,conda]"
+      python -m pip install disutils
+      python -m pip install typing-extensions==4.12.2
     displayName: Install build script requirements
 
   - pwsh: |
@@ -29,9 +30,9 @@ steps:
       $argFile = "$(Agent.TempDirectory)/conda-args.json"
       Set-Content -Path $argFile -Value $argContent
       cat $argFile
-      sdk_build_conda -f "$argFile" ${{ parameters.Arguments }}
+      sdk_build_conda -f "$argFile"
     displayName: Assemble Conda Packages
-  
+
   - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/conda/assembled'
@@ -48,3 +49,8 @@ steps:
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/conda/output'
       ArtifactName: '${{ parameters.ArtifactPrefix }}conda'
+
+  - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/conda/broken'
+      ArtifactName: '${{ parameters.ArtifactPrefix }}broken'

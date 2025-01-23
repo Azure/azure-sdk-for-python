@@ -20,7 +20,7 @@ class TestComputeManagementCapacityReservationsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_capacity_reservations_begin_create_or_update(self, resource_group):
         response = self.client.capacity_reservations.begin_create_or_update(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
@@ -60,7 +60,7 @@ class TestComputeManagementCapacityReservationsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_capacity_reservations_begin_update(self, resource_group):
         response = self.client.capacity_reservations.begin_update(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
@@ -95,7 +95,7 @@ class TestComputeManagementCapacityReservationsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_capacity_reservations_begin_delete(self, resource_group):
         response = self.client.capacity_reservations.begin_delete(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
@@ -108,7 +108,7 @@ class TestComputeManagementCapacityReservationsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_capacity_reservations_get(self, resource_group):
         response = self.client.capacity_reservations.get(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
@@ -121,7 +121,7 @@ class TestComputeManagementCapacityReservationsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_capacity_reservation_group(self, resource_group):
+    def test_capacity_reservations_list_by_capacity_reservation_group(self, resource_group):
         response = self.client.capacity_reservations.list_by_capacity_reservation_group(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",

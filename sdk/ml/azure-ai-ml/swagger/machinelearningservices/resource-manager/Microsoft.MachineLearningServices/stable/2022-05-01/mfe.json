@@ -6413,7 +6413,7 @@
       "additionalProperties": false
     },
     "ComponentContainer": {
-      "description": "Component container definition.\r\n<see href=\"https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command\" />",
+      "description": "Component container definition.\r\n<see href=\"https://learn.microsoft.com/azure/machine-learning/reference-yaml-component-command\" />",
       "type": "object",
       "allOf": [
         {
@@ -6471,7 +6471,7 @@
       ],
       "properties": {
         "componentSpec": {
-          "description": "Defines Component definition details.\r\n<see href=\"https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command\" />",
+          "description": "Defines Component definition details.\r\n<see href=\"https://learn.microsoft.com/azure/machine-learning/reference-yaml-component-command\" />",
           "type": "object",
           "example": {
             "name": "Hello_Python_World",
@@ -7466,7 +7466,7 @@
           ]
         },
         "environmentType": {
-          "description": "Environment type is either user managed or curated by the Azure ML service\r\n<see href=\"https://docs.microsoft.com/en-us/azure/machine-learning/resource-curated-environments\" />",
+          "description": "Environment type is either user managed or curated by the Azure ML service\r\n<see href=\"https://learn.microsoft.com/azure/machine-learning/resource-curated-environments\" />",
           "$ref": "#/definitions/EnvironmentType",
           "readOnly": true,
           "x-ms-mutability": [
@@ -7474,7 +7474,7 @@
           ]
         },
         "image": {
-          "description": "Name of the image that will be used for the environment.\r\n<seealso href=\"https://docs.microsoft.com/en-us/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image\" />",
+          "description": "Name of the image that will be used for the environment.\r\n<seealso href=\"https://learn.microsoft.com/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image\" />",
           "type": "string",
           "example": "docker.io/tensorflow/serving:latest",
           "x-ms-mutability": [
