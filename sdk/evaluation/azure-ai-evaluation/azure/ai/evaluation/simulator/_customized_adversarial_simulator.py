@@ -183,6 +183,44 @@ class CustomAdversarialSimulator:
         application_scenario: Optional[str] = None,
         temperature: float = 0.7,
     ):
+        """Run adversarial simulations asynchronously.
+
+        :keyword scenario: Specifies the scenario for generating adversarial inputs.
+         Example:
+           - :py:const:`azure.ai.evaluation.simulator.AdversarialScenario.ADVERSARIAL_QA`
+           - :py:const:`azure.ai.evaluation.simulator.AdversarialScenario.ADVERSARIAL_CONVERSATION`
+        :paramtype scenario: azure.ai.evaluation.simulator.AdversarialScenario
+        :keyword target: The function to handle conversation messages from the assistant bot.
+        :paramtype target: Callable[..., Any]
+        :keyword max_conversation_turns: Maximum number of conversation turns.
+        :paramtype max_conversation_turns: int
+        :keyword max_simulation_results: Maximum number of scenarios to simulate.
+        :paramtype max_simulation_results: int
+        :keyword api_call_retry_limit: Maximum number of HTTP retries.
+        :paramtype api_call_retry_limit: int
+        :keyword api_call_retry_sleep_sec: Seconds to sleep between retries.
+        :paramtype api_call_retry_sleep_sec: int
+        :keyword api_call_delay_sec: Delay in seconds before making an API call.
+        :paramtype api_call_delay_sec: int
+        :keyword concurrent_async_task: Maximum concurrent async tasks.
+        :paramtype concurrent_async_task: int
+        :keyword _jailbreak_type: If set, modifies conversation parameters using a special jailbreak dataset.
+        :paramtype _jailbreak_type: Optional[str]
+        :keyword language: Language for the conversation simulation.
+        :paramtype language: azure.ai.evaluation.simulator._constants.SupportedLanguages
+        :keyword randomize_order: Whether to shuffle generated scenarios.
+        :paramtype randomize_order: bool
+        :keyword randomization_seed: An optional seed for reproducible random ordering.
+        :paramtype randomization_seed: Optional[int]
+        :keyword personality: Personality string to apply in conversation.
+        :paramtype personality: Optional[str]
+        :keyword application_scenario: Used to specify the scenario context if needed.
+        :paramtype application_scenario: Optional[str]
+        :keyword temperature: Temperature value affecting generation randomness.
+        :paramtype temperature: float
+        :return: A list of simulation results, each containing conversation histories.
+        :rtype: List[Any]
+        """
         self.logger.info(f"User inputs: scenario={scenario}, max_conversation_turns={max_conversation_turns}, "
                      f"max_simulation_results={max_simulation_results}, api_call_retry_limit={api_call_retry_limit}, "
                      f"api_call_retry_sleep_sec={api_call_retry_sleep_sec}, api_call_delay_sec={api_call_delay_sec}, "
@@ -258,6 +296,17 @@ class CustomAdversarialSimulator:
         return all_conversation_histories
 
     def _setup_bots(self, *, template, parameter, target):
+        """Create user and assistant bots for a simulation.
+
+        :keyword template: Contains the conversation template and metadata.
+        :paramtype template: Any
+        :keyword parameter: A dictionary of template parameters.
+        :paramtype parameter: Dict[str, Any]
+        :keyword target: A callback function to handle assistant messages.
+        :paramtype target: Callable[..., Any]
+        :return: A tuple of (user_bot, system_bot).
+        :rtype: Tuple[ConversationBot, CallbackConversationBot]
+        """
         user_bot = self._setup_bot(role=ConversationRole.USER, template=template, parameters=parameter)
         system_bot = self._setup_bot(
             role=ConversationRole.ASSISTANT, template=template, parameters=parameter, target=target
@@ -265,6 +314,19 @@ class CustomAdversarialSimulator:
         return user_bot, system_bot
 
     def _setup_bot(self, *, role, template, parameters, target: Callable = None):
+        """Set up a conversation bot (user or assistant) using the given role, template, and parameters.
+
+        :keyword role: The role of this bot (USER or ASSISTANT).
+        :paramtype role: azure.ai.evaluation.simulator._conversation.ConversationRole
+        :keyword template: Template with the conversation structure.
+        :paramtype template: Any
+        :keyword parameters: Parameters to substitute into the template.
+        :paramtype parameters: Dict[str, Any]
+        :keyword target: Callback function, only used if role=ASSISTANT.
+        :paramtype target: Optional[Callable[..., Any]]
+        :return: A ConversationBot for USER or CallbackConversationBot for ASSISTANT.
+        :rtype: Any
+        """
         if role == ConversationRole.USER:
             model = ProxyChatCompletionsModel(
                 name="user_bot_model",
@@ -295,6 +357,15 @@ class CustomAdversarialSimulator:
             )
 
     def _create_retry_session(self, *, api_call_retry_limit, api_call_retry_sleep_sec):
+        """Construct an async retry session for HTTP calls.
+
+        :keyword api_call_retry_limit: Maximum number of retries for HTTP calls.
+        :paramtype api_call_retry_limit: int
+        :keyword api_call_retry_sleep_sec: Sleep duration (in seconds) between retries.
+        :paramtype api_call_retry_sleep_sec: int
+        :return: An async HTTP client with retry policies.
+        :rtype: Any
+        """
         return get_async_http_client().with_policies(
             retry_policy=AsyncRetryPolicy(
                 retry_total=api_call_retry_limit,
@@ -306,6 +377,23 @@ class CustomAdversarialSimulator:
     async def _perform_conversation_turns(
         self, user_bot, system_bot, session, max_conversation_turns, progress_bar, api_call_delay_sec
     ):
+        """Perform turn-by-turn conversation, alternating between user_bot and system_bot.
+
+        :keyword user_bot: The user bot instance.
+        :paramtype user_bot: Any
+        :keyword system_bot: The assistant bot instance.
+        :paramtype system_bot: Any
+        :keyword session: The HTTP session with retry behavior.
+        :paramtype session: Any
+        :keyword max_conversation_turns: Number of total turns to simulate.
+        :paramtype max_conversation_turns: int
+        :keyword progress_bar: Progress bar for tracking simulation steps.
+        :paramtype progress_bar: Any
+        :keyword api_call_delay_sec: Delay in seconds after each turn.
+        :paramtype api_call_delay_sec: int
+        :return: The final conversation history.
+        :rtype: List[ConversationTurn]
+        """
         conversation_history = []
         for current_turn in range(1, max_conversation_turns + 1):
             current_bot = user_bot if current_turn % 2 == 1 else system_bot
@@ -344,6 +432,41 @@ class CustomAdversarialSimulator:
         _jailbreak_type=None,
         temperature=0.7,
     ):
+        """Create a single simulation asyncio task for an adversarial scenario.
+
+        :keyword template: The conversation template object.
+        :paramtype template: Any
+        :keyword parameter: Key-value pairs to fill the template.
+        :paramtype parameter: Dict[str, Any]
+        :keyword target: The callback for the assistant bot's messages.
+        :paramtype target: Callable[..., Any]
+        :keyword semaphore: Controls concurrency for async tasks.
+        :paramtype semaphore: asyncio.Semaphore
+        :keyword max_conversation_turns: Number of conversation turns to simulate.
+        :paramtype max_conversation_turns: int
+        :keyword personality: Extra personality prompt data.
+        :paramtype personality: str
+        :keyword application_scenario: Contextual scenario name.
+        :paramtype application_scenario: str
+        :keyword language: Desired conversation language.
+        :paramtype language: azure.ai.evaluation.simulator._constants.SupportedLanguages
+        :keyword api_call_retry_limit: Maximum HTTP call retries.
+        :paramtype api_call_retry_limit: int
+        :keyword api_call_retry_sleep_sec: Sleep in seconds between retries.
+        :paramtype api_call_retry_sleep_sec: int
+        :keyword api_call_delay_sec: Delay in seconds before each turn.
+        :paramtype api_call_delay_sec: int
+        :keyword progress_bar: Progress bar for visual feedback.
+        :paramtype progress_bar: Any
+        :keyword jailbreak_dataset: Optional list of jailbreak prompts.
+        :paramtype jailbreak_dataset: Optional[List[str]]
+        :keyword _jailbreak_type: If set, modifies conversation with special jailbreak data.
+        :paramtype _jailbreak_type: Optional[str]
+        :keyword temperature: Sampling temperature for generation.
+        :paramtype temperature: float
+        :return: The scheduled asyncio Task.
+        :rtype: asyncio.Task
+        """
         if _jailbreak_type == "upia" and jailbreak_dataset:
             parameter = self._join_conversation_starter(parameters=parameter, to_join=random.choice(jailbreak_dataset))
 
@@ -382,6 +505,37 @@ class CustomAdversarialSimulator:
         progress_bar,
         temperature,
     ):
+        """Perform a conversation simulation within a semaphore lock.
+
+        :keyword template: The conversation template object.
+        :paramtype template: Any
+        :keyword parameter: Key-value pairs for the template.
+        :paramtype parameter: Dict[str, Any]
+        :keyword target: The callback for assistant messages.
+        :paramtype target: Callable[..., Any]
+        :keyword semaphore: Concurrency control for async tasks.
+        :paramtype semaphore: asyncio.Semaphore
+        :keyword max_conversation_turns: Number of conversation turns per simulation.
+        :paramtype max_conversation_turns: int
+        :keyword personality: Personality string for the user message.
+        :paramtype personality: str
+        :keyword application_scenario: Additional contextual data or scenario name.
+        :paramtype application_scenario: str
+        :keyword language: Language for the conversation.
+        :paramtype language: azure.ai.evaluation.simulator._constants.SupportedLanguages
+        :keyword api_call_retry_limit: Maximum HTTP retries.
+        :paramtype api_call_retry_limit: int
+        :keyword api_call_retry_sleep_sec: Sleep in seconds between HTTP retries.
+        :paramtype api_call_retry_sleep_sec: int
+        :keyword api_call_delay_sec: Delay in seconds before each turn.
+        :paramtype api_call_delay_sec: int
+        :keyword progress_bar: Progress tracking object.
+        :paramtype progress_bar: Any
+        :keyword temperature: Sampling temperature for generation randomness.
+        :paramtype temperature: float
+        :return: A JsonLineList containing the conversation output or empty on failure.
+        :rtype: Any
+        """
         async with semaphore:
             user_bot, system_bot = self._setup_bots(template=template, parameter=parameter, target=target)
             session = self._create_retry_session(
