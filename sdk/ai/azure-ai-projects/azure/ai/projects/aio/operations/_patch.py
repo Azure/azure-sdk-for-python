@@ -68,6 +68,19 @@ _Unset: Any = object()
 class InferenceOperations:
 
     def __init__(self, outer_instance):
+
+        # All returned inference clients will have this application id set on their user-agent.
+        # For more info on user-agent HTTP header, see:
+        # https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
+        USER_AGENT_APP_ID = "AIProjectClient"
+
+        if hasattr(outer_instance, "_user_agent") and outer_instance._user_agent:
+            # If the calling application has set "user_agent" when constructing the AIProjectClient,
+            # take that value and prepend it to USER_AGENT_APP_ID.
+            self._user_agent = f"{outer_instance._user_agent}-{USER_AGENT_APP_ID}"
+        else:
+            self._user_agent = USER_AGENT_APP_ID
+
         self._outer_instance = outer_instance
 
     @distributed_trace_async
@@ -76,7 +89,8 @@ class InferenceOperations:
     ) -> "ChatCompletionsClient":
         """Get an authenticated asynchronous ChatCompletionsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
-        Services resource given by its connection name.
+        Services resource given by its connection name. Keyword arguments are passed to the constructor of
+        ChatCompletionsClient.
 
         At least one AI model that supports chat completions must be deployed in this resource.
 
@@ -107,16 +121,16 @@ class InferenceOperations:
 
         if connection_name:
             connection = await self._outer_instance.connections.get(
-                connection_name=connection_name, include_credentials=True, **kwargs
+                connection_name=connection_name, include_credentials=True
             )
         else:
             if use_serverless_connection:
                 connection = await self._outer_instance.connections.get_default(
-                    connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+                    connection_type=ConnectionType.SERVERLESS, include_credentials=True
                 )
             else:
                 connection = await self._outer_instance.connections.get_default(
-                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True
                 )
 
         logger.debug("[InferenceOperations.get_chat_completions_client] connection = %s", str(connection))
@@ -142,14 +156,23 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
+            client = ChatCompletionsClient(
+                endpoint=endpoint,
+                credential=AzureKeyCredential(connection.key),
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
+            )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             logger.debug(
                 "[InferenceOperations.get_chat_completions_client]"
                 + " Creating ChatCompletionsClient using Entra ID authentication"
             )
             client = ChatCompletionsClient(
-                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes
+                endpoint=endpoint,
+                credential=connection.token_credential,
+                credential_scopes=credential_scopes,
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
@@ -168,7 +191,8 @@ class InferenceOperations:
     async def get_embeddings_client(self, *, connection_name: Optional[str] = None, **kwargs) -> "EmbeddingsClient":
         """Get an authenticated asynchronous EmbeddingsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
-        Services resource given by its connection name.
+        Services resource given by its connection name. Keyword arguments are passed to the constructor of
+        EmbeddingsClient.
 
         At least one AI model that supports text embeddings must be deployed in this resource.
 
@@ -199,16 +223,16 @@ class InferenceOperations:
 
         if connection_name:
             connection = await self._outer_instance.connections.get(
-                connection_name=connection_name, include_credentials=True, **kwargs
+                connection_name=connection_name, include_credentials=True
             )
         else:
             if use_serverless_connection:
                 connection = await self._outer_instance.connections.get_default(
-                    connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+                    connection_type=ConnectionType.SERVERLESS, include_credentials=True
                 )
             else:
                 connection = await self._outer_instance.connections.get_default(
-                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True
                 )
 
         logger.debug("[InferenceOperations.get_embeddings_client] connection = %s", str(connection))
@@ -233,13 +257,22 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = EmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
+            client = EmbeddingsClient(
+                endpoint=endpoint,
+                credential=AzureKeyCredential(connection.key),
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
+            )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             logger.debug(
                 "[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication"
             )
             client = EmbeddingsClient(
-                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes
+                endpoint=endpoint,
+                credential=connection.token_credential,
+                credential_scopes=credential_scopes,
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
@@ -257,7 +290,8 @@ class InferenceOperations:
     ) -> "ImageEmbeddingsClient":
         """Get an authenticated asynchronous ImageEmbeddingsClient (from the package azure-ai-inference) for the default
         Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
-        Services resource given by its connection name.
+        Services resource given by its connection name. Keyword arguments are passed to the constructor of
+        ImageEmbeddingsClient.
 
         At least one AI model that supports image embeddings must be deployed in this resource.
 
@@ -288,16 +322,16 @@ class InferenceOperations:
 
         if connection_name:
             connection = await self._outer_instance.connections.get(
-                connection_name=connection_name, include_credentials=True, **kwargs
+                connection_name=connection_name, include_credentials=True
             )
         else:
             if use_serverless_connection:
                 connection = await self._outer_instance.connections.get_default(
-                    connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+                    connection_type=ConnectionType.SERVERLESS, include_credentials=True
                 )
             else:
                 connection = await self._outer_instance.connections.get_default(
-                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True
                 )
 
         logger.debug("[InferenceOperations.get_embeddings_client] connection = %s", str(connection))
@@ -323,14 +357,23 @@ class InferenceOperations:
             )
             from azure.core.credentials import AzureKeyCredential
 
-            client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
+            client = ImageEmbeddingsClient(
+                endpoint=endpoint,
+                credential=AzureKeyCredential(connection.key),
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
+            )
         elif connection.authentication_type == AuthenticationType.ENTRA_ID:
             logger.debug(
                 "[InferenceOperations.get_image_embeddings_client] "
                 "Creating ImageEmbeddingsClient using Entra ID authentication"
             )
             client = ImageEmbeddingsClient(
-                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes
+                endpoint=endpoint,
+                credential=connection.token_credential,
+                credential_scopes=credential_scopes,
+                user_agent=kwargs.pop("user_agent", self._user_agent),
+                **kwargs,
             )
         elif connection.authentication_type == AuthenticationType.SAS:
             logger.debug(
@@ -501,7 +544,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 from ...models._patch import SASTokenCredential
 
                 cred_prop = cast(InternalConnectionPropertiesSASAuth, connection.properties)
-                sync_credential =  _SyncCredentialWrapper(self._config.credential)
+                sync_credential = _SyncCredentialWrapper(self._config.credential)
 
                 token_credential = SASTokenCredential(
                     sas_token=cred_prop.credentials.sas,

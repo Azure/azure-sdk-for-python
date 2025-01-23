@@ -22,11 +22,7 @@ USAGE:
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (
-    FileSearchTool,
-    FilePurpose,
-    MessageTextContent
-)
+from azure.ai.projects.models import FileSearchTool, FilePurpose, MessageTextContent
 from azure.identity import DefaultAzureCredential
 
 project_client = AIProjectClient.from_connection_string(
@@ -74,11 +70,11 @@ with project_client:
     print("Deleted agent")
 
     messages = project_client.agents.list_messages(thread_id=thread.id)
-    
+
     for message in reversed(messages.data):
         # To remove characters, which are not correctly handled by print, we will encode the message
         # and then decode it again.
         clean_message = "\n".join(
-            text_msg.text.value.encode('ascii', 'ignore').decode('utf-8') for text_msg in message.text_messages
+            text_msg.text.value.encode("ascii", "ignore").decode("utf-8") for text_msg in message.text_messages
         )
         print(f"Role: {message.role}  Message: {clean_message}")
