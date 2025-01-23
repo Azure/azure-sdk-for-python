@@ -22,7 +22,7 @@ LINKS_DIVIDER = "<!-- LINKS -->"
 GITHUB_URL = f"https://aka.ms/azsdk/azure-ai-projects/python/code"
 
 # Define the regular expression pattern to match links in the format [section name](#section_header)
-pattern = re.compile(r'\[([^\]]+)\]\(#([^\)]+)\)')
+pattern = re.compile(r"\[([^\]]+)\]\(#([^\)]+)\)")
 
 
 # a-b-c => a/b/c
@@ -48,10 +48,10 @@ with open("README.md", "r") as f:
     end_index = readme_content.find(PIPY_LONG_DESCRIPTION_END)
     long_description = readme_content[start_index:end_index].strip()
     long_description = long_description.replace("{{package_name}}", PACKAGE_PPRINT_NAME)
-    long_description = re.sub(pattern, rf'[\1]({GITHUB_URL})', long_description)
+    long_description = re.sub(pattern, rf"[\1]({GITHUB_URL})", long_description)
     links_index = readme_content.find(LINKS_DIVIDER)
-    long_description += "\n\n" +  readme_content[links_index:].strip()
-    
+    long_description += "\n\n" + readme_content[links_index:].strip()
+
 with open("CHANGELOG.md", "r") as f:
     long_description += "\n\n" + f.read()
 
@@ -65,7 +65,7 @@ setup(
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects",
-    keywords="azure sdk, azure, ai, agents, foundry, inference, chat completion, project, evaluation", 
+    keywords="azure sdk, azure, ai, agents, foundry, inference, chat completion, project, evaluation",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",

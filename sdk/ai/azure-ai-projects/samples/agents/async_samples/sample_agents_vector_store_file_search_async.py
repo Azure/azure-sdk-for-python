@@ -20,11 +20,7 @@ import asyncio
 import os
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import (
-    FileSearchTool,
-    FilePurpose,
-    MessageTextContent
-)
+from azure.ai.projects.models import FileSearchTool, FilePurpose, MessageTextContent
 from azure.identity.aio import DefaultAzureCredential
 
 
@@ -76,14 +72,15 @@ async def main():
             print("Deleted agent")
 
             messages = await project_client.agents.list_messages(thread_id=thread.id)
-            
+
             for message in reversed(messages.data):
                 # To remove characters, which are not correctly handled by print, we will encode the message
                 # and then decode it again.
                 clean_message = "\n".join(
-                    text_msg.text.value.encode('ascii', 'ignore').decode('utf-8') for text_msg in message.text_messages
+                    text_msg.text.value.encode("ascii", "ignore").decode("utf-8") for text_msg in message.text_messages
                 )
                 print(f"Role: {message.role}  Message: {clean_message}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

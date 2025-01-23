@@ -70,7 +70,8 @@ class InferenceOperations:
     def __init__(self, outer_instance):
 
         # All returned inference clients will have this application id set on their user-agent.
-        # For more info on user-agent HTTP header, see: https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
+        # For more info on user-agent HTTP header, see:
+        # https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
         USER_AGENT_APP_ID = "AIProjectClient"
 
         if hasattr(outer_instance, "_user_agent") and outer_instance._user_agent:
@@ -543,7 +544,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 from ...models._patch import SASTokenCredential
 
                 cred_prop = cast(InternalConnectionPropertiesSASAuth, connection.properties)
-                sync_credential =  _SyncCredentialWrapper(self._config.credential)
+                sync_credential = _SyncCredentialWrapper(self._config.credential)
 
                 token_credential = SASTokenCredential(
                     sas_token=cred_prop.credentials.sas,
