@@ -647,7 +647,7 @@ class PathClient(StorageAccountHostsMixin):
                             name=failure.name,
                             is_directory=failure.type == 'DIRECTORY',
                             error_message=failure.error_message) for failure in resp.failed_entries],
-                        continuation=last_continuation_token  # type: ignore [arg-type]
+                        continuation=last_continuation_token
                     ))
 
                 # update the continuation token, if there are more operations that cannot be completed in a single call
@@ -662,7 +662,7 @@ class PathClient(StorageAccountHostsMixin):
                 directories_successful=total_directories_successful,
                 files_successful=total_files_success,
                 failure_count=total_failure_count),
-                continuation=last_continuation_token  # type: ignore [arg-type]
+                continuation=last_continuation_token
                 if total_failure_count > 0 and not continue_on_failure else current_continuation_token)
         except HttpResponseError as error:
             error.continuation_token = last_continuation_token
