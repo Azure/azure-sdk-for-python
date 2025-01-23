@@ -42,6 +42,7 @@ from ._model_configurations import (
     Message,
     OpenAIModelConfiguration,
 )
+from ._constants import AggregationType
 
 __all__ = [
     "evaluate",
@@ -79,4 +80,5 @@ __all__ = [
     "SexualMultimodalEvaluator",
     "ViolenceMultimodalEvaluator",
     "ProtectedMaterialMultimodalEvaluator",
+    "AggregationType",
 ]

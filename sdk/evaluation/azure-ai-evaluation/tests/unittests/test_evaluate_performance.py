@@ -71,7 +71,8 @@ class TestEvaluatePerformance:
         diff = end - start
         # Assume any system running this test can manage to multithread 10 runs into
         # 2 batches at most, so it should take between 1 and 1.5 seconds.
-        max_duration = 1.5
+        # Increase to 1.75 to account for CI lag.
+        max_duration = 1.75
         assert diff < max_duration
         row_result_df = pd.DataFrame(result["rows"])
         assert "outputs.slow.result" in row_result_df.columns

@@ -4,15 +4,18 @@
 
 import inspect
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, Generic, List, TypedDict, TypeVar, Union, cast, final
+from typing import Any, Callable, Dict, Generic, List, TypedDict, TypeVar, Union, cast, final, Optional
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from typing_extensions import ParamSpec, TypeAlias, get_overloads
 
-from azure.ai.evaluation._common.math import list_mean
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._common.utils import remove_optional_singletons
+from azure.ai.evaluation._constants import AggregationType
 from azure.ai.evaluation._model_configurations import Conversation
+from azure.ai.evaluation._common._experimental import experimental
+
+from ._conversation_aggregators import GetAggregator, GetAggregatorType
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -70,6 +73,13 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     :type not_singleton_inputs: List[str]
     :param eval_last_turn: If True, only the last turn of the conversation will be evaluated. Default is False.
     :type eval_last_turn: bool
+    :param conversation_aggregation_type: The type of aggregation to perform on the per-turn results of a conversation
+        to produce a single result.
+        Default is ~azure.ai.evaluation.AggregationType.MEAN.
+    :type conversation_aggregation_type: ~azure.ai.evaluation.AggregationType
+    :param conversation_aggregator_override: A function that will be used to aggregate per-turn results. If provided,
+        overrides the standard aggregator implied by conversation_aggregation_type. None by default.
+    :type conversation_aggregator_override: Optional[Callable[[List[float]], float]]
     """
 
     # ~~~ METHODS THAT ALMOST ALWAYS NEED TO BE OVERRIDDEN BY CHILDREN~~~
@@ -81,11 +91,17 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         *,
         not_singleton_inputs: List[str] = ["conversation", "kwargs"],
         eval_last_turn: bool = False,
+        conversation_aggregation_type: AggregationType = AggregationType.MEAN,
+        conversation_aggregator_override: Optional[Callable[[List[float]], float]] = None,
     ):
         self._not_singleton_inputs = not_singleton_inputs
         self._eval_last_turn = eval_last_turn
         self._singleton_inputs = self._derive_singleton_inputs()
         self._async_evaluator = AsyncEvaluatorBase(self._real_call)
+        self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
+        if conversation_aggregator_override is not None:
+            # Type ignore since we already checked for None, but mypy doesn't know that.
+            self._conversation_aggregation_function = conversation_aggregator_override  # type: ignore[assignment]
 
     # This needs to be overridden just to change the function header into something more informative,
     # and to be able to add a more specific docstring. The actual function contents should just be
@@ -359,7 +375,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         # Find and average all numeric values
         for metric, values in evaluation_per_turn.items():
             if all(isinstance(value, (int, float)) for value in values):
-                aggregated[metric] = list_mean(cast(List[Union[int, float]], values))
+                aggregated[metric] = self._conversation_aggregation_function(cast(List[Union[int, float]], values))
         # Slap the per-turn results back in.
         aggregated["evaluation_per_turn"] = evaluation_per_turn
         return aggregated
@@ -387,9 +403,50 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         # Otherwise, aggregate results.
         return self._aggregate_results(per_turn_results=per_turn_results)
 
+    # ~~~ METHODS THAT SHOULD NOT BE OVERRIDDEN BY CHILDREN~~~``
+
     @final
     def _to_async(self) -> "AsyncEvaluatorBase":
         return self._async_evaluator
+
+    @experimental
+    @final
+    def _set_conversation_aggregation_type(self, conversation_aggregation_type: AggregationType) -> None:
+        """Input a conversation aggregation type to re-assign the aggregator function used by this evaluator for
+        multi-turn conversations. This aggregator is used to combine numeric outputs from each evaluation of a
+        multi-turn conversation into a single top-level result.
+
+        :param conversation_aggregation_type: The type of aggregation to perform on the per-turn
+            results of a conversation to produce a single result.
+        :type conversation_aggregation_type: ~azure.ai.evaluation.AggregationType
+        """
+        self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
+
+    @experimental
+    @final
+    def _set_conversation_aggregator(self, aggregator: Callable[[List[float]], float]) -> None:
+        """Set the conversation aggregator function directly. This function will be applied to all numeric outputs
+        of an evaluator when it evaluates a conversation with multiple-turns thus ends up with multiple results per
+        evaluation that is needs to coalesce into a single result. Use when built-in aggregators do not
+        suit your needs, but use with caution.
+
+        :param aggregator: The function to use to aggregate per-turn results.
+        :type aggregator: Callable[[List[float]], float]
+        """
+        self._conversation_aggregation_function = aggregator
+
+    @experimental
+    @final
+    def _get_conversation_aggregator_type(self) -> AggregationType:
+        """Get the current conversation aggregation type used by this evaluator. This refers to the
+        method used when a single input produces multiple evaluation results (ex: when a multi-turn conversation
+        is inputted into an evaluator that evaluates each turn individually). The individual inputs
+        are combined by the function implied here to produce a single overall result.
+
+        :return: The conversation aggregation type.
+        :rtype: ~azure.ai.evaluation.AggregationType
+        """
+        return GetAggregatorType(self._conversation_aggregation_function)
 
 
 class AsyncEvaluatorBase:
