@@ -215,36 +215,6 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     :paramtype api_version: str
     """
 
-    @overload
-    def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-    ) -> None: ...
-
-    @overload
-    def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-        *,
-        frequency_penalty: Optional[float] = None,
-        presence_penalty: Optional[float] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        max_tokens: Optional[int] = None,
-        response_format: Optional[Union[Literal["text", "json_object"], _models.JsonSchemaFormat]] = None,
-        stop: Optional[List[str]] = None,
-        tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
-        tool_choice: Optional[
-            Union[str, _models.ChatCompletionsToolChoicePreset, _models.ChatCompletionsNamedToolChoice]
-        ] = None,
-        seed: Optional[int] = None,
-        model: Optional[str] = None,
-        model_extras: Optional[Dict[str, Any]] = None,
-        **kwargs: Any,
-    ) -> None: ...
-
     def __init__(
         self,
         endpoint: str,
@@ -758,27 +728,6 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
     :paramtype api_version: str
     """
 
-    @overload
-    def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-    ) -> None: ...
-
-    @overload
-    def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-        *,
-        dimensions: Optional[int] = None,
-        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
-        input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
-        model: Optional[str] = None,
-        model_extras: Optional[Dict[str, Any]] = None,
-        **kwargs: Any,
-    ) -> None: ...
-
     def __init__(
         self,
         endpoint: str,
@@ -1074,27 +1023,6 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
      behavior.
     :paramtype api_version: str
     """
-
-    @overload
-    def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-    ) -> None: ...
-
-    @overload
-    def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-        *,
-        dimensions: Optional[int] = None,
-        encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
-        input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
-        model: Optional[str] = None,
-        model_extras: Optional[Dict[str, Any]] = None,
-        **kwargs: Any,
-    ) -> None: ...
 
     def __init__(
         self,
