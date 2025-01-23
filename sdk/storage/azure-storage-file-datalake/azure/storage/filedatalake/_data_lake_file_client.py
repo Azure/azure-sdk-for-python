@@ -370,11 +370,12 @@ class DataLakeFileClient(PathClient):
             #other-client--per-operation-configuration>`_.
         :rtype: None
         """
+        expiry_time = None
         if isinstance(expires_on, datetime):
-            expires_on = convert_datetime_to_rfc1123(expires_on)
+            expiry_time = convert_datetime_to_rfc1123(expires_on)
         elif expires_on is not None:
-            expires_on = str(expires_on)
-        self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on, **kwargs)
+            expiry_time = str(expires_on)
+        self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expiry_time, **kwargs)
 
     @distributed_trace
     def upload_data(
