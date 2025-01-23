@@ -39,7 +39,7 @@ def sample_chat_completions():
     from azure.ai.inference.models import SystemMessage, UserMessage
     from azure.core.credentials import AzureKeyCredential
 
-    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key), logging_enable=True)
+    client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     response = client.complete(
         messages=[
