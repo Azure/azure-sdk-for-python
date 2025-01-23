@@ -45,8 +45,6 @@ To construct any of the clients, you will need to pass in the endpoint URL. If y
 
 * For Azure OpenAI endpoints, the endpoint URL has the form `https://your-unique-resouce-name.openai.azure.com/openai/deployments/your-deployment-name`, where `your-unique-resource-name` is your globally unique Azure OpenAI resource name, and `your-deployment-name` is your AI Model deployment name.
 
-* The key is a 32-character string.
-
 For convenience, and to promote the practice of not hard-coding secrets in your source code, all samples here assume the endpoint URL and key are stored in environment variables. You will need to set these environment variables before running the samples as-is. The environment variables are mentioned in the tables below.
 
 Note that the client library does not directly read these environment variable at run time. The sample code reads the environment variables and constructs the relevant client with these values.
@@ -91,6 +89,7 @@ similarly for the other samples.
 |[sample_chat_completions_streaming.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_streaming.py) | One chat completion operation using a synchronous client and streaming response. |
 |[sample_chat_completions_streaming_with_entra_id_auth.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_streaming_with_entra_id_auth.py) | One chat completion operation using a synchronous client and streaming response, using Entra ID authentication. This sample also shows setting the `azureml-model-deployment` HTTP request header, which may be required for some Managed Compute endpoint. |
 |[sample_chat_completions.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions.py) | One chat completion operation using a synchronous client. |
+|[sample_chat_completions_with_entra_id_auth.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_entra_id_auth.py) | One chat completion operation using a synchronous client, with Entra ID authentication. |
 |[sample_chat_completions_with_structured_output.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_structured_output.py) | One chat completion operation using a synchronous client and structured output (the caller specifies a desired JSON scheme for the service response). |
 |[sample_chat_completions_with_structured_output_pydantic.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_structured_output_pydantic.py) | One chat completion operation using a synchronous client and structured output. The JSON scheme for the service response is derived from a set of classes, using Pydantic's `BaseModel.model_json_schema()`. |
 |[sample_chat_completions_with_defaults.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_defaults.py) | One chat completion operation using a synchronous client, with default chat completions configuration set in the client constructor. |

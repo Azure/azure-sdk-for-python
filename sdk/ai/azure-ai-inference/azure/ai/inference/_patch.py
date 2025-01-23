@@ -98,8 +98,10 @@ def _get_internal_response_format(
                 _models._models.ChatCompletionsResponseFormatJsonObject()  # pylint: disable=protected-access
             )
         elif isinstance(response_format, _models.JsonSchemaFormat):
-            internal_response_format = _models._models.ChatCompletionsResponseFormatJsonSchema(  # pylint: disable=protected-access
-                json_schema=response_format
+            internal_response_format = (
+                _models._models.ChatCompletionsResponseFormatJsonSchema(  # pylint: disable=protected-access
+                    json_schema=response_format
+                )
             )
         else:
             raise ValueError(f"Unsupported `response_format` {response_format}")
@@ -117,17 +119,15 @@ def load_client(
     on the given endpoint, to determine the model type and therefore which client to instantiate.
     This method will only work when using Serverless API or Managed Compute endpoint.
     It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
+    Keyword arguments are passed through to the client constructor (you can set keywords such as
+    `api_version`, `user_agent`, `logging_enable` etc. on the client constructor).
 
-    :param endpoint: Service host. Required.
+    :param endpoint: Service endpoint URL for AI model inference. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2024-05-01-preview". Note that overriding this default value may result in unsupported
-     behavior.
-    :paramtype api_version: str
     :return: The appropriate synchronous client associated with the given endpoint
     :rtype: ~azure.ai.inference.ChatCompletionsClient or ~azure.ai.inference.EmbeddingsClient
      or ~azure.ai.inference.ImageEmbeddingsClient
@@ -194,7 +194,7 @@ def load_client(
 class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=too-many-instance-attributes
     """ChatCompletionsClient.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: Service endpoint URL for AI model inference. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
@@ -757,7 +757,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
 class EmbeddingsClient(EmbeddingsClientGenerated):
     """EmbeddingsClient.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: Service endpoint URL for AI model inference. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
@@ -1053,7 +1053,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     """ImageEmbeddingsClient.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: Service endpoint URL for AI model inference. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
