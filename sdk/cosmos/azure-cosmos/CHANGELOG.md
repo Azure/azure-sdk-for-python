@@ -23,6 +23,8 @@
 * Added support for full text search and hybrid search queries. See [PR 38275](https://github.com/Azure/azure-sdk-for-python/pull/38275).
 
 ### 4.8.0 (2024-11-12)
+> [!IMPORTANT]
+> We strongly recommend our customers to use version 4.8.0 and above.
 This version and all future versions will support Python 3.13.
 
 #### Features Added
