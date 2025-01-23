@@ -1,10 +1,10 @@
 # Release History
 
-## 7.3.2 (2024-12-23)
+## 8.0.0 (2025-01-23)
 
-### Other Changes
+### Breaking Changes
   
-  - Removed some unused subfolders
+  - Removed subfolders of some unused Api-Versions for smaller package size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
 
 ## 7.3.1 (2024-08-19)
 
