@@ -2,16 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
-from opentelemetry import trace
 import functools
 import asyncio
-from typing import Callable, Any
+from typing import Any, Callable, Tuple
+from opentelemetry import trace
 
 tracer = trace.get_tracer(__name__)
 
 
-def sanitize_for_attributes(value) -> str:
+def sanitize_for_attributes(value: Any) -> str:
     """
     Convert input value to a flat string representation.
 
@@ -20,21 +19,21 @@ def sanitize_for_attributes(value) -> str:
     logged in OpenTelemetry are always in a compatible string format.
 
     :param value: The value to sanitize, which can be of any type.
+    :type value: Any
     :return: The string representation of the input value.
     :rtype: str
     """
     if isinstance(value, (list, tuple)):
         # Convert the entire list or tuple to a flat string representation
         return "[" + ", ".join(sanitize_for_attributes(v) for v in value) + "]"
-    elif isinstance(value, dict):
+    if isinstance(value, dict):
         # Create a flat string representation of the dictionary
         return "{" + ", ".join(f"{k}: {sanitize_for_attributes(v)}" for k, v in value.items()) + "}"
-    else:
-        # Convert other values to string representation
-        return str(value)
+    # Convert other values to string representation
+    return str(value)
 
 
-def trace_func(func) -> Callable:
+def trace_func(func: Callable) -> Callable:
     """
     Decorator to trace function calls using OpenTelemetry.
 
@@ -47,6 +46,7 @@ def trace_func(func) -> Callable:
     AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is not observed.
 
     :param func: The function to be decorated.
+    :type func: Callable
     :return: The wrapped function with tracing capabilities.
     :rtype: Callable
     """
@@ -57,7 +57,7 @@ def trace_func(func) -> Callable:
         Wrapper function for asynchronous functions.
 
         :param args: Positional arguments passed to the function.
-        :param kwargs: Keyword arguments passed to the function.
+        :type args: Tuple[Any]
         :return: The result of the decorated asynchronous function.
         :rtype: Any
         """
@@ -78,12 +78,12 @@ def trace_func(func) -> Callable:
                 raise
 
     @functools.wraps(func)
-    def sync_wrapper(*args, **kwargs) -> Any:
+    def sync_wrapper(*args: Tuple[Any], **kwargs) -> Any:
         """
         Wrapper function for synchronous functions.
 
         :param args: Positional arguments passed to the function.
-        :param kwargs: Keyword arguments passed to the function.
+        :type args: Tuple[Any]
         :return: The result of the decorated synchronous function.
         :rtype: Any
         """
