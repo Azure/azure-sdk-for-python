@@ -58,16 +58,16 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
             challenge = _HttpChallenge(response.http_response.headers.get("WWW-Authenticate"))
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
             # if no scopes are included in the challenge, challenge.scope and challenge.resource will both be ''
-            scope = challenge.scope or challenge.resource + "/.default" if self._discover_scopes else cast(str, self._scopes)
+            scope = challenge.scope or challenge.resource + "/.default" if self._discover_scopes else self._scopes
             if scope == "/.default":
-                scope = cast(str, self._scopes)
+                scope = self._scopes
         except ValueError:
             return False
 
         if self._discover_tenant:
             await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
         else:
-            await self.authorize_request(request, scope)
+            await self.authorize_request(request, *scope)
         return True
 
 
