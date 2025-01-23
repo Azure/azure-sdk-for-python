@@ -2370,7 +2370,6 @@ class TestAgentClient(AzureRecordedTestCase):
         self._do_test_create_vector_store_add_file(file_path=self._get_data_file(), **kwargs)
 
     @agentClientPreparer()
-    # @pytest.markp("The CreateVectorStoreFile API is not supported yet.")
     @pytest.mark.skip("Not deployed in all regions.")
     @recorded_by_proxy
     def test_create_vector_store_add_file_azure(self, **kwargs):
@@ -2387,16 +2386,14 @@ class TestAgentClient(AzureRecordedTestCase):
         if file_id:
             ds = None
         else:
-            ds = [
-                VectorStoreDataSource(
-                    asset_identifier=kwargs["azure_ai_projects_agents_tests_data_path"],
-                    asset_type="uri_asset",
-                )
-            ]
+            ds = VectorStoreDataSource(
+                asset_identifier=kwargs["azure_ai_projects_agents_tests_data_path"],
+                asset_type="uri_asset",
+            )
         vector_store = ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
         assert vector_store.id
         vector_store_file = ai_client.agents.create_vector_store_file(
-            vector_store_id=vector_store.id, data_sources=ds, file_id=file_id
+            vector_store_id=vector_store.id, data_source=ds, file_id=file_id
         )
         assert vector_store_file.id
         self._test_file_search(ai_client, vector_store, file_id)
