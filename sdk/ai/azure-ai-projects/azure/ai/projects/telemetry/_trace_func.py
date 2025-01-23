@@ -34,12 +34,16 @@ def sanitize_for_attributes(value) -> str:
 
 def trace_func(func) -> Callable:
     """  
-    Decorator to trace function calls using OpenTelemetry.  
-  
-    This decorator captures the function's parameters, return values,   
-    and exceptions, logging them as spans within OpenTelemetry. It   
-    works with both synchronous and asynchronous functions.  
-  
+    Decorator to trace function calls using OpenTelemetry.
+
+    This decorator captures the function's parameters, return values,
+    and exceptions, logging them as spans within OpenTelemetry. It
+    works with both synchronous and asynchronous functions.
+
+    Note that using the decorator will cause all the information mentioned
+    above to be traced always when traces are enabled. The value of the
+    AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is not observed.
+
     :param func: The function to be decorated.
     :return: The wrapped function with tracing capabilities.
     :rtype: Callable
