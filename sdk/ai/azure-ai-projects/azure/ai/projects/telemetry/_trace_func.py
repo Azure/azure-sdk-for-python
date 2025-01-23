@@ -16,7 +16,7 @@ def sanitize_for_attributes(value: Any) -> str:
 
     This function transforms complex data structures (e.g., lists, tuples,
     dictionaries) into a simple string format, ensuring that the attributes
-    logged in OpenTelemetry are always in a compatible string format.
+    logged are always in a compatible string format.
 
     :param value: The value to sanitize, which can be of any type.
     :type value: Any
