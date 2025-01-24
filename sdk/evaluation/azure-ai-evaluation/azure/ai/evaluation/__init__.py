@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 from ._evaluate._evaluate import evaluate
+from ._evaluate_dsb._evaluate_dsb import DSBEvaluator, evaluate_dsb
 from ._evaluators._bleu import BleuScoreEvaluator
 from ._evaluators._coherence import CoherenceEvaluator
 from ._evaluators._content_safety import (
@@ -45,6 +46,8 @@ from ._model_configurations import (
 
 __all__ = [
     "evaluate",
+    "evaluate_dsb",
+    "DSBEvaluator",
     "CoherenceEvaluator",
     "F1ScoreEvaluator",
     "FluencyEvaluator",
