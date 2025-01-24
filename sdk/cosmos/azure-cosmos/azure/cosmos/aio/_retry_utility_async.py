@@ -24,24 +24,26 @@
 import json
 import time
 import asyncio
+from aiohttp.client_exceptions import ConnectionTimeoutError, ServerTimeoutError
+from typing import Optional
 
-from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError
+from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from .. import exceptions
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
-from .._retry_utility import _configure_timeout
+from .._retry_utility import _configure_timeout, _has_retryable_headers
 from .. import _endpoint_discovery_retry_policy
 from .. import _resource_throttle_retry_policy
 from .. import _default_retry_policy
 from .. import _session_retry_policy
 from .. import _gone_retry_policy
 from .. import _timeout_failover_retry_policy
+from .. import _service_response_retry_policy
 from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
-
 
 async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwargs):
     """Executes the function with passed parameters applying all retry policies
@@ -74,6 +76,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     partition_key_range_gone_retry_policy = _gone_retry_policy.PartitionKeyRangeGoneRetryPolicy(client, *args)
     timeout_failover_retry_policy = _timeout_failover_retry_policy._TimeoutFailoverRetryPolicy(
         client.connection_policy, global_endpoint_manager, *args
+    )
+    service_response_retry_policy = _service_response_retry_policy.ServiceResponseRetryPolicy(
+        client.connection_policy, global_endpoint_manager, *args,
     )
     # HttpRequest we would need to modify for Container Recreate Retry Policy
     request = None
@@ -187,6 +192,16 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 if kwargs['timeout'] <= 0:
                     raise exceptions.CosmosClientTimeoutError()
 
+        except ServiceResponseError as e:
+            if _has_retryable_headers(request.http_request.headers):
+                # we resolve the request endpoint to the next preferred region
+                # once we are out of preferred regions we stop retrying
+                retry_policy = service_response_retry_policy
+                if not retry_policy.ShouldRetry():
+                    if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
+                        client.session.clear_session_token(client.last_response_headers)
+                    raise
+
 
 async def ExecuteFunctionAsync(function, *args, **kwargs):
     """Stub method so that it can be used for mocking purposes as well.
@@ -218,6 +233,11 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
         """
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)
+        # TODO: remove this once done testing, place a breakpoint on line 239 and step over slowly until line 251
+        if "docs" in request.http_request.url and request.http_request.method == "GET":
+            per_request_timeout = 0.001
+        else:
+            per_request_timeout = 1
 
         retry_error = None
         retry_active = True
@@ -227,7 +247,6 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
             start_time = time.time()
             try:
                 _configure_timeout(request, absolute_timeout, per_request_timeout)
-
                 response = await self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
@@ -245,6 +264,9 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 timeout_error.history = retry_settings['history']
                 raise
             except ServiceRequestError as err:
+                if _has_retryable_headers(request.http_request.headers):
+                    # raise exception immediately to be dealt with in client retry policies
+                    raise err
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, we retry up to however many connection retries are configured (default 3)
                 if retry_settings['connect'] > 0:
@@ -252,6 +274,17 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport)
                         continue
+                raise err
+            except ServiceResponseError as err:
+                retry_error = err
+                if err.exc_type in [ConnectionTimeoutError, ServerTimeoutError]:
+                    if _has_retryable_headers(request.http_request.headers):
+                            # raise exception immediately to be dealt with in client retry policies
+                            raise err
+                retry_active = self.increment(retry_settings, response=request, error=err)
+                if retry_active:
+                    await self.sleep(retry_settings, request.context.transport)
+                    continue
                 raise err
             except AzureError as err:
                 retry_error = err
