@@ -197,11 +197,11 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError:
-            _handle_service_request_retries(request, client, service_response_retry_policy, args)
+            _handle_service_request_retries(request, client, service_request_retry_policy, *args)
 
         except ServiceResponseError as e:
             if e.exc_type in [ReadTimeout, ConnectTimeout]:
-                _handle_service_response_retries(request, client, service_response_retry_policy, args)
+                _handle_service_response_retries(request, client, service_response_retry_policy, *args)
             else:
                 raise
 
@@ -224,10 +224,10 @@ def _has_read_retryable_headers(request_headers):
         return True
     return False
 
-def _handle_service_request_retries(request, client, response_retry_policy, *args):
+def _handle_service_request_retries(request, client, request_retry_policy, *args):
     # we resolve the request endpoint to the next preferred region
     # once we are out of preferred regions we stop retrying
-    retry_policy = response_retry_policy
+    retry_policy = request_retry_policy
     if not retry_policy.ShouldRetry():
         if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
             client.session.clear_session_token(client.last_response_headers)
@@ -308,9 +308,6 @@ class ConnectionRetryPolicy(RetryPolicy):
                 timeout_error.history = retry_settings['history']
                 raise
             except ServiceRequestError as err:
-                if _has_write_retryable_headers(request.http_request.headers):
-                    # raise exception immediately to be dealt with in client retry policies
-                    raise err
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, we retry up to however many connection retries are configured (default 3)
                 if retry_settings['connect'] > 0:
