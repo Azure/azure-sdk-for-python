@@ -79,20 +79,20 @@ def validate_kwargs(
     The values of keyword arguments must match the expect type and conditions. If the conditions do not match,
     errors will be raised with the error messages and possible ways to correct the errors.
 
-    :param kwargs: Keyword arguments to verify for query_items_change_feed API
-    :keyword mode: Must be one of the values in the Enum, 'ChangeFeedMode'.
+    :param dict[str, Any] kwargs: Keyword arguments to verify for query_items_change_feed API
+    * keyword mode: Must be one of the values in the Enum, 'ChangeFeedMode'.
         If the value is 'ALL_VERSIONS_AND_DELETES', the following keywords must be in the right condition:
             - 'partition_key_range_id': Cannot be used at any time
             - 'is_start_from_beginning': Must be 'False'
             - 'start_time': Must be "Now"
-    :paramtype mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]]
-    :keyword partition_key_range_id: Deprecated Warning.
-    :paramtype partition_key_range_id: str
-    :keyword is_start_from_beginning: Deprecated Warning. Cannot be used with 'start_time'.
-    :paramtype is_start_from_beginning: bool
-    :keyword start_time: Must be in supported types.
-    :paramtype start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
-    :type kwargs: dict[str, Any]
+    * paramtype mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]]
+    * keyword partition_key_range_id: Deprecated Warning.
+    * paramtype partition_key_range_id: str
+    * keyword is_start_from_beginning: Deprecated Warning. Cannot be used with 'start_time'.
+    * paramtype is_start_from_beginning: bool
+    * keyword start_time: Must be in supported types.
+    * paramtype start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
+    * type kwargs: dict[str, Any]
     """
     # Filter items with value None
     kwargs = {key: value for key, value in kwargs.items() if value is not None}

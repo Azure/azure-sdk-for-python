@@ -23,7 +23,7 @@
 database service.
 """
 
-import asyncio
+import asyncio # pylint: disable=do-not-import-asyncio
 from urllib.parse import urlparse
 from .. import _constants as constants
 from .. import exceptions
