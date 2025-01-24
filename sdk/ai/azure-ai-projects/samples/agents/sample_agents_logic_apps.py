@@ -15,8 +15,11 @@ USAGE:
     pip install azure-ai-projects azure-identity
  
     Set this environment variables with your own values:
-    1) PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
-    2) LOGIC_APP_URL - the URL of the Logic App Workflow URL to send emails, as found in your Azure Portal.
+    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
+       Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+       the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) LOGIC_APP_URL - the URL of the Logic App Workflow URL to send emails, as found in your Azure Portal.
 
     Replace <recipient@example.com> with a valid email address in the message content.
 """
@@ -28,7 +31,7 @@ parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 # Add the parent directory to the system path
 sys.path.append(parent_dir)
 from typing import Set
-from user_functions import *
+from user_functions import fetch_current_datetime
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import ToolSet, FunctionTool
 from azure.identity import DefaultAzureCredential
@@ -64,19 +67,19 @@ project_client = AIProjectClient.from_connection_string(
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
 )
  
-user_functions: Set = {
+functions_to_use: Set = {
     fetch_current_datetime,
     send_email_via_logic_app,
 }
  
 with project_client:
  
-    functions = FunctionTool(functions=user_functions)
+    functions = FunctionTool(functions=functions_to_use)
     toolset = ToolSet()
     toolset.add(functions)
  
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview",
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="SendEmailAgent",
         instructions="You are a specialized agent for sending emails.",
         toolset=toolset,
