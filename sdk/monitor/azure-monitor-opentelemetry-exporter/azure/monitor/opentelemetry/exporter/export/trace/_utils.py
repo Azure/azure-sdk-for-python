@@ -67,6 +67,7 @@ def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
     # Currently logic only works for ServiceBus and EventHub
     if attributes:
         # New semconv attributes: https://github.com/Azure/azure-sdk-for-python/pull/29203
+        # TODO: Keep track of when azure-sdk supports stable semconv for these fields
         peer_address = attributes.get("net.peer.name") or attributes.get("peer.address")
         destination = attributes.get("messaging.destination.name") or attributes.get("message_bus.destination")
         if peer_address and destination:
