@@ -143,7 +143,7 @@ class ForecastingJob(AutoMLTabular):
 
             Units are based on the time interval of your training data, e.g., monthly, weekly that the forecaster
             should predict out. When task type is forecasting, this parameter is required. For more information on
-            setting forecasting parameters, see `Auto-train a time-series forecast model <https://docs.microsoft.com/
+            setting forecasting parameters, see `Auto-train a time-series forecast model <https://learn.microsoft.com/
             azure/machine-learning/how-to-auto-train-forecast>`_.
         :type forecast_horizon: Optional[Union[int, str]]
         :keyword time_series_id_column_names:
@@ -162,7 +162,7 @@ class ForecastingJob(AutoMLTabular):
             month may depend on the price of specific commodities 3 months prior. In this example, you may want
             to lag the target (demand) negatively by 3 months so that the model is training on the correct
             relationship. For more information, see `Auto-train a time-series forecast model
-            <https://docs.microsoft.com/azure/machine-learning/how-to-auto-train-forecast>`_.
+            <https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-forecast>`_.
 
             **Note on auto detection of target lags and rolling window size.
             Please see the corresponding comments in the rolling window section.**
@@ -425,7 +425,7 @@ class ForecastingJob(AutoMLTabular):
         :keyword enable_onnx_compatible_models:
             Whether to enable or disable enforcing the ONNX-compatible models.
             The default is False. For more information about Open Neural Network Exchange (ONNX) and Azure Machine
-            Learning, see this `article <https://docs.microsoft.com/azure/machine-learning/concept-onnx>`__.
+            Learning, see this `article <https://learn.microsoft.com/azure/machine-learning/concept-onnx>`__.
         :type enable_onnx_compatible: Optional[bool]
         :keyword enable_dnn_training:
             Whether to include DNN based models during model selection.
@@ -434,7 +434,7 @@ class ForecastingJob(AutoMLTabular):
         :keyword enable_model_explainability:
             Whether to enable explaining the best AutoML model at the end of all AutoML training iterations.
             For more information, see `Interpretability: model explanations in automated machine learning
-            <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
+            <https://learn.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
             , defaults to None
         :type enable_model_explainability: Optional[bool]
         :keyword enable_stack_ensemble:
@@ -443,13 +443,13 @@ class ForecastingJob(AutoMLTabular):
             Similarly, for Timeseries tasks, StackEnsemble iteration will be disabled by default, to avoid risks of
             overfitting due to small training set used in fitting the meta learner.
             For more information about ensembles, see `Ensemble configuration
-            <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
+            <https://learn.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
             , defaults to None
         :type enable_stack_ensemble: Optional[bool]
         :keyword enable_vote_ensemble:
             Whether to enable/disable VotingEnsemble iteration.
             For more information about ensembles, see `Ensemble configuration
-            <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
+            <https://learn.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
             , defaults to None
         :type enable_vote_ensemble: Optional[bool]
         :keyword stack_ensemble_settings:
