@@ -21,7 +21,6 @@ from ._serialization import Deserializer, Serializer
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-
 class LoadTestAdministrationClient(LoadTestAdministrationClientOperationsMixin):
     """LoadTestAdministrationClient.
 
@@ -35,33 +34,30 @@ class LoadTestAdministrationClient(LoadTestAdministrationClientOperationsMixin):
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        _endpoint = "https://{endpoint}"
+    def __init__(
+        self,
+        endpoint: str,
+        credential: "TokenCredential",
+        **kwargs: Any
+    ) -> None:
+        _endpoint = 'https://{endpoint}'
         self._config = LoadTestAdministrationClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        _policies = kwargs.pop("policies", None)
+        _policies = kwargs.pop('policies', None)
         if _policies is None:
-            _policies = [
-                policies.RequestIdPolicy(**kwargs),
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.proxy_policy,
-                policies.ContentDecodePolicy(**kwargs),
-                self._config.redirect_policy,
-                self._config.retry_policy,
-                self._config.authentication_policy,
-                self._config.custom_hook_policy,
-                self._config.logging_policy,
-                policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
-                self._config.http_logging_policy,
-            ]
+            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
         self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
+
+    def send_request(
+        self,
+        request: HttpRequest, *, stream: bool = False,
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -81,7 +77,7 @@ class LoadTestAdministrationClient(LoadTestAdministrationClientOperationsMixin):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -96,8 +92,6 @@ class LoadTestAdministrationClient(LoadTestAdministrationClientOperationsMixin):
 
     def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)
-
-
 class LoadTestRunClient(LoadTestRunClientOperationsMixin):
     """LoadTestRunClient.
 
@@ -111,33 +105,30 @@ class LoadTestRunClient(LoadTestRunClientOperationsMixin):
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        _endpoint = "https://{endpoint}"
+    def __init__(
+        self,
+        endpoint: str,
+        credential: "TokenCredential",
+        **kwargs: Any
+    ) -> None:
+        _endpoint = 'https://{endpoint}'
         self._config = LoadTestRunClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        _policies = kwargs.pop("policies", None)
+        _policies = kwargs.pop('policies', None)
         if _policies is None:
-            _policies = [
-                policies.RequestIdPolicy(**kwargs),
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.proxy_policy,
-                policies.ContentDecodePolicy(**kwargs),
-                self._config.redirect_policy,
-                self._config.retry_policy,
-                self._config.authentication_policy,
-                self._config.custom_hook_policy,
-                self._config.logging_policy,
-                policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
-                self._config.http_logging_policy,
-            ]
+            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
         self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
+
+    def send_request(
+        self,
+        request: HttpRequest, *, stream: bool = False,
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -157,7 +148,7 @@ class LoadTestRunClient(LoadTestRunClientOperationsMixin):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

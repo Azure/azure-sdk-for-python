@@ -15,20 +15,20 @@ if TYPE_CHECKING:
 
     from ._serialization import Deserializer, Serializer
 
-
-class LoadTestAdministrationClientMixinABC(ABC):
+class LoadTestAdministrationClientMixinABC(  
+    ABC
+):
     """DO NOT use this class. It is for internal typing use only."""
-
     _client: "PipelineClient"
     _config: LoadTestAdministrationClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"
-
-
-class LoadTestRunClientMixinABC(ABC):
+class LoadTestRunClientMixinABC(  
+    ABC
+):
     """DO NOT use this class. It is for internal typing use only."""
-
     _client: "PipelineClient"
     _config: LoadTestRunClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"
+

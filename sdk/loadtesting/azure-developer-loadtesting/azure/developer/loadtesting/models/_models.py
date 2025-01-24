@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -61,6 +60,9 @@ class AppComponent(_model_base.Model):
     kind: Optional[str] = rest_field()
     """Kind of Azure resource type."""
 
+
+
+
     @overload
     def __init__(
         self,
@@ -69,7 +71,8 @@ class AppComponent(_model_base.Model):
         resource_type: str,
         display_name: Optional[str] = None,
         kind: Optional[str] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -97,13 +100,17 @@ class ArtifactsContainerInfo(_model_base.Model):
     expire_date_time: Optional[datetime.datetime] = rest_field(name="expireDateTime", format="rfc3339")
     """Expiry time of the container (RFC 3339 literal format)."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         url: Optional[str] = None,
         expire_date_time: Optional[datetime.datetime] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -138,6 +145,9 @@ class AutoStopCriteria(_model_base.Model):
     error_rate_time_window_in_seconds: Optional[int] = rest_field(name="errorRateTimeWindowInSeconds")
     """Time window during which the error percentage should be evaluated in seconds."""
 
+
+
+
     @overload
     def __init__(
         self,
@@ -145,7 +155,8 @@ class AutoStopCriteria(_model_base.Model):
         auto_stop_disabled: Optional[bool] = None,
         error_rate: Optional[float] = None,
         error_rate_time_window_in_seconds: Optional[int] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -176,6 +187,9 @@ class CertificateMetadata(_model_base.Model):
     name: Optional[str] = rest_field()
     """Name of the certificate."""
 
+
+
+
     @overload
     def __init__(
         self,
@@ -183,7 +197,8 @@ class CertificateMetadata(_model_base.Model):
         value: Optional[str] = None,
         type: Optional[Union[str, "_models.CertificateType"]] = None,
         name: Optional[str] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -210,13 +225,17 @@ class DimensionFilter(_model_base.Model):
     values_property: Optional[List[str]] = rest_field(name="values")
     """The dimension values. Maximum values can be 20."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         name: Optional[str] = None,
         values_property: Optional[List[str]] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -243,13 +262,17 @@ class DimensionValue(_model_base.Model):
     value: Optional[str] = rest_field()
     """The value of the dimension."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         name: Optional[str] = None,
         value: Optional[str] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -275,6 +298,10 @@ class ErrorDetails(_model_base.Model):
     """Error details in case test run was not successfully run."""
 
 
+
+
+
+
 class FunctionFlexConsumptionResourceConfiguration(_model_base.Model):  # pylint: disable=name-too-long
     """Resource configuration instance for a Flex Consumption based Azure Function App.
 
@@ -291,13 +318,17 @@ class FunctionFlexConsumptionResourceConfiguration(_model_base.Model):  # pylint
     http_concurrency: int = rest_field(name="httpConcurrency")
     """HTTP Concurrency for the function app. Required."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         instance_memory_mb: int,
         http_concurrency: int,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -326,12 +357,16 @@ class TargetResourceConfigurations(_model_base.Model):
     kind: str = rest_discriminator(name="kind", visibility=["read", "create"])
     """Kind of the resource for which the configurations apply. Required. \"FunctionsFlexConsumption\""""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         kind: str,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -344,9 +379,7 @@ class TargetResourceConfigurations(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class FunctionFlexConsumptionTargetResourceConfigurations(
-    TargetResourceConfigurations, discriminator="FunctionsFlexConsumption"
-):  # pylint: disable=name-too-long
+class FunctionFlexConsumptionTargetResourceConfigurations(TargetResourceConfigurations, discriminator='FunctionsFlexConsumption'):  # pylint: disable=name-too-long
     """Configurations for a Function App using Flex Consumption Plan.
 
 
@@ -366,12 +399,16 @@ class FunctionFlexConsumptionTargetResourceConfigurations(
     configurations: Optional[Dict[str, "_models.FunctionFlexConsumptionResourceConfiguration"]] = rest_field()
     """A map of configurations for a Function app using Flex Consumption Plan."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         configurations: Optional[Dict[str, "_models.FunctionFlexConsumptionResourceConfiguration"]] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -420,10 +457,11 @@ class LoadTestConfiguration(_model_base.Model):
      not required to upload."""
     optional_load_test_config: Optional["_models.OptionalLoadTestConfig"] = rest_field(name="optionalLoadTestConfig")
     """Configuration for quick load test."""
-    regional_load_test_config: Optional[List["_models.RegionalConfiguration"]] = rest_field(
-        name="regionalLoadTestConfig"
-    )
+    regional_load_test_config: Optional[List["_models.RegionalConfiguration"]] = rest_field(name="regionalLoadTestConfig")
     """Region distribution configuration for the load test."""
+
+
+
 
     @overload
     def __init__(
@@ -434,7 +472,8 @@ class LoadTestConfiguration(_model_base.Model):
         quick_start_test: Optional[bool] = None,
         optional_load_test_config: Optional["_models.OptionalLoadTestConfig"] = None,
         regional_load_test_config: Optional[List["_models.RegionalConfiguration"]] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -461,12 +500,16 @@ class MetricAvailability(_model_base.Model):
      a duration 'PT1M', 'PT1H', etc. Known values are: \"PT5S\", \"PT10S\", \"PT1M\", \"PT5M\", and
      \"PT1H\"."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         time_grain: Optional[Union[str, "_models.TimeGrain"]] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -514,9 +557,7 @@ class MetricDefinition(_model_base.Model):
     """The metric name."""
     namespace: Optional[str] = rest_field()
     """The namespace the metric belongs to."""
-    primary_aggregation_type: Optional[Union[str, "_models.AggregationType"]] = rest_field(
-        name="primaryAggregationType"
-    )
+    primary_aggregation_type: Optional[Union[str, "_models.AggregationType"]] = rest_field(name="primaryAggregationType")
     """The primary aggregation type value defining how to use the values for display. Known values
      are: \"Average\", \"Count\", \"None\", \"Total\", \"Percentile75\", \"Percentile90\",
      \"Percentile95\", \"Percentile96\", \"Percentile97\", \"Percentile98\", \"Percentile99\",
@@ -530,6 +571,9 @@ class MetricDefinition(_model_base.Model):
     """Metric availability specifies the time grain (aggregation interval or
      frequency)."""
 
+
+
+
     @overload
     def __init__(
         self,
@@ -542,7 +586,8 @@ class MetricDefinition(_model_base.Model):
         supported_aggregation_types: Optional[List[str]] = None,
         unit: Optional[Union[str, "_models.MetricUnit"]] = None,
         metric_availabilities: Optional[List["_models.MetricAvailability"]] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -566,12 +611,16 @@ class MetricDefinitionCollection(_model_base.Model):
     value: List["_models.MetricDefinition"] = rest_field()
     """the values for the metric definitions. Required."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         value: List["_models.MetricDefinition"],
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -598,13 +647,17 @@ class MetricNamespace(_model_base.Model):
     name: Optional[str] = rest_field()
     """The metric namespace name."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         description: Optional[str] = None,
         name: Optional[str] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -628,12 +681,16 @@ class MetricNamespaceCollection(_model_base.Model):
     value: List["_models.MetricNamespace"] = rest_field()
     """The values for the metric namespaces. Required."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         value: List["_models.MetricNamespace"],
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -662,12 +719,16 @@ class MetricRequestPayload(_model_base.Model):
      is equals to HTTPRequest1 or HTTPRequest2, the DimensionFilter value will be
      {\"SamplerName\", [\"HTTPRequest1\", \"HTTPRequest2\"}."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         filters: Optional[List["_models.DimensionFilter"]] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -694,13 +755,17 @@ class MetricValue(_model_base.Model):
     value: Optional[float] = rest_field()
     """The metric value."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         timestamp: Optional[datetime.datetime] = None,
         value: Optional[float] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -727,13 +792,17 @@ class NameAndDesc(_model_base.Model):
     name: Optional[str] = rest_field()
     """The name."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         description: Optional[str] = None,
         name: Optional[str] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -780,6 +849,9 @@ class OptionalLoadTestConfig(_model_base.Model):
     duration: Optional[int] = rest_field()
     """Test run duration in seconds."""
 
+
+
+
     @overload
     def __init__(
         self,
@@ -790,7 +862,8 @@ class OptionalLoadTestConfig(_model_base.Model):
         virtual_users: Optional[int] = None,
         ramp_up_time: Optional[int] = None,
         duration: Optional[int] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -816,10 +889,11 @@ class PassFailCriteria(_model_base.Model):
 
     pass_fail_metrics: Optional[Dict[str, "_models.PassFailMetric"]] = rest_field(name="passFailMetrics")
     """Map of id and pass fail metrics { id  : pass fail metrics }."""
-    pass_fail_server_metrics: Optional[Dict[str, "_models.PassFailServerMetric"]] = rest_field(
-        name="passFailServerMetrics"
-    )
+    pass_fail_server_metrics: Optional[Dict[str, "_models.PassFailServerMetric"]] = rest_field(name="passFailServerMetrics")
     """Map of id and pass fail server metrics { id  : pass fail metrics }."""
+
+
+
 
     @overload
     def __init__(
@@ -827,7 +901,8 @@ class PassFailCriteria(_model_base.Model):
         *,
         pass_fail_metrics: Optional[Dict[str, "_models.PassFailMetric"]] = None,
         pass_fail_server_metrics: Optional[Dict[str, "_models.PassFailServerMetric"]] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -849,8 +924,8 @@ class PassFailMetric(_model_base.Model):
      are: "response_time_ms", "latency", "error", "requests", and "requests_per_sec".
     :vartype client_metric: str or ~azure.developer.loadtesting.models.PFMetrics
     :ivar aggregate: The aggregation function to be applied on the client metric. Allowed functions
-
-
+    
+    
      * ‘percentage’ - for error metric , ‘avg’, percentiles like ‘p50’, ‘p90’, & so on, ‘min’,
        ‘max’ - for response_time_ms and latency metric, ‘avg’ - for requests_per_sec,
        ‘count’ - for requests. Known values are: "count", "percentage", "avg", "p50", "p75", "p90",
@@ -900,6 +975,9 @@ class PassFailMetric(_model_base.Model):
     result: Optional[Union[str, "_models.PFResult"]] = rest_field(visibility=["read"])
     """Outcome of the test run. Known values are: \"passed\", \"undetermined\", and \"failed\"."""
 
+
+
+
     @overload
     def __init__(
         self,
@@ -910,7 +988,8 @@ class PassFailMetric(_model_base.Model):
         request_name: Optional[str] = None,
         value: Optional[float] = None,
         action: Optional[Union[str, "_models.PFAction"]] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -971,6 +1050,9 @@ class PassFailServerMetric(_model_base.Model):
     result: Optional[Union[str, "_models.PFResult"]] = rest_field(visibility=["read"])
     """Outcome of the test run. Known values are: \"passed\", \"undetermined\", and \"failed\"."""
 
+
+
+
     @overload
     def __init__(
         self,
@@ -982,7 +1064,8 @@ class PassFailServerMetric(_model_base.Model):
         condition: str,
         value: float,
         action: Optional[Union[str, "_models.PFAction"]] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1020,13 +1103,17 @@ class RegionalConfiguration(_model_base.Model):
      The region name must match one of the strings in the \"Name\" column returned from running the
      \"az account list-locations -o table\" Azure CLI command. Required."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         engine_instances: int,
         region: str,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1082,6 +1169,9 @@ class ResourceMetric(_model_base.Model):
     resource_type: str = rest_field(name="resourceType")
     """Azure resource type. Required."""
 
+
+
+
     @overload
     def __init__(
         self,
@@ -1093,7 +1183,8 @@ class ResourceMetric(_model_base.Model):
         resource_type: str,
         display_description: Optional[str] = None,
         unit: Optional[str] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1120,13 +1211,17 @@ class Secret(_model_base.Model):
     type: Optional[Union[str, "_models.SecretType"]] = rest_field()
     """Type of secret. Known values are: \"AKV_SECRET_URI\" and \"SECRET_VALUE\"."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         value: Optional[str] = None,
         type: Optional[Union[str, "_models.SecretType"]] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1250,33 +1345,28 @@ class Test(_model_base.Model):
     """Type of the managed identity referencing the Key vault."""
     keyvault_reference_identity_id: Optional[str] = rest_field(name="keyvaultReferenceIdentityId")
     """Resource Id of the managed identity referencing the Key vault."""
-    metrics_reference_identity_type: Optional[Union[str, "_models.ManagedIdentityType"]] = rest_field(
-        name="metricsReferenceIdentityType"
-    )
+    metrics_reference_identity_type: Optional[Union[str, "_models.ManagedIdentityType"]] = rest_field(name="metricsReferenceIdentityType")
     """Type of the managed identity referencing the metrics. Known values are: \"SystemAssigned\" and
      \"UserAssigned\"."""
     metrics_reference_identity_id: Optional[str] = rest_field(name="metricsReferenceIdentityId")
     """Resource Id of the managed identity referencing the metrics."""
-    engine_built_in_identity_type: Optional[Union[str, "_models.ManagedIdentityType"]] = rest_field(
-        name="engineBuiltInIdentityType"
-    )
+    engine_built_in_identity_type: Optional[Union[str, "_models.ManagedIdentityType"]] = rest_field(name="engineBuiltInIdentityType")
     """Type of the managed identity built in load test engines. Known values are: \"SystemAssigned\"
      and \"UserAssigned\"."""
     engine_built_in_identity_ids: Optional[List[str]] = rest_field(name="engineBuiltInIdentityIds")
     """Resource Ids of the managed identity built in to load test engines. Required if
      engineBuiltInIdentityType is UserAssigned."""
-    created_date_time: Optional[datetime.datetime] = rest_field(
-        name="createdDateTime", visibility=["read"], format="rfc3339"
-    )
+    created_date_time: Optional[datetime.datetime] = rest_field(name="createdDateTime", visibility=["read"], format="rfc3339")
     """The creation datetime(RFC 3339 literal format)."""
     created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
     """The user that created."""
-    last_modified_date_time: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedDateTime", visibility=["read"], format="rfc3339"
-    )
+    last_modified_date_time: Optional[datetime.datetime] = rest_field(name="lastModifiedDateTime", visibility=["read"], format="rfc3339")
     """The last Modified datetime(RFC 3339 literal format)."""
     last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
     """The user that last modified."""
+
+
+
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -1300,7 +1390,8 @@ class Test(_model_base.Model):
         metrics_reference_identity_id: Optional[str] = None,
         engine_built_in_identity_type: Optional[Union[str, "_models.ManagedIdentityType"]] = None,
         engine_built_in_identity_ids: Optional[List[str]] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1341,25 +1432,25 @@ class TestAppComponents(_model_base.Model):
      : resource object }. Required."""
     test_id: Optional[str] = rest_field(name="testId", visibility=["read"])
     """Test identifier."""
-    created_date_time: Optional[datetime.datetime] = rest_field(
-        name="createdDateTime", visibility=["read"], format="rfc3339"
-    )
+    created_date_time: Optional[datetime.datetime] = rest_field(name="createdDateTime", visibility=["read"], format="rfc3339")
     """The creation datetime(RFC 3339 literal format)."""
     created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
     """The user that created."""
-    last_modified_date_time: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedDateTime", visibility=["read"], format="rfc3339"
-    )
+    last_modified_date_time: Optional[datetime.datetime] = rest_field(name="lastModifiedDateTime", visibility=["read"], format="rfc3339")
     """The last Modified datetime(RFC 3339 literal format)."""
     last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
     """The user that last modified."""
+
+
+
 
     @overload
     def __init__(
         self,
         *,
         components: Dict[str, "_models.AppComponent"],
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1402,24 +1493,24 @@ class TestFileInfo(_model_base.Model):
     file_type: Optional[Union[str, "_models.FileType"]] = rest_field(name="fileType", visibility=["read"])
     """File type. Known values are: \"JMX_FILE\", \"USER_PROPERTIES\", \"ADDITIONAL_ARTIFACTS\",
      \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG\", and \"TEST_SCRIPT\"."""
-    expire_date_time: Optional[datetime.datetime] = rest_field(
-        name="expireDateTime", visibility=["read"], format="rfc3339"
-    )
+    expire_date_time: Optional[datetime.datetime] = rest_field(name="expireDateTime", visibility=["read"], format="rfc3339")
     """Expiry time of the file (RFC 3339 literal format)."""
-    validation_status: Optional[Union[str, "_models.FileStatus"]] = rest_field(
-        name="validationStatus", visibility=["read"]
-    )
+    validation_status: Optional[Union[str, "_models.FileStatus"]] = rest_field(name="validationStatus", visibility=["read"])
     """Validation status of the file. Known values are: \"NOT_VALIDATED\", \"VALIDATION_SUCCESS\",
      \"VALIDATION_FAILURE\", \"VALIDATION_INITIATED\", and \"VALIDATION_NOT_REQUIRED\"."""
     validation_failure_details: Optional[str] = rest_field(name="validationFailureDetails", visibility=["read"])
     """Validation failure error details."""
+
+
+
 
     @overload
     def __init__(
         self,
         *,
         file_name: str,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1461,10 +1552,11 @@ class TestInputArtifacts(_model_base.Model):
     """File info."""
     url_test_config_file_info: Optional["_models.TestFileInfo"] = rest_field(name="urlTestConfigFileInfo")
     """The config json file for url based test."""
-    additional_file_info: Optional[List["_models.TestFileInfo"]] = rest_field(
-        name="additionalFileInfo", visibility=["read"]
-    )
+    additional_file_info: Optional[List["_models.TestFileInfo"]] = rest_field(name="additionalFileInfo", visibility=["read"])
     """Additional supported files for the test run."""
+
+
+
 
     @overload
     def __init__(
@@ -1475,7 +1567,8 @@ class TestInputArtifacts(_model_base.Model):
         user_prop_file_info: Optional["_models.TestFileInfo"] = None,
         input_artifacts_zip_file_info: Optional["_models.TestFileInfo"] = None,
         url_test_config_file_info: Optional["_models.TestFileInfo"] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1534,22 +1627,19 @@ class TestProfile(_model_base.Model):
     target_resource_id: Optional[str] = rest_field(name="targetResourceId", visibility=["read", "create"])
     """Target resource ID on which the test profile is created. This property is required for creating
      a Test Profile and it's not allowed to be updated."""
-    target_resource_configurations: Optional["_models.TargetResourceConfigurations"] = rest_field(
-        name="targetResourceConfigurations"
-    )
+    target_resource_configurations: Optional["_models.TargetResourceConfigurations"] = rest_field(name="targetResourceConfigurations")
     """Configurations of the target resource on which testing would be done."""
-    created_date_time: Optional[datetime.datetime] = rest_field(
-        name="createdDateTime", visibility=["read"], format="rfc3339"
-    )
+    created_date_time: Optional[datetime.datetime] = rest_field(name="createdDateTime", visibility=["read"], format="rfc3339")
     """The creation datetime(RFC 3339 literal format)."""
     created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
     """The user that created."""
-    last_modified_date_time: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedDateTime", visibility=["read"], format="rfc3339"
-    )
+    last_modified_date_time: Optional[datetime.datetime] = rest_field(name="lastModifiedDateTime", visibility=["read"], format="rfc3339")
     """The last Modified datetime(RFC 3339 literal format)."""
     last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
     """The user that last modified."""
+
+
+
 
     @overload
     def __init__(
@@ -1560,7 +1650,8 @@ class TestProfile(_model_base.Model):
         test_id: Optional[str] = None,
         target_resource_id: Optional[str] = None,
         target_resource_configurations: Optional["_models.TargetResourceConfigurations"] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1635,9 +1726,7 @@ class TestProfileRun(_model_base.Model):
      run and can't be updated."""
     target_resource_id: Optional[str] = rest_field(name="targetResourceId", visibility=["read"])
     """Target resource ID on which the test profile run is created."""
-    target_resource_configurations: Optional["_models.TargetResourceConfigurations"] = rest_field(
-        name="targetResourceConfigurations", visibility=["read"]
-    )
+    target_resource_configurations: Optional["_models.TargetResourceConfigurations"] = rest_field(name="targetResourceConfigurations", visibility=["read"])
     """Configurations of the target resource on which the test profile ran."""
     status: Optional[Union[str, "_models.TestProfileRunStatus"]] = rest_field(visibility=["read"])
     """The test profile run status. Known values are: \"ACCEPTED\", \"NOTSTARTED\", \"EXECUTING\",
@@ -1645,33 +1734,28 @@ class TestProfileRun(_model_base.Model):
     error_details: Optional[List["_models.ErrorDetails"]] = rest_field(name="errorDetails", visibility=["read"])
     """Error details if there is any failure in test profile run. These errors are specific to the
      Test Profile Run."""
-    start_date_time: Optional[datetime.datetime] = rest_field(
-        name="startDateTime", visibility=["read"], format="rfc3339"
-    )
+    start_date_time: Optional[datetime.datetime] = rest_field(name="startDateTime", visibility=["read"], format="rfc3339")
     """The test profile run start DateTime(RFC 3339 literal format)."""
     end_date_time: Optional[datetime.datetime] = rest_field(name="endDateTime", visibility=["read"], format="rfc3339")
     """The test profile run end DateTime(RFC 3339 literal format)."""
     duration_in_seconds: Optional[int] = rest_field(name="durationInSeconds", visibility=["read"])
     """Test profile run duration in seconds."""
-    test_run_details: Optional[Dict[str, "_models.TestRunDetail"]] = rest_field(
-        name="testRunDetails", visibility=["read"]
-    )
+    test_run_details: Optional[Dict[str, "_models.TestRunDetail"]] = rest_field(name="testRunDetails", visibility=["read"])
     """Details of the test runs ran as part of the test profile run.
      Key is the testRunId of the corresponding testRun."""
     recommendations: Optional[List["_models.TestProfileRunRecommendation"]] = rest_field(visibility=["read"])
     """Recommendations provided based on a successful test profile run."""
-    created_date_time: Optional[datetime.datetime] = rest_field(
-        name="createdDateTime", visibility=["read"], format="rfc3339"
-    )
+    created_date_time: Optional[datetime.datetime] = rest_field(name="createdDateTime", visibility=["read"], format="rfc3339")
     """The creation datetime(RFC 3339 literal format)."""
     created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
     """The user that created."""
-    last_modified_date_time: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedDateTime", visibility=["read"], format="rfc3339"
-    )
+    last_modified_date_time: Optional[datetime.datetime] = rest_field(name="lastModifiedDateTime", visibility=["read"], format="rfc3339")
     """The last Modified datetime(RFC 3339 literal format)."""
     last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
     """The user that last modified."""
+
+
+
 
     @overload
     def __init__(
@@ -1680,7 +1764,8 @@ class TestProfileRun(_model_base.Model):
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         test_profile_id: Optional[str] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1712,13 +1797,17 @@ class TestProfileRunRecommendation(_model_base.Model):
     """List of configurations IDs for which the recommendation is applicable. These are a subset of
      the provided target resource configurations."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         category: Union[str, "_models.RecommendationCategory"],
         configurations: Optional[List[str]] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1848,16 +1937,12 @@ class TestRun(_model_base.Model):
     """Environment variables which are defined as a set of <name,value> pairs."""
     error_details: Optional[List["_models.ErrorDetails"]] = rest_field(name="errorDetails", visibility=["read"])
     """Error details if there is any failure in load test run."""
-    test_run_statistics: Optional[Dict[str, "_models.TestRunStatistics"]] = rest_field(
-        name="testRunStatistics", visibility=["read"]
-    )
+    test_run_statistics: Optional[Dict[str, "_models.TestRunStatistics"]] = rest_field(name="testRunStatistics", visibility=["read"])
     """Test run statistics. Key is the sampler name and value is the set of statistics for performance
      metrics like response time, throughput, etc. from the load test run.
      The sampler name is the same as the name mentioned in the test script.
      Sampler name \"Total\" represents the aggregated statistics of all the samplers."""
-    regional_statistics: Optional[Dict[str, "_models.TestRunStatistics"]] = rest_field(
-        name="regionalStatistics", visibility=["read"]
-    )
+    regional_statistics: Optional[Dict[str, "_models.TestRunStatistics"]] = rest_field(name="regionalStatistics", visibility=["read"])
     """Regional statistics. Key is the Azure region name and value is the test run statistics.
      The region name should of format accepted by ARM, and should be a region supported by Azure
      Load Testing. For example, East US should be passed as \"eastus\".
@@ -1883,15 +1968,11 @@ class TestRun(_model_base.Model):
      \"PROVISIONED\", \"CONFIGURING\", \"CONFIGURED\", \"EXECUTING\", \"EXECUTED\",
      \"DEPROVISIONING\", \"DEPROVISIONED\", \"DONE\", \"CANCELLING\", \"CANCELLED\", \"FAILED\",
      \"VALIDATION_SUCCESS\", and \"VALIDATION_FAILURE\"."""
-    start_date_time: Optional[datetime.datetime] = rest_field(
-        name="startDateTime", visibility=["read"], format="rfc3339"
-    )
+    start_date_time: Optional[datetime.datetime] = rest_field(name="startDateTime", visibility=["read"], format="rfc3339")
     """The test run start DateTime(RFC 3339 literal format)."""
     end_date_time: Optional[datetime.datetime] = rest_field(name="endDateTime", visibility=["read"], format="rfc3339")
     """The test run end DateTime(RFC 3339 literal format)."""
-    executed_date_time: Optional[datetime.datetime] = rest_field(
-        name="executedDateTime", visibility=["read"], format="rfc3339"
-    )
+    executed_date_time: Optional[datetime.datetime] = rest_field(name="executedDateTime", visibility=["read"], format="rfc3339")
     """Test run initiated time."""
     portal_url: Optional[str] = rest_field(name="portalUrl", visibility=["read"])
     """Portal url."""
@@ -1913,18 +1994,17 @@ class TestRun(_model_base.Model):
     created_by_type: Optional[Union[str, "_models.CreateByTypes"]] = rest_field(name="createdByType")
     """The type of the entity that created the test run. (E.x. User, ScheduleTrigger, etc). Known
      values are: \"User\" and \"ScheduledTrigger\"."""
-    created_date_time: Optional[datetime.datetime] = rest_field(
-        name="createdDateTime", visibility=["read"], format="rfc3339"
-    )
+    created_date_time: Optional[datetime.datetime] = rest_field(name="createdDateTime", visibility=["read"], format="rfc3339")
     """The creation datetime(RFC 3339 literal format)."""
     created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
     """The user that created."""
-    last_modified_date_time: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedDateTime", visibility=["read"], format="rfc3339"
-    )
+    last_modified_date_time: Optional[datetime.datetime] = rest_field(name="lastModifiedDateTime", visibility=["read"], format="rfc3339")
     """The last Modified datetime(RFC 3339 literal format)."""
     last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
     """The user that last modified."""
+
+
+
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -1942,7 +2022,8 @@ class TestRun(_model_base.Model):
         request_data_level: Optional[Union[str, "_models.RequestDataLevel"]] = None,
         debug_logs_enabled: Optional[bool] = None,
         created_by_type: Optional[Union[str, "_models.CreateByTypes"]] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -1983,25 +2064,25 @@ class TestRunAppComponents(_model_base.Model):
      : resource object }. Required."""
     test_run_id: Optional[str] = rest_field(name="testRunId", visibility=["read"])
     """Test run identifier."""
-    created_date_time: Optional[datetime.datetime] = rest_field(
-        name="createdDateTime", visibility=["read"], format="rfc3339"
-    )
+    created_date_time: Optional[datetime.datetime] = rest_field(name="createdDateTime", visibility=["read"], format="rfc3339")
     """The creation datetime(RFC 3339 literal format)."""
     created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
     """The user that created."""
-    last_modified_date_time: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedDateTime", visibility=["read"], format="rfc3339"
-    )
+    last_modified_date_time: Optional[datetime.datetime] = rest_field(name="lastModifiedDateTime", visibility=["read"], format="rfc3339")
     """The last Modified datetime(RFC 3339 literal format)."""
     last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
     """The user that last modified."""
+
+
+
 
     @overload
     def __init__(
         self,
         *,
         components: Dict[str, "_models.AppComponent"],
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2030,12 +2111,16 @@ class TestRunArtifacts(_model_base.Model):
     output_artifacts: Optional["_models.TestRunOutputArtifacts"] = rest_field(name="outputArtifacts")
     """The output artifacts for the test run."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         output_artifacts: Optional["_models.TestRunOutputArtifacts"] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2073,6 +2158,9 @@ class TestRunDetail(_model_base.Model):
     properties: Dict[str, str] = rest_field()
     """Key value pair of extra properties associated with the test run. Required."""
 
+
+
+
     @overload
     def __init__(
         self,
@@ -2080,7 +2168,8 @@ class TestRunDetail(_model_base.Model):
         status: Union[str, "_models.Status"],
         configuration_id: str,
         properties: Dict[str, str],
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2123,24 +2212,24 @@ class TestRunFileInfo(_model_base.Model):
     file_type: Optional[Union[str, "_models.FileType"]] = rest_field(name="fileType", visibility=["read"])
     """File type. Known values are: \"JMX_FILE\", \"USER_PROPERTIES\", \"ADDITIONAL_ARTIFACTS\",
      \"ZIPPED_ARTIFACTS\", \"URL_TEST_CONFIG\", and \"TEST_SCRIPT\"."""
-    expire_date_time: Optional[datetime.datetime] = rest_field(
-        name="expireDateTime", visibility=["read"], format="rfc3339"
-    )
+    expire_date_time: Optional[datetime.datetime] = rest_field(name="expireDateTime", visibility=["read"], format="rfc3339")
     """Expiry time of the file (RFC 3339 literal format)."""
-    validation_status: Optional[Union[str, "_models.FileStatus"]] = rest_field(
-        name="validationStatus", visibility=["read"]
-    )
+    validation_status: Optional[Union[str, "_models.FileStatus"]] = rest_field(name="validationStatus", visibility=["read"])
     """Validation status of the file. Known values are: \"NOT_VALIDATED\", \"VALIDATION_SUCCESS\",
      \"VALIDATION_FAILURE\", \"VALIDATION_INITIATED\", and \"VALIDATION_NOT_REQUIRED\"."""
     validation_failure_details: Optional[str] = rest_field(name="validationFailureDetails", visibility=["read"])
     """Validation failure error details."""
+
+
+
 
     @overload
     def __init__(
         self,
         *,
         file_name: str,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2182,10 +2271,11 @@ class TestRunInputArtifacts(_model_base.Model):
     """File info."""
     url_test_config_file_info: Optional["_models.TestRunFileInfo"] = rest_field(name="urlTestConfigFileInfo")
     """The config json file for url based test."""
-    additional_file_info: Optional[List["_models.TestRunFileInfo"]] = rest_field(
-        name="additionalFileInfo", visibility=["read"]
-    )
+    additional_file_info: Optional[List["_models.TestRunFileInfo"]] = rest_field(name="additionalFileInfo", visibility=["read"])
     """Additional supported files for the test run."""
+
+
+
 
     @overload
     def __init__(
@@ -2196,7 +2286,8 @@ class TestRunInputArtifacts(_model_base.Model):
         user_prop_file_info: Optional["_models.TestRunFileInfo"] = None,
         input_artifacts_zip_file_info: Optional["_models.TestRunFileInfo"] = None,
         url_test_config_file_info: Optional["_models.TestRunFileInfo"] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2231,6 +2322,9 @@ class TestRunOutputArtifacts(_model_base.Model):
     report_file_info: Optional["_models.TestRunFileInfo"] = rest_field(name="reportFileInfo")
     """The report file for the test run."""
 
+
+
+
     @overload
     def __init__(
         self,
@@ -2239,7 +2333,8 @@ class TestRunOutputArtifacts(_model_base.Model):
         logs_file_info: Optional["_models.TestRunFileInfo"] = None,
         artifacts_container_info: Optional["_models.ArtifactsContainerInfo"] = None,
         report_file_info: Optional["_models.TestRunFileInfo"] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2279,25 +2374,25 @@ class TestRunServerMetricConfig(_model_base.Model):
     """Azure resource metrics collection {metric id : metrics object} (Refer :
      https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
      for metric id)."""
-    created_date_time: Optional[datetime.datetime] = rest_field(
-        name="createdDateTime", visibility=["read"], format="rfc3339"
-    )
+    created_date_time: Optional[datetime.datetime] = rest_field(name="createdDateTime", visibility=["read"], format="rfc3339")
     """The creation datetime(RFC 3339 literal format)."""
     created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
     """The user that created."""
-    last_modified_date_time: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedDateTime", visibility=["read"], format="rfc3339"
-    )
+    last_modified_date_time: Optional[datetime.datetime] = rest_field(name="lastModifiedDateTime", visibility=["read"], format="rfc3339")
     """The last Modified datetime(RFC 3339 literal format)."""
     last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
     """The user that last modified."""
+
+
+
 
     @overload
     def __init__(
         self,
         *,
         metrics: Optional[Dict[str, "_models.ResourceMetric"]] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2399,6 +2494,10 @@ class TestRunStatistics(_model_base.Model):
     """Send network bytes."""
 
 
+
+
+
+
 class TestServerMetricConfig(_model_base.Model):
     """Test server metrics configuration.
 
@@ -2427,25 +2526,25 @@ class TestServerMetricConfig(_model_base.Model):
     """Azure resource metrics collection {metric id : metrics object} (Refer :
      https://learn.microsoft.com/en-us/rest/api/monitor/metric-definitions/list#metricdefinition
      for metric id). Required."""
-    created_date_time: Optional[datetime.datetime] = rest_field(
-        name="createdDateTime", visibility=["read"], format="rfc3339"
-    )
+    created_date_time: Optional[datetime.datetime] = rest_field(name="createdDateTime", visibility=["read"], format="rfc3339")
     """The creation datetime(RFC 3339 literal format)."""
     created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
     """The user that created."""
-    last_modified_date_time: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedDateTime", visibility=["read"], format="rfc3339"
-    )
+    last_modified_date_time: Optional[datetime.datetime] = rest_field(name="lastModifiedDateTime", visibility=["read"], format="rfc3339")
     """The last Modified datetime(RFC 3339 literal format)."""
     last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
     """The user that last modified."""
+
+
+
 
     @overload
     def __init__(
         self,
         *,
         metrics: Dict[str, "_models.ResourceMetric"],
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:
@@ -2472,13 +2571,17 @@ class TimeSeriesElement(_model_base.Model):
     dimension_values: Optional[List["_models.DimensionValue"]] = rest_field(name="dimensionValues")
     """The dimension values."""
 
+
+
+
     @overload
     def __init__(
         self,
         *,
         data: Optional[List["_models.MetricValue"]] = None,
         dimension_values: Optional[List["_models.DimensionValue"]] = None,
-    ) -> None: ...
+    ) -> None:
+        ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]) -> None:

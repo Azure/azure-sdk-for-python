@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class LoadTestAdministrationClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class LoadTestAdministrationClientConfiguration:    # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for LoadTestAdministrationClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -32,8 +32,13 @@ class LoadTestAdministrationClientConfiguration:  # pylint: disable=too-many-ins
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-12-01-preview")
+    def __init__(
+        self,
+        endpoint: str,
+        credential: "AsyncTokenCredential",
+        **kwargs: Any
+    ) -> None:
+        api_version: str = kwargs.pop('api_version', "2024-12-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -43,28 +48,28 @@ class LoadTestAdministrationClientConfiguration:  # pylint: disable=too-many-ins
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://cnt-prod.loadtesting.azure.com/.default"])
-        kwargs.setdefault("sdk_moniker", "developer-loadtesting/{}".format(VERSION))
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://cnt-prod.loadtesting.azure.com/.default'])
+        kwargs.setdefault('sdk_moniker', 'developer-loadtesting/{}'.format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
-    def _configure(self, **kwargs: Any) -> None:
-        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
-        self.authentication_policy = kwargs.get("authentication_policy")
+
+    def _configure(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
-                self.credential, *self.credential_scopes, **kwargs
-            )
-
-
-class LoadTestRunClientConfiguration:  # pylint: disable=too-many-instance-attributes
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+class LoadTestRunClientConfiguration:    # pylint: disable=too-many-instance-attributes
     """Configuration for LoadTestRunClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -80,8 +85,13 @@ class LoadTestRunClientConfiguration:  # pylint: disable=too-many-instance-attri
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-12-01-preview")
+    def __init__(
+        self,
+        endpoint: str,
+        credential: "AsyncTokenCredential",
+        **kwargs: Any
+    ) -> None:
+        api_version: str = kwargs.pop('api_version', "2024-12-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -91,22 +101,24 @@ class LoadTestRunClientConfiguration:  # pylint: disable=too-many-instance-attri
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://cnt-prod.loadtesting.azure.com/.default"])
-        kwargs.setdefault("sdk_moniker", "developer-loadtesting/{}".format(VERSION))
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://cnt-prod.loadtesting.azure.com/.default'])
+        kwargs.setdefault('sdk_moniker', 'developer-loadtesting/{}'.format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
-    def _configure(self, **kwargs: Any) -> None:
-        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
-        self.authentication_policy = kwargs.get("authentication_policy")
+
+    def _configure(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
-                self.credential, *self.credential_scopes, **kwargs
-            )
+            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)

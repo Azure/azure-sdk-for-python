@@ -8,8 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.developer.loadtesting import LoadTestAdministrationClient
-
+from azure.developer.loadtesting import LoadTestRunClient
 """
 # PREREQUISITES
     pip install azure-identity
@@ -22,8 +21,6 @@ from azure.developer.loadtesting import LoadTestAdministrationClient
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
-
-
 def main():
     client = LoadTestAdministrationClient(
         endpoint="ENDPOINT",
@@ -31,48 +28,10 @@ def main():
     )
 
     response = client.begin_test_run(
-        test_run_id="12316678-1234-1234-1234-122451189012",
-        body={
-            "autoStopCriteria": {"autoStopDisabled": True, "errorRate": 70, "errorRateTimeWindowInSeconds": 60},
-            "debugLogsEnabled": True,
-            "description": "sample description",
-            "displayName": "Performance_LoadTest_Run1",
-            "environmentVariables": {"envvar1": "sampletext"},
-            "loadTestConfiguration": {"engineInstances": 6, "splitAllCSVs": True},
-            "passFailCriteria": {
-                "passFailMetrics": {
-                    "fefd759d-7fe8-4f83-8b6d-aeebe0f491fe": {
-                        "action": "continue",
-                        "aggregate": "percentage",
-                        "clientMetric": "response_time_ms",
-                        "condition": ">",
-                        "value": 20,
-                    }
-                },
-                "passFailServerMetrics": {
-                    "fefd759d-7fe8-4f83-8b6d-aeebe0f491fe": {
-                        "action": "continue",
-                        "aggregation": "Average",
-                        "condition": ">",
-                        "metricName": "Percentage CPU",
-                        "metricNamespace": "Microsoft.Compute/virtualMachines",
-                        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/MyResourceGroup/providers/Microsoft.Compute/virtualMachines/MyVM",
-                        "value": 20,
-                    }
-                },
-            },
-            "requestDataLevel": "NONE",
-            "secrets": {
-                "secret1": {
-                    "type": "AKV_SECRET_URI",
-                    "value": "https://samplevault.vault.azure.net/secrets/samplesecret/f113f91fd4c44a368049849c164db827",
-                }
-            },
-            "testId": "12345678-1234-1234-1234-123456789012",
-        },
+        test_run_id='12316678-1234-1234-1234-122451189012',
+        body={'autoStopCriteria': {'autoStopDisabled': True, 'errorRate': 70, 'errorRateTimeWindowInSeconds': 60}, 'debugLogsEnabled': True, 'description': 'sample description', 'displayName': 'Performance_LoadTest_Run1', 'environmentVariables': {'envvar1': 'sampletext'}, 'loadTestConfiguration': {'engineInstances': 6, 'splitAllCSVs': True}, 'passFailCriteria': {'passFailMetrics': {'fefd759d-7fe8-4f83-8b6d-aeebe0f491fe': {'action': 'continue', 'aggregate': 'percentage', 'clientMetric': 'response_time_ms', 'condition': '>', 'value': 20}}, 'passFailServerMetrics': {'fefd759d-7fe8-4f83-8b6d-aeebe0f491fe': {'action': 'continue', 'aggregation': 'Average', 'condition': '>', 'metricName': 'Percentage CPU', 'metricNamespace': 'Microsoft.Compute/virtualMachines', 'resourceId': '/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/MyResourceGroup/providers/Microsoft.Compute/virtualMachines/MyVM', 'value': 20}}}, 'requestDataLevel': 'NONE', 'secrets': {'secret1': {'type': 'AKV_SECRET_URI', 'value': 'https://samplevault.vault.azure.net/secrets/samplesecret/f113f91fd4c44a368049849c164db827'}}, 'testId': '12345678-1234-1234-1234-123456789012'},
     )
     print(response)
-
 
 # x-ms-original-file: 2024-12-01-preview/CreateOrUpdateTestRun.json
 if __name__ == "__main__":

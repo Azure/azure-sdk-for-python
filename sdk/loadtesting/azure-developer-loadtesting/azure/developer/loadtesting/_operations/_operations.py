@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,16 +12,7 @@ import sys
 from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, overload
 import urllib.parse
 
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceNotModifiedError,
-    StreamClosedError,
-    StreamConsumedError,
-    map_error,
-)
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, StreamClosedError, StreamConsumedError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
@@ -39,8 +29,8 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
-T = TypeVar("T")
+JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
+T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
@@ -48,221 +38,278 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_load_test_administration_create_or_update_test_request(  # pylint: disable=name-too-long
-    test_id: str, **kwargs: Any
+    test_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/tests/{testId}"
     path_format_arguments = {
-        "testId": _SERIALIZER.url("test_id", test_id, "str"),
+        "testId": _SERIALIZER.url("test_id", test_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PATCH",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_administration_create_or_update_app_components_request(  # pylint: disable=name-too-long
-    test_id: str, **kwargs: Any
+    test_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/tests/{testId}/app-components"
     path_format_arguments = {
-        "testId": _SERIALIZER.url("test_id", test_id, "str"),
+        "testId": _SERIALIZER.url("test_id", test_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PATCH",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_administration_create_or_update_server_metrics_config_request(  # pylint: disable=name-too-long
-    test_id: str, **kwargs: Any
+    test_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/tests/{testId}/server-metrics-config"
     path_format_arguments = {
-        "testId": _SERIALIZER.url("test_id", test_id, "str"),
+        "testId": _SERIALIZER.url("test_id", test_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PATCH",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_administration_get_app_components_request(  # pylint: disable=name-too-long
-    test_id: str, **kwargs: Any
+    test_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/tests/{testId}/app-components"
     path_format_arguments = {
-        "testId": _SERIALIZER.url("test_id", test_id, "str"),
+        "testId": _SERIALIZER.url("test_id", test_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_administration_get_server_metrics_config_request(  # pylint: disable=name-too-long
-    test_id: str, **kwargs: Any
+    test_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/tests/{testId}/server-metrics-config"
     path_format_arguments = {
-        "testId": _SERIALIZER.url("test_id", test_id, "str"),
+        "testId": _SERIALIZER.url("test_id", test_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_administration_get_test_request(  # pylint: disable=name-too-long
-    test_id: str, **kwargs: Any
+    test_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/tests/{testId}"
     path_format_arguments = {
-        "testId": _SERIALIZER.url("test_id", test_id, "str"),
+        "testId": _SERIALIZER.url("test_id", test_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_administration_get_test_file_request(  # pylint: disable=name-too-long
-    test_id: str, file_name: str, **kwargs: Any
+    test_id: str,
+    file_name: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/tests/{testId}/files/{fileName}"
     path_format_arguments = {
-        "testId": _SERIALIZER.url("test_id", test_id, "str"),
-        "fileName": _SERIALIZER.url("file_name", file_name, "str"),
+        "testId": _SERIALIZER.url("test_id", test_id, 'str'),
+        "fileName": _SERIALIZER.url("file_name", file_name, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_administration_list_test_files_request(  # pylint: disable=name-too-long
-    test_id: str, **kwargs: Any
+    test_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/tests/{testId}/files"
     path_format_arguments = {
-        "testId": _SERIALIZER.url("test_id", test_id, "str"),
+        "testId": _SERIALIZER.url("test_id", test_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_administration_list_tests_request(  # pylint: disable=name-too-long
@@ -277,196 +324,246 @@ def build_load_test_administration_list_tests_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/tests"
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
     if orderby is not None:
-        _params["orderby"] = _SERIALIZER.query("orderby", orderby, "str")
+        _params['orderby'] = _SERIALIZER.query("orderby", orderby, 'str')
     if search is not None:
-        _params["search"] = _SERIALIZER.query("search", search, "str")
+        _params['search'] = _SERIALIZER.query("search", search, 'str')
     if last_modified_start_time is not None:
-        _params["lastModifiedStartTime"] = _SERIALIZER.query(
-            "last_modified_start_time", last_modified_start_time, "iso-8601"
-        )
+        _params['lastModifiedStartTime'] = _SERIALIZER.query("last_modified_start_time", last_modified_start_time, 'iso-8601')
     if last_modified_end_time is not None:
-        _params["lastModifiedEndTime"] = _SERIALIZER.query("last_modified_end_time", last_modified_end_time, "iso-8601")
+        _params['lastModifiedEndTime'] = _SERIALIZER.query("last_modified_end_time", last_modified_end_time, 'iso-8601')
     if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_administration_begin_upload_test_file_request(  # pylint: disable=name-too-long
-    test_id: str, file_name: str, *, file_type: Optional[Union[str, _models.FileType]] = None, **kwargs: Any
+    test_id: str,
+    file_name: str,
+    *,
+    file_type: Optional[Union[str, _models.FileType]] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    content_type: str = kwargs.pop('content_type')
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/tests/{testId}/files/{fileName}"
     path_format_arguments = {
-        "testId": _SERIALIZER.url("test_id", test_id, "str"),
-        "fileName": _SERIALIZER.url("file_name", file_name, "str"),
+        "testId": _SERIALIZER.url("test_id", test_id, 'str'),
+        "fileName": _SERIALIZER.url("file_name", file_name, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
     if file_type is not None:
-        _params["fileType"] = _SERIALIZER.query("file_type", file_type, "str")
+        _params['fileType'] = _SERIALIZER.query("file_type", file_type, 'str')
 
     # Construct headers
-    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PUT",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_administration_delete_test_file_request(  # pylint: disable=name-too-long
-    test_id: str, file_name: str, **kwargs: Any
+    test_id: str,
+    file_name: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/tests/{testId}/files/{fileName}"
     path_format_arguments = {
-        "testId": _SERIALIZER.url("test_id", test_id, "str"),
-        "fileName": _SERIALIZER.url("file_name", file_name, "str"),
+        "testId": _SERIALIZER.url("test_id", test_id, 'str'),
+        "fileName": _SERIALIZER.url("file_name", file_name, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_administration_delete_test_request(  # pylint: disable=name-too-long
-    test_id: str, **kwargs: Any
+    test_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/tests/{testId}"
     path_format_arguments = {
-        "testId": _SERIALIZER.url("test_id", test_id, "str"),
+        "testId": _SERIALIZER.url("test_id", test_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_administration_create_or_update_test_profile_request(  # pylint: disable=name-too-long
-    test_profile_id: str, **kwargs: Any
+    test_profile_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-profiles/{testProfileId}"
     path_format_arguments = {
-        "testProfileId": _SERIALIZER.url("test_profile_id", test_profile_id, "str"),
+        "testProfileId": _SERIALIZER.url("test_profile_id", test_profile_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PATCH",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_administration_delete_test_profile_request(  # pylint: disable=name-too-long
-    test_profile_id: str, **kwargs: Any
+    test_profile_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-profiles/{testProfileId}"
     path_format_arguments = {
-        "testProfileId": _SERIALIZER.url("test_profile_id", test_profile_id, "str"),
+        "testProfileId": _SERIALIZER.url("test_profile_id", test_profile_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_administration_get_test_profile_request(  # pylint: disable=name-too-long
-    test_profile_id: str, **kwargs: Any
+    test_profile_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-profiles/{testProfileId}"
     path_format_arguments = {
-        "testProfileId": _SERIALIZER.url("test_profile_id", test_profile_id, "str"),
+        "testProfileId": _SERIALIZER.url("test_profile_id", test_profile_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_administration_list_test_profiles_request(  # pylint: disable=name-too-long
@@ -481,249 +578,314 @@ def build_load_test_administration_list_test_profiles_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-profiles"
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
     if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
     if last_modified_start_time is not None:
-        _params["lastModifiedStartTime"] = _SERIALIZER.query(
-            "last_modified_start_time", last_modified_start_time, "iso-8601"
-        )
+        _params['lastModifiedStartTime'] = _SERIALIZER.query("last_modified_start_time", last_modified_start_time, 'iso-8601')
     if last_modified_end_time is not None:
-        _params["lastModifiedEndTime"] = _SERIALIZER.query("last_modified_end_time", last_modified_end_time, "iso-8601")
+        _params['lastModifiedEndTime'] = _SERIALIZER.query("last_modified_end_time", last_modified_end_time, 'iso-8601')
     if test_profile_ids is not None:
-        _params["testProfileIds"] = _SERIALIZER.query("test_profile_ids", test_profile_ids, "[str]", div=",")
+        _params['testProfileIds'] = _SERIALIZER.query("test_profile_ids", test_profile_ids, '[str]', div=',')
     if test_ids is not None:
-        _params["testIds"] = _SERIALIZER.query("test_ids", test_ids, "str")
+        _params['testIds'] = _SERIALIZER.query("test_ids", test_ids, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_begin_test_run_request(  # pylint: disable=name-too-long
-    test_run_id: str, *, old_test_run_id: Optional[str] = None, **kwargs: Any
+    test_run_id: str,
+    *,
+    old_test_run_id: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-runs/{testRunId}"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, "str"),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
     if old_test_run_id is not None:
-        _params["oldTestRunId"] = _SERIALIZER.query("old_test_run_id", old_test_run_id, "str")
+        _params['oldTestRunId'] = _SERIALIZER.query("old_test_run_id", old_test_run_id, 'str')
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PATCH",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_create_or_update_app_components_request(  # pylint: disable=name-too-long
-    test_run_id: str, **kwargs: Any
+    test_run_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-runs/{testRunId}/app-components"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, "str"),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PATCH",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_create_or_update_server_metrics_config_request(  # pylint: disable=name-too-long
-    test_run_id: str, **kwargs: Any
+    test_run_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-runs/{testRunId}/server-metrics-config"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, "str"),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if content_type is not None:
-        _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PATCH",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_delete_test_run_request(  # pylint: disable=name-too-long
-    test_run_id: str, **kwargs: Any
+    test_run_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-runs/{testRunId}"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, "str"),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_get_app_components_request(  # pylint: disable=name-too-long
-    test_run_id: str, **kwargs: Any
+    test_run_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-runs/{testRunId}/app-components"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, "str"),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_get_server_metrics_config_request(  # pylint: disable=name-too-long
-    test_run_id: str, **kwargs: Any
+    test_run_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-runs/{testRunId}/server-metrics-config"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, "str"),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_load_test_run_get_test_run_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/test-runs/{testRunId}"
-    path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
-def build_load_test_run_get_test_run_file_request(  # pylint: disable=name-too-long
-    test_run_id: str, file_name: str, **kwargs: Any
+def build_load_test_run_get_test_run_request(
+    test_run_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
+
+    # Construct URL
+    _url = "/test-runs/{testRunId}"
+    path_format_arguments = {
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str'),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
+
+
+def build_load_test_run_get_test_run_file_request(  # pylint: disable=name-too-long
+    test_run_id: str,
+    file_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-runs/{testRunId}/files/{fileName}"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, "str"),
-        "fileName": _SERIALIZER.url("file_name", file_name, "str"),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str'),
+        "fileName": _SERIALIZER.url("file_name", file_name, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_list_metric_dimension_values_request(  # pylint: disable=name-too-long
@@ -739,83 +901,105 @@ def build_load_test_run_list_metric_dimension_values_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-runs/{testRunId}/metric-dimensions/{name}/values"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, "str"),
-        "name": _SERIALIZER.url("name", name, "str"),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str'),
+        "name": _SERIALIZER.url("name", name, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    _params["metricname"] = _SERIALIZER.query("metric_name", metric_name, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['metricname'] = _SERIALIZER.query("metric_name", metric_name, 'str')
     if interval is not None:
-        _params["interval"] = _SERIALIZER.query("interval", interval, "str")
-    _params["metricNamespace"] = _SERIALIZER.query("metric_namespace", metric_namespace, "str")
-    _params["timespan"] = _SERIALIZER.query("time_interval", time_interval, "str")
+        _params['interval'] = _SERIALIZER.query("interval", interval, 'str')
+    _params['metricNamespace'] = _SERIALIZER.query("metric_namespace", metric_namespace, 'str')
+    _params['timespan'] = _SERIALIZER.query("time_interval", time_interval, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_get_metric_definitions_request(  # pylint: disable=name-too-long
-    test_run_id: str, *, metric_namespace: str, **kwargs: Any
+    test_run_id: str,
+    *,
+    metric_namespace: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-runs/{testRunId}/metric-definitions"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, "str"),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    _params["metricNamespace"] = _SERIALIZER.query("metric_namespace", metric_namespace, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params['metricNamespace'] = _SERIALIZER.query("metric_namespace", metric_namespace, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_get_metric_namespaces_request(  # pylint: disable=name-too-long
-    test_run_id: str, **kwargs: Any
+    test_run_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-runs/{testRunId}/metric-namespaces"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, "str"),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_list_metrics_request(
@@ -831,34 +1015,40 @@ def build_load_test_run_list_metrics_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-runs/{testRunId}/metrics"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, "str"),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
     if aggregation is not None:
-        _params["aggregation"] = _SERIALIZER.query("aggregation", aggregation, "str")
-    _params["metricname"] = _SERIALIZER.query("metric_name", metric_name, "str")
+        _params['aggregation'] = _SERIALIZER.query("aggregation", aggregation, 'str')
+    _params['metricname'] = _SERIALIZER.query("metric_name", metric_name, 'str')
     if interval is not None:
-        _params["interval"] = _SERIALIZER.query("interval", interval, "str")
-    _params["metricNamespace"] = _SERIALIZER.query("metric_namespace", metric_namespace, "str")
-    _params["timespan"] = _SERIALIZER.query("time_interval", time_interval, "str")
+        _params['interval'] = _SERIALIZER.query("interval", interval, 'str')
+    _params['metricNamespace'] = _SERIALIZER.query("metric_namespace", metric_namespace, 'str')
+    _params['timespan'] = _SERIALIZER.query("time_interval", time_interval, 'str')
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_list_test_runs_request(  # pylint: disable=name-too-long
@@ -875,140 +1065,174 @@ def build_load_test_run_list_test_runs_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-runs"
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
     if orderby is not None:
-        _params["orderby"] = _SERIALIZER.query("orderby", orderby, "str")
+        _params['orderby'] = _SERIALIZER.query("orderby", orderby, 'str')
     if search is not None:
-        _params["search"] = _SERIALIZER.query("search", search, "str")
+        _params['search'] = _SERIALIZER.query("search", search, 'str')
     if test_id is not None:
-        _params["testId"] = _SERIALIZER.query("test_id", test_id, "str")
+        _params['testId'] = _SERIALIZER.query("test_id", test_id, 'str')
     if execution_from is not None:
-        _params["executionFrom"] = _SERIALIZER.query("execution_from", execution_from, "iso-8601")
+        _params['executionFrom'] = _SERIALIZER.query("execution_from", execution_from, 'iso-8601')
     if execution_to is not None:
-        _params["executionTo"] = _SERIALIZER.query("execution_to", execution_to, "iso-8601")
+        _params['executionTo'] = _SERIALIZER.query("execution_to", execution_to, 'iso-8601')
     if status is not None:
-        _params["status"] = _SERIALIZER.query("status", status, "str")
+        _params['status'] = _SERIALIZER.query("status", status, 'str')
     if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_stop_test_run_request(  # pylint: disable=name-too-long
-    test_run_id: str, **kwargs: Any
+    test_run_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-runs/{testRunId}:stop"
     path_format_arguments = {
-        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, "str"),
+        "testRunId": _SERIALIZER.url("test_run_id", test_run_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_begin_test_profile_run_request(  # pylint: disable=name-too-long
-    test_profile_run_id: str, **kwargs: Any
+    test_profile_run_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-profile-runs/{testProfileRunId}"
     path_format_arguments = {
-        "testProfileRunId": _SERIALIZER.url("test_profile_run_id", test_profile_run_id, "str"),
+        "testProfileRunId": _SERIALIZER.url("test_profile_run_id", test_profile_run_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PATCH",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_delete_test_profile_run_request(  # pylint: disable=name-too-long
-    test_profile_run_id: str, **kwargs: Any
+    test_profile_run_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-profile-runs/{testProfileRunId}"
     path_format_arguments = {
-        "testProfileRunId": _SERIALIZER.url("test_profile_run_id", test_profile_run_id, "str"),
+        "testProfileRunId": _SERIALIZER.url("test_profile_run_id", test_profile_run_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_get_test_profile_run_request(  # pylint: disable=name-too-long
-    test_profile_run_id: str, **kwargs: Any
+    test_profile_run_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-profile-runs/{testProfileRunId}"
     path_format_arguments = {
-        "testProfileRunId": _SERIALIZER.url("test_profile_run_id", test_profile_run_id, "str"),
+        "testProfileRunId": _SERIALIZER.url("test_profile_run_id", test_profile_run_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_list_test_profile_runs_request(  # pylint: disable=name-too-long
@@ -1028,76 +1252,91 @@ def build_load_test_run_list_test_profile_runs_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-profile-runs"
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
     if maxpagesize is not None:
-        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _params['maxpagesize'] = _SERIALIZER.query("maxpagesize", maxpagesize, 'int')
     if min_start_date_time is not None:
-        _params["minStartDateTime"] = _SERIALIZER.query("min_start_date_time", min_start_date_time, "iso-8601")
+        _params['minStartDateTime'] = _SERIALIZER.query("min_start_date_time", min_start_date_time, 'iso-8601')
     if max_start_date_time is not None:
-        _params["maxStartDateTime"] = _SERIALIZER.query("max_start_date_time", max_start_date_time, "iso-8601")
+        _params['maxStartDateTime'] = _SERIALIZER.query("max_start_date_time", max_start_date_time, 'iso-8601')
     if min_end_date_time is not None:
-        _params["minEndDateTime"] = _SERIALIZER.query("min_end_date_time", min_end_date_time, "iso-8601")
+        _params['minEndDateTime'] = _SERIALIZER.query("min_end_date_time", min_end_date_time, 'iso-8601')
     if max_end_date_time is not None:
-        _params["maxEndDateTime"] = _SERIALIZER.query("max_end_date_time", max_end_date_time, "iso-8601")
+        _params['maxEndDateTime'] = _SERIALIZER.query("max_end_date_time", max_end_date_time, 'iso-8601')
     if created_date_start_time is not None:
-        _params["createdDateStartTime"] = _SERIALIZER.query(
-            "created_date_start_time", created_date_start_time, "iso-8601"
-        )
+        _params['createdDateStartTime'] = _SERIALIZER.query("created_date_start_time", created_date_start_time, 'iso-8601')
     if created_date_end_time is not None:
-        _params["createdDateEndTime"] = _SERIALIZER.query("created_date_end_time", created_date_end_time, "iso-8601")
+        _params['createdDateEndTime'] = _SERIALIZER.query("created_date_end_time", created_date_end_time, 'iso-8601')
     if test_profile_run_ids is not None:
-        _params["testProfileRunIds"] = _SERIALIZER.query("test_profile_run_ids", test_profile_run_ids, "[str]", div=",")
+        _params['testProfileRunIds'] = _SERIALIZER.query("test_profile_run_ids", test_profile_run_ids, '[str]', div=',')
     if test_profile_ids is not None:
-        _params["testProfileIds"] = _SERIALIZER.query("test_profile_ids", test_profile_ids, "[str]", div=",")
+        _params['testProfileIds'] = _SERIALIZER.query("test_profile_ids", test_profile_ids, '[str]', div=',')
     if statuses is not None:
-        _params["statuses"] = _SERIALIZER.query("statuses", statuses, "[str]", div=",")
+        _params['statuses'] = _SERIALIZER.query("statuses", statuses, '[str]', div=',')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
 
 def build_load_test_run_stop_test_profile_run_request(  # pylint: disable=name-too-long
-    test_profile_run_id: str, **kwargs: Any
+    test_profile_run_id: str,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-12-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2024-12-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
     _url = "/test-profile-runs/{testProfileRunId}:stop"
     path_format_arguments = {
-        "testProfileRunId": _SERIALIZER.url("test_profile_run_id", test_profile_run_id, "str"),
+        "testProfileRunId": _SERIALIZER.url("test_profile_run_id", test_profile_run_id, 'str'),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
-
-class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-long
+class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-long
     LoadTestAdministrationClientMixinABC
 ):
 
     @overload
     def create_or_update_test(
-        self, test_id: str, body: _models.Test, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: _models.Test,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.Test:
         """Create a new test or update an existing test by providing the test Id.
 
@@ -1118,7 +1357,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     def create_or_update_test(
-        self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.Test:
         """Create a new test or update an existing test by providing the test Id.
 
@@ -1139,7 +1383,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     def create_or_update_test(
-        self, test_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.Test:
         """Create a new test or update an existing test by providing the test Id.
 
@@ -1158,9 +1407,13 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+
     @distributed_trace
     def create_or_update_test(
-        self, test_id: str, body: Union[_models.Test, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_id: str,
+        body: Union[_models.Test, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.Test:
         """Create a new test or update an existing test by providing the test Id.
 
@@ -1177,18 +1430,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Test] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+        cls: ClsType[_models.Test] = kwargs.pop(
+            'cls', None
+        )
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -1206,13 +1458,15 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1229,12 +1483,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.Test, response.json())
+            deserialized = _deserialize(
+                _models.Test,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
+
+
 
     @overload
     def create_or_update_app_components(
@@ -1264,7 +1523,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     def create_or_update_app_components(
-        self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestAppComponents:
         """Add an app component to a test.
 
@@ -1285,7 +1549,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     def create_or_update_app_components(
-        self, test_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestAppComponents:
         """Add an app component to a test.
 
@@ -1304,9 +1573,13 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+
     @distributed_trace
     def create_or_update_app_components(
-        self, test_id: str, body: Union[_models.TestAppComponents, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_id: str,
+        body: Union[_models.TestAppComponents, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestAppComponents:
         """Add an app component to a test.
 
@@ -1323,18 +1596,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[_models.TestAppComponents] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
+        cls: ClsType[_models.TestAppComponents] = kwargs.pop(
+            'cls', None
+        )
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -1352,13 +1624,15 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1375,12 +1649,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestAppComponents, response.json())
+            deserialized = _deserialize(
+                _models.TestAppComponents,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
+
+
 
     @overload
     def create_or_update_server_metrics_config(
@@ -1410,7 +1689,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     def create_or_update_server_metrics_config(
-        self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestServerMetricConfig:
         """Configure server metrics for a test.
 
@@ -1431,7 +1715,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     def create_or_update_server_metrics_config(
-        self, test_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestServerMetricConfig:
         """Configure server metrics for a test.
 
@@ -1450,9 +1739,13 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+
     @distributed_trace
     def create_or_update_server_metrics_config(
-        self, test_id: str, body: Union[_models.TestServerMetricConfig, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_id: str,
+        body: Union[_models.TestServerMetricConfig, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestServerMetricConfig:
         """Configure server metrics for a test.
 
@@ -1469,18 +1762,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[_models.TestServerMetricConfig] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
+        cls: ClsType[_models.TestServerMetricConfig] = kwargs.pop(
+            'cls', None
+        )
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -1498,13 +1790,15 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1521,15 +1815,24 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestServerMetricConfig, response.json())
+            deserialized = _deserialize(
+                _models.TestServerMetricConfig,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
 
+
+
     @distributed_trace
-    def get_app_components(self, test_id: str, **kwargs: Any) -> _models.TestAppComponents:
+    def get_app_components(
+        self,
+        test_id: str,
+        **kwargs: Any
+    ) -> _models.TestAppComponents:
         """Get associated app component (collection of azure resources) for the given test.
 
         Get associated app component (collection of azure resources) for the given test.
@@ -1542,18 +1845,18 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestAppComponents] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TestAppComponents] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_administration_get_app_components_request(
             test_id=test_id,
             api_version=self._config.api_version,
@@ -1561,13 +1864,15 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1584,15 +1889,24 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestAppComponents, response.json())
+            deserialized = _deserialize(
+                _models.TestAppComponents,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
 
+
+
     @distributed_trace
-    def get_server_metrics_config(self, test_id: str, **kwargs: Any) -> _models.TestServerMetricConfig:
+    def get_server_metrics_config(
+        self,
+        test_id: str,
+        **kwargs: Any
+    ) -> _models.TestServerMetricConfig:
         """List server metrics configuration for the given test.
 
         List server metrics configuration for the given test.
@@ -1605,18 +1919,18 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestServerMetricConfig] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TestServerMetricConfig] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_administration_get_server_metrics_config_request(
             test_id=test_id,
             api_version=self._config.api_version,
@@ -1624,13 +1938,15 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1647,15 +1963,24 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestServerMetricConfig, response.json())
+            deserialized = _deserialize(
+                _models.TestServerMetricConfig,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
 
+
+
     @distributed_trace
-    def get_test(self, test_id: str, **kwargs: Any) -> _models.Test:
+    def get_test(
+        self,
+        test_id: str,
+        **kwargs: Any
+    ) -> _models.Test:
         """Get load test details by test Id.
 
         Get load test details by test Id.
@@ -1668,18 +1993,18 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Test] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Test] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_administration_get_test_request(
             test_id=test_id,
             api_version=self._config.api_version,
@@ -1687,13 +2012,15 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1710,15 +2037,25 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.Test, response.json())
+            deserialized = _deserialize(
+                _models.Test,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
 
+
+
     @distributed_trace
-    def get_test_file(self, test_id: str, file_name: str, **kwargs: Any) -> _models.TestFileInfo:
+    def get_test_file(
+        self,
+        test_id: str,
+        file_name: str,
+        **kwargs: Any
+    ) -> _models.TestFileInfo:
         """Get all the files that are associated with a test.
 
         Get all the files that are associated with a test.
@@ -1733,18 +2070,18 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestFileInfo] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TestFileInfo] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_administration_get_test_file_request(
             test_id=test_id,
             file_name=file_name,
@@ -1753,13 +2090,15 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1776,15 +2115,24 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestFileInfo, response.json())
+            deserialized = _deserialize(
+                _models.TestFileInfo,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
 
+
+
     @distributed_trace
-    def list_test_files(self, test_id: str, **kwargs: Any) -> Iterable["_models.TestFileInfo"]:
+    def list_test_files(
+        self,
+        test_id: str,
+        **kwargs: Any
+    ) -> Iterable["_models.TestFileInfo"]:
         """Get all test files.
 
         Get all test files.
@@ -1799,19 +2147,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.TestFileInfo]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.TestFileInfo]] = kwargs.pop(
+            'cls', None
+        )
 
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 _request = build_load_test_administration_list_test_files_request(
                     test_id=test_id,
                     api_version=self._config.api_version,
@@ -1819,25 +2165,19 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
+                _next_request_params = case_insensitive_dict({
+                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1847,15 +2187,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.TestFileInfo], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+                _request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1865,7 +2207,11 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
             return pipeline_response
 
-        return ItemPaged(get_next, extract_data)
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+
 
     @distributed_trace
     def list_tests(
@@ -1904,19 +2250,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.Test]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.Test]] = kwargs.pop(
+            'cls', None
+        )
 
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 _request = build_load_test_administration_list_tests_request(
                     orderby=orderby,
                     search=search,
@@ -1928,25 +2272,19 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
+                _next_request_params = case_insensitive_dict({
+                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1956,15 +2294,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.Test], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+                _request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1974,7 +2314,11 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
             return pipeline_response
 
-        return ItemPaged(get_next, extract_data)
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+
 
     @distributed_trace
     def begin_upload_test_file(
@@ -2010,18 +2354,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "application/octet-stream"))
-        cls: ClsType[_models.TestFileInfo] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/octet-stream"))
+        cls: ClsType[_models.TestFileInfo] = kwargs.pop(
+            'cls', None
+        )
 
         _content = body
 
@@ -2036,13 +2379,15 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2059,16 +2404,24 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestFileInfo, response.json())
+            deserialized = _deserialize(
+                _models.TestFileInfo,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
 
+
+
     @distributed_trace
     def delete_test_file(  # pylint: disable=inconsistent-return-statements
-        self, test_id: str, file_name: str, **kwargs: Any
+        self,
+        test_id: str,
+        file_name: str,
+        **kwargs: Any
     ) -> None:
         """Delete file by the file name for a test.
 
@@ -2084,18 +2437,18 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_administration_delete_test_file_request(
             test_id=test_id,
             file_name=file_name,
@@ -2104,13 +2457,15 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2120,10 +2475,16 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, {}) # type: ignore
+
+
 
     @distributed_trace
-    def delete_test(self, test_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def delete_test(  # pylint: disable=inconsistent-return-statements
+        self,
+        test_id: str,
+        **kwargs: Any
+    ) -> None:
         """Delete a test by its test Id.
 
         Delete a test by its test Id.
@@ -2136,18 +2497,18 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_administration_delete_test_request(
             test_id=test_id,
             api_version=self._config.api_version,
@@ -2155,13 +2516,15 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2171,7 +2534,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, {}) # type: ignore
+
+
 
     @overload
     def create_or_update_test_profile(
@@ -2201,7 +2566,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
     @overload
     def create_or_update_test_profile(
-        self, test_profile_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_profile_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestProfile:
         """Create a new test profile or update an existing test profile.
 
@@ -2246,13 +2616,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "content_type", "accept"]},
+        params_added_on={'2024-05-01-preview': ['api_version', 'test_profile_id', 'content_type', 'accept']},
     )
     def create_or_update_test_profile(
-        self, test_profile_id: str, body: Union[_models.TestProfile, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_profile_id: str,
+        body: Union[_models.TestProfile, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestProfile:
         """Create a new test profile or update an existing test profile.
 
@@ -2269,18 +2643,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.TestProfile] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+        cls: ClsType[_models.TestProfile] = kwargs.pop(
+            'cls', None
+        )
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -2298,13 +2671,15 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2321,20 +2696,27 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestProfile, response.json())
+            deserialized = _deserialize(
+                _models.TestProfile,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
+
+
 
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "accept"]},
+        params_added_on={'2024-05-01-preview': ['api_version', 'test_profile_id', 'accept']},
     )
     def delete_test_profile(  # pylint: disable=inconsistent-return-statements
-        self, test_profile_id: str, **kwargs: Any
+        self,
+        test_profile_id: str,
+        **kwargs: Any
     ) -> None:
         """Delete a test profile.
 
@@ -2348,18 +2730,18 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_administration_delete_test_profile_request(
             test_profile_id=test_profile_id,
             api_version=self._config.api_version,
@@ -2367,13 +2749,15 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2383,14 +2767,20 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, {}) # type: ignore
+
+
 
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "accept"]},
+        params_added_on={'2024-05-01-preview': ['api_version', 'test_profile_id', 'accept']},
     )
-    def get_test_profile(self, test_profile_id: str, **kwargs: Any) -> _models.TestProfile:
+    def get_test_profile(
+        self,
+        test_profile_id: str,
+        **kwargs: Any
+    ) -> _models.TestProfile:
         """Get load test profile details.
 
         Get load test profile details by test profile Id.
@@ -2403,18 +2793,18 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestProfile] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TestProfile] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_administration_get_test_profile_request(
             test_profile_id=test_profile_id,
             api_version=self._config.api_version,
@@ -2422,13 +2812,15 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2445,27 +2837,22 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestProfile, response.json())
+            deserialized = _deserialize(
+                _models.TestProfile,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
+
+
 
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={
-            "2024-05-01-preview": [
-                "api_version",
-                "maxpagesize",
-                "last_modified_start_time",
-                "last_modified_end_time",
-                "test_profile_ids",
-                "test_ids",
-                "accept",
-            ]
-        },
+        params_added_on={'2024-05-01-preview': ['api_version', 'maxpagesize', 'last_modified_start_time', 'last_modified_end_time', 'test_profile_ids', 'test_ids', 'accept']},
     )
     def list_test_profiles(
         self,
@@ -2500,19 +2887,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.TestProfile]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.TestProfile]] = kwargs.pop(
+            'cls', None
+        )
 
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 _request = build_load_test_administration_list_test_profiles_request(
                     maxpagesize=maxpagesize,
                     last_modified_start_time=last_modified_start_time,
@@ -2524,25 +2909,19 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
+                _next_request_params = case_insensitive_dict({
+                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2552,15 +2931,17 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.TestProfile], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+                _request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2570,10 +2951,14 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 
             return pipeline_response
 
-        return ItemPaged(get_next, extract_data)
 
+        return ItemPaged(
+            get_next, extract_data
+        )
 
-class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
+class LoadTestRunClientOperationsMixin( 
+    LoadTestRunClientMixinABC
+):
 
     @overload
     def begin_test_run(
@@ -2674,6 +3059,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+
     @distributed_trace
     def begin_test_run(
         self,
@@ -2704,18 +3090,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.TestRun] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+        cls: ClsType[_models.TestRun] = kwargs.pop(
+            'cls', None
+        )
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -2734,13 +3119,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2757,12 +3144,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestRun, response.json())
+            deserialized = _deserialize(
+                _models.TestRun,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
+
+
 
     @overload
     def create_or_update_app_components(
@@ -2792,7 +3184,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @overload
     def create_or_update_app_components(
-        self, test_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_run_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestRunAppComponents:
         """Add an app component to a test run.
 
@@ -2813,7 +3210,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @overload
     def create_or_update_app_components(
-        self, test_run_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_run_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestRunAppComponents:
         """Add an app component to a test run.
 
@@ -2832,9 +3234,13 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+
     @distributed_trace
     def create_or_update_app_components(
-        self, test_run_id: str, body: Union[_models.TestRunAppComponents, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_run_id: str,
+        body: Union[_models.TestRunAppComponents, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestRunAppComponents:
         """Add an app component to a test run.
 
@@ -2851,18 +3257,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[_models.TestRunAppComponents] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
+        cls: ClsType[_models.TestRunAppComponents] = kwargs.pop(
+            'cls', None
+        )
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -2880,13 +3285,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2903,12 +3310,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestRunAppComponents, response.json())
+            deserialized = _deserialize(
+                _models.TestRunAppComponents,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
+
+
 
     @overload
     def create_or_update_server_metrics_config(
@@ -2939,7 +3351,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @overload
     def create_or_update_server_metrics_config(
-        self, test_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_run_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestRunServerMetricConfig:
         """Configure server metrics for a test run.
 
@@ -2961,7 +3378,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @overload
     def create_or_update_server_metrics_config(
-        self, test_run_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_run_id: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestRunServerMetricConfig:
         """Configure server metrics for a test run.
 
@@ -2981,9 +3403,13 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+
     @distributed_trace
     def create_or_update_server_metrics_config(
-        self, test_run_id: str, body: Union[_models.TestRunServerMetricConfig, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_run_id: str,
+        body: Union[_models.TestRunServerMetricConfig, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestRunServerMetricConfig:
         """Configure server metrics for a test run.
 
@@ -3001,18 +3427,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[_models.TestRunServerMetricConfig] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
+        cls: ClsType[_models.TestRunServerMetricConfig] = kwargs.pop(
+            'cls', None
+        )
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -3030,13 +3455,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3053,16 +3480,23 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestRunServerMetricConfig, response.json())
+            deserialized = _deserialize(
+                _models.TestRunServerMetricConfig,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
 
+
+
     @distributed_trace
     def delete_test_run(  # pylint: disable=inconsistent-return-statements
-        self, test_run_id: str, **kwargs: Any
+        self,
+        test_run_id: str,
+        **kwargs: Any
     ) -> None:
         """Delete an existing load test run.
 
@@ -3076,18 +3510,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_run_delete_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -3095,13 +3529,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3111,10 +3547,16 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, {}) # type: ignore
+
+
 
     @distributed_trace
-    def get_app_components(self, test_run_id: str, **kwargs: Any) -> _models.TestRunAppComponents:
+    def get_app_components(
+        self,
+        test_run_id: str,
+        **kwargs: Any
+    ) -> _models.TestRunAppComponents:
         """Get associated app component (collection of azure resources) for the given test
         run.
 
@@ -3129,18 +3571,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestRunAppComponents] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TestRunAppComponents] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_run_get_app_components_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -3148,13 +3590,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3171,15 +3615,24 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestRunAppComponents, response.json())
+            deserialized = _deserialize(
+                _models.TestRunAppComponents,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
 
+
+
     @distributed_trace
-    def get_server_metrics_config(self, test_run_id: str, **kwargs: Any) -> _models.TestRunServerMetricConfig:
+    def get_server_metrics_config(
+        self,
+        test_run_id: str,
+        **kwargs: Any
+    ) -> _models.TestRunServerMetricConfig:
         """Get associated server metrics configuration for the given test run.
 
         Get associated server metrics configuration for the given test run.
@@ -3193,18 +3646,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestRunServerMetricConfig] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TestRunServerMetricConfig] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_run_get_server_metrics_config_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -3212,13 +3665,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3235,15 +3690,24 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestRunServerMetricConfig, response.json())
+            deserialized = _deserialize(
+                _models.TestRunServerMetricConfig,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
 
+
+
     @distributed_trace
-    def get_test_run(self, test_run_id: str, **kwargs: Any) -> _models.TestRun:
+    def get_test_run(
+        self,
+        test_run_id: str,
+        **kwargs: Any
+    ) -> _models.TestRun:
         """Get test run details by test run Id.
 
         Get test run details by test run Id.
@@ -3256,18 +3720,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestRun] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TestRun] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_run_get_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -3275,13 +3739,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3298,15 +3764,25 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestRun, response.json())
+            deserialized = _deserialize(
+                _models.TestRun,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
 
+
+
     @distributed_trace
-    def get_test_run_file(self, test_run_id: str, file_name: str, **kwargs: Any) -> _models.TestRunFileInfo:
+    def get_test_run_file(
+        self,
+        test_run_id: str,
+        file_name: str,
+        **kwargs: Any
+    ) -> _models.TestRunFileInfo:
         """Get test run file by file name.
 
         Get test run file by file name.
@@ -3321,18 +3797,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestRunFileInfo] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TestRunFileInfo] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_run_get_test_run_file_request(
             test_run_id=test_run_id,
             file_name=file_name,
@@ -3341,13 +3817,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3364,12 +3842,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestRunFileInfo, response.json())
+            deserialized = _deserialize(
+                _models.TestRunFileInfo,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
+
+
 
     @distributed_trace
     def list_metric_dimension_values(
@@ -3409,19 +3892,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[str]] = kwargs.pop("cls", None)
+        cls: ClsType[List[str]] = kwargs.pop(
+            'cls', None
+        )
 
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 _request = build_load_test_run_list_metric_dimension_values_request(
                     test_run_id=test_run_id,
                     name=name,
@@ -3434,25 +3915,19 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
+                _next_request_params = case_insensitive_dict({
+                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3462,15 +3937,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[str], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, iter(list_of_elem)
+                list_of_elem = cls(list_of_elem) # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+                _request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3480,11 +3957,19 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
             return pipeline_response
 
-        return ItemPaged(get_next, extract_data)
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+
 
     @distributed_trace
     def get_metric_definitions(
-        self, test_run_id: str, *, metric_namespace: str, **kwargs: Any
+        self,
+        test_run_id: str,
+        *,
+        metric_namespace: str,
+        **kwargs: Any
     ) -> _models.MetricDefinitionCollection:
         """List the metric definitions for a load test run.
 
@@ -3501,18 +3986,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.MetricDefinitionCollection] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MetricDefinitionCollection] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_run_get_metric_definitions_request(
             test_run_id=test_run_id,
             metric_namespace=metric_namespace,
@@ -3521,13 +4006,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3544,15 +4031,24 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.MetricDefinitionCollection, response.json())
+            deserialized = _deserialize(
+                _models.MetricDefinitionCollection,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
 
+
+
     @distributed_trace
-    def get_metric_namespaces(self, test_run_id: str, **kwargs: Any) -> _models.MetricNamespaceCollection:
+    def get_metric_namespaces(
+        self,
+        test_run_id: str,
+        **kwargs: Any
+    ) -> _models.MetricNamespaceCollection:
         """List the metric namespaces for a load test run.
 
         List the metric namespaces for a load test run.
@@ -3566,18 +4062,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.MetricNamespaceCollection] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MetricNamespaceCollection] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_run_get_metric_namespaces_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -3585,13 +4081,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3608,12 +4106,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.MetricNamespaceCollection, response.json())
+            deserialized = _deserialize(
+                _models.MetricNamespaceCollection,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
+
+
 
     @overload
     def list_metrics(
@@ -3744,6 +4247,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+
     @distributed_trace
     def list_metrics(
         self,
@@ -3786,16 +4290,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[_models.TimeSeriesElement]] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+        cls: ClsType[List[_models.TimeSeriesElement]] = kwargs.pop(
+            'cls', None
+        )
 
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -3805,10 +4308,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                 _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
             else:
                 _content = None
-
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 _request = build_load_test_run_list_metrics_request(
                     test_run_id=test_run_id,
                     metric_name=metric_name,
@@ -3823,25 +4325,19 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
+                _next_request_params = case_insensitive_dict({
+                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3851,15 +4347,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.TimeSeriesElement], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+                _request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3869,7 +4367,11 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
             return pipeline_response
 
-        return ItemPaged(get_next, extract_data)
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+
 
     @distributed_trace
     def list_test_runs(
@@ -3912,19 +4414,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.TestRun]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.TestRun]] = kwargs.pop(
+            'cls', None
+        )
 
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 _request = build_load_test_run_list_test_runs_request(
                     orderby=orderby,
                     search=search,
@@ -3938,25 +4438,19 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
+                _next_request_params = case_insensitive_dict({
+                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3966,15 +4460,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.TestRun], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+                _request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3984,10 +4480,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
             return pipeline_response
 
-        return ItemPaged(get_next, extract_data)
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+
 
     @distributed_trace
-    def stop_test_run(self, test_run_id: str, **kwargs: Any) -> _models.TestRun:
+    def stop_test_run(
+        self,
+        test_run_id: str,
+        **kwargs: Any
+    ) -> _models.TestRun:
         """Stop test run by test run Id.
 
         Stop test run by test run Id.
@@ -4000,18 +4504,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestRun] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TestRun] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_run_stop_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -4019,13 +4523,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4042,12 +4548,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestRun, response.json())
+            deserialized = _deserialize(
+                _models.TestRun,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
+
+
 
     @overload
     def begin_test_profile_run(
@@ -4077,7 +4588,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @overload
     def begin_test_profile_run(
-        self, test_profile_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_profile_run_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TestProfileRun:
         """Create and start a new test profile run.
 
@@ -4122,13 +4638,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "content_type", "accept"]},
+        params_added_on={'2024-05-01-preview': ['api_version', 'test_profile_run_id', 'content_type', 'accept']},
     )
     def begin_test_profile_run(
-        self, test_profile_run_id: str, body: Union[_models.TestProfileRun, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_profile_run_id: str,
+        body: Union[_models.TestProfileRun, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.TestProfileRun:
         """Create and start a new test profile run.
 
@@ -4145,18 +4665,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.TestProfileRun] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+        cls: ClsType[_models.TestProfileRun] = kwargs.pop(
+            'cls', None
+        )
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -4174,13 +4693,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4197,20 +4718,27 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestProfileRun, response.json())
+            deserialized = _deserialize(
+                _models.TestProfileRun,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
+
+
 
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]},
+        params_added_on={'2024-05-01-preview': ['api_version', 'test_profile_run_id', 'accept']},
     )
     def delete_test_profile_run(  # pylint: disable=inconsistent-return-statements
-        self, test_profile_run_id: str, **kwargs: Any
+        self,
+        test_profile_run_id: str,
+        **kwargs: Any
     ) -> None:
         """Delete an existing load test profile run.
 
@@ -4224,18 +4752,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_run_delete_test_profile_run_request(
             test_profile_run_id=test_profile_run_id,
             api_version=self._config.api_version,
@@ -4243,13 +4771,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4259,14 +4789,20 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, {}) # type: ignore
+
+
 
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]},
+        params_added_on={'2024-05-01-preview': ['api_version', 'test_profile_run_id', 'accept']},
     )
-    def get_test_profile_run(self, test_profile_run_id: str, **kwargs: Any) -> _models.TestProfileRun:
+    def get_test_profile_run(
+        self,
+        test_profile_run_id: str,
+        **kwargs: Any
+    ) -> _models.TestProfileRun:
         """Get test profile run details.
 
         Get test profile run details by test profile run Id.
@@ -4279,18 +4815,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestProfileRun] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TestProfileRun] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_run_get_test_profile_run_request(
             test_profile_run_id=test_profile_run_id,
             api_version=self._config.api_version,
@@ -4298,13 +4834,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4321,32 +4859,22 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestProfileRun, response.json())
+            deserialized = _deserialize(
+                _models.TestProfileRun,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
+
+
 
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={
-            "2024-05-01-preview": [
-                "api_version",
-                "maxpagesize",
-                "min_start_date_time",
-                "max_start_date_time",
-                "min_end_date_time",
-                "max_end_date_time",
-                "created_date_start_time",
-                "created_date_end_time",
-                "test_profile_run_ids",
-                "test_profile_ids",
-                "statuses",
-                "accept",
-            ]
-        },
+        params_added_on={'2024-05-01-preview': ['api_version', 'maxpagesize', 'min_start_date_time', 'max_start_date_time', 'min_end_date_time', 'max_end_date_time', 'created_date_start_time', 'created_date_end_time', 'test_profile_run_ids', 'test_profile_ids', 'statuses', 'accept']},
     )
     def list_test_profile_runs(
         self,
@@ -4401,19 +4929,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.TestProfileRun]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.TestProfileRun]] = kwargs.pop(
+            'cls', None
+        )
 
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 _request = build_load_test_run_list_test_profile_runs_request(
                     maxpagesize=maxpagesize,
                     min_start_date_time=min_start_date_time,
@@ -4430,25 +4956,19 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
+                _next_request_params = case_insensitive_dict({
+                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4458,15 +4978,17 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.TestProfileRun], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+                _request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4476,14 +4998,22 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
             return pipeline_response
 
-        return ItemPaged(get_next, extract_data)
+
+        return ItemPaged(
+            get_next, extract_data
+        )
+
 
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]},
+        params_added_on={'2024-05-01-preview': ['api_version', 'test_profile_run_id', 'accept']},
     )
-    def stop_test_profile_run(self, test_profile_run_id: str, **kwargs: Any) -> _models.TestProfileRun:
+    def stop_test_profile_run(
+        self,
+        test_profile_run_id: str,
+        **kwargs: Any
+    ) -> _models.TestProfileRun:
         """Stop test profile run.
 
         Stop test profile run for the given test profile run Id.
@@ -4496,18 +5026,18 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestProfileRun] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TestProfileRun] = kwargs.pop(
+            'cls', None
+        )
 
+        
         _request = build_load_test_run_stop_test_profile_run_request(
             test_profile_run_id=test_profile_run_id,
             api_version=self._config.api_version,
@@ -4515,13 +5045,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4538,9 +5070,14 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestProfileRun, response.json())
+            deserialized = _deserialize(
+                _models.TestProfileRun,
+                response.json()
+            )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
         return deserialized  # type: ignore
+
+

@@ -8,8 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.developer.loadtesting import LoadTestAdministrationClient
-
+from azure.developer.loadtesting import LoadTestRunClient
 """
 # PREREQUISITES
     pip install azure-identity
@@ -22,8 +21,6 @@ from azure.developer.loadtesting import LoadTestAdministrationClient
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
-
-
 def main():
     client = LoadTestAdministrationClient(
         endpoint="ENDPOINT",
@@ -31,23 +28,10 @@ def main():
     )
 
     response = client.create_or_update_server_metrics_config(
-        test_run_id="edc6e529-d009-4b99-b763-ca492e3a2823",
-        body={
-            "metrics": {
-                "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/samplerg/providers/microsoft.insights/components/appcomponentresource/providers/microsoft.insights/metricdefinitions/requests/duration": {
-                    "aggregation": "Average",
-                    "displayDescription": "sample description",
-                    "metricNamespace": "microsoft.insights/components",
-                    "name": "requests/duration",
-                    "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/samplerg/providers/microsoft.insights/components/appcomponentresource",
-                    "resourceType": "microsoft.insights/components",
-                    "unit": None,
-                }
-            }
-        },
+        test_run_id='edc6e529-d009-4b99-b763-ca492e3a2823',
+        body={'metrics': {'/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/samplerg/providers/microsoft.insights/components/appcomponentresource/providers/microsoft.insights/metricdefinitions/requests/duration': {'aggregation': 'Average', 'displayDescription': 'sample description', 'metricNamespace': 'microsoft.insights/components', 'name': 'requests/duration', 'resourceId': '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/samplerg/providers/microsoft.insights/components/appcomponentresource', 'resourceType': 'microsoft.insights/components', 'unit': None}}},
     )
     print(response)
-
 
 # x-ms-original-file: 2024-12-01-preview/CreateOrUpdateTestRunServerMetricsConfig.json
 if __name__ == "__main__":

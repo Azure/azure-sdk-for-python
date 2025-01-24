@@ -8,8 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.developer.loadtesting import LoadTestAdministrationClient
-
+from azure.developer.loadtesting import LoadTestRunClient
 """
 # PREREQUISITES
     pip install azure-identity
@@ -22,8 +21,6 @@ from azure.developer.loadtesting import LoadTestAdministrationClient
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
-
-
 def main():
     client = LoadTestAdministrationClient(
         endpoint="ENDPOINT",
@@ -31,20 +28,10 @@ def main():
     )
 
     response = client.create_or_update_app_components(
-        test_run_id="ee843bd9-a6d4-4364-a45c-427a03c39fa7",
-        body={
-            "components": {
-                "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/samplerg/providers/microsoft.insights/components/appcomponentresource": {
-                    "displayName": "Performance_LoadTest_Insights",
-                    "kind": "web",
-                    "resourceName": "appcomponentresource",
-                    "resourceType": "microsoft.insights/components",
-                }
-            }
-        },
+        test_run_id='ee843bd9-a6d4-4364-a45c-427a03c39fa7',
+        body={'components': {'/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/samplerg/providers/microsoft.insights/components/appcomponentresource': {'displayName': 'Performance_LoadTest_Insights', 'kind': 'web', 'resourceName': 'appcomponentresource', 'resourceType': 'microsoft.insights/components'}}},
     )
     print(response)
-
 
 # x-ms-original-file: 2024-12-01-preview/CreateOrUpdateTestRunAppComponents.json
 if __name__ == "__main__":

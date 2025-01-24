@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -733,7 +732,6 @@ def _sorted_annotations(types: typing.List[typing.Any]) -> typing.List[typing.An
         key=lambda x: hasattr(x, "__name__") and x.__name__.lower() in ("str", "float", "int", "bool"),
     )
 
-
 def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-return-statements, too-many-branches
     annotation: typing.Any,
     module: typing.Optional[str],
@@ -895,19 +893,20 @@ def _deserialize(
 
 
 def _failsafe_deserialize(
-    deserializer: typing.Any,
-    value: typing.Any,
-    module: typing.Optional[str] = None,
-    rf: typing.Optional["_RestField"] = None,
-    format: typing.Optional[str] = None,
+  deserializer: typing.Any,
+  value: typing.Any,
+  module: typing.Optional[str] = None,
+  rf: typing.Optional["_RestField"] = None,
+  format: typing.Optional[str] = None,
 ) -> typing.Any:
-    try:
-        return _deserialize(deserializer, value, module, rf, format)
-    except DeserializationError:
-        _LOGGER.warning(
-            "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
-        )
-        return None
+  try:
+      return _deserialize(deserializer, value, module, rf, format)
+  except DeserializationError:
+      _LOGGER.warning(
+          "Ran into a deserialization error. Ignoring since this is failsafe deserialization",
+          exc_info=True
+      )
+      return None
 
 
 class _RestField:
@@ -1147,7 +1146,7 @@ def _deserialize_xml(
     deserializer: typing.Any,
     value: str,
 ) -> typing.Any:
-    element = ET.fromstring(value)  # nosec
+    element = ET.fromstring(value) # nosec
     return _deserialize(deserializer, element)
 
 
