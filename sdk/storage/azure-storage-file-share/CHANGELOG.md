@@ -4,6 +4,11 @@
 
 ### Features Added
 
+## 12.20.1 (2025-01-22)
+
+### Bugs Fixed
+- Fixed an issue where custom transports may encounter `AttributeError` on certain requests.
+
 ## 12.20.0 (2024-11-13)
 
 ### Features Added

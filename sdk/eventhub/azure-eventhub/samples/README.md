@@ -92,10 +92,10 @@ If you do not have an existing Azure account, you may sign up for a free trial o
 
 - **Event Hubs namespace with an Event Hub:** To interact with Azure Event Hubs, you'll also need to have a namespace and Event Hub  available.
 If you are not familiar with creating Azure resources, you may wish to follow the step-by-step guide
-for [creating an Event Hub using the Azure portal](https://docs.microsoft.com/azure/event-hubs/event-hubs-create).
+for [creating an Event Hub using the Azure portal](https://learn.microsoft.com/azure/event-hubs/event-hubs-create).
 There, you can also find detailed instructions for using the Azure CLI, Azure PowerShell, or Azure Resource Manager (ARM) templates to create an Event Hub.
 
-- **Azure Storage Account (Optional)**: To run receiving samples with blob checkpoint store for persist checkpoint, you need to [create an Azure Storage account](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal) and a [Blob Container](https://docs.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container).
+- **Azure Storage Account (Optional)**: To run receiving samples with blob checkpoint store for persist checkpoint, you need to [create an Azure Storage account](https://learn.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal) and a [Blob Container](https://learn.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-portal#create-a-container).
 
 ## Setup
 
@@ -125,5 +125,5 @@ pip install azure-eventhub-checkpointstoreblob-aio  # async version
 
 ## Next steps
 
-Check out the [API reference documentation](https://docs.microsoft.com/python/api/overview/azure/eventhub-readme) to learn more about
+Check out the [API reference documentation](https://learn.microsoft.com/python/api/overview/azure/eventhub-readme) to learn more about
 what you can do with the Azure Event Hubs client library.

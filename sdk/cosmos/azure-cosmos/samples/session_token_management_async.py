@@ -6,6 +6,7 @@
 import json
 import random
 import uuid
+from typing import Dict, Any
 
 from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient
@@ -13,14 +14,14 @@ import azure.cosmos.exceptions as exceptions
 
 import asyncio
 import config
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.cosmos.http_constants import HttpHeaders
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites -
 #
 # 1. An Azure Cosmos account -
-#    https://azure.microsoft.com/en-us/documentation/articles/documentdb-create-account/
+#    https://azure.microsoft.com/documentation/articles/documentdb-create-account/
 #
 # 2. Microsoft Azure Cosmos PyPi package -
 #    https://pypi.python.org/pypi/azure-cosmos/
@@ -49,7 +50,7 @@ async def storing_session_tokens_pk(container):
     print('1. Storing session tokens in a cache by feed range from the partition key.')
 
 
-    cache = {}
+    cache: Dict[str, Any] = {}
 
     # Everything below is just a simulation of what could be run on different machines and clients
     # to store session tokens in a cache by feed range from the partition key.
@@ -83,7 +84,7 @@ async def storing_session_tokens_container_feed_ranges(container):
     print('2. Storing session tokens in a cache by feed range from the container.')
 
     # The cache is a dictionary here for simplicity but in a real-world scenario, it would be some service.
-    cache = {}
+    cache: Dict[str, Any] = {}
 
     # Everything below is just a simulation of what could be run on different machines and clients
     # to store session tokens in a cache by feed range from the partition key.

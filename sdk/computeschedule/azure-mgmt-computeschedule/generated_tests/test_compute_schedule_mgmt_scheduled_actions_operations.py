@@ -30,7 +30,13 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                     "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
                 },
                 "resources": {"ids": ["str"]},
-                "schedule": {"deadLine": "2020-02-20 00:00:00", "deadlineType": "str", "timeZone": "str"},
+                "schedule": {
+                    "deadlineType": "str",
+                    "deadLine": "2020-02-20 00:00:00",
+                    "deadline": "2020-02-20 00:00:00",
+                    "timeZone": "str",
+                    "timezone": "str",
+                },
             },
         )
 
@@ -49,7 +55,13 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                     "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
                 },
                 "resources": {"ids": ["str"]},
-                "schedule": {"deadLine": "2020-02-20 00:00:00", "deadlineType": "str", "timeZone": "str"},
+                "schedule": {
+                    "deadlineType": "str",
+                    "deadLine": "2020-02-20 00:00:00",
+                    "deadline": "2020-02-20 00:00:00",
+                    "timeZone": "str",
+                    "timezone": "str",
+                },
             },
         )
 
@@ -68,7 +80,13 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                     "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
                 },
                 "resources": {"ids": ["str"]},
-                "schedule": {"deadLine": "2020-02-20 00:00:00", "deadlineType": "str", "timeZone": "str"},
+                "schedule": {
+                    "deadlineType": "str",
+                    "deadLine": "2020-02-20 00:00:00",
+                    "deadline": "2020-02-20 00:00:00",
+                    "timeZone": "str",
+                    "timezone": "str",
+                },
             },
         )
 

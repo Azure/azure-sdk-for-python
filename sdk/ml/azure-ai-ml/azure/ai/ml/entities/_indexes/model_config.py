@@ -80,8 +80,6 @@ class ModelConfiguration:
         :type model_name: Optional[str]
         :param deployment_name: The name of the deployment.
         :type deployment_name: Optional[str]
-        :keyword kwargs: Additional keyword arguments for the model.
-        :paramtype kwargs: Dict[str, Any]
         :return: The model configuration.
         :rtype: ~azure.ai.ml.entities._indexes.entities.ModelConfiguration
         :raises TypeError: If the connection is not an AzureOpenAIConnection.
