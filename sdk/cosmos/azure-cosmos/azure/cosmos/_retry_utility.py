@@ -217,11 +217,11 @@ def _has_retryable_headers(request_headers):
         return True
     return False
 
-def _handle_service_retries(request, client, service_response_retry_policy, *args):
+def _handle_service_retries(request, client, response_retry_policy, *args):
     if _has_retryable_headers(request.http_request.headers):
         # we resolve the request endpoint to the next preferred region
         # once we are out of preferred regions we stop retrying
-        retry_policy = service_response_retry_policy
+        retry_policy = response_retry_policy
         if not retry_policy.ShouldRetry():
             if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
                 client.session.clear_session_token(client.last_response_headers)
