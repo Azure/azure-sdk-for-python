@@ -60,7 +60,8 @@ class ConnectionStringParser:
             code_cs.get(LIVE_ENDPOINT) or env_cs.get(LIVE_ENDPOINT) or \
                 "https://rt.services.visualstudio.com"
         )
-        # The AUDIENCE is a url that identifies Azure Monitor in a specific cloud (For example: "https://monitor.azure.com/").
+        # The AUDIENCE is a url that identifies Azure Monitor in a specific cloud
+        # (For example: "https://monitor.azure.com/").
         self.aad_audience = (
             code_cs.get(AAD_AUDIENCE) or env_cs.get(AAD_AUDIENCE)  # type: ignore
         )

@@ -286,9 +286,9 @@ def _get_auth_policy(credential, default_auth_policy, aad_audience=None):
 
 
 def _get_scope(aad_audience=None):
-    # The AUDIENCE is a url that identifies Azure Monitor in a specific cloud 
+    # The AUDIENCE is a url that identifies Azure Monitor in a specific cloud
     # (For example: "https://monitor.azure.com/").
-    # The SCOPE is the audience + the permission 
+    # The SCOPE is the audience + the permission
     # (For example: "https://monitor.azure.com//.default").
     return _DEFAULT_AAD_SCOPE if not aad_audience else "{}/.default".format(aad_audience)
 
