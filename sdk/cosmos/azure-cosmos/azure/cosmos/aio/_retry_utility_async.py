@@ -25,14 +25,15 @@ import json
 import time
 import asyncio
 from aiohttp.client_exceptions import ConnectionTimeoutError, ServerTimeoutError
-from typing import Optional
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from .. import exceptions
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
-from .._retry_utility import _configure_timeout, _has_retryable_headers, _handle_service_retries
+from .._retry_utility import (_configure_timeout, _has_read_retryable_headers,
+                              _has_write_retryable_headers, _handle_service_response_retries,
+                              _handle_service_request_retries)
 from .. import _endpoint_discovery_retry_policy
 from .. import _resource_throttle_retry_policy
 from .. import _default_retry_policy
@@ -192,14 +193,14 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 if kwargs['timeout'] <= 0:
                     raise exceptions.CosmosClientTimeoutError()
 
+        except ServiceRequestError:
+            _handle_service_request_retries(request, client, service_response_retry_policy, args)
+
         except ServiceResponseError as e:
             if e.exc_type in [ConnectionTimeoutError, ServerTimeoutError]:
-                _handle_service_retries(request, client, service_response_retry_policy, args)
+                _handle_service_response_retries(request, client, service_response_retry_policy, args)
             else:
                 raise
-
-        except ServiceRequestError:
-            _handle_service_retries(request, client, service_response_retry_policy, args)
 
 
 async def ExecuteFunctionAsync(function, *args, **kwargs):
@@ -263,7 +264,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 timeout_error.history = retry_settings['history']
                 raise
             except ServiceRequestError as err:
-                if _has_retryable_headers(request.http_request.headers):
+                if _has_write_retryable_headers(request.http_request.headers):
                     # raise exception immediately to be dealt with in client retry policies
                     raise err
                 # the request ran into a socket timeout or failed to establish a new connection
@@ -277,7 +278,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
             except ServiceResponseError as err:
                 retry_error = err
                 if err.exc_type in [ConnectionTimeoutError, ServerTimeoutError]:
-                    if _has_retryable_headers(request.http_request.headers):
+                    if _has_read_retryable_headers(request.http_request.headers):
                             # raise exception immediately to be dealt with in client retry policies
                             raise err
                 retry_active = self.increment(retry_settings, response=request, error=err)
