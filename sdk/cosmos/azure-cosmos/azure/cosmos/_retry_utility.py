@@ -202,6 +202,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                         client.session.clear_session_token(client.last_response_headers)
                     raise
 
+
 def ExecuteFunction(function, *args, **kwargs):
     """Stub method so that it can be used for mocking purposes as well.
     :param Callable function: the function to execute.
@@ -306,6 +307,13 @@ class ConnectionRetryPolicy(RetryPolicy):
                     self.sleep(retry_settings, request.context.transport)
                     continue
                 raise err
+            except AzureError as err:
+                retry_error = err
+                if self._is_method_retryable(retry_settings, request.http_request):
+                    retry_active = self.increment(retry_settings, response=request, error=err)
+                    if retry_active:
+                        self.sleep(retry_settings, request.context.transport)
+                        continue
             finally:
                 end_time = time.time()
                 if absolute_timeout:

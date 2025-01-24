@@ -32,6 +32,7 @@ class RequestObject(object):
         self.use_preferred_locations: Optional[bool] = None
         self.location_index_to_route: Optional[int] = None
         self.location_endpoint_to_route: Optional[str] = None
+        self.use_previous_endpoint_within_region = False
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
         self,

@@ -45,14 +45,14 @@ def get_endpoint_by_location(new_locations, old_endpoints_by_location):
 
 
     for new_location in new_locations:
-        if new_location in old_endpoints_by_location:
+        if len(old_endpoints_by_location) == 0 or new_location["name"] in old_endpoints_by_location:
             if not new_location["name"]:
                 # during fail-over the location name is empty
                 continue
             try:
                 region_uri = new_location["databaseAccountEndpoint"]
                 parsed_locations.append(new_location["name"])
-                if old_endpoints_by_location[new_location["name"]]:
+                if new_location["name"] in old_endpoints_by_location:
                     regional_object = old_endpoints_by_location[new_location["name"]]
                     regional_object.set_current(region_uri)
                 else:
@@ -81,12 +81,12 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         refresh_time_interval_in_ms,
     ):
         self.preferred_locations = preferred_locations
-        self.default_endpoint = default_endpoint
+        self.default_endpoint = RegionalEndpoint(default_endpoint)
         self.enable_endpoint_discovery = enable_endpoint_discovery
         self.use_multiple_write_locations = use_multiple_write_locations
         self.enable_multiple_writable_locations = False
-        self.write_endpoints = [self.default_endpoint]
-        self.read_endpoints = [self.default_endpoint]
+        self.write_endpoints = [self.default_endpoint.get_current()]
+        self.read_endpoints = [self.default_endpoint.get_current()]
         self.location_unavailability_info_by_endpoint = {}
         self.refresh_time_interval_in_ms = refresh_time_interval_in_ms
         self.last_cache_update_time_stamp = 0
@@ -154,8 +154,10 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             if self.enable_endpoint_discovery and self.available_write_locations:
                 location_index = min(location_index % 2, len(self.available_write_locations) - 1)
                 write_location = self.available_write_locations[location_index]
-                return self.available_write_endpoint_by_locations[write_location]
-            return self.default_endpoint
+                if request.use_previous_endpoint_within_region:
+                    return self.available_write_endpoint_by_locations[write_location].get_previous()
+                return self.available_write_endpoint_by_locations[write_location].get_current()
+            return self.default_endpoint.get_current()
 
         endpoints = (
             self.get_write_endpoints()
@@ -174,7 +176,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
             if most_preferred_location:
                 if self.available_read_endpoint_by_locations:
-                    most_preferred_read_endpoint = self.available_read_endpoint_by_locations[most_preferred_location]
+                    most_preferred_read_endpoint = self.available_read_endpoint_by_locations[most_preferred_location].get_current()
                     if most_preferred_read_endpoint and most_preferred_read_endpoint != self.read_endpoints[0]:
                         # For reads, we can always refresh in background as we can alternate to
                         # other available read endpoints
@@ -190,7 +192,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     return True
                 return should_refresh
             if most_preferred_location:
-                most_preferred_write_endpoint = self.available_write_endpoint_by_locations[most_preferred_location]
+                most_preferred_write_endpoint = self.available_write_endpoint_by_locations[most_preferred_location].get_current()
                 if most_preferred_write_endpoint:
                     should_refresh |= most_preferred_write_endpoint != self.write_endpoints[0]
                     return should_refresh
@@ -330,7 +332,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
 
                 if not endpoints:
-                    endpoints.append(fallback_endpoint)
+                    endpoints.append(fallback_endpoint.get_current())
+                    if fallback_endpoint.get_previous():
+                        endpoints.append(fallback_endpoint.get_previous())
 
                 endpoints.extend(unavailable_endpoints)
             else:
@@ -340,7 +344,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                         endpoints.append(endpoints_by_location[location])
 
         if not endpoints:
-            endpoints.append(fallback_endpoint)
+            if fallback_endpoint.get_previous():
+                endpoints.append(fallback_endpoint.get_previous())
 
         return endpoints
 
