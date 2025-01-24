@@ -34,6 +34,11 @@ from ._utils import JsonLineList
 logger = logging.getLogger(__name__)
 
 def _setup_logger():
+    """Configure and return a logger instance for the CustomAdversarialSimulator.
+
+    :return: The logger instance.
+    :rtype: logging.Logger
+    """
     log_filename = datetime.now().strftime("%Y_%m_%d__%H_%M.log")
     logger = logging.getLogger("CustomAdversarialSimulatorLogger")
     logger.setLevel(logging.DEBUG)  
@@ -48,6 +53,14 @@ def _setup_logger():
 
 class CustomAdversarialSimulator:
     def __init__(self, *, azure_ai_project: AzureAIProject, credential=None):
+        """Initialize the CustomAdversarialSimulator.
+
+        :keyword azure_ai_project: An AzureAIProject object or dict with required keys 
+         ("subscription_id", "resource_group_name", "project_name").
+        :paramtype azure_ai_project: azure.ai.evaluation._model_configurations.AzureAIProject
+        :keyword credential: A credential object or None. Defaults to DefaultAzureCredential if absent.
+        :paramtype credential: Any
+        """
         self._validate_azure_ai_project(azure_ai_project=azure_ai_project)
         credential = self._get_credential(azure_ai_project=azure_ai_project, credential=credential)
         self.azure_ai_project = azure_ai_project
@@ -63,11 +76,26 @@ class CustomAdversarialSimulator:
         self.logger = _setup_logger()
 
     def _get_credential(self, *, azure_ai_project, credential):
+        """Retrieve the credential from azure_ai_project or return DefaultAzureCredential if none found.
+
+        :keyword azure_ai_project: Config dictionary or object containing a possible credential key.
+        :paramtype azure_ai_project: azure.ai.evaluation._model_configurations.AzureAIProject
+        :keyword credential: A manually provided credential or None.
+        :paramtype credential: Any
+        :return: A valid credential for the simulator.
+        :rtype: Any
+        """
         if "credential" in azure_ai_project:
             return azure_ai_project["credential"]
         return credential or DefaultAzureCredential()
 
     def _validate_azure_ai_project(self, *, azure_ai_project):
+        """Validate that azure_ai_project has required keys and they are non-empty.
+
+        :keyword azure_ai_project: Object or dict with "subscription_id", "resource_group_name", and "project_name".
+        :paramtype azure_ai_project: azure.ai.evaluation._model_configurations.AzureAIProject
+        :raises EvaluationException: If any required keys are missing or empty.
+        """
         required_keys = ["subscription_id", "resource_group_name", "project_name"]
         if not all(key in azure_ai_project for key in required_keys):
             raise EvaluationException(
@@ -78,6 +106,10 @@ class CustomAdversarialSimulator:
             raise EvaluationException(message="None values in required keys", target="CUSTOM_ADVERSARIAL_SIMULATOR")
 
     def _ensure_service_dependencies(self):
+        """Check that RAIClient exists, raise an exception if missing.
+
+        :raises EvaluationException: If RAIClient is not set.
+        """
         if self.rai_client is None:
             msg = "RAI service is required for simulation, but an RAI client was not provided."
             raise EvaluationException(
@@ -89,6 +121,15 @@ class CustomAdversarialSimulator:
             )
 
     def _join_conversation_starter(self, *, parameters, to_join):
+        """Append or set the 'conversation_starter' key in parameters with 'to_join'.
+
+        :keyword parameters: Dictionary of parameters to modify.
+        :paramtype parameters: Dict[str, Any]
+        :keyword to_join: String to prepend.
+        :paramtype to_join: str
+        :return: Updated parameters dictionary.
+        :rtype: Dict[str, Any]
+        """
         key = "conversation_starter"
         if key in parameters.keys():
             parameters[key] = f"{to_join} {parameters[key]}"
@@ -98,6 +139,17 @@ class CustomAdversarialSimulator:
         return parameters
 
     def _validate_inputs(self, scenario, max_conversation_turns, max_simulation_results):
+        """Validate scenario and numeric constraints for the simulation.
+
+        :keyword scenario: Specifies the adversarial scenario.
+        :paramtype scenario: azure.ai.evaluation.simulator.AdversarialScenario 
+         or azure.ai.evaluation.simulator._adversarial_scenario._UnstableAdversarialScenario
+        :keyword max_conversation_turns: Number of conversation turns.
+        :paramtype max_conversation_turns: int
+        :keyword max_simulation_results: Maximum number of simulations to run.
+        :paramtype max_simulation_results: int
+        :raises EvaluationException: If any validation fails.
+        """
         if not isinstance(scenario, (AdversarialScenario, _UnstableAdversarialScenario)):
             raise EvaluationException(message=f"Invalid scenario: {scenario}", target="CUSTOM_ADVERSARIAL_SIMULATOR")
         if not isinstance(max_conversation_turns, int) or max_conversation_turns <= 0:
@@ -110,6 +162,17 @@ class CustomAdversarialSimulator:
             )
 
     def _shuffle_pairs(self, pairs, randomize_order, seed=None):
+        """Shuffle the list of (template, parameter) pairs if randomize_order is True.
+
+        :keyword pairs: The pairs to possibly shuffle.
+        :paramtype pairs: List[Tuple[Any, Any]]
+        :keyword randomize_order: Whether to randomize ordering.
+        :paramtype randomize_order: bool
+        :keyword seed: Optional random seed for reproducibility.
+        :paramtype seed: Optional[int]
+        :return: The shuffled or original list of pairs.
+        :rtype: List[Tuple[Any, Any]]
+        """
         if randomize_order:
             if seed is not None:
                 random.seed(seed)
@@ -119,6 +182,19 @@ class CustomAdversarialSimulator:
     def _get_template_parameter_pairs(
         self, templates, max_simulation_results, randomize_order=False, randomization_seed=None
     ):
+        """Collect (template, parameter) pairs in a round-robin, up to max_simulation_results.
+
+        :keyword templates: List of templates, each with template_parameters.
+        :paramtype templates: List[Any]
+        :keyword max_simulation_results: Maximum number of simulation pairs.
+        :paramtype max_simulation_results: int
+        :keyword randomize_order: If True, shuffle the final list of pairs.
+        :paramtype randomize_order: bool
+        :keyword randomization_seed: Optional seed for reproducible shuffles.
+        :paramtype randomization_seed: Optional[int]
+        :return: List of (template, parameter) tuples.
+        :rtype: List[Tuple[Any, Dict[str, Any]]]
+        """
         template_parameter_pairs = []
         
         # Extract the list of template_parameters from each template
@@ -138,6 +214,15 @@ class CustomAdversarialSimulator:
         return template_parameter_pairs
 
     def _to_chat_protocol(self, *, conversation_history, template_parameters: Dict = None):
+        """Convert the conversation history into a chat protocol payload.
+
+        :keyword conversation_history: List of conversation turns.
+        :paramtype conversation_history: List[ConversationTurn]
+        :keyword template_parameters: Dictionary of additional template data.
+        :paramtype template_parameters: Optional[Dict[str, Any]]
+        :return: The chat protocol output with messages and metadata.
+        :rtype: Dict[str, Any]
+        """
         if template_parameters is None:
             template_parameters = {}
         messages = []
