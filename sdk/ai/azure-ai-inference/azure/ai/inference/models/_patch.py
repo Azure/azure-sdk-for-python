@@ -377,7 +377,7 @@ class BaseStreamingChatCompletions:
 
             # We skip any update that has a None or empty choices list
             # (this is what OpenAI Python SDK does)
-            if update.choices:
+            if update.choices or update.usage:
 
                 # We update all empty content strings to None
                 # (this is what OpenAI Python SDK does)
