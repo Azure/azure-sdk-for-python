@@ -38,12 +38,12 @@ To report an issue with the client library, or request additional features, plea
   * An [Azure subscription](https://azure.microsoft.com/free).
   * An [AI Model from the catalog](https://ai.azure.com/explore/models) deployed through Azure AI Foundry.
   * The endpoint URL of your model, in of the form `https://<your-host-name>.<your-azure-region>.models.ai.azure.com`, where `your-host-name` is your unique model deployment host name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
-  * Depending on your authentication preference, you either need an API key to authenticate against the service, or Entra ID credentials. The API key is a 32-character string.
+  * Depending on your authentication preference, you either need an API key to authenticate against the service, or Entra ID credentials.
 * For Azure OpenAI (AOAI) service
   * An [Azure subscription](https://azure.microsoft.com/free).
   * An [OpenAI Model from the catalog](https://oai.azure.com/resource/models) deployed through Azure AI Foundry.
   * The endpoint URL of your model, in the form `https://<your-resouce-name>.openai.azure.com/openai/deployments/<your-deployment-name>`, where `your-resource-name` is your globally unique AOAI resource name, and `your-deployment-name` is your AI Model deployment name.
-  * Depending on your authentication preference, you either need an API key to authenticate against the service, or Entra ID credentials. The API key is a 32-character string.
+  * Depending on your authentication preference, you either need an API key to authenticate against the service, or Entra ID credentials.
   * An api-version. Latest preview or GA version listed in the `Data plane - inference` row in [the API Specs table](https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions). At the time of writing, latest GA version was "2024-06-01".
 
 ### Install the package
