@@ -59,6 +59,9 @@ ServicePreparerAOAIChatCompletions = functools.partial(
     azure_openai_chat_endpoint="https://your-deployment-name.openai.azure.com/openai/deployments/gpt-4o-deployment",
     azure_openai_chat_key="00000000000000000000000000000000",
     azure_openai_chat_api_version="yyyy-mm-dd-preview",
+    azure_openai_chat_audio_endpoint="https://your-deployment-name.openai.azure.com/openai/deployments/gpt-4o-audio-preview",
+    azure_openai_chat_audio_key="00000000000000000000000000000000",
+    azure_openai_chat_audio_api_version="yyyy-mm-dd-preview"
 )
 
 #
@@ -223,6 +226,22 @@ class ModelClientTestBase(AzureRecordedTestCase):
             # headers = {}
         return endpoint, credential, credential_scopes, api_version  # , headers
 
+    def _load_aoai_audio_chat_credentials(self, *, key_auth: bool, bad_key: bool, is_async: bool = False, **kwargs):
+        endpoint = kwargs.pop("azure_openai_chat_audio_endpoint")
+        api_version = kwargs.pop("azure_openai_chat_audio_api_version")
+        if key_auth:
+            key = "00000000000000000000000000000000" if bad_key else kwargs.pop("azure_openai_chat_audio_key")
+            # We no longer need to set "api-key" header, since the SDK was updated to set this header
+            # (both "api-key" header and "Authorization": "Bearer ..." headers are now used for api key auth).
+            # headers = {"api-key": key}
+            credential = AzureKeyCredential(key)
+            credential_scopes: list[str] = []
+        else:
+            credential = self.get_credential(sdk.ChatCompletionsClient, is_async=is_async)
+            credential_scopes: list[str] = ["https://cognitiveservices.azure.com/.default"]
+            # headers = {}
+        return endpoint, credential, credential_scopes, api_version  # , headers
+
     def _load_embeddings_credentials_api_key(self, *, bad_key: bool, **kwargs):
         endpoint = kwargs.pop("azure_ai_embeddings_endpoint")
         key = "00000000000000000000000000000000" if bad_key else kwargs.pop("azure_ai_embeddings_key")
@@ -325,6 +344,34 @@ class ModelClientTestBase(AzureRecordedTestCase):
         self, *, key_auth: bool = True, bad_key: bool = False, **kwargs
     ) -> async_sdk.ChatCompletionsClient:
         endpoint, credential, credential_scopes, api_version = self._load_aoai_chat_credentials(
+            key_auth=True, bad_key=bad_key, is_async=True, **kwargs
+        )
+        return async_sdk.ChatCompletionsClient(
+            endpoint=endpoint,
+            credential=credential,
+            credential_scopes=credential_scopes,
+            api_version=api_version,
+            logging_enable=LOGGING_ENABLED,
+        )
+
+    def _create_aoai_audio_chat_client(
+        self, *, key_auth: bool = True, bad_key: bool = False, **kwargs
+    ) -> sdk.ChatCompletionsClient:
+        endpoint, credential, credential_scopes, api_version = self._load_aoai_audio_chat_credentials(
+            key_auth=key_auth, bad_key=bad_key, **kwargs
+        )
+        return sdk.ChatCompletionsClient(
+            endpoint=endpoint,
+            credential=credential,
+            credential_scopes=credential_scopes,
+            api_version=api_version,
+            logging_enable=LOGGING_ENABLED,
+        )
+
+    def _create_async_aoai_audio_chat_client(
+        self, *, key_auth: bool = True, bad_key: bool = False, **kwargs
+    ) -> async_sdk.ChatCompletionsClient:
+        endpoint, credential, credential_scopes, api_version = self._load_aoai_audio_chat_credentials(
             key_auth=True, bad_key=bad_key, is_async=True, **kwargs
         )
         return async_sdk.ChatCompletionsClient(
