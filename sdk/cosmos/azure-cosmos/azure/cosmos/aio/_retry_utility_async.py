@@ -40,6 +40,7 @@ from .. import _session_retry_policy
 from .. import _gone_retry_policy
 from .. import _timeout_failover_retry_policy
 from .. import _service_response_retry_policy
+from .. import _service_request_retry_policy
 from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 
 
@@ -80,6 +81,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     service_response_retry_policy = _service_response_retry_policy.ServiceResponseRetryPolicy(
         client.connection_policy, global_endpoint_manager, *args,
     )
+    service_request_retry_policy = _service_request_retry_policy.ServiceRequestRetryPolicy(
+        client.connection_policy, global_endpoint_manager, *args,
+    )
     # HttpRequest we would need to modify for Container Recreate Retry Policy
     request = None
     if args and len(args) > 3:
@@ -97,6 +101,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         try:
             if args:
                 result = await ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)
+                # Update the regional endpoint with the latest request's success
+                global_endpoint_manager.swap_regional_endpoint_values(args[0])
             else:
                 result = await ExecuteFunctionAsync(function, *args, **kwargs)
             if not client.last_response_headers:
@@ -193,7 +199,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError:
-            _handle_service_request_retries(request, client, service_response_retry_policy, args)
+            _handle_service_request_retries(request, client, service_request_retry_policy, args)
 
         except ServiceResponseError as e:
             if e.exc_type in [ConnectionTimeoutError, ServerTimeoutError]:
@@ -263,9 +269,6 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 timeout_error.history = retry_settings['history']
                 raise
             except ServiceRequestError as err:
-                if _has_read_retryable_headers(request.http_request.headers):
-                    # raise exception immediately to be dealt with in client retry policies
-                    raise err
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, we retry up to however many connection retries are configured (default 3)
                 if retry_settings['connect'] > 0:

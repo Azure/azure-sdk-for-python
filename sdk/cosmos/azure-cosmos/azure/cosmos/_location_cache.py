@@ -59,7 +59,7 @@ class RegionalEndpoint(object):
 
     def __str__(self):
         # print out all of them
-        return self.endpoint
+        return "Current: " + self.current_endpoint + ",Previous: " + self.previous_endpoint
 
     def swap(self):
         temp = self.current_endpoint
@@ -170,7 +170,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
     # This updates the current and previous of the regional endpoint
     # to keep it up to date with the success and failure cases
-    def update_regional_endpoint(self, request):
+    def swap_regional_endpoint_values(self, request):
         location_index = int(request.location_index_to_route) if request.location_index_to_route else 0
         use_preferred_locations = (
             request.use_preferred_locations if request.use_preferred_locations is not None else True

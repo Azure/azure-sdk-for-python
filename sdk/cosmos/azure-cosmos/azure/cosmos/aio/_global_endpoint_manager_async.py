@@ -65,16 +65,19 @@ class _GlobalEndpointManager(object):
     def get_read_endpoint(self):
         return self.location_cache.get_read_regional_endpoint()
 
+    def swap_regional_endpoint_values(self, request):
+        return self.location_cache.swap_regional_endpoint_values(request)
+
     def resolve_service_endpoint(self, request):
         return self.location_cache.resolve_service_endpoint(request)
 
-    def mark_endpoint_unavailable_for_read(self, endpoint):
-        self.location_cache.mark_endpoint_unavailable_for_read(endpoint)
+    def mark_endpoint_unavailable_for_read(self, endpoint, refresh_cache):
+        self.location_cache.mark_endpoint_unavailable_for_read(endpoint, refresh_cache)
 
-    def mark_endpoint_unavailable_for_write(self, endpoint):
-        self.location_cache.mark_endpoint_unavailable_for_write(endpoint)
+    def mark_endpoint_unavailable_for_write(self, endpoint, refresh_cache):
+        self.location_cache.mark_endpoint_unavailable_for_write(endpoint, refresh_cache)
 
-    def get_ordered_write_endpoints(self):
+    def get_ordered_write_locations(self):
         return self.location_cache.get_ordered_write_locations()
 
     def can_use_multiple_write_locations(self, request):

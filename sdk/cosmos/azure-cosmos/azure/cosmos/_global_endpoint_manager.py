@@ -68,8 +68,8 @@ class _GlobalEndpointManager(object):
     def get_read_endpoint(self):
         return self.location_cache.get_read_regional_endpoint()
 
-    def update_regional_endpoint(self, request):
-        return self.location_cache.update_regional_endpoint(request)
+    def swap_regional_endpoint_values(self, request):
+        return self.location_cache.swap_regional_endpoint_values(request)
 
     def resolve_service_endpoint(self, request):
         return self.location_cache.resolve_service_endpoint(request)

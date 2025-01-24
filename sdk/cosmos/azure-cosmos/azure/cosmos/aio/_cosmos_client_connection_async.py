@@ -290,7 +290,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :returns: the read endpoint for the database account
         :rtype: str
         """
-        return self._global_endpoint_manager.get_read_endpoint()
+        return self._global_endpoint_manager.get_read_regional_endpoint()
 
     async def _setup(self) -> None:
         if 'database_account' not in self._setup_kwargs:
