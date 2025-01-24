@@ -149,7 +149,7 @@ class SenderLink(Link):
         pending = []
         for delivery in self._pending_deliveries:
             if delivery.timeout and (now - delivery.start) >= delivery.timeout:
-                delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
+                await delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
                 continue
             if not delivery.sent:
                 sent_and_settled = await self._outgoing_transfer(delivery)

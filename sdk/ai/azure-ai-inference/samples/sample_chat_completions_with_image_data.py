@@ -66,9 +66,9 @@ def sample_chat_completions_with_image_data():
 
     response = client.complete(
         messages=[
-            SystemMessage(content="You are an AI assistant that describes images in details."),
+            SystemMessage("You are an AI assistant that describes images in details."),
             UserMessage(
-                content=[
+                [
                     TextContentItem(text="What's in this image?"),
                     ImageContentItem(
                         image_url=ImageUrl.load(

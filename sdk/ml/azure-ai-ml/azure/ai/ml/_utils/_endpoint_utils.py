@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,E0401,E0611
+# pylint: disable=protected-access
 
 import ast
 import concurrent.futures
@@ -190,7 +190,7 @@ def validate_scoring_script(deployment):
             except SyntaxError as err:
                 err.filename = err.filename.split("/")[-1]
                 msg = (
-                    f"Failed to submit deployment {deployment.name} due to syntax errors "  # pylint: disable=no-member
+                    f"Failed to submit deployment {deployment.name} due to syntax errors "
                     f"in scoring script {err.filename}.\nError on line {err.lineno}: "
                     f"{err.text}\nIf you wish to bypass this validation use --skip-script-validation paramater."
                 )

@@ -20,6 +20,7 @@ def convert_search_result(result):
     ret["@search.reranker_score"] = result.reranker_score
     ret["@search.highlights"] = result.highlights
     ret["@search.captions"] = result.captions
+    ret["@search.document_debug_info"] = result.document_debug_info
     return ret
 
 
@@ -44,6 +45,7 @@ def unpack_continuation_token(token):
 
 class SearchItemPaged(ItemPaged[ReturnType]):
     """A pageable list of search results."""
+
     def __init__(self, *args, **kwargs) -> None:
         super(SearchItemPaged, self).__init__(*args, **kwargs)
         self._first_page_iterator_instance: Optional[SearchPageIterator] = None
@@ -118,6 +120,7 @@ def _ensure_response(f):
 
 class SearchPageIterator(PageIterator):
     """An iterator over search results."""
+
     def __init__(self, client, initial_query, kwargs, continuation_token=None) -> None:
         super(SearchPageIterator, self).__init__(
             get_next=self._get_next_cb,

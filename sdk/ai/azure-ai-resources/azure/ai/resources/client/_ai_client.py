@@ -160,7 +160,7 @@ class AIClient:
     ) -> "AIClient":
         """Returns a client from an existing Azure AI project using a file configuration.
 
-        To get the required details, you can go to the Project Overview page in the AI Studio.
+        To get the required details, you can go to the Project Overview page in AI Foundry.
         
         You can save a project's details in a JSON configuration file using this format:
 

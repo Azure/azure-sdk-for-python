@@ -17,14 +17,17 @@ USAGE:
 
     pip install azure-ai-projects azure-identity
 
-    Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
+    Set these environment variables with your own values:
+    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
+       Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+       the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import AzureAISearchTool
+from azure.ai.projects.models import AzureAISearchTool, ConnectionType
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
@@ -35,7 +38,7 @@ project_client = AIProjectClient.from_connection_string(
 conn_list = project_client.connections.list()
 conn_id = ""
 for conn in conn_list:
-    if conn.connection_type == "CognitiveSearch":
+    if conn.connection_type == ConnectionType.AZURE_AI_SEARCH:
         conn_id = conn.id
         break
 
@@ -47,7 +50,7 @@ ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="myindexna
 # Create agent with AI search tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4o-mini",
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are a helpful assistant",
         tools=ai_search.definitions,

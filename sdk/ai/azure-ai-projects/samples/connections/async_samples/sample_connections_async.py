@@ -34,41 +34,41 @@ async def sample_connections_async() -> None:
     project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
     connection_name = os.environ["CONNECTION_NAME"]
 
-    project_client = AIProjectClient.from_connection_string(
-        credential=DefaultAzureCredential(),
-        conn_str=project_connection_string,
-    )
+    async with DefaultAzureCredential() as credential:
 
-    async with project_client:
+        async with AIProjectClient.from_connection_string(
+            credential=credential,
+            conn_str=project_connection_string,
+        ) as project_client:
 
-        # List the properties of all connections
-        connections = await project_client.connections.list()
-        print(f"====> Listing of all connections (found {len(connections)}):")
-        for connection in connections:
+            # List the properties of all connections
+            connections = await project_client.connections.list()
+            print(f"====> Listing of all connections (found {len(connections)}):")
+            for connection in connections:
+                print(connection)
+
+            # List the properties of all connections of a particular "type" (in this sample, Azure OpenAI connections)
+            connections = await project_client.connections.list(
+                connection_type=ConnectionType.AZURE_OPEN_AI,
+            )
+            print(f"====> Listing of all Azure Open AI connections (found {len(connections)}):")
+            for connection in connections:
+                print(connection)
+
+            # Get the properties of the default connection of a particular "type", with credentials
+            connection = await project_client.connections.get_default(
+                connection_type=ConnectionType.AZURE_AI_SERVICES,
+                include_credentials=True,  # Optional. Defaults to "False"
+            )
+            print("====> Get default Azure AI Services connection:")
             print(connection)
 
-        # List the properties of all connections of a particular "type" (in this sample, Azure OpenAI connections)
-        connections = await project_client.connections.list(
-            connection_type=ConnectionType.AZURE_OPEN_AI,
-        )
-        print(f"====> Listing of all Azure Open AI connections (found {len(connections)}):")
-        for connection in connections:
+            # Get the properties of a connection by its connection name:
+            connection = await project_client.connections.get(
+                connection_name=connection_name, include_credentials=True  # Optional. Defaults to "False"
+            )
+            print("====> Get connection by name:")
             print(connection)
-
-        # Get the properties of the default connection of a particular "type", with credentials
-        connection = await project_client.connections.get_default(
-            connection_type=ConnectionType.AZURE_AI_SERVICES,
-            include_credentials=True,  # Optional. Defaults to "False"
-        )
-        print("====> Get default Azure AI Services connection:")
-        print(connection)
-
-        # Get the properties of a connection by its connection name:
-        connection = await project_client.connections.get(
-            connection_name=connection_name, include_credentials=True  # Optional. Defaults to "False"
-        )
-        print("====> Get connection by name:")
-        print(connection)
 
 
 async def main():

@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-missing-return, docstring-missing-rtype
 
 """Input/output utilities.
 
@@ -52,7 +53,7 @@ class SchemaResolutionException(schema.AvroException):
     def __init__(self, fail_msg, writer_schema=None):
         pretty_writers = json.dumps(json.loads(str(writer_schema)), indent=2)
         if writer_schema:
-            fail_msg += "\nWriter's Schema: %s" % pretty_writers
+            fail_msg += f"\nWriter's Schema: {pretty_writers}"
         schema.AvroException.__init__(self, fail_msg)
 
 # ------------------------------------------------------------------------------
@@ -76,10 +77,9 @@ class BinaryDecoder(object):
     def read(self, n):
         """Read n bytes.
 
-        Args:
-          n: Number of bytes to read.
-        Returns:
-          The next n bytes from the input.
+        :param int n: Number of bytes to read.
+        :returns: The next n bytes from the input.
+        :rtype: bytes
         """
         assert (n >= 0), n
         input_bytes = self.reader.read(n)
@@ -105,7 +105,7 @@ class BinaryDecoder(object):
             return True
         if b == 0:
             return False
-        fail_msg = "Invalid value for boolean: %s" % b
+        fail_msg = f"Invalid value for boolean: {b}"
         raise schema.AvroException(fail_msg)
 
     def read_int(self):
@@ -253,7 +253,7 @@ class DatumReader(object):
         elif writer_schema.type in ['record', 'error', 'request']:
             result = self.read_record(writer_schema, decoder)
         else:
-            fail_msg = "Cannot read unknown schema type: %s" % writer_schema.type
+            fail_msg = f"Cannot read unknown schema type: {writer_schema.type}"
             raise schema.AvroException(fail_msg)
         return result
 
@@ -290,33 +290,26 @@ class DatumReader(object):
             self.skip_record(writer_schema, decoder)
             result = None
         else:
-            fail_msg = "Unknown schema type: %s" % writer_schema.type
+            fail_msg = f"Unknown schema type: {writer_schema.type}"
             raise schema.AvroException(fail_msg)
         return result
 
+    # Fixed instances are encoded using the number of bytes declared in the schema.
     @staticmethod
     def read_fixed(writer_schema, decoder):
-        """
-        Fixed instances are encoded using the number of bytes declared
-        in the schema.
-        """
         return decoder.read(writer_schema.size)
 
     @staticmethod
     def skip_fixed(writer_schema, decoder):
         return decoder.skip(writer_schema.size)
 
+    # An enum is encoded by a int, representing the zero-based position of the symbol in the schema.
     @staticmethod
     def read_enum(writer_schema, decoder):
-        """
-        An enum is encoded by a int, representing the zero-based position
-        of the symbol in the schema.
-        """
         # read data
         index_of_symbol = decoder.read_int()
         if index_of_symbol >= len(writer_schema.symbols):
-            fail_msg = "Can't access enum index %d for enum with %d symbols" \
-                       % (index_of_symbol, len(writer_schema.symbols))
+            fail_msg = f"Can't access enum index {index_of_symbol} for enum with {len(writer_schema.symbols)} symbols"
             raise SchemaResolutionException(fail_msg, writer_schema)
         read_symbol = writer_schema.symbols[index_of_symbol]
         return read_symbol
@@ -325,21 +318,15 @@ class DatumReader(object):
     def skip_enum(decoder):
         return decoder.skip_int()
 
+    # Arrays are encoded as a series of blocks.
+
+    # Each block consists of a long count value, followed by that many array items.
+    # A block with count zero indicates the end of the array. Each item is encoded per the array's item schema.
+
+    # If a block's count is negative, then the count is followed immediately by a long block size,
+    # indicating the number of bytes in the block.
+    # The actual count in this case is the absolute value of the count written.
     def read_array(self, writer_schema, decoder):
-        """
-        Arrays are encoded as a series of blocks.
-
-        Each block consists of a long count value,
-        followed by that many array items.
-        A block with count zero indicates the end of the array.
-        Each item is encoded per the array's item schema.
-
-        If a block's count is negative,
-        then the count is followed immediately by a long block size,
-        indicating the number of bytes in the block.
-        The actual count in this case
-        is the absolute value of the count written.
-        """
         read_items = []
         block_count = decoder.read_long()
         while block_count != 0:
@@ -362,21 +349,15 @@ class DatumReader(object):
                     self.skip_data(writer_schema.items, decoder)
             block_count = decoder.read_long()
 
+    # Maps are encoded as a series of blocks.
+
+    # Each block consists of a long count value, followed by that many key/value pairs.
+    # A block with count zero indicates the end of the map. Each item is encoded per the map's value schema.
+
+    # If a block's count is negative, then the count is followed immediately by a long block size,
+    # indicating the number of bytes in the block.
+    # The actual count in this case is the absolute value of the count written.
     def read_map(self, writer_schema, decoder):
-        """
-        Maps are encoded as a series of blocks.
-
-        Each block consists of a long count value,
-        followed by that many key/value pairs.
-        A block with count zero indicates the end of the map.
-        Each item is encoded per the map's value schema.
-
-        If a block's count is negative,
-        then the count is followed immediately by a long block size,
-        indicating the number of bytes in the block.
-        The actual count in this case
-        is the absolute value of the count written.
-        """
         read_items = {}
         block_count = decoder.read_long()
         while block_count != 0:
@@ -401,17 +382,15 @@ class DatumReader(object):
                     self.skip_data(writer_schema.values, decoder)
             block_count = decoder.read_long()
 
+    # A union is encoded by first writing a long value indicating
+    # the zero-based position within the union of the schema of its value.
+    # The value is then encoded per the indicated schema within the union.
     def read_union(self, writer_schema, decoder):
-        """
-        A union is encoded by first writing a long value indicating
-        the zero-based position within the union of the schema of its value.
-        The value is then encoded per the indicated schema within the union.
-        """
         # schema resolution
         index_of_schema = int(decoder.read_long())
         if index_of_schema >= len(writer_schema.schemas):
-            fail_msg = "Can't access branch index %d for union with %d branches" \
-                       % (index_of_schema, len(writer_schema.schemas))
+            fail_msg = (f"Can't access branch index {index_of_schema} "
+                        f"for union with {len(writer_schema.schemas)} branches")
             raise SchemaResolutionException(fail_msg, writer_schema)
         selected_writer_schema = writer_schema.schemas[index_of_schema]
 
@@ -421,31 +400,29 @@ class DatumReader(object):
     def skip_union(self, writer_schema, decoder):
         index_of_schema = int(decoder.read_long())
         if index_of_schema >= len(writer_schema.schemas):
-            fail_msg = "Can't access branch index %d for union with %d branches" \
-                       % (index_of_schema, len(writer_schema.schemas))
+            fail_msg = (f"Can't access branch index {index_of_schema} "
+                        f"for union with {len(writer_schema.schemas)} branches")
             raise SchemaResolutionException(fail_msg, writer_schema)
         return self.skip_data(writer_schema.schemas[index_of_schema], decoder)
 
-    def read_record(self, writer_schema, decoder):
-        """
-        A record is encoded by encoding the values of its fields
-        in the order that they are declared. In other words, a record
-        is encoded as just the concatenation of the encodings of its fields.
-        Field values are encoded per their schema.
+    # A record is encoded by encoding the values of its fields
+    # in the order that they are declared. In other words, a record
+    # is encoded as just the concatenation of the encodings of its fields.
+    # Field values are encoded per their schema.
 
-        Schema Resolution:
-         * the ordering of fields may be different: fields are matched by name.
-         * schemas for fields with the same name in both records are resolved
-           recursively.
-         * if the writer's record contains a field with a name not present in the
-           reader's record, the writer's value for that field is ignored.
-         * if the reader's record schema has a field that contains a default value,
-           and writer's schema does not have a field with the same name, then the
-           reader should use the default value from its field.
-         * if the reader's record schema has a field with no default value, and
-           writer's schema does not have a field with the same name, then the
-           field's value is unset.
-        """
+    # Schema Resolution:
+    #     * the ordering of fields may be different: fields are matched by name.
+    #     * schemas for fields with the same name in both records are resolved
+    #     recursively.
+    #     * if the writer's record contains a field with a name not present in the
+    #     reader's record, the writer's value for that field is ignored.
+    #     * if the reader's record schema has a field that contains a default value,
+    #     and writer's schema does not have a field with the same name, then the
+    #     reader should use the default value from its field.
+    #     * if the reader's record schema has a field with no default value, and
+    #     writer's schema does not have a field with the same name, then the
+    #     field's value is unset.
+    def read_record(self, writer_schema, decoder):
         # schema resolution
         read_record = {}
         for field in writer_schema.fields:
@@ -456,9 +433,3 @@ class DatumReader(object):
     def skip_record(self, writer_schema, decoder):
         for field in writer_schema.fields:
             self.skip_data(field.type, decoder)
-
-
-# ------------------------------------------------------------------------------
-
-if __name__ == '__main__':
-    raise Exception('Not a standalone module')
