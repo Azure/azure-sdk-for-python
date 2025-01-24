@@ -55,13 +55,12 @@ def sample_chat_completions_with_audio_data():
         model_deployment = os.environ["AZURE_AI_CHAT_DEPLOYMENT_NAME"]
     except KeyError:
         print("Could not read optional environment variable `AZURE_AI_CHAT_DEPLOYMENT_NAME`.")
-        print("HTTP request header `azureml-model-deployment` will not be set.")
+        print("No specific model target will not be set.")
         model_deployment = None
 
     client = ChatCompletionsClient(
         endpoint=endpoint,
         credential=AzureKeyCredential(key),
-        headers={"azureml-model-deployment": model_deployment},
     )
 
     response = client.complete(
@@ -78,6 +77,7 @@ def sample_chat_completions_with_audio_data():
                 ],
             ),
         ],
+        model=model_deployment,
     )
 
     print(response.choices[0].message.content)
