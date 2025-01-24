@@ -22,10 +22,11 @@
 """Internal methods for executing functions in the Azure Cosmos database service.
 """
 import json
+from requests.exceptions import ReadTimeout, ConnectTimeout
 import time
 from typing import Optional
 
-from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError
+from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
 from azure.core.pipeline.transport._base import HttpRequest
@@ -38,6 +39,7 @@ from . import _session_retry_policy
 from . import _gone_retry_policy
 from . import _timeout_failover_retry_policy
 from . import _container_recreate_retry_policy
+from . import _service_response_retry_policy
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
@@ -77,6 +79,9 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
 
     timeout_failover_retry_policy = _timeout_failover_retry_policy._TimeoutFailoverRetryPolicy(
         client.connection_policy, global_endpoint_manager, *args
+    )
+    service_response_retry_policy = _service_response_retry_policy.ServiceResponseRetryPolicy(
+        client.connection_policy, global_endpoint_manager, *args,
     )
     # HttpRequest we would need to modify for Container Recreate Retry Policy
     request: Optional[HttpRequest] = None
@@ -188,6 +193,15 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 if kwargs['timeout'] <= 0:
                     raise exceptions.CosmosClientTimeoutError()
 
+        except ServiceResponseError as e:
+            if _has_retryable_headers(request.http_request.headers):
+                # we resolve the request endpoint to the next preferred region
+                # once we are out of preferred regions we stop retrying
+                retry_policy = service_response_retry_policy
+                if not retry_policy.ShouldRetry():
+                    if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
+                        client.session.clear_session_token(client.last_response_headers)
+                    raise
 
 def ExecuteFunction(function, *args, **kwargs):
     """Stub method so that it can be used for mocking purposes as well.
@@ -198,6 +212,12 @@ def ExecuteFunction(function, *args, **kwargs):
     """
     return function(*args, **kwargs)
 
+def _has_retryable_headers(request_headers):
+    if (request_headers.get(HttpHeaders.ThinClientProxyResourceType) in ["docs"]
+            and request_headers.get(HttpHeaders.ThinClientProxyOperationType) in ["Read", "Query", "QueryPlan",
+                                                                                  "ReadFeed", "SqlQuery"]):
+        return True
+    return False
 
 def _configure_timeout(request: PipelineRequest, absolute: Optional[int], per_request: int) -> None:
     if absolute is not None:
@@ -261,6 +281,9 @@ class ConnectionRetryPolicy(RetryPolicy):
                 timeout_error.history = retry_settings['history']
                 raise
             except ServiceRequestError as err:
+                if _has_retryable_headers(request.http_request.headers):
+                    # raise exception immediately to be dealt with in client retry policies
+                    raise err
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, we retry up to however many connection retries are configured (default 3)
                 if retry_settings['connect'] > 0:
@@ -269,13 +292,16 @@ class ConnectionRetryPolicy(RetryPolicy):
                         self.sleep(retry_settings, request.context.transport)
                         continue
                 raise err
-            except AzureError as err:
+            except ServiceResponseError as err:
                 retry_error = err
-                if self._is_method_retryable(retry_settings, request.http_request):
-                    retry_active = self.increment(retry_settings, response=request, error=err)
-                    if retry_active:
-                        self.sleep(retry_settings, request.context.transport)
-                        continue
+                if err.exc_type in [ReadTimeout, ConnectTimeout]:
+                    if _has_retryable_headers(request.http_request.headers):
+                        # raise exception immediately to be dealt with in client retry policies
+                        raise err
+                retry_active = self.increment(retry_settings, response=request, error=err)
+                if retry_active:
+                    self.sleep(retry_settings, request.context.transport)
+                    continue
                 raise err
             finally:
                 end_time = time.time()
