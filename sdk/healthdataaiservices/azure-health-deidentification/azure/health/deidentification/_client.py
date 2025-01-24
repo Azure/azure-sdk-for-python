@@ -19,13 +19,10 @@ from ._operations import DeidentificationClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class DeidentificationClient(
-    DeidentificationClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class DeidentificationClient(DeidentificationClientOperationsMixin):
     """DeidentificationClient.
 
     :param endpoint: Url of your De-identification Service. Required.

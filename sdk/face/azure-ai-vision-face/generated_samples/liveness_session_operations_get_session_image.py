@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.vision.face import FaceAdministrationClient
+from azure.ai.vision.face import FaceSessionClient
 
 """
 # PREREQUISITES

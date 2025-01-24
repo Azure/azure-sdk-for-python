@@ -242,7 +242,7 @@ class BatchNodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PREEMPTED = "preempted"
     """The Spot/Low-priority Compute Node has been preempted. Tasks which were running on the Compute
     Node when it was preempted will be rescheduled when another Compute Node becomes available."""
-    UPGRADING_O_S = "upgradingos"
+    UPGRADING_OS = "upgradingos"
     """The Compute Node is undergoing an OS upgrade operation."""
 
 
@@ -575,11 +575,11 @@ class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """StorageAccountType enums."""
 
-    STANDARD_L_R_S = "standard_lrs"
+    STANDARD_LRS = "standard_lrs"
     """The data disk should use standard locally redundant storage."""
-    PREMIUM_L_R_S = "premium_lrs"
+    PREMIUM_LRS = "premium_lrs"
     """The data disk should use premium locally redundant storage."""
-    STANDARD_S_S_D_L_R_S = "standardssd_lrs"
+    STANDARD_SSDLRS = "standardssd_lrs"
     """The data disk / OS disk should use standard SSD locally redundant storage."""
 
 

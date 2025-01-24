@@ -14,11 +14,10 @@ from azure.core.pipeline import policies
 from ._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class NotificationMessagesClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class NotificationMessagesClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for NotificationMessagesClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -27,8 +26,8 @@ class NotificationMessagesClientConfiguration:  # pylint: disable=too-many-insta
     :param endpoint: The communication resource, for example
      https://my-resource.communication.azure.com. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     TokenCredential type or a AzureKeyCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a token
+     credential type or a key credential type. Required.
     :type credential: ~azure.core.credentials.TokenCredential or
      ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is "2024-08-30".
@@ -73,7 +72,7 @@ class NotificationMessagesClientConfiguration:  # pylint: disable=too-many-insta
             self.authentication_policy = self._infer_policy(**kwargs)
 
 
-class MessageTemplateClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class MessageTemplateClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for MessageTemplateClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -82,8 +81,8 @@ class MessageTemplateClientConfiguration:  # pylint: disable=too-many-instance-a
     :param endpoint: The communication resource, for example
      https://my-resource.communication.azure.com. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     TokenCredential type or a AzureKeyCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a token
+     credential type or a key credential type. Required.
     :type credential: ~azure.core.credentials.TokenCredential or
      ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is "2024-08-30".

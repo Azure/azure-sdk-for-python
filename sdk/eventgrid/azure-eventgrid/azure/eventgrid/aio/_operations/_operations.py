@@ -289,8 +289,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        body: JSON,
         *,
+        lock_tokens: List[str],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AcknowledgeResult: ...
@@ -299,8 +299,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
+        body: JSON,
         *,
-        lock_tokens: List[str],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AcknowledgeResult: ...
@@ -413,8 +413,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        body: JSON,
         *,
+        lock_tokens: List[str],
         release_delay_in_seconds: Optional[Union[str, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -424,8 +424,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
+        body: JSON,
         *,
-        lock_tokens: List[str],
         release_delay_in_seconds: Optional[Union[str, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -547,8 +547,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        body: JSON,
         *,
+        lock_tokens: List[str],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RejectResult: ...
@@ -557,8 +557,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
+        body: JSON,
         *,
-        lock_tokens: List[str],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RejectResult: ...
@@ -670,8 +670,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
-        body: JSON,
         *,
+        lock_tokens: List[str],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RenewLocksResult: ...
@@ -680,8 +680,8 @@ class EventGridConsumerClientOperationsMixin(EventGridConsumerClientMixinABC):
         self,
         topic_name: str,
         event_subscription_name: str,
+        body: JSON,
         *,
-        lock_tokens: List[str],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RenewLocksResult: ...
