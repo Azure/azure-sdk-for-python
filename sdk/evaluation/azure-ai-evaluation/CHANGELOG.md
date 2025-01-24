@@ -1,12 +1,12 @@
 # Release History
 
-## 1.2.0 (2024-01-24)
+## 1.2.0 (2025-01-24)
 
 ### Features Added
-- CSV files are now supported as data file inputs with `evaluate()` API. The CSV file should have a header row with column names that match the `data` and `target` fields in the `evaluate()` method and the filename should be passed as the `data` parameter. Column name 'Conversation' in CSV file is not supported.  
+- CSV files are now supported as data file inputs with `evaluate()` API. The CSV file should have a header row with column names that match the `data` and `target` fields in the `evaluate()` method and the filename should be passed as the `data` parameter. Column name 'Conversation' in CSV file is not fully supported yet.  
 
 ### Breaking Changes
-- In release 1.1.0, Multimodal image support was added in `ContentSafetyEvaluator`, `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator` and `ProtectedMaterialEvaluator`. Hence, `ContentSafetyMultimodalEvaluator`, `ViolenceMultimodalEvaluator`, `SexualMultimodalEvaluator`, `SelfHarmMultimodalEvaluator`, `HateUnfairnessMultimodalEvaluator` and `ProtectedMaterialMultimodalEvaluator` will be removed in next release azure-ai-evaluation:1.3.0. 
+- `ViolenceMultimodalEvaluator`, `SexualMultimodalEvaluator`, `SelfHarmMultimodalEvaluator`, `HateUnfairnessMultimodalEvaluator` and `ProtectedMaterialMultimodalEvaluator` will be removed in next release. 
 
 ### Bugs Fixed
 - Removed `[remote]` extra. This is no longer needed when tracking results in Azure AI Studio.
