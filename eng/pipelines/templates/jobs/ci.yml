@@ -259,6 +259,7 @@ jobs:
           - "**/*matrix*.json"
         EnablePRGeneration: true
         PRMatrixSetting: "TargetingString"
+        PRJobBatchSize: 5
         PreGenerationSteps:
           - task: UsePythonVersion@0
             inputs:
