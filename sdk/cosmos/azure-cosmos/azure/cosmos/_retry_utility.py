@@ -218,7 +218,7 @@ def _has_retryable_headers(request_headers):
     return False
 
 def _handle_service_retries(request, client, response_retry_policy, *args):
-    if _has_retryable_headers(request.http_request.headers):
+    if _has_retryable_headers(request.headers):
         # we resolve the request endpoint to the next preferred region
         # once we are out of preferred regions we stop retrying
         retry_policy = response_retry_policy
@@ -264,11 +264,6 @@ class ConnectionRetryPolicy(RetryPolicy):
         """
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)
-        # TODO: remove this once done testing, place a breakpoint on line 259 and step over slowly until line 271
-        if "docs" in request.http_request.url and request.http_request.method == "GET":
-            per_request_timeout = 0.01
-        else:
-            per_request_timeout = 1
 
         retry_error = None
         retry_active = True
