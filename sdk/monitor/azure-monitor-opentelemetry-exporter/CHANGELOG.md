@@ -6,6 +6,8 @@
 
 - Support AAD for sovereign clouds
   ([#39379](https://github.com/Azure/azure-sdk-for-python/pull/39379))
+- Support stable http semantic conventions for breeze exporter - REQUESTS
+  ([#39208](https://github.com/Azure/azure-sdk-for-python/pull/39208))
 
 ### Breaking Changes
 
