@@ -475,7 +475,10 @@ class InputAudio(InputAudioGenerated):
 
     @classmethod
     def load(
-        cls, *, audio_file: str, audio_format: str,
+        cls,
+        *,
+        audio_file: str,
+        audio_format: str,
     ) -> Self:
         """
         Create an InputAudio object from a local audio file. The method reads the audio

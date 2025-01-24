@@ -528,21 +528,21 @@ class TestChatCompletionsClientAsync(ModelClientTestBase):
 
         response = await client.complete(
             messages=[
-                sdk.models.SystemMessage(content="You are an AI assistant for translating and transcribing audio clips."),
+                sdk.models.SystemMessage(
+                    content="You are an AI assistant for translating and transcribing audio clips."
+                ),
                 sdk.models.UserMessage(
                     content=[
                         sdk.models.TextContentItem(text="Please translate this audio snippet to spanish."),
                         sdk.models.AudioContentItem(
                             input_audio=sdk.models.InputAudio.load(
-                                audio_file=audio_file_path,
-                                audio_format=sdk.models.AudioContentFormat.MP3)
+                                audio_file=audio_file_path, audio_format=sdk.models.AudioContentFormat.MP3
+                            )
                         ),
                     ],
                 ),
             ],
         )
         self._print_chat_completions_result(response)
-        self._validate_chat_completions_result(
-            response, ["Hola", "cómo", "estás"], is_aoai=True
-        )
+        self._validate_chat_completions_result(response, ["Hola", "cómo", "estás"], is_aoai=True)
         await client.close()

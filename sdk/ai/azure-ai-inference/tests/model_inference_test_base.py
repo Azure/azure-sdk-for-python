@@ -61,7 +61,7 @@ ServicePreparerAOAIChatCompletions = functools.partial(
     azure_openai_chat_api_version="yyyy-mm-dd-preview",
     azure_openai_chat_audio_endpoint="https://your-deployment-name.openai.azure.com/openai/deployments/gpt-4o-audio-preview",
     azure_openai_chat_audio_key="00000000000000000000000000000000",
-    azure_openai_chat_audio_api_version="yyyy-mm-dd-preview"
+    azure_openai_chat_audio_api_version="yyyy-mm-dd-preview",
 )
 
 #
