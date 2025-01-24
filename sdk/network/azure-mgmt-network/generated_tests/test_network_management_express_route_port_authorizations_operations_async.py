@@ -21,13 +21,13 @@ class TestNetworkManagementExpressRoutePortAuthorizationsOperationsAsync(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_express_route_port_authorizations_begin_delete(self, resource_group):
         response = await (
             await self.client.express_route_port_authorizations.begin_delete(
                 resource_group_name=resource_group.name,
                 express_route_port_name="str",
                 authorization_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -36,12 +36,12 @@ class TestNetworkManagementExpressRoutePortAuthorizationsOperationsAsync(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_express_route_port_authorizations_get(self, resource_group):
         response = await self.client.express_route_port_authorizations.get(
             resource_group_name=resource_group.name,
             express_route_port_name="str",
             authorization_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestNetworkManagementExpressRoutePortAuthorizationsOperationsAsync(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_express_route_port_authorizations_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.express_route_port_authorizations.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -65,7 +65,7 @@ class TestNetworkManagementExpressRoutePortAuthorizationsOperationsAsync(AzureMg
                     "provisioningState": "str",
                     "type": "str",
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -74,11 +74,11 @@ class TestNetworkManagementExpressRoutePortAuthorizationsOperationsAsync(AzureMg
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_express_route_port_authorizations_list(self, resource_group):
         response = self.client.express_route_port_authorizations.list(
             resource_group_name=resource_group.name,
             express_route_port_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

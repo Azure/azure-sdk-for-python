@@ -230,7 +230,7 @@ class GroupInput(Input):
             restored_inputs[name] = restore_from_dict_recursively(data)
         return restored_inputs
 
-    def _update_default(self, default_value: object = None) -> None:  # pylint: disable=protected-access
+    def _update_default(self, default_value: object = None) -> None:
         default_cls = type(default_value)
 
         # Assert '__dsl_group__' must in the class of default value

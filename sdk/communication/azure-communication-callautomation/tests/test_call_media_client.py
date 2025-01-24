@@ -30,7 +30,8 @@ from azure.communication.callautomation._generated.models import (
     HoldRequest,
     UnholdRequest,
     StartMediaStreamingRequest,
-    StopMediaStreamingRequest
+    StopMediaStreamingRequest,
+    InterruptAudioAndAnnounceRequest
 )
 from azure.communication.callautomation._generated.models._enums import RecognizeInputType, DtmfTone
 from unittest.mock import Mock
@@ -719,3 +720,54 @@ class TestCallMediaClient(unittest.TestCase):
        mock_stop_media_streaming.assert_called_once()
        actual_call_connection_id = mock_stop_media_streaming.call_args[0][0]
        self.assertEqual(self.call_connection_id,actual_call_connection_id)
+
+    def test_interrupt_audio_and_announce(self):
+        mock_hold = Mock()
+        mock_interrupt_audio_and_announce = Mock()
+        mock_unhold = Mock()
+        self.call_media_operations.hold = mock_hold
+        self.call_media_operations.interrupt_audio_and_announce = mock_interrupt_audio_and_announce
+        self.call_media_operations.unhold = mock_unhold
+        self.call_media_operations.hold = mock_hold
+        play_source = FileSource(url=self.url)
+        operation_context = "context"
+
+        self.call_connection_client.hold(
+            target_participant=self.target_user, play_source=play_source, operation_context=operation_context
+        )
+
+        expected_hold_request = HoldRequest(
+            target_participant=[serialize_identifier(self.target_user)],
+            play_source_info=play_source._to_generated(),
+            operation_context=operation_context,
+        )
+        mock_hold.assert_called_once()
+        actual_hold_request = mock_hold.call_args[0][1]
+
+        self.assertEqual(expected_hold_request.play_source_info.file.uri, actual_hold_request.play_source_info.file.uri)
+        self.assertEqual(expected_hold_request.play_source_info.kind, actual_hold_request.play_source_info.kind)
+        self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)
+        
+        play_sources = [FileSource(url=self.url),  TextSource(text='test test test')]
+        self.call_connection_client.interrupt_audio_and_announce(target_participant=self.target_user, play_sources=play_sources)
+
+        expected_interrupt_audio_announce_request = InterruptAudioAndAnnounceRequest(
+            play_sources=[play_source._to_generated()],
+            play_to=serialize_identifier(self.target_user),
+            operation_context=operation_context,
+        )
+        mock_interrupt_audio_and_announce.assert_called_once()
+        actual_interrupt_audio_and_announce_request = mock_interrupt_audio_and_announce.call_args[0][1]
+
+        self.assertEqual(expected_interrupt_audio_announce_request.play_sources[0].kind, actual_interrupt_audio_and_announce_request.play_sources[0].kind)
+        self.assertEqual(expected_interrupt_audio_announce_request.play_to, actual_interrupt_audio_and_announce_request.play_to)
+        
+        self.call_connection_client.unhold(target_participant=self.target_user, operation_context=operation_context)
+
+        expected_hold_request = UnholdRequest(
+            target_participant=serialize_identifier(self.target_user), operation_context=operation_context
+        )
+        mock_unhold.assert_called_once()
+        actual_hold_request = mock_unhold.call_args[0][1]
+
+        self.assertEqual(expected_hold_request.operation_context, actual_hold_request.operation_context)

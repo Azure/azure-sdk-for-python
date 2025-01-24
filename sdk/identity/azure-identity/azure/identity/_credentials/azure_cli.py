@@ -252,9 +252,11 @@ def _run_command(command: str, timeout: int) -> str:
     except subprocess.CalledProcessError as ex:
         # non-zero return from shell
         # Fallback check in case the executable is not found while executing subprocess.
-        if ex.returncode == 127 or ex.stderr.startswith("'az' is not recognized"):
+        if ex.returncode == 127 or (ex.stderr is not None and ex.stderr.startswith("'az' is not recognized")):
             raise CredentialUnavailableError(message=CLI_NOT_FOUND) from ex
-        if ("az login" in ex.stderr or "az account set" in ex.stderr) and "AADSTS" not in ex.stderr:
+        if ex.stderr is not None and (
+            ("az login" in ex.stderr or "az account set" in ex.stderr) and "AADSTS" not in ex.stderr
+        ):
             raise CredentialUnavailableError(message=NOT_LOGGED_IN) from ex
 
         # return code is from the CLI -> propagate its output
@@ -269,7 +271,7 @@ def _run_command(command: str, timeout: int) -> str:
         # failed to execute 'cmd' or '/bin/sh'
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
         raise error from ex
-    except Exception as ex:  # pylint:disable=broad-except
+    except Exception as ex:
         # could be a timeout, for example
         error = CredentialUnavailableError(message="Failed to invoke the Azure CLI")
         raise error from ex

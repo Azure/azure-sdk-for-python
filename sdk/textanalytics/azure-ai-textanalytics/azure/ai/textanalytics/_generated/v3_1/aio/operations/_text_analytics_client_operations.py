@@ -630,7 +630,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
          processing functions. Setting this parameter to true, disables input logging and may limit our
          ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy
          notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI
-         principles at https://www.microsoft.com/en-us/ai/responsible-ai. Default value is None.
+         principles at https://www.microsoft.com/ai/responsible-ai. Default value is None.
         :type logging_opt_out: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -734,7 +734,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
          processing functions. Setting this parameter to true, disables input logging and may limit our
          ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy
          notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI
-         principles at https://www.microsoft.com/en-us/ai/responsible-ai. Default value is None.
+         principles at https://www.microsoft.com/ai/responsible-ai. Default value is None.
         :type logging_opt_out: bool
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
@@ -835,7 +835,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
          processing functions. Setting this parameter to true, disables input logging and may limit our
          ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy
          notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI
-         principles at https://www.microsoft.com/en-us/ai/responsible-ai. Default value is None.
+         principles at https://www.microsoft.com/ai/responsible-ai. Default value is None.
         :type logging_opt_out: bool
         :param domain: (Optional) if specified, will set the PII domain to include only a subset of the
          entity categories. Possible values include: 'PHI', 'none'. Default value is None.
@@ -940,7 +940,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
          processing functions. Setting this parameter to true, disables input logging and may limit our
          ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy
          notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI
-         principles at https://www.microsoft.com/en-us/ai/responsible-ai. Default value is None.
+         principles at https://www.microsoft.com/ai/responsible-ai. Default value is None.
         :type logging_opt_out: bool
         :param string_index_type: (Optional) Specifies the method used to interpret string offsets.
          Defaults to Text Elements (Graphemes) according to Unicode v8.0.0. For additional information
@@ -1036,7 +1036,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
          processing functions. Setting this parameter to true, disables input logging and may limit our
          ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy
          notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI
-         principles at https://www.microsoft.com/en-us/ai/responsible-ai. Default value is None.
+         principles at https://www.microsoft.com/ai/responsible-ai. Default value is None.
         :type logging_opt_out: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyPhraseResult or the result of cls(response)
@@ -1127,7 +1127,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
          processing functions. Setting this parameter to true, disables input logging and may limit our
          ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy
          notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI
-         principles at https://www.microsoft.com/en-us/ai/responsible-ai. Default value is None.
+         principles at https://www.microsoft.com/ai/responsible-ai. Default value is None.
         :type logging_opt_out: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LanguageResult or the result of cls(response)
@@ -1219,7 +1219,7 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
          processing functions. Setting this parameter to true, disables input logging and may limit our
          ability to remediate issues that occur.  Please see Cognitive Services Compliance and Privacy
          notes at https://aka.ms/cs-compliance for additional details, and Microsoft Responsible AI
-         principles at https://www.microsoft.com/en-us/ai/responsible-ai. Default value is None.
+         principles at https://www.microsoft.com/ai/responsible-ai. Default value is None.
         :type logging_opt_out: bool
         :param opinion_mining: (Optional) if set to true, response will contain not only sentiment
          prediction but also opinion mining (aspect-based sentiment analysis) results. Default value is

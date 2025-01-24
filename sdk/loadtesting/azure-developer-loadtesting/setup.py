@@ -63,9 +63,15 @@ setup(
         "azure.developer.loadtesting": ["py.typed"],
     },
     install_requires=[
+<<<<<<< HEAD
         "isodate>=0.6.1",
         "azure-core>=1.30.0",
         "typing-extensions>=4.6.0",
+=======
+        "isodate<1.0.0,>=0.6.1",
+        "azure-core<2.0.0,>=1.26.2",
+        "typing-extensions>=4.3.0; python_version<'3.8.0'",
+>>>>>>> main
     ],
     python_requires=">=3.8",
 )

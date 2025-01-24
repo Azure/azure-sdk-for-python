@@ -32,7 +32,7 @@ class TestCopyClassifierAsync(AsyncDocumentIntelligenceTest):
     async def test_copy_classifier_none_classifier_id(self, **kwargs):
         client = kwargs.pop("client")
         with pytest.raises(ValueError) as e:
-            await client.begin_copy_classifier_to(classifier_id=None, copy_to_request={})
+            await client.begin_copy_classifier_to(classifier_id=None, body={})
         assert "No value for given attribute" in str(e.value)
 
     @DocumentIntelligencePreparer()
@@ -41,7 +41,7 @@ class TestCopyClassifierAsync(AsyncDocumentIntelligenceTest):
     async def test_copy_classifier_empty_classifier_id(self, **kwargs):
         client = kwargs.pop("client")
         with pytest.raises(ResourceNotFoundError):
-            await client.begin_copy_classifier_to(classifier_id="", copy_to_request={})
+            await client.begin_copy_classifier_to(classifier_id="", body={})
 
     @DocumentIntelligencePreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -94,7 +94,7 @@ class TestCopyClassifierAsync(AsyncDocumentIntelligenceTest):
                 tags={"testkey": "testvalue"},
             )
         )
-        poller = await client.begin_copy_classifier_to(classifier.classifier_id, copy_to_request=copy_auth)
+        poller = await client.begin_copy_classifier_to(classifier.classifier_id, body=copy_auth)
         copy = await poller.result()
 
         assert copy.api_version == classifier.api_version
