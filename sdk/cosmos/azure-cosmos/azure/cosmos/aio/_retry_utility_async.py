@@ -234,7 +234,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
         """
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)
-        # TODO: remove this once done testing
+        # TODO: remove this once done testing, place a breakpoint on line 239 and step over slowly until line 251
         if "docs" in request.http_request.url and request.http_request.method == "GET":
             per_request_timeout = 0.001
         else:
@@ -248,7 +248,6 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
             start_time = time.time()
             try:
                 _configure_timeout(request, absolute_timeout, per_request_timeout)
-
                 response = await self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
