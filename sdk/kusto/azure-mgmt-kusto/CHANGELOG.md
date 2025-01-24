@@ -1,5 +1,34 @@
 # Release History
 
+## 3.4.0 (2024-01-24)
+
+### Features Added
+
+  - Model `Cluster` added property `callout_policies`
+  - Model `Cluster` added property `zone_status`
+  - Enum `ClusterPrincipalRole` added member `ALL_DATABASES_MONITOR`
+  - Model `ClusterUpdate` added property `callout_policies`
+  - Model `ClusterUpdate` added property `zone_status`
+  - Enum `LanguageExtensionImageName` added member `PYTHON3_11_7`
+  - Enum `LanguageExtensionImageName` added member `PYTHON3_11_7_DL`
+  - Model `SandboxCustomImage` added property `base_image_name`
+  - Model `Script` added property `script_level`
+  - Model `Script` added property `principal_permissions_action`
+  - Added model `CalloutPoliciesList`
+  - Added model `CalloutPolicy`
+  - Added model `CalloutPolicyToRemove`
+  - Added enum `CalloutType`
+  - Added model `FollowerDatabaseDefinitionGet`
+  - Added model `FollowerDatabaseListResultGet`
+  - Added enum `OutboundAccess`
+  - Added enum `PrincipalPermissionsAction`
+  - Added enum `ScriptLevel`
+  - Added enum `ZoneStatus`
+  - Model `ClustersOperations` added method `begin_add_callout_policies`
+  - Model `ClustersOperations` added method `begin_remove_callout_policy`
+  - Model `ClustersOperations` added method `list_callout_policies`
+  - Model `ClustersOperations` added method `list_follower_databases_get`
+
 ## 3.3.0 (2023-10-23)
 
 ### Features Added

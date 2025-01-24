@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -16,10 +16,9 @@ from .. import _serialization
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -50,7 +49,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -86,7 +85,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -95,30 +94,14 @@ class ProxyResource(Resource):
     :vartype type: str
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
 
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
-
-class AttachedDatabaseConfiguration(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class AttachedDatabaseConfiguration(ProxyResource):
     """Class representing an attached database configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -247,12 +230,12 @@ class AttachedDatabaseConfigurationListResult(_serialization.Model):
         self.value = value
 
 
-class AttachedDatabaseConfigurationsCheckNameRequest(_serialization.Model):
+class AttachedDatabaseConfigurationsCheckNameRequest(_serialization.Model):  # pylint: disable=name-too-long
     """The result returned from a AttachedDatabaseConfigurations check name availability request.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Attached database resource name. Required.
     :vartype name: str
@@ -286,7 +269,7 @@ class AttachedDatabaseConfigurationsCheckNameRequest(_serialization.Model):
 class AzureCapacity(_serialization.Model):
     """Azure capacity definition.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar scale_type: Scale type. Required. Known values are: "automatic", "manual", and "none".
     :vartype scale_type: str or ~azure.mgmt.kusto.models.AzureScaleType
@@ -380,7 +363,7 @@ class AzureResourceSku(_serialization.Model):
 class AzureSku(_serialization.Model):
     """Azure SKU definition.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: SKU name. Required. Known values are: "Dev(No SLA)_Standard_D11_v2", "Dev(No
      SLA)_Standard_E2a_v4", "Standard_D11_v2", "Standard_D12_v2", "Standard_D13_v2",
@@ -459,10 +442,117 @@ class AzureSku(_serialization.Model):
         self.tier = tier
 
 
+class CalloutPoliciesList(_serialization.Model):
+    """A list of the service's callout policy objects.
+
+    :ivar value: A list of the service's callout policies.
+    :vartype value: list[~azure.mgmt.kusto.models.CalloutPolicy]
+    :ivar next_link: The URL to get the next set of callout policies list results if there are any.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[CalloutPolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.CalloutPolicy"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A list of the service's callout policies.
+        :paramtype value: list[~azure.mgmt.kusto.models.CalloutPolicy]
+        :keyword next_link: The URL to get the next set of callout policies list results if there are
+         any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class CalloutPolicy(_serialization.Model):
+    """Configuration for external callout policies, including URI patterns, access types, and service
+    types.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar callout_uri_regex: Regular expression or FQDN pattern for the callout URI.
+    :vartype callout_uri_regex: str
+    :ivar callout_type: Type of the callout service, specifying the kind of external resource or
+     service being accessed. Known values are: "kusto", "sql", "cosmosdb", "external_data",
+     "azure_digital_twins", "sandbox_artifacts", "webapi", "mysql", "postgresql", "genevametrics",
+     and "azure_openai".
+    :vartype callout_type: str or ~azure.mgmt.kusto.models.CalloutType
+    :ivar outbound_access: Indicates whether outbound access is permitted for the specified URI
+     pattern. Known values are: "Allow" and "Deny".
+    :vartype outbound_access: str or ~azure.mgmt.kusto.models.OutboundAccess
+    :ivar callout_id: Unique identifier for the callout configuration.
+    :vartype callout_id: str
+    """
+
+    _validation = {
+        "callout_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "callout_uri_regex": {"key": "calloutUriRegex", "type": "str"},
+        "callout_type": {"key": "calloutType", "type": "str"},
+        "outbound_access": {"key": "outboundAccess", "type": "str"},
+        "callout_id": {"key": "calloutId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        callout_uri_regex: Optional[str] = None,
+        callout_type: Optional[Union[str, "_models.CalloutType"]] = None,
+        outbound_access: Optional[Union[str, "_models.OutboundAccess"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword callout_uri_regex: Regular expression or FQDN pattern for the callout URI.
+        :paramtype callout_uri_regex: str
+        :keyword callout_type: Type of the callout service, specifying the kind of external resource or
+         service being accessed. Known values are: "kusto", "sql", "cosmosdb", "external_data",
+         "azure_digital_twins", "sandbox_artifacts", "webapi", "mysql", "postgresql", "genevametrics",
+         and "azure_openai".
+        :paramtype callout_type: str or ~azure.mgmt.kusto.models.CalloutType
+        :keyword outbound_access: Indicates whether outbound access is permitted for the specified URI
+         pattern. Known values are: "Allow" and "Deny".
+        :paramtype outbound_access: str or ~azure.mgmt.kusto.models.OutboundAccess
+        """
+        super().__init__(**kwargs)
+        self.callout_uri_regex = callout_uri_regex
+        self.callout_type = callout_type
+        self.outbound_access = outbound_access
+        self.callout_id = None
+
+
+class CalloutPolicyToRemove(_serialization.Model):
+    """Configuration for an external callout policy to remove.
+
+    :ivar callout_id: Unique identifier for the callout configuration.
+    :vartype callout_id: str
+    """
+
+    _attribute_map = {
+        "callout_id": {"key": "calloutId", "type": "str"},
+    }
+
+    def __init__(self, *, callout_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword callout_id: Unique identifier for the callout configuration.
+        :paramtype callout_id: str
+        """
+        super().__init__(**kwargs)
+        self.callout_id = callout_id
+
+
 class CheckNameRequest(_serialization.Model):
     """The result returned from a database check name availability request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Resource name. Required.
     :vartype name: str
@@ -552,10 +642,10 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -595,15 +685,15 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Cluster(TrackedResource):
     """Class representing a Kusto cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -678,6 +768,8 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar allowed_fqdn_list: List of allowed FQDNs(Fully Qualified Domain Name) for egress from
      Cluster.
     :vartype allowed_fqdn_list: list[str]
+    :ivar callout_policies: List of callout policies for egress from Cluster.
+    :vartype callout_policies: list[~azure.mgmt.kusto.models.CalloutPolicy]
     :ivar public_ip_type: Indicates what public IP type to create - IPv4 (default), or DualStack
      (both IPv4 and IPv6). Known values are: "IPv4" and "DualStack".
     :vartype public_ip_type: str or ~azure.mgmt.kusto.models.PublicIPType
@@ -688,6 +780,9 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar migration_cluster: Properties of the peer cluster involved in a migration to/from this
      cluster.
     :vartype migration_cluster: ~azure.mgmt.kusto.models.MigrationClusterProperties
+    :ivar zone_status: Indicates whether the cluster is zonal or non-zonal. Known values are:
+     "NonZonal", "ZonalInconsistency", and "Zonal".
+    :vartype zone_status: str or ~azure.mgmt.kusto.models.ZoneStatus
     """
 
     _validation = {
@@ -705,6 +800,7 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "state_reason": {"readonly": True},
         "private_endpoint_connections": {"readonly": True},
         "migration_cluster": {"readonly": True},
+        "zone_status": {"readonly": True},
     }
 
     _attribute_map = {
@@ -742,6 +838,7 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "enable_auto_stop": {"key": "properties.enableAutoStop", "type": "bool"},
         "restrict_outbound_network_access": {"key": "properties.restrictOutboundNetworkAccess", "type": "str"},
         "allowed_fqdn_list": {"key": "properties.allowedFqdnList", "type": "[str]"},
+        "callout_policies": {"key": "properties.calloutPolicies", "type": "[CalloutPolicy]"},
         "public_ip_type": {"key": "properties.publicIPType", "type": "str"},
         "virtual_cluster_graduation_properties": {
             "key": "properties.virtualClusterGraduationProperties",
@@ -752,6 +849,7 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
             "type": "[PrivateEndpointConnection]",
         },
         "migration_cluster": {"key": "properties.migrationCluster", "type": "MigrationClusterProperties"},
+        "zone_status": {"key": "properties.zoneStatus", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -778,6 +876,7 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         enable_auto_stop: bool = True,
         restrict_outbound_network_access: Union[str, "_models.ClusterNetworkAccessFlag"] = "Disabled",
         allowed_fqdn_list: Optional[List[str]] = None,
+        callout_policies: Optional[List["_models.CalloutPolicy"]] = None,
         public_ip_type: Union[str, "_models.PublicIPType"] = "IPv4",
         virtual_cluster_graduation_properties: Optional[str] = None,
         **kwargs: Any
@@ -836,6 +935,8 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword allowed_fqdn_list: List of allowed FQDNs(Fully Qualified Domain Name) for egress from
          Cluster.
         :paramtype allowed_fqdn_list: list[str]
+        :keyword callout_policies: List of callout policies for egress from Cluster.
+        :paramtype callout_policies: list[~azure.mgmt.kusto.models.CalloutPolicy]
         :keyword public_ip_type: Indicates what public IP type to create - IPv4 (default), or DualStack
          (both IPv4 and IPv6). Known values are: "IPv4" and "DualStack".
         :paramtype public_ip_type: str or ~azure.mgmt.kusto.models.PublicIPType
@@ -869,10 +970,12 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.enable_auto_stop = enable_auto_stop
         self.restrict_outbound_network_access = restrict_outbound_network_access
         self.allowed_fqdn_list = allowed_fqdn_list
+        self.callout_policies = callout_policies
         self.public_ip_type = public_ip_type
         self.virtual_cluster_graduation_properties = virtual_cluster_graduation_properties
         self.private_endpoint_connections = None
         self.migration_cluster = None
+        self.zone_status = None
 
 
 class ClusterCheckNameRequest(_serialization.Model):
@@ -880,7 +983,7 @@ class ClusterCheckNameRequest(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Cluster name. Required.
     :vartype name: str
@@ -933,7 +1036,7 @@ class ClusterListResult(_serialization.Model):
 class ClusterMigrateRequest(_serialization.Model):
     """A cluster migrate request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar cluster_resource_id: Resource ID of the destination cluster or kusto pool. Required.
     :vartype cluster_resource_id: str
@@ -956,13 +1059,13 @@ class ClusterMigrateRequest(_serialization.Model):
         self.cluster_resource_id = cluster_resource_id
 
 
-class ClusterPrincipalAssignment(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class ClusterPrincipalAssignment(ProxyResource):
     """Class representing a cluster principal assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -972,8 +1075,8 @@ class ClusterPrincipalAssignment(ProxyResource):  # pylint: disable=too-many-ins
     :ivar principal_id: The principal ID assigned to the cluster principal. It can be a user email,
      application ID, or security group name.
     :vartype principal_id: str
-    :ivar role: Cluster principal role. Known values are: "AllDatabasesAdmin" and
-     "AllDatabasesViewer".
+    :ivar role: Cluster principal role. Known values are: "AllDatabasesAdmin",
+     "AllDatabasesViewer", and "AllDatabasesMonitor".
     :vartype role: str or ~azure.mgmt.kusto.models.ClusterPrincipalRole
     :ivar tenant_id: The tenant id of the principal.
     :vartype tenant_id: str
@@ -1027,8 +1130,8 @@ class ClusterPrincipalAssignment(ProxyResource):  # pylint: disable=too-many-ins
         :keyword principal_id: The principal ID assigned to the cluster principal. It can be a user
          email, application ID, or security group name.
         :paramtype principal_id: str
-        :keyword role: Cluster principal role. Known values are: "AllDatabasesAdmin" and
-         "AllDatabasesViewer".
+        :keyword role: Cluster principal role. Known values are: "AllDatabasesAdmin",
+         "AllDatabasesViewer", and "AllDatabasesMonitor".
         :paramtype role: str or ~azure.mgmt.kusto.models.ClusterPrincipalRole
         :keyword tenant_id: The tenant id of the principal.
         :paramtype tenant_id: str
@@ -1046,12 +1149,12 @@ class ClusterPrincipalAssignment(ProxyResource):  # pylint: disable=too-many-ins
         self.aad_object_id = None
 
 
-class ClusterPrincipalAssignmentCheckNameRequest(_serialization.Model):
+class ClusterPrincipalAssignmentCheckNameRequest(_serialization.Model):  # pylint: disable=name-too-long
     """A principal assignment check name availability request.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Principal Assignment resource name. Required.
     :vartype name: str
@@ -1101,13 +1204,13 @@ class ClusterPrincipalAssignmentListResult(_serialization.Model):
         self.value = value
 
 
-class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
+class ClusterUpdate(Resource):
     """Class representing an update to a Kusto cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1178,6 +1281,8 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar allowed_fqdn_list: List of allowed FQDNs(Fully Qualified Domain Name) for egress from
      Cluster.
     :vartype allowed_fqdn_list: list[str]
+    :ivar callout_policies: List of callout policies for egress from Cluster.
+    :vartype callout_policies: list[~azure.mgmt.kusto.models.CalloutPolicy]
     :ivar public_ip_type: Indicates what public IP type to create - IPv4 (default), or DualStack
      (both IPv4 and IPv6). Known values are: "IPv4" and "DualStack".
     :vartype public_ip_type: str or ~azure.mgmt.kusto.models.PublicIPType
@@ -1188,6 +1293,9 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar migration_cluster: Properties of the peer cluster involved in a migration to/from this
      cluster.
     :vartype migration_cluster: ~azure.mgmt.kusto.models.MigrationClusterProperties
+    :ivar zone_status: Indicates whether the cluster is zonal or non-zonal. Known values are:
+     "NonZonal", "ZonalInconsistency", and "Zonal".
+    :vartype zone_status: str or ~azure.mgmt.kusto.models.ZoneStatus
     """
 
     _validation = {
@@ -1201,6 +1309,7 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
         "state_reason": {"readonly": True},
         "private_endpoint_connections": {"readonly": True},
         "migration_cluster": {"readonly": True},
+        "zone_status": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1236,6 +1345,7 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
         "enable_auto_stop": {"key": "properties.enableAutoStop", "type": "bool"},
         "restrict_outbound_network_access": {"key": "properties.restrictOutboundNetworkAccess", "type": "str"},
         "allowed_fqdn_list": {"key": "properties.allowedFqdnList", "type": "[str]"},
+        "callout_policies": {"key": "properties.calloutPolicies", "type": "[CalloutPolicy]"},
         "public_ip_type": {"key": "properties.publicIPType", "type": "str"},
         "virtual_cluster_graduation_properties": {
             "key": "properties.virtualClusterGraduationProperties",
@@ -1246,6 +1356,7 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
             "type": "[PrivateEndpointConnection]",
         },
         "migration_cluster": {"key": "properties.migrationCluster", "type": "MigrationClusterProperties"},
+        "zone_status": {"key": "properties.zoneStatus", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -1272,6 +1383,7 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
         enable_auto_stop: bool = True,
         restrict_outbound_network_access: Union[str, "_models.ClusterNetworkAccessFlag"] = "Disabled",
         allowed_fqdn_list: Optional[List[str]] = None,
+        callout_policies: Optional[List["_models.CalloutPolicy"]] = None,
         public_ip_type: Union[str, "_models.PublicIPType"] = "IPv4",
         virtual_cluster_graduation_properties: Optional[str] = None,
         **kwargs: Any
@@ -1330,6 +1442,8 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
         :keyword allowed_fqdn_list: List of allowed FQDNs(Fully Qualified Domain Name) for egress from
          Cluster.
         :paramtype allowed_fqdn_list: list[str]
+        :keyword callout_policies: List of callout policies for egress from Cluster.
+        :paramtype callout_policies: list[~azure.mgmt.kusto.models.CalloutPolicy]
         :keyword public_ip_type: Indicates what public IP type to create - IPv4 (default), or DualStack
          (both IPv4 and IPv6). Known values are: "IPv4" and "DualStack".
         :paramtype public_ip_type: str or ~azure.mgmt.kusto.models.PublicIPType
@@ -1363,13 +1477,17 @@ class ClusterUpdate(Resource):  # pylint: disable=too-many-instance-attributes
         self.enable_auto_stop = enable_auto_stop
         self.restrict_outbound_network_access = restrict_outbound_network_access
         self.allowed_fqdn_list = allowed_fqdn_list
+        self.callout_policies = callout_policies
         self.public_ip_type = public_ip_type
         self.virtual_cluster_graduation_properties = virtual_cluster_graduation_properties
         self.private_endpoint_connections = None
         self.migration_cluster = None
+        self.zone_status = None
 
 
-class ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties(_serialization.Model):
+class ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1405,10 +1523,10 @@ class DataConnection(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1456,15 +1574,15 @@ class DataConnection(ProxyResource):
         self.kind: Optional[str] = None
 
 
-class CosmosDbDataConnection(DataConnection):  # pylint: disable=too-many-instance-attributes
+class CosmosDbDataConnection(DataConnection):
     """Class representing a CosmosDb data connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1585,10 +1703,10 @@ class Database(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1632,7 +1750,7 @@ class Database(ProxyResource):
 class DatabaseInviteFollowerRequest(_serialization.Model):
     """The request to invite a follower to a database.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar invitee_email: The email of the invited user for which the follower invitation is
      generated. Required.
@@ -1722,7 +1840,7 @@ class DatabasePrincipal(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar role: Database principal role. Required. Known values are: "Admin", "Ingestor",
      "Monitor", "User", "UnrestrictedViewer", and "Viewer".
@@ -1794,13 +1912,13 @@ class DatabasePrincipal(_serialization.Model):
         self.tenant_name = None
 
 
-class DatabasePrincipalAssignment(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class DatabasePrincipalAssignment(ProxyResource):
     """Class representing a database principal assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1884,12 +2002,12 @@ class DatabasePrincipalAssignment(ProxyResource):  # pylint: disable=too-many-in
         self.aad_object_id = None
 
 
-class DatabasePrincipalAssignmentCheckNameRequest(_serialization.Model):
+class DatabasePrincipalAssignmentCheckNameRequest(_serialization.Model):  # pylint: disable=name-too-long
     """A principal assignment check name availability request.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Principal Assignment resource name. Required.
     :vartype name: str
@@ -2004,7 +2122,7 @@ class DataConnectionCheckNameRequest(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Data Connection name. Required.
     :vartype name: str
@@ -2298,15 +2416,15 @@ class ErrorResponse(_serialization.Model):
         self.error = error
 
 
-class EventGridDataConnection(DataConnection):  # pylint: disable=too-many-instance-attributes
+class EventGridDataConnection(DataConnection):
     """Class representing an Event Grid data connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2460,15 +2578,15 @@ class EventGridDataConnection(DataConnection):  # pylint: disable=too-many-insta
         self.provisioning_state = None
 
 
-class EventHubDataConnection(DataConnection):  # pylint: disable=too-many-instance-attributes
+class EventHubDataConnection(DataConnection):
     """Class representing an event hub data connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2619,7 +2737,7 @@ class FollowerDatabaseDefinition(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar cluster_resource_id: Resource id of the cluster that follows a database owned by this
      cluster. Required.
@@ -2670,6 +2788,67 @@ class FollowerDatabaseDefinition(_serialization.Model):
         self.database_share_origin = None
 
 
+class FollowerDatabaseDefinitionGet(_serialization.Model):
+    """A class representing follower database object.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar cluster_resource_id: Resource id of the cluster that follows a database owned by this
+     cluster.
+    :vartype cluster_resource_id: str
+    :ivar attached_database_configuration_name: Resource name of the attached database
+     configuration in the follower cluster.
+    :vartype attached_database_configuration_name: str
+    :ivar database_name: The database name owned by this cluster that was followed. * in case
+     following all databases.
+    :vartype database_name: str
+    :ivar table_level_sharing_properties: Table level sharing specifications.
+    :vartype table_level_sharing_properties: ~azure.mgmt.kusto.models.TableLevelSharingProperties
+    :ivar database_share_origin: The origin of the following setup. Known values are: "Direct",
+     "DataShare", and "Other".
+    :vartype database_share_origin: str or ~azure.mgmt.kusto.models.DatabaseShareOrigin
+    """
+
+    _validation = {
+        "database_name": {"readonly": True},
+        "table_level_sharing_properties": {"readonly": True},
+        "database_share_origin": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "cluster_resource_id": {"key": "properties.clusterResourceId", "type": "str"},
+        "attached_database_configuration_name": {"key": "properties.attachedDatabaseConfigurationName", "type": "str"},
+        "database_name": {"key": "properties.databaseName", "type": "str"},
+        "table_level_sharing_properties": {
+            "key": "properties.tableLevelSharingProperties",
+            "type": "TableLevelSharingProperties",
+        },
+        "database_share_origin": {"key": "properties.databaseShareOrigin", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        cluster_resource_id: Optional[str] = None,
+        attached_database_configuration_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword cluster_resource_id: Resource id of the cluster that follows a database owned by this
+         cluster.
+        :paramtype cluster_resource_id: str
+        :keyword attached_database_configuration_name: Resource name of the attached database
+         configuration in the follower cluster.
+        :paramtype attached_database_configuration_name: str
+        """
+        super().__init__(**kwargs)
+        self.cluster_resource_id = cluster_resource_id
+        self.attached_database_configuration_name = attached_database_configuration_name
+        self.database_name = None
+        self.table_level_sharing_properties = None
+        self.database_share_origin = None
+
+
 class FollowerDatabaseListResult(_serialization.Model):
     """The list Kusto database principals operation response.
 
@@ -2690,12 +2869,46 @@ class FollowerDatabaseListResult(_serialization.Model):
         self.value = value
 
 
+class FollowerDatabaseListResultGet(_serialization.Model):
+    """The list Kusto database principals operation response.
+
+    :ivar value: The list of follower database result.
+    :vartype value: list[~azure.mgmt.kusto.models.FollowerDatabaseDefinitionGet]
+    :ivar next_link: The URL to get the next set of follower databases list results if there are
+     any.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[FollowerDatabaseDefinitionGet]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.FollowerDatabaseDefinitionGet"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The list of follower database result.
+        :paramtype value: list[~azure.mgmt.kusto.models.FollowerDatabaseDefinitionGet]
+        :keyword next_link: The URL to get the next set of follower databases list results if there are
+         any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class Identity(_serialization.Model):
     """Identity for the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar principal_id: The principal ID of resource identity.
     :vartype principal_id: str
@@ -2708,7 +2921,7 @@ class Identity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.kusto.models.IdentityType
     :ivar user_assigned_identities: The list of user identities associated with the Kusto cluster.
      The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.kusto.models.ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties]
     """
@@ -2746,7 +2959,7 @@ class Identity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.kusto.models.IdentityType
         :keyword user_assigned_identities: The list of user identities associated with the Kusto
          cluster. The user identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.kusto.models.ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties]
         """
@@ -2757,15 +2970,15 @@ class Identity(_serialization.Model):
         self.user_assigned_identities = user_assigned_identities
 
 
-class IotHubDataConnection(DataConnection):  # pylint: disable=too-many-instance-attributes
+class IotHubDataConnection(DataConnection):
     """Class representing an iot hub data connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2948,7 +3161,8 @@ class LanguageExtension(_serialization.Model):
     :ivar language_extension_name: The language extension name. Known values are: "PYTHON" and "R".
     :vartype language_extension_name: str or ~azure.mgmt.kusto.models.LanguageExtensionName
     :ivar language_extension_image_name: The language extension image name. Known values are: "R",
-     "Python3_6_5", "Python3_10_8", "Python3_10_8_DL", and "PythonCustomImage".
+     "Python3_6_5", "Python3_10_8", "Python3_10_8_DL", "PythonCustomImage", "Python3_11_7", and
+     "Python3_11_7_DL".
     :vartype language_extension_image_name: str or
      ~azure.mgmt.kusto.models.LanguageExtensionImageName
     :ivar language_extension_custom_image_name: The language extension custom image name.
@@ -2974,7 +3188,8 @@ class LanguageExtension(_serialization.Model):
          "R".
         :paramtype language_extension_name: str or ~azure.mgmt.kusto.models.LanguageExtensionName
         :keyword language_extension_image_name: The language extension image name. Known values are:
-         "R", "Python3_6_5", "Python3_10_8", "Python3_10_8_DL", and "PythonCustomImage".
+         "R", "Python3_6_5", "Python3_10_8", "Python3_10_8_DL", "PythonCustomImage", "Python3_11_7", and
+         "Python3_11_7_DL".
         :paramtype language_extension_image_name: str or
          ~azure.mgmt.kusto.models.LanguageExtensionImageName
         :keyword language_extension_custom_image_name: The language extension custom image name.
@@ -3032,7 +3247,7 @@ class ManagedPrivateEndpoint(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3131,7 +3346,7 @@ class ManagedPrivateEndpointsCheckNameRequest(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Managed private endpoint resource name. Required.
     :vartype name: str
@@ -3322,7 +3537,7 @@ class OperationListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class OperationResult(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class OperationResult(_serialization.Model):
     """Operation Result Entity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3420,7 +3635,7 @@ class OperationResult(_serialization.Model):  # pylint: disable=too-many-instanc
 class OptimizedAutoscale(_serialization.Model):
     """A class that contains the optimized auto scale definition.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar version: The version of the template defined, for instance 1. Required.
     :vartype version: int
@@ -3473,7 +3688,7 @@ class OutboundNetworkDependenciesEndpoint(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3531,12 +3746,12 @@ class OutboundNetworkDependenciesEndpoint(ProxyResource):
         self.provisioning_state = None
 
 
-class OutboundNetworkDependenciesEndpointListResult(_serialization.Model):
+class OutboundNetworkDependenciesEndpointListResult(_serialization.Model):  # pylint: disable=name-too-long
     """Collection of Outbound Environment Endpoints.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Collection of resources. Required.
     :vartype value: list[~azure.mgmt.kusto.models.OutboundNetworkDependenciesEndpoint]
@@ -3570,7 +3785,7 @@ class PrivateEndpointConnection(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3684,7 +3899,7 @@ class PrivateLinkResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3750,7 +3965,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
         self.value = value
 
 
-class PrivateLinkServiceConnectionStateProperty(_serialization.Model):
+class PrivateLinkServiceConnectionStateProperty(_serialization.Model):  # pylint: disable=name-too-long
     """Connection State of the Private Endpoint Connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3787,15 +4002,15 @@ class PrivateLinkServiceConnectionStateProperty(_serialization.Model):
         self.actions_required = None
 
 
-class ReadOnlyFollowingDatabase(Database):  # pylint: disable=too-many-instance-attributes
+class ReadOnlyFollowingDatabase(Database):
     """Class representing a read only following database.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3903,15 +4118,15 @@ class ReadOnlyFollowingDatabase(Database):  # pylint: disable=too-many-instance-
         self.suspension_details = None
 
 
-class ReadWriteDatabase(Database):  # pylint: disable=too-many-instance-attributes
+class ReadWriteDatabase(Database):
     """Class representing a read write database.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4063,7 +4278,7 @@ class SandboxCustomImage(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4072,8 +4287,13 @@ class SandboxCustomImage(ProxyResource):
     :vartype type: str
     :ivar language: The language name, for example Python. "Python"
     :vartype language: str or ~azure.mgmt.kusto.models.Language
-    :ivar language_version: The version of the language.
+    :ivar language_version: The version of the language. Either this property or baseImageName
+     should be specified.
     :vartype language_version: str
+    :ivar base_image_name: The base image name on which the custom image is built on top of. It can
+     be one of the LanguageExtensionImageName (e.g.: 'Python3_10_8', 'Python3_10_8_DL') or the name
+     of an existing custom image. Either this property or languageVersion should be specified.
+    :vartype base_image_name: str
     :ivar requirements_file_content: The requirements file content.
     :vartype requirements_file_content: str
     :ivar provisioning_state: The provisioned state of the resource. Known values are: "Running",
@@ -4094,6 +4314,7 @@ class SandboxCustomImage(ProxyResource):
         "type": {"key": "type", "type": "str"},
         "language": {"key": "properties.language", "type": "str"},
         "language_version": {"key": "properties.languageVersion", "type": "str"},
+        "base_image_name": {"key": "properties.baseImageName", "type": "str"},
         "requirements_file_content": {"key": "properties.requirementsFileContent", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
@@ -4103,20 +4324,27 @@ class SandboxCustomImage(ProxyResource):
         *,
         language: Optional[Union[str, "_models.Language"]] = None,
         language_version: Optional[str] = None,
+        base_image_name: Optional[str] = None,
         requirements_file_content: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword language: The language name, for example Python. "Python"
         :paramtype language: str or ~azure.mgmt.kusto.models.Language
-        :keyword language_version: The version of the language.
+        :keyword language_version: The version of the language. Either this property or baseImageName
+         should be specified.
         :paramtype language_version: str
+        :keyword base_image_name: The base image name on which the custom image is built on top of. It
+         can be one of the LanguageExtensionImageName (e.g.: 'Python3_10_8', 'Python3_10_8_DL') or the
+         name of an existing custom image. Either this property or languageVersion should be specified.
+        :paramtype base_image_name: str
         :keyword requirements_file_content: The requirements file content.
         :paramtype requirements_file_content: str
         """
         super().__init__(**kwargs)
         self.language = language
         self.language_version = language_version
+        self.base_image_name = base_image_name
         self.requirements_file_content = requirements_file_content
         self.provisioning_state = None
 
@@ -4126,7 +4354,7 @@ class SandboxCustomImagesCheckNameRequest(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Sandbox custom image resource name. Required.
     :vartype name: str
@@ -4194,7 +4422,7 @@ class Script(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4220,6 +4448,14 @@ class Script(ProxyResource):
     :ivar provisioning_state: The provisioned state of the resource. Known values are: "Running",
      "Creating", "Deleting", "Succeeded", "Failed", "Moving", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.kusto.models.ProvisioningState
+    :ivar script_level: Differentiates between the type of script commands included - Database or
+     Cluster. The default is Database. Known values are: "Database" and "Cluster".
+    :vartype script_level: str or ~azure.mgmt.kusto.models.ScriptLevel
+    :ivar principal_permissions_action: Indicates if the permissions for the script caller are kept
+     following completion of the script. Known values are: "RetainPermissionOnScriptCompletion" and
+     "RemovePermissionOnScriptCompletion".
+    :vartype principal_permissions_action: str or
+     ~azure.mgmt.kusto.models.PrincipalPermissionsAction
     """
 
     _validation = {
@@ -4241,6 +4477,8 @@ class Script(ProxyResource):
         "force_update_tag": {"key": "properties.forceUpdateTag", "type": "str"},
         "continue_on_errors": {"key": "properties.continueOnErrors", "type": "bool"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "script_level": {"key": "properties.scriptLevel", "type": "str"},
+        "principal_permissions_action": {"key": "properties.principalPermissionsAction", "type": "str"},
     }
 
     def __init__(
@@ -4251,6 +4489,8 @@ class Script(ProxyResource):
         script_content: Optional[str] = None,
         force_update_tag: Optional[str] = None,
         continue_on_errors: bool = False,
+        script_level: Optional[Union[str, "_models.ScriptLevel"]] = None,
+        principal_permissions_action: Optional[Union[str, "_models.PrincipalPermissionsAction"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4269,6 +4509,14 @@ class Script(ProxyResource):
         :keyword continue_on_errors: Flag that indicates whether to continue if one of the command
          fails.
         :paramtype continue_on_errors: bool
+        :keyword script_level: Differentiates between the type of script commands included - Database
+         or Cluster. The default is Database. Known values are: "Database" and "Cluster".
+        :paramtype script_level: str or ~azure.mgmt.kusto.models.ScriptLevel
+        :keyword principal_permissions_action: Indicates if the permissions for the script caller are
+         kept following completion of the script. Known values are: "RetainPermissionOnScriptCompletion"
+         and "RemovePermissionOnScriptCompletion".
+        :paramtype principal_permissions_action: str or
+         ~azure.mgmt.kusto.models.PrincipalPermissionsAction
         """
         super().__init__(**kwargs)
         self.system_data = None
@@ -4278,6 +4526,8 @@ class Script(ProxyResource):
         self.force_update_tag = force_update_tag
         self.continue_on_errors = continue_on_errors
         self.provisioning_state = None
+        self.script_level = script_level
+        self.principal_permissions_action = principal_permissions_action
 
 
 class ScriptCheckNameRequest(_serialization.Model):
@@ -4285,7 +4535,7 @@ class ScriptCheckNameRequest(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Script name. Required.
     :vartype name: str
@@ -4409,7 +4659,7 @@ class SkuDescriptionList(_serialization.Model):
 class SkuLocationInfoItem(_serialization.Model):
     """The locations and zones info for SKU.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: The available location of the SKU. Required.
     :vartype location: str
@@ -4640,7 +4890,7 @@ class TrustedExternalTenant(_serialization.Model):
 class VirtualNetworkConfiguration(_serialization.Model):
     """A class that contains virtual network definition.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar subnet_id: The subnet resource id. Required.
     :vartype subnet_id: str
