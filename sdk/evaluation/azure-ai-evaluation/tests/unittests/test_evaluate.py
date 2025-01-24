@@ -118,6 +118,8 @@ def _target_fn2(query):
     response["query"] = f"The query is as follows: {query}"
     return response
 
+def _target_that_fails(query):
+    raise Exception("I am failing")
 
 def _new_answer_target():
     return {"response": "new response"}
@@ -830,3 +832,13 @@ class TestEvaluate:
             )
 
         assert "Either 'conversation' or individual inputs must be provided." in str(exc_info.value)
+
+    def test_target_failure_error_message(self, questions_file):
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluate(
+                data=questions_file,
+                evaluators={"f1_score": F1ScoreEvaluator()},
+                target=_target_that_fails,
+            )
+
+        assert "Evaluation target failed to produce any results. Please check the logs at " in str(exc_info.value)
