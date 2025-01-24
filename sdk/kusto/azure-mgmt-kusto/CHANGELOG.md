@@ -1,6 +1,6 @@
 # Release History
 
-## 3.4.0 (2024-12-22)
+## 3.4.0 (2024-01-24)
 
 ### Features Added
 
@@ -28,43 +28,6 @@
   - Model `ClustersOperations` added method `begin_remove_callout_policy`
   - Model `ClustersOperations` added method `list_callout_policies`
   - Model `ClustersOperations` added method `list_follower_databases_get`
-  - Method `AttachedDatabaseConfigurationsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, cluster_name: str, attached_database_configuration_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `AttachedDatabaseConfigurationsOperations.check_name_availability` has a new overload `def check_name_availability(self: None, resource_group_name: str, cluster_name: str, resource_name: IO[bytes], content_type: str)`
-  - Method `ClusterPrincipalAssignmentsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, cluster_name: str, principal_assignment_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `ClusterPrincipalAssignmentsOperations.check_name_availability` has a new overload `def check_name_availability(self: None, resource_group_name: str, cluster_name: str, principal_assignment_name: IO[bytes], content_type: str)`
-  - Method `ClustersOperations.begin_add_language_extensions` has a new overload `def begin_add_language_extensions(self: None, resource_group_name: str, cluster_name: str, language_extensions_to_add: IO[bytes], content_type: str)`
-  - Method `ClustersOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, cluster_name: str, parameters: IO[bytes], if_match: Optional[str], if_none_match: Optional[str], content_type: str)`
-  - Method `ClustersOperations.begin_detach_follower_databases` has a new overload `def begin_detach_follower_databases(self: None, resource_group_name: str, cluster_name: str, follower_database_to_remove: IO[bytes], content_type: str)`
-  - Method `ClustersOperations.begin_migrate` has a new overload `def begin_migrate(self: None, resource_group_name: str, cluster_name: str, cluster_migrate_request: IO[bytes], content_type: str)`
-  - Method `ClustersOperations.begin_remove_language_extensions` has a new overload `def begin_remove_language_extensions(self: None, resource_group_name: str, cluster_name: str, language_extensions_to_remove: IO[bytes], content_type: str)`
-  - Method `ClustersOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, cluster_name: str, parameters: IO[bytes], if_match: Optional[str], content_type: str)`
-  - Method `ClustersOperations.check_name_availability` has a new overload `def check_name_availability(self: None, location: str, cluster_name: IO[bytes], content_type: str)`
-  - Method `ClustersOperations.begin_add_callout_policies` has a new overload `def begin_add_callout_policies(self: None, resource_group_name: str, cluster_name: str, callout_policies: CalloutPoliciesList, content_type: str)`
-  - Method `ClustersOperations.begin_add_callout_policies` has a new overload `def begin_add_callout_policies(self: None, resource_group_name: str, cluster_name: str, callout_policies: IO[bytes], content_type: str)`
-  - Method `ClustersOperations.begin_remove_callout_policy` has a new overload `def begin_remove_callout_policy(self: None, resource_group_name: str, cluster_name: str, callout_policy: CalloutPolicyToRemove, content_type: str)`
-  - Method `ClustersOperations.begin_remove_callout_policy` has a new overload `def begin_remove_callout_policy(self: None, resource_group_name: str, cluster_name: str, callout_policy: IO[bytes], content_type: str)`
-  - Method `DataConnectionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, cluster_name: str, database_name: str, data_connection_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `DataConnectionsOperations.begin_data_connection_validation` has a new overload `def begin_data_connection_validation(self: None, resource_group_name: str, cluster_name: str, database_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `DataConnectionsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, cluster_name: str, database_name: str, data_connection_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `DataConnectionsOperations.check_name_availability` has a new overload `def check_name_availability(self: None, resource_group_name: str, cluster_name: str, database_name: str, data_connection_name: IO[bytes], content_type: str)`
-  - Method `DatabaseOperations.invite_follower` has a new overload `def invite_follower(self: None, resource_group_name: str, cluster_name: str, database_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `DatabasePrincipalAssignmentsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, cluster_name: str, database_name: str, principal_assignment_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `DatabasePrincipalAssignmentsOperations.check_name_availability` has a new overload `def check_name_availability(self: None, resource_group_name: str, cluster_name: str, database_name: str, principal_assignment_name: IO[bytes], content_type: str)`
-  - Method `DatabasesOperations.add_principals` has a new overload `def add_principals(self: None, resource_group_name: str, cluster_name: str, database_name: str, database_principals_to_add: IO[bytes], content_type: str)`
-  - Method `DatabasesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, cluster_name: str, database_name: str, parameters: IO[bytes], caller_role: Union[str, CallerRole], content_type: str)`
-  - Method `DatabasesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, cluster_name: str, database_name: str, parameters: IO[bytes], caller_role: Union[str, CallerRole], content_type: str)`
-  - Method `DatabasesOperations.check_name_availability` has a new overload `def check_name_availability(self: None, resource_group_name: str, cluster_name: str, resource_name: IO[bytes], content_type: str)`
-  - Method `DatabasesOperations.remove_principals` has a new overload `def remove_principals(self: None, resource_group_name: str, cluster_name: str, database_name: str, database_principals_to_remove: IO[bytes], content_type: str)`
-  - Method `ManagedPrivateEndpointsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, cluster_name: str, managed_private_endpoint_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `ManagedPrivateEndpointsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, cluster_name: str, managed_private_endpoint_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `ManagedPrivateEndpointsOperations.check_name_availability` has a new overload `def check_name_availability(self: None, resource_group_name: str, cluster_name: str, resource_name: IO[bytes], content_type: str)`
-  - Method `PrivateEndpointConnectionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, cluster_name: str, private_endpoint_connection_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `SandboxCustomImagesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, cluster_name: str, sandbox_custom_image_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `SandboxCustomImagesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, cluster_name: str, sandbox_custom_image_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `SandboxCustomImagesOperations.check_name_availability` has a new overload `def check_name_availability(self: None, resource_group_name: str, cluster_name: str, resource_name: IO[bytes], content_type: str)`
-  - Method `ScriptsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, cluster_name: str, database_name: str, script_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `ScriptsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, cluster_name: str, database_name: str, script_name: str, parameters: IO[bytes], content_type: str)`
-  - Method `ScriptsOperations.check_name_availability` has a new overload `def check_name_availability(self: None, resource_group_name: str, cluster_name: str, database_name: str, script_name: IO[bytes], content_type: str)`
 
 ## 3.3.0 (2023-10-23)
 
