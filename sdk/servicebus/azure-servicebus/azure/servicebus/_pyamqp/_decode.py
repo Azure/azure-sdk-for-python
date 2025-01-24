@@ -6,6 +6,7 @@
 import struct
 import uuid
 import logging
+import decimal
 from typing import (
     Callable,
     List,
@@ -146,6 +147,39 @@ def _decode_binary_large(buffer: memoryview) -> Tuple[memoryview, bytes]:
     length_index = c_unsigned_long.unpack(buffer[:4])[0] + 4
     return buffer[length_index:], buffer[4:length_index].tobytes()
 
+DECIMAL128_BIAS = 6176
+
+def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]:
+    dec_value = bytearray(buffer[:16])
+
+    sign = 1 if dec_value[0] & 0x80 else 0
+    exponent = 0
+
+    if dec_value[0] & 0x60 != 0x60:
+        exponent = ((dec_value[0] & 0x7F) << 9) | ((dec_value[1] & 0xFE) >> 1)
+        dec_value[0] = 0
+        dec_value[1] &= 0x01
+    elif dec_value[0] & 0x78 != 0:
+        return buffer[16:], decimal.Decimal('NaN') if (dec_value[0] & 0x78) == 0x78 else decimal.Decimal('-Infinity')
+    else:
+        return buffer[16:], decimal.Decimal(0)
+    
+    hi = c_unsigned_int.unpack(dec_value[4:8])[0]
+    middle = c_unsigned_int.unpack(dec_value[8:12])[0]
+    lo = c_unsigned_int.unpack(dec_value[12:16])[0]
+    digits = tuple(int(digit) for digit in f"{hi:08}{middle:08}{lo:08}".lstrip('0'))
+    return buffer[16:], decimal.Decimal((sign, digits, exponent - DECIMAL128_BIAS)) #create_decimal(digits, sign, exponent - DECIMAL128_BIAS)
+
+def create_decimal(digits: Tuple[int,...], sign: int, exponent: int) -> decimal.Decimal:
+    if exponent <= 0:
+        exponent = abs(exponent)
+        return decimal.Decimal((sign,digits, -1 * (exponent%256)))
+
+    value = decimal.Decimal((sign, digits, 0))
+    return value * (10 ** exponent)
+
+
+
 
 def _decode_list_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = buffer[1]
@@ -231,6 +265,7 @@ def decode_payload(buffer: memoryview) -> Message:
         # described type then ulong.
         descriptor = buffer[2]
         buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[3]](buffer[4:])
+            
         if descriptor == 112:
             message["header"] = Header(*value)
         elif descriptor == 113:
@@ -315,6 +350,7 @@ _DECODE_BY_CONSTRUCTOR[128] = _decode_ulong_large
 _DECODE_BY_CONSTRUCTOR[129] = _decode_long_large
 _DECODE_BY_CONSTRUCTOR[130] = _decode_double
 _DECODE_BY_CONSTRUCTOR[131] = _decode_timestamp
+_DECODE_BY_CONSTRUCTOR[148] = _decode_decimal128
 _DECODE_BY_CONSTRUCTOR[152] = _decode_uuid
 _DECODE_BY_CONSTRUCTOR[160] = _decode_binary_small
 _DECODE_BY_CONSTRUCTOR[161] = _decode_binary_small
