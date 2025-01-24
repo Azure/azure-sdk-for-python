@@ -37,20 +37,33 @@ class EndpointOperationType(object):
     WriteType = "Write"
 
 
-def get_endpoint_by_location(locations):
+def get_endpoint_by_location(new_locations, old_endpoints_by_location):
+    # construct from previous object
+    print(old_endpoints_by_location)
     endpoints_by_location = collections.OrderedDict()
     parsed_locations = []
 
-    for location in locations:
-        if not location["name"]:
-            # during fail-over the location name is empty
-            continue
-        try:
-            region_uri = location["databaseAccountEndpoint"]
-            parsed_locations.append(location["name"])
-            endpoints_by_location.update({location["name"]: region_uri})
-        except Exception as e:
-            raise e
+
+    for new_location in new_locations:
+        if new_location in old_endpoints_by_location:
+            if not new_location["name"]:
+                # during fail-over the location name is empty
+                continue
+            try:
+                region_uri = new_location["databaseAccountEndpoint"]
+                parsed_locations.append(new_location["name"])
+                if old_endpoints_by_location[new_location["name"]]:
+                    regional_object = old_endpoints_by_location[new_location["name"]]
+                    regional_object.set_current(region_uri)
+                else:
+                    regional_object = RegionalEndpoint(region_uri)
+
+                endpoints_by_location.update({new_location["name"]: regional_object}) # pass in object with region uri , last known good, curr etc
+
+
+            except Exception as e:
+                raise e
+
 
     return endpoints_by_location, parsed_locations
 
@@ -170,7 +183,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     return True
 
             if not self.can_use_multiple_write_locations():
-                if self.is_endpoint_unavailable(self.write_endpoints[0], EndpointOperationType.WriteType):
+                if self.is_endpoint_unavailable(self.write_endpoints[0].get_current(), EndpointOperationType.WriteType):
+                    # same logic as other
                     # Since most preferred write endpoint is unavailable, we can only refresh in background if
                     # we have an alternate write endpoint
                     return True
@@ -254,13 +268,17 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         if self.enable_endpoint_discovery:
             if read_locations:
                 self.available_read_endpoint_by_locations, self.available_read_locations = get_endpoint_by_location(  # pylint: disable=line-too-long
-                    read_locations
+                    read_locations,
+                    self.available_read_endpoint_by_locations
                 )
+                print(self.available_read_endpoint_by_locations)
 
             if write_locations:
                 self.available_write_endpoint_by_locations, self.available_write_locations = get_endpoint_by_location(  # pylint: disable=line-too-long
-                    write_locations
+                    write_locations,
+                    self.available_write_endpoint_by_locations
                 )
+                print(self.available_write_endpoint_by_locations)
 
         self.write_endpoints = self.get_preferred_available_endpoints(
             self.available_write_endpoint_by_locations,
@@ -294,12 +312,22 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     # can use multiple write locations, preferred locations list should be
                     # used for determining both read and write endpoints order.
                     for location in self.preferred_locations:
-                        endpoint = endpoints_by_location[location] if location in endpoints_by_location else None
-                        if endpoint:
-                            if self.is_endpoint_unavailable(endpoint, expected_available_operation):
-                                unavailable_endpoints.append(endpoint)
+                        regional_endpoints = endpoints_by_location[location] if location in endpoints_by_location else None
+                        if regional_endpoints:
+                            if regional_endpoints.get_previous():
+                                if self.is_endpoint_unavailable(regional_endpoints.get_current(), expected_available_operation) \
+                                    and self.is_endpoint_unavailable(regional_endpoints.get_previous(), expected_available_operation):
+                                    unavailable_endpoints.append(regional_endpoints.get_current())
+                                    unavailable_endpoints.append(regional_endpoints.get_previous())
+                                else:
+                                    endpoints.append(regional_endpoints.get_current())
+                                    endpoints.append(regional_endpoints.get_previous())
                             else:
-                                endpoints.append(endpoint)
+                                if self.is_endpoint_unavailable(regional_endpoints.get_current(), expected_available_operation):
+                                    unavailable_endpoints.append(regional_endpoints.get_current())
+                                else:
+                                    endpoints.append(regional_endpoints.get_current())
+
 
                 if not endpoints:
                     endpoints.append(fallback_endpoint)
@@ -327,3 +355,25 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 and request.operation_type == documents._OperationType.ExecuteJavaScript
             )
         )
+
+class RegionalEndpoint(object):
+    def __init__(self, endpoint: str):
+        self.current_endpoint = endpoint
+        self.previous_endpoint = None
+
+    def set_current(self, endpoint: str):
+        self.current_endpoint = endpoint
+
+    def set_previous(self, endpoint: str):
+        self.previous_endpoint = endpoint
+
+    def get_current(self):
+        return self.current_endpoint
+
+    def get_previous(self):
+        return self.previous_endpoint
+
+    def __str__(self):
+        # print out all of them
+        return self.endpoint
+

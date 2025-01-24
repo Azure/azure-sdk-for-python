@@ -2576,6 +2576,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             database_account._EnableMultipleWritableLocations = result[
                 Constants.EnableMultipleWritableLocations
             ]
+        # store current in database account
+
 
         self.UseMultipleWriteLocations = (
                 self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
