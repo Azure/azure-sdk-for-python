@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Support AAD for soverign clouds
+  ([#39168](https://github.com/Azure/azure-sdk-for-python/pull/39168))
+
 ### Breaking Changes
 
 ### Bugs Fixed
