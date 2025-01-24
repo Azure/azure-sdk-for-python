@@ -4,9 +4,14 @@ from os import environ
 import json
 import logging
 from time import time_ns
-from typing import Any, Dict, List, Sequence
+from typing import no_type_check, Any, Dict, List, Sequence
 from urllib.parse import urlparse
 
+from opentelemetry.semconv.attributes.client_attributes import CLIENT_ADDRESS
+from opentelemetry.semconv.attributes.http_attributes import (
+    HTTP_REQUEST_METHOD,
+    HTTP_RESPONSE_STATUS_CODE,
+)
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
 from opentelemetry.semconv._incubating.attributes import gen_ai_attributes
 from opentelemetry.sdk.resources import Resource
@@ -63,6 +68,28 @@ _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES = [
     "thread.",
     "fass.",
     "code.",
+]
+
+_STANDARD_OPENTELEMETRY_HTTP_ATTRIBUTES = [
+    "client.address",
+    "client.port",
+    "server.address",
+    "server.port",
+    "url.full",
+    "url.path",
+    "url.query",
+    "url.scheme",
+    "url.template",
+    "error.type",
+    "network.local.address",
+    "network.local.port",
+    "network.protocol.name",
+    "network.peer.address",
+    "network.peer.port",
+    "network.protocol.version",
+    "network.transport",
+    "user_agent.original",
+    "user_agent.synthetic.type",
 ]
 
 _STANDARD_AZURE_MONITOR_ATTRIBUTES = [
@@ -141,7 +168,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     def _span_to_envelope(self, span: ReadableSpan) -> TelemetryItem:
         envelope = _convert_span_to_envelope(span)
         envelope.instrumentation_key = self._instrumentation_key
-        return envelope
+        return envelope  # type: ignore
 
     def _span_events_to_envelopes(self, span: ReadableSpan) -> Sequence[TelemetryItem]:
         if not span or len(span.events) == 0:
@@ -179,6 +206,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
 # pylint: disable=too-many-branches
 # pylint: disable=protected-access
 # mypy: disable-error-code="assignment,attr-defined,index,operator,union-attr"
+@no_type_check
 def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
     # Update instrumentation bitmap if span was generated from instrumentation
     _check_instrumentation_span(span)
@@ -208,8 +236,9 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         )
         envelope.data = MonitorBase(base_data=data, base_type="RequestData")
         envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = span.name
-        if SpanAttributes.NET_PEER_IP in span.attributes:
-            envelope.tags[ContextTagKeys.AI_LOCATION_IP] = span.attributes[SpanAttributes.NET_PEER_IP]
+        location_ip = trace_utils._get_location_ip(span.attributes)
+        if location_ip:
+            envelope.tags[ContextTagKeys.AI_LOCATION_IP] = location_ip
         if _AZURE_SDK_NAMESPACE_NAME in span.attributes:  # Azure specific resources
             # Currently only eventhub and servicebus are supported (kind CONSUMER)
             data.source = trace_utils._get_azure_sdk_target_source(span.attributes)
@@ -222,21 +251,19 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                         difference = (start_time / 1000000) - enqueued_time
                         total += difference
                 data.measurements["timeSinceEnqueued"] = max(0, total / len(span.links))
-        elif SpanAttributes.HTTP_METHOD in span.attributes:  # HTTP
+        elif HTTP_REQUEST_METHOD in span.attributes or SpanAttributes.HTTP_METHOD in span.attributes:  # HTTP
             path = ""
-            if SpanAttributes.HTTP_USER_AGENT in span.attributes:
+            user_agent = trace_utils._get_user_agent(span.attributes)
+            if user_agent:
                 # TODO: Not exposed in Swagger, need to update def
-                envelope.tags["ai.user.userAgent"] = span.attributes[SpanAttributes.HTTP_USER_AGENT]
-            # http specific logic for ai.location.ip
-            if SpanAttributes.HTTP_CLIENT_IP in span.attributes:
-                envelope.tags[ContextTagKeys.AI_LOCATION_IP] = span.attributes[SpanAttributes.HTTP_CLIENT_IP]
+                envelope.tags["ai.user.userAgent"] = user_agent
             # url
             url = trace_utils._get_url_for_http_request(span.attributes)
             data.url = url
             # Http specific logic for ai.operation.name
             if SpanAttributes.HTTP_ROUTE in span.attributes:
                 envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = "{} {}".format(
-                    span.attributes[SpanAttributes.HTTP_METHOD],
+                    span.attributes.get(HTTP_REQUEST_METHOD) or span.attributes.get(SpanAttributes.HTTP_METHOD),
                     span.attributes[SpanAttributes.HTTP_ROUTE],
                 )
             elif url:
@@ -246,12 +273,13 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     if not path:
                         path = "/"
                     envelope.tags[ContextTagKeys.AI_OPERATION_NAME] = "{} {}".format(
-                        span.attributes[SpanAttributes.HTTP_METHOD],
+                        span.attributes.get(HTTP_REQUEST_METHOD) or span.attributes.get(SpanAttributes.HTTP_METHOD),
                         path,
                     )
                 except Exception:  # pylint: disable=broad-except
                     pass
-            status_code = span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
+            status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) \
+                or span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
             if status_code:
                 try:
                     status_code = int(status_code)  # type: ignore
@@ -263,12 +291,10 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             # Success criteria for server spans depends on span.success and the actual status code
             data.success = span.status.is_ok and status_code and status_code not in range(400, 500)
         elif SpanAttributes.MESSAGING_SYSTEM in span.attributes:  # Messaging
-            if SpanAttributes.NET_PEER_IP in span.attributes:
-                envelope.tags[ContextTagKeys.AI_LOCATION_IP] = span.attributes[SpanAttributes.NET_PEER_IP]
             if span.attributes.get(SpanAttributes.MESSAGING_DESTINATION):
-                if span.attributes.get(SpanAttributes.NET_PEER_NAME):
+                if span.attributes.get(CLIENT_ADDRESS) or span.attributes.get(SpanAttributes.NET_PEER_NAME):
                     data.source = "{}/{}".format(
-                        span.attributes.get(SpanAttributes.NET_PEER_NAME),
+                        span.attributes.get(CLIENT_ADDRESS) or span.attributes.get(SpanAttributes.NET_PEER_NAME),
                         span.attributes.get(SpanAttributes.MESSAGING_DESTINATION),
                     )
                 elif span.attributes.get(SpanAttributes.NET_PEER_IP):
@@ -515,7 +541,8 @@ def _is_standard_attribute(key: str) -> bool:
     for prefix in _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES:
         if key.startswith(prefix):
             return True
-    return key in _STANDARD_AZURE_MONITOR_ATTRIBUTES
+    return key in _STANDARD_AZURE_MONITOR_ATTRIBUTES or \
+        key in _STANDARD_OPENTELEMETRY_HTTP_ATTRIBUTES
 
 
 def _get_trace_export_result(result: ExportResult) -> SpanExportResult:
