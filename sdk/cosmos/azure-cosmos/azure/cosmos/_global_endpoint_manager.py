@@ -63,10 +63,10 @@ class _GlobalEndpointManager(object):
         return constants._Constants.DefaultUnavailableLocationExpirationTime
 
     def get_write_endpoint(self):
-        return self.location_cache.get_write_endpoint()
+        return self.location_cache.get_write_regional_endpoint()
 
     def get_read_endpoint(self):
-        return self.location_cache.get_read_endpoint()
+        return self.location_cache.get_read_regional_endpoint()
 
     def resolve_service_endpoint(self, request):
         return self.location_cache.resolve_service_endpoint(request)
@@ -77,11 +77,11 @@ class _GlobalEndpointManager(object):
     def mark_endpoint_unavailable_for_write(self, endpoint):
         self.location_cache.mark_endpoint_unavailable_for_write(endpoint)
 
-    def get_ordered_write_endpoints(self):
-        return self.location_cache.get_ordered_write_endpoints()
+    def get_ordered_write_locations(self):
+        return self.location_cache.get_ordered_write_locations()
 
-    def get_ordered_read_endpoints(self):
-        return self.location_cache.get_ordered_read_endpoints()
+    def get_ordered_read_locations(self):
+        return self.location_cache.get_ordered_read_locations()
 
     def can_use_multiple_write_locations(self, request):
         return self.location_cache.can_use_multiple_write_locations_for_request(request)
