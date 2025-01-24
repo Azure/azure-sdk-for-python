@@ -10,7 +10,7 @@ class ServiceRequestRetryPolicy(object):
     def __init__(self, connection_policy, global_endpoint_manager, *args):
         self.args = args
         self.global_endpoint_manager = global_endpoint_manager
-        self.total_retries = len(self.global_endpoint_manager.location_cache.read_endpoints)
+        self.total_retries = len(self.global_endpoint_manager.location_cache.read_regional_endpoints)
         self.in_region_retry_count = 0
         self.failover_retry_count = 0
         self.connection_policy = connection_policy
@@ -32,23 +32,26 @@ class ServiceRequestRetryPolicy(object):
         # We just failed on regional endpoint, let's mark it unavailable and send the cache refresh flag
         # Cache refresh flag should only be true if we have already tried both current and previous regional endpoints
         if self.request:
+            # This refresh cache logic is limited to only 2 regional endpoints being stored in location cache.
+            # This needs to be changed once we start receiving multiple regional endpoints for a single region.
+            refresh_cache = self.request.last_routed_location_endpoint_within_region is not None
             if self.location_endpoint:
                 if _OperationType.IsReadOnlyOperation(self.request.operation_type):
                     # Mark current read endpoint as unavailable
                     self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.location_endpoint,
-                                                                                    self.request.use_previous_endpoint_within_region)
+                                                                                    refresh_cache)
                 else:
                     self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.location_endpoint,
-                                                                                     self.request.use_previous_endpoint_within_region)
+                                                                                     refresh_cache)
 
         self.in_region_retry_count += 1
-        self.request.use_previous_endpoint_within_region = True
+        self.request.last_routed_location_endpoint_within_region = self.request.location_endpoint_to_route
         # The reason for this check is that we retry on
         # current and previous regional endpoint for every region before moving to next region
         if self.in_region_retry_count > 1:
             self.in_region_retry_count = 0
             self.failover_retry_count += 1
-            self.request.use_previous_endpoint_within_region = False
+            self.request.last_routed_location_endpoint_within_region = None
 
         if self.request:
             # clear previous location-based routing directive

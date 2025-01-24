@@ -16,6 +16,7 @@ class _TimeoutFailoverRetryPolicy(object):
         self.args = args
 
         self.global_endpoint_manager = global_endpoint_manager
+        self.in_region_retry_count = 0
         self.failover_retry_count = 0
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
@@ -49,7 +50,14 @@ class _TimeoutFailoverRetryPolicy(object):
         if self.failover_retry_count >= self._max_retry_attempt_count:
             return False
 
-        self.failover_retry_count += 1
+        self.in_region_retry_count += 1
+        self.request.last_routed_location_endpoint_within_region = self.request.location_endpoint_to_route
+        # The reason for this check is that we retry on
+        # current and previous regional endpoint for every region before moving to next region
+        if self.in_region_retry_count > 1:
+            self.in_region_retry_count = 0
+            self.failover_retry_count += 1
+            self.request.last_routed_location_endpoint_within_region = None
 
         if self.request:
             # clear previous location-based routing directive

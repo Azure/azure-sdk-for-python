@@ -37,9 +37,9 @@ class EndpointOperationType(object):
     WriteType = "Write"
 
 class RegionalEndpoint(object):
-    def __init__(self, endpoint: str):
-        self.current_endpoint = endpoint
-        self.previous_endpoint = None
+    def __init__(self, c_endpoint: str, p_endpoint: str):
+        self.current_endpoint = c_endpoint
+        self.previous_endpoint = p_endpoint
 
     def set_current(self, endpoint: str):
         self.current_endpoint = endpoint
@@ -61,6 +61,11 @@ class RegionalEndpoint(object):
         # print out all of them
         return self.endpoint
 
+    def swap(self):
+        temp = self.current_endpoint
+        self.current_endpoint = self.previous_endpoint
+        self.previous_endpoint = temp
+
 def get_endpoints_by_location(new_locations, old_endpoints_by_location):
     # construct from previous object
     print(old_endpoints_by_location)
@@ -79,12 +84,12 @@ def get_endpoints_by_location(new_locations, old_endpoints_by_location):
                 if new_location["name"] in old_endpoints_by_location:
                     regional_object = old_endpoints_by_location[new_location["name"]]
                     current = regional_object.get_current()
-                    # The aim is to always keep current and previous
+                    # The aim is to always keep current and previous uris different
                     if current != region_uri:
                         regional_object.set_previous(current)
                     regional_object.set_current(region_uri)
                 else:
-                    regional_object = RegionalEndpoint(region_uri)
+                    regional_object = RegionalEndpoint(region_uri, region_uri)
 
                 endpoints_by_location.update({new_location["name"]: regional_object}) # pass in object with region uri , last known good, curr etc
 
@@ -109,12 +114,12 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         refresh_time_interval_in_ms,
     ):
         self.preferred_locations = preferred_locations
-        self.default_endpoint = RegionalEndpoint(default_endpoint)
+        self.default_regional_endpoint = RegionalEndpoint(default_endpoint, default_endpoint)
         self.enable_endpoint_discovery = enable_endpoint_discovery
         self.use_multiple_write_locations = use_multiple_write_locations
         self.enable_multiple_writable_locations = False
-        self.write_regional_endpoints = [self.default_endpoint]
-        self.read_regional_endpoints = [self.default_endpoint]
+        self.write_regional_endpoints = [self.default_regional_endpoint]
+        self.read_regional_endpoints = [self.default_regional_endpoint]
         self.location_unavailability_info_by_endpoint = {}
         self.refresh_time_interval_in_ms = refresh_time_interval_in_ms
         self.last_cache_update_time_stamp = 0
@@ -163,6 +168,37 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
     def get_ordered_read_locations(self):
         return self.available_read_locations
 
+    # This updates the current and previous of the regional endpoint
+    # to keep it up to date with the success and failure cases
+    def update_regional_endpoint(self, request):
+        location_index = int(request.location_index_to_route) if request.location_index_to_route else 0
+        use_preferred_locations = (
+            request.use_preferred_locations if request.use_preferred_locations is not None else True
+        )
+
+        if not use_preferred_locations or (
+                documents._OperationType.IsWriteOperation(request.operation_type)
+                and not self.can_use_multiple_write_locations_for_request(request)
+        ):
+            # For non-document resource types in case of client can use multiple write locations
+            # or when client cannot use multiple write locations, flip-flop between the
+            # first and the second writable region in DatabaseAccount (for manual failover)
+            if self.enable_endpoint_discovery and self.available_write_locations:
+                location_index = min(location_index % 2, len(self.available_write_locations) - 1)
+                write_location = self.available_write_locations[location_index]
+                write_regional_endpoint = self.available_write_regional_endpoints_by_location[write_location]
+                if request.location_endpoint_to_route != write_regional_endpoint.get_current():
+                    write_regional_endpoint.swap()
+
+        regional_endpoints = (
+            self.get_write_regional_endpoints()
+            if documents._OperationType.IsWriteOperation(request.operation_type)
+            else self.get_read_regional_endpoints()
+        )
+        regional_endpoint = regional_endpoints[location_index % len(regional_endpoints)]
+        if request.location_endpoint_to_route != regional_endpoint.get_current():
+            regional_endpoint.swap()
+
     def resolve_service_endpoint(self, request):
         if request.location_endpoint_to_route:
             return request.location_endpoint_to_route
@@ -182,19 +218,23 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             if self.enable_endpoint_discovery and self.available_write_locations:
                 location_index = min(location_index % 2, len(self.available_write_locations) - 1)
                 write_location = self.available_write_locations[location_index]
-                if request.use_previous_endpoint_within_region:
-                    return self.available_write_regional_endpoints_by_location[write_location].get_previous()
-                return self.available_write_regional_endpoints_by_location[write_location].get_current()
-            return self.default_endpoint.get_current()
+                write_regional_endpoint = self.available_write_regional_endpoints_by_location[write_location]
+                if (request.last_routed_location_endpoint_within_region is not None
+                        and request.last_routed_location_endpoint_within_region == write_regional_endpoint.get_current()):
+                    return write_regional_endpoint.get_previous()
+                return write_regional_endpoint.get_current()
+            return self.default_regional_endpoint.get_current()
 
-        endpoints = (
+        regional_endpoints = (
             self.get_write_regional_endpoints()
             if documents._OperationType.IsWriteOperation(request.operation_type)
             else self.get_read_regional_endpoints()
         )
-        if request.use_previous_endpoint_within_region:
-            return endpoints[location_index % len(endpoints)].get_previous()
-        return endpoints[location_index % len(endpoints)].get_current()
+        regional_endpoint = regional_endpoints[location_index % len(regional_endpoints)]
+        if (request.last_routed_location_endpoint_within_region is not None
+                and request.last_routed_location_endpoint_within_region == regional_endpoint.get_current()):
+            return regional_endpoint.get_previous()
+        return regional_endpoint.get_current()
 
     def should_refresh_endpoints(self):  # pylint: disable=too-many-return-statements
         most_preferred_location = self.preferred_locations[0] if self.preferred_locations else None
@@ -326,7 +366,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             self.available_write_regional_endpoints_by_location,
             self.available_write_locations,
             EndpointOperationType.WriteType,
-            self.default_endpoint,
+            self.default_regional_endpoint,
         )
         self.read_regional_endpoints = self.get_preferred_available_regional_endpoints(
             self.available_read_regional_endpoints_by_location,

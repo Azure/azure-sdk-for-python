@@ -30,13 +30,13 @@ class ServiceResponseRetryPolicy(object):
             return False
 
         self.in_region_retry_count += 1
-        self.request.use_previous_endpoint_within_region = True
+        self.request.last_routed_location_endpoint_within_region = self.request.location_endpoint_to_route
         # The reason for this check is that we retry on
         # current and previous regional endpoint for every region before moving to next region
         if self.in_region_retry_count > 1:
             self.in_region_retry_count = 0
             self.failover_retry_count += 1
-            self.request.use_previous_endpoint_within_region = False
+            self.request.last_routed_location_endpoint_within_region = None
 
         if self.request:
             # clear previous location-based routing directive

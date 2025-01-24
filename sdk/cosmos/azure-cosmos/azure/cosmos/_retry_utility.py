@@ -104,6 +104,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
         try:
             if args:
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
+                # Update the regional endpoint with the latest request's success
+                global_endpoint_manager.update_regional_endpoint(args[0])
             else:
                 result = ExecuteFunction(function, *args, **kwargs)
             if not client.last_response_headers:

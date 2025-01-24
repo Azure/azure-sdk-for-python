@@ -52,6 +52,7 @@ class EndpointDiscoveryRetryPolicy(object):
         self.request = args[0] if args else None
         # clear previous location-based routing directive
         if self.request:
+            self.request.last_routed_location_endpoint_within_region = self.request.location_endpoint_to_route
             self.request.clear_route_to_location()
 
             # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
