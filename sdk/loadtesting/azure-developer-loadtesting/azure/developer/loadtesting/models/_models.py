@@ -262,45 +262,6 @@ class DimensionValue(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DimensionValueList(_model_base.Model):
-    """Metrics dimension values.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: The dimension name.
-    :vartype name: str
-    :ivar value: The dimension value.
-    :vartype value: list[str]
-    :ivar next_link: Link for the next set of values in case of paginated results, if applicable.
-    :vartype next_link: str
-    """
-
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The dimension name."""
-    value: Optional[List[str]] = rest_field()
-    """The dimension value."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """Link for the next set of values in case of paginated results, if applicable."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: Optional[List[str]] = None,
-        next_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ErrorDetails(_model_base.Model):
     """Error details if there is any failure in load test run.
 

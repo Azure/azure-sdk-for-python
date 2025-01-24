@@ -22,6 +22,7 @@ from .. import models as _models
 
 logger = logging.getLogger(__name__)
 
+
 class LoadTestingPollingMethod(PollingMethod):
     """Base class for custom sync polling methods."""
 
@@ -57,6 +58,7 @@ class LoadTestingPollingMethod(PollingMethod):
             logger.error(e)
             raise e
 
+
 class ValidationCheckPoller(LoadTestingPollingMethod):
     """Polling method for long-running file validation operation."""
 
@@ -70,6 +72,7 @@ class ValidationCheckPoller(LoadTestingPollingMethod):
 
     def _update_status(self) -> None:
         self._status = self._resource["validationStatus"]
+
 
 class TestRunStatusPoller(LoadTestingPollingMethod):
     """Polling method for polling a Test Run."""
@@ -85,6 +88,7 @@ class TestRunStatusPoller(LoadTestingPollingMethod):
     def _update_status(self) -> None:
         self._status = self._resource["status"]
 
+
 class TestProfileRunStatusPoller(LoadTestingPollingMethod):
     """Polling method for polling a Test Profile Run."""
 
@@ -99,11 +103,12 @@ class TestProfileRunStatusPoller(LoadTestingPollingMethod):
     def _update_status(self):
         self._status = self._resource["status"]
 
+
 class LoadTestAdministrationClientOperationsMixin(GeneratedAdministrationClientOperations):
-    
+
     def __init__(self, *args, **kwargs):
         super(LoadTestAdministrationClientOperationsMixin, self).__init__(*args, **kwargs)
-    
+
     @distributed_trace
     def begin_upload_test_file(
         self,
@@ -142,22 +147,16 @@ class LoadTestAdministrationClientOperationsMixin(GeneratedAdministrationClientO
         if polling_interval is None:
             polling_interval = 5
         upload_test_file_operation = super().begin_upload_test_file(
-            test_id=test_id,
-            file_name=file_name,
-            file_type=file_type,
-            **kwargs)
-        
+            test_id=test_id, file_name=file_name, file_type=file_type, **kwargs
+        )
+
         command = partial(self.get_test_file, test_id=test_id, file_name=file_name)
         file_validation_status_polling = ValidationCheckPoller(interval=polling_interval)
-        return LROPoller(
-            command,
-            upload_test_file_operation,
-            lambda *_: None,
-            file_validation_status_polling)
+        return LROPoller(command, upload_test_file_operation, lambda *_: None, file_validation_status_polling)
 
 
 class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
-    
+
     def __init__(self, *args, **kwargs):
         super(LoadTestRunClientOperationsMixin, self).__init__(*args, **kwargs)
 
@@ -306,7 +305,7 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
             lambda *_: None,
             test_run_status_polling,
         )
-    
+
     @overload
     def begin_test_profile_run(
         self,
@@ -415,12 +414,8 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
         )
 
 
-
 # Add all objects you want publicly available to users at this package level
-__all__: List[str] = [
-    "LoadTestAdministrationClientOperationsMixin",
-    "LoadTestRunClientOperationsMixin"
-]
+__all__: List[str] = ["LoadTestAdministrationClientOperationsMixin", "LoadTestRunClientOperationsMixin"]
 
 
 def patch_sdk():

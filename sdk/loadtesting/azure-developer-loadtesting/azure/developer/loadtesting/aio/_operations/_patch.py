@@ -23,6 +23,7 @@ from ... import models as _models
 
 logger = logging.getLogger(__name__)
 
+
 class AsyncLoadTestingPollingMethod(AsyncPollingMethod):
     """Base class for custom async polling methods."""
 
@@ -58,6 +59,7 @@ class AsyncLoadTestingPollingMethod(AsyncPollingMethod):
             logger.error(e)
             raise e
 
+
 class AsyncValidationCheckPoller(AsyncLoadTestingPollingMethod):
     def __init__(self, interval=5) -> None:
         self._resource = None
@@ -74,6 +76,7 @@ class AsyncValidationCheckPoller(AsyncLoadTestingPollingMethod):
     def _update_status(self) -> None:
         self._status = self._resource["validationStatus"]
 
+
 class AsyncTestRunStatusPoller(AsyncLoadTestingPollingMethod):
     def __init__(self, interval=5) -> None:
         self._resource = None
@@ -86,6 +89,7 @@ class AsyncTestRunStatusPoller(AsyncLoadTestingPollingMethod):
     def _update_status(self) -> None:
         self._status = self._resource["status"]
 
+
 class AsyncTestProfileRunStatusPoller(AsyncLoadTestingPollingMethod):
     def __init__(self, interval=5) -> None:
         self._resource = None
@@ -97,6 +101,7 @@ class AsyncTestProfileRunStatusPoller(AsyncLoadTestingPollingMethod):
 
     def _update_status(self) -> None:
         self._status = self._resource["status"]
+
 
 class LoadTestAdministrationClientOperationsMixin(GeneratedAdministrationClientOperations):
 
@@ -152,6 +157,7 @@ class LoadTestAdministrationClientOperationsMixin(GeneratedAdministrationClientO
             lambda *_: None,
             file_validation_status_polling,
         )
+
 
 class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
 
@@ -289,7 +295,7 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-        
+
         create_or_update_test_run_operation = await super().begin_test_run(
             test_run_id, body, old_test_run_id=old_test_run_id, **kwargs
         )
@@ -297,14 +303,14 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
         command = partial(self.get_test_run, test_run_id=test_run_id)
 
         test_run_status_polling = AsyncTestRunStatusPoller(interval=polling_interval)
-        
+
         return AsyncLROPoller(
             command,
             create_or_update_test_run_operation,
             lambda *_: None,
             test_run_status_polling,
         )
-    
+
     @overload
     async def begin_test_profile_run(
         self,
@@ -397,14 +403,14 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         polling_interval = kwargs.pop("_polling_interval", None)
-        
+
         if polling_interval is None:
             polling_interval = 5
-        
+
         create_or_update_test_profile_run_operation = await super().begin_test_profile_run(
             test_profile_run_id, body, **kwargs
         )
-        
+
         command = partial(self.get_test_profile_run, test_profile_run_id=test_profile_run_id)
 
         test_profile_run_status_polling = AsyncTestProfileRunStatusPoller(interval=polling_interval)
@@ -417,10 +423,7 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
 
 
 # Add all objects you want publicly available to users at this package level
-__all__: List[str] = [
-    "LoadTestAdministrationClientOperationsMixin",
-    "LoadTestRunClientOperationsMixin"
-]
+__all__: List[str] = ["LoadTestAdministrationClientOperationsMixin", "LoadTestRunClientOperationsMixin"]
 
 
 def patch_sdk():

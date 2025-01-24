@@ -1459,7 +1459,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         *,
         last_modified_start_time: Optional[datetime.datetime] = None,
         last_modified_end_time: Optional[datetime.datetime] = None,
-        test_profile_ids: Optional[str] = None,
+        test_profile_ids: Optional[List[str]] = None,
         test_ids: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.TestProfile"]:
@@ -1475,7 +1475,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :paramtype last_modified_end_time: ~datetime.datetime
         :keyword test_profile_ids: Comma separated list of IDs of the test profiles to filter. Default
          value is None.
-        :paramtype test_profile_ids: str
+        :paramtype test_profile_ids: list[str]
         :keyword test_ids: Comma separated list IDs of the tests which should be associated with the
          test profiles to fetch. Default value is None.
         :paramtype test_ids: str
@@ -2357,8 +2357,8 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list_metric_dimension_values(
+    @distributed_trace
+    def list_metric_dimension_values(
         self,
         test_run_id: str,
         name: str,
@@ -2368,7 +2368,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         time_interval: str,
         interval: Optional[Union[str, _models.TimeGrain]] = None,
         **kwargs: Any
-    ) -> _models.DimensionValueList:
+    ) -> AsyncIterable[str]:
         """List the dimension values for the given metric dimension name.
 
         List the dimension values for the given metric dimension name.
@@ -2388,10 +2388,15 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :keyword interval: The interval (i.e. timegrain) of the query. Known values are: "PT5S",
          "PT10S", "PT1M", "PT5M", and "PT1H". Default value is None.
         :paramtype interval: str or ~azure.developer.loadtesting.models.TimeGrain
-        :return: DimensionValueList. The DimensionValueList is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.DimensionValueList
+        :return: An iterator like instance of str
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[str]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2400,52 +2405,68 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.DimensionValueList] = kwargs.pop("cls", None)
+                _request = build_load_test_run_list_metric_dimension_values_request(
+                    test_run_id=test_run_id,
+                    name=name,
+                    metric_name=metric_name,
+                    metric_namespace=metric_namespace,
+                    time_interval=time_interval,
+                    interval=interval,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_load_test_run_list_metric_dimension_values_request(
-            test_run_id=test_run_id,
-            name=name,
-            metric_name=metric_name,
-            metric_namespace=metric_namespace,
-            time_interval=time_interval,
-            interval=interval,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[str], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, AsyncList(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.DimensionValueList, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def get_metric_definitions(
@@ -3324,9 +3345,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         max_end_date_time: Optional[datetime.datetime] = None,
         created_date_start_time: Optional[datetime.datetime] = None,
         created_date_end_time: Optional[datetime.datetime] = None,
-        test_profile_run_ids: Optional[str] = None,
-        test_profile_ids: Optional[str] = None,
-        statuses: Optional[str] = None,
+        test_profile_run_ids: Optional[List[str]] = None,
+        test_profile_ids: Optional[List[str]] = None,
+        statuses: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.TestProfileRun"]:
         """List test profile runs.
@@ -3353,13 +3374,13 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :paramtype created_date_end_time: ~datetime.datetime
         :keyword test_profile_run_ids: Comma separated list of IDs of the test profile runs to filter.
          Default value is None.
-        :paramtype test_profile_run_ids: str
+        :paramtype test_profile_run_ids: list[str]
         :keyword test_profile_ids: Comma separated IDs of the test profiles which should be associated
          with the test profile runs to fetch. Default value is None.
-        :paramtype test_profile_ids: str
+        :paramtype test_profile_ids: list[str]
         :keyword statuses: Comma separated list of Statuses of the test profile runs to filter. Default
          value is None.
-        :paramtype statuses: str
+        :paramtype statuses: list[str]
         :return: An iterator like instance of TestProfileRun
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.developer.loadtesting.models.TestProfileRun]

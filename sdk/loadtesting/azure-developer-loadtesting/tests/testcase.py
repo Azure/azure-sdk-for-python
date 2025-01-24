@@ -41,5 +41,5 @@ LoadtestingPowerShellPreparer = functools.partial(
     loadtesting_resource_id="000",
     loadtesting_test_profile_id="000",
     loadtesting_target_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.Web/sites/myFlexFunction",
-    loadtesting_test_profile_run_id="000"
+    loadtesting_test_profile_run_id="000",
 )

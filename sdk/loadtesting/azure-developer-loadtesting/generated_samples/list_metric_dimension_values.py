@@ -37,7 +37,8 @@ def main():
         metric_namespace="LoadTestRunMetrics",
         time_interval="2022-09-24T19:00:40Z/2022-09-25T19:28:40Z",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
 # x-ms-original-file: 2024-12-01-preview/ListMetricDimensionValues.json
