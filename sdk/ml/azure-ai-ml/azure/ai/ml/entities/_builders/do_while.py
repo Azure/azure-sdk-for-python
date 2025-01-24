@@ -142,7 +142,6 @@ class DoWhile(LoopNode):
         :rtype: DoWhile
         """
 
-        # pylint: disable=protected-access
         # Get body object from pipeline job list.
         body_name = cls._get_data_binding_expression_value(loaded_data.pop("body"), regex=r"\{\{.*\.jobs\.(.*)\}\}")
         body = cls._get_body_from_pipeline_jobs(pipeline_jobs, body_name)
@@ -338,11 +337,7 @@ class DoWhile(LoopNode):
                         input_output_mapping[input_name] = input_output_mapping.get(input_name, []) + [output_name]
                         is_primitive_type = self.body._inputs[input_name]._meta._is_primitive_type
 
-                        if (
-                            input_validate_results.passed
-                            and not is_primitive_output
-                            and is_primitive_type  # pylint: disable=protected-access
-                        ):
+                        if input_validate_results.passed and not is_primitive_output and is_primitive_type:
                             validate_results.append_error(
                                 yaml_path="mapping",
                                 message=(

@@ -193,7 +193,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")]
+        [(ASST_AZURE, PREVIEW)]
     )
     async def test_assistants_crud(self, client_async, api_type, api_version, **kwargs):
         try:

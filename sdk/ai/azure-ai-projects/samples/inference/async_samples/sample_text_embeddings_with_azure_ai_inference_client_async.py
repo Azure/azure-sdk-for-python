@@ -10,11 +10,11 @@ DESCRIPTION:
     on the azure.ai.inference package see https://pypi.org/project/azure-ai-inference/.
 
 USAGE:
-    python sample_get_embeddings_client_async.py
+    python sample_text_embeddings_with_azure_ai_inference_client_async.py
 
     Before running the sample:
 
-    pip install azure-ai-projects aiohttp azure-identity
+    pip install azure-ai-projects azure-ai-inference aiohttp azure-identity
 
     Set these environment variables with your own values:
     * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.

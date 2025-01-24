@@ -20,74 +20,12 @@ class TestEventHubManagementEventHubsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_all(self, resource_group):
-        response = self.client.event_hubs.list_all(
-            resource_group_name=resource_group.name,
-            namespace_name="str",
-            api_version="2015-08-01",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
-        response = self.client.event_hubs.create_or_update(
-            resource_group_name=resource_group.name,
-            namespace_name="str",
-            event_hub_name="str",
-            parameters={
-                "location": "str",
-                "createdAt": "2020-02-20 00:00:00",
-                "messageRetentionInDays": 0,
-                "name": "str",
-                "partitionCount": 0,
-                "partitionIds": ["str"],
-                "status": "str",
-                "type": "str",
-                "updatedAt": "2020-02-20 00:00:00",
-            },
-            api_version="2015-08-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_delete(self, resource_group):
-        response = self.client.event_hubs.delete(
-            resource_group_name=resource_group.name,
-            namespace_name="str",
-            event_hub_name="str",
-            api_version="2015-08-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_get(self, resource_group):
-        response = self.client.event_hubs.get(
-            resource_group_name=resource_group.name,
-            namespace_name="str",
-            event_hub_name="str",
-            api_version="2015-08-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_list_authorization_rules(self, resource_group):
+    def test_event_hubs_list_authorization_rules(self, resource_group):
         response = self.client.event_hubs.list_authorization_rules(
             resource_group_name=resource_group.name,
             namespace_name="str",
             event_hub_name="str",
-            api_version="2015-08-01",
+            api_version="2024-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -95,14 +33,28 @@ class TestEventHubManagementEventHubsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update_authorization_rule(self, resource_group):
+    def test_event_hubs_create_or_update_authorization_rule(self, resource_group):
         response = self.client.event_hubs.create_or_update_authorization_rule(
             resource_group_name=resource_group.name,
             namespace_name="str",
             event_hub_name="str",
             authorization_rule_name="str",
-            parameters={"location": "str", "name": "str", "rights": ["str"]},
-            api_version="2015-08-01",
+            parameters={
+                "id": "str",
+                "location": "str",
+                "name": "str",
+                "rights": ["str"],
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+            },
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -110,13 +62,13 @@ class TestEventHubManagementEventHubsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_authorization_rule(self, resource_group):
+    def test_event_hubs_get_authorization_rule(self, resource_group):
         response = self.client.event_hubs.get_authorization_rule(
             resource_group_name=resource_group.name,
             namespace_name="str",
             event_hub_name="str",
             authorization_rule_name="str",
-            api_version="2015-08-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -124,27 +76,13 @@ class TestEventHubManagementEventHubsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_post_authorization_rule(self, resource_group):
-        response = self.client.event_hubs.post_authorization_rule(
-            resource_group_name=resource_group.name,
-            namespace_name="str",
-            event_hub_name="str",
-            authorization_rule_name="str",
-            api_version="2015-08-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_delete_authorization_rule(self, resource_group):
+    def test_event_hubs_delete_authorization_rule(self, resource_group):
         response = self.client.event_hubs.delete_authorization_rule(
             resource_group_name=resource_group.name,
             namespace_name="str",
             event_hub_name="str",
             authorization_rule_name="str",
-            api_version="2015-08-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -152,13 +90,13 @@ class TestEventHubManagementEventHubsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_keys(self, resource_group):
+    def test_event_hubs_list_keys(self, resource_group):
         response = self.client.event_hubs.list_keys(
             resource_group_name=resource_group.name,
             namespace_name="str",
             event_hub_name="str",
             authorization_rule_name="str",
-            api_version="2015-08-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -166,14 +104,108 @@ class TestEventHubManagementEventHubsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_regenerate_keys(self, resource_group):
+    def test_event_hubs_regenerate_keys(self, resource_group):
         response = self.client.event_hubs.regenerate_keys(
             resource_group_name=resource_group.name,
             namespace_name="str",
             event_hub_name="str",
             authorization_rule_name="str",
-            parameters={"policykey": "str"},
-            api_version="2015-08-01",
+            parameters={"keyType": "str", "key": "str"},
+            api_version="2024-01-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_event_hubs_list_by_namespace(self, resource_group):
+        response = self.client.event_hubs.list_by_namespace(
+            resource_group_name=resource_group.name,
+            namespace_name="str",
+            api_version="2024-01-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_event_hubs_create_or_update(self, resource_group):
+        response = self.client.event_hubs.create_or_update(
+            resource_group_name=resource_group.name,
+            namespace_name="str",
+            event_hub_name="str",
+            parameters={
+                "captureDescription": {
+                    "destination": {
+                        "archiveNameFormat": "str",
+                        "blobContainer": "str",
+                        "dataLakeAccountName": "str",
+                        "dataLakeFolderPath": "str",
+                        "dataLakeSubscriptionId": "str",
+                        "identity": {"type": "str", "userAssignedIdentity": "str"},
+                        "name": "str",
+                        "storageAccountResourceId": "str",
+                    },
+                    "enabled": bool,
+                    "encoding": "str",
+                    "intervalInSeconds": 0,
+                    "sizeLimitInBytes": 0,
+                    "skipEmptyArchives": bool,
+                },
+                "createdAt": "2020-02-20 00:00:00",
+                "id": "str",
+                "location": "str",
+                "messageRetentionInDays": 0,
+                "name": "str",
+                "partitionCount": 0,
+                "partitionIds": ["str"],
+                "retentionDescription": {
+                    "cleanupPolicy": "str",
+                    "retentionTimeInHours": 0,
+                    "tombstoneRetentionTimeInHours": 0,
+                },
+                "status": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+                "updatedAt": "2020-02-20 00:00:00",
+                "userMetadata": "str",
+            },
+            api_version="2024-01-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_event_hubs_delete(self, resource_group):
+        response = self.client.event_hubs.delete(
+            resource_group_name=resource_group.name,
+            namespace_name="str",
+            event_hub_name="str",
+            api_version="2024-01-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_event_hubs_get(self, resource_group):
+        response = self.client.event_hubs.get(
+            resource_group_name=resource_group.name,
+            namespace_name="str",
+            event_hub_name="str",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself

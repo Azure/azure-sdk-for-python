@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
-
 """Contains functionality for sending telemetry to Application Insights via OpenCensus Azure Monitor Exporter."""
 
 import logging
