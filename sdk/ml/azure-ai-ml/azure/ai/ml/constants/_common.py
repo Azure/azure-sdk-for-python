@@ -168,7 +168,7 @@ SCHEMA_VALIDATION_ERROR_TEMPLATE = (
     "\nAdditional Resources: The easiest way to author a yaml specification file is using IntelliSense and "
     "auto-completion Azure ML VS code extension provides: "
     "{link_color}https://code.visualstudio.com/docs/datascience/azure-machine-learning.{reset} "
-    "To set up VS Code, visit {link_color}https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-"
+    "To set up VS Code, visit {link_color}https://learn.microsoft.com/azure/machine-learning/how-to-setup-vs-"
     "code{reset}\n"
 )
 

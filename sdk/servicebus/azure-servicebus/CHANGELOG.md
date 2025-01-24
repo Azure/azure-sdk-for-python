@@ -9,6 +9,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where sending large messages with synchronous client caused a frame buffer offset error ([#37916](https://github.com/Azure/azure-sdk-for-python/issues/37916))
+
 ### Other Changes
 
 ## 7.13.0 (2024-11-12)

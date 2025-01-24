@@ -948,6 +948,15 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.measurements["timeSinceEnqueued"], 0)
 
+        # Source new semconv
+        span._attributes = {
+            "az.namespace": "Microsoft.EventHub",
+            "net.peer.name": "Test_name",
+            "messaging.destination.name": "/testdest",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.source, "Test_name//testdest")
+
     def test_span_envelope_server_http(self):
         exporter = self._exporter
         start_time = 1575494316027613500
@@ -1000,6 +1009,23 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertFalse(envelope.data.base_data.success)
         self.assertEqual(envelope.data.base_data.response_code, "400")
 
+        ## Stable http semconv
+        span._attributes = {
+            "http.request.method": "GET",
+            "http.response.status_code": 200,
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertTrue(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.response_code, "200")
+
+        span._attributes = {
+            "http.request.method": "GET",
+            "http.response.status_code": 400,
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertFalse(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.response_code, "400")
+
         span._attributes = {
             "http.method": "GET",
             "net.peer.ip": "peer_ip",
@@ -1022,6 +1048,11 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "peer_ip")
 
+        ## Stable http semconv
+        span._attributes = {"http.request.method": "GET", "client.address": "client_address"}
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "client_address")
+
         # url
         span._attributes = {
             "http.method": "GET",
@@ -1031,6 +1062,25 @@ class TestAzureTraceExporter(unittest.TestCase):
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.url, "https://www.example.org/path")
+
+        ## Stable http semconv
+        span._attributes = {
+            "http.request.method": "GET",
+            "url.full": "https://www.example.org:80/path?query",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.url, "https://www.example.org:80/path?query")
+
+        span._attributes = {
+            "http.request.method": "GET",
+            "url.scheme": "https",
+            "url.path": "/path",
+            "url.query": "query",
+            "server.address": "www.example.org",
+            "server.port": "80"
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.url, "https://www.example.org:80/path?query")
 
         span._attributes = {
             "http.method": "GET",
@@ -1055,12 +1105,38 @@ class TestAzureTraceExporter(unittest.TestCase):
         # ai.operation.name
         span._attributes = {
             "http.method": "GET",
+            "http.route": "/wiki/Rabbit/test",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
+        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
+
+        ## Stable http semconv
+        span._attributes = {
+            "http.request.method": "GET",
+            "http.route": "/wiki/Rabbit/test",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
+        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
+
+        span._attributes = {
+            "http.method": "GET",
             "http.url": "https://www.wikipedia.org/wiki/Rabbit/test",
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
         self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
 
+        span._attributes = {
+            "http.request.method": "GET",
+            "url.full": "https://www.wikipedia.org/wiki/Rabbit/test",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
+        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
+
+        # Default is span name
         span._attributes = {
             "http.method": "GET",
         }
@@ -1119,6 +1195,15 @@ class TestAzureTraceExporter(unittest.TestCase):
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.source, "celery")
+
+        ## Stable http semconv
+        span._attributes = {
+            "messaging.system": "messaging",
+            "client.address": "127.0.0.1",
+            "messaging.destination": "celery",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.source, "127.0.0.1/celery")
 
     def test_span_to_envelope_success_error(self):
         exporter = self._exporter
