@@ -626,6 +626,7 @@ class PageBlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         copy_source_authorization: Optional[str] = None,
+        file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -666,6 +667,8 @@ class PageBlobOperations:
         :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
          OAuth access token to copy source. Default value is None.
         :type copy_source_authorization: str
+        :param file_request_intent: Valid value is backup. "backup" Default value is None.
+        :type file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param cpk_scope_info: Parameter group. Default value is None.
@@ -770,6 +773,7 @@ class PageBlobOperations:
             source_if_none_match=_source_if_none_match,
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
+            file_request_intent=file_request_intent,
             comp=comp,
             page_write=page_write,
             version=self._config.version,

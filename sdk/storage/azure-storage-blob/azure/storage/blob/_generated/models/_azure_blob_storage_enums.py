@@ -152,6 +152,12 @@ class EncryptionAlgorithmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AES256 = "AES256"
 
 
+class FileShareTokenIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """FileShareTokenIntent."""
+
+    BACKUP = "backup"
+
+
 class FilterBlobsIncludeItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FilterBlobsIncludeItem."""
 
