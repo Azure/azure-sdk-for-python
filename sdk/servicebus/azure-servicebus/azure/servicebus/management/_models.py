@@ -398,7 +398,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
             max_message_size_in_kilobytes=internal_qd.max_message_size_in_kilobytes,
         )
 
-        qd._internal_qd = deepcopy(internal_qd)  # pylint:disable=protected-access
+        qd._internal_qd = deepcopy(internal_qd)
         return qd
 
     def _to_internal_entity(
@@ -475,7 +475,7 @@ class QueueRuntimeProperties(object):
     def _from_internal_entity(cls, name: str, internal_qr: InternalQueueDescription) -> "QueueRuntimeProperties":
         qr = cls()
         qr._name = name
-        qr._internal_qr = deepcopy(internal_qr)  # pylint:disable=protected-access
+        qr._internal_qr = deepcopy(internal_qr)
         return qr
 
     @property

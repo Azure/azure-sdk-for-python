@@ -40,7 +40,7 @@ import os
 # Because we want the iteration to be a string, we define str as the generic type for BaseAsyncAgentEventHandler
 # and override the _process_event method to return a string.
 # The get_stream_chunks method is defined to return the chunks as strings because the iteration is a string.
-class MyEventHandler(BaseAsyncAgentEventHandler[str]):
+class MyEventHandler(BaseAsyncAgentEventHandler[Optional[str]]):
 
     async def _process_event(self, event_data_str: str) -> Optional[str]:
 
@@ -68,7 +68,8 @@ class MyEventHandler(BaseAsyncAgentEventHandler[str]):
 
     async def get_stream_chunks(self) -> AsyncGenerator[str, None]:
         async for chunk in self:
-            yield chunk
+            if chunk:
+                yield chunk
 
 
 async def main() -> None:
@@ -78,7 +79,7 @@ async def main() -> None:
             credential=creds, conn_str=os.environ["PROJECT_CONNECTION_STRING"]
         ) as project_client:
             agent = await project_client.agents.create_agent(
-                model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+                model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-assistant", instructions="You are helpful assistant"
             )
             print(f"Created agent, agent ID: {agent.id}")
 

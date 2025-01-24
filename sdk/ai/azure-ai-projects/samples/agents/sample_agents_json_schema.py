@@ -14,13 +14,16 @@ USAGE:
 
     pip install azure-ai-projects azure-identity pydantic
 
-    Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    Set these environment variables with your own values:
+    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
+       Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+       the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
 import os
 
-from enum import StrEnum
+from enum import Enum
 from pydantic import BaseModel, TypeAdapter
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
@@ -41,7 +44,7 @@ project_client = AIProjectClient.from_connection_string(
 
 
 # Create the pydantic model to represent the planet names and there masses.
-class Planets(StrEnum):
+class Planets(str, Enum):
     Earth = "Earth"
     Mars = "Mars"
     Jupyter = "Jupyter"
@@ -58,7 +61,7 @@ with project_client:
     agent = project_client.agents.create_agent(
         # Note only gpt-4o-mini-2024-07-18 and
         # gpt-4o-2024-08-06 and later support structured output.
-        model="gpt-4o-mini",
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="Extract the information about planets.",
         headers={"x-ms-enable-preview": "true"},

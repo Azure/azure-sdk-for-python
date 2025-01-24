@@ -250,7 +250,6 @@ class IndexOperations(_ScopeDependentOperations):
 
         return self._azure_ai_assets.indexes.list(name, list_view_type=list_view_type, cls=cls, **kwargs)
 
-    # pylint: disable=too-many-locals
     def build_index(
         self,
         *,

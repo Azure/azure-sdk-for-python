@@ -102,9 +102,7 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         )
 
     @classmethod
-    def _resolve_cls_and_type(
-        cls, data: Dict, params_override: Optional[List[Dict]] = None
-    ) -> Tuple:  # pylint: disable=unused-argument
+    def _resolve_cls_and_type(cls, data: Dict, params_override: Optional[List[Dict]] = None) -> Tuple:
         from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
         from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 
@@ -486,7 +484,7 @@ class ScheduleTriggerResult:
     :ivar str schedule_action_type:
     """
 
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, **kwargs):
         self.job_name = kwargs.get("job_name", None)
         self.schedule_action_type = kwargs.get("schedule_action_type", None)
 

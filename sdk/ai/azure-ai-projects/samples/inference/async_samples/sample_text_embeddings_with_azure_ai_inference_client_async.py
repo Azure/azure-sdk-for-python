@@ -10,11 +10,11 @@ DESCRIPTION:
     on the azure.ai.inference package see https://pypi.org/project/azure-ai-inference/.
 
 USAGE:
-    python sample_get_embeddings_client_async.py
+    python sample_text_embeddings_with_azure_ai_inference_client_async.py
 
     Before running the sample:
 
-    pip install azure-ai-projects aiohttp azure-identity
+    pip install azure-ai-projects azure-ai-inference aiohttp azure-identity
 
     Set these environment variables with your own values:
     * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
@@ -31,24 +31,26 @@ async def sample_get_embeddings_client_async():
     project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
     model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-    async with AIProjectClient.from_connection_string(
-        credential=DefaultAzureCredential(),
-        conn_str=project_connection_string,
-    ) as project_client:
+    async with DefaultAzureCredential() as credential:
 
-        # Get an authenticated async azure.ai.inference embeddings client for your default Serverless connection:
-        async with await project_client.inference.get_embeddings_client() as client:
+        async with AIProjectClient.from_connection_string(
+            credential=credential,
+            conn_str=project_connection_string,
+        ) as project_client:
 
-            response = await client.embed(
-                model=model_deployment_name, input=["first phrase", "second phrase", "third phrase"]
-            )
+            # Get an authenticated async azure.ai.inference embeddings client for your default Serverless connection:
+            async with await project_client.inference.get_embeddings_client() as client:
 
-            for item in response.data:
-                length = len(item.embedding)
-                print(
-                    f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
-                    f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+                response = await client.embed(
+                    model=model_deployment_name, input=["first phrase", "second phrase", "third phrase"]
                 )
+
+                for item in response.data:
+                    length = len(item.embedding)
+                    print(
+                        f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
+                        f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+                    )
 
 
 async def main():

@@ -52,7 +52,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from openai import AsyncAzureOpenAI
 
-    from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient
+    from azure.ai.inference.aio import ChatCompletionsClient, EmbeddingsClient, ImageEmbeddingsClient
     from azure.ai.projects import _types
 
 logger = logging.getLogger(__name__)
@@ -67,36 +67,54 @@ class InferenceOperations:
         self._outer_instance = outer_instance
 
     @distributed_trace_async
-    async def get_chat_completions_client(self, **kwargs) -> "ChatCompletionsClient":
-        """Get an authenticated asynchronous ChatCompletionsClient (from the package azure-ai-inference) for
-        the default Azure AI Services connected resource.
+    async def get_chat_completions_client(
+        self, *, connection_name: Optional[str] = None, **kwargs
+    ) -> "ChatCompletionsClient":
+        """Get an authenticated asynchronous ChatCompletionsClient (from the package azure-ai-inference) for the default
+        Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
+        Services resource given by its connection name.
 
         At least one AI model that supports chat completions must be deployed in this resource.
 
-        .. note::
+        .. note:: The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
 
-            The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
+        :keyword connection_name: The name of a connection to an Azure AI Services resource in your AI Foundry project.
+         resource. Optional. If not provided, the default Azure AI Services connection will be used.
+        :type connection_name: str
 
-        :return: An authenticated chat completions client
-        :rtype: ~azure.ai.inference.models.ChatCompletionsClient
-        :raises ~azure.core.exceptions.ResourceNotFoundError: An Azure AI Services connection does not exist.
-        :raises ~azure.core.exceptions.ModuleNotFoundError: The `azure-ai-inference` package is not installed.
+        :return: An authenticated chat completions client.
+        :rtype: ~azure.ai.inference.ChatCompletionsClient
+
+        :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure AI Services connection
+         does not exist.
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
+         is not installed.
+        :raises ValueError: if the connection name is an empty string.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
+
+        if connection_name is not None and not connection_name:
+            raise ValueError("Connection name cannot be empty")
 
         # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
         # a separate "Serverless" connection. This is now deprecated.
         use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
 
-        if use_serverless_connection:
-            connection = await self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+        if connection_name:
+            connection = await self._outer_instance.connections.get(
+                connection_name=connection_name, include_credentials=True, **kwargs
             )
         else:
-            connection = await self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
-            )
+            if use_serverless_connection:
+                connection = await self._outer_instance.connections.get_default(
+                    connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+                )
+            else:
+                connection = await self._outer_instance.connections.get_default(
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
+                )
+
         logger.debug("[InferenceOperations.get_chat_completions_client] connection = %s", str(connection))
 
         try:
@@ -143,36 +161,52 @@ class InferenceOperations:
         return client
 
     @distributed_trace_async
-    async def get_embeddings_client(self, **kwargs) -> "EmbeddingsClient":
-        """Get an authenticated asynchronous EmbeddingsClient (from the package azure-ai-inference) for
-        the default Azure AI Services connected resource.
+    async def get_embeddings_client(self, *, connection_name: Optional[str] = None, **kwargs) -> "EmbeddingsClient":
+        """Get an authenticated asynchronous EmbeddingsClient (from the package azure-ai-inference) for the default
+        Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
+        Services resource given by its connection name.
 
         At least one AI model that supports text embeddings must be deployed in this resource.
 
-        .. note::
+        .. note:: The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
 
-            The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
+        :keyword connection_name: The name of a connection to an Azure AI Services resource in your AI Foundry project.
+         resource. Optional. If not provided, the default Azure AI Services connection will be used.
+        :type connection_name: str
 
-        :return: An authenticated chat completions client
-        :rtype: ~azure.ai.inference.models.EmbeddingsClient
-        :raises ~azure.core.exceptions.ResourceNotFoundError: An Azure AI Services connection does not exist.
-        :raises ~azure.core.exceptions.ModuleNotFoundError: The `azure-ai-inference` package is not installed.
+        :return: An authenticated text embeddings client
+        :rtype: ~azure.ai.inference.EmbeddingsClient
+
+        :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure AI Services connection
+         does not exist.
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
+         is not installed.
+        :raises ValueError: if the connection name is an empty string.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         kwargs.setdefault("merge_span", True)
+
+        if connection_name is not None and not connection_name:
+            raise ValueError("Connection name cannot be empty")
 
         # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
         # a separate "Serverless" connection. This is now deprecated.
         use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
 
-        if use_serverless_connection:
-            connection = await self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+        if connection_name:
+            connection = await self._outer_instance.connections.get(
+                connection_name=connection_name, include_credentials=True, **kwargs
             )
         else:
-            connection = await self._outer_instance.connections.get_default(
-                connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
-            )
+            if use_serverless_connection:
+                connection = await self._outer_instance.connections.get_default(
+                    connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+                )
+            else:
+                connection = await self._outer_instance.connections.get_default(
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
+                )
+
         logger.debug("[InferenceOperations.get_embeddings_client] connection = %s", str(connection))
 
         try:
@@ -214,29 +248,141 @@ class InferenceOperations:
         return client
 
     @distributed_trace_async
-    async def get_azure_openai_client(self, *, api_version: Optional[str] = None, **kwargs) -> "AsyncAzureOpenAI":
+    async def get_image_embeddings_client(
+        self, *, connection_name: Optional[str] = None, **kwargs
+    ) -> "ImageEmbeddingsClient":
+        """Get an authenticated asynchronous ImageEmbeddingsClient (from the package azure-ai-inference) for the default
+        Azure AI Services connected resource (if `connection_name` is not specificed), or from the Azure AI
+        Services resource given by its connection name.
+
+        At least one AI model that supports image embeddings must be deployed in this resource.
+
+        .. note:: The packages `azure-ai-inference` and `aiohttp` must be installed prior to calling this method.
+
+        :keyword connection_name: The name of a connection to an Azure AI Services resource in your AI Foundry project.
+         resource. Optional. If not provided, the default Azure AI Services connection will be used.
+        :type connection_name: str
+
+        :return: An authenticated image embeddings client
+        :rtype: ~azure.ai.inference.ImageEmbeddingsClient
+
+        :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure AI Services connection
+         does not exist.
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `azure-ai-inference` package
+         is not installed.
+        :raises ValueError: if the connection name is an empty string.
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        kwargs.setdefault("merge_span", True)
+
+        if connection_name is not None and not connection_name:
+            raise ValueError("Connection name cannot be empty")
+
+        # Back-door way to access the old behavior where each AI model (non-OpenAI) was hosted on
+        # a separate "Serverless" connection. This is now deprecated.
+        use_serverless_connection: bool = os.getenv("USE_SERVERLESS_CONNECTION", None) == "true"
+
+        if connection_name:
+            connection = await self._outer_instance.connections.get(
+                connection_name=connection_name, include_credentials=True, **kwargs
+            )
+        else:
+            if use_serverless_connection:
+                connection = await self._outer_instance.connections.get_default(
+                    connection_type=ConnectionType.SERVERLESS, include_credentials=True, **kwargs
+                )
+            else:
+                connection = await self._outer_instance.connections.get_default(
+                    connection_type=ConnectionType.AZURE_AI_SERVICES, include_credentials=True, **kwargs
+                )
+
+        logger.debug("[InferenceOperations.get_embeddings_client] connection = %s", str(connection))
+
+        try:
+            from azure.ai.inference.aio import ImageEmbeddingsClient
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
+            ) from e
+
+        if use_serverless_connection:
+            endpoint = connection.endpoint_url
+            credential_scopes = ["https://ml.azure.com/.default"]
+        else:
+            endpoint = f"{connection.endpoint_url}/models"
+            credential_scopes = ["https://cognitiveservices.azure.com/.default"]
+
+        if connection.authentication_type == AuthenticationType.API_KEY:
+            logger.debug(
+                "[InferenceOperations.get_image_embeddings_client] "
+                "Creating ImageEmbeddingsClient using API key authentication"
+            )
+            from azure.core.credentials import AzureKeyCredential
+
+            client = ImageEmbeddingsClient(endpoint=endpoint, credential=AzureKeyCredential(connection.key))
+        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
+            logger.debug(
+                "[InferenceOperations.get_image_embeddings_client] "
+                "Creating ImageEmbeddingsClient using Entra ID authentication"
+            )
+            client = ImageEmbeddingsClient(
+                endpoint=endpoint, credential=connection.token_credential, credential_scopes=credential_scopes
+            )
+        elif connection.authentication_type == AuthenticationType.SAS:
+            logger.debug(
+                "[InferenceOperations.get_image_embeddings_client] "
+                "Creating ImageEmbeddingsClient using SAS authentication"
+            )
+            raise ValueError("Getting embeddings client from a connection with SAS authentication is not yet supported")
+        else:
+            raise ValueError("Unknown authentication type")
+
+        return client
+
+    @distributed_trace_async
+    async def get_azure_openai_client(
+        self, *, api_version: Optional[str] = None, connection_name: Optional[str] = None, **kwargs
+    ) -> "AsyncAzureOpenAI":
         """Get an authenticated AsyncAzureOpenAI client (from the `openai` package) for the default
-        Azure OpenAI connection. The package `openai` must be installed prior to calling this method.
-        Raises ~azure.core.exceptions.ResourceNotFoundError exception if an Azure OpenAI connection
-        does not exist.
-        Raises ~azure.core.exceptions.ModuleNotFoundError exception if the `openai` package
-        is not installed.
+        Azure OpenAI connection (if `connection_name` is not specificed), or from the Azure OpenAI
+        resource given by its connection name.
+
+        .. note:: The package `openai` must be installed prior to calling this method.
 
         :keyword api_version: The Azure OpenAI api-version to use when creating the client. Optional.
          See "Data plane - Inference" row in the table at
          https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs. If this keyword
          is not specified, you must set the environment variable `OPENAI_API_VERSION` instead.
         :paramtype api_version: str
+        :keyword connection_name: The name of a connection to an Azure OpenAI resource in your AI Foundry project.
+         resource. Optional. If not provided, the default Azure OpenAI connection will be used.
+        :type connection_name: str
+
         :return: An authenticated AsyncAzureOpenAI client
         :rtype: ~openai.AsyncAzureOpenAI
-        :raises ~azure.core.exceptions.ResourceNotFoundError:
-        :raises ~azure.core.exceptions.ModuleNotFoundError:
+
+        :raises ~azure.core.exceptions.ResourceNotFoundError: if an Azure OpenAI connection
+         does not exist.
+        :raises ~azure.core.exceptions.ModuleNotFoundError: if the `openai` package
+         is not installed.
+        :raises ValueError: if the connection name is an empty string.
         :raises ~azure.core.exceptions.HttpResponseError:
+
         """
         kwargs.setdefault("merge_span", True)
-        connection = await self._outer_instance.connections.get_default(
-            connection_type=ConnectionType.AZURE_OPEN_AI, include_credentials=True, **kwargs
-        )
+
+        if connection_name is not None and not connection_name:
+            raise ValueError("Connection name cannot be empty")
+
+        if connection_name:
+            connection = await self._outer_instance.connections.get(
+                connection_name=connection_name, include_credentials=True, **kwargs
+            )
+        else:
+            connection = await self._outer_instance.connections.get_default(
+                connection_type=ConnectionType.AZURE_OPEN_AI, include_credentials=True, **kwargs
+            )
+
         logger.debug("[InferenceOperations.get_azure_openai_client] connection = %s", str(connection))
 
         try:
@@ -298,7 +444,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :keyword include_credentials: Whether to populate the connection properties with authentication credentials.
             Optional.
         :type include_credentials: bool
-        :return: The connection properties, or `None` if there are no connections of the specified type.
+        :return: The connection properties.
         :rtype: ~azure.ai.projects.model.ConnectionProperties
         :raises ~azure.core.exceptions.ResourceNotFoundError:
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -340,7 +486,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         """
         kwargs.setdefault("merge_span", True)
         if not connection_name:
-            raise ValueError("Endpoint name cannot be empty")
+            raise ValueError("Connection name cannot be empty")
         if include_credentials:
             connection: GetConnectionResponse = await self._get_connection_with_secrets(
                 connection_name=connection_name, ignored="ignore", **kwargs
@@ -665,7 +811,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype metadata: Optional[Dict[str, str]]
         :keyword content_type: Content type of the body.
         :paramtype content_type: str
-        :keyword kwargs: Additional parameters.
         :return: An Agent object.
         :rtype: _models.Agent
         :raises: HttpResponseError for HTTP errors.
@@ -927,6 +1072,9 @@ class AgentsOperations(AgentsOperationsGenerated):
          AgentsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or ~azure.ai.projects.models.AgentsApiResponseFormatMode
          or ~azure.ai.projects.models.AgentsApiResponseFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1556,6 +1704,8 @@ class AgentsOperations(AgentsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :keyword event_handler: None
+        :paramtype event_handler: None.  _models.AsyncAgentEventHandler will be applied as default.
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1663,8 +1813,7 @@ class AgentsOperations(AgentsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
+        :keyword event_handler: The event handler to use for processing events during the run.
         :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
         :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
@@ -1695,6 +1844,8 @@ class AgentsOperations(AgentsOperationsGenerated):
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
         :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :keyword event_handler: None
+        :paramtype event_handler: None.  _models.AsyncAgentEventHandler will be applied as default.
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1937,9 +2088,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2019,39 +2167,10 @@ class AgentsOperations(AgentsOperationsGenerated):
         run_id: str,
         body: Union[JSON, IO[bytes]],
         *,
-        event_handler: None = None,
+        event_handler: _models.BaseAsyncAgentEventHandler,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[_models.AsyncAgentEventHandler]:
-        """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
-        outputs will have a status of 'requires_action' with a required_action.type of
-        'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
-
-        :param thread_id: Required.
-        :type thread_id: str
-        :param run_id: Required.
-        :type run_id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def submit_tool_outputs_to_stream(
-        self,
-        thread_id: str,
-        run_id: str,
-        body: Union[JSON, IO[bytes]],
-        *,
-        event_handler: _models.BaseAsyncAgentEventHandlerT,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
+    ) -> None:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -2068,8 +2187,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2081,9 +2198,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         *,
         tool_outputs: List[_models.ToolOutput],
         content_type: str = "application/json",
-        event_handler: None = None,
+        event_handler: _models.BaseAsyncAgentEventHandler,
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[_models.AsyncAgentEventHandler]:
+    ) -> None:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -2097,43 +2214,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
+        :keyword event_handler: The event handler to use for processing events during the run.
         :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def submit_tool_outputs_to_stream(
-        self,
-        thread_id: str,
-        run_id: str,
-        *,
-        tool_outputs: List[_models.ToolOutput],
-        content_type: str = "application/json",
-        event_handler: _models.BaseAsyncAgentEventHandlerT,
-        **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
-        """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
-        outputs will have a status of 'requires_action' with a required_action.type of
-        'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
-
-        :param thread_id: Required.
-        :type thread_id: str
-        :param run_id: Required.
-        :type run_id: str
-        :keyword tool_outputs: Required.
-        :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
-        :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2145,9 +2227,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: Optional[_models.BaseAsyncAgentEventHandlerT] = None,
+        event_handler: _models.BaseAsyncAgentEventHandler,
         **kwargs: Any,
-    ) -> _models.AsyncAgentRunStream[_models.BaseAsyncAgentEventHandlerT]:
+    ) -> None:
         """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -2161,8 +2243,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
         :keyword event_handler: The event handler to use for processing events during the run.
-        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
-        :rtype: ~azure.ai.projects.models.AsyncAgentRunStream
+        :paramtype event_handler: ~azure.ai.projects.models.AsyncAgentEventHandler
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2185,10 +2266,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         # Cast the response to Iterator[bytes] for type correctness
         response_iterator: AsyncIterator[bytes] = cast(AsyncIterator[bytes], await response)
 
-        if not event_handler:
-            event_handler = cast(_models.BaseAsyncAgentEventHandlerT, _models.AsyncAgentEventHandler())
-
-        return _models.AsyncAgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
+        event_handler.initialize(response_iterator, self._handle_submit_tool_outputs)
 
     async def _handle_submit_tool_outputs(
         self, run: _models.ThreadRun, event_handler: _models.BaseAsyncAgentEventHandler
@@ -2211,10 +2289,9 @@ class AgentsOperations(AgentsOperationsGenerated):
 
                 logger.info("Tool outputs: %s", tool_outputs)
                 if tool_outputs:
-                    async with await self.submit_tool_outputs_to_stream(
+                    await self.submit_tool_outputs_to_stream(
                         thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=event_handler
-                    ) as stream:
-                        await stream.until_done()
+                    )
 
     @overload
     async def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
@@ -2535,6 +2612,9 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword file_ids: A list of file IDs that the vector store should use. Useful for tools like
          ``file_search`` that can access files. Default value is None.
         :paramtype file_ids: list[str]
@@ -2699,6 +2779,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:

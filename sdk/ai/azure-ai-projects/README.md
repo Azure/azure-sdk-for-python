@@ -187,7 +187,7 @@ print(connection)
 
 ### Get an authenticated ChatCompletionsClient
 
-Your Azure AI Foundry project may have one or more AI models deployed that support chat completions. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an already authenticated [ChatCompletionsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.chatcompletionsclient?view=azure-python-preview) from the [azure-ai-inference](https://pypi.org/project/azure-ai-inference/) package, and execute a chat completions call.
+Your Azure AI Foundry project may have one or more AI models deployed that support chat completions. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an already authenticated [ChatCompletionsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.chatcompletionsclient) from the [azure-ai-inference](https://pypi.org/project/azure-ai-inference/) package, and execute a chat completions call.
 
 First, install the package:
 
@@ -208,7 +208,7 @@ response = inference_client.complete(
 print(response.choices[0].message.content)
 ```
 
-See the "inference" folder in the [package samples][samples] for additional samples, including getting an authenticated [EmbeddingsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.embeddingsclient?view=azure-python-preview).
+See the "inference" folder in the [package samples][samples] for additional samples, including getting an authenticated [EmbeddingsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.embeddingsclient) and [ImageEmbeddingsClient](https://learn.microsoft.com/python/api/azure-ai-inference/azure.ai.inference.imageembeddingsclient).
 
 ### Get an authenticated AzureOpenAI client
 
@@ -253,7 +253,7 @@ Here is an example of how to create an Agent:
 
 ```python
 agent = project_client.agents.create_agent(
-    model="gpt-4o",
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name="my-assistant",
     instructions="You are helpful assistant",
 )
@@ -275,7 +275,10 @@ toolset.add(functions)
 toolset.add(code_interpreter)
 
 agent = project_client.agents.create_agent(
-    model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
+    name="my-assistant",
+    instructions="You are a helpful assistant",
+    toolset=toolset,
 )
 ```
 
@@ -291,7 +294,7 @@ file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
 
 # Notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
 agent = project_client.agents.create_agent(
-    model="gpt-4-1106-preview",
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name="my-assistant",
     instructions="You are helpful assistant",
     tools=file_search_tool.definitions,
@@ -320,7 +323,7 @@ print(f"Created vector store, vector store ID: {vector_store.id}")
 file_search = FileSearchTool(vector_store_ids=[vector_store.id])
 
 agent = project_client.agents.create_agent(
-    model="gpt-4-1106-preview",
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name="my-assistant",
     instructions="Hello, you are helpful assistant and can search information from uploaded files",
     tools=file_search.definitions,
@@ -350,7 +353,7 @@ file_search_tool = FileSearchTool(vector_store_ids=[vector_store.id])
 
 # Notices that FileSearchTool as tool and tool_resources must be added or the assistant unable to search the file
 agent = project_client.agents.create_agent(
-    model="gpt-4-1106-preview",
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name="my-assistant",
     instructions="You are helpful assistant",
     tools=file_search_tool.definitions,
@@ -360,7 +363,7 @@ agent = project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-We also can attach files to the existing vector vector store. In the code snippet below, we first create an empty vector store and add file to it.
+We also can attach files to the existing vector store. In the code snippet below, we first create an empty vector store and add file to it.
 
 <!-- SNIPPET:sample_agents_vector_store_batch_enterprise_file_search.attach_files_to_store -->
 
@@ -398,7 +401,7 @@ code_interpreter = CodeInterpreterTool(file_ids=[file.id])
 
 # Create agent with code interpreter tool and tools_resources
 agent = project_client.agents.create_agent(
-    model="gpt-4-1106-preview",
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name="my-assistant",
     instructions="You are helpful assistant",
     tools=code_interpreter.definitions,
@@ -428,7 +431,7 @@ bing = BingGroundingTool(connection_id=conn_id)
 # Create agent with the bing tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview",
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are a helpful assistant",
         tools=bing.definitions,
@@ -462,7 +465,7 @@ ai_search = AzureAISearchTool(index_connection_id=conn_id, index_name="myindexna
 # Create agent with AI search tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4o-mini",
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are a helpful assistant",
         tools=ai_search.definitions,
@@ -482,6 +485,8 @@ You can enhance your Agents by defining callback functions as function tools. Th
 
 For more details about calling functions by code, refer to [`sample_agents_stream_eventhandler_with_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_eventhandler_with_functions.py) and [`sample_agents_functions.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_functions.py).
 
+For more details about requirements and specification of functions, refer to [Function Tool Specifications](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/FunctionTool.md)
+
 Here is an example to use [user functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/user_functions.py) in `toolset`:
 <!-- SNIPPET:sample_agents_stream_eventhandler_with_toolset.create_agent_with_function_tool -->
 
@@ -491,7 +496,10 @@ toolset = ToolSet()
 toolset.add(functions)
 
 agent = project_client.agents.create_agent(
-    model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
+    name="my-assistant",
+    instructions="You are a helpful assistant",
+    toolset=toolset,
 )
 ```
 
@@ -512,7 +520,7 @@ toolset = AsyncToolSet()
 toolset.add(functions)
 
 agent = await project_client.agents.create_agent(
-    model="gpt-4-1106-preview",
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name="my-assistant",
     instructions="You are a helpful assistant",
     toolset=toolset,
@@ -583,7 +591,10 @@ openapi = OpenApiTool(
 # Create agent with OpenApi tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant", tools=openapi.definitions
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-assistant",
+        instructions="You are a helpful assistant",
+        tools=openapi.definitions,
     )
 ```
 
@@ -618,7 +629,7 @@ print(f"Created vector store, vector store ID: {vector_store.id}")
 file_search = FileSearchTool(vector_store_ids=[vector_store.id])
 
 agent = project_client.agents.create_agent(
-    model="gpt-4-1106-preview",
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name="my-assistant",
     instructions="Hello, you are helpful assistant and can search information from uploaded files",
     tools=file_search.definitions,
@@ -661,7 +672,7 @@ message = project_client.agents.create_message(
 
 #### Create Message with Code Interpreter Attachment
 
-To attach a file to a message for data analysis, you use `MessageAttachment` and `CodeInterpreterTool`. You must pass `CodeInterpreterTool` as `tools` or `toolset` in `create_agent` call or the file attachment cannot be opened for code interpreter.  
+To attach a file to a message for data analysis, use `MessageAttachment` and `CodeInterpreterTool` classes. You must pass `CodeInterpreterTool` as `tools` or `toolset` in `create_agent` call or the file attachment cannot be opened for code interpreter.  
 
 Here is an example to pass `CodeInterpreterTool` as tool:
 
@@ -671,7 +682,7 @@ Here is an example to pass `CodeInterpreterTool` as tool:
 # Notice that CodeInterpreter must be enabled in the agent creation,
 # otherwise the agent will not be able to see the file attachment for code interpretation
 agent = project_client.agents.create_agent(
-    model="gpt-4-1106-preview",
+    model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name="my-assistant",
     instructions="You are helpful assistant",
     tools=CodeInterpreterTool().definitions,
@@ -695,6 +706,23 @@ message = project_client.agents.create_message(
 
 <!-- END SNIPPET -->
 
+Azure blob storage can be used as a message attachment. In this case, use `VectorStoreDataSource` as a data source:
+
+<!-- SNIPPET:sample_agents_code_interpreter_attachment_enterprise_search.upload_file_and_create_message_with_code_interpreter -->
+
+```python
+# We will upload the local file to Azure and will use it for vector store creation.
+_, asset_uri = project_client.upload_file("./product_info_1.md")
+ds = VectorStoreDataSource(asset_identifier=asset_uri, asset_type=VectorStoreDataSourceAssetType.URI_ASSET)
+
+# Create a message with the attachment
+attachment = MessageAttachment(data_source=ds, tools=code_interpreter.definitions)
+message = project_client.agents.create_message(
+    thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
+)
+```
+
+<!-- END SNIPPET -->
 
 #### Create Run, Run_and_Process, or Stream
 
@@ -815,6 +843,15 @@ with project_client.agents.create_stream(
 <!-- END SNIPPET -->
 
 As you can see, this SDK parses the events and produces various event types similar to OpenAI assistants. In your use case, you might not be interested in handling all these types and may decide to parse the events on your own. To achieve this, please refer to [override base event handler](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/sample_agents_stream_with_base_override_eventhandler.py).
+
+```
+Note: Multiple streaming processes may be chained behind the scenes.
+
+When the SDK receives a `ThreadRun` event with the status `requires_action`, the next event will be `Done`, followed by termination. The SDK will submit the tool calls using the same event handler. The event handler will then chain the main stream with the tool stream.
+
+Consequently, when you iterate over the streaming using a for loop similar to the example above, the for loop will receive events from the main stream followed by events from the tool stream.
+```
+
 
 #### Retrieve Message
 
@@ -1042,7 +1079,7 @@ Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
 
 ```bash
 pip install opentelemetry
-pip install azure-core-tracing-opentelemetry
+pip install azure-ai-projects azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry
 ```
 
 You will also need an exporter to send telemetry to your observability backend. You can print traces to the console or use a local viewer such as [Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash).
@@ -1190,5 +1227,5 @@ additional questions or comments.
 [pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
 [evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk
-[azure_ai_evaluation]: https://learn.microsoft.com/python/api/overview/azure/ai-evaluation-readme?view=azure-python-preview
+[azure_ai_evaluation]: https://learn.microsoft.com/python/api/overview/azure/ai-evaluation-readme
 [evaluator_library]: https://learn.microsoft.com/azure/ai-studio/how-to/evaluate-generative-ai-app#view-and-manage-the-evaluators-in-the-evaluator-library

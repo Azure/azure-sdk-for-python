@@ -45,7 +45,7 @@ pip install azure-appconfiguration
 
 <!-- LINKS -->
 [azure_sub]: https://azure.microsoft.com/free/
-[azure_cli]: https://docs.microsoft.com/cli/azure
+[azure_cli]: https://learn.microsoft.com/cli/azure
 [configuration_store]: https://azure.microsoft.com/services/app-configuration/
 [hello_world_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/hello_world_sample.py
 [hello_world_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/hello_world_sample_async.py

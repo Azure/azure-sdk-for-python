@@ -173,9 +173,9 @@ class CommunityGalleryImage(PirCommunityGalleryResource):
     :ivar unique_id: The unique id of this community gallery.
     :vartype unique_id: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
-     disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows" and "Linux".
+     disk when creating a VM from a managed image. :code:`<br>`\\ :code:`<br>` Possible values are:
+     :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known values
+     are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
      under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized" and
@@ -255,9 +255,9 @@ class CommunityGalleryImage(PirCommunityGalleryResource):
         :keyword unique_id: The unique id of this community gallery.
         :paramtype unique_id: str
         :keyword os_type: This property allows you to specify the type of the OS that is included in
-         the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows" and "Linux".
+         the disk when creating a VM from a managed image. :code:`<br>`\\ :code:`<br>` Possible values
+         are: :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known
+         values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
          created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized"
@@ -837,9 +837,9 @@ class GalleryApplication(Resource):
      property can be used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar supported_os_type: This property allows you to specify the supported type of the OS that
-     application is built for. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows" and "Linux".
+     application is built for. :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\
+     :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known values are: "Windows" and
+     "Linux".
     :vartype supported_os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     """
 
@@ -895,9 +895,9 @@ class GalleryApplication(Resource):
          property can be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword supported_os_type: This property allows you to specify the supported type of the OS
-         that application is built for. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows" and "Linux".
+         that application is built for. :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\
+         :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known values are: "Windows" and
+         "Linux".
         :paramtype supported_os_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         """
@@ -1013,9 +1013,9 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
      property can be used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar supported_os_type: This property allows you to specify the supported type of the OS that
-     application is built for. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows" and "Linux".
+     application is built for. :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\
+     :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known values are: "Windows" and
+     "Linux".
     :vartype supported_os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     """
 
@@ -1066,9 +1066,9 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
          property can be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword supported_os_type: This property allows you to specify the supported type of the OS
-         that application is built for. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows" and "Linux".
+         that application is built for. :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\
+         :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known values are: "Windows" and
+         "Linux".
         :paramtype supported_os_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         """
@@ -1736,9 +1736,9 @@ class GalleryImage(Resource):
     :ivar release_note_uri: The release note uri.
     :vartype release_note_uri: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
-     disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows" and "Linux".
+     disk when creating a VM from a managed image. :code:`<br>`\\ :code:`<br>` Possible values are:
+     :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known values
+     are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
      under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized" and
@@ -1838,9 +1838,9 @@ class GalleryImage(Resource):
         :keyword release_note_uri: The release note uri.
         :paramtype release_note_uri: str
         :keyword os_type: This property allows you to specify the type of the OS that is included in
-         the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows" and "Linux".
+         the disk when creating a VM from a managed image. :code:`<br>`\\ :code:`<br>` Possible values
+         are: :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known
+         values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
          created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized"
@@ -2009,9 +2009,9 @@ class GalleryImageUpdate(UpdateResourceDefinition):
     :ivar release_note_uri: The release note uri.
     :vartype release_note_uri: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
-     disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows" and "Linux".
+     disk when creating a VM from a managed image. :code:`<br>`\\ :code:`<br>` Possible values are:
+     :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known values
+     are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
      under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized" and
@@ -2106,9 +2106,9 @@ class GalleryImageUpdate(UpdateResourceDefinition):
         :keyword release_note_uri: The release note uri.
         :paramtype release_note_uri: str
         :keyword os_type: This property allows you to specify the type of the OS that is included in
-         the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows" and "Linux".
+         the disk when creating a VM from a managed image. :code:`<br>`\\ :code:`<br>` Possible values
+         are: :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known
+         values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
          created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized"
@@ -3154,9 +3154,9 @@ class SharedGalleryImage(PirSharedGalleryResource):
     :ivar unique_id: The unique id of this shared gallery.
     :vartype unique_id: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
-     disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows" and "Linux".
+     disk when creating a VM from a managed image. :code:`<br>`\\ :code:`<br>` Possible values are:
+     :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known values
+     are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
      under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized" and
@@ -3226,9 +3226,9 @@ class SharedGalleryImage(PirSharedGalleryResource):
         :keyword unique_id: The unique id of this shared gallery.
         :paramtype unique_id: str
         :keyword os_type: This property allows you to specify the type of the OS that is included in
-         the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows" and "Linux".
+         the disk when creating a VM from a managed image. :code:`<br>`\\ :code:`<br>` Possible values
+         are: :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known
+         values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
          created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized"
@@ -3501,9 +3501,9 @@ class SharingProfile(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar permissions: This property allows you to specify the permission of sharing gallery.
-     :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Private**
-     :code:`<br>`:code:`<br>` **Groups** :code:`<br>`:code:`<br>` **Community**. Known values are:
-     "Private", "Groups", and "Community".
+     :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **Private**
+     :code:`<br>`\\ :code:`<br>` **Groups** :code:`<br>`\\ :code:`<br>` **Community**. Known values
+     are: "Private", "Groups", and "Community".
     :vartype permissions: str or
      ~azure.mgmt.compute.v2022_01_03.models.GallerySharingPermissionTypes
     :ivar groups: A list of sharing profile groups.
@@ -3532,9 +3532,9 @@ class SharingProfile(_serialization.Model):
     ) -> None:
         """
         :keyword permissions: This property allows you to specify the permission of sharing gallery.
-         :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Private**
-         :code:`<br>`:code:`<br>` **Groups** :code:`<br>`:code:`<br>` **Community**. Known values are:
-         "Private", "Groups", and "Community".
+         :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **Private**
+         :code:`<br>`\\ :code:`<br>` **Groups** :code:`<br>`\\ :code:`<br>` **Community**. Known values
+         are: "Private", "Groups", and "Community".
         :paramtype permissions: str or
          ~azure.mgmt.compute.v2022_01_03.models.GallerySharingPermissionTypes
         :keyword community_gallery_info: Information of community gallery if current gallery is shared
@@ -3550,9 +3550,9 @@ class SharingProfile(_serialization.Model):
 class SharingProfileGroup(_serialization.Model):
     """Group of the gallery sharing profile.
 
-    :ivar type: This property allows you to specify the type of sharing group.
-     :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Subscriptions**
-     :code:`<br>`:code:`<br>` **AADTenants**. Known values are: "Subscriptions" and "AADTenants".
+    :ivar type: This property allows you to specify the type of sharing group. :code:`<br>`\\
+     :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **Subscriptions** :code:`<br>`\\
+     :code:`<br>` **AADTenants**. Known values are: "Subscriptions" and "AADTenants".
     :vartype type: str or ~azure.mgmt.compute.v2022_01_03.models.SharingProfileGroupTypes
     :ivar ids: A list of subscription/tenant ids the gallery is aimed to be shared to.
     :vartype ids: list[str]
@@ -3571,9 +3571,9 @@ class SharingProfileGroup(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword type: This property allows you to specify the type of sharing group.
-         :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Subscriptions**
-         :code:`<br>`:code:`<br>` **AADTenants**. Known values are: "Subscriptions" and "AADTenants".
+        :keyword type: This property allows you to specify the type of sharing group. :code:`<br>`\\
+         :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **Subscriptions** :code:`<br>`\\
+         :code:`<br>` **AADTenants**. Known values are: "Subscriptions" and "AADTenants".
         :paramtype type: str or ~azure.mgmt.compute.v2022_01_03.models.SharingProfileGroupTypes
         :keyword ids: A list of subscription/tenant ids the gallery is aimed to be shared to.
         :paramtype ids: list[str]
@@ -3620,9 +3620,9 @@ class SharingUpdate(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar operation_type: This property allows you to specify the operation type of gallery sharing
-     update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Add**
-     :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**. Required. Known values
-     are: "Add", "Remove", "Reset", and "EnableCommunity".
+     update. :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **Add**
+     :code:`<br>`\\ :code:`<br>` **Remove** :code:`<br>`\\ :code:`<br>` **Reset**. Required. Known
+     values are: "Add", "Remove", "Reset", and "EnableCommunity".
     :vartype operation_type: str or
      ~azure.mgmt.compute.v2022_01_03.models.SharingUpdateOperationTypes
     :ivar groups: A list of sharing profile groups.
@@ -3647,9 +3647,9 @@ class SharingUpdate(_serialization.Model):
     ) -> None:
         """
         :keyword operation_type: This property allows you to specify the operation type of gallery
-         sharing update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Add**
-         :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**. Required. Known values
-         are: "Add", "Remove", "Reset", and "EnableCommunity".
+         sharing update. :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>`
+         **Add** :code:`<br>`\\ :code:`<br>` **Remove** :code:`<br>`\\ :code:`<br>` **Reset**. Required.
+         Known values are: "Add", "Remove", "Reset", and "EnableCommunity".
         :paramtype operation_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.SharingUpdateOperationTypes
         :keyword groups: A list of sharing profile groups.

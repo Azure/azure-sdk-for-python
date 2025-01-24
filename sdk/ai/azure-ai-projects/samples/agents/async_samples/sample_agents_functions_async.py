@@ -39,7 +39,7 @@ async def main() -> None:
 
             # Create agent
             agent = await project_client.agents.create_agent(
-                model="gpt-4-1106-preview",
+                model=os.environ["MODEL_DEPLOYMENT_NAME"],
                 name="my-assistant",
                 instructions="You are helpful assistant",
                 tools=functions.definitions,

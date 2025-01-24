@@ -23312,7 +23312,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         `Entities Create Or Update
         operation
-        <https://learn.microsoft.com/en-us/rest/api/purview/datamapdataplane/entity/bulk-create-or-update?tabs=HTTP>`_
+        <https://learn.microsoft.com/rest/api/purview/datamapdataplane/entity/bulk-create-or-update?tabs=HTTP>`_
         is an alternative to assign a term to multiple entities.
 
         :param term_id: The globally unique identifier for glossary term. Required.
@@ -23366,7 +23366,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         `Entities Create Or Update
         operation
-        <https://learn.microsoft.com/en-us/rest/api/purview/datamapdataplane/entity/bulk-create-or-update?tabs=HTTP>`_
+        <https://learn.microsoft.com/rest/api/purview/datamapdataplane/entity/bulk-create-or-update?tabs=HTTP>`_
         is an alternative to assign a term to multiple entities.
 
         :param term_id: The globally unique identifier for glossary term. Required.
@@ -23390,7 +23390,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         `Entities Create Or Update
         operation
-        <https://learn.microsoft.com/en-us/rest/api/purview/datamapdataplane/entity/bulk-create-or-update?tabs=HTTP>`_
+        <https://learn.microsoft.com/rest/api/purview/datamapdataplane/entity/bulk-create-or-update?tabs=HTTP>`_
         is an alternative to assign a term to multiple entities.
 
         :param term_id: The globally unique identifier for glossary term. Required.
