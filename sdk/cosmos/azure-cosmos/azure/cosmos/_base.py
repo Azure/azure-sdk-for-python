@@ -117,6 +117,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         resource_id: Optional[str],
         resource_type: str,
         options: Mapping[str, Any],
+        operation_type: str,
         partition_key_range_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Gets HTTP request headers.
@@ -322,6 +323,11 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     # refreshed.
     if resource_type != 'dbs' and options.get("containerRID"):
         headers[http_constants.HttpHeaders.IntendedCollectionRID] = options["containerRID"]
+
+    if resource_type == "":
+        resource_type = "databaseaccount"
+    headers[http_constants.HttpHeaders.ThinClientProxyResourceType] = resource_type
+    headers[http_constants.HttpHeaders.ThinClientProxyOperationType] = operation_type
 
     return headers
 
