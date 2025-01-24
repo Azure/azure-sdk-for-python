@@ -485,9 +485,9 @@ class InputAudio(InputAudioGenerated):
         file and encodes it as a base64 string, which together with the audio format
         is then used to create the InputAudio object passed to the request payload.
 
-        :ivar audio_file: The name of the local audio file to load. Required.
+        :keyword audio_file: The name of the local audio file to load. Required.
         :vartype audio_file: str
-        :ivar audio_format: The MIME type format of the audio. For example: "wav", "mp3". Required.
+        :keyword audio_format: The MIME type format of the audio. For example: "wav", "mp3". Required.
         :vartype audio_format: str
         :return: An InputAudio object with the audio data encoded as a base64 string.
         :rtype: ~azure.ai.inference.models.InputAudio
