@@ -97,7 +97,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert "/dbs" in messages_request[0]
         assert messages_request[1] == "Request method: 'POST'"
         assert 'Request headers:' in messages_request[2]
-        assert messages_request[13] == 'A body is sent with the request'
+        assert messages_request[15] == 'A body is sent with the request'
         assert messages_response[0] == 'Response status: 201'
         assert "Elapsed time in seconds:" in elapsed_time[0]
         assert "Response headers" in messages_response[1]
@@ -115,7 +115,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert "/dbs" in messages_request[0]
         assert messages_request[1] == "Request method: 'POST'"
         assert 'Request headers:' in messages_request[2]
-        assert messages_request[13] == 'A body is sent with the request'
+        assert messages_request[15] == 'A body is sent with the request'
         assert messages_response[0] == 'Response status: 409'
         assert "Elapsed time in seconds:" in elapsed_time[0]
         assert "Response headers" in messages_response[1]

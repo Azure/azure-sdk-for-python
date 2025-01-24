@@ -32,7 +32,7 @@ from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from .. import exceptions
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
-from .._retry_utility import _configure_timeout, _has_retryable_headers
+from .._retry_utility import _configure_timeout, _has_retryable_headers, _handle_service_retries
 from .. import _endpoint_discovery_retry_policy
 from .. import _resource_throttle_retry_policy
 from .. import _default_retry_policy
@@ -193,14 +193,13 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceResponseError as e:
-            if _has_retryable_headers(request.http_request.headers):
-                # we resolve the request endpoint to the next preferred region
-                # once we are out of preferred regions we stop retrying
-                retry_policy = service_response_retry_policy
-                if not retry_policy.ShouldRetry():
-                    if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
-                        client.session.clear_session_token(client.last_response_headers)
-                    raise
+            if e.exc_type in [ConnectionTimeoutError, ServerTimeoutError]:
+                _handle_service_retries(request, client, service_response_retry_policy, args)
+            else:
+                raise
+
+        except ServiceRequestError:
+            _handle_service_retries(request, client, service_response_retry_policy, args)
 
 
 async def ExecuteFunctionAsync(function, *args, **kwargs):

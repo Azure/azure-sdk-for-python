@@ -193,14 +193,13 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceResponseError as e:
-            if _has_retryable_headers(request.http_request.headers):
-                # we resolve the request endpoint to the next preferred region
-                # once we are out of preferred regions we stop retrying
-                retry_policy = service_response_retry_policy
-                if not retry_policy.ShouldRetry():
-                    if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
-                        client.session.clear_session_token(client.last_response_headers)
-                    raise
+            if e.exc_type in [ReadTimeout, ConnectTimeout]:
+                _handle_service_retries(request, client, service_response_retry_policy, args)
+            else:
+                raise
+
+        except ServiceRequestError:
+            _handle_service_retries(request, client, service_response_retry_policy, args)
 
 
 def ExecuteFunction(function, *args, **kwargs):
@@ -218,6 +217,18 @@ def _has_retryable_headers(request_headers):
                                                                                   "ReadFeed", "SqlQuery"]):
         return True
     return False
+
+def _handle_service_retries(request, client, response_retry_policy, *args):
+    if _has_retryable_headers(request.http_request.headers):
+        # we resolve the request endpoint to the next preferred region
+        # once we are out of preferred regions we stop retrying
+        retry_policy = response_retry_policy
+        if not retry_policy.ShouldRetry():
+            if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
+                client.session.clear_session_token(client.last_response_headers)
+            raise
+    else:
+        raise
 
 def _configure_timeout(request: PipelineRequest, absolute: Optional[int], per_request: int) -> None:
     if absolute is not None:
