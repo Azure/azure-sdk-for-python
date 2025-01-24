@@ -78,6 +78,10 @@ def get_endpoints_by_location(new_locations, old_endpoints_by_location):
                 parsed_locations.append(new_location["name"])
                 if new_location["name"] in old_endpoints_by_location:
                     regional_object = old_endpoints_by_location[new_location["name"]]
+                    current = regional_object.get_current()
+                    # The aim is to always keep current and previous
+                    if current != region_uri:
+                        regional_object.set_previous(current)
                     regional_object.set_current(region_uri)
                 else:
                     regional_object = RegionalEndpoint(region_uri)
@@ -140,11 +144,11 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
     def get_read_regional_endpoint(self):
         return self.get_read_regional_endpoints()[0]
 
-    def mark_endpoint_unavailable_for_read(self, endpoint):
-        self.mark_endpoint_unavailable(endpoint, EndpointOperationType.ReadType)
+    def mark_endpoint_unavailable_for_read(self, endpoint, refresh_cache):
+        self.mark_endpoint_unavailable(endpoint, EndpointOperationType.ReadType, refresh_cache)
 
-    def mark_endpoint_unavailable_for_write(self, endpoint):
-        self.mark_endpoint_unavailable(endpoint, EndpointOperationType.WriteType)
+    def mark_endpoint_unavailable_for_write(self, endpoint, refresh_cache):
+        self.mark_endpoint_unavailable(endpoint, EndpointOperationType.WriteType, refresh_cache)
 
     def perform_on_database_account_read(self, database_account):
         self.update_location_cache(
@@ -272,7 +276,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         # Unexpired entry present. Endpoint is unavailable
         return True
 
-    def mark_endpoint_unavailable(self, unavailable_endpoint: str, unavailable_operation_type):
+    def mark_endpoint_unavailable(self, unavailable_endpoint: str, unavailable_operation_type, refresh_cache: bool):
         unavailability_info = (
             self.location_unavailability_info_by_endpoint[unavailable_endpoint]
             if unavailable_endpoint in self.location_unavailability_info_by_endpoint
@@ -290,7 +294,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 "lastUnavailabilityCheckTimeStamp": current_time,
                 "operationType": unavailable_operations,
             }
-        self.update_location_cache()
+
+        if refresh_cache:
+            self.update_location_cache()
 
     def get_preferred_locations(self):
         return self.preferred_locations

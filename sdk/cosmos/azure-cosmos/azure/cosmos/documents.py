@@ -385,6 +385,7 @@ class _OperationType:
             _OperationType.HeadFeed,
             _OperationType.Query,
             _OperationType.SqlQuery,
+            _OperationType.QueryPlan,
         )
 
     @staticmethod

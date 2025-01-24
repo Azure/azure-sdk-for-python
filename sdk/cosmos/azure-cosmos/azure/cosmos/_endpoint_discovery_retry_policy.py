@@ -80,9 +80,9 @@ class EndpointDiscoveryRetryPolicy(object):
         if self.location_endpoint:
             if _OperationType.IsReadOnlyOperation(self.request.operation_type):
                 # Mark current read endpoint as unavailable
-                self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.location_endpoint)
+                self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.location_endpoint, True)
             else:
-                self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.location_endpoint)
+                self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.location_endpoint, True)
 
         # set the refresh_needed flag to ensure that endpoint list is
         # refreshed with new writable and readable locations

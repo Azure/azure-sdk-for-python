@@ -5,12 +5,14 @@
 Cosmos database service.
 """
 
+# This retry policy is for errors after the request has been sent to the service but some error occurred.
 class ServiceResponseRetryPolicy(object):
 
     def __init__(self, connection_policy, global_endpoint_manager, *args):
         self.args = args
         self.global_endpoint_manager = global_endpoint_manager
         self.total_retries = len(self.global_endpoint_manager.location_cache.read_regional_endpoints)
+        self.in_region_retry_count = 0
         self.failover_retry_count = 0
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
@@ -23,12 +25,18 @@ class ServiceResponseRetryPolicy(object):
         """
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
+
         if self.args[0].operation_type != 'Read' and self.args[0].resource_type != 'docs':
             return False
 
-        self.failover_retry_count += 1
-        if self.failover_retry_count > self.total_retries:
-            return False
+        self.in_region_retry_count += 1
+        self.request.use_previous_endpoint_within_region = True
+        # The reason for this check is that we retry on
+        # current and previous regional endpoint for every region before moving to next region
+        if self.in_region_retry_count > 1:
+            self.in_region_retry_count = 0
+            self.failover_retry_count += 1
+            self.request.use_previous_endpoint_within_region = False
 
         if self.request:
             # clear previous location-based routing directive
@@ -37,6 +45,8 @@ class ServiceResponseRetryPolicy(object):
             # set location-based routing directive based on retry count
             # ensuring usePreferredLocations is set to True for retry
             self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, True)
+
+            # We need to update request use_previous_endpoint_within_region flag
 
             # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
             # This enables marking the endpoint unavailability on endpoint failover/unreachability
