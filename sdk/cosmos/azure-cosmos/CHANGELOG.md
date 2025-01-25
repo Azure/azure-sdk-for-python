@@ -3,7 +3,7 @@
 ### 4.9.1b2 (2025-01-24)
 
 #### Features Added
-* Added new cross-regional retry logic for ServiceRequest and ServiceResponse exceptions. See [PR 39396](https://github.com/Azure/azure-sdk-for-python/pull/39396)
+* Added new cross-regional retry logic for `ServiceRequestError` and `ServiceResponseError` exceptions. See [PR 39396](https://github.com/Azure/azure-sdk-for-python/pull/39396)
 
 #### Bugs Fixed
 * Fixed `KeyError` being returned by location cache when most preferred location is not present in cached regions. See [PR 39396](https://github.com/Azure/azure-sdk-for-python/pull/39396).
