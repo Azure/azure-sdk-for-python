@@ -13,14 +13,15 @@ class ServiceRequestRetryPolicy(object):
         self.args = args
         self.global_endpoint_manager = global_endpoint_manager
         self.failover_retry_count = 0
+        self.total_retries = 1
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
         if self.request:
             self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
-        if _OperationType.IsReadOnlyOperation(self.request.operation_type):
-            self.total_retries = len(self.global_endpoint_manager.location_cache.read_endpoints)
-        else:
-            self.total_retries = len(self.global_endpoint_manager.location_cache.write_endpoints)
+            if _OperationType.IsReadOnlyOperation(self.request.operation_type):
+                self.total_retries = len(self.global_endpoint_manager.location_cache.read_endpoints)
+            else:
+                self.total_retries = len(self.global_endpoint_manager.location_cache.write_endpoints)
 
     def ShouldRetry(self):
         """Returns true if the request should retry based on preferred regions and retries already done.
