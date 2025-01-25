@@ -5,6 +5,8 @@
 Cosmos database service.
 """
 
+import logging
+
 class ServiceResponseRetryPolicy(object):
 
     def __init__(self, connection_policy, global_endpoint_manager, *args):
@@ -16,6 +18,7 @@ class ServiceResponseRetryPolicy(object):
         self.request = args[0] if args else None
         if self.request:
             self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
+        self.logger = logging.getLogger('azure.cosmos.CosmosServiceResponseRetryPolicy')
 
     def ShouldRetry(self):
         """Returns true if the request should retry based on preferred regions and retries already done.
@@ -28,6 +31,7 @@ class ServiceResponseRetryPolicy(object):
 
         self.failover_retry_count += 1
         if self.failover_retry_count >= self.total_retries:
+            self.logger.info("No more response connection retries")
             return False
 
         if self.request:
@@ -42,4 +46,5 @@ class ServiceResponseRetryPolicy(object):
             # This enables marking the endpoint unavailability on endpoint failover/unreachability
             self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
             self.request.route_to_location(self.location_endpoint)
+            self.logger.info("Connection retry, now using {}".format(self.location_endpoint))
         return True

@@ -5,6 +5,7 @@
 Cosmos database service.
 """
 
+import logging
 from azure.cosmos.documents import _OperationType
 
 class ServiceRequestRetryPolicy(object):
@@ -16,6 +17,7 @@ class ServiceRequestRetryPolicy(object):
         self.total_retries = 1
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
+        self.logger = logging.getLogger("azure.cosmos.ServiceRequestRetryPolicy")
         if self.request:
             self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
             if _OperationType.IsReadOnlyOperation(self.request.operation_type):
@@ -29,18 +31,19 @@ class ServiceRequestRetryPolicy(object):
         """
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
-        if self.args[0].resource_type != 'docs':
-            return False
 
         if self.request:
             if self.location_endpoint:
                 if _OperationType.IsReadOnlyOperation(self.request.operation_type):
                     self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.location_endpoint)
+                    self.logger.info("Marking {} unavailable for read".format(self.location_endpoint))
                 else:
                     self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.location_endpoint)
+                    self.logger.info("Marking {} unavailable for write".format(self.location_endpoint))
 
         self.failover_retry_count += 1
         if self.failover_retry_count >= self.total_retries:
+            self.logger.info("No more request connection retries")
             return False
 
         if self.request:
@@ -55,4 +58,5 @@ class ServiceRequestRetryPolicy(object):
             # This enables marking the endpoint unavailability on endpoint failover/unreachability
             self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
             self.request.route_to_location(self.location_endpoint)
+            self.logger.info("Attempting request connection retry")
         return True
