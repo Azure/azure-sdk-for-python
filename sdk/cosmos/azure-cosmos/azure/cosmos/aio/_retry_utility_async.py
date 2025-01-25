@@ -40,7 +40,7 @@ from .. import _default_retry_policy
 from .. import _session_retry_policy
 from .. import _gone_retry_policy
 from .. import _timeout_failover_retry_policy
-from .. import _service_response_retry_policy
+from .. import _service_response_retry_policy, _service_request_retry_policy
 from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 
 
@@ -79,6 +79,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         client.connection_policy, global_endpoint_manager, *args
     )
     service_response_retry_policy = _service_response_retry_policy.ServiceResponseRetryPolicy(
+        client.connection_policy, global_endpoint_manager, *args,
+    )
+    service_request_retry_policy = _service_request_retry_policy.ServiceRequestRetryPolicy(
         client.connection_policy, global_endpoint_manager, *args,
     )
     # HttpRequest we would need to modify for Container Recreate Retry Policy
@@ -194,7 +197,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError:
-            _handle_service_request_retries(request, client, service_response_retry_policy, args)
+            _handle_service_request_retries(request, client, service_request_retry_policy, args)
 
         except ServiceResponseError as e:
             if e.exc_type in [ConnectionTimeoutError, ServerTimeoutError]:
@@ -273,6 +276,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
             except ServiceResponseError as err:
                 retry_error = err
                 if err.exc_type in [ConnectionTimeoutError, ServerTimeoutError]:
+
                     if _has_read_retryable_headers(request.http_request.headers):
                             # raise exception immediately to be dealt with in client retry policies
                             raise err
