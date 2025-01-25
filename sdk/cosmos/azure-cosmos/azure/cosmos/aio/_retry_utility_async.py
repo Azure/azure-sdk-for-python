@@ -199,8 +199,10 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             _handle_service_request_retries(client, service_request_retry_policy, *args)
 
         except ServiceResponseError as e:
-            if e.exc_type in [ConnectionTimeoutError, ServerTimeoutError]:
+            if e.exc_type == ServerTimeoutError:
                 _handle_service_response_retries(request, client, service_response_retry_policy, *args)
+            elif e.exc_type == ConnectionTimeoutError:
+                _handle_service_request_retries(client, service_request_retry_policy, *args)
             else:
                 raise
 
