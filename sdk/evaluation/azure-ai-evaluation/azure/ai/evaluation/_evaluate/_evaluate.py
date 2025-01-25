@@ -27,7 +27,7 @@ from .._constants import (
 )
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
 from .._user_agent import USER_AGENT
-from ._batch_run import EvalRunContext, CodeClient, ProxyClient, TargetRunContext
+from ._batch_run import EvalRunContext, CodeClient, ProxyClient, TargetRunContext, ProxyRun
 from ._utils import (
     _apply_column_mapping,
     _log_metrics_and_instance_results,
@@ -448,7 +448,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
 def _apply_target_to_data(
     target: Callable,
     data: Union[str, os.PathLike],
-    pf_client: PFClient,
+    batch_client: TClient,
     initial_data: pd.DataFrame,
     evaluation_name: Optional[str] = None,
     **kwargs,
@@ -460,8 +460,8 @@ def _apply_target_to_data(
     :type target: Callable
     :param data: The path to input jsonl or csv file.
     :type data: Union[str, os.PathLike]
-    :param pf_client: The promptflow client to be used.
-    :type pf_client: PFClient
+    :param batch_client: The promptflow client to be used.
+    :type batch_client: PFClient
     :param initial_data: The data frame with the loaded data.
     :type initial_data: pd.DataFrame
     :param evaluation_name: The name of the evaluation.
@@ -471,7 +471,7 @@ def _apply_target_to_data(
     """
     _run_name = kwargs.get("_run_name")
     with TargetRunContext():
-        run: Run = pf_client.run(
+        run: ProxyRun = batch_client.run(
             flow=target,
             display_name=evaluation_name,
             data=data,
@@ -479,7 +479,18 @@ def _apply_target_to_data(
             name=_run_name,
         )
 
-    target_output: pd.DataFrame = pf_client.runs.get_details(run, all_results=True)
+    target_output: pd.DataFrame = batch_client.get_details(run, all_results=True)
+    run_summary = batch_client.get_run_summary(run)
+
+    if run_summary["completed_lines"] == 0:
+        msg = (f"Evaluation target failed to produce any results."
+               f" Please check the logs at {run_summary['log_path']} for more details about cause of failure.")
+        raise EvaluationException(
+            message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.FAILED_EXECUTION,
+            blame=ErrorBlame.USER_ERROR,
+        )
     # Remove input and output prefix
     generated_columns = {
         col[len(Prefixes.OUTPUTS) :] for col in target_output.columns if col.startswith(Prefixes.OUTPUTS)
@@ -498,7 +509,7 @@ def _apply_target_to_data(
     # Concatenate output to input
     target_output = pd.concat([target_output, initial_data], axis=1)
 
-    return target_output, generated_columns, run
+    return target_output, generated_columns, run.run.result()
 
 
 def _process_column_mappings(
@@ -727,7 +738,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     target_generated_columns: Set[str] = set()
     if data is not None and target is not None:
         input_data_df, target_generated_columns, target_run = _apply_target_to_data(
-            target, data, pf_client, input_data_df, evaluation_name, **kwargs
+            target, data, ProxyClient(pf_client), input_data_df, evaluation_name, **kwargs
         )
 
         for evaluator_name, mapping in column_mapping.items():
