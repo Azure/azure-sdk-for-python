@@ -64,5 +64,4 @@ class ServiceRequestRetryPolicy(object):
             # This enables marking the endpoint unavailability on endpoint failover/unreachability
             self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
             self.request.route_to_location(self.location_endpoint)
-            self.logger.info("Attempting request connection retry")
         return True
