@@ -7,6 +7,7 @@ Cosmos database service.
 
 import logging
 from azure.cosmos.documents import _OperationType
+from azure.cosmos.http_constants import ResourceType
 
 class ServiceRequestRetryPolicy(object):
 
@@ -31,7 +32,10 @@ class ServiceRequestRetryPolicy(object):
         """
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
-
+        # For database account calls, we loop through preferred locations
+        # in global endpoint manager
+        if self.request.resource_type == ResourceType.DatabaseAccount:
+            return False
         if self.request:
             if self.location_endpoint:
                 if _OperationType.IsReadOnlyOperation(self.request.operation_type):
