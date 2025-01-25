@@ -326,6 +326,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)
                         continue
+                raise err
             finally:
                 end_time = time.time()
                 if absolute_timeout:
