@@ -262,12 +262,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 raise
             except ServiceRequestError as err:
                 # the request ran into a socket timeout or failed to establish a new connection
-                # since request wasn't sent, we retry up to however many connection retries are configured (default 3)
-                if retry_settings['connect'] > 0:
-                    retry_active = self.increment(retry_settings, response=request, error=err)
-                    if retry_active:
-                        await self.sleep(retry_settings, request.context.transport)
-                        continue
+                # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
                 raise err
             except ServiceResponseError as err:
                 retry_error = err
