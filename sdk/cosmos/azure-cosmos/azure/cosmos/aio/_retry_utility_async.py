@@ -25,7 +25,6 @@ import json
 import time
 import asyncio
 from aiohttp.client_exceptions import ConnectionTimeoutError, ServerTimeoutError
-from typing import Optional
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
@@ -199,11 +198,11 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError:
-            _handle_service_request_retries(request, client, service_request_retry_policy, args)
+            _handle_service_request_retries(request, client, service_request_retry_policy, *args)
 
         except ServiceResponseError as e:
             if e.exc_type in [ConnectionTimeoutError, ServerTimeoutError]:
-                _handle_service_request_retries(request, client, service_response_retry_policy, args)
+                _handle_service_request_retries(request, client, service_response_retry_policy, *args)
             else:
                 raise
 

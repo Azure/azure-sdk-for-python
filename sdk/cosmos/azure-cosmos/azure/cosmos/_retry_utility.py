@@ -200,11 +200,11 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError:
-            _handle_service_request_retries(client, service_request_retry_policy, args)
+            _handle_service_request_retries(client, service_request_retry_policy, *args)
 
         except ServiceResponseError as e:
             if e.exc_type in [ReadTimeout, ConnectTimeout]:
-                _handle_service_response_retries(request, client, service_response_retry_policy, args)
+                _handle_service_response_retries(request, client, service_response_retry_policy, *args)
             else:
                 raise
 
@@ -241,7 +241,7 @@ def _handle_service_response_retries(request, client, response_retry_policy, *ar
         # once we are out of preferred regions we stop retrying
         retry_policy = response_retry_policy
         if not retry_policy.ShouldRetry():
-            if args and args[0] and args[0][0].should_clear_session_token_on_session_read_failure and client.session:
+            if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
                 client.session.clear_session_token(client.last_response_headers)
             raise
     else:
@@ -282,11 +282,11 @@ class ConnectionRetryPolicy(RetryPolicy):
         """
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)
-        # TODO: remove this once done testing, place a breakpoint on line 259 and step over slowly until line 271
-        if "docs" in request.http_request.url and request.http_request.method == "GET":
-            per_request_timeout = 0.01
-        else:
-            per_request_timeout = 1
+        # # TODO: remove this once done testing, place a breakpoint on line 259 and step over slowly until line 271
+        # if "docs" in request.http_request.url and request.http_request.method == "GET":
+        #     per_request_timeout = 0.01
+        # else:
+        #     per_request_timeout = 1
 
         retry_error = None
         retry_active = True

@@ -58,7 +58,6 @@ class RegionalEndpoint(object):
                 and self.previous_endpoint == other.previous_endpoint)
 
     def __str__(self):
-        # print out all of them
         return "Current: " + self.current_endpoint + ",Previous: " + self.previous_endpoint
 
     def swap(self):
@@ -68,7 +67,6 @@ class RegionalEndpoint(object):
 
 def get_endpoints_by_location(new_locations, old_endpoints_by_location):
     # construct from previous object
-    print(old_endpoints_by_location)
     endpoints_by_location = collections.OrderedDict()
     parsed_locations = []
 
