@@ -325,7 +325,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.IntendedCollectionRID] = options["containerRID"]
 
     if resource_type == "":
-        resource_type = "databaseaccount"
+        resource_type = http_constants.ResourceType.DatabaseAccount
     headers[http_constants.HttpHeaders.ThinClientProxyResourceType] = resource_type
     headers[http_constants.HttpHeaders.ThinClientProxyOperationType] = operation_type
 
