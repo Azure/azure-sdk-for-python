@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0 (2025-01-24)
+## 1.2.0 (2025-01-27)
 
 ### Features Added
 - CSV files are now supported as data file inputs with `evaluate()` API. The CSV file should have a header row with column names that match the `data` and `target` fields in the `evaluate()` method and the filename should be passed as the `data` parameter. Column name 'Conversation' in CSV file is not fully supported yet.  
