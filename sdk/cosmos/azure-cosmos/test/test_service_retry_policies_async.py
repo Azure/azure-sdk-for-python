@@ -80,8 +80,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
                 assert mf.counter == 2
-
-            _retry_utility_async.ExecuteFunctionAsync = original_execute_function
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = original_execute_function
 
 
     async def test_service_response_server_timeout_retry_async(self):
@@ -126,8 +126,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
                 assert mf.counter == 1
-
-            _retry_utility_async.ExecuteFunctionAsync = original_execute_function
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = original_execute_function
 
 
     async def test_service_response_connection_timeout_retry_async(self):
@@ -172,8 +172,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
                 assert mf.counter == 1
-
-            _retry_utility_async.ExecuteFunctionAsync = original_execute_function
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = original_execute_function
 
     async def test_service_response_no_retry_async(self):
         async with CosmosClient(self.host, self.masterKey) as mock_client:
@@ -209,8 +209,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             except ServiceRequestError:
                 # We should only run the request once due to no logic for these error types
                 assert mf.counter == 1
-
-            _retry_utility_async.ExecuteFunctionAsync = original_execute_function
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = original_execute_function
 
     class MockExecuteServiceRequestException(object):
         def __init__(self):

@@ -77,8 +77,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert mf.counter == 2
-
-        _retry_utility.ExecuteFunction = original_execute_function
+        finally:
+            _retry_utility.ExecuteFunction = original_execute_function
 
 
     def test_service_response_read_timeout_retry(self):
@@ -123,8 +123,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert mf.counter == 1
-
-        _retry_utility.ExecuteFunction = original_execute_function
+        finally:
+            _retry_utility.ExecuteFunction = original_execute_function
 
 
     def test_service_response_connect_timeout_retry(self):
@@ -169,8 +169,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert mf.counter == 1
-
-        _retry_utility.ExecuteFunction = original_execute_function
+        finally:
+            _retry_utility.ExecuteFunction = original_execute_function
 
     def test_service_response_no_retry(self):
         mock_client = CosmosClient(self.host, self.masterKey)
@@ -206,8 +206,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
         except ServiceRequestError:
             # We should only run the request once due to no logic for these error types
             assert mf.counter == 1
-
-        _retry_utility.ExecuteFunction = original_execute_function
+        finally:
+            _retry_utility.ExecuteFunction = original_execute_function
 
     class MockExecuteServiceRequestException(object):
         def __init__(self):
