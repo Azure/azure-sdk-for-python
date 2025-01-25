@@ -7,21 +7,27 @@
 DESCRIPTION:
     This sample demonstrates how to use agents to execute tasks with Logic Apps.
  
+PREREQUISITES:
+    Create a Logic App configured to send emails. The Logic App must include an HTTP request trigger that is 
+    configured to accept JSON with 'to', 'subject', and 'body'. The guide to creating a Logic App Workflow
+    can be found here: 
+    https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/assistants-logic-apps#create-logic-apps-workflows-for-function-calling
+    
 USAGE:
     python sample_agents_logic_apps.py
  
     Before running the sample:
  
     pip install azure-ai-projects azure-identity
- 
+
+    Replace <recipient@example.com> with a valid email address in the message content.
+
     Set this environment variables with your own values:
     1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
        Azure AI Foundry project.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) LOGIC_APP_URL - the URL of the Logic App Workflow URL to send emails, as found in your Azure Portal.
-
-    Replace <recipient@example.com> with a valid email address in the message content.
 """
  
 import os, sys

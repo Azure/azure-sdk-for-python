@@ -7,8 +7,14 @@
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the 
     Azure AI Search tool from the Azure Agents service using a synchronous client.
-    To learn how to set up an Azure AI Search resource,
-    visit https://learn.microsoft.com/azure/search/search-get-started-portal
+
+PREREQUISITES:
+    You will need an Azure AI Search Resource. 
+    If you already have one, you must create an agent that can use an existing Azure AI Search index:
+    https://learn.microsoft.com/en-us/azure/ai-services/agents/how-to/tools/azure-ai-search?tabs=azurecli%2Cpython&pivots=overview-azure-ai-search
+    
+    If you do not already have an Agent Setup with an Azure AI Search resource, follow the guide for a Standard Agent setup: 
+    https://learn.microsoft.com/en-us/azure/ai-services/agents/quickstart?pivots=programming-language-python-azure
 
 USAGE:
     python sample_agents_azure_ai_search.py
