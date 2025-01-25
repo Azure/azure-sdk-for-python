@@ -227,8 +227,6 @@ def _handle_service_request_retries(request, client, request_retry_policy, *args
         if args[0] and args[0][0].should_clear_session_token_on_session_read_failure and client.session:
             client.session.clear_session_token(client.last_response_headers)
         raise
-    else:
-        raise
 
 def _handle_service_response_retries(request, client, response_retry_policy, *args):
     if _has_read_retryable_headers(request.headers):
