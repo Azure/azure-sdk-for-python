@@ -39,7 +39,7 @@ class ServiceRequestRetryPolicy(object):
                     self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.location_endpoint)
 
         self.failover_retry_count += 1
-        if self.failover_retry_count > self.total_retries:
+        if self.failover_retry_count >= self.total_retries:
             return False
 
         if self.request:

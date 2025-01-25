@@ -27,7 +27,7 @@ class ServiceResponseRetryPolicy(object):
             return False
 
         self.failover_retry_count += 1
-        if self.failover_retry_count > self.total_retries:
+        if self.failover_retry_count >= self.total_retries:
             return False
 
         if self.request:
