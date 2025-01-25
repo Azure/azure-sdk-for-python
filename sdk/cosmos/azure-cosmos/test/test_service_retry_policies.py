@@ -60,6 +60,10 @@ class TestServiceRetryPolicies(unittest.TestCase):
         except ServiceRequestError:
             assert mf.counter == 3
 
+        # Reset the function to reset the counter
+        mf = self.MockExecuteServiceRequestException()
+        _retry_utility.ExecuteFunction = mf
+
         # Now we change the location cache to have only 1 preferred read region
         original_location_cache.read_endpoints = [self.host]
         try:
@@ -67,6 +71,10 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert mf.counter == 1
+
+        # Reset the function to reset the counter
+        mf = self.MockExecuteServiceRequestException()
+        _retry_utility.ExecuteFunction = mf
 
         # Now we try it out with a write request
         original_location_cache.write_endpoints = [self.host, self.host]
@@ -104,6 +112,10 @@ class TestServiceRetryPolicies(unittest.TestCase):
         except ServiceRequestError:
             assert mf.counter == 3
 
+        # Reset the function to reset the counter
+        mf = self.MockExecuteServiceResponseException(ReadTimeout)
+        _retry_utility.ExecuteFunction = mf
+
         # Now we change the location cache to have only 1 preferred read region
         original_location_cache.read_endpoints = [self.host]
         try:
@@ -111,6 +123,10 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert mf.counter == 1
+
+        # Reset the function to reset the counter
+        mf = self.MockExecuteServiceResponseException(ReadTimeout)
+        _retry_utility.ExecuteFunction = mf
 
         # Now we try it out with a write request
         original_location_cache.write_endpoints = [self.host, self.host]
@@ -150,6 +166,10 @@ class TestServiceRetryPolicies(unittest.TestCase):
         except ServiceRequestError:
             assert mf.counter == 3
 
+        # Reset the function to reset the counter
+        mf = self.MockExecuteServiceResponseException(ConnectTimeout)
+        _retry_utility.ExecuteFunction = mf
+
         # Now we change the location cache to have only 1 preferred read region
         original_location_cache.read_endpoints = [self.host]
         try:
@@ -157,6 +177,10 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert mf.counter == 1
+
+        # Reset the function to reset the counter
+        mf = self.MockExecuteServiceResponseException(ConnectTimeout)
+        _retry_utility.ExecuteFunction = mf
 
         # Now we try it out with a write request
         original_location_cache.write_endpoints = [self.host, self.host]
@@ -195,6 +219,10 @@ class TestServiceRetryPolicies(unittest.TestCase):
         except ServiceRequestError:
             # We should only run the request once due to no logic for these error types
             assert mf.counter == 1
+
+        # Reset the function to reset the counter
+        mf = self.MockExecuteServiceResponseException(ConnectionError)
+        _retry_utility.ExecuteFunction = mf
 
         # Now we try it out with a write request
         original_location_cache.write_endpoints = [self.host, self.host]

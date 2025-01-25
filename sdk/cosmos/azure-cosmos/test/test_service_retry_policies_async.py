@@ -63,6 +63,10 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             except ServiceRequestError:
                 assert mf.counter == 3
 
+            # Reset the function to reset the counter
+            mf = self.MockExecuteServiceRequestException()
+            _retry_utility_async.ExecuteFunctionAsync = mf
+
             # Now we change the location cache to have only 1 preferred read region
             original_location_cache.read_endpoints = [self.host]
             try:
@@ -70,6 +74,10 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
                 assert mf.counter == 1
+
+            # Reset the function to reset the counter
+            mf = self.MockExecuteServiceRequestException()
+            _retry_utility_async.ExecuteFunctionAsync = mf
 
             # Now we try it out with a write request
             original_location_cache.write_endpoints = [self.host, self.host]
@@ -107,6 +115,10 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             except ServiceRequestError:
                 assert mf.counter == 3
 
+            # Reset the function to reset the counter
+            mf = self.MockExecuteServiceResponseException(ServerTimeoutError)
+            _retry_utility_async.ExecuteFunctionAsync = mf
+
             # Now we change the location cache to have only 1 preferred read region
             original_location_cache.read_endpoints = [self.host]
             try:
@@ -114,6 +126,10 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
                 assert mf.counter == 1
+
+            # Reset the function to reset the counter
+            mf = self.MockExecuteServiceResponseException(ServerTimeoutError)
+            _retry_utility_async.ExecuteFunctionAsync = mf
 
             # Now we try it out with a write request
             original_location_cache.write_endpoints = [self.host, self.host]
@@ -153,6 +169,10 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             except ServiceRequestError:
                 assert mf.counter == 3
 
+            # Reset the function to reset the counter
+            mf = self.MockExecuteServiceResponseException(ConnectionTimeoutError)
+            _retry_utility_async.ExecuteFunctionAsync = mf
+
             # Now we change the location cache to have only 1 preferred read region
             original_location_cache.read_endpoints = [self.host]
             try:
@@ -160,6 +180,10 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
                 assert mf.counter == 1
+
+            # Reset the function to reset the counter
+            mf = self.MockExecuteServiceResponseException(ConnectionTimeoutError)
+            _retry_utility_async.ExecuteFunctionAsync = mf
 
             # Now we try it out with a write request
             original_location_cache.write_endpoints = [self.host, self.host]
@@ -198,6 +222,10 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             except ServiceRequestError:
                 # We should only run the request once due to no logic for these error types
                 assert mf.counter == 1
+
+            # Reset the function to reset the counter
+            mf = self.MockExecuteServiceResponseException(ClientHttpProxyError)
+            _retry_utility_async.ExecuteFunctionAsync = mf
 
             # Now we try it out with a write request
             original_location_cache.write_endpoints = [self.host, self.host]
