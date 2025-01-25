@@ -1029,15 +1029,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         collection_link: str,
         feed_options: Optional[Mapping[str, Any]] = None,
-        *,
         response_hook: Optional[Callable[[CaseInsensitiveDict, Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Reads all documents in a collection.
         :param str collection_link: The link to the document collection.
         :param dict feed_options: The additional options for the operation.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[CaseInsensitiveDict, Dict[str, Any]]
+        :param response_hook: A callable invoked with the response metadata.
+        :type response_hook: Callable[[CaseInsensitiveDict, Dict[str, Any]]
         :return: Query Iterable of Documents.
         :rtype: query_iterable.QueryIterable
         """
@@ -1052,7 +1051,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
         partition_key: Optional[PartitionKeyType] = None,
-        *,
         response_hook: Optional[Callable[[CaseInsensitiveDict, Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
@@ -1064,8 +1062,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict options: The request options for the request.
         :param partition_key: Partition key for the query(default value None)
         :type: partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[CaseInsensitiveDict, Dict[str, Any]]
+        :param response_hook: A callable invoked with the response metadata.
+        :type response_hook: Callable[[CaseInsensitiveDict, Dict[str, Any]]
 
         :return:
             Query Iterable of Documents.
@@ -2976,9 +2974,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
         partition_key_range_id: Optional[str] = None,
-        is_query_plan: bool = False,
-        *,
         response_hook: Optional[Callable[[CaseInsensitiveDict, Dict[str, Any]], None]] = None,
+        is_query_plan: bool = False,
         **kwargs: Any
     ) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
         """Query for more than one Azure Cosmos resources.
@@ -2993,10 +2990,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The request options for the request.
         :param str partition_key_range_id:
             Specifies partition key range id.
+        :param response_hook: A callable invoked with the response metadata.
+        :type response_hook: Callable[[CaseInsensitiveDict, Dict[str, Any]]
         :param bool is_query_plan:
             Specifies if the call is to fetch query plan
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[CaseInsensitiveDict, Dict[str, Any]]
         :returns: A list of the queried resources.
         :rtype: list
         :raises SystemError: If the query compatibility mode is undefined.

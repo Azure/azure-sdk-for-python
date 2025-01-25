@@ -45,6 +45,7 @@ __all__ = ("DatabaseProxy",)
 
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 def _get_database_link(database_or_id: Union[str, 'DatabaseProxy', Mapping[str, Any]]) -> str:
     if isinstance(database_or_id, str):
@@ -134,6 +135,7 @@ class DatabaseProxy(object):
 
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the database properties.
         :rtype: Dict[Str, Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
@@ -196,6 +198,7 @@ class DatabaseProxy(object):
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
@@ -321,6 +324,7 @@ class DatabaseProxy(object):
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
@@ -393,6 +397,7 @@ class DatabaseProxy(object):
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
@@ -581,6 +586,7 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
@@ -724,6 +730,7 @@ class DatabaseProxy(object):
 
         :param Dict[str, Any] body: A dict-like object with an `id` key and value representing the user to be created.
             The user ID must be unique within the database, and consist of no more than 255 characters.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `UserProxy` instance representing the new user.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be created.
         :rtype: ~azure.cosmos.UserProxy
@@ -754,6 +761,7 @@ class DatabaseProxy(object):
         does not already exist, it is inserted.
 
         :param Dict[str, Any] body: A dict-like object representing the user to update or insert.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `UserProxy` instance representing the upserted user.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user could not be upserted.
         :rtype: ~azure.cosmos.UserProxy
@@ -780,6 +788,7 @@ class DatabaseProxy(object):
             instance of the user to be replaced.
         :type user: Union[str, ~azure.cosmos.UserProxy, Dict[str, Any]]
         :param Dict[str, Any] body: A dict-like object representing the user to replace.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `UserProxy` instance representing the user after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
             If the replace operation failed or the user with given ID does not exist.
@@ -805,6 +814,7 @@ class DatabaseProxy(object):
         :param user: The ID (name), dict representing the properties or :class:`~azure.cosmos.UserProxy`
             instance of the user to be deleted.
         :type user: Union[str, ~azure.cosmos.UserProxy, Dict[str, Any]]
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The user wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The user does not exist in the container.
         :rtype: None
@@ -819,6 +829,7 @@ class DatabaseProxy(object):
 
         If no ThroughputProperties already exist for the database, an exception is raised.
 
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: ThroughputProperties for the database.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
             the throughput properties could not be retrieved.
@@ -874,6 +885,7 @@ class DatabaseProxy(object):
 
         :param throughput: The throughput to be set (an integer).
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: ThroughputProperties for the database, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
             If no throughput properties exists for the database or if the throughput properties could not be updated.

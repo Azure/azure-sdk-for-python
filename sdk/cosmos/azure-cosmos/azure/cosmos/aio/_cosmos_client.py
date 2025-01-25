@@ -41,6 +41,8 @@ from ._database import DatabaseProxy, _get_database_link
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
 
+# pylint: disable=docstring-keyword-should-match-keyword-only
+
 __all__ = ("CosmosClient",)
 
 CredentialType = Union[
@@ -260,6 +262,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
         :returns: A DatabaseProxy instance representing the new database.
         :rtype: ~azure.cosmos.aio.DatabaseProxy
@@ -318,6 +322,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy

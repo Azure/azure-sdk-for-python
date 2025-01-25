@@ -60,6 +60,7 @@ __all__ = ("ContainerProxy",)
 # pylint: disable=protected-access, too-many-lines
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=too-many-public-methods
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
 
@@ -166,6 +167,8 @@ class ContainerProxy:
         :keyword bool populate_quota_info: Enable returning collection storage quota information in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -225,6 +228,8 @@ class ContainerProxy:
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -285,6 +290,8 @@ class ContainerProxy:
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
@@ -649,11 +656,34 @@ class ContainerProxy:
 
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
+        :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
+        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
+        :keyword partition_key: The partition key that is used to define the scope
+            (logical partition or a subset of a container)
+        :paramtype partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword start_time: The start time to start processing chang feed items.
+            Beginning: Processing the change feed items from the beginning of the change feed.
+            Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
+            ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
+            By default, it is start from current ("Now")
+        :paramtype start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
+        :keyword priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :paramtype priority: Literal["High", "Low"]
+        :keyword mode: The modes to query change feed. If `continuation` was passed, 'mode' argument will be ignored.
+            LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
+            ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
+            or 'continuation' token.
+        :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
         # pylint: disable=too-many-statements
-        validate_kwargs(**kwargs)
+        validate_kwargs(kwargs)
         feed_options = _build_options(kwargs)
 
         change_feed_state_context = {}
@@ -721,6 +751,8 @@ class ContainerProxy:
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -792,6 +824,8 @@ class ContainerProxy:
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -866,6 +900,7 @@ class ContainerProxy:
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -939,6 +974,8 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], None], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The item wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
@@ -1011,6 +1048,8 @@ class ContainerProxy:
 
         :param throughput: The throughput to be set.
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
         :returns: ThroughputProperties for the container, updated with new throughput.
@@ -1121,6 +1160,8 @@ class ContainerProxy:
         :type conflict: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the conflict to retrieve.
         :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
         :returns: A dict representing the retrieved conflict.
         :rtype: Dict[str, Any]
@@ -1149,6 +1190,8 @@ class ContainerProxy:
         :type conflict: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the conflict to retrieve.
         :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], None], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The conflict wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
         :rtype: None
@@ -1186,6 +1229,7 @@ class ContainerProxy:
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :rtype: None
         """
         if pre_trigger_include is not None:
@@ -1236,6 +1280,7 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A CosmosList representing the items after the batch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.

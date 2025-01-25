@@ -39,6 +39,7 @@ from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
 
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 __all__ = ("CosmosClient",)
 
@@ -339,6 +340,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
