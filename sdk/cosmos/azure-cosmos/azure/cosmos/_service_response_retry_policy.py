@@ -2,10 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 """Internal class for service response read errors implementation in the Azure
-Cosmos database service.
+Cosmos database service. Exceptions caught in this policy have had some issue receiving a response
+from the service, and as such we do not know what the output of the operation was. We only do cross
+regional
 """
 
 import logging
+from azure.cosmos.documents import _OperationType
 
 class ServiceResponseRetryPolicy(object):
 
@@ -18,7 +21,7 @@ class ServiceResponseRetryPolicy(object):
         self.request = args[0] if args else None
         if self.request:
             self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
-        self.logger = logging.getLogger('azure.cosmos.CosmosServiceResponseRetryPolicy')
+        self.logger = logging.getLogger('azure.cosmos.ServiceResponseRetryPolicy')
 
     def ShouldRetry(self):
         """Returns true if the request should retry based on preferred regions and retries already done.
@@ -26,7 +29,7 @@ class ServiceResponseRetryPolicy(object):
         """
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
-        if self.args[0].operation_type != 'Read' and self.args[0].resource_type != 'docs':
+        if  _OperationType.IsReadOnlyOperation(self.args[0].operation_type):
             return False
 
         self.failover_retry_count += 1
