@@ -134,7 +134,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
                                                _hosts=datalake_hosts, **kwargs)
 
         # ADLS doesn't support secondary endpoint, make sure it's empty
-        self._hosts[LocationMode.SECONDARY] = ""  # type: ignore [index]
+        self._hosts[LocationMode.SECONDARY] = ""
 
         self._api_version = get_api_version(kwargs)
         self._client = self._build_generated_client(self.url)

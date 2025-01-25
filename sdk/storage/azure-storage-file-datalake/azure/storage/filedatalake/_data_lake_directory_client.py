@@ -688,7 +688,7 @@ class DataLakeDirectoryClient(PathClient):
         :returns: An iterable (auto-paging) response of PathProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.PathProperties]
         """
-        hostname = self._hosts[self._location_mode]  # type: ignore [index]
+        hostname = self._hosts[self._location_mode]
         url = f"{self.scheme}://{hostname}/{quote(self.file_system_name)}"
         client = self._build_generated_client(url)
         command = functools.partial(
