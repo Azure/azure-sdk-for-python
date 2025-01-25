@@ -116,8 +116,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         path: str,
         resource_id: Optional[str],
         resource_type: str,
-        options: Mapping[str, Any],
         operation_type: str,
+        options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Gets HTTP request headers.
