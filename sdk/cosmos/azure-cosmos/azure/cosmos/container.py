@@ -482,7 +482,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         # pylint: disable=too-many-statements
         add_args_to_kwargs(args, kwargs)
-        validate_kwargs(**kwargs)
+        validate_kwargs(kwargs)
         feed_options = build_options(kwargs)
 
         change_feed_state_context = {}
