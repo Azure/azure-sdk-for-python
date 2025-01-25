@@ -29,7 +29,7 @@ class ServiceResponseRetryPolicy(object):
         """
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
-        if  _OperationType.IsReadOnlyOperation(self.args[0].operation_type):
+        if not _OperationType.IsReadOnlyOperation(self.args[0].operation_type):
             return False
 
         self.failover_retry_count += 1
