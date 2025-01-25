@@ -32,8 +32,7 @@ from azure.core.pipeline.policies import AsyncRetryPolicy
 from .. import exceptions
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from .._retry_utility import (_configure_timeout, _has_read_retryable_headers,
-                              _has_write_retryable_headers, _handle_service_response_retries,
-                              _handle_service_request_retries)
+                              _handle_service_response_retries, _handle_service_request_retries)
 from .. import _endpoint_discovery_retry_policy
 from .. import _resource_throttle_retry_policy
 from .. import _default_retry_policy
@@ -196,7 +195,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 if kwargs['timeout'] <= 0:
                     raise exceptions.CosmosClientTimeoutError()
 
-        except ServiceRequestError:
+        except ServiceRequestError as e:
             _handle_service_request_retries(request, client, service_request_retry_policy, args)
 
         except ServiceResponseError as e:
@@ -262,9 +261,6 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 timeout_error.history = retry_settings['history']
                 raise
             except ServiceRequestError as err:
-                if _has_write_retryable_headers(request.http_request.headers):
-                    # raise exception immediately to be dealt with in client retry policies
-                    raise err
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, we retry up to however many connection retries are configured (default 3)
                 if retry_settings['connect'] > 0:

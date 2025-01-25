@@ -214,11 +214,6 @@ def ExecuteFunction(function, *args, **kwargs):
     """
     return function(*args, **kwargs)
 
-def _has_write_retryable_headers(request_headers):
-    if request_headers.get(HttpHeaders.ThinClientProxyResourceType) == "docs":
-        return True
-    return False
-
 def _has_read_retryable_headers(request_headers):
     if _OperationType.IsReadOnlyOperation(request_headers.get(HttpHeaders.ThinClientProxyOperationType)):
         return True
