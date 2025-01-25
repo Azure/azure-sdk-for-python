@@ -7,7 +7,7 @@
 
 #### Bugs Fixed
 * Fixed `KeyError` being returned by location cache when most preferred location is not present in cached regions. See [PR 39396](https://github.com/Azure/azure-sdk-for-python/pull/39396).
-
+* Fixed cross-region retries on `CosmosClient` initialization. See [PR 39396](https://github.com/Azure/azure-sdk-for-python/pull/39396)
 ### 4.9.1b1 (2024-12-13)
 
 #### Features Added
