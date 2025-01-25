@@ -3,8 +3,8 @@
 
 """Internal class for service response read errors implementation in the Azure
 Cosmos database service. Exceptions caught in this policy have had some issue receiving a response
-from the service, and as such we do not know what the output of the operation was. We only do cross
-regional
+from the service, and as such we do not know what the output of the operation was. As such, we
+only do cross regional retries for read operations.
 """
 
 import logging
