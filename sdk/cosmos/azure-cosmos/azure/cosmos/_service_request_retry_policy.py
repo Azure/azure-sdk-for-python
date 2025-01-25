@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 """Internal class for service request errors implementation in the Azure
-Cosmos database service.
+Cosmos database service. Exceptions caught in this policy have the guarantee that they never
+reached the service, and as such we will attempt cross regional retries depending on the
+operation type.
 """
 
 import logging
@@ -40,10 +42,10 @@ class ServiceRequestRetryPolicy(object):
             if self.location_endpoint:
                 if _OperationType.IsReadOnlyOperation(self.request.operation_type):
                     self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.location_endpoint)
-                    self.logger.info("Marking {} unavailable for read".format(self.location_endpoint))
+                    self.logger.warning("Marking {} unavailable for read".format(self.location_endpoint))
                 else:
                     self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.location_endpoint)
-                    self.logger.info("Marking {} unavailable for write".format(self.location_endpoint))
+                    self.logger.warning("Marking {} unavailable for write".format(self.location_endpoint))
 
         self.failover_retry_count += 1
         if self.failover_retry_count >= self.total_retries:
