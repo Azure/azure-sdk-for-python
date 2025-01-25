@@ -21,11 +21,11 @@ class TestComputeManagementCloudServiceOperatingSystemsOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_os_version(self, resource_group):
+    async def test_cloud_service_operating_systems_get_os_version(self, resource_group):
         response = await self.client.cloud_service_operating_systems.get_os_version(
             location="str",
             os_version_name="str",
-            api_version="2021-03-01",
+            api_version="2024-11-04",
         )
 
         # please add some check logic here by yourself
@@ -33,10 +33,10 @@ class TestComputeManagementCloudServiceOperatingSystemsOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_os_versions(self, resource_group):
+    async def test_cloud_service_operating_systems_list_os_versions(self, resource_group):
         response = self.client.cloud_service_operating_systems.list_os_versions(
             location="str",
-            api_version="2021-03-01",
+            api_version="2024-11-04",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -44,11 +44,11 @@ class TestComputeManagementCloudServiceOperatingSystemsOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_os_family(self, resource_group):
+    async def test_cloud_service_operating_systems_get_os_family(self, resource_group):
         response = await self.client.cloud_service_operating_systems.get_os_family(
             location="str",
             os_family_name="str",
-            api_version="2021-03-01",
+            api_version="2024-11-04",
         )
 
         # please add some check logic here by yourself
@@ -56,10 +56,10 @@ class TestComputeManagementCloudServiceOperatingSystemsOperationsAsync(AzureMgmt
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_os_families(self, resource_group):
+    async def test_cloud_service_operating_systems_list_os_families(self, resource_group):
         response = self.client.cloud_service_operating_systems.list_os_families(
             location="str",
-            api_version="2021-03-01",
+            api_version="2024-11-04",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

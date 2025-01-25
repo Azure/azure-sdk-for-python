@@ -165,7 +165,7 @@ from azure.core.credentials import AzureKeyCredential
 # For Serverless API or Managed Compute endpoints
 client = ChatCompletionsClient(
     endpoint=endpoint,
-    credential=AzureKeyCredential(key)
+    credential=AzureKeyCredential(key),
     temperature=0.5,
     max_tokens=1000
 )

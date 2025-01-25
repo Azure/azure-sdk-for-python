@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.kusto import KustoManagementClient
 
 """
@@ -40,7 +41,7 @@ def main():
                 "properties": {
                     "compression": "None",
                     "consumerGroup": "testConsumerGroup1",
-                    "dataFormat": "JSON",
+                    "dataFormat": "MULTIJSON",
                     "eventHubResourceId": "/subscriptions/12345678-1234-1234-1234-123456789098/resourceGroups/kustorptest/providers/Microsoft.EventHub/namespaces/eventhubTestns1/eventhubs/eventhubTest1",
                     "managedIdentityResourceId": "/subscriptions/12345678-1234-1234-1234-123456789098/resourceGroups/kustorptest/providers/Microsoft.ManagedIdentity/userAssignedIdentities/managedidentityTest1",
                     "mappingRuleName": "TestMapping",
@@ -52,6 +53,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2023-08-15/examples/KustoDataConnectionValidationAsync.json
+# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2024-04-13/examples/KustoDataConnectionValidationAsync.json
 if __name__ == "__main__":
     main()
