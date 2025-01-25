@@ -34,11 +34,13 @@ class ServiceRequestRetryPolicy(object):
         """
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
-        # For database account calls, we loop through preferred locations
-        # in global endpoint manager
-        if self.request.resource_type == ResourceType.DatabaseAccount:
-            return False
+
         if self.request:
+            # For database account calls, we loop through preferred locations
+            # in global endpoint manager
+            if self.request.operation_type == ResourceType.DatabaseAccount:
+                return False
+
             if self.location_endpoint:
                 if _OperationType.IsReadOnlyOperation(self.request.operation_type):
                     self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.location_endpoint)
@@ -49,7 +51,6 @@ class ServiceRequestRetryPolicy(object):
 
         self.failover_retry_count += 1
         if self.failover_retry_count >= self.total_retries:
-            self.logger.info("No more request connection retries")
             return False
 
         if self.request:

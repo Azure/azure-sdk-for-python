@@ -29,15 +29,14 @@ class ServiceResponseRetryPolicy(object):
         """
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
-        if not _OperationType.IsReadOnlyOperation(self.args[0].operation_type):
-            return False
 
         self.failover_retry_count += 1
         if self.failover_retry_count >= self.total_retries:
-            self.logger.info("No more response connection retries")
             return False
 
         if self.request:
+            if not _OperationType.IsReadOnlyOperation(self.request.operation_type):
+                return False
             # clear previous location-based routing directive
             self.request.clear_route_to_location()
 
