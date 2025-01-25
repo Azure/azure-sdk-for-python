@@ -268,10 +268,12 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 raise err
             except ServiceResponseError as err:
                 retry_error = err
-                if err.exc_type in [ConnectionTimeoutError, ServerTimeoutError]:
+                if err.exc_type == ServerTimeoutError:
                     if _has_read_retryable_headers(request.http_request.headers):
                             # raise exception immediately to be dealt with in client retry policies
                             raise err
+                elif err.exc_type == ConnectionTimeoutError:
+                    raise err
                 retry_active = self.increment(retry_settings, response=request, error=err)
                 if retry_active:
                     await self.sleep(retry_settings, request.context.transport)

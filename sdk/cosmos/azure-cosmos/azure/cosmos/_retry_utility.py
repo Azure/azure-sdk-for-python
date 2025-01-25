@@ -308,10 +308,12 @@ class ConnectionRetryPolicy(RetryPolicy):
                 raise err
             except ServiceResponseError as err:
                 retry_error = err
-                if err.exc_type in [ReadTimeout, ConnectTimeout]:
+                if err.exc_type == ReadTimeout:
                     if _has_read_retryable_headers(request.http_request.headers):
                         # raise exception immediately to be dealt with in client retry policies
                         raise err
+                elif err.exc_type == ConnectTimeout:
+                    raise err
                 retry_active = self.increment(retry_settings, response=request, error=err)
                 if retry_active:
                     self.sleep(retry_settings, request.context.transport)
