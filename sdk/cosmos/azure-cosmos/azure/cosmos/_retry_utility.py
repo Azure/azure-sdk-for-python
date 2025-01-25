@@ -314,10 +314,11 @@ class ConnectionRetryPolicy(RetryPolicy):
                         raise err
                 elif err.exc_type == ConnectTimeout:
                     raise err
-                retry_active = self.increment(retry_settings, response=request, error=err)
-                if retry_active:
-                    self.sleep(retry_settings, request.context.transport)
-                    continue
+                if self._is_method_retryable(retry_settings, request.http_request):
+                    retry_active = self.increment(retry_settings, response=request, error=err)
+                    if retry_active:
+                        self.sleep(retry_settings, request.context.transport)
+                        continue
                 raise err
             except AzureError as err:
                 retry_error = err
