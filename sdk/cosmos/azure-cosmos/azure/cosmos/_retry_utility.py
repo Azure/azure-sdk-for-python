@@ -208,7 +208,6 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             else:
                 raise
 
-
 def ExecuteFunction(function, *args, **kwargs):
     """Stub method so that it can be used for mocking purposes as well.
     :param Callable function: the function to execute.
