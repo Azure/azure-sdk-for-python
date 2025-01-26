@@ -22,10 +22,11 @@
 """Internal methods for executing functions in the Azure Cosmos database service.
 """
 import json
-from requests.exceptions import ReadTimeout, ConnectTimeout
 import time
 from typing import Optional
 
+from requests.exceptions import ( # pylint: disable=networking-import-outside-azure-core-transport
+    ReadTimeout, ConnectTimeout) # pylint: disable=networking-import-outside-azure-core-transport
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
@@ -196,14 +197,14 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 if kwargs['timeout'] <= 0:
                     raise exceptions.CosmosClientTimeoutError()
 
-        except ServiceRequestError:
-            _handle_service_request_retries(client, service_request_retry_policy, *args)
+        except ServiceRequestError as e:
+            _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
             if e.exc_type == ReadTimeout:
-                _handle_service_response_retries(request, client, service_response_retry_policy, *args)
+                _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
             elif e.exc_type == ConnectTimeout:
-                _handle_service_request_retries(client, service_request_retry_policy, *args)
+                _handle_service_request_retries(client, service_request_retry_policy, e, *args)
             else:
                 raise
 
@@ -221,16 +222,16 @@ def _has_read_retryable_headers(request_headers):
         return True
     return False
 
-def _handle_service_request_retries(client, request_retry_policy, *args):
+def _handle_service_request_retries(client, request_retry_policy, exception, *args):
     # we resolve the request endpoint to the next preferred region
     # once we are out of preferred regions we stop retrying
     retry_policy = request_retry_policy
     if not retry_policy.ShouldRetry():
         if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
             client.session.clear_session_token(client.last_response_headers)
-        raise
+        raise exception
 
-def _handle_service_response_retries(request, client, response_retry_policy, *args):
+def _handle_service_response_retries(request, client, response_retry_policy, exception, *args):
     if _has_read_retryable_headers(request.headers):
         # we resolve the request endpoint to the next preferred region
         # once we are out of preferred regions we stop retrying
@@ -238,9 +239,9 @@ def _handle_service_response_retries(request, client, response_retry_policy, *ar
         if not retry_policy.ShouldRetry():
             if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
                 client.session.clear_session_token(client.last_response_headers)
-            raise
+            raise exception
     else:
-        raise
+        raise exception
 
 def _configure_timeout(request: PipelineRequest, absolute: Optional[int], per_request: int) -> None:
     if absolute is not None:

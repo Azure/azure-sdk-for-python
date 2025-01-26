@@ -31,6 +31,8 @@ class ServiceRequestRetryPolicy(object):
     def ShouldRetry(self):
         """Returns true if the request should retry based on preferred regions and retries already done.
 
+        :returns: a boolean stating whether the request should be retried
+        :rtype: bool
         """
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
@@ -44,10 +46,10 @@ class ServiceRequestRetryPolicy(object):
             if self.location_endpoint:
                 if _OperationType.IsReadOnlyOperation(self.request.operation_type):
                     self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.location_endpoint)
-                    self.logger.warning("Marking {} unavailable for read".format(self.location_endpoint))
+                    self.logger.warning("Marking %s unavailable for read", self.location_endpoint)
                 else:
                     self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.location_endpoint)
-                    self.logger.warning("Marking {} unavailable for write".format(self.location_endpoint))
+                    self.logger.warning("Marking %s unavailable for write", self.location_endpoint)
 
         self.failover_retry_count += 1
         if self.failover_retry_count >= self.total_retries:

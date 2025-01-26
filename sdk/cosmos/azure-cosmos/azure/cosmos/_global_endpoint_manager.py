@@ -24,13 +24,13 @@ database service.
 """
 
 import threading
-
 from urllib.parse import urlparse
+
+from azure.core.exceptions import AzureError
 
 from . import _constants as constants
 from . import exceptions
 from ._location_cache import LocationCache
-from azure.core.exceptions import AzureError
 
 
 # pylint: disable=protected-access

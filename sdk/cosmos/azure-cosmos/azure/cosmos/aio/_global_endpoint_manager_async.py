@@ -25,9 +25,11 @@ database service.
 
 import asyncio
 from urllib.parse import urlparse
+
+from azure.core.exceptions import AzureError
+
 from .. import _constants as constants
 from .. import exceptions
-from azure.core.exceptions import AzureError
 from .._location_cache import LocationCache
 
 

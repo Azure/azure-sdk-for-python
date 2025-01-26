@@ -24,7 +24,8 @@
 import json
 import time
 import asyncio
-from aiohttp.client_exceptions import ConnectionTimeoutError, ServerTimeoutError
+from aiohttp.client_exceptions import ( # pylint: disable=networking-import-outside-azure-core-transport
+    ConnectionTimeoutError, ServerTimeoutError) # pylint: disable=networking-import-outside-azure-core-transport
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
@@ -196,13 +197,13 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError as e:
-            _handle_service_request_retries(client, service_request_retry_policy, *args)
+            _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
             if e.exc_type == ServerTimeoutError:
-                _handle_service_response_retries(request, client, service_response_retry_policy, *args)
+                _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
             elif e.exc_type == ConnectionTimeoutError:
-                _handle_service_request_retries(client, service_request_retry_policy, *args)
+                _handle_service_request_retries(client, service_request_retry_policy, e, *args)
             else:
                 raise
 
@@ -270,8 +271,8 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 retry_error = err
                 if err.exc_type == ServerTimeoutError:
                     if _has_read_retryable_headers(request.http_request.headers):
-                            # raise exception immediately to be dealt with in client retry policies
-                            raise err
+                        # raise exception immediately to be dealt with in client retry policies
+                        raise err
                 elif err.exc_type == ConnectionTimeoutError:
                     raise err
                 if self._is_method_retryable(retry_settings, request.http_request):

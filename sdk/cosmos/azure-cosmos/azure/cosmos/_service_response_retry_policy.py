@@ -26,6 +26,8 @@ class ServiceResponseRetryPolicy(object):
     def ShouldRetry(self):
         """Returns true if the request should retry based on preferred regions and retries already done.
 
+        :returns: a boolean stating whether the request should be retried
+        :rtype: bool
         """
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
