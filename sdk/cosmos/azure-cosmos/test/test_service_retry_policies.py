@@ -59,7 +59,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert mf.counter == 3
-        _retry_utility.ExecuteFunction = self.original_execute_function
+        finally:
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
         # Now we change the location cache to have only 1 preferred read region
         original_location_cache.available_read_locations = [self.REGION1]
@@ -72,7 +73,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert mf.counter == 1
-        _retry_utility.ExecuteFunction = self.original_execute_function
+        finally:
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
         # Now we try it out with a write request
         original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
@@ -87,7 +89,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert mf.counter == 2
-        _retry_utility.ExecuteFunction = self.original_execute_function
+        finally:
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
 
     def test_service_response_read_timeout_retry(self):
@@ -112,7 +115,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceResponseError:
             assert mf.counter == 3
-        self.original_execute_function = _retry_utility.ExecuteFunction
+        finally:
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
         # Now we change the location cache to have only 1 preferred read region
         original_location_cache.available_read_locations = [self.REGION1]
@@ -125,7 +129,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceResponseError:
             assert mf.counter == 1
-        self.original_execute_function = _retry_utility.ExecuteFunction
+        finally:
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
         # Now we try it out with a write request
         original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
@@ -142,7 +147,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceResponseError:
             assert mf.counter == 1
-        _retry_utility.ExecuteFunction = self.original_execute_function
+        finally:
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
 
     def test_service_response_connect_timeout_retry(self):
@@ -167,7 +173,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceResponseError:
             assert mf.counter == 3
-        _retry_utility.ExecuteFunction = self.original_execute_function
+        finally:
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
         # Now we change the location cache to have only 1 preferred read region
         original_location_cache.available_read_locations = [self.REGION1]
@@ -180,7 +187,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceResponseError:
             assert mf.counter == 1
-        _retry_utility.ExecuteFunction = self.original_execute_function
+        finally:
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
         # Now we try it out with a write request
         original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
@@ -196,7 +204,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceResponseError:
             assert mf.counter == 2
-        _retry_utility.ExecuteFunction = self.original_execute_function
+        finally:
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
     def test_service_response_no_retry(self):
         mock_client = CosmosClient(self.host, self.masterKey)
@@ -221,7 +230,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
         except ServiceResponseError:
             # We should only run the request once due to no logic for these error types
             assert mf.counter == 1
-        _retry_utility.ExecuteFunction = self.original_execute_function
+        finally:
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
         # Now we try it out with a write request
         original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
@@ -237,7 +247,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
         except ServiceResponseError:
             # We should only run the request once due to no logic for these error types
             assert mf.counter == 1
-        _retry_utility.ExecuteFunction = self.original_execute_function
+        finally:
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
     class MockExecuteServiceRequestException(object):
         def __init__(self):

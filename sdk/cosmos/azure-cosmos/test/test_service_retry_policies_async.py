@@ -62,7 +62,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
                 assert mf.counter == 3
-            _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we change the location cache to have only 1 preferred read region
             original_location_cache.available_read_locations = [self.REGION1]
@@ -75,7 +76,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
                 assert mf.counter == 1
-            _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we try it out with a write request
             original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
@@ -90,7 +92,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
                 assert mf.counter == 2
-            _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
     async def test_service_response_server_timeout_retry_async(self):
         async with CosmosClient(self.host, self.masterKey) as mock_client:
@@ -114,7 +117,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceResponseError:
                 assert mf.counter == 3
-            _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we change the location cache to have only 1 preferred read region
             original_location_cache.available_read_locations = [self.REGION1]
@@ -127,7 +131,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceResponseError:
                 assert mf.counter == 1
-            _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we try it out with a write request
             original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
@@ -144,7 +149,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceResponseError:
                 assert mf.counter == 1
-            _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
 
     async def test_service_response_connection_timeout_retry_async(self):
@@ -169,11 +175,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceResponseError:
                 assert mf.counter == 3
-            _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
-
-            # Reset the function to reset the counter
-            mf = self.MockExecuteServiceResponseException(ConnectionTimeoutError)
-            _retry_utility_async.ExecuteFunctionAsync = mf
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we change the location cache to have only 1 preferred read region
             original_location_cache.available_read_locations = [self.REGION1]
@@ -186,7 +189,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceResponseError:
                 assert mf.counter == 1
-            _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we try it out with a write request
             original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
@@ -202,7 +206,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceResponseError:
                 assert mf.counter == 2
-            _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
 
     async def test_service_response_no_retry_async(self):
@@ -228,7 +233,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             except ServiceResponseError:
                 # We should only run the request once due to no logic for these error types
                 assert mf.counter == 1
-            _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we try it out with a write request
             original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
@@ -244,7 +250,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             except ServiceResponseError:
                 # We should only run the request once due to no logic for these error types
                 assert mf.counter == 1
-            _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
     class MockExecuteServiceRequestException(object):
         def __init__(self):
