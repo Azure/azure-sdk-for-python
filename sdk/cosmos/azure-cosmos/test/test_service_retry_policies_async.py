@@ -51,6 +51,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
 
             # Change the location cache to have 3 preferred read regions and 3 available read endpoints by location
             original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
+            original_location_cache.available_read_locations = [self.REGION1, self.REGION2, self.REGION3]
             original_location_cache.available_read_endpoint_by_locations = {self.REGION1: self.host, self.REGION2: self.host, self.REGION3: self.host}
             original_location_cache.read_endpoints = [self.host, self.host, self.host]
             try:
@@ -64,6 +65,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we change the location cache to have only 1 preferred read region
+            original_location_cache.available_read_locations = [self.REGION1]
             original_location_cache.read_endpoints = [self.host]
             try:
                 # Reset the function to reset the counter
@@ -76,6 +78,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we try it out with a write request
+            original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
             original_location_cache.write_endpoints = [self.host, self.host]
             original_location_cache.available_write_endpoint_by_locations = {self.REGION1: self.host,
                                                                              self.REGION2: self.host}
@@ -100,6 +103,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
 
             # Change the location cache to have 3 preferred read regions and 3 available read endpoints by location
             original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
+            original_location_cache.available_read_locations = [self.REGION1, self.REGION2, self.REGION3]
             original_location_cache.available_read_endpoint_by_locations = {self.REGION1: self.host, self.REGION2: self.host, self.REGION3: self.host}
             original_location_cache.read_endpoints = [self.host, self.host, self.host]
             try:
@@ -113,6 +117,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we change the location cache to have only 1 preferred read region
+            original_location_cache.available_read_locations = [self.REGION1]
             original_location_cache.read_endpoints = [self.host]
             try:
                 # Reset the function to reset the counter
@@ -125,6 +130,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we try it out with a write request
+            original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
             original_location_cache.write_endpoints = [self.host, self.host]
             original_location_cache.available_write_endpoint_by_locations = {self.REGION1: self.host,
                                                                              self.REGION2: self.host}
@@ -152,6 +158,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
 
             # Change the location cache to have 3 preferred read regions and 3 available read endpoints by location
             original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
+            original_location_cache.available_read_locations = [self.REGION1, self.REGION2, self.REGION3]
             original_location_cache.available_read_endpoint_by_locations = {self.REGION1: self.host, self.REGION2: self.host, self.REGION3: self.host}
             original_location_cache.read_endpoints = [self.host, self.host, self.host]
             try:
@@ -169,6 +176,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             _retry_utility_async.ExecuteFunctionAsync = mf
 
             # Now we change the location cache to have only 1 preferred read region
+            original_location_cache.available_read_locations = [self.REGION1]
             original_location_cache.read_endpoints = [self.host]
             try:
                 # Mock the function to return the ConnectionTimeoutError we retry
@@ -181,6 +189,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we try it out with a write request
+            original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
             original_location_cache.write_endpoints = [self.host, self.host]
             original_location_cache.available_write_endpoint_by_locations = {self.REGION1: self.host,
                                                                              self.REGION2: self.host}
@@ -188,12 +197,11 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 # Reset the function to reset the counter
                 mf = self.MockExecuteServiceResponseException(ConnectionTimeoutError)
                 _retry_utility_async.ExecuteFunctionAsync = mf
-                # Even though we have 2 preferred write endpoints,
-                # we will only run the exception once due to no retries on write requests
+                # ConnectTimeout behaves the same as service request timeout, so we retry on writes as well
                 await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
-                assert mf.counter == 1
+                assert mf.counter == 2
             _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
 
@@ -208,6 +216,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
 
             # Change the location cache to have 3 preferred read regions and 3 available read endpoints by location
             original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
+            original_location_cache.available_read_locations = [self.REGION1, self.REGION2, self.REGION3]
             original_location_cache.available_read_endpoint_by_locations = {self.REGION1: self.host, self.REGION2: self.host, self.REGION3: self.host}
             original_location_cache.read_endpoints = [self.host, self.host, self.host]
             try:
@@ -222,6 +231,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we try it out with a write request
+            original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
             original_location_cache.write_endpoints = [self.host, self.host]
             original_location_cache.available_write_endpoint_by_locations = {self.REGION1: self.host,
                                                                              self.REGION2: self.host}
