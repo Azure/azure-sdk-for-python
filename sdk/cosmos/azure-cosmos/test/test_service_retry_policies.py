@@ -110,7 +110,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             _retry_utility.ExecuteFunction = mf
             container.read_item(created_item['id'], created_item['pk'])
             pytest.fail("Exception was not raised.")
-        except ServiceRequestError:
+        except ServiceResponseError:
             assert mf.counter == 3
         self.original_execute_function = _retry_utility.ExecuteFunction
 
@@ -123,7 +123,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             _retry_utility.ExecuteFunction = mf
             container.read_item(created_item['id'], created_item['pk'])
             pytest.fail("Exception was not raised.")
-        except ServiceRequestError:
+        except ServiceResponseError:
             assert mf.counter == 1
         self.original_execute_function = _retry_utility.ExecuteFunction
 
@@ -140,7 +140,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             # we will only run the exception once due to no retries on write requests
             container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
             pytest.fail("Exception was not raised.")
-        except ServiceRequestError:
+        except ServiceResponseError:
             assert mf.counter == 1
         _retry_utility.ExecuteFunction = self.original_execute_function
 
@@ -165,7 +165,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             _retry_utility.ExecuteFunction = mf
             container.read_item(created_item['id'], created_item['pk'])
             pytest.fail("Exception was not raised.")
-        except ServiceRequestError:
+        except ServiceResponseError:
             assert mf.counter == 3
         _retry_utility.ExecuteFunction = self.original_execute_function
 
@@ -178,7 +178,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             _retry_utility.ExecuteFunction = mf
             container.read_item(created_item['id'], created_item['pk'])
             pytest.fail("Exception was not raised.")
-        except ServiceRequestError:
+        except ServiceResponseError:
             assert mf.counter == 1
         _retry_utility.ExecuteFunction = self.original_execute_function
 
@@ -194,7 +194,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             # ConnectTimeout behaves the same as service request timeout, so we retry on writes as well
             container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
             pytest.fail("Exception was not raised.")
-        except ServiceRequestError:
+        except ServiceResponseError:
             assert mf.counter == 2
         _retry_utility.ExecuteFunction = self.original_execute_function
 
@@ -218,7 +218,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             _retry_utility.ExecuteFunction = mf
             container.read_item(created_item['id'], created_item['pk'])
             pytest.fail("Exception was not raised.")
-        except ServiceRequestError:
+        except ServiceResponseError:
             # We should only run the request once due to no logic for these error types
             assert mf.counter == 1
         _retry_utility.ExecuteFunction = self.original_execute_function
@@ -234,7 +234,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             _retry_utility.ExecuteFunction = mf
             container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
             pytest.fail("Exception was not raised.")
-        except ServiceRequestError:
+        except ServiceResponseError:
             # We should only run the request once due to no logic for these error types
             assert mf.counter == 1
         _retry_utility.ExecuteFunction = self.original_execute_function
