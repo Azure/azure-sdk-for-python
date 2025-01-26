@@ -13,7 +13,7 @@ from aiohttp.client_exceptions import ConnectionTimeoutError, ServerTimeoutError
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 
-@pytest.mark.Emulator
+@pytest.mark.cosmosEmulator
 class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey

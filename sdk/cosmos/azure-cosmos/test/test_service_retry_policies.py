@@ -12,7 +12,7 @@ from azure.cosmos import CosmosClient, PartitionKey, _retry_utility
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 
-@pytest.mark.Emulator
+@pytest.mark.cosmosEmulator
 class TestServiceRetryPolicies(unittest.TestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
