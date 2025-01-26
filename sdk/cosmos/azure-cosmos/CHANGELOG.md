@@ -1,5 +1,15 @@
 ## Release History
 
+### 4.9.1b3 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
 ### 4.9.1b2 (2025-01-24)
 
 #### Features Added
