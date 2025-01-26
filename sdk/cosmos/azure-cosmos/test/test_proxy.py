@@ -72,7 +72,7 @@ class TestProxy(unittest.TestCase):
         server.shutdown()
 
     # Needs further debugging
-    @pytest.mark.skip
+    # @pytest.mark.skip
     def test_success_with_correct_proxy(self):
         if platform.system() == 'Darwin':
             self.skipTest("TODO: Connection error raised on OSX")
