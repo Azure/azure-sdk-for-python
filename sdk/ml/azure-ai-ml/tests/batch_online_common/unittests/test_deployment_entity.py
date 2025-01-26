@@ -2,10 +2,12 @@ import copy
 
 import pytest
 import yaml
+import json
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_batch_deployment, load_online_deployment
 from azure.ai.ml._restclient.v2022_10_01.models import BatchOutputAction, EndpointComputeType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import OnlineDeployment as RestOnlineDeploymentData
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities import (
     BatchDeployment,
@@ -20,6 +22,7 @@ from azure.ai.ml.entities import (
     ResourceSettings,
     TargetUtilizationScaleSettings,
 )
+from azure.ai.ml.exceptions import DeploymentException
 from azure.ai.ml.entities._assets import Environment, Model
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
@@ -130,6 +133,73 @@ class TestOnlineDeploymentFromYAML:
         with pytest.raises(Exception) as exc:
             blue._merge_with(blue_copy)
         assert "are not matched when merging" in str(exc.value)
+    
+    def test_managed_online_deployment_from_rest_object(self) -> None:
+        with open("./tests/test_configs/deployments/online/online_deployment_managed_rest.json", "r") as f:
+            rest_object = RestOnlineDeploymentData.deserialize(json.load(f))
+            blue_deployment = OnlineDeployment._from_rest_object(rest_object)
+            assert isinstance(blue_deployment, ManagedOnlineDeployment)
+            assert blue_deployment.name == "blue"
+            assert blue_deployment.id == rest_object.id
+            assert blue_deployment.properties == rest_object.properties.properties
+            assert blue_deployment.tags == rest_object.tags
+            assert blue_deployment.description == rest_object.properties.description
+            assert blue_deployment.environment_variables == rest_object.properties.environment_variables
+            assert blue_deployment.properties == rest_object.properties.properties
+            assert blue_deployment.model == rest_object.properties.model
+            assert blue_deployment.code_configuration.code == rest_object.properties.code_configuration.code_id
+            assert blue_deployment.request_settings.request_timeout_ms == rest_object.properties.request_settings.request_timeout.seconds * 1000
+            assert blue_deployment.environment == rest_object.properties.environment_id
+            assert blue_deployment.endpoint_name == "some-endpoint"
+            assert blue_deployment.app_insights_enabled == rest_object.properties.app_insights_enabled
+            assert blue_deployment.scale_settings.type == rest_object.properties.scale_settings.scale_type.lower()
+            assert blue_deployment.liveness_probe.failure_threshold == rest_object.properties.liveness_probe.failure_threshold
+            assert blue_deployment.instance_type == rest_object.properties.instance_type
+            assert blue_deployment.instance_count == rest_object.sku.capacity
+            assert blue_deployment.private_network_connection is None
+            assert blue_deployment.egress_public_network_access == rest_object.properties.egress_public_network_access
+            assert blue_deployment.data_collector.collections["some-collection"].client_id == rest_object.properties.data_collector.collections["some-collection"].client_id
+            assert blue_deployment.provisioning_state == rest_object.properties.provisioning_state
+    
+    def test_kubenets_online_deployment_from_rest_object_(self) -> None:
+        with open("./tests/test_configs/deployments/online/online_deployment_kubernetes_rest.json", "r") as f:
+            rest_object = RestOnlineDeploymentData.deserialize(json.load(f))
+            blue_deployment = OnlineDeployment._from_rest_object(rest_object)
+            assert isinstance(blue_deployment, KubernetesOnlineDeployment)
+            assert blue_deployment.name == "blue"
+            assert blue_deployment.id == rest_object.id
+            assert blue_deployment.properties == rest_object.properties.properties
+            assert blue_deployment.tags == rest_object.tags
+            assert blue_deployment.description == rest_object.properties.description
+            assert blue_deployment.environment_variables == rest_object.properties.environment_variables
+            assert blue_deployment.properties == rest_object.properties.properties
+            assert blue_deployment.model == rest_object.properties.model
+            assert blue_deployment.resources.limits.cpu == rest_object.properties.container_resource_requirements.container_resource_limits.cpu
+            assert blue_deployment.resources.requests.cpu == rest_object.properties.container_resource_requirements.container_resource_requests.cpu
+            assert blue_deployment.code_configuration.code == rest_object.properties.code_configuration.code_id
+            assert blue_deployment.code_configuration.scoring_script == rest_object.properties.code_configuration.scoring_script
+            assert blue_deployment.request_settings.request_timeout_ms == rest_object.properties.request_settings.request_timeout.seconds * 1000
+            assert blue_deployment.environment == rest_object.properties.environment_id
+            assert blue_deployment.endpoint_name == "some-endpoint"
+            assert blue_deployment.app_insights_enabled == rest_object.properties.app_insights_enabled
+            assert blue_deployment.scale_settings.type == "target_utilization"
+            assert blue_deployment.scale_settings.min_instances == rest_object.properties.scale_settings.min_instances
+            assert blue_deployment.scale_settings.max_instances == rest_object.properties.scale_settings.max_instances
+            assert blue_deployment.scale_settings.polling_interval == rest_object.properties.scale_settings.polling_interval.seconds
+            assert blue_deployment.scale_settings.target_utilization_percentage == rest_object.properties.scale_settings.target_utilization_percentage
+            assert blue_deployment.liveness_probe.success_threshold == rest_object.properties.liveness_probe.success_threshold
+            assert blue_deployment.instance_type == rest_object.properties.instance_type
+            assert blue_deployment.instance_count == rest_object.sku.capacity
+            assert blue_deployment.data_collector.collections["some-collection"].client_id == rest_object.properties.data_collector.collections["some-collection"].client_id
+            assert blue_deployment.provisioning_state == rest_object.properties.provisioning_state
+
+    def test_online_deployment_from_rest_object_unsupported_type(self) -> None:
+                with open("./tests/test_configs/deployments/online/online_deployment_kubernetes_rest.json", "r") as f:
+                    rest_object = RestOnlineDeploymentData.deserialize(json.load(f))
+                    rest_object.properties.endpoint_compute_type = "Other"
+                    with pytest.raises(DeploymentException) as exc:
+                        OnlineDeployment._from_rest_object(rest_object)
+                    assert str(exc.value) == "Unsupported online endpoint type Other."
 
     def test_k8s_deployment(self) -> None:
         with open(TestOnlineDeploymentFromYAML.BLUE_K8S_ONLINE_DEPLOYMENT, "r") as f:
