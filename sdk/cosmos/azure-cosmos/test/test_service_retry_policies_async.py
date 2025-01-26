@@ -9,7 +9,7 @@ import pytest
 from azure.cosmos.aio import CosmosClient, _retry_utility_async
 import test_config
 from azure.cosmos import PartitionKey
-from aiohttp.client_exceptions import ConnectionTimeoutError, ServerTimeoutError, ClientHttpProxyError
+from aiohttp.client_exceptions import ConnectionTimeoutError, ServerTimeoutError, ClientResponseError
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 
@@ -221,7 +221,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             original_location_cache.read_endpoints = [self.host, self.host, self.host]
             try:
                 # Mock the function to return some other ServiceResponseException we don't account for
-                mf = self.MockExecuteServiceResponseException(ClientHttpProxyError)
+                mf = self.MockExecuteServiceResponseException(ClientResponseError)
                 _retry_utility_async.ExecuteFunctionAsync = mf
                 await container.read_item(created_item['id'], created_item['pk'])
                 pytest.fail("Exception was not raised.")
@@ -237,7 +237,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                                                                              self.REGION2: self.host}
             try:
                 # Reset the function to reset the counter
-                mf = self.MockExecuteServiceResponseException(ClientHttpProxyError)
+                mf = self.MockExecuteServiceResponseException(ClientResponseError)
                 _retry_utility_async.ExecuteFunctionAsync = mf
                 await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
                 pytest.fail("Exception was not raised.")
