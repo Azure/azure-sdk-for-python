@@ -162,8 +162,33 @@ class TestOnlineDeploymentFromYAML:
         assert arm_resource[ArmConstants.DEPENDSON_PARAMETER_NAME][0] == f"{blue.environment._arm_type}Deployment"
         assert arm_resource[ArmConstants.DEPENDSON_PARAMETER_NAME][1] == f"{blue.model._arm_type}Deployment"
     
+    def test_set_scale_settings(self) -> None:
+        with open(TestOnlineDeploymentFromYAML.MINIMAL_DEPLOYMENT, 'r') as f:
+            blue = yaml.safe_load(f)
+            blue["scale_settings"] = {"type":"default", "min_instances": 1, "max_instances": 2, "polling_interval": 3, "target_utilization_percentage": 4}
+
+            class OnlineDeploymentDict(dict):
+                def __init__(self, *args, **kwargs):
+                    super(OnlineDeploymentDict, self).__init__(*args, **kwargs)
+                    self.scale_settings = "default"
+
+            blue = OnlineDeploymentDict(blue)
+            OnlineDeployment._set_scale_settings(blue)
+            assert len(blue["scale_settings"]) == 1
+            assert blue["scale_settings"]["type"] == "default"
+
+    def test_generate_dependencies(self) -> None:
+        blue = load_online_deployment(TestOnlineDeploymentFromYAML.MINIMAL_DEPLOYMENT)
+        code, environment_id, model_id = blue._generate_dependencies()
+        assert code.code_id == blue.code_configuration.code
+        assert code.scoring_script == blue.code_configuration.scoring_script
+        assert environment_id == blue.environment.id
+        assert model_id == blue.model.id
+        
     def test_get_arm_resource_and_params(self) -> None:
         blue = load_online_deployment(TestOnlineDeploymentFromYAML.MINIMAL_DEPLOYMENT)
+        blue.egress_public_network_access = "Enabled"
+        blue.private_network_connection = True
         arm_resource = blue._get_arm_resource_and_params(location="westus2")
         
         assert arm_resource[0][0][ArmConstants.DEPENDSON_PARAMETER_NAME][0] == f"{blue.environment._arm_type}Deployment"
