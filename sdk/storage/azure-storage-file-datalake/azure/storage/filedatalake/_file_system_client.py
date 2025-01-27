@@ -7,7 +7,7 @@
 
 import functools
 from typing import (
-    Any, cast, Dict, Optional, Union,
+    Any, cast, Dict, Literal, Optional, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -41,6 +41,8 @@ if TYPE_CHECKING:
     from azure.storage.blob._models import AccessPolicy as BlobAccessPolicy
     from datetime import datetime
     from ._models import AccessPolicy, PathProperties
+
+showonly_type = Literal["deleted"]
 
 
 class FileSystemClient(StorageAccountHostsMixin):
@@ -1066,7 +1068,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._datalake_client_for_blob_operation.file_system.list_blob_hierarchy_segment,
-            showonly=ListBlobsIncludeItem.deleted,  # type: ignore [arg-type]
+            showonly=cast(showonly_type, ListBlobsIncludeItem.deleted),
             timeout=timeout,
             **kwargs)
         return ItemPaged(
