@@ -9,6 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+* Added better custom transport handling. See [PR 38640](https://github.com/Azure/azure-sdk-for-python/pull/38640).
 
 ### 4.9.1b1 (2024-12-13)
 
