@@ -7,6 +7,7 @@ import asyncio
 import logging
 import random
 from typing import Any, Callable, Dict, List, Optional, Union, cast
+import uuid
 
 from tqdm import tqdm
 
@@ -187,6 +188,8 @@ class AdversarialSimulator:
             )
         self._ensure_service_dependencies()
         templates = await self.adversarial_template_handler._get_content_harm_template_collections(scenario.value)
+        simulation_id = str(uuid.uuid4())
+        logger.warning("Use simulation_id to help debug the issue: %s", str(simulation_id))
         concurrent_async_task = min(concurrent_async_task, 1000)
         semaphore = asyncio.Semaphore(concurrent_async_task)
         sim_results = []
