@@ -3,12 +3,12 @@
 ## 7.13.1 (Unreleased)
 
 ### Features Added
-- Added in emulator support, ServiceBusAdministrationClient is currently not supported by the emulator.
 
-### Breaking Changes
+- Added in emulator support, ServiceBusAdministrationClient is currently not supported by the emulator.
 
 ### Bugs Fixed
 
+- Fixed a bug where async websocket disconnects were not being retried properly. ([#36280](https://github.com/Azure/azure-sdk-for-python/issues/36280))
 - Fixed a bug where sending large messages with synchronous client caused a frame buffer offset error ([#37916](https://github.com/Azure/azure-sdk-for-python/issues/37916))
 
 ### Other Changes
