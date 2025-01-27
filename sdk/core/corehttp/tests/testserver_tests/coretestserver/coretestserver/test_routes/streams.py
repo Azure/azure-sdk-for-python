@@ -39,6 +39,21 @@ def stream_compressed_header_error():
     yield b"test"
 
 
+def stream_jsonl_basic():
+    data = [b'{"msg": "this is a message"}\n', b'{"msg": "this is another message"}\n', b'{"msg": "this is a third message"}\n{"msg": "this is a fourth message"}\n']
+    yield from data
+
+
+def stream_jsonl_no_final_line_separator():
+    data = b'{"msg": "this is a message"}'
+    yield data
+
+
+def stream_jsonl_broken_up_data():
+    data = [b'{"msg": "this is a third message"}\n{"msg": ', b'"this is a fourth message"}\n']
+    yield from data
+
+
 @streams_api.route("/basic", methods=["GET"])
 def basic():
     return Response(streaming_body(), status=200)
@@ -104,3 +119,18 @@ def upload():
             break
         byte_content += chunk
     return Response(byte_content, status=200)
+
+
+@streams_api.route("/jsonl_basic", methods=["GET"])
+def jsonl_basic():
+    return Response(stream_jsonl_basic(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_no_final_line_separator", methods=["GET"])
+def jsonl_no_final_line_separator():
+    return Response(stream_jsonl_no_final_line_separator(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_broken_up_data", methods=["GET"])
+def jsonl_broken_up_data():
+    return Response(stream_jsonl_broken_up_data(), status=200, headers={"Content-Type": "application/jsonl"})
