@@ -6,7 +6,7 @@ Use the AI Projects client library (in preview) to:
 * **Enumerate connections** in your Azure AI Foundry project and get connection properties.
 For example, get the inference endpoint URL and credentials associated with your Azure OpenAI connection.
 * **Get an authenticated Inference client** to do chat completions, for the default Azure OpenAI or AI Services connections in your Azure AI Foundry project. Supports the AzureOpenAI client from the `openai` package, or clients from the `azure-ai-inference` package.
-* **Develop Agents using the Azure AI Agent Service**, leveraging an extensive ecosystem of models, tools, and capabilities from OpenAI, Microsoft, and other LLM providers. The Azure AI Agent Service enables the building of Agents for a wide range of generative AI use cases. The package is currently in private preview.
+* **Develop Agents using the Azure AI Agent Service**, leveraging an extensive ecosystem of models, tools, and capabilities from OpenAI, Microsoft, and other LLM providers. The Azure AI Agent Service enables the building of Agents for a wide range of generative AI use cases. The package is currently in preview.
 * **Run Evaluations** to assess the performance of generative AI applications using various evaluators and metrics. It includes built-in evaluators for quality, risk, and safety, and allows custom evaluators for specific needs.
 * **Enable OpenTelemetry tracing**.
 
@@ -36,7 +36,7 @@ To report an issue with the client library, or request additional features, plea
     - [Get properties of a connection by its connection name](#get-properties-of-a-connection-by-its-connection-name)
   - [Get an authenticated ChatCompletionsClient](#get-an-authenticated-chatcompletionsclient)
   - [Get an authenticated AzureOpenAI client](#get-an-authenticated-azureopenai-client)
-  - [Agents (Private Preview)](#agents-private-preview)
+  - [Agents (Preview)](#agents-preview)
     - [Create an Agent](#create-agent) with:
       - [File Search](#create-agent-with-file-search)
       - [Enterprise File Search](#create-agent-with-enterprise-file-search)
@@ -244,13 +244,13 @@ print(response.choices[0].message.content)
 
 See the "inference" folder in the [package samples][samples] for additional samples.
 
-### Agents (Private Preview)
+### Agents (Preview)
 
 Agents in the Azure AI Projects client library are designed to facilitate various interactions and operations within your AI projects. They serve as the core components that manage and execute tasks, leveraging different tools and resources to achieve specific goals. The following steps outline the typical sequence for interacting with Agents. See the "agents" folder in the [package samples][samples] for additional Agent samples.
 
-Agents are actively being developed. A sign-up form for private preview is coming soon.
-
 #### Create Agent
+
+Before creating an Agent, you need to set up Azure resources to deploy your model. [Create a New Agent Quickstart](https://learn.microsoft.com/azure/ai-services/agents/quickstart?pivots=programming-language-python-azure) details selecting and deploying your Agent Setup.
 
 Here is an example of how to create an Agent:
 <!-- SNIPPET:sample_agents_basics.create_agent -->
@@ -447,7 +447,7 @@ with project_client:
 
 #### Create Agent with Azure AI Search
 
-Azure AI Search is an enterprise search system for high-performance applications. It integrates with Azure OpenAI Service and Azure Machine Learning, offering advanced search technologies like vector search and full-text search. Ideal for knowledge base insights, information discovery, and automation
+Azure AI Search is an enterprise search system for high-performance applications. It integrates with Azure OpenAI Service and Azure Machine Learning, offering advanced search technologies like vector search and full-text search. Ideal for knowledge base insights, information discovery, and automation. Creating an Agent with Azure AI Search requires an existing Azure AI Search Index. For more information and setup guides, see [Azure AI Search Tool Guide](https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/azure-ai-search?tabs=azurecli%2Cpython&pivots=overview-azure-ai-search).
 
 Here is an example to integrate Azure AI Search:
 
@@ -571,6 +571,58 @@ print(f"Created agent, agent ID: {agent.id}")
 
 <!-- END SNIPPET -->
 
+#### Create Agent With Logic Apps
+
+Logic Apps allow HTTP requests to trigger actions. For more information, refer to the guide [Logic App Workflows for Function Calling](https://learn.microsoft.com/azure/ai-services/openai/how-to/assistants-logic-apps#create-logic-apps-workflows-for-function-calling).
+Agents SDK accesses Logic Apps through Workflow URLs, which are called as requests in functions.
+
+<!-- SNIPPET:sample_agents_logic_apps.send_email_via_logic_app -->
+
+```python
+def send_email_via_logic_app(recipient: str, subject: str, body: str) -> str:
+    """
+    Sends an email by triggering an Azure Logic App endpoint. 
+    The Logic App must be configured to accept JSON with 'to', 'subject', and 'body'.
+    """
+    if not LOGIC_APP_URL:
+        raise ValueError("Logic App URL is not set.")
+ 
+    payload = {
+        "to": recipient,
+        "subject": subject,
+        "body": body
+    }
+ 
+    response = requests.post(url=LOGIC_APP_URL, json=payload)
+    if response.ok:
+        return json.dumps({"result": "Email sent successfully."})
+    else:
+        return json.dumps({"error": f"Error sending email request ({response.status_code}): {response.text}"})
+```
+
+<!-- END SNIPPET -->
+Then, the Logic App and other functions can be incorporated into code using `FunctionTool` and `ToolSet`. 
+<!--SNIPPET: -->
+
+```python
+functions_to_use: Set = {
+        fetch_current_datetime,
+        send_email_via_logic_app,
+    }
+ 
+    functions = FunctionTool(functions=functions_to_use)
+    toolset = ToolSet()
+    toolset.add(functions)
+ 
+    agent = project_client.agents.create_agent(
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="SendEmailAgent",
+        instructions="You are a specialized agent for sending emails.",
+        toolset=toolset,
+    )
+```
+
+<!-- END SNIPPET -->
 #### Create Agent With OpenAPI
 
 OpenAPI specifications describe REST operations against a specific endpoint. Agents SDK can read an OpenAPI spec, create a function from it, and call that function against the REST endpoint without additional client-side execution.
