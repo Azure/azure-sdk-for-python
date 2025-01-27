@@ -173,6 +173,19 @@ class TestOnlineDeploymentFromYAML:
         assert arm_resource[1][1]["environment_version"]["name"] == blue.environment.name
         assert arm_resource[2][0]["type"] == 'Microsoft.MachineLearningServices/workspaces/models/versions'
         assert arm_resource[2][1]["model_version"]["name"] == blue.model.name
+    
+    
+    def test_get_arm_resource_and_params_for_kubenets_deployment(self) -> None:
+        blue = load_online_deployment(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT)
+        arm_resource = blue._get_arm_resource_and_params(location="westus2")
+        
+        assert arm_resource[0][0][ArmConstants.DEPENDSON_PARAMETER_NAME][0] == f"{blue.environment._arm_type}Deployment"
+        assert arm_resource[0][0][ArmConstants.DEPENDSON_PARAMETER_NAME][1] == f"{blue.model._arm_type}Deployment"
+        assert arm_resource[0][1]["online_deployment"]["name"] == blue.name
+        assert arm_resource[1][0]["type"] == "Microsoft.MachineLearningServices/workspaces/environments/versions"
+        assert arm_resource[1][1]["environment_version"]["name"] == blue.environment.name
+        assert arm_resource[2][0]["type"] == 'Microsoft.MachineLearningServices/workspaces/models/versions'
+        assert arm_resource[2][1]["model_version"]["name"] == blue.model.name
 
     def test_preview_mir_deployment(self) -> None:
         with open(TestOnlineDeploymentFromYAML.PREVIEW_DEPLOYMENT, "r") as f:
