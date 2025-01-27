@@ -40,7 +40,7 @@ from . import _container_recreate_retry_policy
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
-# pylint: disable=protected-access, disable=too-many-statements, disable=too-many-branches
+# pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
 
 
 def Execute(client, global_endpoint_manager, function, *args, **kwargs):
@@ -250,7 +250,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                         self.sleep(retry_settings, request.context.transport, response=response)
                         continue
                 break
-            except ClientAuthenticationError:
+            except ClientAuthenticationError:  # pylint:disable=try-except-raise
                 # the authentication policy failed such that the client's request can't
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise

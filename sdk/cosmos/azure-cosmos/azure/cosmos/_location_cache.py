@@ -253,12 +253,12 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
         if self.enable_endpoint_discovery:
             if read_locations:
-                self.available_read_endpoint_by_locations, self.available_read_locations = get_endpoint_by_location(
+                self.available_read_endpoint_by_locations, self.available_read_locations = get_endpoint_by_location(  # pylint: disable=line-too-long
                     read_locations
                 )
 
             if write_locations:
-                self.available_write_endpoint_by_locations, self.available_write_locations = get_endpoint_by_location(
+                self.available_write_endpoint_by_locations, self.available_write_locations = get_endpoint_by_location(  # pylint: disable=line-too-long
                     write_locations
                 )
 

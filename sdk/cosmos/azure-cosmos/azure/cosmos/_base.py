@@ -607,7 +607,7 @@ def IsValidBase64String(string_to_validate: str) -> bool:
         buffer = base64.standard_b64decode(string_to_validate.replace("-", "/"))
         if len(buffer) != 4:
             return False
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-except
         if isinstance(e, binascii.Error):
             return False
         raise e
