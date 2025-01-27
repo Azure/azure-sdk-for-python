@@ -2,11 +2,9 @@
 
 ## 5.13.1 (Unreleased)
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
+
+- Fixed a bug where async websocket disconnects were not being retried properly.
 
 ### Other Changes
 
