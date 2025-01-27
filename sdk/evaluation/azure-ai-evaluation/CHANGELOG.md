@@ -14,6 +14,7 @@
 - Content safety evaluators (violence, self harm, sexual, hate/unfairness) return the maximum result as the
   main score when aggregating per-turn evaluations from a conversation into an overall
   evaluation score. Other conversation-capable evaluators still default to a mean for aggregation.
+- Fixed bug in non adversarial simulator sample where `tasks` undefined
 
 ### Other Changes
 - Changed minimum required python version to use this package from 3.8 to 3.9
