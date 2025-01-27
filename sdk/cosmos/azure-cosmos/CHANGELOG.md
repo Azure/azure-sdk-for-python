@@ -1,14 +1,16 @@
 ## Release History
 
-### 4.9.1b2 (Unreleased)
+### 4.9.1b2 (2025-01-24)
 
 #### Features Added
-
-#### Breaking Changes
+* Added new cross-regional retry logic for `ServiceRequestError` and `ServiceResponseError` exceptions. See [PR 39396](https://github.com/Azure/azure-sdk-for-python/pull/39396)
 
 #### Bugs Fixed
+* Fixed `KeyError` being returned by location cache when most preferred location is not present in cached regions. See [PR 39396](https://github.com/Azure/azure-sdk-for-python/pull/39396).
+* Fixed cross-region retries on `CosmosClient` initialization. See [PR 39396](https://github.com/Azure/azure-sdk-for-python/pull/39396)
 
 #### Other Changes
+* This release requires aiohttp version 3.10.11 and above. See [PR 39396](https://github.com/Azure/azure-sdk-for-python/pull/39396)
 
 ### 4.9.1b1 (2024-12-13)
 
