@@ -23,7 +23,7 @@
 """
 import json
 import time
-import asyncio
+import asyncio # pylint: disable=do-not-import-asyncio
 from aiohttp.client_exceptions import ( # pylint: disable=networking-import-outside-azure-core-transport
     ConnectionTimeoutError, ServerTimeoutError) # pylint: disable=networking-import-outside-azure-core-transport
 

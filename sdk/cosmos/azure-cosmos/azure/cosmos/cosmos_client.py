@@ -42,6 +42,7 @@ from .exceptions import CosmosResourceNotFoundError
 __all__ = ("CosmosClient",)
 
 
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 CredentialType = Union[
     TokenCredential, CredentialDict, str, Mapping[str, Any], Iterable[Mapping[str, Any]]
