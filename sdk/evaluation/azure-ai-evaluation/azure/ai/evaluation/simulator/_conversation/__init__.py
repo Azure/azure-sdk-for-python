@@ -258,6 +258,7 @@ class CallbackConversationBot(ConversationBot):
         conversation_history: List[Any],
         max_history: int,
         turn_number: int = 0,
+        session_state: Optional[Dict[str, Any]] = None,
     ) -> Tuple[dict, dict, float, dict]:
         chat_protocol_message = self._to_chat_protocol(
             self.user_template, conversation_history, self.user_template_parameters
@@ -265,7 +266,7 @@ class CallbackConversationBot(ConversationBot):
         msg_copy = copy.deepcopy(chat_protocol_message)
         result = {}
         start_time = time.time()
-        result = await self.callback(msg_copy)
+        result = await self.callback(msg_copy, session_state=session_state)
         end_time = time.time()
         if not result:
             result = {
