@@ -177,6 +177,25 @@ class TestOnlineDeploymentFromYAML:
             assert len(blue["scale_settings"]) == 1
             assert blue["scale_settings"]["type"] == "default"
 
+    def test_kubenetes_deployment_to_dict(self) -> None:
+         with open(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT, 'r') as f:
+            minimal_deployment = yaml.safe_load(f)
+            online_deployment_dict = load_online_deployment(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT)._to_dict()
+            assert online_deployment_dict["name"]== minimal_deployment["name"]
+            assert online_deployment_dict['endpoint_name']== minimal_deployment['endpoint_name']
+            assert online_deployment_dict['model']['name']== minimal_deployment['model']['name']
+            assert online_deployment_dict['type']== 'kubernetes'
+
+    def test_managed_deployment_to_dict(self) -> None:
+         with open(TestOnlineDeploymentFromYAML.MINIMAL_DEPLOYMENT, 'r') as f:
+            minimal_deployment = yaml.safe_load(f)
+            online_deployment_dict = load_online_deployment(TestOnlineDeploymentFromYAML.MINIMAL_DEPLOYMENT)._to_dict()
+            assert online_deployment_dict["name"]== minimal_deployment["name"]
+            assert online_deployment_dict['endpoint_name']== minimal_deployment['endpoint_name']
+            assert online_deployment_dict['model']['name']== minimal_deployment['model']['name']
+            assert online_deployment_dict['type']== 'managed'
+
+
     def test_generate_dependencies(self) -> None:
         blue = load_online_deployment(TestOnlineDeploymentFromYAML.MINIMAL_DEPLOYMENT)
         code, environment_id, model_id = blue._generate_dependencies()
