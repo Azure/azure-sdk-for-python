@@ -23,7 +23,7 @@
 """
 import json
 import time
-import asyncio
+import asyncio # pylint: disable=do-not-import-asyncio
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError
 from azure.core.pipeline.policies import AsyncRetryPolicy
