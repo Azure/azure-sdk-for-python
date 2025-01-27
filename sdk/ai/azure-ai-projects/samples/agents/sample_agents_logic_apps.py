@@ -11,7 +11,7 @@ PREREQUISITES:
     Create a Logic App configured to send emails. The Logic App must include an HTTP request trigger that is 
     configured to accept JSON with 'to', 'subject', and 'body'. The guide to creating a Logic App Workflow
     can be found here: 
-    https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/assistants-logic-apps#create-logic-apps-workflows-for-function-calling
+    https://learn.microsoft.com/azure/ai-services/openai/how-to/assistants-logic-apps#create-logic-apps-workflows-for-function-calling
     
 USAGE:
     python sample_agents_logic_apps.py
