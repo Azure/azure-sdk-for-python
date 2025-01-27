@@ -22,8 +22,9 @@ from azure.ai.ml.entities import (
     ResourceSettings,
     TargetUtilizationScaleSettings,
 )
+from azure.ai.ml.constants._common import ArmConstants
 from azure.ai.ml.exceptions import DeploymentException
-from azure.ai.ml.entities._assets import Environment, Model
+from azure.ai.ml.entities._assets import Environment, Model, Code
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 
@@ -221,6 +222,24 @@ class TestOnlineDeploymentFromYAML:
         assert blue.resources.requests.gpu == target["resources"]["requests"]["nvidia.com/gpu"]
         assert blue.description == target["description"]
         assert blue.instance_type == target["instance_type"]
+    
+    def test_get_arm_resource(self) -> None:
+        blue = load_online_deployment(TestOnlineDeploymentFromYAML.MINIMAL_DEPLOYMENT)
+        arm_resource = blue._get_arm_resource()
+        assert arm_resource[ArmConstants.DEPENDSON_PARAMETER_NAME][0] == f"{blue.environment._arm_type}Deployment"
+        assert arm_resource[ArmConstants.DEPENDSON_PARAMETER_NAME][1] == f"{blue.model._arm_type}Deployment"
+    
+    def test_get_arm_resource_and_params(self) -> None:
+        blue = load_online_deployment(TestOnlineDeploymentFromYAML.MINIMAL_DEPLOYMENT)
+        arm_resource = blue._get_arm_resource_and_params(location="westus2")
+        
+        assert arm_resource[0][0][ArmConstants.DEPENDSON_PARAMETER_NAME][0] == f"{blue.environment._arm_type}Deployment"
+        assert arm_resource[0][0][ArmConstants.DEPENDSON_PARAMETER_NAME][1] == f"{blue.model._arm_type}Deployment"
+        assert arm_resource[0][1]["online_deployment"]["name"] == blue.name
+        assert arm_resource[1][0]["type"] == "Microsoft.MachineLearningServices/workspaces/environments/versions"
+        assert arm_resource[1][1]["environment_version"]["name"] == blue.environment.name
+        assert arm_resource[2][0]["type"] == 'Microsoft.MachineLearningServices/workspaces/models/versions'
+        assert arm_resource[2][1]["model_version"]["name"] == blue.model.name
 
     def test_preview_mir_deployment(self) -> None:
         with open(TestOnlineDeploymentFromYAML.PREVIEW_DEPLOYMENT, "r") as f:
