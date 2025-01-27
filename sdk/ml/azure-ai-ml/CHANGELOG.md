@@ -6,6 +6,7 @@
  - Test
 
 ### Bugs Fixed
+  - #39187 - Submitting a Command job created using the __call__ method on another Command is missing outputs
 
 ## 1.24.0 (2025-01-07)
 
