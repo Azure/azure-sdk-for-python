@@ -5,6 +5,9 @@ import logging
 import os
 from pathlib import Path
 from subprocess import check_call
+from typing import Any
+import multiprocessing
+from functools import partial
 
 from .package_utils import create_package, change_log_generate, extract_breaking_change
 
@@ -14,6 +17,11 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %X",
 )
 _LOGGER = logging.getLogger(__name__)
+
+
+def execute_func_with_timeout(func, timeout: int = 900) -> Any:
+    """Execute function with timeout"""
+    return multiprocessing.Pool(processes=1).apply_async(func).get(timeout)
 
 
 def main(generate_input, generate_output):
@@ -28,14 +36,18 @@ def main(generate_input, generate_output):
         prefolder = package["path"][0]
         # Changelog
         last_version = ["first release"]
+        change_log_func = partial(
+            change_log_generate,
+            package_name,
+            last_version,
+            package["tagIsStable"],
+            prefolder=prefolder,
+            is_multiapi=package["isMultiapi"],
+        )
         try:
-            md_output = change_log_generate(
-                package_name,
-                last_version,
-                package["tagIsStable"],
-                prefolder=prefolder,
-                is_multiapi=package["isMultiapi"],
-            )
+            md_output, last_version = execute_func_with_timeout(change_log_func)
+        except multiprocessing.TimeoutError:
+            md_output = "change log generation was timeout!!!"
         except:
             md_output = "change log generation failed!!!"
         package["changelog"] = {
@@ -53,28 +65,27 @@ def main(generate_input, generate_output):
         package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
         package["result"] = "succeeded"
         # Generate api stub File
-        if "azure-mgmt-" not in package_name:
-            try:
-                package_path = Path(sdk_folder, folder_name, package_name)
-                check_call(
-                    [
-                        "python",
-                        "-m" "pip",
-                        "install",
-                        "-r",
-                        "../../../eng/apiview_reqs.txt",
-                        "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
-                        "/simple/",
-                    ],
-                    cwd=package_path,
-                    timeout=300,
-                )
-                check_call(["apistubgen", "--pkg-path", "."], cwd=package_path, timeout=600)
-                for file in os.listdir(package_path):
-                    if "_python.json" in file and package_name in file:
-                        package["apiViewArtifact"] = str(Path(package_path, file))
-            except Exception as e:
-                _LOGGER.error(f"Fail to generate ApiView token file for {package_name}: {e}")
+        try:
+            package_path = Path(sdk_folder, folder_name, package_name)
+            check_call(
+                [
+                    "python",
+                    "-m" "pip",
+                    "install",
+                    "-r",
+                    "../../../eng/apiview_reqs.txt",
+                    "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
+                    "/simple/",
+                ],
+                cwd=package_path,
+                timeout=600,
+            )
+            check_call(["apistubgen", "--pkg-path", "."], cwd=package_path, timeout=600)
+            for file in os.listdir(package_path):
+                if "_python.json" in file and package_name in file:
+                    package["apiViewArtifact"] = str(Path(package_path, file))
+        except Exception as e:
+            _LOGGER.debug(f"Fail to generate ApiView token file for {package_name}: {e}")
         # Installation package
         package["installInstructions"] = {
             "full": "You can install the use using pip install of the artifacts.",
@@ -89,6 +100,10 @@ def main(generate_input, generate_output):
 
     with open(generate_output, "w") as writer:
         json.dump(result, writer)
+
+    _LOGGER.info(
+        f"Congratulations! Succeed to build package for {[p['packageName'] for p in result['packages']]}. And you shall be able to see the generated code when running 'git status'."
+    )
 
 
 def generate_main():

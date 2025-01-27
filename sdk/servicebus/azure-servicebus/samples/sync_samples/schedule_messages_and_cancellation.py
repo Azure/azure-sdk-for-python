@@ -34,6 +34,7 @@ def schedule_multiple_messages(sender):
     sequence_numbers = sender.schedule_messages(messages_to_schedule, scheduled_time_utc)
     return sequence_numbers
 
+
 credential = DefaultAzureCredential()
 servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential, logging_enable=True)
 with servicebus_client:

@@ -4,18 +4,20 @@
 
 # pylint: disable=unused-argument,no-else-return
 
-from marshmallow import fields, EXCLUDE
+from marshmallow import EXCLUDE, fields
 from marshmallow.decorators import post_load, pre_dump
+
+from azure.ai.ml._schema import ExperimentalField
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
-from azure.ai.ml._schema.core.fields import StringTransformedEnum, NestedField, UnionField
+from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake
+from azure.ai.ml.constants._workspace import FirewallSku, IsolationMode, OutboundRuleCategory
 from azure.ai.ml.entities._workspace.networking import (
-    ManagedNetwork,
     FqdnDestination,
-    ServiceTagDestination,
+    ManagedNetwork,
     PrivateEndpointDestination,
+    ServiceTagDestination,
 )
-from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
-from azure.ai.ml._utils.utils import camel_to_snake, _snake_to_camel
 
 
 class ManagedNetworkStatusSchema(metaclass=PatchedSchemaMeta):
@@ -46,7 +48,12 @@ class FqdnOutboundRuleSchema(metaclass=PatchedSchemaMeta):
         category = data.get("category", OutboundRuleCategory.USER_DEFINED)
         name = data.get("name")
         status = data.get("status", None)
-        return FqdnDestination(name=name, destination=dest, category=_snake_to_camel(category), status=status)
+        return FqdnDestination(
+            name=name,
+            destination=dest,
+            category=_snake_to_camel(category),
+            status=status,
+        )
 
 
 class ServiceTagDestinationSchema(metaclass=PatchedSchemaMeta):
@@ -184,13 +191,34 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
         ),
         allow_none=True,
     )
+    firewall_sku = ExperimentalField(
+        StringTransformedEnum(
+            allowed_values=[
+                FirewallSku.STANDARD,
+                FirewallSku.BASIC,
+            ],
+            casing_transform=camel_to_snake,
+            metadata={"description": "Firewall sku for FQDN rules in AllowOnlyApprovedOutbound mode"},
+        )
+    )
     network_id = fields.Str(required=False, dump_only=True)
     status = NestedField(ManagedNetworkStatusSchema, allow_none=False, unknown=EXCLUDE)
 
     @post_load
     def make(self, data, **kwargs):
         outbound_rules = data.get("outbound_rules", False)
+
+        firewall_sku = data.get("firewall_sku", False)
+        firewall_sku_value = _snake_to_camel(data["firewall_sku"]) if firewall_sku else FirewallSku.STANDARD
+
         if outbound_rules:
-            return ManagedNetwork(isolation_mode=_snake_to_camel(data["isolation_mode"]), outbound_rules=outbound_rules)
+            return ManagedNetwork(
+                isolation_mode=_snake_to_camel(data["isolation_mode"]),
+                outbound_rules=outbound_rules,
+                firewall_sku=firewall_sku_value,
+            )
         else:
-            return ManagedNetwork(isolation_mode=_snake_to_camel(data["isolation_mode"]))
+            return ManagedNetwork(
+                isolation_mode=_snake_to_camel(data["isolation_mode"]),
+                firewall_sku=firewall_sku_value,
+            )

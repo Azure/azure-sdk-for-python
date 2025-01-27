@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, Optional, TypeVar, Union, overload
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, Optional, Type, TypeVar, Union, overload
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -16,18 +16,18 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._dsc_configuration_operations import (
     build_create_or_update_request,
     build_delete_request,
@@ -36,12 +36,11 @@ from ...operations._dsc_configuration_operations import (
     build_list_by_automation_account_request,
     build_update_request,
 )
-from .._vendor import AutomationClientMixinABC
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -71,18 +70,20 @@ class DscConfigurationOperations:
     ) -> None:
         """Delete the dsc configuration identified by configuration name.
 
+        .. seealso::
+           - http://aka.ms/azureautomationsdk/configurationoperations
+
         :param resource_group_name: Name of an Azure Resource group. Required.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
         :type automation_account_name: str
         :param configuration_name: The configuration name. Required.
         :type configuration_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -93,24 +94,23 @@ class DscConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-08"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             automation_account_name=automation_account_name,
             configuration_name=configuration_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -121,11 +121,7 @@ class DscConfigurationOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/configurations/{configurationName}"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def get(
@@ -133,18 +129,20 @@ class DscConfigurationOperations:
     ) -> _models.DscConfiguration:
         """Retrieve the configuration identified by configuration name.
 
+        .. seealso::
+           - http://aka.ms/azureautomationsdk/configurationoperations
+
         :param resource_group_name: Name of an Azure Resource group. Required.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
         :type automation_account_name: str
         :param configuration_name: The configuration name. Required.
         :type configuration_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DscConfiguration or the result of cls(response)
         :rtype: ~azure.mgmt.automation.models.DscConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -155,24 +153,23 @@ class DscConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-08"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
         cls: ClsType[_models.DscConfiguration] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             automation_account_name=automation_account_name,
             configuration_name=configuration_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -182,16 +179,12 @@ class DscConfigurationOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("DscConfiguration", pipeline_response)
+        deserialized = self._deserialize("DscConfiguration", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/configurations/{configurationName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def create_or_update(
@@ -206,6 +199,9 @@ class DscConfigurationOperations:
     ) -> _models.DscConfiguration:
         """Create the configuration identified by configuration name.
 
+        .. seealso::
+           - http://aka.ms/azureautomationsdk/configurationoperations
+
         :param resource_group_name: Name of an Azure Resource group. Required.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
@@ -217,7 +213,6 @@ class DscConfigurationOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DscConfiguration or the result of cls(response)
         :rtype: ~azure.mgmt.automation.models.DscConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -236,6 +231,9 @@ class DscConfigurationOperations:
     ) -> _models.DscConfiguration:
         """Create the configuration identified by configuration name.
 
+        .. seealso::
+           - http://aka.ms/azureautomationsdk/configurationoperations
+
         :param resource_group_name: Name of an Azure Resource group. Required.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
@@ -247,7 +245,6 @@ class DscConfigurationOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for string body.
          Default value is None.
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DscConfiguration or the result of cls(response)
         :rtype: ~azure.mgmt.automation.models.DscConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -264,24 +261,23 @@ class DscConfigurationOperations:
     ) -> _models.DscConfiguration:
         """Create the configuration identified by configuration name.
 
+        .. seealso::
+           - http://aka.ms/azureautomationsdk/configurationoperations
+
         :param resource_group_name: Name of an Azure Resource group. Required.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
         :type automation_account_name: str
         :param configuration_name: The create or update parameters for configuration. Required.
         :type configuration_name: str
-        :param parameters: The create or update parameters for configuration. Is either a model type or
-         a string type. Required.
+        :param parameters: The create or update parameters for configuration. Is either a
+         DscConfigurationCreateOrUpdateParameters type or a str type. Required.
         :type parameters: ~azure.mgmt.automation.models.DscConfigurationCreateOrUpdateParameters or str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/plain; charset=utf-8'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DscConfiguration or the result of cls(response)
         :rtype: ~azure.mgmt.automation.models.DscConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -292,7 +288,7 @@ class DscConfigurationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-08"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DscConfiguration] = kwargs.pop("cls", None)
 
@@ -304,7 +300,7 @@ class DscConfigurationOperations:
         elif isinstance(parameters, str):
             _content = self._serialize.body(parameters, "str")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             automation_account_name=automation_account_name,
             configuration_name=configuration_name,
@@ -313,15 +309,14 @@ class DscConfigurationOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -331,20 +326,12 @@ class DscConfigurationOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("DscConfiguration", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("DscConfiguration", pipeline_response)
+        deserialized = self._deserialize("DscConfiguration", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/configurations/{configurationName}"
-    }
 
     @overload
     async def update(
@@ -359,6 +346,9 @@ class DscConfigurationOperations:
     ) -> _models.DscConfiguration:
         """Create the configuration identified by configuration name.
 
+        .. seealso::
+           - http://aka.ms/azureautomationsdk/configurationoperations
+
         :param resource_group_name: Name of an Azure Resource group. Required.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
@@ -370,7 +360,6 @@ class DscConfigurationOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DscConfiguration or the result of cls(response)
         :rtype: ~azure.mgmt.automation.models.DscConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -389,6 +378,9 @@ class DscConfigurationOperations:
     ) -> _models.DscConfiguration:
         """Create the configuration identified by configuration name.
 
+        .. seealso::
+           - http://aka.ms/azureautomationsdk/configurationoperations
+
         :param resource_group_name: Name of an Azure Resource group. Required.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
@@ -400,7 +392,6 @@ class DscConfigurationOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for string body.
          Default value is None.
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DscConfiguration or the result of cls(response)
         :rtype: ~azure.mgmt.automation.models.DscConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -417,24 +408,23 @@ class DscConfigurationOperations:
     ) -> _models.DscConfiguration:
         """Create the configuration identified by configuration name.
 
+        .. seealso::
+           - http://aka.ms/azureautomationsdk/configurationoperations
+
         :param resource_group_name: Name of an Azure Resource group. Required.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
         :type automation_account_name: str
         :param configuration_name: The create or update parameters for configuration. Required.
         :type configuration_name: str
-        :param parameters: The create or update parameters for configuration. Is either a model type or
-         a string type. Default value is None.
+        :param parameters: The create or update parameters for configuration. Is either a
+         DscConfigurationUpdateParameters type or a str type. Default value is None.
         :type parameters: ~azure.mgmt.automation.models.DscConfigurationUpdateParameters or str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'text/plain; charset=utf-8'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DscConfiguration or the result of cls(response)
         :rtype: ~azure.mgmt.automation.models.DscConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -445,7 +435,7 @@ class DscConfigurationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-08"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DscConfiguration] = kwargs.pop("cls", None)
 
@@ -463,7 +453,7 @@ class DscConfigurationOperations:
             else:
                 _content = None
 
-        request = build_update_request(
+        _request = build_update_request(
             resource_group_name=resource_group_name,
             automation_account_name=automation_account_name,
             configuration_name=configuration_name,
@@ -472,15 +462,14 @@ class DscConfigurationOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -490,16 +479,12 @@ class DscConfigurationOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("DscConfiguration", pipeline_response)
+        deserialized = self._deserialize("DscConfiguration", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/configurations/{configurationName}"
-    }
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def get_content(
@@ -507,18 +492,20 @@ class DscConfigurationOperations:
     ) -> AsyncIterator[bytes]:
         """Retrieve the configuration script identified by configuration name.
 
+        .. seealso::
+           - http://aka.ms/azureautomationsdk/configurationoperations
+
         :param resource_group_name: Name of an Azure Resource group. Required.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
         :type automation_account_name: str
         :param configuration_name: The configuration name. Required.
         :type configuration_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Async iterator of the response bytes or the result of cls(response)
+        :return: AsyncIterator[bytes] or the result of cls(response)
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -529,42 +516,42 @@ class DscConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-08"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        request = build_get_content_request(
+        _request = build_get_content_request(
             resource_group_name=resource_group_name,
             automation_account_name=automation_account_name,
             configuration_name=configuration_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_content.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=True, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    get_content.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/configurations/{configurationName}/content"
-    }
 
     @distributed_trace
     def list_by_automation_account(
@@ -579,6 +566,9 @@ class DscConfigurationOperations:
     ) -> AsyncIterable["_models.DscConfiguration"]:
         """Retrieve a list of configurations.
 
+        .. seealso::
+           - http://aka.ms/azureautomationsdk/configurationoperations
+
         :param resource_group_name: Name of an Azure Resource group. Required.
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account. Required.
@@ -591,7 +581,6 @@ class DscConfigurationOperations:
         :type top: int
         :param inlinecount: Return total rows. Default value is None.
         :type inlinecount: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DscConfiguration or the result of cls(response)
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.automation.models.DscConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -599,10 +588,10 @@ class DscConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-08"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-08"))
         cls: ClsType[_models.DscConfigurationListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -613,7 +602,7 @@ class DscConfigurationOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_automation_account_request(
+                _request = build_list_by_automation_account_request(
                     resource_group_name=resource_group_name,
                     automation_account_name=automation_account_name,
                     subscription_id=self._config.subscription_id,
@@ -622,19 +611,16 @@ class DscConfigurationOperations:
                     top=top,
                     inlinecount=inlinecount,
                     api_version=api_version,
-                    template_url=self.list_by_automation_account.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("DscConfigurationListResult", pipeline_response)
@@ -644,10 +630,11 @@ class DscConfigurationOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -659,7 +646,3 @@ class DscConfigurationOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    list_by_automation_account.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/configurations"
-    }

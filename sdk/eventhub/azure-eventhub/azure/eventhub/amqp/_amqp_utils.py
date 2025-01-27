@@ -4,11 +4,13 @@
 # license information.
 # -------------------------------------------------------------------------
 
-def encode_str(data, encoding='utf-8'):
+
+def encode_str(data, encoding="utf-8"):
     try:
         return data.encode(encoding)
     except AttributeError:
         return data
+
 
 def normalized_data_body(data, **kwargs):
     # A helper method to normalize input into AMQP Data Body format
@@ -17,7 +19,8 @@ def normalized_data_body(data, **kwargs):
         return [encode_str(item, encoding) for item in data]
     return [encode_str(data, encoding)]
 
-def normalized_sequence_body(sequence): # pylint: disable=inconsistent-return-statements
+
+def normalized_sequence_body(sequence):  # pylint: disable=inconsistent-return-statements
     # A helper method to normalize input into AMQP Sequence Body format
     if isinstance(sequence, list) and all((isinstance(b, list) for b in sequence)):
         return sequence

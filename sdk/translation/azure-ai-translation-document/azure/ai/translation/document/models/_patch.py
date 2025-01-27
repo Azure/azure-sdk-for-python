@@ -14,7 +14,7 @@ from ._models import (
     TranslationStatus as GeneratedTranslationStatus,
     TranslationGlossary as GeneratedTranslationGlossary,
     TranslationTarget as GeneratedTranslationTarget,
-    BatchRequest,
+    DocumentBatch,
     SourceInput,
     DocumentFilter,
 )
@@ -22,7 +22,6 @@ from ._enums import StorageInputType
 
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -114,7 +113,7 @@ class DocumentTranslationInput:
         self.suffix = suffix
 
     def _to_generated(self):
-        return BatchRequest(
+        return DocumentBatch(
             source=SourceInput(
                 source_url=self.source_url,
                 filter=DocumentFilter(prefix=self.prefix, suffix=self.suffix),
@@ -155,7 +154,7 @@ class TranslationTarget(GeneratedTranslationTarget):
     :ivar glossaries: List of Glossary.
     :vartype glossaries: list[~azure.ai.translation.document.models.TranslationGlossary]
     :ivar storage_source: Storage Source. "AzureBlob"
-    :vartype storage_source: str or ~azure.ai.translation.document.models.StorageSource
+    :vartype storage_source: str or ~azure.ai.translation.document.models.TranslationStorageSource
     """
 
     target_url: str
@@ -166,7 +165,7 @@ class TranslationTarget(GeneratedTranslationTarget):
     """Target Language. Required."""
     glossaries: Optional[List["TranslationGlossary"]]
     """List of Glossary."""
-    storage_source: Optional[Union[str, "_models.StorageSource"]]
+    storage_source: Optional[Union[str, "_models.TranslationStorageSource"]]
     """Storage Source. \"AzureBlob\""""
 
     @overload
@@ -177,7 +176,7 @@ class TranslationTarget(GeneratedTranslationTarget):
         *,
         category_id: Optional[str] = None,
         glossaries: Optional[List["TranslationGlossary"]] = None,
-        storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
+        storage_source: Optional[Union[str, "_models.TranslationStorageSource"]] = None,
     ): ...
 
     @overload
@@ -213,7 +212,7 @@ class TranslationGlossary(GeneratedTranslationGlossary):
     :ivar format_version: Optional Version.  If not specified, default is used.
     :vartype format_version: str
     :ivar storage_source: Storage Source. "AzureBlob"
-    :vartype storage_source: str or ~azure.ai.translation.document.models.StorageSource
+    :vartype storage_source: str or ~azure.ai.translation.document.models.TranslationStorageSource
     """
 
     glossary_url: str
@@ -227,7 +226,7 @@ class TranslationGlossary(GeneratedTranslationGlossary):
     """Format. Required."""
     format_version: Optional[str]
     """Optional Version.  If not specified, default is used."""
-    storage_source: Optional[Union[str, "_models.StorageSource"]]
+    storage_source: Optional[Union[str, "_models.TranslationStorageSource"]]
     """Storage Source. \"AzureBlob\""""
 
     @overload
@@ -237,7 +236,7 @@ class TranslationGlossary(GeneratedTranslationGlossary):
         file_format: str,
         *,
         format_version: Optional[str] = None,
-        storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
+        storage_source: Optional[Union[str, "_models.TranslationStorageSource"]] = None,
     ): ...
 
     @overload
@@ -362,7 +361,7 @@ class TranslationStatus(GeneratedTranslationStatus):
      inner error with more descriptive details.
     :vartype error: ~azure.ai.translation.document.models.DocumentTranslationError
     :ivar summary: Status Summary. Required.
-    :vartype summary: ~azure.ai.translation.document.models.StatusSummary
+    :vartype summary: ~azure.ai.translation.document.models.TranslationStatusSummary
     """
 
     id: str
@@ -378,10 +377,10 @@ class TranslationStatus(GeneratedTranslationStatus):
     error: Optional["_models.DocumentTranslationError"]
     """This contains an outer error with error code, message, details, target and an
      inner error with more descriptive details."""
-    summary: "_models.StatusSummary"
+    summary: "_models.TranslationStatusSummary"
     """Status Summary. Required."""
 
-    # pylint: disable=too-many-return-statements,inconsistent-return-statements
+    # pylint: disable=too-many-return-statements
     def __getattr__(self, name: str) -> Any:
         backcompat_attrs = [
             "documents_total_count",
@@ -420,7 +419,7 @@ class TranslationStatus(GeneratedTranslationStatus):
         created_on: datetime.datetime,
         last_updated_on: datetime.datetime,
         status: Union[str, "_models.Status"],
-        summary: "_models.StatusSummary",
+        summary: "_models.TranslationStatusSummary",
         error: Optional["_models.DocumentTranslationError"] = None,
     ): ...
 

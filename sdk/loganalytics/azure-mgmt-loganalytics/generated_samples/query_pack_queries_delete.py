@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.loganalytics import LogAnalyticsManagementClient
 
 """
@@ -29,12 +30,11 @@ def main():
         subscription_id="86dc51d3-92ed-4d7e-947a-775ea79b4918",
     )
 
-    response = client.queries.delete(
+    client.queries.delete(
         resource_group_name="my-resource-group",
         query_pack_name="my-querypack",
         id="a449f8af-8e64-4b3a-9b16-5a7165ff98c4",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2019-09-01/examples/QueryPackQueriesDelete.json

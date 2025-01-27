@@ -27,8 +27,4 @@ extends:
         Path: sdk/cosmos/cosmos-emulator-matrix.json
         Selection: all
         GenerateVMJobs: true
-    Artifacts:
-    - name: azure-cosmos
-      safeName: azurecosmos
-    - name: azure-mgmt-cosmosdb
-      safeName: azuremgmtcosmosdb
+    Artifacts: ${{ parameters.Artifacts }}

@@ -1,13 +1,13 @@
 # Azure Communication SMS Package client library for Python
 
 This package contains a Python SDK for Azure Communication Services for SMS.
-Read more about Azure Communication Services [here](https://docs.microsoft.com/azure/communication-services/overview)
+Read more about Azure Communication Services [here](https://learn.microsoft.com/azure/communication-services/overview)
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-sms)
 | [Package (Pypi)](https://pypi.org/project/azure-communication-sms/)
 | [Package (Conda)](https://anaconda.org/microsoft/azure-communication/)
-| [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-sms)
-| [Product documentation](https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-python)
+| [API reference documentation](https://learn.microsoft.com/python/api/overview/azure/communication-sms-readme?view=azure-python)
+| [Product documentation](https://learn.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-python)
 
 ## _Disclaimer_
 
@@ -18,7 +18,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 ### Prerequisites
 
 - Python 3.7 or later is required to use this package.
-- A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
+- A deployed Communication Services resource. You can use the [Azure Portal](https://learn.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://learn.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 - You must have a phone number configured that is associated with an Azure subscription
 
 ### Install the package
@@ -151,5 +151,5 @@ For more information see the [Code of Conduct FAQ](https://opensource.microsoft.
 
 <!-- LINKS -->
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
-[handle_sms_events]: https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/handle-sms-events
-[next_steps]:https://docs.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-python
+[handle_sms_events]: https://learn.microsoft.com/azure/communication-services/quickstarts/telephony-sms/handle-sms-events
+[next_steps]:https://learn.microsoft.com/azure/communication-services/quickstarts/telephony-sms/send?pivots=programming-language-python

@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 
     from azure.core.rest import HttpRequest, HttpResponse
 
+
 class AzureMonitorClient(AzureMonitorClientOperationsMixin):
     """OpenTelemetry Exporter for Azure Monitor.
 
@@ -37,7 +38,7 @@ class AzureMonitorClient(AzureMonitorClientOperationsMixin):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        _base_url = '{Host}/v2.1'
+        _base_url = "{Host}/v2.1"
         self._config = AzureMonitorClientConfiguration(host=host, **kwargs)
         self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
@@ -45,7 +46,6 @@ class AzureMonitorClient(AzureMonitorClientOperationsMixin):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-
 
     def _send_request(
         self,
@@ -72,7 +72,7 @@ class AzureMonitorClient(AzureMonitorClientOperationsMixin):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Host": self._serialize.url("self._config.host", self._config.host, 'str', skip_quote=True),
+            "Host": self._serialize.url("self._config.host", self._config.host, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

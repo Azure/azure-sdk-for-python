@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.devtestlabs import DevTestLabsClient
 
 """
@@ -29,12 +30,11 @@ def main():
         subscription_id="{subscriptionId}",
     )
 
-    response = client.artifact_sources.delete(
+    client.artifact_sources.delete(
         resource_group_name="resourceGroupName",
         lab_name="{labName}",
         name="{artifactSourceName}",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/devtestlabs/resource-manager/Microsoft.DevTestLab/stable/2018-09-15/examples/ArtifactSources_Delete.json

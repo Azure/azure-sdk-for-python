@@ -29,18 +29,17 @@ tracer = trace.get_tracer(__name__)
 
 # azure monitor trace exporter to send telemetry to appinsights
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
+
 span_processor = BatchSpanProcessor(
-    AzureMonitorTraceExporter.from_connection_string(
-        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-    )
+    AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
 
 # Example with Servicebus SDKs
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
-connstr = os.environ['SERVICE_BUS_CONN_STR']
-queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+connstr = os.environ["SERVICE_BUS_CONN_STR"]
+queue_name = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 with tracer.start_as_current_span(name="MyApplication2"):
     with ServiceBusClient.from_connection_string(connstr) as client:

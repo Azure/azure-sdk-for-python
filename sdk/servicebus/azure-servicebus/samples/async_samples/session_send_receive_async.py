@@ -16,8 +16,8 @@ from azure.servicebus.aio import ServiceBusClient
 from azure.identity.aio import DefaultAzureCredential
 
 SESSION_QUEUE_NAME = os.environ["SERVICEBUS_SESSION_QUEUE_NAME"]
-SESSION_ID = os.environ['SERVICEBUS_SESSION_ID']
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
+SESSION_ID = os.environ["SERVICEBUS_SESSION_ID"]
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 
 
 async def send_single_message(sender):
@@ -34,7 +34,9 @@ async def send_batch_message(sender):
     batch_message = await sender.create_message_batch()
     for _ in range(10):
         try:
-            batch_message.add_message(ServiceBusMessage("Session Message inside a ServiceBusMessageBatch", session_id=SESSION_ID))
+            batch_message.add_message(
+                ServiceBusMessage("Session Message inside a ServiceBusMessageBatch", session_id=SESSION_ID)
+            )
         except ValueError:
             # ServiceBusMessageBatch object reaches max_size.
             # New ServiceBusMessageBatch object can be created here to send more data.

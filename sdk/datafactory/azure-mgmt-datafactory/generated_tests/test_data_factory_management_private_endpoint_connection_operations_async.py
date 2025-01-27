@@ -21,7 +21,7 @@ class TestDataFactoryManagementPrivateEndpointConnectionOperationsAsync(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_private_endpoint_connection_create_or_update(self, resource_group):
         response = await self.client.private_endpoint_connection.create_or_update(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -48,7 +48,7 @@ class TestDataFactoryManagementPrivateEndpointConnectionOperationsAsync(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_private_endpoint_connection_get(self, resource_group):
         response = await self.client.private_endpoint_connection.get(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -61,7 +61,7 @@ class TestDataFactoryManagementPrivateEndpointConnectionOperationsAsync(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_private_endpoint_connection_delete(self, resource_group):
         response = await self.client.private_endpoint_connection.delete(
             resource_group_name=resource_group.name,
             factory_name="str",

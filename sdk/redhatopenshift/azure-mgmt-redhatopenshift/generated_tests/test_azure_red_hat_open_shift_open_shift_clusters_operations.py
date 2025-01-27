@@ -22,7 +22,7 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperations(AzureMgmtRecordedTestC
     @recorded_by_proxy
     def test_list(self, resource_group):
         response = self.client.open_shift_clusters.list(
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperations(AzureMgmtRecordedTestC
     def test_list_by_resource_group(self, resource_group):
         response = self.client.open_shift_clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperations(AzureMgmtRecordedTestC
         response = self.client.open_shift_clusters.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
 
         # please add some check logic here by yourself
@@ -78,6 +78,10 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperations(AzureMgmtRecordedTestC
                 },
                 "name": "str",
                 "networkProfile": {
+                    "loadBalancerProfile": {
+                        "effectiveOutboundIps": [{"id": "str"}],
+                        "managedOutboundIps": {"count": 0},
+                    },
                     "outboundType": "str",
                     "podCidr": "str",
                     "preconfiguredNSG": "str",
@@ -118,7 +122,7 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperations(AzureMgmtRecordedTestC
                     }
                 ],
             },
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -130,7 +134,7 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperations(AzureMgmtRecordedTestC
         response = self.client.open_shift_clusters.begin_delete(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -160,6 +164,10 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperations(AzureMgmtRecordedTestC
                     "vmSize": "str",
                 },
                 "networkProfile": {
+                    "loadBalancerProfile": {
+                        "effectiveOutboundIps": [{"id": "str"}],
+                        "managedOutboundIps": {"count": 0},
+                    },
                     "outboundType": "str",
                     "podCidr": "str",
                     "preconfiguredNSG": "str",
@@ -199,7 +207,7 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperations(AzureMgmtRecordedTestC
                     }
                 ],
             },
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -211,7 +219,7 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperations(AzureMgmtRecordedTestC
         response = self.client.open_shift_clusters.list_admin_credentials(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
 
         # please add some check logic here by yourself
@@ -223,7 +231,7 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperations(AzureMgmtRecordedTestC
         response = self.client.open_shift_clusters.list_credentials(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-09-04",
+            api_version="2023-11-22",
         )
 
         # please add some check logic here by yourself

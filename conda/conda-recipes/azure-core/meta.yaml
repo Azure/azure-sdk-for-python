@@ -44,13 +44,13 @@ about:
   home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core"
   license: MIT
   license_family: MIT
-  license_file: 
+  license_file:
   summary: "Microsoft Azure Core Library for Python"
   description: |
     Azure core provides shared exceptions and modules for Python SDK client libraries.
     Please see https://aka.ms/azsdk/conda/releases/core for version details.
-  doc_url: 
-  dev_url: 
+  doc_url:
+  dev_url:
 
 extra:
   recipe-maintainers:

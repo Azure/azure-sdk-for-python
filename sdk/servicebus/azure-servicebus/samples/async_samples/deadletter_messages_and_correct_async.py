@@ -20,8 +20,9 @@ from azure.servicebus.aio import ServiceBusClient
 from azure.identity.aio import DefaultAzureCredential
 
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
+
 
 async def send_messages(servicebus_client, num_messages):
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
@@ -36,10 +37,10 @@ async def send_messages(servicebus_client, num_messages):
         await sender.send_messages(msg)
         print("Messages sent")
 
+
 async def exceed_max_delivery(servicebus_client):
     receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
-    dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, 
-                                                        sub_queue=ServiceBusSubQueue.DEAD_LETTER)
+    dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, sub_queue=ServiceBusSubQueue.DEAD_LETTER)
     async with receiver:
         received_msgs = await receiver.receive_messages(max_wait_time=5)
         while len(received_msgs) > 0:
@@ -54,7 +55,8 @@ async def exceed_max_delivery(servicebus_client):
             print("Deadletter message:")
             print(msg)
             await dlq_receiver.complete_message(msg)
-    
+
+
 async def receive_messages(servicebus_client):
     receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
     async with receiver:
@@ -69,11 +71,11 @@ async def receive_messages(servicebus_client):
                     error_description="Don't know what to do with this message.",
                 )
 
+
 async def fix_deadletters(servicebus_client):
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
     receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
-    dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, 
-                                                        sub_queue=ServiceBusSubQueue.DEAD_LETTER)
+    dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, sub_queue=ServiceBusSubQueue.DEAD_LETTER)
     msgs_to_send = []
     async with dlq_receiver:
         received_dlq_msgs = await dlq_receiver.receive_messages(max_message_count=10, max_wait_time=5)
@@ -93,19 +95,19 @@ async def fix_deadletters(servicebus_client):
                 print("Received fixed message: Body={}, Subject={}".format(next(msg.body), msg.subject))
                 await receiver.complete_message(msg)
 
+
 async def main():
     credential = DefaultAzureCredential()
     servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
     receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
-    dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, 
-                                                        sub_queue=ServiceBusSubQueue.DEAD_LETTER)
+    dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, sub_queue=ServiceBusSubQueue.DEAD_LETTER)
 
     # Scenario 1: Send, retrieve, and abandon message until maximum delivery count is exhausted.
     # The message is automatically dead-lettered.
     await send_messages(servicebus_client, 1)
     await exceed_max_delivery(servicebus_client)
 
-    # Scenario 2: Send messages and dead-letter messages that don't match some criterion and 
+    # Scenario 2: Send messages and dead-letter messages that don't match some criterion and
     # would not be processed correctly. The messages are picked up from the dead-letter queue,
     # automatically corrected, and resubmitted.
     await send_messages(servicebus_client, 10)
@@ -113,5 +115,6 @@ async def main():
     await fix_deadletters(servicebus_client)
 
     await servicebus_client.close()
+
 
 asyncio.run(main())

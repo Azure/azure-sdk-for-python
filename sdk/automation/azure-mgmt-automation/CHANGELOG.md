@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.0b4 (2024-11-05)
+
+### Other Changes
+
+  - Update dependencies
+
 ## 1.1.0b3 (2022-12-12)
 
 ### Features Added

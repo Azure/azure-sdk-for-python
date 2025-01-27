@@ -21,12 +21,12 @@ class TestWebSiteManagementWorkflowTriggersOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_workflow_triggers_list(self, resource_group):
         response = self.client.workflow_triggers.list(
             resource_group_name=resource_group.name,
             name="str",
             workflow_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,13 +34,13 @@ class TestWebSiteManagementWorkflowTriggersOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_workflow_triggers_get(self, resource_group):
         response = await self.client.workflow_triggers.get(
             resource_group_name=resource_group.name,
             name="str",
             workflow_name="str",
             trigger_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -48,13 +48,13 @@ class TestWebSiteManagementWorkflowTriggersOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_callback_url(self, resource_group):
+    async def test_workflow_triggers_list_callback_url(self, resource_group):
         response = await self.client.workflow_triggers.list_callback_url(
             resource_group_name=resource_group.name,
             name="str",
             workflow_name="str",
             trigger_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -62,14 +62,14 @@ class TestWebSiteManagementWorkflowTriggersOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_run(self, resource_group):
+    async def test_workflow_triggers_begin_run(self, resource_group):
         response = await (
             await self.client.workflow_triggers.begin_run(
                 resource_group_name=resource_group.name,
                 name="str",
                 workflow_name="str",
                 trigger_name="str",
-                api_version="2023-12-01",
+                api_version="2024-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -78,13 +78,13 @@ class TestWebSiteManagementWorkflowTriggersOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_schema_json(self, resource_group):
+    async def test_workflow_triggers_get_schema_json(self, resource_group):
         response = await self.client.workflow_triggers.get_schema_json(
             resource_group_name=resource_group.name,
             name="str",
             workflow_name="str",
             trigger_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself

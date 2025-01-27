@@ -10,9 +10,7 @@ def get_running_loop() -> asyncio.AbstractEventLoop:
     try:
         return asyncio.get_running_loop()
     except AttributeError:  # 3.5 / 3.6
-        loop = (
-            asyncio._get_running_loop()  # pylint: disable=protected-access, no-member
-        )
+        loop = asyncio._get_running_loop()  # pylint: disable=protected-access, no-member
         if loop is None:
             raise RuntimeError("No running event loop") from None
         return loop

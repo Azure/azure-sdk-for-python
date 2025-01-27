@@ -42,7 +42,6 @@ class BaseEnvironment:
         return BaseEnvironment(type=rest_obj.base_environment_source_type, resource_id=rest_obj.resource_id)
 
     def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
         return dict(BaseEnvironmentSourceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
 
     def _to_rest_object(self) -> RestBaseEnvironmentId:

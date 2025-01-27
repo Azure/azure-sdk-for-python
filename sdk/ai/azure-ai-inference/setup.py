@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = "azure-ai-inference"
-PACKAGE_PPRINT_NAME = "Azure Ai Inference"
+PACKAGE_PPRINT_NAME = "Azure AI Inference"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
@@ -69,6 +69,7 @@ setup(
     ],
     python_requires=">=3.8",
     extras_require={
-        'opentelemetry': ['azure-core-tracing-opentelemetry']  
-    }
+        "opentelemetry": ["azure-core-tracing-opentelemetry"],
+        "prompts": ["pyyaml"],
+    },
 )

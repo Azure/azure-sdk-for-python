@@ -15,16 +15,15 @@ from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
 from azure.identity import DefaultAzureCredential
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
+
 
 def send_data_message(producer):
-    data_body = [b'aa', b'bb', b'cc']
+    data_body = [b"aa", b"bb", b"cc"]
     application_properties = {"body_type": "data"}
     delivery_annotations = {"delivery_annotation_key": "value"}
     data_message = AmqpAnnotatedMessage(
-        data_body=data_body,
-        delivery_annotations=delivery_annotations,
-        application_properties=application_properties
+        data_body=data_body, delivery_annotations=delivery_annotations, application_properties=application_properties
     )
     batch = producer.create_batch()
     batch.add(data_message)
@@ -33,30 +32,24 @@ def send_data_message(producer):
 
 
 def send_sequence_message(producer):
-    sequence_body = [b'message', 123.456, True]
-    footer = {'footer_key': 'footer_value'}
+    sequence_body = [b"message", 123.456, True]
+    footer = {"footer_key": "footer_value"}
     properties = {"subject": "sequence"}
     application_properties = {"body_type": "sequence"}
     sequence_message = AmqpAnnotatedMessage(
-        sequence_body=sequence_body,
-        footer=footer,
-        properties=properties,
-        application_properties=application_properties
+        sequence_body=sequence_body, footer=footer, properties=properties, application_properties=application_properties
     )
     producer.send_batch([sequence_message])
     print("Message of sequence body sent.")
 
 
 def send_value_message(producer):
-    value_body = {b"key": [-123, b'data', False]}
+    value_body = {b"key": [-123, b"data", False]}
     header = {"priority": 10}
     annotations = {"annotation_key": "value"}
     application_properties = {"body_type": "value"}
     value_message = AmqpAnnotatedMessage(
-        value_body=value_body,
-        header=header,
-        annotations=annotations,
-        application_properties=application_properties
+        value_body=value_body, header=header, annotations=annotations, application_properties=application_properties
     )
     producer.send_batch([value_message])
     print("Message of value body sent.")
@@ -88,7 +81,7 @@ def receive_and_parse_message(consumer):
                 starting_position="-1",  # "-1" is from the beginning of the partition.
             )
         except KeyboardInterrupt:
-            print('Stopped receiving.')
+            print("Stopped receiving.")
 
 
 producer = EventHubProducerClient(

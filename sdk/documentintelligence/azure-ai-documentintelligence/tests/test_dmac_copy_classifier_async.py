@@ -32,7 +32,7 @@ class TestCopyClassifierAsync(AsyncDocumentIntelligenceTest):
     async def test_copy_classifier_none_classifier_id(self, **kwargs):
         client = kwargs.pop("client")
         with pytest.raises(ValueError) as e:
-            await client.begin_copy_classifier_to(classifier_id=None, copy_to_request={})
+            await client.begin_copy_classifier_to(classifier_id=None, body={})
         assert "No value for given attribute" in str(e.value)
 
     @DocumentIntelligencePreparer()
@@ -41,9 +41,8 @@ class TestCopyClassifierAsync(AsyncDocumentIntelligenceTest):
     async def test_copy_classifier_empty_classifier_id(self, **kwargs):
         client = kwargs.pop("client")
         with pytest.raises(ResourceNotFoundError):
-            await client.begin_copy_classifier_to(classifier_id="", copy_to_request={})
+            await client.begin_copy_classifier_to(classifier_id="", body={})
 
-    @pytest.mark.skip(reason="https://github.com/Azure/azure-sdk-for-python/issues/36989")
     @DocumentIntelligencePreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -95,15 +94,14 @@ class TestCopyClassifierAsync(AsyncDocumentIntelligenceTest):
                 tags={"testkey": "testvalue"},
             )
         )
-        poller = await client.begin_copy_classifier_to(classifier.classifier_id, copy_to_request=copy_auth)
-        copy = poller.result()
+        poller = await client.begin_copy_classifier_to(classifier.classifier_id, body=copy_auth)
+        copy = await poller.result()
 
         assert copy.api_version == classifier.api_version
         assert copy.classifier_id != classifier.classifier_id
         assert copy.classifier_id == copy_auth["targetClassifierId"]
+        assert copy.base_classifier_id == classifier.base_classifier_id
+        assert copy.base_classifier_id is None
         assert copy.description == classifier.description
-        for name, doc_type in copy.doc_types.items():
-            assert name == copy_auth["targetClassifierId"]
-            assert doc_type.source_kind is None
 
         return recorded_variables

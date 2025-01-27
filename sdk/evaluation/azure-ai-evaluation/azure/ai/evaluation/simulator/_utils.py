@@ -26,9 +26,9 @@ class JsonLineList(list):
             json_lines += json.dumps(item) + "\n"
         return json_lines
 
-    def to_eval_qa_json_lines(self):
+    def to_eval_qr_json_lines(self):
         """
-        Converts the list to a string of JSON lines suitable for evaluation in a Q&A format.
+        Converts the list to a string of JSON lines suitable for evaluation in a query & response format.
         Each item in the list is expected to be a dictionary with
         'messages' key. The 'messages' value is a list of
         dictionaries, each with a 'role' key and a 'content' key.
@@ -44,23 +44,41 @@ class JsonLineList(list):
         for item in self:
             user_message = None
             assistant_message = None
-            context = None
+            user_context = None
+            assistant_context = None
+            template_parameters = item.get("template_parameters", {})
+            category = template_parameters.get("category", None)
             for message in item["messages"]:
                 if message["role"] == "user":
                     user_message = message["content"]
+                    user_context = message.get("context", "")
                 elif message["role"] == "assistant":
                     assistant_message = message["content"]
-                if "context" in message:
-                    context = message.get("context", None)
+                    assistant_context = message.get("context", "")
                 if user_message and assistant_message:
-                    if context:
+                    if user_context or assistant_context:
                         json_lines += (
-                            json.dumps({"query": user_message, "response": assistant_message, "context": context})
+                            json.dumps(
+                                {
+                                    "query": user_message,
+                                    "response": assistant_message,
+                                    "context": str(
+                                        {
+                                            "user_context": user_context,
+                                            "assistant_context": assistant_context,
+                                        }
+                                    ),
+                                    "category": category,
+                                }
+                            )
                             + "\n"
                         )
-                        user_message = assistant_message = context = None
+                        user_message = assistant_message = None
                     else:
-                        json_lines += json.dumps({"query": user_message, "response": assistant_message}) + "\n"
+                        json_lines += (
+                            json.dumps({"query": user_message, "response": assistant_message, "category": category})
+                            + "\n"
+                        )
                         user_message = assistant_message = None
 
         return json_lines
@@ -80,9 +98,9 @@ class JsonLineChatProtocol(dict):
         """
         return json.dumps(self)
 
-    def to_eval_qa_json_lines(self) -> str:
+    def to_eval_qr_json_lines(self) -> str:
         """
-        Converts the object to a string of JSON lines suitable for evaluation in a Q&A format.
+        Converts the object to a string of JSON lines suitable for evaluation in a query and response format.
         The object is expected to be a dictionary with 'messages' key.
 
         :returns: A json lines document
@@ -105,10 +123,10 @@ class JsonLineChatProtocol(dict):
             if user_message and assistant_message:
                 if context:
                     json_lines += (
-                        json.dumps({"question": user_message, "answer": assistant_message, "context": context}) + "\n"
+                        json.dumps({"query": user_message, "response": assistant_message, "context": context}) + "\n"
                     )
                     user_message = assistant_message = None
                 else:
-                    json_lines += json.dumps({"question": user_message, "answer": assistant_message}) + "\n"
+                    json_lines += json.dumps({"query": user_message, "response": assistant_message}) + "\n"
                     user_message = assistant_message = None
         return json_lines

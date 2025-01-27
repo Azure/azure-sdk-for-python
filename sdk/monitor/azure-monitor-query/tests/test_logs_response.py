@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+# cspell:ignore toint
 from datetime import datetime, timezone
 
 from azure.monitor.query import LogsQueryClient
@@ -23,14 +24,15 @@ class TestLogsResponse(AzureMonitorQueryLogsTestCase):
         client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = (
             f"{monitor_info['table_name']} | project TimeGenerated, Type, ExtendedColumn, AdditionalContext"
-            f"| order by TimeGenerated desc | take 5")
+            f"| order by TimeGenerated desc | take 5"
+        )
 
         # returns LogsQueryResult
-        result = client.query_workspace(monitor_info['workspace_id'], query, timespan=None)
+        result = client.query_workspace(monitor_info["workspace_id"], query, timespan=None)
         assert isinstance(result.tables[0].rows[0][0], datetime)
 
         assert isinstance(result.tables[0].rows[0][1], str)
-        assert result.tables[0].rows[0][1] == monitor_info['table_name']
+        assert result.tables[0].rows[0][1] == monitor_info["table_name"]
 
         assert isinstance(result.tables[0].rows[0][2], str)
         # Check if DCR transformation correctly populated the ExtendedColumn field.
@@ -50,7 +52,7 @@ class TestLogsResponse(AzureMonitorQueryLogsTestCase):
                 longcolumn=print_4,
                 realcolumn=print_5
             """
-        result = client.query_workspace(monitor_info['workspace_id'], query, timespan=None)
+        result = client.query_workspace(monitor_info["workspace_id"], query, timespan=None)
 
         assert isinstance(result.tables[0].rows[0][0], str)
         assert result.tables[0].rows[0][0] == "hello"

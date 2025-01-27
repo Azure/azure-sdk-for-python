@@ -16,9 +16,6 @@ USAGE:
 
     In this example, a Storage account resource URI is taken.
 """
-# Provide a cert or disable warnings to run this sample
-import urllib3
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # [START send_metrics_query]
 from datetime import timedelta

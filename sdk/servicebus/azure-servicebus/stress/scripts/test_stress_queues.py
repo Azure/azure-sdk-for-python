@@ -39,6 +39,7 @@ def test_stress_queue_send_and_receive(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_send_and_receive"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = stress_test.run()
@@ -60,11 +61,10 @@ def test_stress_queue_send_and_pull_receive(args):
         admin_client=sb_admin_client,
         receive_type=ReceiveType.pull,
         duration=args.duration,
-        azure_monitor_metric=AzureMonitorMetric(
-            "test_stress_queue_send_and_pull_receive"
-        ),
+        azure_monitor_metric=AzureMonitorMetric("test_stress_queue_send_and_pull_receive"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = stress_test.run()
@@ -82,17 +82,14 @@ def test_stress_queue_batch_send_and_receive(args):
     )
     stress_test = StressTestRunner(
         senders=[sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
-        receivers=[
-            sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, prefetch_count=5)
-        ],
+        receivers=[sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, prefetch_count=5)],
         admin_client=sb_admin_client,
         duration=args.duration,
         send_batch_size=5,
-        azure_monitor_metric=AzureMonitorMetric(
-            "test_stress_queue_batch_send_and_receive"
-        ),
+        azure_monitor_metric=AzureMonitorMetric("test_stress_queue_batch_send_and_receive"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = stress_test.run()
@@ -114,11 +111,10 @@ def test_stress_queue_slow_send_and_receive(args):
         admin_client=sb_admin_client,
         duration=args.duration,
         send_delay=(args.duration / 3),
-        azure_monitor_metric=AzureMonitorMetric(
-            "test_stress_queue_slow_send_and_receive"
-        ),
+        azure_monitor_metric=AzureMonitorMetric("test_stress_queue_slow_send_and_receive"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = stress_test.run()
@@ -145,11 +141,10 @@ def test_stress_queue_receive_and_delete(args):
         admin_client=sb_admin_client,
         should_complete_messages=False,
         duration=args.duration,
-        azure_monitor_metric=AzureMonitorMetric(
-            "test_stress_queue_slow_send_and_receive"
-        ),
+        azure_monitor_metric=AzureMonitorMetric("test_stress_queue_slow_send_and_receive"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = stress_test.run()
@@ -174,6 +169,7 @@ def test_stress_queue_unsettled_messages(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_unsettled_messages"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = stress_test.run()
@@ -193,17 +189,14 @@ def test_stress_queue_receive_large_batch_size(args):
     )
     stress_test = StressTestRunner(
         senders=[sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
-        receivers=[
-            sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, prefetch_count=50)
-        ],
+        receivers=[sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, prefetch_count=50)],
         admin_client=sb_admin_client,
         duration=args.duration,
         max_message_count=50,
-        azure_monitor_metric=AzureMonitorMetric(
-            "test_stress_queue_receive_large_batch_size"
-        ),
+        azure_monitor_metric=AzureMonitorMetric("test_stress_queue_receive_large_batch_size"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = stress_test.run()
@@ -235,11 +228,10 @@ def test_stress_queue_pull_receive_timeout(args):
         max_wait_time=5,
         receive_type=ReceiveType.pull,
         duration=args.duration,
-        azure_monitor_metric=AzureMonitorMetric(
-            "test_stress_queue_pull_receive_timeout"
-        ),
+        azure_monitor_metric=AzureMonitorMetric("test_stress_queue_pull_receive_timeout"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = stress_test.run()
@@ -269,11 +261,10 @@ def test_stress_queue_long_renew_send_and_receive(args):
         admin_client=sb_admin_client,
         duration=args.duration,
         send_delay=300,
-        azure_monitor_metric=AzureMonitorMetric(
-            "test_stress_queue_long_renew_send_and_receive"
-        ),
+        azure_monitor_metric=AzureMonitorMetric("test_stress_queue_long_renew_send_and_receive"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = stress_test.run()
@@ -309,18 +300,15 @@ def test_stress_queue_long_renew_session_send_and_receive(args):
 
     stress_test = LongSessionRenewStressTestRunner(
         senders=[sb_client.get_queue_sender(SERVICEBUS_QUEUE_NAME)],
-        receivers=[
-            sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, session_id=session_id)
-        ],
+        receivers=[sb_client.get_queue_receiver(SERVICEBUS_QUEUE_NAME, session_id=session_id)],
         admin_client=sb_admin_client,
         duration=args.duration,
         send_delay=300,
         send_session_id=session_id,
-        azure_monitor_metric=AzureMonitorMetric(
-            "test_stress_queue_long_renew_session_send_and_receive"
-        ),
+        azure_monitor_metric=AzureMonitorMetric("test_stress_queue_long_renew_session_send_and_receive"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = stress_test.run()
@@ -352,6 +340,7 @@ def test_stress_queue_peek_messages(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_peek_messages"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = stress_test.run()
@@ -392,6 +381,7 @@ def test_stress_queue_close_and_reopen(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_close_and_reopen"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = stress_test.run()
@@ -444,11 +434,10 @@ def test_stress_queue_check_for_dropped_messages(args):
         admin_client=sb_admin_client,
         receive_type=ReceiveType.pull,
         duration=args.duration,
-        azure_monitor_metric=AzureMonitorMetric(
-            "test_stress_queue_check_for_dropped_messages"
-        ),
+        azure_monitor_metric=AzureMonitorMetric("test_stress_queue_check_for_dropped_messages"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = stress_test.run()
@@ -489,8 +478,12 @@ if __name__ == "__main__":
         type=str,
         default="Error",
     )
+    # rotate logs by default, if you want to disable it, use --no-rotating-logs flag
+    parser.add_argument("--no-rotating-logs", action="store_true")
 
     args, _ = parser.parse_known_args()
+    # store rotating_logs in args for later use
+    args.rotating_logs = not args.no_rotating_logs
 
     if args.transport:
         TRANSPORT_TYPE = TransportType.AmqpOverWebsocket

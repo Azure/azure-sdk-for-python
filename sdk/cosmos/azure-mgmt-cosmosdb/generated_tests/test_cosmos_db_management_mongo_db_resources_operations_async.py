@@ -21,11 +21,11 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_mongo_db_databases(self, resource_group):
+    async def test_mongo_db_resources_list_mongo_db_databases(self, resource_group):
         response = self.client.mongo_db_resources.list_mongo_db_databases(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_mongo_db_database(self, resource_group):
+    async def test_mongo_db_resources_get_mongo_db_database(self, resource_group):
         response = await self.client.mongo_db_resources.get_mongo_db_database(
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_update_mongo_db_database(self, resource_group):
+    async def test_mongo_db_resources_begin_create_update_mongo_db_database(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_create_update_mongo_db_database(
                 resource_group_name=resource_group.name,
@@ -75,7 +75,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -84,13 +84,13 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete_mongo_db_database(self, resource_group):
+    async def test_mongo_db_resources_begin_delete_mongo_db_database(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_delete_mongo_db_database(
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -99,12 +99,12 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_mongo_db_database_throughput(self, resource_group):
+    async def test_mongo_db_resources_get_mongo_db_database_throughput(self, resource_group):
         response = await self.client.mongo_db_resources.get_mongo_db_database_throughput(
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -112,7 +112,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update_mongo_db_database_throughput(self, resource_group):
+    async def test_mongo_db_resources_begin_update_mongo_db_database_throughput(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_update_mongo_db_database_throughput(
                 resource_group_name=resource_group.name,
@@ -130,6 +130,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                         "offerReplacePending": "str",
                         "softAllowedMaximumThroughput": "str",
                         "throughput": 0,
+                        "throughputBuckets": [{"id": 0, "maxThroughputPercentage": 0}],
                     },
                     "id": "str",
                     "identity": {
@@ -143,7 +144,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -152,13 +153,13 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_migrate_mongo_db_database_to_autoscale(self, resource_group):
+    async def test_mongo_db_resources_begin_migrate_mongo_db_database_to_autoscale(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_migrate_mongo_db_database_to_autoscale(
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -167,13 +168,13 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_migrate_mongo_db_database_to_manual_throughput(self, resource_group):
+    async def test_mongo_db_resources_begin_migrate_mongo_db_database_to_manual_throughput(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_migrate_mongo_db_database_to_manual_throughput(
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -182,7 +183,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_mongo_db_database_retrieve_throughput_distribution(self, resource_group):
+    async def test_mongo_db_resources_begin_mongo_db_database_retrieve_throughput_distribution(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_mongo_db_database_retrieve_throughput_distribution(
                 resource_group_name=resource_group.name,
@@ -202,7 +203,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -211,7 +212,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_mongo_db_database_redistribute_throughput(self, resource_group):
+    async def test_mongo_db_resources_begin_mongo_db_database_redistribute_throughput(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_mongo_db_database_redistribute_throughput(
                 resource_group_name=resource_group.name,
@@ -235,7 +236,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -244,7 +245,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_mongo_db_container_retrieve_throughput_distribution(self, resource_group):
+    async def test_mongo_db_resources_begin_mongo_db_container_retrieve_throughput_distribution(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_mongo_db_container_retrieve_throughput_distribution(
                 resource_group_name=resource_group.name,
@@ -265,7 +266,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -274,7 +275,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_mongo_db_container_redistribute_throughput(self, resource_group):
+    async def test_mongo_db_resources_begin_mongo_db_container_redistribute_throughput(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_mongo_db_container_redistribute_throughput(
                 resource_group_name=resource_group.name,
@@ -299,7 +300,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -308,12 +309,12 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_mongo_db_collections(self, resource_group):
+    async def test_mongo_db_resources_list_mongo_db_collections(self, resource_group):
         response = self.client.mongo_db_resources.list_mongo_db_collections(
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -321,13 +322,13 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_mongo_db_collection(self, resource_group):
+    async def test_mongo_db_resources_get_mongo_db_collection(self, resource_group):
         response = await self.client.mongo_db_resources.get_mongo_db_collection(
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
             collection_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -335,7 +336,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_update_mongo_db_collection(self, resource_group):
+    async def test_mongo_db_resources_begin_create_update_mongo_db_collection(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_create_update_mongo_db_collection(
                 resource_group_name=resource_group.name,
@@ -368,7 +369,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -377,14 +378,14 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete_mongo_db_collection(self, resource_group):
+    async def test_mongo_db_resources_begin_delete_mongo_db_collection(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_delete_mongo_db_collection(
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
                 collection_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -393,14 +394,14 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_mongo_db_database_partition_merge(self, resource_group):
+    async def test_mongo_db_resources_begin_mongo_db_database_partition_merge(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_mongo_db_database_partition_merge(
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
                 merge_parameters={"isDryRun": bool},
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -409,7 +410,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_list_mongo_db_collection_partition_merge(self, resource_group):
+    async def test_mongo_db_resources_begin_list_mongo_db_collection_partition_merge(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_list_mongo_db_collection_partition_merge(
                 resource_group_name=resource_group.name,
@@ -417,7 +418,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                 database_name="str",
                 collection_name="str",
                 merge_parameters={"isDryRun": bool},
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -426,13 +427,13 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_mongo_db_collection_throughput(self, resource_group):
+    async def test_mongo_db_resources_get_mongo_db_collection_throughput(self, resource_group):
         response = await self.client.mongo_db_resources.get_mongo_db_collection_throughput(
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
             collection_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -440,7 +441,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update_mongo_db_collection_throughput(self, resource_group):
+    async def test_mongo_db_resources_begin_update_mongo_db_collection_throughput(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_update_mongo_db_collection_throughput(
                 resource_group_name=resource_group.name,
@@ -459,6 +460,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                         "offerReplacePending": "str",
                         "softAllowedMaximumThroughput": "str",
                         "throughput": 0,
+                        "throughputBuckets": [{"id": 0, "maxThroughputPercentage": 0}],
                     },
                     "id": "str",
                     "identity": {
@@ -472,7 +474,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -481,14 +483,14 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_migrate_mongo_db_collection_to_autoscale(self, resource_group):
+    async def test_mongo_db_resources_begin_migrate_mongo_db_collection_to_autoscale(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_migrate_mongo_db_collection_to_autoscale(
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
                 collection_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -497,14 +499,14 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_migrate_mongo_db_collection_to_manual_throughput(self, resource_group):
+    async def test_mongo_db_resources_begin_migrate_mongo_db_collection_to_manual_throughput(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_migrate_mongo_db_collection_to_manual_throughput(
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
                 collection_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -513,12 +515,12 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_mongo_role_definition(self, resource_group):
+    async def test_mongo_db_resources_get_mongo_role_definition(self, resource_group):
         response = await self.client.mongo_db_resources.get_mongo_role_definition(
             mongo_role_definition_id="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -526,7 +528,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_update_mongo_role_definition(self, resource_group):
+    async def test_mongo_db_resources_begin_create_update_mongo_role_definition(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_create_update_mongo_role_definition(
                 mongo_role_definition_id="str",
@@ -539,7 +541,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                     "roles": [{"db": "str", "role": "str"}],
                     "type": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -548,13 +550,13 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete_mongo_role_definition(self, resource_group):
+    async def test_mongo_db_resources_begin_delete_mongo_role_definition(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_delete_mongo_role_definition(
                 mongo_role_definition_id="str",
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -563,11 +565,11 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_mongo_role_definitions(self, resource_group):
+    async def test_mongo_db_resources_list_mongo_role_definitions(self, resource_group):
         response = self.client.mongo_db_resources.list_mongo_role_definitions(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -575,12 +577,12 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_mongo_user_definition(self, resource_group):
+    async def test_mongo_db_resources_get_mongo_user_definition(self, resource_group):
         response = await self.client.mongo_db_resources.get_mongo_user_definition(
             mongo_user_definition_id="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -588,7 +590,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_update_mongo_user_definition(self, resource_group):
+    async def test_mongo_db_resources_begin_create_update_mongo_user_definition(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_create_update_mongo_user_definition(
                 mongo_user_definition_id="str",
@@ -602,7 +604,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                     "roles": [{"db": "str", "role": "str"}],
                     "userName": "str",
                 },
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -611,13 +613,13 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete_mongo_user_definition(self, resource_group):
+    async def test_mongo_db_resources_begin_delete_mongo_user_definition(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_delete_mongo_user_definition(
                 mongo_user_definition_id="str",
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -626,11 +628,11 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_mongo_user_definitions(self, resource_group):
+    async def test_mongo_db_resources_list_mongo_user_definitions(self, resource_group):
         response = self.client.mongo_db_resources.list_mongo_user_definitions(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -638,7 +640,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_retrieve_continuous_backup_information(self, resource_group):
+    async def test_mongo_db_resources_begin_retrieve_continuous_backup_information(self, resource_group):
         response = await (
             await self.client.mongo_db_resources.begin_retrieve_continuous_backup_information(
                 resource_group_name=resource_group.name,
@@ -646,7 +648,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                 database_name="str",
                 collection_name="str",
                 location={"location": "str"},
-                api_version="2024-09-01-preview",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

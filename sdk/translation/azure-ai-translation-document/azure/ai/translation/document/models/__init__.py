@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import BatchRequest
+from ._models import DocumentBatch
 from ._models import DocumentFilter
 from ._patch import DocumentStatus
 from ._models import DocumentTranslateContent
@@ -15,7 +15,7 @@ from ._patch import TranslationGlossary
 from ._models import InnerTranslationError
 from ._models import SourceInput
 from ._models import StartTranslationDetails
-from ._models import StatusSummary
+from ._models import TranslationStatusSummary
 from ._patch import TranslationTarget
 from ._models import DocumentTranslationError
 from ._patch import TranslationStatus
@@ -24,13 +24,13 @@ from ._patch import DocumentTranslationInput
 from ._enums import FileFormatType
 from ._enums import Status
 from ._enums import StorageInputType
-from ._enums import StorageSource
+from ._enums import TranslationStorageSource
 from ._enums import TranslationErrorCode
 
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "BatchRequest",
+    "DocumentBatch",
     "DocumentFilter",
     "DocumentStatus",
     "DocumentTranslateContent",
@@ -39,14 +39,14 @@ __all__ = [
     "InnerTranslationError",
     "SourceInput",
     "StartTranslationDetails",
-    "StatusSummary",
+    "TranslationStatusSummary",
     "TranslationTarget",
     "DocumentTranslationError",
     "TranslationStatus",
     "FileFormatType",
     "Status",
     "StorageInputType",
-    "StorageSource",
+    "TranslationStorageSource",
     "TranslationErrorCode",
     "DocumentTranslationInput",
 ]

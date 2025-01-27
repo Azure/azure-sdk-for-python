@@ -1,5 +1,11 @@
 # Release History
 
+## 0.20.8 (2024-10-31)
+
+### Other Changes
+
+- This package has been deprecated and will no longer be maintained after 10-31-2024. This package will only receive security fixes until 10-31-2024. To receive updates on new features and non-security bug fixes, upgrade to the specific service management package listed [here](https://azure.github.io/azure-sdk/releases/latest/all/python.html).
+
 ## 0.20.7 (2020-05-05)
 
 - Python 3.7 compatibility

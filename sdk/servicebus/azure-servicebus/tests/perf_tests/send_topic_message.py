@@ -9,6 +9,7 @@ from devtools_testutils.perfstress_tests import get_random_bytes
 
 from azure.servicebus import ServiceBusMessage
 
+
 class SendTopicMessageTest(_SendTopicTest):
     def __init__(self, arguments) -> None:
         super().__init__(arguments)
@@ -16,9 +17,7 @@ class SendTopicMessageTest(_SendTopicTest):
 
     def run_batch_sync(self) -> int:
         if self.args.batch_size > 1:
-            self.sender.send_messages(
-                [ServiceBusMessage(self.data) for _ in range(self.args.batch_size)]
-            )
+            self.sender.send_messages([ServiceBusMessage(self.data) for _ in range(self.args.batch_size)])
         else:
             self.sender.send_messages(ServiceBusMessage(self.data))
 
@@ -26,9 +25,7 @@ class SendTopicMessageTest(_SendTopicTest):
 
     async def run_batch_async(self) -> int:
         if self.args.batch_size > 1:
-            await self.async_sender.send_messages(
-                [ServiceBusMessage(self.data) for _ in range(self.args.batch_size)]
-            )
+            await self.async_sender.send_messages([ServiceBusMessage(self.data) for _ in range(self.args.batch_size)])
         else:
             await self.async_sender.send_messages(ServiceBusMessage(self.data))
 

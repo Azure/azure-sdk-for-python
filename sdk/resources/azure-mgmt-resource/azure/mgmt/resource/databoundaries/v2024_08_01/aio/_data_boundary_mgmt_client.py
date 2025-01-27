@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from .. import models as _models
 from ..._serialization import Deserializer, Serializer
 from ._configuration import DataBoundaryMgmtClientConfiguration
-from .operations import DataBoundariesOperations, Operations
+from .operations import DataBoundariesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -28,8 +28,6 @@ if TYPE_CHECKING:
 class DataBoundaryMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
     """Provides APIs for data boundary operations.
 
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.resource.databoundaries.v2024_08_01.aio.operations.Operations
     :ivar data_boundaries: DataBoundariesOperations operations
     :vartype data_boundaries:
      azure.mgmt.resource.databoundaries.v2024_08_01.aio.operations.DataBoundariesOperations
@@ -70,7 +68,6 @@ class DataBoundaryMgmtClient:  # pylint: disable=client-accepts-api-version-keyw
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2024-08-01")
         self.data_boundaries = DataBoundariesOperations(
             self._client, self._config, self._serialize, self._deserialize, "2024-08-01"
         )

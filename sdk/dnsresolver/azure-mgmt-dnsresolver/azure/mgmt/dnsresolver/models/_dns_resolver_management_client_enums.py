@@ -10,6 +10,20 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of action to take."""
+
+    ALLOW = "Allow"
+    ALERT = "Alert"
+    BLOCK = "Block"
+
+
+class BlockResponseCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The response code for block actions."""
+
+    SERVFAIL = "SERVFAIL"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -26,6 +40,13 @@ class DnsResolverState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CONNECTED = "Connected"
     DISCONNECTED = "Disconnected"
+
+
+class DnsSecurityRuleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of DNS security rule."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class ForwardingRuleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

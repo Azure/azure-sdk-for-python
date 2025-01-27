@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.loganalytics import LogAnalyticsManagementClient
 
 """
@@ -29,12 +30,11 @@ def main():
         subscription_id="00000000-0000-0000-0000-00000000000",
     )
 
-    response = client.tables.cancel_search(
+    client.tables.cancel_search(
         resource_group_name="oiautorest6685",
         workspace_name="oiautorest6685",
         table_name="table1_SRCH",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/stable/2022-10-01/examples/TablesSearchCancel.json

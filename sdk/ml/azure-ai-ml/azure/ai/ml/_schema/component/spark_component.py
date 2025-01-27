@@ -2,12 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,protected-access,no-member
+# pylint: disable=unused-argument,protected-access
 
 from copy import deepcopy
 
 import yaml
-from marshmallow import INCLUDE, fields, post_load
+from marshmallow import INCLUDE, fields, post_dump, post_load
 
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
@@ -20,6 +20,16 @@ from ..job.parameterized_spark import ParameterizedSparkSchema
 
 class SparkComponentSchema(ComponentSchema, ParameterizedSparkSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.SPARK])
+    additional_includes = fields.List(fields.Str())
+
+    @post_dump
+    def remove_unnecessary_fields(self, component_schema_dict, **kwargs):
+        if (
+            component_schema_dict.get("additional_includes") is not None
+            and len(component_schema_dict["additional_includes"]) == 0
+        ):
+            component_schema_dict.pop("additional_includes")
+        return component_schema_dict
 
 
 class RestSparkComponentSchema(SparkComponentSchema):

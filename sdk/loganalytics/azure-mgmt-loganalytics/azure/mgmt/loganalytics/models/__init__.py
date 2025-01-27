@@ -39,6 +39,7 @@ from ._models_py3 import LogAnalyticsQueryPackQueryListResult
 from ._models_py3 import LogAnalyticsQueryPackQueryPropertiesRelated
 from ._models_py3 import LogAnalyticsQueryPackQuerySearchProperties
 from ._models_py3 import LogAnalyticsQueryPackQuerySearchPropertiesRelated
+from ._models_py3 import ManagedServiceIdentity
 from ._models_py3 import ManagementGroup
 from ._models_py3 import MetricName
 from ._models_py3 import Operation
@@ -73,6 +74,7 @@ from ._models_py3 import Tag
 from ._models_py3 import TagsResource
 from ._models_py3 import TrackedResource
 from ._models_py3 import UsageMetric
+from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import UserIdentityProperties
 from ._models_py3 import Workspace
 from ._models_py3 import WorkspaceCapping
@@ -100,6 +102,7 @@ from ._log_analytics_management_client_enums import DataSourceKind
 from ._log_analytics_management_client_enums import DataSourceType
 from ._log_analytics_management_client_enums import IdentityType
 from ._log_analytics_management_client_enums import LinkedServiceEntityStatus
+from ._log_analytics_management_client_enums import ManagedServiceIdentityType
 from ._log_analytics_management_client_enums import ProvisioningStateEnum
 from ._log_analytics_management_client_enums import PublicNetworkAccessType
 from ._log_analytics_management_client_enums import PurgeState
@@ -151,6 +154,7 @@ __all__ = [
     "LogAnalyticsQueryPackQueryPropertiesRelated",
     "LogAnalyticsQueryPackQuerySearchProperties",
     "LogAnalyticsQueryPackQuerySearchPropertiesRelated",
+    "ManagedServiceIdentity",
     "ManagementGroup",
     "MetricName",
     "Operation",
@@ -185,6 +189,7 @@ __all__ = [
     "TagsResource",
     "TrackedResource",
     "UsageMetric",
+    "UserAssignedIdentity",
     "UserIdentityProperties",
     "Workspace",
     "WorkspaceCapping",
@@ -211,6 +216,7 @@ __all__ = [
     "DataSourceType",
     "IdentityType",
     "LinkedServiceEntityStatus",
+    "ManagedServiceIdentityType",
     "ProvisioningStateEnum",
     "PublicNetworkAccessType",
     "PurgeState",

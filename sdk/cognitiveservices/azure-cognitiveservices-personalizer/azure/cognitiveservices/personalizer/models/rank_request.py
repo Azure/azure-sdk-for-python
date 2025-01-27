@@ -53,22 +53,22 @@ class RankRequest(Model):
     """
 
     _validation = {
-        'actions': {'required': True},
-        'event_id': {'max_length': 256},
+        "actions": {"required": True},
+        "event_id": {"max_length": 256},
     }
 
     _attribute_map = {
-        'context_features': {'key': 'contextFeatures', 'type': '[object]'},
-        'actions': {'key': 'actions', 'type': '[RankableAction]'},
-        'excluded_actions': {'key': 'excludedActions', 'type': '[str]'},
-        'event_id': {'key': 'eventId', 'type': 'str'},
-        'defer_activation': {'key': 'deferActivation', 'type': 'bool'},
+        "context_features": {"key": "contextFeatures", "type": "[object]"},
+        "actions": {"key": "actions", "type": "[RankableAction]"},
+        "excluded_actions": {"key": "excludedActions", "type": "[str]"},
+        "event_id": {"key": "eventId", "type": "str"},
+        "defer_activation": {"key": "deferActivation", "type": "bool"},
     }
 
     def __init__(self, **kwargs):
         super(RankRequest, self).__init__(**kwargs)
-        self.context_features = kwargs.get('context_features', None)
-        self.actions = kwargs.get('actions', None)
-        self.excluded_actions = kwargs.get('excluded_actions', None)
-        self.event_id = kwargs.get('event_id', None)
-        self.defer_activation = kwargs.get('defer_activation', False)
+        self.context_features = kwargs.get("context_features", None)
+        self.actions = kwargs.get("actions", None)
+        self.excluded_actions = kwargs.get("excluded_actions", None)
+        self.event_id = kwargs.get("event_id", None)
+        self.defer_activation = kwargs.get("defer_activation", False)

@@ -19,7 +19,7 @@ else:
 
 if TYPE_CHECKING:
     from .. import models as _models
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class BatchRequest(_serialization.Model):
@@ -429,7 +429,7 @@ class GeoJsonFeature(GeoJsonObject, GeoJsonFeatureData):
         self.properties = properties
         self.id = id
         self.feature_type = feature_type
-        self.type: str = "Feature" # type: ignore
+        self.type: str = "Feature"  # type: ignore
 
 
 class GeoJsonFeatureCollectionData(_serialization.Model):
@@ -491,7 +491,7 @@ class GeoJsonFeatureCollection(GeoJsonObject, GeoJsonFeatureCollectionData):
         """
         super().__init__(features=features, **kwargs)
         self.features = features
-        self.type: str = "FeatureCollection" # type: ignore
+        self.type: str = "FeatureCollection"  # type: ignore
 
 
 class GeoJsonGeometry(GeoJsonObject):
@@ -537,7 +537,7 @@ class GeoJsonGeometry(GeoJsonObject):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type: str = "GeoJsonGeometry" # type: ignore
+        self.type: str = "GeoJsonGeometry"  # type: ignore
 
 
 class GeoJsonGeometryCollectionData(_serialization.Model):
@@ -1078,7 +1078,7 @@ class RouteDirectionParameters(_serialization.Model):
      * The reference route may contain traffic incidents of type _ROAD\\ *CLOSURE*\\ , which are
        ignored for the calculation of the reference route's travel time and traffic delay.
        Please refer to `Supporting Points
-       <https://docs.microsoft.com/azure/azure-maps/how-to-use-best-practices-for-routing#calculate-and-bias-alternative-routes-using-supporting-points>`_  # pylint: disable=line-too-long
+       <https://learn.microsoft.com/azure/azure-maps/how-to-use-best-practices-for-routing#calculate-and-bias-alternative-routes-using-supporting-points>`_  # pylint: disable=line-too-long
        for details.
     :vartype supporting_points: ~azure.maps.route.models.GeoJsonGeometryCollection
     :ivar avoid_vignette: This is a list of 3-character, ISO 3166-1, alpha-3 country codes of
@@ -1133,7 +1133,7 @@ class RouteDirectionParameters(_serialization.Model):
          * The reference route may contain traffic incidents of type _ROAD\\ *CLOSURE*\\ , which are
            ignored for the calculation of the reference route's travel time and traffic delay.
            Please refer to `Supporting Points
-           <https://docs.microsoft.com/azure/azure-maps/how-to-use-best-practices-for-routing#calculate-and-bias-alternative-routes-using-supporting-points>`_  # pylint: disable=line-too-long
+           <https://learn.microsoft.com/azure/azure-maps/how-to-use-best-practices-for-routing#calculate-and-bias-alternative-routes-using-supporting-points>`_  # pylint: disable=line-too-long
            for details.
         :paramtype supporting_points: ~azure.maps.route.models.GeoJsonGeometryCollection
         :keyword avoid_vignette: This is a list of 3-character, ISO 3166-1, alpha-3 country codes of
@@ -2011,7 +2011,7 @@ class RouteSection(_serialization.Model):
     :vartype delay_in_seconds: int
     :ivar delay_magnitude: The magnitude of delay caused by the incident. These values correspond
      to the values of the response field ty of the `Get Traffic Incident Detail API
-     <https://docs.microsoft.com/rest/api/maps/traffic/gettrafficincidentdetail>`_. Known values
+     <https://learn.microsoft.com/rest/api/maps/traffic/gettrafficincidentdetail>`_. Known values
      are: "0", "1", "2", "3", and "4".
     :vartype delay_magnitude: str or ~azure.maps.route.models.DelayMagnitude
     :ivar tec: Details of the traffic event, using definitions in the `TPEG2-TEC

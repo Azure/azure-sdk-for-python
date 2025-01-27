@@ -9,11 +9,12 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry.sdk.trace import SpanProcessor
 from opentelemetry.trace import get_tracer, SpanContext, SpanKind, TraceFlags
 
+
 # Define a custom processor to filter your spans
 class SpanFilteringProcessor(SpanProcessor):
 
     # Prevents exporting spans that are of kind INTERNAL
-    def on_start(self, span, parent_context):
+    def on_start(self, span, parent_context):  # type: ignore
         # Check if the span is an internal activity.
         if span._kind is SpanKind.INTERNAL:
             # Create a new span context with the following properties:
@@ -30,13 +31,12 @@ class SpanFilteringProcessor(SpanProcessor):
                 span.context.trace_state,
             )
 
+
 # Create a SpanFilteringProcessor instance.
 span_filter_processor = SpanFilteringProcessor()
 
 # Pass in your processor to configuration options
-configure_azure_monitor(
-    span_processors=[span_filter_processor]
-)
+configure_azure_monitor(span_processors=[span_filter_processor])
 
 tracer = get_tracer(__name__)
 

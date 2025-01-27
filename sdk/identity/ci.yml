@@ -35,7 +35,6 @@ extends:
         Path: sdk/identity/platform-matrix.json
         Selection: sparse
         GenerateVMJobs: true
-    ValidateFormatting: true
     TestProxy: true
     Artifacts:
      - name: azure-identity
