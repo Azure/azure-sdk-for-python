@@ -239,6 +239,7 @@ class AdversarialSimulator:
                             language=language,
                             semaphore=semaphore,
                             scenario=scenario,
+                            simulation_id=simulation_id,
                         )
                     )
                 )
@@ -301,9 +302,10 @@ class AdversarialSimulator:
         language: SupportedLanguages,
         semaphore: asyncio.Semaphore,
         scenario: Union[AdversarialScenario, AdversarialScenarioJailbreak],
+        simulation_id: str = "",
     ) -> List[Dict]:
         user_bot = self._setup_bot(
-            role=ConversationRole.USER, template=template, parameters=parameters, scenario=scenario
+            role=ConversationRole.USER, template=template, parameters=parameters, scenario=scenario, simulation_id=simulation_id
         )
         system_bot = self._setup_bot(
             target=target, role=ConversationRole.ASSISTANT, template=template, parameters=parameters, scenario=scenario
@@ -332,7 +334,7 @@ class AdversarialSimulator:
         )
 
     def _get_user_proxy_completion_model(
-        self, template_key: str, template_parameters: TemplateParameters
+        self, template_key: str, template_parameters: TemplateParameters, simulation_id: str = ""
     ) -> ProxyChatCompletionsModel:
         return ProxyChatCompletionsModel(
             name="raisvc_proxy_model",
@@ -343,6 +345,7 @@ class AdversarialSimulator:
             api_version="2023-07-01-preview",
             max_tokens=1200,
             temperature=0.0,
+            simulation_id=simulation_id,
         )
 
     def _setup_bot(
@@ -353,10 +356,11 @@ class AdversarialSimulator:
         parameters: TemplateParameters,
         target: Optional[Callable] = None,
         scenario: Union[AdversarialScenario, AdversarialScenarioJailbreak],
+        simulation_id: str = "",
     ) -> ConversationBot:
         if role is ConversationRole.USER:
             model = self._get_user_proxy_completion_model(
-                template_key=template.template_name, template_parameters=parameters
+                template_key=template.template_name, template_parameters=parameters, simulation_id=simulation_id,
             )
             return ConversationBot(
                 role=role,
