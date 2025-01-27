@@ -149,6 +149,7 @@ class ConversationBot:
         conversation_history: List[ConversationTurn],
         max_history: int,
         turn_number: int = 0,
+        session_state: Optional[Dict[str, Any]] = None,
     ) -> Tuple[dict, dict, float, dict]:
         """
         Prompt the ConversationBot for a response.
@@ -345,6 +346,7 @@ class MultiModalConversationBot(ConversationBot):
         conversation_history: List[Any],
         max_history: int,
         turn_number: int = 0,
+        session_state: Optional[Dict[str, Any]] = None,
     ) -> Tuple[dict, dict, float, dict]:
         previous_prompt = conversation_history[-1]
         chat_protocol_message = await self._to_chat_protocol(conversation_history, self.user_template_parameters)
