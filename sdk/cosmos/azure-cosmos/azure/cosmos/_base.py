@@ -128,6 +128,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     :param str path:
     :param str resource_id:
     :param str resource_type:
+    :param str operation_type:
     :param dict options:
     :param str partition_key_range_id:
     :return: The HTTP request headers.
@@ -325,7 +326,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.IntendedCollectionRID] = options["containerRID"]
 
     if resource_type == "":
-        resource_type = "databaseaccount"
+        resource_type = http_constants.ResourceType.DatabaseAccount
     headers[http_constants.HttpHeaders.ThinClientProxyResourceType] = resource_type
     headers[http_constants.HttpHeaders.ThinClientProxyOperationType] = operation_type
 

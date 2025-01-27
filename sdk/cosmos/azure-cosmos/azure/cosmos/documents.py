@@ -373,7 +373,8 @@ class _OperationType:
             _OperationType.Replace,
             _OperationType.Upsert,
             _OperationType.Update,
-            _OperationType.Batch
+            _OperationType.Batch,
+            _OperationType.Patch
         )
 
     @staticmethod
@@ -387,19 +388,6 @@ class _OperationType:
             _OperationType.SqlQuery,
             _OperationType.QueryPlan,
         )
-
-    @staticmethod
-    def IsFeedOperation(operationType: str) -> bool:
-        return operationType in (
-            _OperationType.Create,
-            _OperationType.Upsert,
-            _OperationType.ReadFeed,
-            _OperationType.Query,
-            _OperationType.SqlQuery,
-            _OperationType.QueryPlan,
-            _OperationType.HeadFeed,
-        )
-
 
 class _QueryFeature:
     NoneQuery: Literal["NoneQuery"] = "NoneQuery"
