@@ -53,9 +53,8 @@ from ._generated.models import (
     InterruptAudioAndAnnounceRequest,
 )
 from ._generated.models._enums import RecognizeInputType
-from ._shared.auth_policy_utils import get_authentication_policy
 from ._shared.utils import parse_connection_str
-from ._credential.call_automation_auth_policy_utils import get_call_automation_auth_policy
+from ._credential.call_automation_auth_policy_utils import get_authentication_policy
 from ._credential.credential_utils import get_custom_enabled, get_custom_url
 
 if TYPE_CHECKING:
@@ -110,7 +109,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
                     custom_url,
                     credential,
                     api_version=api_version or DEFAULT_VERSION,
-                    authentication_policy=get_call_automation_auth_policy(custom_url, credential, acs_url=endpoint),
+                    authentication_policy=get_authentication_policy(custom_url, credential, acs_url=endpoint),
                     sdk_moniker=SDK_MONIKER,
                     **kwargs,
                 )
@@ -640,7 +639,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword initial_silence_timeout: Time to wait for first input after prompt in seconds (if any).
         :paramtype initial_silence_timeout: int
-        :type play_prompt: ~azure.communication.callautomation.FileSource or
+        :keyword play_prompt: A play_prompt representing the source to play.
+        :paramtype play_prompt: ~azure.communication.callautomation.FileSource or
          ~azure.communication.callautomation.TextSource or
          ~azure.communication.callautomation.SsmlSource or         
          list[~azure.communication.callautomation.FileSource] or
