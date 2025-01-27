@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import (
-    Any, Dict, Optional, Union,
+    Any, cast, Dict, Literal, Optional, Union,
     TYPE_CHECKING
 )
 
@@ -26,6 +26,7 @@ if TYPE_CHECKING:
     from azure.storage.filedatalake import CustomerProvidedEncryptionKey
     from ._models import ContentSettings
 
+EncryptionAlgorithmType = Literal["AES256"]
 
 _SUPPORTED_API_VERSIONS = [
     '2019-02-02',
@@ -193,7 +194,7 @@ def get_cpk_info(scheme: str, kwargs: Dict[str, Any]) -> Optional[CpkInfo]:
         return CpkInfo(
             encryption_key=cpk.key_value,
             encryption_key_sha256=cpk.key_hash,
-            encryption_algorithm=cpk.algorithm  # type: ignore [arg-type]
+            encryption_algorithm=cast(EncryptionAlgorithmType, cpk.algorithm)
         )
 
     return None
