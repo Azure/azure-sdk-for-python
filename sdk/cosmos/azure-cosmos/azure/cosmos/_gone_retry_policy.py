@@ -24,6 +24,9 @@ Cosmos database service.
 """
 
 
+# pylint: disable=protected-access
+
+
 class PartitionKeyRangeGoneRetryPolicy(object):
 
     def __init__(self, client, *args):

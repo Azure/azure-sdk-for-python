@@ -159,7 +159,7 @@ class ChangeFeedStateV1(ChangeFeedState):
     async def populate_request_headers_async(
             self,
             async_routing_provider: AsyncSmartRoutingMapProvider,
-            request_headers: Dict[str, Any]) -> None:
+            request_headers: Dict[str, Any]) -> None: # pylint: disable=unused-argument
 
         request_headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
 

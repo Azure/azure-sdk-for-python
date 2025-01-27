@@ -43,6 +43,10 @@ from ..partition_key import PartitionKey
 
 __all__ = ("DatabaseProxy",)
 
+
+# pylint: disable=protected-access
+# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+
 def _get_database_link(database_or_id: Union[str, 'DatabaseProxy', Mapping[str, Any]]) -> str:
     if isinstance(database_or_id, str):
         return "dbs/{}".format(database_or_id)
@@ -133,6 +137,8 @@ class DatabaseProxy(object):
 
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         :returns: A dict representing the database properties
         :rtype: Dict[str, Any]
@@ -191,6 +197,11 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
+            `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
@@ -311,6 +322,11 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
+            `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
@@ -397,6 +413,8 @@ class DatabaseProxy(object):
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of container properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
 
@@ -446,6 +464,8 @@ class DatabaseProxy(object):
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of container properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -508,6 +528,8 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
@@ -582,6 +604,8 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], None], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
@@ -611,6 +635,8 @@ class DatabaseProxy(object):
 
         :param Dict[str, Any] body: A dict object with an `id` key and value representing the user to be created.
             The user ID must be unique within the database, and consist of no more than 255 characters.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be created.
         :returns: A `UserProxy` instance representing the new user.
         :rtype: ~azure.cosmos.aio.UserProxy
@@ -664,6 +690,8 @@ class DatabaseProxy(object):
         """List all the users in the container.
 
         :keyword int max_item_count: Max number of users to be returned in the enumeration operation.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of user properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -696,6 +724,8 @@ class DatabaseProxy(object):
             Ignored if no query is provided.
         :paramtype parameters: Optional[List[Dict[str, Any]]]
         :keyword int max_item_count: Max number of users to be returned in the enumeration operation.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of user properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -726,6 +756,8 @@ class DatabaseProxy(object):
         does not already exist, it is inserted.
 
         :param Dict[str, Any] body: A dict-like object representing the user to update or insert.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user could not be upserted.
         :returns: A `UserProxy` instance representing the upserted user.
         :rtype: ~azure.cosmos.aio.UserProxy
@@ -752,6 +784,8 @@ class DatabaseProxy(object):
             instance of the user to be replaced.
         :type user: Union[str, Dict[str, Any], ~azure.cosmos.aio.UserProxy]
         :param Dict[str, Any] body: A dict object representing the user to replace.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
             If the replace operation failed or the user with given ID does not exist.
         :returns: A `UserProxy` instance representing the user after replace went through.
@@ -780,6 +814,8 @@ class DatabaseProxy(object):
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be deleted.
         :type user: Union[str, Dict[str, Any], ~azure.cosmos.aio.UserProxy]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], None], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The user wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The user does not exist in the container.
         :rtype: None
@@ -796,6 +832,8 @@ class DatabaseProxy(object):
 
         If no ThroughputProperties already exists for the database, an exception is raised.
 
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], List[Dict[str, Any]]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the database
             or the throughput properties could not be retrieved.
         :returns: ThroughputProperties for the database.
@@ -832,6 +870,8 @@ class DatabaseProxy(object):
 
         :param throughput: The throughput to be set.
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the database
             or the throughput properties could not be updated.
         :returns: ThroughputProperties for the database, updated with new throughput.

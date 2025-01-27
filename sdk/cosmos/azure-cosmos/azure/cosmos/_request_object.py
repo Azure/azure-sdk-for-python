@@ -28,7 +28,7 @@ class RequestObject(object):
         self.resource_type = resource_type
         self.operation_type = operation_type
         self.endpoint_override = endpoint_override
-        self.should_clear_session_token_on_session_read_failure: bool = False
+        self.should_clear_session_token_on_session_read_failure: bool = False  # pylint: disable=name-too-long
         self.use_preferred_locations: Optional[bool] = None
         self.location_index_to_route: Optional[int] = None
         self.location_endpoint_to_route: Optional[str] = None
