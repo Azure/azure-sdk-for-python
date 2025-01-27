@@ -36,7 +36,7 @@ To report an issue with the client library, or request additional features, plea
     - [Get properties of a connection by its connection name](#get-properties-of-a-connection-by-its-connection-name)
   - [Get an authenticated ChatCompletionsClient](#get-an-authenticated-chatcompletionsclient)
   - [Get an authenticated AzureOpenAI client](#get-an-authenticated-azureopenai-client)
-  - [Agents (Preview)](#agents-private-preview)
+  - [Agents (Preview)](#agents-preview)
     - [Create an Agent](#create-agent) with:
       - [File Search](#create-agent-with-file-search)
       - [Enterprise File Search](#create-agent-with-enterprise-file-search)
