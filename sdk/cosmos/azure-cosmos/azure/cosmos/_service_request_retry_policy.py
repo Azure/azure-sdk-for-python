@@ -56,10 +56,10 @@ class ServiceRequestRetryPolicy(object):
             refresh_cache = self.request.last_routed_location_endpoint_within_region is not None
             if self.location_endpoint:
                 if _OperationType.IsReadOnlyOperation(self.request.operation_type):
-                    self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.location_endpoint)
+                    self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.location_endpoint, refresh_cache)
                     self.logger.warning("Marking %s unavailable for read", self.location_endpoint)
                 else:
-                    self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.location_endpoint)
+                    self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.location_endpoint, refresh_cache)
                     self.logger.warning("Marking %s unavailable for write", self.location_endpoint)
 
         self.in_region_retry_count += 1
