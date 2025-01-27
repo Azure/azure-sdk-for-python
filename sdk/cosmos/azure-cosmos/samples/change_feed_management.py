@@ -31,21 +31,27 @@ DATABASE_ID = config.settings['database_id']
 CONTAINER_ID = config.settings['container_id']
 
 
-def create_items(container, size):
-    print('Creating Items')
+def create_items(container, size, partition_key_value):
+    print("Creating Items with partition key value: {}".format(partition_key_value))
 
-    for i in range(1, size):
+    for i in range(size):
         c = str(uuid.uuid4())
         item_definition = {'id': 'item' + c,
                            'address': {'street': '1 Microsoft Way' + c,
                                        'city': 'Redmond' + c,
-                                       'state': 'WA',
+                                       'state': partition_key_value,
                                        'zip code': 98052
                                        }
                            }
 
         created_item = container.create_item(body=item_definition)
 
+def clean_up(container):
+    print('\nClean up the container\n')
+
+    for item in container.query_items(query='SELECT * FROM c', enable_cross_partition_query=True):
+        # Deleting the current item
+        container.delete_item(item, partition_key=item['address']['state'])
 
 def read_change_feed(container):
     print('\nReading Change Feed from the beginning\n')
@@ -53,73 +59,123 @@ def read_change_feed(container):
     # For a particular Partition Key Range we can use partition_key_range_id]
     # 'is_start_from_beginning = True' will read from the beginning of the history of the container
     # If no is_start_from_beginning is specified, the read change feed loop will pickup the items that happen while the loop / process is active
-    response = container.query_items_change_feed(is_start_from_beginning=True)
-    for doc in response:
+    create_items(container, 10, 'WA')
+    response_iterator = container.query_items_change_feed(is_start_from_beginning=True)
+    for doc in response_iterator:
         print(doc)
 
-    print('\nFinished reading all the change feed\n')
-
-
-def read_change_feed_with_start_time(container, start_time):
-    time = start_time.strftime('%a, %d %b %Y %H:%M:%S GMT')
-    print('\nReading Change Feed from start time of {}\n'.format(time))
-
+def read_change_feed_with_start_time(container):
+    print('\nReading Change Feed from the start time\n')
     # You can read change feed from a specific time.
     # You must pass in a datetime object for the start_time field.
-    response = container.query_items_change_feed(start_time=start_time)
-    for doc in response:
+
+    # Create items
+    create_items(container, 10, 'WA')
+    start_time = datetime.now(timezone.utc)
+    time = start_time.strftime('%a, %d %b %Y %H:%M:%S GMT')
+    print('\nReading Change Feed from start time of {}\n'.format(time))
+    create_items(container, 5, 'CA')
+    create_items(container, 5, 'OR')
+
+    # Read change feed from the beginning
+    response_iterator = container.query_items_change_feed(start_time="Beginning")
+    for doc in response_iterator:
         print(doc)
 
-    print('\nFinished reading all the change feed from start time of {}\n'.format(time))
+    # Read change feed from a start time
+    response_iterator = container.query_items_change_feed(start_time=start_time)
+    for doc in response_iterator:
+        print(doc)
 
+def read_change_feed_with_partition_key(container):
+    print('\nReading Change Feed from the beginning of the partition key\n')
+    # Create items
+    create_items(container, 10, 'WA')
+    create_items(container, 5, 'CA')
+    create_items(container, 5, 'OR')
 
-def read_change_feed_with_continuation(container, continuation):
-    print('\nReading change feed from continuation\n')
+    # Read change feed with partition key with LatestVersion mode.
+    # Should only return change feed for the created items with 'CA' partition key
+    response_iterator = container.query_items_change_feed(start_time="Beginning", partition_key="CA")
+    for doc in response_iterator:
+        print(doc)
+
+def read_change_feed_with_continuation(container):
+    print('\nReading Change Feed from the continuation\n')
+    # Create items
+    create_items(container, 10, 'WA')
+    response_iterator = container.query_items_change_feed(start_time="Beginning")
+    for doc in response_iterator:
+        print(doc)
+    continuation_token = container.client_connection.last_response_headers['etag']
+
+    # Create additional items
+    create_items(container, 5, 'CA')
+    create_items(container, 5, 'OR')
 
     # You can read change feed from a specific continuation token.
     # You must pass in a valid continuation token.
-    response = container.query_items_change_feed(continuation=continuation)
-    for doc in response:
+    # From our continuation token above, you will get all items created after the continuation
+    response_iterator = container.query_items_change_feed(continuation=continuation_token)
+    for doc in response_iterator:
         print(doc)
-
-    print('\nFinished reading all the change feed from continuation\n')
-
-def delete_all_items(container):
-    print('\nDeleting all item\n')
-
-    for item in container.query_items(query='SELECT * FROM c', enable_cross_partition_query=True):
-        # Deleting the current item
-        container.delete_item(item, partition_key=item['address']['state'])
-
-    print('Deleted all items')
 
 def read_change_feed_with_all_versions_and_delete_mode(container):
-    change_feed_mode = "AllVersionsAndDeletes"
-    print("\nReading change feed with 'AllVersionsAndDeletes' mode.\n")
+    print('\nReading Change Feed with AllVersionsAndDeletes mode\n')
+    # Read the initial change feed with 'AllVersionsAndDeletes' mode.
+    # This initial call was made to store a point in time in a 'continuation' token
+    response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes")
+    for doc in response_iterator:
+        print(doc)
+    continuation_token = container.client_connection.last_response_headers['etag']
 
-    # You can read change feed with a specific change feed mode.
-    # You must pass in a valid change feed mode: ["LatestVersion", "AllVersionsAndDeletes"].
-    response = container.query_items_change_feed(mode=change_feed_mode)
-    for doc in response:
+    # Read all change feed with 'AllVersionsAndDeletes' mode after create items from a continuation
+    create_items(container, 10, 'CA')
+    create_items(container, 10, 'OR')
+    response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", continuation=continuation_token)
+    for doc in response_iterator:
         print(doc)
 
-    print("\nFinished reading all the change feed with 'AllVersionsAndDeletes' mode.\n")
-
-def read_change_feed_with_all_versions_and_delete_mode_from_continuation(container, continuation):
-    change_feed_mode = "AllVersionsAndDeletes"
-    print("\nReading change feed with 'AllVersionsAndDeletes' mode.\n")
-
-    # You can read change feed with a specific change feed mode from a specific continuation token.
-    # You must pass in a valid change feed mode: ["LatestVersion", "AllVersionsAndDeletes"].
-    # You must pass in a valid continuation token.
-    response = container.query_items_change_feed(mode=change_feed_mode, continuation=continuation)
-    for doc in response:
+    # Read all change feed with 'AllVersionsAndDeletes' mode after delete items from a continuation
+    clean_up(container)
+    response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", continuation=continuation_token)
+    for doc in response_iterator:
         print(doc)
 
-    print("\nFinished reading all the change feed with 'AllVersionsAndDeletes' mode.\n")
+def read_change_feed_with_all_versions_and_delete_mode_with_partition_key(container):
+    print('\nReading Change Feed with AllVersionsAndDeletes mode from the partition key\n')
+
+    # Read the initial change feed with 'AllVersionsAndDeletes' mode with partition key('CA').
+    # This initial call was made to store a point in time and 'partition_key' in a 'continuation' token
+    response_iterator = container.query_items_change_feed(mode="AllVersionsAndDeletes", partition_key="CA")
+    for doc in response_iterator:
+        print(doc)
+    continuation_token = container.client_connection.last_response_headers['etag']
+
+    create_items(container, 10, 'CA')
+    create_items(container, 10, 'OR')
+    # Read change feed 'AllVersionsAndDeletes' mode with 'CA' partition key value from the previous continuation.
+    # Should only print the created items with 'CA' partition key value
+    response_iterator = container.query_items_change_feed(mode='AllVersionsAndDeletes', continuation=continuation_token)
+    for doc in response_iterator:
+        print(doc)
+    continuation_token = container.client_connection.last_response_headers['etag']
+
+    clean_up(container)
+    # Read change feed 'AllVersionsAndDeletes' mode with 'CA' partition key value from the previous continuation.
+    # Should only print the deleted items with 'CA' partition key value
+    response_iterator = container.query_items_change_feed(mode='AllVersionsAndDeletes', continuation=continuation_token)
+    for doc in response_iterator:
+        print(doc)
 
 def run_sample():
     client = cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY})
+    # Delete pre-existing database
+    try:
+        client.delete_database(DATABASE_ID)
+    except exceptions.CosmosResourceNotFoundError:
+        pass
+
     try:
         # setup database for this sample
         try:
@@ -131,34 +187,37 @@ def run_sample():
         try:
             container = db.create_container(
                 id=CONTAINER_ID,
-                partition_key=partition_key.PartitionKey(path='/address/state', kind=documents.PartitionKind.Hash)
+                partition_key=partition_key.PartitionKey(path='/address/state', kind=documents.PartitionKind.Hash),
+                offer_throughput = 11000
             )
             print('Container with id \'{0}\' created'.format(CONTAINER_ID))
 
         except exceptions.CosmosResourceExistsError:
             raise RuntimeError("Container with id '{}' already exists".format(CONTAINER_ID))
 
-        # Create items
-        create_items(container, 100)
-        # Timestamp post item creations
-        timestamp = datetime.now(timezone.utc)
-        # Create more items after time stamp
-        create_items(container, 50)
         # Read change feed from beginning
         read_change_feed(container)
+        clean_up(container)
+
         # Read Change Feed from timestamp
-        read_change_feed_with_start_time(container, timestamp)
-        # Delete all items from container
-        delete_all_items(container)
-        # Read change feed with 'AllVersionsAndDeletes' mode
-        read_change_feed_with_all_versions_and_delete_mode(container)
-        continuation_token = container.client_connection.last_response_headers['etag']
-        # Read change feed with 'AllVersionsAndDeletes' mode after create item
-        create_items(container, 10)
-        read_change_feed_with_all_versions_and_delete_mode_from_continuation(container,continuation_token)
+        read_change_feed_with_start_time(container)
+        clean_up(container)
+
+        # Read Change Feed from continuation
+        read_change_feed_with_continuation(container)
+        clean_up(container)
+
+        # Read Change Feed by partition_key
+        read_change_feed_with_partition_key(container)
+        clean_up(container)
+
         # Read change feed with 'AllVersionsAndDeletes' mode after create/delete item
-        delete_all_items(container)
-        read_change_feed_with_all_versions_and_delete_mode_from_continuation(container,continuation_token)
+        read_change_feed_with_all_versions_and_delete_mode(container)
+        clean_up(container)
+
+        # Read change feed with 'AllVersionsAndDeletes' mode with partition key for create/delete items.
+        read_change_feed_with_all_versions_and_delete_mode_with_partition_key(container)
+        clean_up(container)
 
         # cleanup database after sample
         try:
