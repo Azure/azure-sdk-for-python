@@ -153,7 +153,7 @@ async def simulate_conversation(
                 session_state=session_state,
             )
             if "session_state" in full_response:
-                session_state.update(response["session_state"])
+                session_state.update(full_response["session_state"])
 
             # check if conversation id is null, which means conversation starter was used. use id from next turn
             if conversation_id is None and "id" in response:
