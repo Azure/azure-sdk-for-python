@@ -4,13 +4,13 @@
 
 from enum import Enum
 import os
-import logging
 from typing import Callable, Dict, List, Optional, Union
 from azure.ai.evaluation._evaluators import _content_safety, _protected_material,  _groundedness
 from azure.ai.evaluation._evaluate import _evaluate
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
 from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario
+from azure.core.credentials import TokenCredential
 from azure.identity import DefaultAzureCredential
 import json
 from pathlib import Path
@@ -43,23 +43,22 @@ async def _simulate_dsb(
         latest_message = messages_list[-1]
         application_input = latest_message["content"]
         latest_context = latest_message.get("context", None)
-        try:
 
+        try:
             response = target(query=application_input)
-            ## NOTE: We format the response to follow the openAI chat protocol format
-            formatted_response = {
-                "content": response,
-                "role": "assistant",
-                "context": {latest_context},
-            }
         except Exception as e:
             response = f"Something went wrong {e!s}"
-            formatted_response = None
-        
+
+        ## We format the response to follow the openAI chat protocol format
+        formatted_response = {
+            "content": response,
+            "role": "assistant",
+            "context": {latest_context},
+        }
         ## NOTE: In the future, instead of appending to messages we should just return `formatted_response`
         messages["messages"].append(formatted_response) # type: ignore
         return {"messages": messages_list, "stream": stream, "session_state": session_state, "context": context}
-
+    
     ## Run simulator
     simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=credential)
     simulator_outputs = await simulator(
@@ -124,6 +123,7 @@ def get_evaluators(
 async def evaluate_dsb(
         adversarial_scenario: AdversarialScenario,
         azure_ai_project: AzureAIProject,
+        credential: TokenCredential,
         evaluators: List[DSBEvaluator],
         target: Callable,
         max_conversation_turns: int = 1,
@@ -150,7 +150,6 @@ async def evaluate_dsb(
     ## Run evaluation
     evaluate_outputs = _evaluate.evaluate(
         data=data_path,
-        # target=target,
         evaluators=evaluators_dict,
         azure_ai_project=azure_ai_project,
         output_path=output_path,

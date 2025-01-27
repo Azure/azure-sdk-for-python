@@ -2,31 +2,34 @@ import asyncio
 from dotenv import load_dotenv
 import os
 from azure.ai.evaluation.simulator import AdversarialScenario
-from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.identity import DefaultAzureCredential
 from azure.ai.evaluation import evaluate_dsb, DSBEvaluator
 from typing import Optional
 
-def test_target(query: Optional[str], response: Optional[str], conversation: Optional[str]) -> str:
+def test_target(query: str) -> str:
     return f"Res: {query}"
 
 if __name__ == "__main__":
     load_dotenv()
 
-    azure_ai_project = AzureAIProject(
-        subscription_id=os.environ.get("AZURE_SUBSCRIPTION_ID") or "<your-subscription-id>",
-        resource_group_name=os.environ.get("AZURE_RESOURCE_GROUP_NAME") or "<your-resource-group>",
-        project_name=os.environ.get("AZURE_PROJECT_NAME") or "<your-workspace-name>",
-    )
+    azure_ai_project = {
+        "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
+        "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP_NAME"),
+        "project_name": os.environ.get("AZURE_PROJECT_NAME"),
+    }
 
     model_config = {
         "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
         "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
     }
 
+    credential = DefaultAzureCredential()
+
     asyncio.run(evaluate_dsb(
-        adversarial_scenario=AdversarialScenario.ADVERSARIAL_CONVERSATION,
+        adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA,
         azure_ai_project=azure_ai_project,
-        evaluators=[DSBEvaluator.CONTENT_SAFETY],
+        credential=credential,
+        evaluators=[DSBEvaluator.CONTENT_SAFETY, DSBEvaluator.GROUNDEDNESS, DSBEvaluator.PROTECTED_MATERIAL],
         target=test_target,
         model_config=model_config,
         max_conversation_turns=1,
