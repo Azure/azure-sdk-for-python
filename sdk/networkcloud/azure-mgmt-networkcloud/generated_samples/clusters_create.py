@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.networkcloud import NetworkCloudMgmtClient
 
 """
@@ -36,6 +37,12 @@ def main():
             "extendedLocation": {
                 "name": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ExtendedLocation/customLocations/clusterManagerExtendedLocationName",
                 "type": "CustomLocation",
+            },
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ManagedIdentity/userAssignedIdentities/userIdentity1": {}
+                },
             },
             "location": "location",
             "properties": {
@@ -83,6 +90,13 @@ def main():
                 },
                 "clusterType": "SingleRack",
                 "clusterVersion": "1.0.0",
+                "commandOutputSettings": {
+                    "associatedIdentity": {
+                        "identityType": "UserAssignedIdentity",
+                        "userAssignedIdentityResourceId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ManagedIdentity/userAssignedIdentities/userIdentity1",
+                    },
+                    "containerUrl": "https://myaccount.blob.core.windows.net/mycontainer?restype=container",
+                },
                 "computeDeploymentThreshold": {"grouping": "PerCluster", "type": "PercentSuccess", "value": 90},
                 "computeRackDefinitions": [
                     {
@@ -122,6 +136,18 @@ def main():
                 ],
                 "managedResourceGroupConfiguration": {"location": "East US", "name": "my-managed-rg"},
                 "networkFabricId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/networkFabrics/fabricName",
+                "runtimeProtectionConfiguration": {"enforcementLevel": "OnDemand"},
+                "secretArchive": {
+                    "keyVaultId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.KeyVault/vaults/keyVaultName",
+                    "useKeyVault": "True",
+                },
+                "updateStrategy": {
+                    "maxUnavailable": 4,
+                    "strategyType": "Rack",
+                    "thresholdType": "CountSuccess",
+                    "thresholdValue": 4,
+                    "waitTimeMinutes": 10,
+                },
             },
             "tags": {"key1": "myvalue1", "key2": "myvalue2"},
         },
@@ -129,6 +155,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/Clusters_Create.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2024-06-01-preview/examples/Clusters_Create.json
 if __name__ == "__main__":
     main()

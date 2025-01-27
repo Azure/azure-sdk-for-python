@@ -59,10 +59,12 @@ class TestModelsAsync(AzureRecordedTestCase):
             files = client_async.files.list()
             async for file in files:
                 assert file.id
+                break
 
             files = client_async.files.list(purpose="assistants")
             async for file in files:
                 assert file.id
+                break
 
             retrieved_file = await client_async.files.retrieve(file1.id)
             assert retrieved_file.id

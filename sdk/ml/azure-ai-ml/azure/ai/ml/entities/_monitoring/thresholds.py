@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument, line-too-long, protected-access
+# pylint: disable=unused-argument, protected-access
 
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -86,7 +86,7 @@ class NumericalDriftMetrics(RestTranslatableMixin):
         return metric_name, threshold
 
     @classmethod
-    # pylint: disable=arguments-differ, inconsistent-return-statements
+    # pylint: disable=arguments-differ
     def _from_rest_object(cls, metric_name: str, threshold: Optional[float]) -> "NumericalDriftMetrics":  # type: ignore
         metric_name = camel_to_snake(metric_name)
         if metric_name == MonitorMetricName.JENSEN_SHANNON_DISTANCE:
@@ -144,7 +144,7 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
         return metric_name, threshold
 
     @classmethod
-    # pylint: disable=arguments-differ, inconsistent-return-statements
+    # pylint: disable=arguments-differ
     def _from_rest_object(  # type: ignore
         cls, metric_name: str, threshold: Optional[float]
     ) -> "CategoricalDriftMetrics":

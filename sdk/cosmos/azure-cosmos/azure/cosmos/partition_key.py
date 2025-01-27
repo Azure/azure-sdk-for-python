@@ -93,7 +93,7 @@ class _Infinity:
 class PartitionKey(dict):
     """Key used to partition a container into logical partitions.
 
-    See https://docs.microsoft.com/azure/cosmos-db/partitioning-overview#choose-partitionkey
+    See https://learn.microsoft.com/azure/cosmos-db/partitioning-overview#choose-partitionkey
     for information on how to choose partition keys.
 
     :ivar str path: The path of the partition key
@@ -281,12 +281,12 @@ class PartitionKey(dict):
 
     def _is_prefix_partition_key(
             self,
-            partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> bool: # pylint: disable=line-too-long
-        if self.kind!= "MultiHash":
+            partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> bool:  # pylint: disable=line-too-long
+        if self.kind != "MultiHash":
             return False
-        if isinstance(partition_key, list) and len(self['paths']) == len(partition_key):
-            return False
-        return True
+        ret = ((isinstance(partition_key, Sequence) and
+                not isinstance(partition_key, str)) and len(self['paths']) != len(partition_key))
+        return ret
 
 
 def _return_undefined_or_empty_partition_key(is_system_key: bool) -> Union[_Empty, _Undefined]:

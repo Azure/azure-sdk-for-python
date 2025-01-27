@@ -11,7 +11,7 @@ FILE: sample_authentication_async.py
 DESCRIPTION:
     This sample demonstrates how to authenticate with the Azure Maps Render
     service with an Subscription key. See more details about authentication here:
-    https://docs.microsoft.com/azure/azure-maps/how-to-manage-account-keys
+    https://learn.microsoft.com/azure/azure-maps/how-to-manage-account-keys
 USAGE:
     python sample_authentication_async.py
     Set the environment variables with your own values before running the sample:
@@ -25,6 +25,7 @@ USAGE:
 import asyncio
 import os
 import sys
+
 
 async def authentication_maps_service_client_with_subscription_key_credential_async():
     # [START create_maps_render_service_client_with_key_async]
@@ -66,7 +67,8 @@ async def main():
     await authentication_maps_service_client_with_subscription_key_credential_async()
     await authentication_maps_service_client_with_aad_credential_async()
 
-if __name__ == '__main__':
-    if sys.platform == 'win32':
+
+if __name__ == "__main__":
+    if sys.platform == "win32":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(main())

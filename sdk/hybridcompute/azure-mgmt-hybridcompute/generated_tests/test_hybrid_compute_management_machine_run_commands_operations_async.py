@@ -77,7 +77,7 @@ class TestHybridComputeManagementMachineRunCommandsOperationsAsync(AzureMgmtReco
                     "timeoutInSeconds": 0,
                     "type": "str",
                 },
-                api_version="2024-05-20-preview",
+                api_version="2024-07-31-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -92,7 +92,7 @@ class TestHybridComputeManagementMachineRunCommandsOperationsAsync(AzureMgmtReco
                 resource_group_name=resource_group.name,
                 machine_name="str",
                 run_command_name="str",
-                api_version="2024-05-20-preview",
+                api_version="2024-07-31-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -106,7 +106,7 @@ class TestHybridComputeManagementMachineRunCommandsOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             machine_name="str",
             run_command_name="str",
-            api_version="2024-05-20-preview",
+            api_version="2024-07-31-preview",
         )
 
         # please add some check logic here by yourself
@@ -118,7 +118,7 @@ class TestHybridComputeManagementMachineRunCommandsOperationsAsync(AzureMgmtReco
         response = self.client.machine_run_commands.list(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2024-05-20-preview",
+            api_version="2024-07-31-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

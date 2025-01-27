@@ -13,7 +13,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 AZURE_LOCATION = "eastus"
 
 
-
+@pytest.mark.live_test_only
 class TestServiceFabricmanagedclustersManagementManagedClustersOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ServiceFabricManagedClustersManagementClient)
@@ -23,18 +23,13 @@ class TestServiceFabricmanagedclustersManagementManagedClustersOperations(AzureM
     def test_list_by_resource_group(self, resource_group):
         response = self.client.managed_clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-04-01",
         )
         result = [r for r in response]
         assert result == []
 
-
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_list_by_subscription(self, resource_group):
-        response = self.client.managed_clusters.list_by_subscription(
-            api_version="2024-04-01",
-        )
+        response = self.client.managed_clusters.list_by_subscription()
         result = [r for r in response]
         assert response
-        

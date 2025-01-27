@@ -5,18 +5,16 @@ import azure.mgmt.netapp.models
 from azure.mgmt.netapp.models import NetAppAccount, NetAppAccountPatch
 import setup
 
+
 def create_account(client, rg, acc_name, location=setup.LOCATION, tags=None, active_directories=None):
     account_body = NetAppAccount(location=location, tags=tags, active_directories=active_directories)
-    
+
     print("Creating NetApp Account {0}".format(acc_name))
-    account = client.accounts.begin_create_or_update(
-        rg,
-        acc_name,
-        account_body
-    ).result()
+    account = client.accounts.begin_create_or_update(rg, acc_name, account_body).result()
     wait_for_account(client, rg, acc_name)
     print("\tDone creating NetApp Account {0}".format(acc_name))
     return account
+
 
 def wait_for_account(client, rg, acc_name):
     # a work around for the async nature of certain ARM processes
@@ -30,6 +28,7 @@ def wait_for_account(client, rg, acc_name):
             time.sleep(3)
     if retry == 60:
         raise Exception("Timeout when waiting for account")
+
 
 def wait_for_no_account(client, rg, acc_name):
     # a workaround for the async nature of certain ARM processes
@@ -47,14 +46,15 @@ def wait_for_no_account(client, rg, acc_name):
     if retry == 60:
         raise Exception("Timeout when waiting for no account")
 
+
 def delete_account(client, rg, acc_name):
     print("Deleting NetApp Account {0}".format(acc_name))
     retry = 0
     while retry < 5:
         try:
-            client.accounts.begin_delete(rg, acc_name).wait() 
+            client.accounts.begin_delete(rg, acc_name).wait()
             break
-        except Exception as e: 
+        except Exception as e:
             print("failed to delete account. Retry number: {0}".format(retry))
             print(e)
             retry += 1
@@ -65,6 +65,7 @@ def delete_account(client, rg, acc_name):
 
     wait_for_no_account(client, rg, acc_name)
     print("\tDone deleting account {0}".format(acc_name))
+
 
 class TestNetAppAccount(AzureMgmtRecordedTestCase):
 
@@ -79,7 +80,7 @@ class TestNetAppAccount(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_create_delete_account(self):
         print("Starting test_create_delete_account")
-        account_name = self.get_resource_name(setup.TEST_ACC_1+"-")
+        account_name = self.get_resource_name(setup.TEST_ACC_1 + "-")
         account_list = self.client.accounts.list(setup.TEST_RG)
         account_list_lenght = len(list(account_list))
 
@@ -88,7 +89,7 @@ class TestNetAppAccount(AzureMgmtRecordedTestCase):
         assert account.name == account_name
 
         account_list = self.client.accounts.list(setup.TEST_RG)
-        assert len(list(account_list)) == account_list_lenght+1
+        assert len(list(account_list)) == account_list_lenght + 1
 
         delete_account(self.client, setup.TEST_RG, account_name)
         account_list = self.client.accounts.list(setup.TEST_RG)
@@ -98,8 +99,8 @@ class TestNetAppAccount(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_list_accounts(self):
         print("Starting test_list_accounts")
-        account_name1 = self.get_resource_name(setup.TEST_ACC_1+"-")
-        account_name2 = self.get_resource_name(setup.TEST_ACC_2+"-")
+        account_name1 = self.get_resource_name(setup.TEST_ACC_1 + "-")
+        account_name2 = self.get_resource_name(setup.TEST_ACC_2 + "-")
         account_list = self.client.accounts.list(setup.TEST_RG)
         account_list_lenght = len(list(account_list))
 
@@ -108,7 +109,7 @@ class TestNetAppAccount(AzureMgmtRecordedTestCase):
         accounts = [account_name1, account_name2]
 
         account_list = self.client.accounts.list(setup.TEST_RG)
-        assert len(list(account_list)) == account_list_lenght+2
+        assert len(list(account_list)) == account_list_lenght + 2
         idx = 0
         for account in account_list:
             assert account.name == accounts[idx]
@@ -121,7 +122,7 @@ class TestNetAppAccount(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_get_account_by_name(self):
         print("Starting test_get_account_by_name")
-        account_name1 = self.get_resource_name(setup.TEST_ACC_1+"-")
+        account_name1 = self.get_resource_name(setup.TEST_ACC_1 + "-")
         create_account(self.client, setup.TEST_RG, account_name1)
 
         account = self.client.accounts.get(setup.TEST_RG, account_name1)
@@ -133,14 +134,14 @@ class TestNetAppAccount(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_patch_account(self):
         print("Starting test_patch_account")
-        account_name1 = self.get_resource_name(setup.TEST_ACC_1+"-")
+        account_name1 = self.get_resource_name(setup.TEST_ACC_1 + "-")
         create_account(self.client, setup.TEST_RG, account_name1)
 
-        tag = {'Tag1': 'Value2'}
+        tag = {"Tag1": "Value2"}
         netapp_account_patch = NetAppAccountPatch(tags=tag)
 
         account = self.client.accounts.begin_update(setup.TEST_RG, account_name1, netapp_account_patch).result()
-        assert account.tags['Tag1'] == 'Value2'
+        assert account.tags["Tag1"] == "Value2"
 
         delete_account(self.client, setup.TEST_RG, account_name1)
         print("Finished with test_patch_account")

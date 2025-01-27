@@ -47,17 +47,13 @@ class TestAzureMetricExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         os.environ.clear()
-        os.environ[
-            "APPINSIGHTS_INSTRUMENTATIONKEY"
-        ] = "1234abcd-5678-4efa-8abc-1234567890ab"
+        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._exporter = AzureMonitorMetricExporter()
         cls._metrics_data = MetricsData(
             resource_metrics=[
                 ResourceMetrics(
-                    resource = Resource.create(
-                        attributes={"asd":"test_resource"}
-                    ),
+                    resource=Resource.create(attributes={"asd": "test_resource"}),
                     scope_metrics=[
                         ScopeMetrics(
                             scope=InstrumentationScope("test_name"),
@@ -79,7 +75,7 @@ class TestAzureMetricExporter(unittest.TestCase):
                                         ],
                                         aggregation_temporality=AggregationTemporality.CUMULATIVE,
                                         is_monotonic=False,
-                                    )
+                                    ),
                                 )
                             ],
                             schema_url="test url",
@@ -166,10 +162,13 @@ class TestAzureMetricExporter(unittest.TestCase):
     def test_point_to_envelope_partA(self):
         exporter = self._exporter
         resource = Resource(
-            {"service.name": "testServiceName",
-             "service.namespace": "testServiceNamespace",
-             "service.instance.id": "testServiceInstanceId"})
-        point=NumberDataPoint(
+            {
+                "service.name": "testServiceName",
+                "service.namespace": "testServiceNamespace",
+                "service.instance.id": "testServiceInstanceId",
+            }
+        )
+        point = NumberDataPoint(
             attributes={
                 "test": "attribute",
             },
@@ -181,11 +180,23 @@ class TestAzureMetricExporter(unittest.TestCase):
 
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertIsNotNone(envelope.tags)
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID])
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE])
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION), azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION])
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE])
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION), azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION])
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID]
+        )
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE]
+        )
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION),
+            azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION],
+        )
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE]
+        )
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION),
+            azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION],
+        )
 
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceNamespace.testServiceName")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), "testServiceInstanceId")
@@ -193,9 +204,8 @@ class TestAzureMetricExporter(unittest.TestCase):
 
     def test_point_to_envelope_partA_default(self):
         exporter = self._exporter
-        resource = Resource(
-            {"service.name": "testServiceName"})
-        point=NumberDataPoint(
+        resource = Resource({"service.name": "testServiceName"})
+        point = NumberDataPoint(
             attributes={
                 "test": "attribute",
             },
@@ -206,13 +216,16 @@ class TestAzureMetricExporter(unittest.TestCase):
         envelope = exporter._point_to_envelope(point, "test name", resource)
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceName")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), platform.node())
-        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME), envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE))
+        self.assertEqual(
+            envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME),
+            envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE),
+        )
 
     def test_point_to_envelope_number(self):
         exporter = self._exporter
-        resource = Resource.create(attributes={"asd":"test_resource"})
+        resource = Resource.create(attributes={"asd": "test_resource"})
         scope = InstrumentationScope("test_scope")
-        point=NumberDataPoint(
+        point = NumberDataPoint(
             attributes={
                 "test": "attribute",
             },
@@ -222,11 +235,11 @@ class TestAzureMetricExporter(unittest.TestCase):
         )
         envelope = exporter._point_to_envelope(point, "test name", resource, scope)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Metric')
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
         self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
-        self.assertEqual(envelope.data.base_type, 'MetricData')
+        self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
-        self.assertEqual(envelope.data.base_data.properties['test'], 'attribute')
+        self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
         self.assertEqual(envelope.data.base_data.metrics[0].namespace, None)
@@ -235,14 +248,14 @@ class TestAzureMetricExporter(unittest.TestCase):
 
     def test_point_to_envelope_histogram(self):
         exporter = self._exporter
-        resource = Resource.create(attributes={"asd":"test_resource"})
-        point=HistogramDataPoint(
+        resource = Resource.create(attributes={"asd": "test_resource"})
+        point = HistogramDataPoint(
             attributes={
                 "test": "attribute",
             },
-            bucket_counts=[0,3,4],
+            bucket_counts=[0, 3, 4],
             count=7,
-            explicit_bounds=[0,5,10,0],
+            explicit_bounds=[0, 5, 10, 0],
             max=18,
             min=1,
             start_time_unix_nano=1646865018558419456,
@@ -251,11 +264,11 @@ class TestAzureMetricExporter(unittest.TestCase):
         )
         envelope = exporter._point_to_envelope(point, "test name", resource)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Metric')
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
         self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
-        self.assertEqual(envelope.data.base_type, 'MetricData')
+        self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
-        self.assertEqual(envelope.data.base_data.properties['test'], 'attribute')
+        self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 31)
@@ -269,9 +282,9 @@ class TestAzureMetricExporter(unittest.TestCase):
     )
     def test_point_to_envelope_metric_namespace(self):
         exporter = self._exporter
-        resource = Resource.create(attributes={"asd":"test_resource"})
+        resource = Resource.create(attributes={"asd": "test_resource"})
         scope = InstrumentationScope("test_scope")
-        point=NumberDataPoint(
+        point = NumberDataPoint(
             attributes={
                 "test": "attribute",
             },
@@ -281,11 +294,11 @@ class TestAzureMetricExporter(unittest.TestCase):
         )
         envelope = exporter._point_to_envelope(point, "test name", resource, scope)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Metric')
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
         self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
-        self.assertEqual(envelope.data.base_type, 'MetricData')
+        self.assertEqual(envelope.data.base_type, "MetricData")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
-        self.assertEqual(envelope.data.base_data.properties['test'], 'attribute')
+        self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
         self.assertEqual(envelope.data.base_data.metrics[0].namespace, "test_scope")
@@ -295,10 +308,13 @@ class TestAzureMetricExporter(unittest.TestCase):
     def test_point_to_envelope_std_metric_client_duration(self):
         exporter = self._exporter
         resource = Resource(
-            {"service.name": "testServiceName",
-             "service.namespace": "testServiceNamespace",
-             "service.instance.id": "testServiceInstanceId"})
-        point=NumberDataPoint(
+            {
+                "service.name": "testServiceName",
+                "service.namespace": "testServiceNamespace",
+                "service.instance.id": "testServiceInstanceId",
+            }
+        )
+        point = NumberDataPoint(
             attributes={
                 "http.status_code": 200,
                 "peer.service": "test_service",
@@ -310,17 +326,17 @@ class TestAzureMetricExporter(unittest.TestCase):
         )
         envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Metric')
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
         self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
-        self.assertEqual(envelope.data.base_type, 'MetricData')
-        self.assertEqual(envelope.data.base_data.properties['_MS.MetricId'], 'dependencies/duration')
-        self.assertEqual(envelope.data.base_data.properties['_MS.IsAutocollected'], 'True')
-        self.assertEqual(envelope.data.base_data.properties['Dependency.Type'], 'http')
-        self.assertEqual(envelope.data.base_data.properties['Dependency.Success'], 'True')
-        self.assertEqual(envelope.data.base_data.properties['dependency/target'], 'test_service')
-        self.assertEqual(envelope.data.base_data.properties['dependency/resultCode'], '200')
-        self.assertEqual(envelope.data.base_data.properties['cloud/roleInstance'], 'testServiceInstanceId')
-        self.assertEqual(envelope.data.base_data.properties['cloud/roleName'], 'testServiceNamespace.testServiceName')
+        self.assertEqual(envelope.data.base_type, "MetricData")
+        self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "dependencies/duration")
+        self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
+        self.assertEqual(envelope.data.base_data.properties["Dependency.Type"], "http")
+        self.assertEqual(envelope.data.base_data.properties["Dependency.Success"], "True")
+        self.assertEqual(envelope.data.base_data.properties["dependency/target"], "test_service")
+        self.assertEqual(envelope.data.base_data.properties["dependency/resultCode"], "200")
+        self.assertEqual(envelope.data.base_data.properties["cloud/roleInstance"], "testServiceInstanceId")
+        self.assertEqual(envelope.data.base_data.properties["cloud/roleName"], "testServiceNamespace.testServiceName")
         self.assertIsNone(envelope.data.base_data.properties.get("custom_attr"))
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertEqual(envelope.data.base_data.metrics[0].name, "http.client.duration")
@@ -330,36 +346,38 @@ class TestAzureMetricExporter(unittest.TestCase):
         point.attributes.pop("peer.service", None)
         point.attributes["net.peer.name"] = None
         envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
-        self.assertEqual(envelope.data.base_data.properties['dependency/target'], None)
+        self.assertEqual(envelope.data.base_data.properties["dependency/target"], None)
 
         point.attributes["net.peer.name"] = "test_peer_name"
         point.attributes["net.host.port"] = "test_port"
         envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
-        self.assertEqual(envelope.data.base_data.properties['dependency/target'], "test_peer_name:test_port")
+        self.assertEqual(envelope.data.base_data.properties["dependency/target"], "test_peer_name:test_port")
 
         # Success/Failure
         point.attributes["http.status_code"] = 500
         envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
-        self.assertEqual(envelope.data.base_data.properties['Dependency.Success'], "False")
+        self.assertEqual(envelope.data.base_data.properties["Dependency.Success"], "False")
 
         point.attributes["http.status_code"] = None
         envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
-        self.assertEqual(envelope.data.base_data.properties['Dependency.Success'], "False")
-        self.assertEqual(envelope.data.base_data.properties['dependency/resultCode'], "0")
+        self.assertEqual(envelope.data.base_data.properties["Dependency.Success"], "False")
+        self.assertEqual(envelope.data.base_data.properties["dependency/resultCode"], "0")
 
         point.attributes["http.status_code"] = "None"
         envelope = exporter._point_to_envelope(point, "http.client.duration", resource)
-        self.assertEqual(envelope.data.base_data.properties['Dependency.Success'], "False")
-        self.assertEqual(envelope.data.base_data.properties['dependency/resultCode'], "0")
-
+        self.assertEqual(envelope.data.base_data.properties["Dependency.Success"], "False")
+        self.assertEqual(envelope.data.base_data.properties["dependency/resultCode"], "0")
 
     def test_point_to_envelope_std_metric_server_duration(self):
         exporter = self._exporter
         resource = Resource(
-            {"service.name": "testServiceName",
-             "service.namespace": "testServiceNamespace",
-             "service.instance.id": "testServiceInstanceId"})
-        point=NumberDataPoint(
+            {
+                "service.name": "testServiceName",
+                "service.namespace": "testServiceNamespace",
+                "service.instance.id": "testServiceInstanceId",
+            }
+        )
+        point = NumberDataPoint(
             attributes={
                 "http.status_code": 200,
                 "peer.service": "test_service",
@@ -371,15 +389,15 @@ class TestAzureMetricExporter(unittest.TestCase):
         )
         envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
-        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Metric')
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Metric")
         self.assertEqual(envelope.time, ns_to_iso_str(point.time_unix_nano))
-        self.assertEqual(envelope.data.base_type, 'MetricData')
-        self.assertEqual(envelope.data.base_data.properties['_MS.MetricId'], 'requests/duration')
-        self.assertEqual(envelope.data.base_data.properties['_MS.IsAutocollected'], 'True')
-        self.assertEqual(envelope.data.base_data.properties['Request.Success'], 'True')
-        self.assertEqual(envelope.data.base_data.properties['request/resultCode'], '200')
-        self.assertEqual(envelope.data.base_data.properties['cloud/roleInstance'], 'testServiceInstanceId')
-        self.assertEqual(envelope.data.base_data.properties['cloud/roleName'], 'testServiceNamespace.testServiceName')
+        self.assertEqual(envelope.data.base_type, "MetricData")
+        self.assertEqual(envelope.data.base_data.properties["_MS.MetricId"], "requests/duration")
+        self.assertEqual(envelope.data.base_data.properties["_MS.IsAutocollected"], "True")
+        self.assertEqual(envelope.data.base_data.properties["Request.Success"], "True")
+        self.assertEqual(envelope.data.base_data.properties["request/resultCode"], "200")
+        self.assertEqual(envelope.data.base_data.properties["cloud/roleInstance"], "testServiceInstanceId")
+        self.assertEqual(envelope.data.base_data.properties["cloud/roleName"], "testServiceNamespace.testServiceName")
         self.assertIsNone(envelope.data.base_data.properties.get("custom_attr"))
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertEqual(envelope.data.base_data.metrics[0].name, "http.server.duration")
@@ -388,26 +406,28 @@ class TestAzureMetricExporter(unittest.TestCase):
         # Success/Failure
         point.attributes["http.status_code"] = 500
         envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
-        self.assertEqual(envelope.data.base_data.properties['Request.Success'], "False")
+        self.assertEqual(envelope.data.base_data.properties["Request.Success"], "False")
 
         point.attributes["http.status_code"] = None
         envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
-        self.assertEqual(envelope.data.base_data.properties['Request.Success'], "False")
-        self.assertEqual(envelope.data.base_data.properties.get('request/resultCode'), "0")
+        self.assertEqual(envelope.data.base_data.properties["Request.Success"], "False")
+        self.assertEqual(envelope.data.base_data.properties.get("request/resultCode"), "0")
 
         point.attributes["http.status_code"] = "None"
         envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
-        self.assertEqual(envelope.data.base_data.properties['Request.Success'], "False")
-        self.assertEqual(envelope.data.base_data.properties.get('request/resultCode'), "0")
-
+        self.assertEqual(envelope.data.base_data.properties["Request.Success"], "False")
+        self.assertEqual(envelope.data.base_data.properties.get("request/resultCode"), "0")
 
     def test_point_to_envelope_std_metric_unsupported(self):
         exporter = self._exporter
         resource = Resource(
-            {"service.name": "testServiceName",
-             "service.namespace": "testServiceNamespace",
-             "service.instance.id": "testServiceInstanceId"})
-        point=NumberDataPoint(
+            {
+                "service.name": "testServiceName",
+                "service.namespace": "testServiceNamespace",
+                "service.instance.id": "testServiceInstanceId",
+            }
+        )
+        point = NumberDataPoint(
             attributes={
                 "http.status_code": 200,
                 "peer.service": "test_service",

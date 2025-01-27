@@ -1,12 +1,12 @@
 {
-  "commit": "b8bf9af0df9b688bf2de1eb0972810ac0e0b6185",
+  "commit": "bb87821da87100719c7dc8a3ef6b89781813ed0a",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.15.0",
+    "@autorest/python@6.27.4",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/eventhub/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.15.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/eventhub/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.27.4 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/eventhub/resource-manager/readme.md",
   "package-2024-01": "2024-04-17 10:03:55 -0700 bcb917a6cf4a1e47544a3acd36779cfbd58a9899 Microsoft.EventHub/stable/2024-01-01/eventhubs.json",
   "package-2021-11": "2022-11-29 14:20:04 +0530 d85953a9cb1b464824fae7c1fd300a99d086c8e4 Microsoft.EventHub/stable/2021-11-01/namespaces-preview.json",

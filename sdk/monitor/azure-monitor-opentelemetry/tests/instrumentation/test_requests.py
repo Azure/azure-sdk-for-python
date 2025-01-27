@@ -17,6 +17,4 @@ class TestRequestsInstrumentation(unittest.TestCase):
             RequestsInstrumentor().instrument()
         except Exception as ex:  # pylint: disable=broad-except
             print(ex)
-            self.fail(
-                f"Unexpected exception raised when instrumenting {RequestsInstrumentor.__name__}"
-            )
+            self.fail(f"Unexpected exception raised when instrumenting {RequestsInstrumentor.__name__}")

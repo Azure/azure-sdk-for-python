@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.1 (2024-10-31)
+
+### Other Changes
+
+- This package has been deprecated and will no longer be maintained after 08-31-2024.
+
 ## 2.0.0 (2018-05-25)
 
 **Features**

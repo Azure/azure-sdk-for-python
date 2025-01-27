@@ -11,7 +11,7 @@ FILE: sample_authentication.py
 DESCRIPTION:
     This sample demonstrates how to authenticate with the Azure Maps Render
     service with an Subscription key. See more details about authentication here:
-    https://docs.microsoft.com/azure/azure-maps/how-to-manage-account-keys
+    https://learn.microsoft.com/azure/azure-maps/how-to-manage-account-keys
 USAGE:
     python sample_authentication.py
     Set the environment variables with your own values before running the sample:
@@ -23,6 +23,7 @@ USAGE:
 """
 
 import os
+
 
 def authentication_maps_service_client_with_subscription_key_credential():
     # [START create_maps_render_service_client_with_key]
@@ -58,6 +59,6 @@ def authentication_maps_service_client_with_aad_credential():
     print(result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     authentication_maps_service_client_with_subscription_key_credential()
     authentication_maps_service_client_with_aad_credential()

@@ -8,6 +8,7 @@ from subprocess import check_call, getoutput
 import shutil
 import re
 import os
+from functools import partial
 
 try:
     # py 311 adds this library natively
@@ -46,7 +47,10 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def is_multiapi_package(python_md_content: List[str]) -> bool:
-    return "multiapi: true" in "".join(python_md_content)
+    for line in python_md_content:
+        if re.findall(r"\s*multiapi\s*:\s*true", line):
+            return True
+    return False
 
 
 # return relative path like: network/azure-mgmt-network
@@ -56,49 +60,6 @@ def extract_sdk_folder(python_md: List[str]) -> str:
         if all(p in line for p in pattern):
             return re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+[-a-z]*", line)[0]
     return ""
-
-
-@return_origin_path
-def multiapi_combiner(sdk_code_path: str, package_name: str):
-    os.chdir(sdk_code_path)
-    _LOGGER.info(f"start to combine multiapi package: {package_name}")
-    check_call(
-        f"python {str(Path('../../../tools/azure-sdk-tools/packaging_tools/multiapi_combiner.py'))} --pkg-path={os.getcwd()}",
-        shell=True,
-    )
-    check_call("pip install -e .", shell=True)
-
-
-@return_origin_path
-def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: str):
-    toml_file = Path(sdk_code_path) / CONF_NAME
-    # do not package code of v20XX_XX_XX
-    exclude = lambda x: x.replace("-", ".") + ".v20*"
-    if toml_file.exists():
-        with open(toml_file, "rb") as file_in:
-            content = toml.load(file_in)
-        if package_name != "azure-mgmt-resource":
-            content["packaging"]["exclude_folders"] = exclude(package_name)
-        else:
-            # azure-mgmt-resource has subfolders
-            subfolder_path = Path(sdk_code_path) / package_name.replace("-", "/")
-            subfolders_name = [s.name for s in subfolder_path.iterdir() if s.is_dir() and not s.name.startswith("_")]
-            content["packaging"]["exclude_folders"] = ",".join(
-                [exclude(f"{package_name}-{s}") for s in subfolders_name]
-            )
-
-        with open(toml_file, "wb") as file_out:
-            tomlw.dump(content, file_out)
-        call_build_config(package_name, folder_name)
-
-        # remove .egg-info to reinstall package
-        for item in Path(sdk_code_path).iterdir():
-            if item.suffix == ".egg-info":
-                shutil.rmtree(str(item))
-        os.chdir(sdk_code_path)
-        check_call("pip install -e .", shell=True)
-    else:
-        _LOGGER.info(f"do not find {toml_file}")
 
 
 # readme: ../azure-rest-api-specs/specification/paloaltonetworks/resource-manager/readme.md or absolute path
@@ -152,7 +113,10 @@ def get_related_swagger(readme_content: List[str], tag: str) -> List[str]:
             while idx < len(readme_content):
                 if "```" in readme_content[idx]:
                     break
-                if ".json" in readme_content[idx] and "Microsoft." in readme_content[idx]:
+                if ".json" in readme_content[idx] and (
+                    re.compile(r"\d{4}-\d{1,2}-\d{1,2}").findall(readme_content[idx])
+                    or "Microsoft." in readme_content[idx]
+                ):
                     result.append(readme_content[idx].strip("\n -"))
                 idx += 1
             break
@@ -219,49 +183,31 @@ def if_need_regenerate(meta: Dict[str, Any]) -> bool:
 # spec_folder: "../azure-rest-api-specs"
 # input_readme: "specification/paloaltonetworks/resource-manager/readme.md"
 @return_origin_path
-def update_metadata_for_multiapi_package(spec_folder: str, input_readme: str):
+def need_regen_for_multiapi_package(spec_folder: str, input_readme: str) -> bool:
     os.chdir(spec_folder)
     python_readme = (Path(input_readme).parent / "readme.python.md").absolute()
     if not python_readme.exists():
         _LOGGER.info(f"do not find python configuration: {python_readme}")
-        return
+        return False
 
     with open(python_readme, "r") as file_in:
         python_md_content = file_in.readlines()
     is_multiapi = is_multiapi_package(python_md_content)
     if not is_multiapi:
         _LOGGER.info(f"do not find multiapi configuration in {python_readme}")
-        return
-
-    sdk_folder = extract_sdk_folder(python_md_content)
-    if not sdk_folder:
-        _LOGGER.warning(f"don't find valid sdk folder in {python_readme}")
-        return
-    meta_path = Path("../azure-sdk-for-python/sdk", sdk_folder, "_meta.json")
-    if not meta_path.exists():
-        _LOGGER.warning(f"don't find _meta.json file: {meta_path}")
-        return
-
-    with open(meta_path, "r") as file_in:
-        meta = json.load(file_in)
-
-    need_regenerate = if_need_regenerate(meta)
+        return False
 
     after_handle = []
     for idx in range(len(python_md_content)):
+        if re.findall(r"\s*clear-output-folder\s*:\s*true\s*", python_md_content[idx]):
+            continue
+        if re.findall(r"\s*-\s*tag\s*:", python_md_content[idx]):
+            continue
         after_handle.append(python_md_content[idx])
-        if "batch:" in python_md_content[idx]:
-            line_number = choose_tag_and_update_meta(
-                idx + 1, python_md_content, after_handle, input_readme, meta, need_regenerate
-            )
-            after_handle.extend(python_md_content[line_number:])
-            break
 
     with open(python_readme, "w") as file_out:
         file_out.writelines(after_handle)
-
-    with open(meta_path, "w") as file_out:
-        json.dump(meta, file_out, indent=2)
+    return True
 
 
 def main(generate_input, generate_output):
@@ -279,9 +225,9 @@ def main(generate_input, generate_output):
         try:
             if "resource-manager" in readme_or_tsp:
                 relative_path_readme = str(Path(spec_folder, readme_or_tsp))
-                update_metadata_for_multiapi_package(spec_folder, readme_or_tsp)
                 del_outdated_files(relative_path_readme)
-                config = generate(
+                generate_mgmt = partial(
+                    generate,
                     CONFIG_FILE,
                     sdk_folder,
                     [],
@@ -290,6 +236,9 @@ def main(generate_input, generate_output):
                     force_generation=True,
                     python_tag=python_tag,
                 )
+                config = generate_mgmt()
+                if need_regen_for_multiapi_package(spec_folder, readme_or_tsp):
+                    generate_mgmt()
             elif "data-plane" in readme_or_tsp:
                 config = gen_dpg(readme_or_tsp, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
             else:
@@ -359,17 +308,10 @@ def main(generate_input, generate_output):
                 )
 
                 # check whether multiapi package has only one api-version in per subfolder
-                # skip check for network for https://github.com/Azure/azure-sdk-for-python/issues/30556#issuecomment-1571341309
-                if "azure-mgmt-network" not in sdk_code_path:
-                    check_api_version_in_subfolder(sdk_code_path)
+                check_api_version_in_subfolder(sdk_code_path)
 
-                # use multiapi combiner to combine multiapi package
-                if package_name in ("azure-mgmt-network"):
-                    multiapi_combiner(sdk_code_path, package_name)
-                    after_multiapi_combiner(sdk_code_path, package_name, folder_name)
-                    result[package_name]["afterMultiapiCombiner"] = True
-                else:
-                    result[package_name]["afterMultiapiCombiner"] = False
+                # could be removed in the short future
+                result[package_name]["afterMultiapiCombiner"] = False
             except Exception as e:
                 _LOGGER.error(f"fail to setup package: {str(e)}")
 

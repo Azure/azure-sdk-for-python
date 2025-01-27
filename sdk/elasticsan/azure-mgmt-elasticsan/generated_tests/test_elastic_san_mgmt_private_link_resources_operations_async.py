@@ -25,7 +25,7 @@ class TestElasticSanMgmtPrivateLinkResourcesOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.private_link_resources.list_by_elastic_san(
             resource_group_name=resource_group.name,
             elastic_san_name="str",
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         )
 
         # please add some check logic here by yourself

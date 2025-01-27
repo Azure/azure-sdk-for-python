@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=no-member, protected-access
+# pylint: disable=protected-access
 from copy import deepcopy
 
 import yaml

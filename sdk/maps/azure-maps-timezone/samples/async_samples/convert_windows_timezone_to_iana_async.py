@@ -23,11 +23,12 @@ from azure.core.exceptions import HttpResponseError
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 async def convert_windows_timezone_to_iana_async():
     from azure.core.credentials import AzureKeyCredential
-    from azure.maps.timezone.aio import MapsTimezoneClient
+    from azure.maps.timezone.aio import MapsTimeZoneClient
 
-    timezone_client = MapsTimezoneClient(credential=AzureKeyCredential(subscription_key))
+    timezone_client = MapsTimeZoneClient(credential=AzureKeyCredential(subscription_key))
     try:
         async with timezone_client:
             result = await timezone_client.convert_windows_timezone_to_iana(windows_timezone_id="Pacific Standard Time")
@@ -37,5 +38,6 @@ async def convert_windows_timezone_to_iana_async():
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(convert_windows_timezone_to_iana_async())

@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
+from datetime import datetime
 from typing import (
     Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
@@ -32,7 +33,6 @@ from ._upload_helper import upload_datalake_file
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from datetime import datetime
     from ._models import ContentSettings
 
 
@@ -370,9 +370,9 @@ class DataLakeFileClient(PathClient):
             #other-client--per-operation-configuration>`_.
         :rtype: None
         """
-        try:
+        if isinstance(expires_on, datetime):
             expires_on = convert_datetime_to_rfc1123(expires_on)
-        except AttributeError:
+        elif expires_on is not None:
             expires_on = str(expires_on)
         self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on, **kwargs)
 
@@ -447,6 +447,10 @@ class DataLakeFileClient(PathClient):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
             the timeout will apply to each call individually.
+        :keyword int max_concurrency:
+            Maximum number of parallel connections to use when transferring the file in chunks.
+            This option does not affect the underlying connection pool, and may
+            require a separate configuration of the connection pool.
         :keyword int chunk_size:
             The maximum chunk size for uploading a file in chunks.
             Defaults to 100*1024*1024, or 100MB.
@@ -675,7 +679,9 @@ class DataLakeFileClient(PathClient):
             Use of customer-provided keys must be done over HTTPS.
             Required if the file was created with a Customer-Provided Key.
         :keyword int max_concurrency:
-            The number of parallel connections with which to download.
+            Maximum number of parallel connections to use when transferring the file in chunks.
+            This option does not affect the underlying connection pool, and may
+            require a separate configuration of the connection pool.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.

@@ -5,38 +5,70 @@
 # -------------------------------------------------------------------------
 from __future__ import annotations
 from types import TracebackType
-from typing import Any, NamedTuple, Optional, AsyncContextManager, Type
+from typing import NamedTuple, Optional, AsyncContextManager, Type, TypedDict, ContextManager
 from typing_extensions import Protocol, runtime_checkable
 
 
-class AccessToken(NamedTuple):
-    """Represents an OAuth access token."""
+class AccessTokenInfo:
+    """Information about an OAuth access token.
+
+    :param str token: The token string.
+    :param int expires_on: The token's expiration time in Unix time.
+    :keyword str token_type: The type of access token. Defaults to 'Bearer'.
+    :keyword int refresh_on: Specifies the time, in Unix time, when the cached token should be proactively
+        refreshed. Optional.
+    """
 
     token: str
+    """The token string."""
     expires_on: int
+    """The token's expiration time in Unix time."""
+    token_type: str
+    """The type of access token."""
+    refresh_on: Optional[int]
+    """Specifies the time, in Unix time, when the cached token should be proactively refreshed. Optional."""
+
+    def __init__(
+        self, token: str, expires_on: int, *, token_type: str = "Bearer", refresh_on: Optional[int] = None
+    ) -> None:
+        self.token = token
+        self.expires_on = expires_on
+        self.token_type = token_type
+        self.refresh_on = refresh_on
+
+    def __repr__(self) -> str:
+        return "AccessTokenInfo(token='{}', expires_on={}, token_type='{}', refresh_on={})".format(
+            self.token, self.expires_on, self.token_type, self.refresh_on
+        )
 
 
-AccessToken.token.__doc__ = """The token string."""
-AccessToken.expires_on.__doc__ = """The token's expiration time in Unix time."""
+class TokenRequestOptions(TypedDict, total=False):
+    """Options to use for access token requests. All parameters are optional."""
+
+    claims: str
+    """Additional claims required in the token, such as those returned in a resource provider's claims
+    challenge following an authorization failure."""
+    tenant_id: str
+    """The tenant ID to include in the token request."""
 
 
-@runtime_checkable
-class TokenCredential(Protocol):
-    """Protocol for classes able to provide OAuth tokens."""
+class TokenCredential(Protocol, ContextManager["TokenCredential"]):
+    """Protocol for classes able to provide OAuth access tokens."""
 
-    def get_token(self, *scopes: str, claims: Optional[str] = None, **kwargs: Any) -> AccessToken:
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
         """Request an access token for `scopes`.
 
         :param str scopes: The type of access needed.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: TokenRequestOptions
 
-        :keyword str claims: Additional claims required in the token, such as those returned in a resource
-            provider's claims challenge following an authorization failure.
-
-
-        :rtype: AccessToken
-        :return: An AccessToken instance containing the token string and its expiration time in Unix time.
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
         """
         ...
+
+    def close(self) -> None:
+        pass
 
 
 class ServiceNamedKey(NamedTuple):
@@ -47,10 +79,11 @@ class ServiceNamedKey(NamedTuple):
 
 
 __all__ = [
-    "AccessToken",
+    "AccessTokenInfo",
     "ServiceKeyCredential",
     "ServiceNamedKeyCredential",
     "TokenCredential",
+    "TokenRequestOptions",
     "AsyncTokenCredential",
 ]
 
@@ -134,16 +167,15 @@ class ServiceNamedKeyCredential:
 class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]):
     """Protocol for classes able to provide OAuth tokens."""
 
-    async def get_token(self, *scopes: str, claims: Optional[str] = None, **kwargs: Any) -> AccessToken:
+    async def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
         """Request an access token for `scopes`.
 
         :param str scopes: The type of access needed.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: TokenRequestOptions
 
-        :keyword str claims: Additional claims required in the token, such as those returned in a resource
-            provider's claims challenge following an authorization failure.
-
-        :rtype: AccessToken
-        :return: An AccessToken instance containing the token string and its expiration time in Unix time.
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing the token string and its expiration time in Unix time.
         """
         ...
 

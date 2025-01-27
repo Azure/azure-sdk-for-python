@@ -4,12 +4,14 @@
 
 import math
 import re
-from typing import Dict
+from typing import Dict, TypeVar, Union
 
 from promptflow.core import AsyncPrompty
 from typing_extensions import override
 
-from ..._common.utils import construct_prompty_model_config, validate_model_config
+from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
 from . import EvaluatorBase
 
 try:
@@ -17,8 +19,10 @@ try:
 except ImportError:
     USER_AGENT = "None"
 
+T = TypeVar("T")
 
-class PromptyEvaluatorBase(EvaluatorBase[float]):
+
+class PromptyEvaluatorBase(EvaluatorBase[T]):
     """Base class for all evaluators that make use of context as an input. It's also assumed that such evaluators
     make use of a prompty file, and return their results as a dictionary, with a single key-value pair
     linking the result name to a float value (unless multi-turn evaluation occurs, in which case the
@@ -36,18 +40,20 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
     :type ignore_queries: bool
     """
 
-    LLM_CALL_TIMEOUT = 600
-    DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
+    _LLM_CALL_TIMEOUT = 600
+    _DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
     def __init__(self, *, result_key: str, prompty_file: str, model_config: dict, eval_last_turn: bool = False):
         self._result_key = result_key
         self._prompty_file = prompty_file
         super().__init__(eval_last_turn=eval_last_turn)
 
+        subclass_name = self.__class__.__name__
+        user_agent = f"{USER_AGENT} (type=evaluator subtype={subclass_name})"
         prompty_model_config = construct_prompty_model_config(
             validate_model_config(model_config),
-            self.DEFAULT_OPEN_API_VERSION,
-            USER_AGENT,
+            self._DEFAULT_OPEN_API_VERSION,
+            user_agent,
         )
 
         self._flow = AsyncPrompty.load(source=prompty_file, model=prompty_model_config)
@@ -56,7 +62,7 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
     # defining a default here.
 
     @override
-    async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
         """Do a relevance evaluation.
 
         :param eval_input: The input to the evaluator. Expected to contain
@@ -66,11 +72,28 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
         :return: The evaluation result.
         :rtype: Dict
         """
-        llm_output = await self._flow(timeout=self.LLM_CALL_TIMEOUT, **eval_input)
+        if "query" not in eval_input and "response" not in eval_input:
+            raise EvaluationException(
+                message="Only text conversation inputs are supported.",
+                internal_message="Only text conversation inputs are supported.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.CONVERSATION,
+            )
+        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
         score = math.nan
         if llm_output:
+            # Parse out score and reason from evaluators known to possess them.
+            if self._result_key in PROMPT_BASED_REASON_EVALUATORS:
+                score, reason = parse_quality_evaluator_reason_score(llm_output)
+                return {
+                    self._result_key: float(score),
+                    f"gpt_{self._result_key}": float(score),
+                    f"{self._result_key}_reason": reason,
+                }
             match = re.search(r"\d", llm_output)
             if match:
                 score = float(match.group())
-        return {self._result_key: float(score)}
+            return {self._result_key: float(score), f"gpt_{self._result_key}": float(score)}
+        return {self._result_key: float(score), f"gpt_{self._result_key}": float(score)}

@@ -68,7 +68,7 @@ class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
         """
         if isinstance(data, str) or data is None:
             return data
-        for key, value in self.fields.items():  # pylint: disable=no-member
+        for key, value in self.fields.items():
             if value.dump_only:
                 schema_key = value.data_key or key
                 if data.get(schema_key, None) is not None:

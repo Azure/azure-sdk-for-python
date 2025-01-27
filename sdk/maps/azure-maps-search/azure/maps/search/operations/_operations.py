@@ -404,9 +404,7 @@ class SearchOperations:
         return cast(JSON, deserialized)  # type: ignore
 
     @overload
-    def get_geocoding_batch(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> JSON:
+    def get_geocoding_batch(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         # pylint: disable=line-too-long
         """Use to send a batch of queries to the `Geocoding </rest/api/maps/search/get-geocoding>`_ API in
         a single request.
@@ -445,7 +443,7 @@ class SearchOperations:
         results in the exact same order the original queries were sent in the batch request. Each item
         is of one of the following types:
 
-        * `GeocodingResponse <https://docs.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
+        * `GeocodingResponse <https://learn.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in this case.
 
@@ -461,9 +459,7 @@ class SearchOperations:
         """
 
     @overload
-    def get_geocoding_batch(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> JSON:
+    def get_geocoding_batch(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         # pylint: disable=line-too-long
         """Use to send a batch of queries to the `Geocoding </rest/api/maps/search/get-geocoding>`_ API in
         a single request.
@@ -502,7 +498,7 @@ class SearchOperations:
         results in the exact same order the original queries were sent in the batch request. Each item
         is of one of the following types:
 
-        * `GeocodingResponse <https://docs.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
+        * `GeocodingResponse <https://learn.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in this case.
 
@@ -557,7 +553,7 @@ class SearchOperations:
         results in the exact same order the original queries were sent in the batch request. Each item
         is of one of the following types:
 
-        * `GeocodingResponse <https://docs.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
+        * `GeocodingResponse <https://learn.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in this case.
 
@@ -818,9 +814,7 @@ class SearchOperations:
         return cast(JSON, deserialized)  # type: ignore
 
     @overload
-    def get_reverse_geocoding_batch(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> JSON:
+    def get_reverse_geocoding_batch(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         # pylint: disable=line-too-long
         """Use to send a batch of queries to the `Reverse Geocoding
         </rest/api/maps/search/get-reverse-geocoding>`_ API in a single request.
@@ -861,7 +855,7 @@ class SearchOperations:
         results in the exact same order the original queries were sent in the batch request. Each item
         is of one of the following types:
 
-        * `GeocodingResponse <https://docs.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
+        * `GeocodingResponse <https://learn.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in this case.
 
@@ -920,7 +914,7 @@ class SearchOperations:
         results in the exact same order the original queries were sent in the batch request. Each item
         is of one of the following types:
 
-        * `GeocodingResponse <https://docs.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
+        * `GeocodingResponse <https://learn.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in this case.
 
@@ -936,9 +930,7 @@ class SearchOperations:
         """
 
     @distributed_trace
-    def get_reverse_geocoding_batch(
-        self, body: Union[JSON, IO[bytes]], **kwargs: Any
-    ) -> JSON:
+    def get_reverse_geocoding_batch(self, body: Union[JSON, IO[bytes]], **kwargs: Any) -> JSON:
         # pylint: disable=line-too-long
         """Use to send a batch of queries to the `Reverse Geocoding
         </rest/api/maps/search/get-reverse-geocoding>`_ API in a single request.
@@ -979,7 +971,7 @@ class SearchOperations:
         results in the exact same order the original queries were sent in the batch request. Each item
         is of one of the following types:
 
-        * `GeocodingResponse <https://docs.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
+        * `GeocodingResponse <https://learn.microsoft.com/rest/api/maps/search/get-reverse-geocoding#geocodingresponse>`_ - If the query completed successfully.
 
         * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in this case.
 

@@ -38,7 +38,7 @@ class TestTableChallengeAuthAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
         Recorded using an incorrect tenant for the credential provided to our client. To run this live, ensure that the
         service principal used for testing is enabled for multitenant authentication
-        (https://docs.microsoft.com/azure/active-directory/develop/howto-convert-app-to-be-multi-tenant). Set the
+        (https://learn.microsoft.com/azure/active-directory/develop/howto-convert-app-to-be-multi-tenant). Set the
         TABLES_TENANT_ID environment variable to a different, existing tenant than the one the storage account exists
         in, and set CHALLENGE_TABLES_TENANT_ID to the tenant that the storage account exists in.
         """
@@ -60,7 +60,7 @@ class TestTableChallengeAuthAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
         Recorded using an incorrect tenant for the credential provided to our client. To run this live, ensure that the
         service principal used for testing is enabled for multitenant authentication
-        (https://docs.microsoft.com/azure/active-directory/develop/howto-convert-app-to-be-multi-tenant). Set the
+        (https://learn.microsoft.com/azure/active-directory/develop/howto-convert-app-to-be-multi-tenant). Set the
         TABLES_TENANT_ID environment variable to a different, existing tenant than the one the storage account exists
         in, and set CHALLENGE_TABLES_TENANT_ID to the tenant that the storage account exists in.
         """

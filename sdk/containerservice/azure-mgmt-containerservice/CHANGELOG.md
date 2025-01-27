@@ -1,5 +1,62 @@
 # Release History
 
+## 34.0.0 (2025-01-20)
+
+### Features Added
+
+  - Added operation ContainerServicesOperations.begin_create_or_update
+  - Added operation ContainerServicesOperations.begin_delete
+  - Added operation ContainerServicesOperations.get
+  - Added operation ContainerServicesOperations.list
+  - Added operation ContainerServicesOperations.list_by_resource_group
+  - Model NetworkProfile has a new parameter peer_vnet_id
+  - Model OpenShiftManagedClusterMasterPoolProfile has a new parameter name
+  - Model OpenShiftManagedClusterMasterPoolProfile has a new parameter os_type
+
+### Breaking Changes
+
+  - Removed subfolders of some unused Api-Versions for smaller package size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+  - Model BaseManagedCluster no longer has parameter power_state
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 no longer has parameter azure_portal_fqdn
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 no longer has parameter disable_local_accounts
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 no longer has parameter fqdn_subdomain
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 no longer has parameter http_proxy_config
+  - Model Components1Q1Og48SchemasManagedclusterAllof1 no longer has parameter private_link_resources
+  - Model NetworkProfile no longer has parameter management_subnet_cidr
+  - Model OpenShiftManagedCluster no longer has parameter refresh_cluster
+  - Model OpenShiftManagedClusterMasterPoolProfile no longer has parameter api_properties
+  - Removed operation ContainerServicesOperations.list_orchestrators
+  - Removed operation group FleetMembersOperations
+  - Removed operation group FleetsOperations
+  - Removed operation group LoadBalancersOperations
+  - Removed operation group ManagedClusterSnapshotsOperations
+  - Removed operation group OperationStatusResultOperations
+
+## 33.0.0 (2024-11-08)
+
+### Features Added
+
+  - Model AdvancedNetworking has a new parameter enabled
+  - Model AdvancedNetworkingSecurity has a new parameter enabled
+  - Model AgentPool has a new parameter e_tag
+  - Model ContainerServiceNetworkProfile has a new parameter advanced_networking
+  - Model ManagedCluster has a new parameter e_tag
+  - Model ManagedCluster has a new parameter node_resource_group_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter e_tag
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter e_tag
+  - Operation AgentPoolsOperations.begin_create_or_update has a new optional parameter if_match
+  - Operation AgentPoolsOperations.begin_create_or_update has a new optional parameter if_none_match
+  - Operation AgentPoolsOperations.begin_delete has a new optional parameter if_match
+  - Operation ManagedClustersOperations.begin_create_or_update has a new optional parameter if_match
+  - Operation ManagedClustersOperations.begin_create_or_update has a new optional parameter if_none_match
+  - Operation ManagedClustersOperations.begin_delete has a new optional parameter if_match
+  - Operation ManagedClustersOperations.begin_update_tags has a new optional parameter if_match
+
+### Breaking Changes
+
+  - Model AdvancedNetworkingObservability no longer has parameter tls_management
+  - Model AdvancedNetworkingSecurity no longer has parameter fqdn_policy
+
 ## 32.1.0 (2024-10-11)
 
 ### Features Added

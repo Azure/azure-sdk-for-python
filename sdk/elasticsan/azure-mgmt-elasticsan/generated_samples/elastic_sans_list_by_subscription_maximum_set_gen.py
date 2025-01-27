@@ -35,6 +35,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/ElasticSans_ListBySubscription_MaximumSet_Gen.json
+# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2024-06-01-preview/examples/ElasticSans_ListBySubscription_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

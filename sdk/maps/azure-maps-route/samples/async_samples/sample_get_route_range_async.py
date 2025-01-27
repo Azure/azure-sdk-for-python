@@ -21,6 +21,7 @@ import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 async def get_route_range():
     # [START get_route_range_async]
     from azure.core.credentials import AzureKeyCredential
@@ -31,8 +32,7 @@ async def get_route_range():
 
     async with maps_route_client:
         result = await maps_route_client.get_route_range(
-            coordinates=LatLongPair(latitude=52.50931, longitude=13.42936),
-            time_budget_in_sec=6000
+            coordinates=LatLongPair(latitude=52.50931, longitude=13.42936), time_budget_in_sec=6000
         )
 
     if result.reachable_range is not None and result.reachable_range.boundary is not None:
@@ -41,5 +41,6 @@ async def get_route_range():
         print(result.reachable_range.boundary[0])
     # [END get_route_range_async]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(get_route_range())

@@ -93,10 +93,11 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
                 return
 
             namer = ctxt.pop("network_span_namer", self._network_span_namer)
+            tracing_attributes = ctxt.pop("tracing_attributes", self._tracing_attributes)
             span_name = namer(request.http_request)
 
             span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
-            for attr, value in self._tracing_attributes.items():
+            for attr, value in tracing_attributes.items():
                 span.add_attribute(attr, value)
             span.start()
 

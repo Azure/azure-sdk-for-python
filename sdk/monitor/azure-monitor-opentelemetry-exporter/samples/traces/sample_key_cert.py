@@ -27,10 +27,9 @@ tracer = trace.get_tracer(__name__)
 
 # azure monitor trace exporter to send telemetry to appinsights
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
+
 span_processor = BatchSpanProcessor(
-    AzureMonitorTraceExporter.from_connection_string(
-        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-    )
+    AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
 )
 trace.get_tracer_provider().add_span_processor(span_processor)
 
@@ -42,11 +41,7 @@ tenant_id = "<tenant-id>"
 client_id = "<client-id>"
 client_secret = "<client-secret>"
 
-credential = ClientSecretCredential(
-    tenant_id=tenant_id,
-    client_id=client_id,
-    client_secret=client_secret
-)
+credential = ClientSecretCredential(tenant_id=tenant_id, client_id=client_id, client_secret=client_secret)
 
 vault_url = "https://my-key-vault.vault.azure.net/"
 

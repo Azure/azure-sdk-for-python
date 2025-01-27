@@ -20,9 +20,9 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_app_service_environments_list(self, resource_group):
         response = self.client.app_service_environments.list(
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_app_service_environments_list_by_resource_group(self, resource_group):
         response = self.client.app_service_environments.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,11 +41,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_app_service_environments_get(self, resource_group):
         response = self.client.app_service_environments.get(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_app_service_environments_begin_create_or_update(self, resource_group):
         response = self.client.app_service_environments.begin_create_or_update(
             resource_group_name=resource_group.name,
             name="str",
@@ -108,7 +108,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "virtualNetwork": {"id": "str", "name": "str", "subnet": "str", "type": "str"},
                 "zoneRedundant": bool,
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -116,11 +116,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_app_service_environments_begin_delete(self, resource_group):
         response = self.client.app_service_environments.begin_delete(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -128,7 +128,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_app_service_environments_update(self, resource_group):
         response = self.client.app_service_environments.update(
             resource_group_name=resource_group.name,
             name="str",
@@ -181,7 +181,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "virtualNetwork": {"id": "str", "name": "str", "subnet": "str", "type": "str"},
                 "zoneRedundant": bool,
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -189,11 +189,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_capacities(self, resource_group):
+    def test_app_service_environments_list_capacities(self, resource_group):
         response = self.client.app_service_environments.list_capacities(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -201,11 +201,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_vip_info(self, resource_group):
+    def test_app_service_environments_get_vip_info(self, resource_group):
         response = self.client.app_service_environments.get_vip_info(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -213,12 +213,12 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_change_vnet(self, resource_group):
+    def test_app_service_environments_begin_change_vnet(self, resource_group):
         response = self.client.app_service_environments.begin_change_vnet(
             resource_group_name=resource_group.name,
             name="str",
             vnet_info={"id": "str", "name": "str", "subnet": "str", "type": "str"},
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -226,11 +226,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_ase_custom_dns_suffix_configuration(self, resource_group):
+    def test_app_service_environments_get_ase_custom_dns_suffix_configuration(self, resource_group):
         response = self.client.app_service_environments.get_ase_custom_dns_suffix_configuration(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -238,7 +238,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update_ase_custom_dns_suffix_configuration(self, resource_group):
+    def test_app_service_environments_update_ase_custom_dns_suffix_configuration(self, resource_group):
         response = self.client.app_service_environments.update_ase_custom_dns_suffix_configuration(
             resource_group_name=resource_group.name,
             name="str",
@@ -253,7 +253,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -261,11 +261,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete_ase_custom_dns_suffix_configuration(self, resource_group):
+    def test_app_service_environments_delete_ase_custom_dns_suffix_configuration(self, resource_group):
         response = self.client.app_service_environments.delete_ase_custom_dns_suffix_configuration(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -273,11 +273,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_ase_v3_networking_configuration(self, resource_group):
+    def test_app_service_environments_get_ase_v3_networking_configuration(self, resource_group):
         response = self.client.app_service_environments.get_ase_v3_networking_configuration(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -285,7 +285,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update_ase_networking_configuration(self, resource_group):
+    def test_app_service_environments_update_ase_networking_configuration(self, resource_group):
         response = self.client.app_service_environments.update_ase_networking_configuration(
             resource_group_name=resource_group.name,
             name="str",
@@ -303,7 +303,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "type": "str",
                 "windowsOutboundIpAddresses": ["str"],
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -311,11 +311,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_diagnostics(self, resource_group):
+    def test_app_service_environments_list_diagnostics(self, resource_group):
         response = self.client.app_service_environments.list_diagnostics(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -323,12 +323,12 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_diagnostics_item(self, resource_group):
+    def test_app_service_environments_get_diagnostics_item(self, resource_group):
         response = self.client.app_service_environments.get_diagnostics_item(
             resource_group_name=resource_group.name,
             name="str",
             diagnostics_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -336,11 +336,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_inbound_network_dependencies_endpoints(self, resource_group):
+    def test_app_service_environments_get_inbound_network_dependencies_endpoints(self, resource_group):
         response = self.client.app_service_environments.get_inbound_network_dependencies_endpoints(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -348,11 +348,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_multi_role_pools(self, resource_group):
+    def test_app_service_environments_list_multi_role_pools(self, resource_group):
         response = self.client.app_service_environments.list_multi_role_pools(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -360,11 +360,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_multi_role_pool(self, resource_group):
+    def test_app_service_environments_get_multi_role_pool(self, resource_group):
         response = self.client.app_service_environments.get_multi_role_pool(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -372,7 +372,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update_multi_role_pool(self, resource_group):
+    def test_app_service_environments_begin_create_or_update_multi_role_pool(self, resource_group):
         response = self.client.app_service_environments.begin_create_or_update_multi_role_pool(
             resource_group_name=resource_group.name,
             name="str",
@@ -397,7 +397,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "workerSize": "str",
                 "workerSizeId": 0,
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -405,7 +405,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update_multi_role_pool(self, resource_group):
+    def test_app_service_environments_update_multi_role_pool(self, resource_group):
         response = self.client.app_service_environments.update_multi_role_pool(
             resource_group_name=resource_group.name,
             name="str",
@@ -430,7 +430,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "workerSize": "str",
                 "workerSizeId": 0,
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -438,12 +438,12 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_multi_role_pool_instance_metric_definitions(self, resource_group):
+    def test_app_service_environments_list_multi_role_pool_instance_metric_definitions(self, resource_group):
         response = self.client.app_service_environments.list_multi_role_pool_instance_metric_definitions(
             resource_group_name=resource_group.name,
             name="str",
             instance="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -451,11 +451,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_multi_role_metric_definitions(self, resource_group):
+    def test_app_service_environments_list_multi_role_metric_definitions(self, resource_group):
         response = self.client.app_service_environments.list_multi_role_metric_definitions(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -463,11 +463,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_multi_role_pool_skus(self, resource_group):
+    def test_app_service_environments_list_multi_role_pool_skus(self, resource_group):
         response = self.client.app_service_environments.list_multi_role_pool_skus(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -475,11 +475,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_test_upgrade_available_notification(self, resource_group):
+    def test_app_service_environments_test_upgrade_available_notification(self, resource_group):
         response = self.client.app_service_environments.test_upgrade_available_notification(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -487,11 +487,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_upgrade(self, resource_group):
+    def test_app_service_environments_begin_upgrade(self, resource_group):
         response = self.client.app_service_environments.begin_upgrade(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -499,11 +499,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_multi_role_usages(self, resource_group):
+    def test_app_service_environments_list_multi_role_usages(self, resource_group):
         response = self.client.app_service_environments.list_multi_role_usages(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -511,11 +511,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_operations(self, resource_group):
+    def test_app_service_environments_list_operations(self, resource_group):
         response = self.client.app_service_environments.list_operations(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -523,11 +523,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_outbound_network_dependencies_endpoints(self, resource_group):
+    def test_app_service_environments_get_outbound_network_dependencies_endpoints(self, resource_group):
         response = self.client.app_service_environments.get_outbound_network_dependencies_endpoints(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -535,11 +535,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_private_endpoint_connection_list(self, resource_group):
+    def test_app_service_environments_get_private_endpoint_connection_list(self, resource_group):
         response = self.client.app_service_environments.get_private_endpoint_connection_list(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -547,12 +547,12 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_private_endpoint_connection(self, resource_group):
+    def test_app_service_environments_get_private_endpoint_connection(self, resource_group):
         response = self.client.app_service_environments.get_private_endpoint_connection(
             resource_group_name=resource_group.name,
             name="str",
             private_endpoint_connection_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -560,7 +560,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_approve_or_reject_private_endpoint_connection(self, resource_group):
+    def test_app_service_environments_begin_approve_or_reject_private_endpoint_connection(self, resource_group):
         response = self.client.app_service_environments.begin_approve_or_reject_private_endpoint_connection(
             resource_group_name=resource_group.name,
             name="str",
@@ -575,7 +575,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -583,12 +583,12 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete_private_endpoint_connection(self, resource_group):
+    def test_app_service_environments_begin_delete_private_endpoint_connection(self, resource_group):
         response = self.client.app_service_environments.begin_delete_private_endpoint_connection(
             resource_group_name=resource_group.name,
             name="str",
             private_endpoint_connection_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -596,11 +596,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_private_link_resources(self, resource_group):
+    def test_app_service_environments_get_private_link_resources(self, resource_group):
         response = self.client.app_service_environments.get_private_link_resources(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -608,11 +608,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_reboot(self, resource_group):
+    def test_app_service_environments_reboot(self, resource_group):
         response = self.client.app_service_environments.reboot(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -620,11 +620,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_resume(self, resource_group):
+    def test_app_service_environments_begin_resume(self, resource_group):
         response = self.client.app_service_environments.begin_resume(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -632,11 +632,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_app_service_plans(self, resource_group):
+    def test_app_service_environments_list_app_service_plans(self, resource_group):
         response = self.client.app_service_environments.list_app_service_plans(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -644,11 +644,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_web_apps(self, resource_group):
+    def test_app_service_environments_list_web_apps(self, resource_group):
         response = self.client.app_service_environments.list_web_apps(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -656,11 +656,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_suspend(self, resource_group):
+    def test_app_service_environments_begin_suspend(self, resource_group):
         response = self.client.app_service_environments.begin_suspend(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -668,11 +668,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_usages(self, resource_group):
+    def test_app_service_environments_list_usages(self, resource_group):
         response = self.client.app_service_environments.list_usages(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -680,11 +680,11 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_worker_pools(self, resource_group):
+    def test_app_service_environments_list_worker_pools(self, resource_group):
         response = self.client.app_service_environments.list_worker_pools(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -692,12 +692,12 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_worker_pool(self, resource_group):
+    def test_app_service_environments_get_worker_pool(self, resource_group):
         response = self.client.app_service_environments.get_worker_pool(
             resource_group_name=resource_group.name,
             name="str",
             worker_pool_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -705,7 +705,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update_worker_pool(self, resource_group):
+    def test_app_service_environments_begin_create_or_update_worker_pool(self, resource_group):
         response = self.client.app_service_environments.begin_create_or_update_worker_pool(
             resource_group_name=resource_group.name,
             name="str",
@@ -731,7 +731,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "workerSize": "str",
                 "workerSizeId": 0,
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -739,7 +739,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update_worker_pool(self, resource_group):
+    def test_app_service_environments_update_worker_pool(self, resource_group):
         response = self.client.app_service_environments.update_worker_pool(
             resource_group_name=resource_group.name,
             name="str",
@@ -765,7 +765,7 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
                 "workerSize": "str",
                 "workerSizeId": 0,
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -773,13 +773,13 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_worker_pool_instance_metric_definitions(self, resource_group):
+    def test_app_service_environments_list_worker_pool_instance_metric_definitions(self, resource_group):
         response = self.client.app_service_environments.list_worker_pool_instance_metric_definitions(
             resource_group_name=resource_group.name,
             name="str",
             worker_pool_name="str",
             instance="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -787,12 +787,12 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_web_worker_metric_definitions(self, resource_group):
+    def test_app_service_environments_list_web_worker_metric_definitions(self, resource_group):
         response = self.client.app_service_environments.list_web_worker_metric_definitions(
             resource_group_name=resource_group.name,
             name="str",
             worker_pool_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -800,12 +800,12 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_worker_pool_skus(self, resource_group):
+    def test_app_service_environments_list_worker_pool_skus(self, resource_group):
         response = self.client.app_service_environments.list_worker_pool_skus(
             resource_group_name=resource_group.name,
             name="str",
             worker_pool_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -813,12 +813,12 @@ class TestWebSiteManagementAppServiceEnvironmentsOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_web_worker_usages(self, resource_group):
+    def test_app_service_environments_list_web_worker_usages(self, resource_group):
         response = self.client.app_service_environments.list_web_worker_usages(
             resource_group_name=resource_group.name,
             name="str",
             worker_pool_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

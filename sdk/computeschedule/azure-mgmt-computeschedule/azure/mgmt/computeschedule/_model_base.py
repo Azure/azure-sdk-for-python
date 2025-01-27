@@ -1,10 +1,11 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=protected-access, arguments-differ, signature-differs, broad-except, too-many-lines
+# pylint: disable=protected-access, broad-except
 
 import copy
 import calendar
@@ -573,7 +574,7 @@ class Model(_MyMutableMapping):
     def copy(self) -> "Model":
         return Model(self.__dict__)
 
-    def __new__(cls, *args: typing.Any, **kwargs: typing.Any) -> Self:  # pylint: disable=unused-argument
+    def __new__(cls, *args: typing.Any, **kwargs: typing.Any) -> Self:
         if f"{cls.__module__}.{cls.__qualname__}" not in cls._calculated:
             # we know the last nine classes in mro are going to be 'Model', '_MyMutableMapping', 'MutableMapping',
             # 'Mapping', 'Collection', 'Sized', 'Iterable', 'Container' and 'object'
@@ -584,8 +585,8 @@ class Model(_MyMutableMapping):
             annotations = {
                 k: v
                 for mro_class in mros
-                if hasattr(mro_class, "__annotations__")  # pylint: disable=no-member
-                for k, v in mro_class.__annotations__.items()  # pylint: disable=no-member
+                if hasattr(mro_class, "__annotations__")
+                for k, v in mro_class.__annotations__.items()
             }
             for attr, rf in attr_to_rest_field.items():
                 rf._module = cls.__module__
@@ -600,8 +601,8 @@ class Model(_MyMutableMapping):
 
     def __init_subclass__(cls, discriminator: typing.Optional[str] = None) -> None:
         for base in cls.__bases__:
-            if hasattr(base, "__mapping__"):  # pylint: disable=no-member
-                base.__mapping__[discriminator or cls.__name__] = cls  # type: ignore  # pylint: disable=no-member
+            if hasattr(base, "__mapping__"):
+                base.__mapping__[discriminator or cls.__name__] = cls  # type: ignore
 
     @classmethod
     def _get_discriminator(cls, exist_discriminators) -> typing.Optional["_RestField"]:
@@ -612,7 +613,7 @@ class Model(_MyMutableMapping):
 
     @classmethod
     def _deserialize(cls, data, exist_discriminators):
-        if not hasattr(cls, "__mapping__"):  # pylint: disable=no-member
+        if not hasattr(cls, "__mapping__"):
             return cls(data)
         discriminator = cls._get_discriminator(exist_discriminators)
         if discriminator is None:
@@ -632,11 +633,11 @@ class Model(_MyMutableMapping):
                 discriminator_value = data.find(xml_name).text  # pyright: ignore
         else:
             discriminator_value = data.get(discriminator._rest_name)
-        mapped_cls = cls.__mapping__.get(discriminator_value, cls)  # pyright: ignore # pylint: disable=no-member
+        mapped_cls = cls.__mapping__.get(discriminator_value, cls)  # pyright: ignore
         return mapped_cls._deserialize(data, exist_discriminators)
 
     def as_dict(self, *, exclude_readonly: bool = False) -> typing.Dict[str, typing.Any]:
-        """Return a dict that can be JSONify using json.dump.
+        """Return a dict that can be turned into json using json.dump.
 
         :keyword bool exclude_readonly: Whether to remove the readonly properties.
         :returns: A dict JSON compatible object
@@ -733,7 +734,7 @@ def _sorted_annotations(types: typing.List[typing.Any]) -> typing.List[typing.An
     )
 
 
-def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, R0912
+def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-return-statements, too-many-branches
     annotation: typing.Any,
     module: typing.Optional[str],
     rf: typing.Optional["_RestField"] = None,
@@ -753,7 +754,7 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
         except AttributeError:
             model_name = annotation
         if module is not None:
-            annotation = _get_model(module, model_name)
+            annotation = _get_model(module, model_name)  # type: ignore
 
     try:
         if module and _is_model(annotation):
@@ -891,6 +892,22 @@ def _deserialize(
     if not isinstance(deserializer, functools.partial):
         deserializer = _get_deserialize_callable_from_annotation(deserializer, module, rf)
     return _deserialize_with_callable(deserializer, value)
+
+
+def _failsafe_deserialize(
+    deserializer: typing.Any,
+    value: typing.Any,
+    module: typing.Optional[str] = None,
+    rf: typing.Optional["_RestField"] = None,
+    format: typing.Optional[str] = None,
+) -> typing.Any:
+    try:
+        return _deserialize(deserializer, value, module, rf, format)
+    except DeserializationError:
+        _LOGGER.warning(
+            "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
+        )
+        return None
 
 
 class _RestField:

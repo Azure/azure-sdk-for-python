@@ -10,8 +10,7 @@
 param (
     [hashtable] $DeploymentOutputs,
     [string] $TenantId,
-    [string] $TestApplicationId,
-    [string] $TestApplicationSecret
+    [string] $TestApplicationId
 )
 
 # Retrieve the connection string from environment variables

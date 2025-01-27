@@ -54,7 +54,7 @@ def get_header_policy(**kwargs):
     return header_policy
 
 
-def parse_connection_str(conn_str:str) -> Tuple[str, str]:
+def parse_connection_str(conn_str: str) -> Tuple[str, str]:
     if conn_str is None:
         raise ValueError("Connection string is undefined.")
     endpoint = None

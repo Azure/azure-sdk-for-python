@@ -19,14 +19,14 @@ except ImportError:
 
 from ._common_conversion import _sign_string
 from ._error import _wrap_exception
-from ._constants import STORAGE_OAUTH_SCOPE
+from ._constants import STORAGE_OAUTH_SCOPE, COSMOS_OAUTH_SCOPE
 
 
 class AzureSigningError(ClientAuthenticationError):
     """
     Represents a fatal error when attempting to sign a request.
     In general, the cause of this exception is user error. For example, the given account key is not valid.
-    Please visit https://docs.microsoft.com/en-us/azure/storage/common/storage-create-storage-account for more info.
+    Please visit https://learn.microsoft.com/azure/storage/common/storage-create-storage-account for more info.
     """
 
 
@@ -160,7 +160,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
     """Adds a bearer token Authorization header to requests, for the tenant provided in authentication challenges.
 
-    See https://docs.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on AAD
+    See https://learn.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on AAD
     authentication challenges.
 
     :param credential: The credential.
@@ -236,11 +236,15 @@ def _configure_credential(credential: None) -> None: ...
 
 
 def _configure_credential(
-    credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential, SharedKeyCredentialPolicy]]
+    credential: Optional[
+        Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential, SharedKeyCredentialPolicy]
+    ],
+    cosmos_endpoint: bool = False,
 ) -> Optional[Union[BearerTokenChallengePolicy, AzureSasCredentialPolicy, SharedKeyCredentialPolicy]]:
     if hasattr(credential, "get_token"):
         credential = cast(TokenCredential, credential)
-        return BearerTokenChallengePolicy(credential, STORAGE_OAUTH_SCOPE)
+        scope = COSMOS_OAUTH_SCOPE if cosmos_endpoint else STORAGE_OAUTH_SCOPE
+        return BearerTokenChallengePolicy(credential, scope)
     if isinstance(credential, SharedKeyCredentialPolicy):
         return credential
     if isinstance(credential, AzureSasCredential):

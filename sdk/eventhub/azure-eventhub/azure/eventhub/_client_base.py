@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals, annotations
+from __future__ import annotations
 
 import logging
 import uuid
@@ -25,7 +25,7 @@ from azure.core.pipeline.policies import RetryMode
 try:
     from ._transport._uamqp_transport import UamqpTransport
 except ImportError:
-    UamqpTransport = None   # type: ignore
+    UamqpTransport = None  # type: ignore
 from ._transport._pyamqp_transport import PyamqpTransport
 from .exceptions import ClientClosedError
 from ._configuration import Configuration
@@ -44,6 +44,7 @@ from ._constants import (
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+
     CredentialTypes: TypeAlias = Union[
         AzureSasCredential,
         AzureNamedKeyCredential,
@@ -53,6 +54,7 @@ if TYPE_CHECKING:
     from ._consumer_client import EventHubConsumerClient
     from ._producer_client import EventHubProducerClient
     from ._transport._base import AmqpTransport
+
     try:
         from uamqp import Message as uamqp_Message
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
@@ -68,13 +70,14 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
 
+
 def _parse_conn_str(
-        conn_str: str,  # pylint:disable=unused-argument
-        *,
-        eventhub_name: Optional[str] = None,
-        check_case: bool = False,
-        **kwargs: Any
-    ) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int], bool]:
+    conn_str: str,  # pylint:disable=unused-argument
+    *,
+    eventhub_name: Optional[str] = None,
+    check_case: bool = False,
+    **kwargs: Any,
+) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int], bool]:
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
@@ -82,9 +85,7 @@ def _parse_conn_str(
     shared_access_signature: Optional[str] = None
     shared_access_signature_expiry = None
     use_emulator: Optional[str] = None
-    conn_settings = core_parse_connection_string(
-        conn_str, case_sensitive_keys=check_case
-    )
+    conn_settings = core_parse_connection_string(conn_str, case_sensitive_keys=check_case)
     if check_case:
         shared_access_key = conn_settings.get("SharedAccessKey")
         shared_access_key_name = conn_settings.get("SharedAccessKeyName")
@@ -110,9 +111,7 @@ def _parse_conn_str(
     if shared_access_signature:
         try:
             # Expiry can be stored in the "se=<timestamp>" clause of the token. ('&'-separated key-value pairs)
-            shared_access_signature_expiry = int(
-                shared_access_signature.split("se=")[1].split("&")[0]  # type: ignore
-            )
+            shared_access_signature_expiry = int(shared_access_signature.split("se=")[1].split("&")[0])  # type: ignore
         except (
             IndexError,
             TypeError,
@@ -132,11 +131,9 @@ def _parse_conn_str(
         raise ValueError("Invalid Endpoint on the Connection String.")
     host = cast(str, parsed.netloc.strip())
 
-    emulator = use_emulator=="true"
+    emulator = use_emulator == "true"
 
-    if any([shared_access_key, shared_access_key_name]) and not all(
-        [shared_access_key, shared_access_key_name]
-    ):
+    if any([shared_access_key, shared_access_key_name]) and not all([shared_access_key, shared_access_key_name]):
         raise ValueError(
             "Invalid connection string. Should be in the format: "
             "Endpoint=sb://<FQDN>/;SharedAccessKeyName=<KeyName>;SharedAccessKey=<KeyValue>"
@@ -144,13 +141,9 @@ def _parse_conn_str(
     # Only connection string parser should check that only one of sas and shared access
     # key exists. For backwards compatibility, client construction should not have this check.
     if check_case and shared_access_signature and shared_access_key:
-        raise ValueError(
-            "Only one of the SharedAccessKey or SharedAccessSignature must be present."
-        )
+        raise ValueError("Only one of the SharedAccessKey or SharedAccessSignature must be present.")
     if not shared_access_signature and not shared_access_key:
-        raise ValueError(
-            "At least one of the SharedAccessKey or SharedAccessSignature must be present."
-        )
+        raise ValueError("At least one of the SharedAccessKey or SharedAccessSignature must be present.")
 
     return (
         host,
@@ -159,7 +152,7 @@ def _parse_conn_str(
         entity,
         str(shared_access_signature) if shared_access_signature else None,
         shared_access_signature_expiry,
-        emulator
+        emulator,
     )
 
 
@@ -181,6 +174,7 @@ def _generate_sas_token(uri: str, policy: str, key: str, expiry: Optional[timede
     token = generate_sas_token(uri, policy, key, abs_expiry)
     return AccessToken(token=token, expires_on=abs_expiry)
 
+
 def _build_uri(address: str, entity: str) -> str:
     parsed = urlparse(address)
     if parsed.path:
@@ -195,7 +189,7 @@ def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
     if retry_mode == RetryMode.Fixed:
         backoff_value = backoff_factor
     else:
-        backoff_value = backoff_factor * (2 ** retried_times)
+        backoff_value = backoff_factor * (2**retried_times)
     return min(backoff_max, backoff_value)
 
 
@@ -327,16 +321,12 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
         )
         self._debug = self._config.network_tracing
         kwargs["custom_endpoint_address"] = self._config.custom_endpoint_address
-        self._conn_manager = get_connection_manager(
-            amqp_transport=self._amqp_transport,
-            **kwargs)
+        self._conn_manager = get_connection_manager(amqp_transport=self._amqp_transport, **kwargs)
         self._idle_timeout = kwargs.get("idle_timeout", None)
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs: Any) -> Dict[str, Any]:
-        host, policy, key, entity, token, token_expiry, emulator = _parse_conn_str(
-            conn_str, **kwargs
-        )
+        host, policy, key, entity, token, token_expiry, emulator = _parse_conn_str(conn_str, **kwargs)
 
         kwargs["fully_qualified_namespace"] = host
         kwargs["eventhub_name"] = entity
@@ -392,7 +382,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
         retried_times: int,
         last_exception: Exception,
         timeout_time: Optional[float] = None,
-        entity_name: Optional[str] = None
+        entity_name: Optional[str] = None,
     ) -> None:
         entity_name = entity_name or self._container_id
         backoff = _get_backoff_time(
@@ -403,7 +393,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
         )
         if backoff <= self._config.backoff_max and (
             timeout_time is None or time.time() + backoff <= timeout_time
-        ):  # pylint:disable=no-else-return
+        ):
             time.sleep(backoff)
             _LOGGER.info(
                 "%r has an exception (%r). Retrying...",
@@ -418,10 +408,9 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
             )
             raise last_exception
 
-    def _management_request(# pylint:disable=inconsistent-return-statements
+    def _management_request(  # pylint:disable=inconsistent-return-statements
         self, mgmt_msg: Union[uamqp_Message, Message], op_type: bytes
     ) -> Any:
-        # pylint:disable=assignment-from-none
         retried_times = 0
         last_exception = None
         while retried_times <= self._config.max_retries:
@@ -430,16 +419,16 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
                 self._address, mgmt_auth=mgmt_auth, config=self._config
             )
             try:
-                conn = self._conn_manager.get_connection(  # pylint:disable=assignment-from-none
+                conn = self._conn_manager.get_connection(
                     endpoint=self._address.hostname, auth=mgmt_auth
                 )
                 mgmt_client.open(connection=conn)
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
 
-                cast(Dict[Union[str, bytes], Any], mgmt_msg.application_properties)[
-                    "security_token"
-                ] = self._amqp_transport.get_updated_token(mgmt_auth)
+                cast(Dict[Union[str, bytes], Any], mgmt_msg.application_properties)["security_token"] = (
+                    self._amqp_transport.get_updated_token(mgmt_auth)
+                )
                 status_code, description, response = self._amqp_transport.mgmt_client_request(
                     mgmt_client,
                     mgmt_msg,
@@ -467,33 +456,23 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
                 last_exception = self._amqp_transport._handle_exception(  # pylint: disable=protected-access
                     exception, self, is_consumer=True
                 )
-                self._backoff(
-                    retried_times=retried_times, last_exception=last_exception
-                )
+                self._backoff(retried_times=retried_times, last_exception=last_exception)
                 retried_times += 1
                 if retried_times > self._config.max_retries:
-                    _LOGGER.info(
-                        "%r returns an exception %r", self._container_id, last_exception
-                    )
+                    _LOGGER.info("%r returns an exception %r", self._container_id, last_exception)
                     raise last_exception from None
             finally:
                 mgmt_client.close()
 
     def _get_eventhub_properties(self) -> Dict[str, Any]:
-        mgmt_msg = self._amqp_transport.build_message(
-            application_properties={"name": self.eventhub_name}
-        )
+        mgmt_msg = self._amqp_transport.build_message(application_properties={"name": self.eventhub_name})
         response = self._management_request(mgmt_msg, op_type=MGMT_OPERATION)
         output = {}
         eh_info: Dict[bytes, Any] = response.value
         if eh_info:
             output["eventhub_name"] = eh_info[b"name"].decode("utf-8")
-            output["created_at"] = utc_from_timestamp(
-                float(eh_info[b"created_at"]) / 1000
-            )
-            output["partition_ids"] = [
-                p.decode("utf-8") for p in eh_info[b"partition_ids"]
-            ]
+            output["created_at"] = utc_from_timestamp(float(eh_info[b"created_at"]) / 1000)
+            output["partition_ids"] = [p.decode("utf-8") for p in eh_info[b"partition_ids"]]
         return output
 
     def _get_partition_ids(self) -> List[str]:
@@ -510,19 +489,11 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
         partition_info: Dict[bytes, Union[bytes, int]] = response.value
         output: Dict[str, Any] = {}
         if partition_info:
-            output["eventhub_name"] = cast(bytes, partition_info[b"name"]).decode(
-                "utf-8"
-            )
+            output["eventhub_name"] = cast(bytes, partition_info[b"name"]).decode("utf-8")
             output["id"] = cast(bytes, partition_info[b"partition"]).decode("utf-8")
-            output["beginning_sequence_number"] = cast(
-                int, partition_info[b"begin_sequence_number"]
-            )
-            output["last_enqueued_sequence_number"] = cast(
-                int, partition_info[b"last_enqueued_sequence_number"]
-            )
-            output["last_enqueued_offset"] = cast(
-                bytes, partition_info[b"last_enqueued_offset"]
-            ).decode("utf-8")
+            output["beginning_sequence_number"] = cast(int, partition_info[b"begin_sequence_number"])
+            output["last_enqueued_sequence_number"] = cast(int, partition_info[b"last_enqueued_sequence_number"])
+            output["last_enqueued_offset"] = cast(bytes, partition_info[b"last_enqueued_offset"]).decode("utf-8")
             output["is_empty"] = partition_info[b"is_partition_empty"]
             output["last_enqueued_time_utc"] = utc_from_timestamp(
                 float(cast(int, partition_info[b"last_enqueued_time_utc"]) / 1000)
@@ -533,14 +504,12 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
         self._conn_manager.close_connection()
 
 
-class ConsumerProducerMixin():
+class ConsumerProducerMixin:
 
     def __init__(self) -> None:
         self._handler: Union[
-            uamqp_AMQPRecieveClient,
-            pyamqp_AMQPRecieveClient,
-            uamqp_AMQPSendClient,
-            pyamqp_AMQPSendClient]
+            uamqp_AMQPRecieveClient, pyamqp_AMQPRecieveClient, uamqp_AMQPSendClient, pyamqp_AMQPSendClient
+        ]
         self._client: Union[EventHubConsumerClient, EventHubProducerClient]
         self._amqp_transport: "AmqpTransport"
         self._max_message_size_on_link: Optional[int] = None
@@ -556,9 +525,7 @@ class ConsumerProducerMixin():
 
     def _check_closed(self):
         if self.closed:
-            raise ClientClosedError(
-                f"{self._name} has been closed. Please create a new one to handle event data."
-            )
+            raise ClientClosedError(f"{self._name} has been closed. Please create a new one to handle event data.")
 
     def _open(self) -> bool:
         """Open the EventHubConsumer/EventHubProducer using the supplied connection.
@@ -601,15 +568,15 @@ class ConsumerProducerMixin():
             exception, self, is_consumer=is_consumer
         )
 
-    def _do_retryable_operation(self, operation, timeout=None, **kwargs): # pylint:disable=inconsistent-return-statements
+    def _do_retryable_operation(  # pylint:disable=inconsistent-return-statements
+        self, operation, timeout=None, **kwargs
+    ):
         # pylint:disable=protected-access
         timeout_time = (time.time() + timeout) if timeout else None
         retried_times = 0
         last_exception = kwargs.pop("last_exception", None)
         operation_need_param = kwargs.pop("operation_need_param", True)
-        max_retries = (
-            self._client._config.max_retries
-        )  # pylint:disable=protected-access
+        max_retries = self._client._config.max_retries  # pylint:disable=protected-access
 
         while retried_times <= max_retries:
             try:

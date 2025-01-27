@@ -8,7 +8,13 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, List, Optional, TypeVar
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -16,16 +22,14 @@ from azure.core.rest import HttpRequest
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._azure_monitor_client_operations import build_track_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class AzureMonitorClientOperationsMixin:
 
-    async def track(
-        self,
-        body: List["_models.TelemetryItem"],
-        **kwargs: Any
-    ) -> "_models.TrackResponse":
+    async def track(self, body: List["_models.TelemetryItem"], **kwargs: Any) -> "_models.TrackResponse":
         """Track telemetry events.
 
         This operation sends a sequence of telemetry events that will be monitored by Azure Monitor.
@@ -37,38 +41,46 @@ class AzureMonitorClientOperationsMixin:
         :rtype: ~azure_monitor_client.models.TrackResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TrackResponse"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.TrackResponse"]
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
-            400: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TrackResponse, response)),
-            402: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TrackResponse, response)),
-            429: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TrackResponse, response)),
-            500: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TrackResponse, response)),
-            503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.TrackResponse, response)),
+            400: lambda response: HttpResponseError(
+                response=response, model=self._deserialize(_models.TrackResponse, response)
+            ),
+            402: lambda response: HttpResponseError(
+                response=response, model=self._deserialize(_models.TrackResponse, response)
+            ),
+            429: lambda response: HttpResponseError(
+                response=response, model=self._deserialize(_models.TrackResponse, response)
+            ),
+            500: lambda response: HttpResponseError(
+                response=response, model=self._deserialize(_models.TrackResponse, response)
+            ),
+            503: lambda response: HttpResponseError(
+                response=response, model=self._deserialize(_models.TrackResponse, response)
+            ),
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, '[TelemetryItem]')
+        _json = self._serialize.body(body, "[TelemetryItem]")
 
         request = build_track_request(
             content_type=content_type,
             json=_json,
-            template_url=self.track.metadata['url'],
+            template_url=self.track.metadata["url"],
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "Host": self._serialize.url("self._config.host", self._config.host, 'str', skip_quote=True),
+            "Host": self._serialize.url("self._config.host", self._config.host, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -77,15 +89,14 @@ class AzureMonitorClientOperationsMixin:
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('TrackResponse', pipeline_response)
+            deserialized = self._deserialize("TrackResponse", pipeline_response)
 
         if response.status_code == 206:
-            deserialized = self._deserialize('TrackResponse', pipeline_response)
+            deserialized = self._deserialize("TrackResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    track.metadata = {'url': "/track"}  # type: ignore
-
+    track.metadata = {"url": "/track"}  # type: ignore

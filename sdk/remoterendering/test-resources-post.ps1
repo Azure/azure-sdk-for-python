@@ -9,8 +9,7 @@
 param (
     [hashtable] $DeploymentOutputs,
     [string] $TenantId,
-    [string] $TestApplicationId,
-    [string] $TestApplicationSecret
+    [string] $TestApplicationId
 )
 
 # outputs from the ARM deployment passed in from New-TestResources

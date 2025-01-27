@@ -36,12 +36,8 @@ from shared.helpers import beautify_json, get_logger
 class GroupFaces:
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.getenv(
-            CONFIGURATION_NAME_FACE_API_ENDPOINT, DEFAULT_FACE_API_ENDPOINT
-        )
-        self.key = os.getenv(
-            CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY
-        )
+        self.endpoint = os.getenv(CONFIGURATION_NAME_FACE_API_ENDPOINT, DEFAULT_FACE_API_ENDPOINT)
+        self.key = os.getenv(CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY)
         self.logger = get_logger("sample_face_grouping")
 
     def group(self):
@@ -49,21 +45,17 @@ class GroupFaces:
         from azure.ai.vision.face import FaceClient
         from azure.ai.vision.face.models import FaceDetectionModel, FaceRecognitionModel
 
-        with FaceClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
-        ) as face_client:
+        with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
             sample_file_path = helpers.get_image_path(TestImages.IMAGE_NINE_FACES)
             detect_result = face_client.detect(
                 helpers.read_file_content(sample_file_path),
-                detection_model=FaceDetectionModel.DETECTION_03,
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                detection_model=FaceDetectionModel.DETECTION03,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
                 return_face_id=True,
             )
 
             face_ids = [str(face.face_id) for face in detect_result]
-            self.logger.info(
-                f"Detect {len(face_ids)} faces from the file '{sample_file_path}': {face_ids}"
-            )
+            self.logger.info(f"Detect {len(face_ids)} faces from the file '{sample_file_path}': {face_ids}")
 
             group_result = face_client.group(face_ids=face_ids)
             self.logger.info(f"Group result: {beautify_json(group_result.as_dict())}")

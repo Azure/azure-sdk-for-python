@@ -1,0 +1,6 @@
+name: test_capability_host_hub
+description: "Capability host in hub for unit tests"
+vector_store_connections: []
+ai_services_connections: []
+storage_connections: []
+capability_host_kind: "Agents"

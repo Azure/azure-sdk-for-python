@@ -7,6 +7,7 @@
 import pytest
 from azure.eventhub._mixin import DictMixin
 
+
 class TestDictMixin:
 
     def test_contains_haskey(self):
@@ -60,7 +61,7 @@ class TestDictMixin:
         updated = {key: updatedval}
         model.update(updated)
         assert model[key] == updatedval
-    
+
     def test_values_items(self):
         model = DictMixin()
         key = "testkey"

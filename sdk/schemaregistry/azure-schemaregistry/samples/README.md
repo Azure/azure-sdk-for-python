@@ -82,4 +82,4 @@ what you can do with the Azure Schema Registry client library.
 [eventhub_receive_integration_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry/samples/sync_samples/jsonencoder/eventhub_receive_integration.py
 [eventhub_send_integration_async_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry/samples/async_samples/jsonencoder/eventhub_send_integration_async.py
 [eventhub_receive_integration_async_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry/samples/async_samples/jsonencoder/eventhub_receive_integration_async.py
-[api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-readme
+[api_reference]: https://learn.microsoft.com/python/api/overview/azure/schemaregistry-readme

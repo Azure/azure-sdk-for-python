@@ -25,7 +25,7 @@ We utilize a variety of tools to ensure smooth development, testing, and code qu
 
 - Bandit: [Bandit](https://bandit.readthedocs.io/en/latest/) is employed to find common security issues in Python code. It performs static analysis and helps us secure the codebase.
 
-- Azure DevOps: Our CI/CD pipelines are managed using [Azure DevOps](https://azure.microsoft.com/en-us/products/devops/), ensuring that builds, tests, and deployments are executed consistently and reliably across all contributions.
+- Azure DevOps: Our CI/CD pipelines are managed using [Azure DevOps](https://azure.microsoft.com/products/devops/), ensuring that builds, tests, and deployments are executed consistently and reliably across all contributions.
 
 ## Building and Testing
 

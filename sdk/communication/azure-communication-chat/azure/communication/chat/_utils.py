@@ -6,7 +6,7 @@
 
 
 def _to_utc_datetime(value):
-    return value.strftime('%Y-%m-%dT%H:%M:%SZ')
+    return value.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def return_response(response, deserialized, _):  # pylint: disable=unused-argument
@@ -39,6 +39,7 @@ class CommunicationErrorResponseConverter(object):
         :return: A list of (ChatParticipant, ChatError)
         :rtype: list[(~azure.communication.chat.ChatParticipant, ~azure.communication.chat.ChatError)]
         """
+
         def create_dict(participants):
             # type: (...) -> Dict(str, ChatThreadParticipant)
             """
@@ -50,7 +51,7 @@ class CommunicationErrorResponseConverter(object):
             """
             result = {}
             for participant in participants:
-                result[participant.identifier.properties['id']] = participant
+                result[participant.identifier.properties["id"]] = participant
             return result
 
         _thread_participants_dict = create_dict(participants=participants)

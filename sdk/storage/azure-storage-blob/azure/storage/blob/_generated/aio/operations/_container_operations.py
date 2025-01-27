@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +7,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, AsyncIterator, Callable, Dict, IO, List, Literal, Optional, Type, TypeVar, Union
+from typing import Any, AsyncIterator, Callable, Dict, IO, List, Literal, Optional, TypeVar, Union
 
+from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -25,6 +26,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
+from ..._serialization import Deserializer, Serializer
 from ...operations._container_operations import (
     build_acquire_lease_request,
     build_break_lease_request,
@@ -45,11 +47,12 @@ from ...operations._container_operations import (
     build_set_metadata_request,
     build_submit_batch_request,
 )
+from .._configuration import AzureBlobStorageConfiguration
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -68,13 +71,13 @@ class ContainerOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureBlobStorageConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def create(  # pylint: disable=inconsistent-return-statements
+    async def create(
         self,
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -113,7 +116,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -174,7 +177,7 @@ class ContainerOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def get_properties(  # pylint: disable=inconsistent-return-statements
+    async def get_properties(
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -200,7 +203,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -276,7 +279,7 @@ class ContainerOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
+    async def delete(
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -305,7 +308,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -366,7 +369,7 @@ class ContainerOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def set_metadata(  # pylint: disable=inconsistent-return-statements
+    async def set_metadata(
         self,
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -403,7 +406,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -492,7 +495,7 @@ class ContainerOperations:
         :rtype: list[~azure.storage.blob.models.SignedIdentifier]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -557,7 +560,7 @@ class ContainerOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def set_access_policy(  # pylint: disable=inconsistent-return-statements
+    async def set_access_policy(
         self,
         timeout: Optional[int] = None,
         access: Optional[Union[str, _models.PublicAccessType]] = None,
@@ -593,7 +596,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -669,7 +672,7 @@ class ContainerOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def restore(  # pylint: disable=inconsistent-return-statements
+    async def restore(
         self,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -699,7 +702,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -752,7 +755,7 @@ class ContainerOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def rename(  # pylint: disable=inconsistent-return-statements
+    async def rename(
         self,
         source_container_name: str,
         timeout: Optional[int] = None,
@@ -782,7 +785,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -863,7 +866,7 @@ class ContainerOperations:
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -975,7 +978,7 @@ class ContainerOperations:
         :rtype: ~azure.storage.blob.models.FilterBlobSegment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1034,7 +1037,7 @@ class ContainerOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def acquire_lease(  # pylint: disable=inconsistent-return-statements
+    async def acquire_lease(
         self,
         timeout: Optional[int] = None,
         duration: Optional[int] = None,
@@ -1070,7 +1073,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1136,7 +1139,7 @@ class ContainerOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def release_lease(  # pylint: disable=inconsistent-return-statements
+    async def release_lease(
         self,
         lease_id: str,
         timeout: Optional[int] = None,
@@ -1165,7 +1168,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1229,7 +1232,7 @@ class ContainerOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def renew_lease(  # pylint: disable=inconsistent-return-statements
+    async def renew_lease(
         self,
         lease_id: str,
         timeout: Optional[int] = None,
@@ -1258,7 +1261,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1323,7 +1326,7 @@ class ContainerOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def break_lease(  # pylint: disable=inconsistent-return-statements
+    async def break_lease(
         self,
         timeout: Optional[int] = None,
         break_period: Optional[int] = None,
@@ -1358,7 +1361,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1423,7 +1426,7 @@ class ContainerOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def change_lease(  # pylint: disable=inconsistent-return-statements
+    async def change_lease(
         self,
         lease_id: str,
         proposed_lease_id: str,
@@ -1457,7 +1460,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1569,7 +1572,7 @@ class ContainerOperations:
         :rtype: ~azure.storage.blob.models.ListBlobsFlatSegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1681,7 +1684,7 @@ class ContainerOperations:
         :rtype: ~azure.storage.blob.models.ListBlobsHierarchySegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1742,7 +1745,7 @@ class ContainerOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_account_info(  # pylint: disable=inconsistent-return-statements
+    async def get_account_info(
         self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long
@@ -1761,7 +1764,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

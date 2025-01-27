@@ -10,6 +10,26 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AcceleratorManufacturer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Accelerator manufacturers supported by Azure VMs."""
+
+    AMD = "AMD"
+    """AMD GpuType"""
+    NVIDIA = "Nvidia"
+    """Nvidia GpuType"""
+    XILINX = "Xilinx"
+    """Xilinx GpuType"""
+
+
+class AcceleratorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Accelerator types supported by Azure VMs."""
+
+    GPU = "GPU"
+    """GPU Accelerator"""
+    FPGA = "FPGA"
+    """FPGA Accelerator"""
+
+
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
     only APIs.
@@ -17,6 +37,15 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INTERNAL = "Internal"
     """Actions are for internal-only APIs."""
+
+
+class ArchitectureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Architecture types supported by Azure VMs."""
+
+    ARM64 = "ARM64"
+    """ARM64 Architecture"""
+    X64 = "X64"
+    """X64 Architecture"""
 
 
 class CachingTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -28,6 +57,19 @@ class CachingTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """'ReadOnly' is default for Premium Storage"""
     READ_WRITE = "ReadWrite"
     """'ReadWrite' is default for OS Disk"""
+
+
+class CpuManufacturer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cpu Manufacturers  supported by Azure VMs."""
+
+    INTEL = "Intel"
+    """Intel CPU."""
+    AMD = "AMD"
+    """AMD CPU."""
+    MICROSOFT = "Microsoft"
+    """Microsoft CPU."""
+    AMPERE = "Ampere"
+    """Ampere CPU."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -93,7 +135,7 @@ class DiskControllerTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SCSI = "SCSI"
     """SCSI disk type"""
-    N_V_ME = "NVMe"
+    NV_ME = "NVMe"
     """NVMe disk type"""
 
 
@@ -212,6 +254,15 @@ class LinuxVMGuestPatchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     provisionVMAgent must be true."""
 
 
+class LocalStorageDiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Different kind of Local storage disk types supported by Azure VMs."""
+
+    HDD = "HDD"
+    """HDD DiskType."""
+    SSD = "SSD"
+    """SDD DiskType."""
+
+
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
@@ -246,7 +297,7 @@ class NetworkApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     with orchestration mode 'Flexible'.
     """
 
-    ENUM_2020_11_01 = "2020-11-01"
+    V2020_11_01 = "2020-11-01"
     """Initial version supported. Later versions are supported as well."""
 
 
@@ -368,13 +419,13 @@ class SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     **Note:** It can be set for only Confidential VMs.
     """
 
-    V_M_GUEST_STATE_ONLY = "VMGuestStateOnly"
+    VM_GUEST_STATE_ONLY = "VMGuestStateOnly"
     """EncryptionType of the managed disk is set to VMGuestStateOnly for encryption
     of just the VMGuestState blob."""
-    DISK_WITH_V_M_GUEST_STATE = "DiskWithVMGuestState"
+    DISK_WITH_VM_GUEST_STATE = "DiskWithVMGuestState"
     """EncryptionType of the managed disk is set to DiskWithVMGuestState for encryption
     of the managed disk along with VMGuestState blob."""
-    NON_PERSISTED_T_P_M = "NonPersistedTPM"
+    NON_PERSISTED_TPM = "NonPersistedTPM"
     """EncryptionType of the managed disk is set to NonPersistedTPM for not persisting
     firmware state in the VMGuestState blob."""
 
@@ -387,7 +438,7 @@ class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TRUSTED_LAUNCH = "TrustedLaunch"
     """TrustedLaunch security type"""
-    CONFIDENTIAL_V_M = "ConfidentialVM"
+    CONFIDENTIAL_VM = "ConfidentialVM"
     """ConfidentialVM security type"""
 
 
@@ -428,20 +479,69 @@ class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     https://docs.microsoft.com/azure/virtual-machines/linux/disks-types.
     """
 
-    STANDARD_L_R_S = "Standard_LRS"
+    STANDARD_LRS = "Standard_LRS"
     """Standard_LRS option."""
-    PREMIUM_L_R_S = "Premium_LRS"
+    PREMIUM_LRS = "Premium_LRS"
     """Premium_LRS option."""
-    STANDARD_S_S_D_L_R_S = "StandardSSD_LRS"
+    STANDARD_SSD_LRS = "StandardSSD_LRS"
     """StandardSSD_LRS option."""
-    ULTRA_S_S_D_L_R_S = "UltraSSD_LRS"
+    ULTRA_SSD_LRS = "UltraSSD_LRS"
     """UltraSSD_LRS option."""
-    PREMIUM_Z_R_S = "Premium_ZRS"
+    PREMIUM_ZRS = "Premium_ZRS"
     """Premium_ZRS option."""
-    STANDARD_S_S_D_Z_R_S = "StandardSSD_ZRS"
+    STANDARD_SSD_ZRS = "StandardSSD_ZRS"
     """StandardSSD_ZRS option."""
-    PREMIUM_V2_L_R_S = "PremiumV2_LRS"
+    PREMIUM_V2_LRS = "PremiumV2_LRS"
     """PremiumV2_LRS option."""
+
+
+class VMAttributeSupport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """VMSizes supported by Azure VMs. Included is a union of Excluded and Required."""
+
+    EXCLUDED = "Excluded"
+    """All VMSizes having the feature support will be excluded."""
+    INCLUDED = "Included"
+    """VMSizes that have the feature support and that do not have the feature support will be used.
+    Included is a union of Excluded and Required."""
+    REQUIRED = "Required"
+    """Only the VMSizes having the feature support will be used."""
+
+
+class VMCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """VMCategories defined for Azure VMs.
+    See:
+    https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/overview?tabs=breakdownseries%2Cgeneralsizelist%2Ccomputesizelist%2Cmemorysizelist%2Cstoragesizelist%2Cgpusizelist%2Cfpgasizelist%2Chpcsizelist#general-purpose.
+    """
+
+    GENERAL_PURPOSE = "GeneralPurpose"
+    """General purpose VM sizes provide balanced CPU-to-memory ratio. Ideal for testing and
+    development, small to medium databases, and low to medium traffic web servers."""
+    COMPUTE_OPTIMIZED = "ComputeOptimized"
+    """Compute optimized VM sizes have a high CPU-to-memory ratio. These sizes are good for medium
+    traffic web servers, network appliances, batch processes, and application servers."""
+    MEMORY_OPTIMIZED = "MemoryOptimized"
+    """Memory optimized VM sizes offer a high memory-to-CPU ratio that is great for relational
+    database servers, medium to large caches, and in-memory analytics."""
+    STORAGE_OPTIMIZED = "StorageOptimized"
+    """Storage optimized virtual machine (VM) sizes offer high disk throughput and IO, and are ideal
+    for Big Data, SQL, NoSQL databases, data warehousing, and large transactional databases.
+    Examples include Cassandra, MongoDB, Cloudera, and Redis."""
+    GPU_ACCELERATED = "GpuAccelerated"
+    """GPU optimized VM sizes are specialized virtual machines available with single, multiple, or
+    fractional GPUs.
+    These sizes are designed for compute-intensive, graphics-intensive, and visualization
+    workloads."""
+    FPGA_ACCELERATED = "FpgaAccelerated"
+    """FPGA optimized VM sizes are specialized virtual machines available with single or multiple
+    FPGA.
+    These sizes are designed for compute-intensive workloads. This article provides information
+    about the number and type of FPGA, vCPUs, data disks, and NICs.
+    Storage throughput and network bandwidth are also included for each size in this grouping."""
+    HIGH_PERFORMANCE_COMPUTE = "HighPerformanceCompute"
+    """Azure High Performance Compute VMs are optimized for various HPC workloads such as
+    computational fluid dynamics, finite element analysis, frontend and backend EDA,
+    rendering, molecular dynamics, computational geo science, weather simulation, and financial
+    risk analysis."""
 
 
 class WindowsPatchAssessmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -478,7 +578,7 @@ class WindowsVMGuestPatchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     You do this by applying patches manually inside the VM. In this mode,
     automatic updates are disabled; the property WindowsConfiguration.enableAutomaticUpdates
     must be false"""
-    AUTOMATIC_BY_O_S = "AutomaticByOS"
+    AUTOMATIC_BY_OS = "AutomaticByOS"
     """The virtual machine will automatically be updated by the OS.
     The property WindowsConfiguration.enableAutomaticUpdates must be true."""
     AUTOMATIC_BY_PLATFORM = "AutomaticByPlatform"

@@ -91,12 +91,30 @@ class EsuServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATACENTER = "Datacenter"
 
 
+class ExecutionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Script execution status."""
+
+    UNKNOWN = "Unknown"
+    PENDING = "Pending"
+    RUNNING = "Running"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    TIMED_OUT = "TimedOut"
+    CANCELED = "Canceled"
+
+
 class ExtensionsStatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The level code."""
 
     INFO = "Info"
     WARNING = "Warning"
     ERROR = "Error"
+
+
+class GatewayType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the Gateway resource."""
+
+    PUBLIC = "Public"
 
 
 class HotpatchEnablementStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

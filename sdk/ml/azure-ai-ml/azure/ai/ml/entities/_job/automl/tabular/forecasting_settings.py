@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes
 
 from typing import List, Optional, Union
 
@@ -44,7 +44,7 @@ class ForecastingSettings(RestTranslatableMixin):
 
         Units are based on the time interval of your training data, e.g., monthly, weekly that the forecaster
         should predict out. When task type is forecasting, this parameter is required. For more information on
-        setting forecasting parameters, see `Auto-train a time-series forecast model <https://docs.microsoft.com/
+        setting forecasting parameters, see `Auto-train a time-series forecast model <https://learn.microsoft.com/
         azure/machine-learning/how-to-auto-train-forecast>`_.
     :type forecast_horizon: Optional[Union[int, str]]
     :param target_lags:
@@ -57,7 +57,7 @@ class ForecastingSettings(RestTranslatableMixin):
         month may depend on the price of specific commodities 3 months prior. In this example, you may want
         to lag the target (demand) negatively by 3 months so that the model is training on the correct
         relationship. For more information, see `Auto-train a time-series forecast model
-        <https://docs.microsoft.com/azure/machine-learning/how-to-auto-train-forecast>`_.
+        <https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-forecast>`_.
 
         **Note on auto detection of target lags and rolling window size.
         Please see the corresponding comments in the rolling window section.**

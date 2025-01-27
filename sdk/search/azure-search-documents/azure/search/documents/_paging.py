@@ -10,7 +10,7 @@ import itertools
 import json
 
 from azure.core.paging import ItemPaged, PageIterator, ReturnType
-from ._generated.models import SearchRequest, SearchDocumentsResult, QueryAnswerResult
+from ._generated.models import SearchRequest, SearchDocumentsResult, QueryAnswerResult, DebugInfo
 from ._api_versions import DEFAULT_VERSION
 
 
@@ -20,6 +20,7 @@ def convert_search_result(result):
     ret["@search.reranker_score"] = result.reranker_score
     ret["@search.highlights"] = result.highlights
     ret["@search.captions"] = result.captions
+    ret["@search.document_debug_info"] = result.document_debug_info
     return ret
 
 
@@ -43,6 +44,8 @@ def unpack_continuation_token(token):
 
 
 class SearchItemPaged(ItemPaged[ReturnType]):
+    """A pageable list of search results."""
+
     def __init__(self, *args, **kwargs) -> None:
         super(SearchItemPaged, self).__init__(*args, **kwargs)
         self._first_page_iterator_instance: Optional[SearchPageIterator] = None
@@ -93,6 +96,14 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         """
         return cast(List[QueryAnswerResult], self._first_iterator_instance().get_answers())
 
+    def get_debug_info(self) -> DebugInfo:
+        """Return the debug information for the query.
+
+        :return: the debug information for the query
+        :rtype: ~azure.search.documents.models.DebugInfo
+        """
+        return cast(DebugInfo, self._first_iterator_instance().get_debug_info())
+
 
 # The pylint error silenced below seems spurious, as the inner wrapper does, in
 # fact, become a method of the class when it is applied.
@@ -108,6 +119,8 @@ def _ensure_response(f):
 
 
 class SearchPageIterator(PageIterator):
+    """An iterator over search results."""
+
     def __init__(self, client, initial_query, kwargs, continuation_token=None) -> None:
         super(SearchPageIterator, self).__init__(
             get_next=self._get_next_cb,
@@ -160,3 +173,9 @@ class SearchPageIterator(PageIterator):
         self.continuation_token = None
         response = cast(SearchDocumentsResult, self._response)
         return response.answers
+
+    @_ensure_response
+    def get_debug_info(self) -> DebugInfo:
+        self.continuation_token = None
+        response = cast(SearchDocumentsResult, self._response)
+        return cast(DebugInfo, response.debug_info)

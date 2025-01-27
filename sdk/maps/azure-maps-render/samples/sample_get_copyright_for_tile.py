@@ -24,6 +24,7 @@ import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 def get_copyright_for_tile():
     # [START get_copyright_for_tile]
     from azure.core.credentials import AzureKeyCredential
@@ -38,5 +39,5 @@ def get_copyright_for_tile():
     # [END get_copyright_for_tile]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     get_copyright_for_tile()

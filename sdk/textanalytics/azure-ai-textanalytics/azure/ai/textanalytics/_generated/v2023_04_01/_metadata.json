@@ -4,7 +4,7 @@
     "client": {
         "name": "TextAnalyticsClient",
         "filename": "_text_analytics_client",
-        "description": "The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in :code:`\u003ca href=\"https://docs.microsoft.com/azure/cognitive-services/language-service/overview\"\u003ehttps://docs.microsoft.com/azure/cognitive-services/language-service/overview\u003c/a\u003e`.",
+        "description": "The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in :code:`\u003ca href=\"https://learn.microsoft.com/azure/cognitive-services/language-service/overview\"\u003ehttps://learn.microsoft.com/azure/cognitive-services/language-service/overview\u003c/a\u003e`.",
         "host_value": null,
         "parameterized_host_template": "\u0027{Endpoint}/language\u0027",
         "azure_arm": false,

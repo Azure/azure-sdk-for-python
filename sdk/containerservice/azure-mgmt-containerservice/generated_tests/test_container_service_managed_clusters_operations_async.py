@@ -21,10 +21,10 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_kubernetes_versions(self, resource_group):
+    async def test_managed_clusters_list_kubernetes_versions(self, resource_group):
         response = await self.client.managed_clusters.list_kubernetes_versions(
             location="str",
-            api_version="2024-08-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -32,9 +32,9 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_managed_clusters_list(self, resource_group):
         response = self.client.managed_clusters.list(
-            api_version="2024-08-01",
+            api_version="2024-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,10 +42,10 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_managed_clusters_list_by_resource_group(self, resource_group):
         response = self.client.managed_clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-08-01",
+            api_version="2024-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -53,11 +53,11 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_upgrade_profile(self, resource_group):
+    async def test_managed_clusters_get_upgrade_profile(self, resource_group):
         response = await self.client.managed_clusters.get_upgrade_profile(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-08-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -65,12 +65,12 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_access_profile(self, resource_group):
+    async def test_managed_clusters_get_access_profile(self, resource_group):
         response = await self.client.managed_clusters.get_access_profile(
             resource_group_name=resource_group.name,
             resource_name="str",
             role_name="str",
-            api_version="2024-08-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -78,11 +78,11 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_cluster_admin_credentials(self, resource_group):
+    async def test_managed_clusters_list_cluster_admin_credentials(self, resource_group):
         response = await self.client.managed_clusters.list_cluster_admin_credentials(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-08-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -90,11 +90,11 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_cluster_user_credentials(self, resource_group):
+    async def test_managed_clusters_list_cluster_user_credentials(self, resource_group):
         response = await self.client.managed_clusters.list_cluster_user_credentials(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-08-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -102,11 +102,11 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_cluster_monitoring_user_credentials(self, resource_group):
+    async def test_managed_clusters_list_cluster_monitoring_user_credentials(self, resource_group):
         response = await self.client.managed_clusters.list_cluster_monitoring_user_credentials(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-08-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -114,11 +114,11 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_managed_clusters_get(self, resource_group):
         response = await self.client.managed_clusters.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-08-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -126,7 +126,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_managed_clusters_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.managed_clusters.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -157,6 +157,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                             "count": 0,
                             "creationData": {"sourceResourceId": "str"},
                             "currentOrchestratorVersion": "str",
+                            "eTag": "str",
                             "enableAutoScaling": bool,
                             "enableEncryptionAtHost": bool,
                             "enableFIPS": bool,
@@ -294,6 +295,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                     "disableLocalAccounts": bool,
                     "diskEncryptionSetID": "str",
                     "dnsPrefix": "str",
+                    "eTag": "str",
                     "enablePodSecurityPolicy": bool,
                     "enableRBAC": bool,
                     "extendedLocation": {"name": "str", "type": "str"},
@@ -334,6 +336,11 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                     "metricsProfile": {"costAnalysis": {"enabled": bool}},
                     "name": "str",
                     "networkProfile": {
+                        "advancedNetworking": {
+                            "enabled": bool,
+                            "observability": {"enabled": bool},
+                            "security": {"enabled": bool},
+                        },
                         "dnsServiceIP": "10.0.0.10",
                         "ipFamilies": ["str"],
                         "loadBalancerProfile": {
@@ -354,7 +361,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                         },
                         "networkDataplane": "str",
                         "networkMode": "str",
-                        "networkPlugin": "kubenet",
+                        "networkPlugin": "str",
                         "networkPluginMode": "str",
                         "networkPolicy": "str",
                         "outboundType": "loadBalancer",
@@ -364,6 +371,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                         "serviceCidrs": ["str"],
                     },
                     "nodeResourceGroup": "str",
+                    "nodeResourceGroupProfile": {"restrictionLevel": "str"},
                     "oidcIssuerProfile": {"enabled": bool, "issuerURL": "str"},
                     "podIdentityProfile": {
                         "allowNetworkPluginKubenet": bool,
@@ -463,7 +471,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                         "verticalPodAutoscaler": {"enabled": False},
                     },
                 },
-                api_version="2024-08-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -472,13 +480,13 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update_tags(self, resource_group):
+    async def test_managed_clusters_begin_update_tags(self, resource_group):
         response = await (
             await self.client.managed_clusters.begin_update_tags(
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 parameters={"tags": {"str": "str"}},
-                api_version="2024-08-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -487,12 +495,12 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_managed_clusters_begin_delete(self, resource_group):
         response = await (
             await self.client.managed_clusters.begin_delete(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                api_version="2024-08-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -501,13 +509,13 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_reset_service_principal_profile(self, resource_group):
+    async def test_managed_clusters_begin_reset_service_principal_profile(self, resource_group):
         response = await (
             await self.client.managed_clusters.begin_reset_service_principal_profile(
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 parameters={"clientId": "str", "secret": "str"},
-                api_version="2024-08-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -516,7 +524,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_reset_aad_profile(self, resource_group):
+    async def test_managed_clusters_begin_reset_aad_profile(self, resource_group):
         response = await (
             await self.client.managed_clusters.begin_reset_aad_profile(
                 resource_group_name=resource_group.name,
@@ -530,7 +538,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                     "serverAppSecret": "str",
                     "tenantID": "str",
                 },
-                api_version="2024-08-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -539,12 +547,12 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_rotate_cluster_certificates(self, resource_group):
+    async def test_managed_clusters_begin_rotate_cluster_certificates(self, resource_group):
         response = await (
             await self.client.managed_clusters.begin_rotate_cluster_certificates(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                api_version="2024-08-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -553,12 +561,12 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_abort_latest_operation(self, resource_group):
+    async def test_managed_clusters_begin_abort_latest_operation(self, resource_group):
         response = await (
             await self.client.managed_clusters.begin_abort_latest_operation(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                api_version="2024-08-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -567,12 +575,12 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_rotate_service_account_signing_keys(self, resource_group):
+    async def test_managed_clusters_begin_rotate_service_account_signing_keys(self, resource_group):
         response = await (
             await self.client.managed_clusters.begin_rotate_service_account_signing_keys(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                api_version="2024-08-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -581,12 +589,12 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_stop(self, resource_group):
+    async def test_managed_clusters_begin_stop(self, resource_group):
         response = await (
             await self.client.managed_clusters.begin_stop(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                api_version="2024-08-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -595,12 +603,12 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_start(self, resource_group):
+    async def test_managed_clusters_begin_start(self, resource_group):
         response = await (
             await self.client.managed_clusters.begin_start(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                api_version="2024-08-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -609,13 +617,13 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_run_command(self, resource_group):
+    async def test_managed_clusters_begin_run_command(self, resource_group):
         response = await (
             await self.client.managed_clusters.begin_run_command(
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 request_payload={"command": "str", "clusterToken": "str", "context": "str"},
-                api_version="2024-08-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -624,12 +632,12 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_command_result(self, resource_group):
+    async def test_managed_clusters_get_command_result(self, resource_group):
         response = await self.client.managed_clusters.get_command_result(
             resource_group_name=resource_group.name,
             resource_name="str",
             command_id="str",
-            api_version="2024-08-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -637,11 +645,11 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_outbound_network_dependencies_endpoints(self, resource_group):
+    async def test_managed_clusters_list_outbound_network_dependencies_endpoints(self, resource_group):
         response = self.client.managed_clusters.list_outbound_network_dependencies_endpoints(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-08-01",
+            api_version="2024-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -649,10 +657,10 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_mesh_revision_profiles(self, resource_group):
+    async def test_managed_clusters_list_mesh_revision_profiles(self, resource_group):
         response = self.client.managed_clusters.list_mesh_revision_profiles(
             location="str",
-            api_version="2024-08-01",
+            api_version="2024-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -660,11 +668,11 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_mesh_revision_profile(self, resource_group):
+    async def test_managed_clusters_get_mesh_revision_profile(self, resource_group):
         response = await self.client.managed_clusters.get_mesh_revision_profile(
             location="str",
             mode="str",
-            api_version="2024-08-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -672,11 +680,11 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_mesh_upgrade_profiles(self, resource_group):
+    async def test_managed_clusters_list_mesh_upgrade_profiles(self, resource_group):
         response = self.client.managed_clusters.list_mesh_upgrade_profiles(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-08-01",
+            api_version="2024-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -684,12 +692,12 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_mesh_upgrade_profile(self, resource_group):
+    async def test_managed_clusters_get_mesh_upgrade_profile(self, resource_group):
         response = await self.client.managed_clusters.get_mesh_upgrade_profile(
             resource_group_name=resource_group.name,
             resource_name="str",
             mode="str",
-            api_version="2024-08-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself

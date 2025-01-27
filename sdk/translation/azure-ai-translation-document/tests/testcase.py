@@ -7,7 +7,7 @@ import os
 import time
 import datetime
 import uuid
-from azure.ai.translation.document.models import BatchRequest, SourceInput, StartTranslationDetails
+from azure.ai.translation.document.models import DocumentBatch, SourceInput, StartTranslationDetails
 from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
 from azure.storage.blob import generate_container_sas, ContainerClient
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
@@ -313,7 +313,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         blob_data = Document.create_dummy_docs(docs_count=docs_count)
         source_input = SourceInput(source_url=self.create_source_container(data=blob_data, variables=variables))
         target = TranslationTarget(target_url=self.create_target_container(variables=variables), language=language)
-        batch_request = BatchRequest(source=source_input, targets=[target])
+        batch_request = DocumentBatch(source=source_input, targets=[target])
         start_translation_details = StartTranslationDetails(inputs=[batch_request])
 
         # submit job

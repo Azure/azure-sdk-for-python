@@ -40,7 +40,7 @@ def clean_folder(folder):
                 elif os.path.isdir(file_path):
                     shutil.rmtree(file_path)
             except Exception as e:
-                print('Failed to delete %s. Reason: %s' % (file_path, e))
+                print("Failed to delete %s. Reason: %s" % (file_path, e))
 
 
 # pylint: disable=protected-access
@@ -48,25 +48,22 @@ class TestStatsbeatExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         os.environ.clear()
-        os.environ[
-            "APPINSIGHTS_INSTRUMENTATIONKEY"
-        ] = "1234abcd-5678-4efa-8abc-1234567890ab"
+        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "false"
         cls._exporter = _StatsBeatExporter(
             disable_offline_storage=True,
         )
         cls._envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now())]
 
-    @mock.patch(
-        'azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics')
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_init(self, collect_mock):
         exporter = _StatsBeatExporter(disable_offline_storage=True)
         self.assertFalse(exporter._should_collect_stats())
         collect_mock.assert_not_called()
 
     def test_point_to_envelope(self):
-        resource = Resource.create(attributes={"asd":"test_resource"})
-        point=NumberDataPoint(
+        resource = Resource.create(attributes={"asd": "test_resource"})
+        point = NumberDataPoint(
             start_time_unix_nano=1646865018558419456,
             time_unix_nano=1646865018558419457,
             value=10,
@@ -75,10 +72,10 @@ class TestStatsbeatExporter(unittest.TestCase):
         for ot_name, sb_name in _STATSBEAT_METRIC_NAME_MAPPINGS.items():
             envelope = self._exporter._point_to_envelope(point, ot_name, resource)
             self.assertEqual(envelope.data.base_data.metrics[0].name, sb_name)
-    
+
     def test_transmit_200_reach_ingestion(self):
         _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
-        with mock.patch.object(AzureMonitorClient, 'track') as post:
+        with mock.patch.object(AzureMonitorClient, "track") as post:
             post.return_value = TrackResponse(
                 items_received=1,
                 items_accepted=1,
@@ -90,17 +87,11 @@ class TestStatsbeatExporter(unittest.TestCase):
 
     def test_transmit_206_reach_ingestion(self):
         _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
-        with mock.patch.object(AzureMonitorClient, 'track') as post:
+        with mock.patch.object(AzureMonitorClient, "track") as post:
             post.return_value = TrackResponse(
                 items_received=3,
                 items_accepted=1,
-                errors=[
-                    TelemetryErrorDetails(
-                        index=0,
-                        status_code=500,
-                        message="should retry"
-                    )
-                ],
+                errors=[TelemetryErrorDetails(index=0, status_code=500, message="should retry")],
             )
             result = self._exporter._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
@@ -108,11 +99,12 @@ class TestStatsbeatExporter(unittest.TestCase):
 
     def test_transmit_reach_ingestion_code(self):
         _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
-        with mock.patch("azure.monitor.opentelemetry.exporter.export._base._reached_ingestion_code") as m, \
-            mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code") as p:
+        with mock.patch("azure.monitor.opentelemetry.exporter.export._base._reached_ingestion_code") as m, mock.patch(
+            "azure.monitor.opentelemetry.exporter.export._base._is_retryable_code"
+        ) as p:
             m.return_value = True
             p.return_value = True
-            with mock.patch.object(AzureMonitorClient, 'track', throw(HttpResponseError)):
+            with mock.patch.object(AzureMonitorClient, "track", throw(HttpResponseError)):
                 result = self._exporter._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
         self.assertTrue(_STATSBEAT_STATE["INITIAL_SUCCESS"])
@@ -120,11 +112,12 @@ class TestStatsbeatExporter(unittest.TestCase):
     def test_transmit_not_reach_ingestion_code(self):
         _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
         _STATSBEAT_STATE["INITIAL_FAILURE_COUNT"] = 1
-        with mock.patch("azure.monitor.opentelemetry.exporter.export._base._reached_ingestion_code") as m, \
-            mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code") as p:
+        with mock.patch("azure.monitor.opentelemetry.exporter.export._base._reached_ingestion_code") as m, mock.patch(
+            "azure.monitor.opentelemetry.exporter.export._base._is_retryable_code"
+        ) as p:
             m.return_value = False
             p.return_value = False
-            with mock.patch.object(AzureMonitorClient, 'track', throw(HttpResponseError)):
+            with mock.patch.object(AzureMonitorClient, "track", throw(HttpResponseError)):
                 result = self._exporter._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         self.assertFalse(_STATSBEAT_STATE["INITIAL_SUCCESS"])
@@ -134,7 +127,7 @@ class TestStatsbeatExporter(unittest.TestCase):
         _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
         _STATSBEAT_STATE["INITIAL_FAILURE_COUNT"] = 1
         with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.shutdown_statsbeat_metrics") as m:
-            with mock.patch.object(AzureMonitorClient, 'track', throw(Exception)):
+            with mock.patch.object(AzureMonitorClient, "track", throw(Exception)):
                 result = self._exporter._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         self.assertFalse(_STATSBEAT_STATE["INITIAL_SUCCESS"])
@@ -145,7 +138,7 @@ class TestStatsbeatExporter(unittest.TestCase):
         _STATSBEAT_STATE["INITIAL_SUCCESS"] = False
         _STATSBEAT_STATE["INITIAL_FAILURE_COUNT"] = 2
         with mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.shutdown_statsbeat_metrics") as m:
-            with mock.patch.object(AzureMonitorClient, 'track', throw(Exception)):
+            with mock.patch.object(AzureMonitorClient, "track", throw(Exception)):
                 result = self._exporter._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         self.assertFalse(_STATSBEAT_STATE["INITIAL_SUCCESS"])
