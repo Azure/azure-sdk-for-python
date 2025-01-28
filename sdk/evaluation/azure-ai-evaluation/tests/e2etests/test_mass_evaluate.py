@@ -6,6 +6,7 @@ import pathlib
 import pandas as pd
 import pytest
 from regex import F
+from devtools_testutils import is_live
 
 
 from azure.ai.evaluation import (
@@ -76,6 +77,7 @@ class TestMassEvaluate:
     - Multi-modal inputs: This one has some parameters for the different types of multi-modal inputs.
     """
     
+    @pytest.mark.skipif(not is_live(), reason="Skip in playback due to inconsistency in evaluation results.")
     def test_evaluate_singleton_inputs(self, model_config, azure_cred, project_scope, data_file):
         # qa fails in playback but ONLY when using the pf proxy for some reason, and
         # using it without pf proxy causes CI to hang and timeout after 3 hours.
@@ -106,7 +108,6 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
-
         assert len(row_result_df.keys()) == 61
         assert len(row_result_df["inputs.query"]) == 3
         assert len(row_result_df["inputs.context"]) == 3
