@@ -74,6 +74,7 @@ class ServiceRequestRetryPolicy(object):
             if self.failover_retry_count >= self.total_retries:
                 return False
 
+        if self.request:
             # clear previous location-based routing directive
             self.request.clear_route_to_location()
 

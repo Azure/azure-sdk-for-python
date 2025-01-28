@@ -245,7 +245,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
             should_refresh = self.use_multiple_write_locations and not self.enable_multiple_writable_locations
 
-            if most_preferred_location and most_preferred_location in self.available_read_endpoint_by_locations:
+            if most_preferred_location and most_preferred_location in self.available_read_regional_endpoints_by_location:
                 if (self.available_read_regional_endpoints_by_location
                         and most_preferred_location in self.available_read_regional_endpoints_by_location):
                     most_preferred_read_endpoint = self.available_read_regional_endpoints_by_location[most_preferred_location]

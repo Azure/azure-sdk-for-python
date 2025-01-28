@@ -386,7 +386,7 @@ class _OperationType:
             _OperationType.HeadFeed,
             _OperationType.Query,
             _OperationType.SqlQuery,
-            _OperationType.QueryPlan,
+            _OperationType.QueryPlan
         )
 
 class _QueryFeature:

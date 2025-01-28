@@ -956,6 +956,12 @@ class ShareClient(StorageAccountHostsMixin):
         :keyword metadata:
             Name-value pairs associated with the directory as metadata.
         :paramtype metadata: Optional[dict[str, str]]
+        :keyword str owner:
+            NFS only. The owner of the directory.
+        :keyword str group:
+            NFS only. The owning group of the directory.
+        :keyword str file_mode:
+            NFS only. The file mode of the directory.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.

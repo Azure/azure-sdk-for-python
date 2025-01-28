@@ -209,7 +209,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
             pytest.fail("Exception was not raised.")
         except ServiceResponseError:
-            assert mf.counter == 1
+            assert mf.counter == 2
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
