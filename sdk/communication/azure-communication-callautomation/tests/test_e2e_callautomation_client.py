@@ -115,7 +115,7 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
         return
 
     @recorded_by_proxy
-    def test_play_multiple_file_sources_with_operationcallbackurl_with_play_media_all(self):
+    def test_start_recording_with_call_connection_id(self):
         # try to establish the call
         caller = self.identity_client.create_user()
         target = self.identity_client.create_user()
@@ -136,12 +136,12 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
         channel_affinity = ChannelAffinity(target_participant=target_participant, channel=0)
         
         # start recording request with call connection id.
-        start_recording = call_automation_client.start_recording(call_connection_id=call_connection_id, channel_affinity=[channel_affinity]
+        start_recording = call_automation_client.start_recording(call_connection_id=call_connection_id, recording_state_callback_url=callback_url, channel_affinity=[channel_affinity]
             )
-        time.sleep(3)
+        time.sleep(5)
 
         # check for RecordingStateChanged event
-        recording_state_changed_event = self.check_for_event('RecordingStateChanged', call_connection._call_connection_id, timedelta(seconds=30))
+        recording_state_changed_event = self.check_for_event('RecordingStateChanged', call_connection_id, timedelta(seconds=30))
         if recording_state_changed_event is None:
             raise ValueError("RecordingStateChanged event is None")
         
