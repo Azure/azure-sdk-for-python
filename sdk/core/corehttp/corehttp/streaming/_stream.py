@@ -24,14 +24,14 @@
 #
 # --------------------------------------------------------------------------
 
-from typing import Iterator, AsyncIterator, TypeVar, Callable, Any, Optional, Type, Protocol
 from types import TracebackType
+from typing import Iterator, AsyncIterator, TypeVar, Callable, Any, Optional, Type, Protocol
 
 from typing_extensions import Self, runtime_checkable
 
-from ..rest import HttpRequest, HttpResponse
+from ..rest import HttpRequest, HttpResponse, AsyncHttpResponse
 from ..runtime.pipeline import PipelineResponse
-from ._decoders import JSONLDecoder
+from ._decoders import JSONLDecoder, AsyncJSONLDecoder
 
 
 ReturnType = TypeVar("ReturnType")
@@ -52,6 +52,16 @@ class StreamDecoder(Protocol):
     def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[EventType]:
         ...
 
+    def event(self) -> EventType:
+        ...
+
+    def decode(self, line: bytes) -> None:
+        ...
+
+
+@runtime_checkable
+class AsyncStreamDecoder(Protocol):
+
     async def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[EventType]:
         ...
 
@@ -60,7 +70,6 @@ class StreamDecoder(Protocol):
 
     def decode(self, line: bytes) -> None:
         ...
-
 
 
 class Stream(Iterator[ReturnType]):
@@ -76,7 +85,7 @@ class Stream(Iterator[ReturnType]):
         self,
         *,
         response: PipelineResponse[HttpRequest, HttpResponse],
-        deserialization_callback: Callable[[Any, Any], ReturnType], # TODO type hint correct?
+        deserialization_callback: Callable[[Any, Any], ReturnType],
         decoder: Optional[StreamDecoder] = None,
         terminal_event: Optional[str] = None,
     ) -> None:
@@ -137,9 +146,9 @@ class AsyncStream(AsyncIterator[ReturnType]):
     def __init__(
         self,
         *,
-        response: PipelineResponse[HttpRequest, HttpResponse],
-        deserialization_callback: Callable[[Any, Any], ReturnType], # TODO type hint correct?
-        decoder: Optional[StreamDecoder] = None,
+        response: PipelineResponse[HttpRequest, AsyncHttpResponse],
+        deserialization_callback: Callable[[Any, Any], ReturnType],
+        decoder: Optional[AsyncStreamDecoder] = None,
         terminal_event: Optional[str] = None,
     ) -> None:
         self._response = response.http_response
@@ -150,7 +159,7 @@ class AsyncStream(AsyncIterator[ReturnType]):
         if decoder is not None:
             self._decoder = decoder
         elif self._response.headers.get("Content-Type") == "application/jsonl":
-            self._decoder = JSONLDecoder()
+            self._decoder = AsyncJSONLDecoder()
         else:
             raise ValueError(
                 f"Unsupported content-type "
@@ -158,8 +167,8 @@ class AsyncStream(AsyncIterator[ReturnType]):
                 "for streaming. Provide a custom decoder."
             )
 
-    def __anext__(self) -> ReturnType:
-        return self._iterator.__anext__()
+    async def __anext__(self) -> ReturnType:
+        return await self._iterator.__anext__()
 
     async def __aiter__(self) -> AsyncIterator[ReturnType]:
         async for item in self._iterator:
@@ -181,7 +190,7 @@ class AsyncStream(AsyncIterator[ReturnType]):
     ) -> None:
         await self.close()
 
-    def __aenter__(self) -> Self:
+    async def __aenter__(self) -> Self:
         return self
 
     async def close(self) -> None:

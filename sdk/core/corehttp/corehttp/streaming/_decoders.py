@@ -56,6 +56,20 @@ class JSONLDecoder:
             event = self.event()
             yield event
 
+    def event(self) -> JSONLEvent:
+        jsonl = JSONLEvent(data=self._data)
+        self._data = ""
+        return jsonl
+
+
+class AsyncJSONLDecoder:
+    def __init__(self) -> None:
+        self._data: str = ""
+        self._line_separators: Tuple[bytes, ...] = (b"\n", b"\r\n")
+
+    def decode(self, line: bytes) -> None:
+        self._data = line.decode("utf-8")
+
     async def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[JSONLEvent]:
         data = b''
         async for chunk in iter_bytes:

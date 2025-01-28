@@ -29,6 +29,7 @@ import pytest
 from corehttp.rest import HttpRequest
 from corehttp.streaming import Stream
 from corehttp.streaming._decoders import JSONLDecoder
+from corehttp.runtime.pipeline import PipelineResponse
 
 
 @pytest.fixture
@@ -42,10 +43,14 @@ def deserialization_callback():
 @pytest.fixture
 def stream(client, deserialization_callback):
     def _callback(request, **kwargs):
-        initial_response = client.send_request(request=request, stream=True, _return_pipeline_response=True)
+        http_response = client.send_request(request=request, stream=True)
         return Stream(
             deserialization_callback=deserialization_callback,
-            response=initial_response,
+            response=PipelineResponse(  # corehttp doesn't have _return_pipeline_response
+                http_request=request,
+                http_response=http_response,
+                context={}
+            ),
         )
 
     return _callback
@@ -94,3 +99,11 @@ def test_stream_jsonl_next(stream):
 
     with pytest.raises(StopIteration):
         next(jsonl_stream)
+
+
+def test_stream_jsonl_context_manager(stream):
+    jsonl_stream = stream(HttpRequest("GET", "/streams/jsonl_basic"))
+    with jsonl_stream as streaming:
+        for _ in streaming:
+            break
+    assert streaming._response.is_closed
