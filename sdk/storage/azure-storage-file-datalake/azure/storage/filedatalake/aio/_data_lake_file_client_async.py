@@ -25,7 +25,7 @@ from .._deserialize import deserialize_file_properties, process_storage_error
 from .._models import FileProperties
 from .._path_client_helpers import _parse_rename_path
 from .._serialize import convert_datetime_to_rfc1123
-from .._shared.base_client import parse_connection_str
+from .._shared.base_client_async import parse_connection_str
 from ..aio._upload_helper import upload_datalake_file
 from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient
@@ -101,7 +101,7 @@ class DataLakeFileClient(PathClient):
         cls, conn_str: str,
         file_system_name: str,
         file_path: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Self:
         """
@@ -386,11 +386,12 @@ class DataLakeFileClient(PathClient):
             #other-client--per-operation-configuration>`_.
         :rtype: None
         """
+        expiry_time = None
         if isinstance(expires_on, datetime):
-            expires_on = convert_datetime_to_rfc1123(expires_on)
+            expiry_time = convert_datetime_to_rfc1123(expires_on)
         elif expires_on is not None:
-            expires_on = str(expires_on)
-        await self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on, **kwargs)
+            expiry_time = str(expires_on)
+        await self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expiry_time, **kwargs)
 
     @distributed_trace_async
     async def upload_data(
@@ -721,7 +722,7 @@ class DataLakeFileClient(PathClient):
         return StorageStreamDownloader(downloader)
 
     @distributed_trace_async
-    async def rename_file(self, new_name: str, **kwargs: Any) -> Self:
+    async def rename_file(self, new_name: str, **kwargs: Any) -> "DataLakeFileClient":
         """
         Rename the source file.
 

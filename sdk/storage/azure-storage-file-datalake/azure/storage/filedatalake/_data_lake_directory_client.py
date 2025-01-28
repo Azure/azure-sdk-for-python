@@ -353,7 +353,7 @@ class DataLakeDirectoryClient(PathClient):
         return self._exists(**kwargs)
 
     @distributed_trace
-    def rename_directory(self, new_name: str, **kwargs: Any) -> Self:
+    def rename_directory(self, new_name: str, **kwargs: Any) -> "DataLakeDirectoryClient":
         """
         Rename the source directory.
 
@@ -437,7 +437,7 @@ class DataLakeDirectoryClient(PathClient):
         self, sub_directory: Union[DirectoryProperties, str],
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Self:
+    ) -> "DataLakeDirectoryClient":
         """
         Create a subdirectory and return the subdirectory client to be interacted with.
 
@@ -520,7 +520,10 @@ class DataLakeDirectoryClient(PathClient):
         return subdir
 
     @distributed_trace
-    def delete_sub_directory(self, sub_directory: Union[DirectoryProperties, str], **kwargs: Any) -> Self:  # pylint: disable=delete-operation-wrong-return-type
+    def delete_sub_directory(  # pylint: disable=delete-operation-wrong-return-type
+        self, sub_directory: Union[DirectoryProperties, str],
+        **kwargs: Any
+    ) -> "DataLakeDirectoryClient":
         """
         Marks the specified subdirectory for deletion.
 
@@ -724,7 +727,7 @@ class DataLakeDirectoryClient(PathClient):
             api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
 
-    def get_sub_directory_client(self, sub_directory: Union[DirectoryProperties, str]) -> Self:
+    def get_sub_directory_client(self, sub_directory: Union[DirectoryProperties, str]) -> "DataLakeDirectoryClient":
         """Get a client to interact with the specified subdirectory of the current directory.
 
         The sub subdirectory need not already exist.
@@ -742,8 +745,8 @@ class DataLakeDirectoryClient(PathClient):
             subdir_path = self.path_name + '/' + str(sub_directory)
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies # pylint: disable=protected-access
         )
         return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory_name=subdir_path, credential=self._raw_credential,

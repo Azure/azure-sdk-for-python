@@ -25,6 +25,8 @@ from ._shared.response_handlers import return_headers_and_deserialized, return_r
 
 if TYPE_CHECKING:
     from urllib.parse import ParseResult
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline import Pipeline
     from ._models import ContentSettings
 
@@ -41,8 +43,9 @@ def _parse_url(account_url: str) -> "ParseResult":
     return parsed_url
 
 
-def _format_url(scheme: str, hostname: str, file_system_name: str, path_name: str, query_str: str) -> str:
-    file_system_name = file_system_name.encode('UTF-8')
+def _format_url(scheme: str, hostname: str, file_system_name: Union[str, bytes], path_name: str, query_str: str) -> str:
+    if isinstance(file_system_name, str):
+        file_system_name = file_system_name.encode('UTF-8')
     return f"{scheme}://{hostname}/{quote(file_system_name)}/{quote(path_name, safe='~')}{query_str}"
 
 
@@ -201,7 +204,7 @@ def _parse_rename_path(
     new_name: str,
     file_system_name: str,
     query_str: str,
-    raw_credential: Optional[Union[str, Dict[str, str]]]
+    raw_credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential", "AsyncTokenCredential"]]  # pylint: disable=line-too-long
 ) -> Tuple[str, str, Optional[str]]:
     new_name = new_name.strip('/')
     new_file_system = new_name.split('/')[0]
