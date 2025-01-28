@@ -60,6 +60,7 @@ class _TimeoutFailoverRetryPolicy(object):
             # So that we can check in location cache if we need to return the current or previous
             # based on where the request was routed previously.
             self.request.last_routed_location_endpoint_within_region = self.request.location_endpoint_to_route
+            print("In Timeout retry policy: last routed location endpoint within region: ", self.request.last_routed_location_endpoint_within_region)
 
             if _OperationType.IsReadOnlyOperation(self.request.operation_type):
                 # We just directly got to the next location in case of read requests
@@ -72,12 +73,14 @@ class _TimeoutFailoverRetryPolicy(object):
                 if self.request.last_routed_location_endpoint_within_region == self.location_endpoint:
                     self.location_endpoint = self.resolve_next_region_service_endpoint()
 
+            print("Timeout retry policy Location endpoint: ", self.location_endpoint)
             self.request.route_to_location(self.location_endpoint)
         return True
 
 
     # This function prepares the request to go to the second endpoint in the same region
     def resolve_current_region_service_endpoint(self):
+        print("Timeout retry policy - Resolving current region endpoint")
         # clear previous location-based routing directive
         self.request.clear_route_to_location()
         # resolve the next service endpoint in the same region
@@ -88,6 +91,7 @@ class _TimeoutFailoverRetryPolicy(object):
     # This function prepares the request to go to the next region
     def resolve_next_region_service_endpoint(self):
         self.location_index += 1
+        print("Timeout retry policy - Resolving next service endpoint - location index: {}".format(self.location_index))
         # clear previous location-based routing directive
         self.request.clear_route_to_location()
         # clear the last routed endpoint within same region since we are going to a new region now

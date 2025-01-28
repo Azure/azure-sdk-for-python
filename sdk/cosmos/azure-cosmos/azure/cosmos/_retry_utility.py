@@ -25,21 +25,19 @@ import json
 import time
 from typing import Optional
 
-# from requests.exceptions import ( # pylint: disable=networking-import-outside-azure-core-transport
-#     ReadTimeout, ConnectTimeout) # pylint: disable=networking-import-outside-azure-core-transport
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
 
-from . import exceptions
-from . import _endpoint_discovery_retry_policy
-from . import _resource_throttle_retry_policy
-from . import _default_retry_policy
-from . import _session_retry_policy
-from . import _gone_retry_policy
-from . import _timeout_failover_retry_policy
 from . import _container_recreate_retry_policy
+from . import _default_retry_policy
+from . import _endpoint_discovery_retry_policy
+from . import _gone_retry_policy
+from . import _resource_throttle_retry_policy
 from . import _service_request_retry_policy, _service_response_retry_policy
+from . import _session_retry_policy
+from . import _timeout_failover_retry_policy
+from . import exceptions
 from .documents import _OperationType
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
@@ -203,10 +201,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
-            # if e.exc_type == ConnectTimeout:
-            #     _handle_service_request_retries(client, service_request_retry_policy, e, *args)
-            # else:
-                _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
+            _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 def ExecuteFunction(function, *args, **kwargs):
     """Stub method so that it can be used for mocking purposes as well.
@@ -304,8 +299,10 @@ class ConnectionRetryPolicy(RetryPolicy):
                 timeout_error.history = retry_settings['history']
                 raise
             except ServiceRequestError as err:
+                retry_error = err
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
+                # This logic is based on the _retry.py file from azure-core
                 if retry_settings['connect'] > 0:
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
@@ -314,14 +311,12 @@ class ConnectionRetryPolicy(RetryPolicy):
                 raise err
             except ServiceResponseError as err:
                 retry_error = err
-                # All read operations can be safely retried with ServiceResponseError
-                if _has_read_retryable_headers(request.http_request.headers):
-                    # raise exception immediately to be dealt with in client retry policies
+                # Only read operations can be safely retried with ServiceResponseError
+                if not _has_read_retryable_headers(request.http_request.headers):
                     raise err
-                # In this case, both read and write operations can be safely retried with ConnectionTimeoutError
-                # elif err.exc_type == ConnectTimeout:
-                #     raise err
-                if self._is_method_retryable(retry_settings, request.http_request):
+
+                # This logic is based on the _retry.py file from azure-core
+                if retry_settings['read'] > 0:
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)

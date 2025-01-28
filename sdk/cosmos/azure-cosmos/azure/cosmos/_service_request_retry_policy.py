@@ -72,6 +72,7 @@ class ServiceRequestRetryPolicy(object):
                 if self.request.last_routed_location_endpoint_within_region == self.location_endpoint:
                     # Since both the endpoints (current and previous) are same, we mark them unavailable
                     # and refresh the cache.
+                    print("In service request - Both current and previous are same, marking them unavailable")
                     self.mark_endpoint_unavailable(True)
                     # Although we are not retrying again in this region
                     # but since this is the same endpoint, our in region retries are done for this region
@@ -83,6 +84,7 @@ class ServiceRequestRetryPolicy(object):
                         return False
                     self.location_endpoint = self.resolve_next_region_service_endpoint()
 
+            print("In service request - Location endpoint: {}".format(self.location_endpoint))
             self.request.route_to_location(self.location_endpoint)
         return True
 
@@ -91,6 +93,8 @@ class ServiceRequestRetryPolicy(object):
         # clear previous location-based routing directive
         self.request.clear_route_to_location()
         self.in_region_retry_count += 1
+        print("In service request retry policy - Resolving current region endpoint - in region retry count: {}"
+              .format(self.in_region_retry_count))
         # resolve the next service endpoint in the same region
         # since we maintain 2 endpoints per region for write operations
         self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, True)
@@ -100,6 +104,8 @@ class ServiceRequestRetryPolicy(object):
     def resolve_next_region_service_endpoint(self):
         # This acts as an index for next location in the list of available locations
         # clear previous location-based routing directive
+        print("In service request retry policy - Resolving next region endpoint - failover retry count: {}"
+              .format(self.failover_retry_count))
         self.request.clear_route_to_location()
         # clear the last routed endpoint within same region since we are going to a new region now
         self.request.clear_last_routed_location()
@@ -111,6 +117,7 @@ class ServiceRequestRetryPolicy(object):
         return self.global_endpoint_manager.resolve_service_endpoint(self.request)
 
     def mark_endpoint_unavailable(self, refresh_cache: bool):
+        print("Marking endpoint unavailable - refresh_cache : {}".format(refresh_cache))
         if _OperationType.IsReadOnlyOperation(self.request.operation_type):
             self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.location_endpoint, True)
             self.logger.warning("Marking %s unavailable for read", self.location_endpoint)
