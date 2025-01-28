@@ -9,7 +9,9 @@ from logging import INFO, getLogger
 import flask
 from azure.monitor.opentelemetry import configure_azure_monitor
 
-configure_azure_monitor()
+configure_azure_monitor(
+    logger_name=__name__,
+)
 
 logger = getLogger(__name__)
 logger.setLevel(INFO)
