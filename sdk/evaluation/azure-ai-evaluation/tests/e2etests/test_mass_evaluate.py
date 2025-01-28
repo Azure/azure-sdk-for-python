@@ -76,7 +76,6 @@ class TestMassEvaluate:
     - Multi-modal inputs: This one has some parameters for the different types of multi-modal inputs.
     """
 
-    @pytest.mark.skip("Skipping due to local freezing")
     def test_evaluate_singleton_inputs(self, model_config, azure_cred, project_scope, data_file):
         # qa fails in playback but ONLY when using the pf proxy for some reason, and
         # using it without pf proxy causes CI to hang and timeout after 3 hours.
@@ -214,7 +213,6 @@ class TestMassEvaluate:
         assert metrics["qa.similarity"] >= 0
         assert metrics["qa.gpt_similarity"] >= 0
 
-    @pytest.mark.skip("Skipping due to local freezing")
     def test_evaluate_conversation(self, model_config, data_convo_file, azure_cred, project_scope):
         evaluators = {
             "grounded": GroundednessEvaluator(model_config),
