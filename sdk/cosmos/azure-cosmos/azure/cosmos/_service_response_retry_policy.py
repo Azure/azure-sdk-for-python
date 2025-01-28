@@ -10,7 +10,6 @@ only do cross regional retries for read operations.
 import logging
 from azure.cosmos.documents import _OperationType
 
-# This retry policy is for errors after the request has been sent to the service but some error occurred.
 class ServiceResponseRetryPolicy(object):
 
     def __init__(self, connection_policy, global_endpoint_manager, *args):

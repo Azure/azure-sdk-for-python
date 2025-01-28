@@ -65,39 +65,44 @@ class RegionalEndpoint(object):
         self.current_endpoint = self.previous_endpoint
         self.previous_endpoint = temp
 
-def get_endpoints_by_location(new_locations, old_endpoints_by_location, default_regional_endpoint, writes):
+def get_endpoints_by_location(new_locations,
+                              old_endpoints_by_location,
+                              default_regional_endpoint,
+                              writes,
+                              use_multiple_write_locations):
     # construct from previous object
     endpoints_by_location = collections.OrderedDict()
     parsed_locations = []
 
 
     for new_location in new_locations:
-        if len(old_endpoints_by_location) == 0 or new_location["name"] in old_endpoints_by_location:
-            if not new_location["name"]:
-                # during fail-over the location name is empty
-                continue
-            try:
-                region_uri = new_location["databaseAccountEndpoint"]
-                parsed_locations.append(new_location["name"])
-                if new_location["name"] in old_endpoints_by_location:
-                    regional_object = old_endpoints_by_location[new_location["name"]]
-                    current = regional_object.get_current()
-                    # swap the previous with current and current with new region_uri received from the gateway
-                    if current != region_uri:
-                        regional_object.set_previous(current)
-                        regional_object.set_current(region_uri)
-                # This is the bootstrapping condition
-                else:
-                    regional_object = RegionalEndpoint(region_uri, region_uri)
-                    # if it is for writes, then we update the previous to default_endpoint
-                    if writes:
-                        regional_object = RegionalEndpoint(region_uri, default_regional_endpoint.get_current())
+        # if name in new_location and same for database account endpoint
+        if "name" in new_location and "databaseAccountEndpoint" in new_location:
+            if len(old_endpoints_by_location) == 0 or new_location["name"] in old_endpoints_by_location:
+                if not new_location["name"]:
+                    # during fail-over the location name is empty
+                    continue
+                try:
+                    region_uri = new_location["databaseAccountEndpoint"]
+                    parsed_locations.append(new_location["name"])
+                    if new_location["name"] in old_endpoints_by_location:
+                        regional_object = old_endpoints_by_location[new_location["name"]]
+                        current = regional_object.get_current()
+                        # swap the previous with current and current with new region_uri received from the gateway
+                        if current != region_uri:
+                            regional_object.set_previous(current)
+                            regional_object.set_current(region_uri)
+                    # This is the bootstrapping condition
+                    else:
+                        regional_object = RegionalEndpoint(region_uri, region_uri)
+                        # if it is for writes, then we update the previous to default_endpoint
+                        if writes and not use_multiple_write_locations:
+                            regional_object = RegionalEndpoint(region_uri, default_regional_endpoint.get_current())
 
-                # pass in object with region uri , last known good, curr etc
-                endpoints_by_location.update({new_location["name"]: regional_object})
-            except Exception as e:
-                raise e
-
+                    # pass in object with region uri , last known good, curr etc
+                    endpoints_by_location.update({new_location["name"]: regional_object})
+                except Exception as e:
+                    raise e
 
     return endpoints_by_location, parsed_locations
 
@@ -173,24 +178,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
     # to keep it up to date with the success and failure cases
     def swap_regional_endpoint_values(self, request):
         location_index = int(request.location_index_to_route) if request.location_index_to_route else 0
-        use_preferred_locations = (
-            request.use_preferred_locations if request.use_preferred_locations is not None else True
-        )
-
-        if not use_preferred_locations or (
-                documents._OperationType.IsWriteOperation(request.operation_type)
-                and not self.can_use_multiple_write_locations_for_request(request)
-        ):
-            # For non-document resource types in case of client can use multiple write locations
-            # or when client cannot use multiple write locations, flip-flop between the
-            # first and the second writable region in DatabaseAccount (for manual failover)
-            if self.enable_endpoint_discovery and self.available_write_locations:
-                location_index = min(location_index % 2, len(self.available_write_locations) - 1)
-                write_location = self.available_write_locations[location_index]
-                write_regional_endpoint = self.available_write_regional_endpoints_by_location[write_location]
-                if request.location_endpoint_to_route != write_regional_endpoint.get_current():
-                    write_regional_endpoint.swap()
-
         regional_endpoints = (
             self.get_write_regional_endpoints()
             if documents._OperationType.IsWriteOperation(request.operation_type)
@@ -355,7 +342,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     read_locations,
                     self.available_read_regional_endpoints_by_location,
                     self.default_regional_endpoint,
-                    False
+                    False,
+                    self.use_multiple_write_locations
                 )
 
             if write_locations:
@@ -363,7 +351,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     write_locations,
                     self.available_write_regional_endpoints_by_location,
                     self.default_regional_endpoint,
-                    True
+                    True,
+                    self.use_multiple_write_locations,
                 )
 
         self.write_regional_endpoints = self.get_preferred_available_regional_endpoints(

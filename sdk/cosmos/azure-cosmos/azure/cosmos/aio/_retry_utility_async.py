@@ -24,8 +24,8 @@
 import json
 import time
 import asyncio # pylint: disable=do-not-import-asyncio
-from aiohttp.client_exceptions import ( # pylint: disable=networking-import-outside-azure-core-transport
-    ConnectionTimeoutError, ServerTimeoutError) # pylint: disable=networking-import-outside-azure-core-transport
+# from aiohttp.client_exceptions import ( # pylint: disable=networking-import-outside-azure-core-transport
+#     ConnectionTimeoutError, ServerTimeoutError) # pylint: disable=networking-import-outside-azure-core-transport
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
@@ -202,9 +202,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
-            if e.exc_type == ConnectionTimeoutError:
-                _handle_service_request_retries(client, service_request_retry_policy, e, *args)
-            else:
+            # if e.exc_type == ConnectionTimeoutError:
+            #     _handle_service_request_retries(client, service_request_retry_policy, e, *args)
+            # else:
                 _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 
@@ -265,6 +265,11 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
             except ServiceRequestError as err:
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
+                if retry_settings['connect'] > 0:
+                    retry_active = self.increment(retry_settings, response=request, error=err)
+                    if retry_active:
+                        self.sleep(retry_settings, request.context.transport)
+                        continue
                 raise err
             except ServiceResponseError as err:
                 retry_error = err
@@ -273,8 +278,8 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                     # raise exception immediately to be dealt with in client retry policies
                     raise err
                 # In this case, both read and write operations can be safely retried with ConnectionTimeoutError
-                elif err.exc_type == ConnectionTimeoutError:
-                    raise err
+                # elif err.exc_type == ConnectionTimeoutError:
+                #     raise err
                 if self._is_method_retryable(retry_settings, request.http_request):
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:

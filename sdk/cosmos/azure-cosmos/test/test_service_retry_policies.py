@@ -61,8 +61,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             container.read_item(created_item['id'], created_item['pk'])
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
-            # Should retry twice in each region
-            assert mf.counter == 6
+            assert mf.counter == 3
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
@@ -76,8 +75,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             container.read_item(created_item['id'], created_item['pk'])
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
-            # Should retry twice in each region
-            assert mf.counter == 2
+            assert mf.counter == 1
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
@@ -94,10 +92,9 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             # Should retry twice in each region
-            assert mf.counter == 4
+            assert mf.counter == 2
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
-
 
     def test_service_response_read_timeout_retry(self):
         mock_client = CosmosClient(self.host, self.masterKey)
