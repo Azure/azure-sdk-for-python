@@ -4,7 +4,7 @@
 
 ### Features Added
 
-### Breaking Changes
+* Added support for Chat Completions with audio input. See new sample `sample_chat_completions_with_audio_data.py`.
 
 ### Bugs Fixed
 
