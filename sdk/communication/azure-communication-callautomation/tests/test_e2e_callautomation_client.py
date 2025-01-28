@@ -104,7 +104,7 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
             )
 
         # check returned call connected events
-        connect_call_connected_event = self.check_for_event('CallConnected', connect_call_connection.call_connection_id, timedelta(seconds=20))
+        connect_call_connected_event = self.check_for_event('CallConnected', connect_call_connection.call_connection_id, timedelta(seconds=15))
         if connect_call_connected_event is None:
             raise ValueError("Caller CallConnected event is None")
 
