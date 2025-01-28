@@ -7,7 +7,7 @@
 
 from datetime import datetime
 from typing import (
-    Any, Callable, Dict, Optional, Union,
+    Any, Awaitable, Callable, cast, Dict, Optional, Union,
     TYPE_CHECKING
 )
 
@@ -21,6 +21,8 @@ from .._models import (
     AccessControlChangeFailure,
     AccessControlChangeResult,
     AccessControlChanges,
+    DirectoryProperties,
+    FileProperties,
     LocationMode,
 )
 from .._path_client_helpers import (
@@ -42,10 +44,10 @@ from ._data_lake_lease_async import DataLakeLeaseClient
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._models import ContentSettings, DirectoryProperties, FileProperties
+    from .._models import ContentSettings
 
 
-class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
+class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
     """A base client for interacting with a DataLake file/directory, even if the file/directory may not yet exist.
 
     :param str account_url:
@@ -145,7 +147,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
             path=self.path_name,
             pipeline=self._pipeline
         )
-        client._config.version = self._api_version  # pylint: disable=protected-access
+        client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
         return client
 
     async def __aexit__(self, *args: Any) -> None:
@@ -609,7 +611,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
 
     async def _set_access_control_internal(
         self, options: Dict[str, Any],
-        progress_hook: Optional[Callable[[AccessControlChanges], None]],
+        progress_hook: Optional[Callable[[AccessControlChanges], Awaitable[Any]]],
         max_batches: Optional[int] = None
     ) -> AccessControlChangeResult:
         try:
@@ -650,7 +652,8 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
                             name=failure.name,
                             is_directory=failure.type == 'DIRECTORY',
                             error_message=failure.error_message) for failure in resp.failed_entries],
-                        continuation=last_continuation_token))
+                        continuation=last_continuation_token
+                    ))
 
                 # update the continuation token, if there are more operations that cannot be completed in a single call
                 max_batches_satisfied = (max_batches is not None and batch_count == max_batches)
@@ -738,7 +741,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    async def _get_path_properties(self, **kwargs: Any) -> Union["DirectoryProperties", "FileProperties"]:
+    async def _get_path_properties(self, **kwargs: Any) -> Union[DirectoryProperties, FileProperties]:
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the file or directory. It does not return the content of the directory or file.
 
@@ -791,7 +794,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
             headers['x-ms-upn'] = str(upn)
             kwargs['headers'] = headers
         path_properties = await self._blob_client.get_blob_properties(**kwargs)
-        return path_properties
+        return cast(Union[DirectoryProperties, FileProperties], path_properties)
 
     async def _exists(self, **kwargs: Any) -> bool:
         """
