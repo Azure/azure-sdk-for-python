@@ -241,12 +241,6 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
         """
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)
-        # TODO: remove this once done testing, place a breakpoint on line 239 and step over slowly until line 251
-        if "docs" in request.http_request.url and request.http_request.method == "GET":
-            per_request_timeout = 0.001
-        else:
-            per_request_timeout = 1
-
         retry_error = None
         retry_active = True
         response = None
@@ -288,17 +282,6 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport)
                         continue
-                raise err
-            except ServiceResponseError as err:
-                retry_error = err
-                if err.exc_type in [ConnectionTimeoutError, ServerTimeoutError]:
-                    if _has_read_retryable_headers(request.http_request.headers):
-                            # raise exception immediately to be dealt with in client retry policies
-                            raise err
-                retry_active = self.increment(retry_settings, response=request, error=err)
-                if retry_active:
-                    await self.sleep(retry_settings, request.context.transport)
-                    continue
                 raise err
             except AzureError as err:
                 retry_error = err

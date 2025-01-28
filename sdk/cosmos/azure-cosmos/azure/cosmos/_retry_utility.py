@@ -280,11 +280,6 @@ class ConnectionRetryPolicy(RetryPolicy):
         """
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)
-        # # TODO: remove this once done testing, place a breakpoint on line 259 and step over slowly until line 271
-        # if "docs" in request.http_request.url and request.http_request.method == "GET":
-        #     per_request_timeout = 0.01
-        # else:
-        #     per_request_timeout = 1
 
         retry_error = None
         retry_active = True

@@ -256,6 +256,9 @@ class HttpHeaders:
     ThinClientProxyOperationType = "x-ms-thinclient-proxy-operation-type"
     ThinClientProxyResourceType = "x-ms-thinclient-proxy-resource-type"
 
+    # Client Id header for load balancing
+    ClientId = "x-ms-client-id"
+
 class HttpHeaderPreferenceTokens:
     """Constants of http header preference tokens.
     """

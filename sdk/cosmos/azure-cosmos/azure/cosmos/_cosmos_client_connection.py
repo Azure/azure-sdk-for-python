@@ -25,6 +25,7 @@
 """
 import os
 import urllib.parse
+import uuid
 from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast, Type
 from typing_extensions import TypedDict
 from urllib3.util.retry import Retry
@@ -2555,7 +2556,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             url_connection = self.url_connection
 
         headers = base.GetHeaders(self, self.default_headers, "get", "", "", "",
-                                  documents._OperationType.Read,{})
+                                  documents._OperationType.Read,{}, client_id=str(uuid.uuid4()))
         request_params = RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
         result, last_response_headers = self.__Get("", request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
