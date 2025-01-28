@@ -1,0 +1,64 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "testrg123",
+    "registryName": "registry123",
+    "api-version": "2025-01-01-preview",
+    "modelName": "testContainer",
+    "body": {
+      "properties": {
+        "description": "Model container description",
+        "tags": {
+          "tag1": "value1",
+          "tag2": "value2"
+        }
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/testrg123/providers/Microsoft.MachineLearningServices/registries/registry123/models/testContainer",
+        "name": "testContainer",
+        "type": "Microsoft.MachineLearningServices/registries/models",
+        "properties": {
+          "description": "Model container description",
+          "tags": {
+            "tag1": "value1",
+            "tag2": "value2"
+          }
+        },
+        "systemData": {
+          "createdAt": "2020-12-01T12:00:00.000Z",
+          "createdBy": "John Smith",
+          "createdByType": "User",
+          "lastModifiedAt": "2020-12-01T12:00:00.000Z",
+          "lastModifiedBy": "John Smith",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    "201": {
+      "body": {
+        "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/testrg123/providers/Microsoft.MachineLearningServices/registries/registry123/models/testContainer",
+        "name": "testContainer",
+        "type": "Microsoft.MachineLearningServices/registries/models",
+        "properties": {
+          "description": "Model container description",
+          "tags": {
+            "tag1": "value1",
+            "tag2": "value2"
+          }
+        },
+        "systemData": {
+          "createdAt": "2020-12-01T12:00:00.000Z",
+          "createdBy": "John Smith",
+          "createdByType": "User",
+          "lastModifiedAt": "2020-12-01T12:00:00.000Z",
+          "lastModifiedBy": "John Smith",
+          "lastModifiedByType": "User"
+        }
+      }
+    }
+  }
+}

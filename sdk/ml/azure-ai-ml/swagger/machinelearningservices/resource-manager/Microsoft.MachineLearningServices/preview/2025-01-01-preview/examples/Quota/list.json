@@ -1,0 +1,415 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-0000-0000-0000-000000000000",
+    "location": "eastus",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/quotas/Standard_D_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/vmFamily/quotas",
+            "limit": 48,
+            "name": {
+              "localizedValue": "Standard D Family Cluster Dedicated vCPUs",
+              "value": "Standard D Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace1/quotas/Standard_D_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 12,
+            "name": {
+              "value": "Standard D Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard D Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace2/quotas/Standard_D_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 12,
+            "name": {
+              "value": "Standard D Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard D Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace3/quotas/Standard_D_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 24,
+            "name": {
+              "value": "Standard D Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard D Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/quotas/Standard_DSv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/vmFamily/quota",
+            "limit": 24,
+            "name": {
+              "value": "Standard DSv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard DSv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace1/quotas/Standard_DSv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 24,
+            "name": {
+              "value": "Standard DSv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard DSv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace2/quotas/Standard_DSv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 12,
+            "name": {
+              "value": "Standard DSv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard DSv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace3/quotas/Standard_DSv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 12,
+            "name": {
+              "value": "Standard DSv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard DSv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/quotas/Standard_Dv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/vmFamily/quotas",
+            "limit": 24,
+            "name": {
+              "localizedValue": "Standard Dv2 Family Cluster Dedicated vCPUs",
+              "value": "Standard Dv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace1/quotas/Standard_Dv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 0,
+            "name": {
+              "value": "Standard Dv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard Dv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace2/quotas/Standard_Dv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 24,
+            "name": {
+              "value": "Standard Dv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard Dv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace3/quotas/Standard_Dv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 0,
+            "name": {
+              "value": "Standard Dv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard Dv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/quotas/Standard_FSv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/vmFamily/quotas",
+            "limit": 24,
+            "name": {
+              "value": "Standard FSv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard FSv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace1/quotas/Standard_FSv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 0,
+            "name": {
+              "value": "Standard FSv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard FSv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace2/quotas/Standard_FSv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 24,
+            "name": {
+              "value": "Standard FSv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard FSv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace3/quotas/Standard_FSv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 12,
+            "name": {
+              "value": "Standard FSv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard FSv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/quotas/Standard_NC_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/vmFamily/quotas",
+            "limit": 24,
+            "name": {
+              "localizedValue": "Standard NC Family Cluster Dedicated vCPUs",
+              "value": "Standard NC Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace1/quotas/Standard_NC_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 24,
+            "name": {
+              "value": "Standard NC Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard NC Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace2/quotas/Standard_NC_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 24,
+            "name": {
+              "value": "Standard NC Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard NC Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace3/quotas/Standard_NC_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 24,
+            "name": {
+              "value": "Standard NC Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard NC Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/quotas/Standard_NCv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/vmFamily/quotas",
+            "limit": 0,
+            "name": {
+              "localizedValue": "Standard NCv2 Family Cluster Dedicated vCPUs",
+              "value": "Standard NCv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace1/quotas/Standard_NCv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 0,
+            "name": {
+              "value": "Standard NCv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard NCv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace2/quotas/Standard_NCv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 0,
+            "name": {
+              "value": "Standard NCv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard NCv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace3/quotas/Standard_NCv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 0,
+            "name": {
+              "value": "Standard NCv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard NCv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/quotas/Standard_NCv3_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/vmFamily/quotas",
+            "limit": 0,
+            "name": {
+              "localizedValue": "Standard NCv3 Family Cluster Dedicated vCPUs",
+              "value": "Standard NCv3 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace1/quotas/Standard_NCv3_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 0,
+            "name": {
+              "value": "Standard NCv3 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard NCv3 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace2/quotas/Standard_NCv3_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 0,
+            "name": {
+              "value": "Standard NCv3 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard NCv3 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace3/quotas/Standard_NCv3_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 0,
+            "name": {
+              "value": "Standard NCv3 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard NCv3 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/quotas/Standard_ND_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/vmFamily/quotas",
+            "limit": 0,
+            "name": {
+              "localizedValue": "Standard ND Family Cluster Dedicated vCPUs",
+              "value": "Standard ND Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace1/quotas/Standard_ND_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 0,
+            "name": {
+              "value": "Standard ND Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard ND Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace2/quotas/Standard_ND_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 0,
+            "name": {
+              "value": "Standard ND Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard ND Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace3/quotas/Standard_ND_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 0,
+            "name": {
+              "value": "Standard ND Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard ND Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/quotas/Standard_NDv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/vmFamily/quotas",
+            "limit": 0,
+            "name": {
+              "value": "Standard NDv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard NDv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace1/quotas/Standard_NDv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 0,
+            "name": {
+              "value": "Standard NDv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard NDv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace2/quotas/Standard_NDv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 0,
+            "name": {
+              "value": "Standard NDv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard NDv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace3/quotas/Standard_NDv2_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 0,
+            "name": {
+              "value": "Standard NDv2 Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard NDv2 Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/quotas/Standard_NV_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/vmFamily/quotas",
+            "limit": 24,
+            "name": {
+              "localizedValue": "Standard NV Family Cluster Dedicated vCPUs",
+              "value": "Standard NV Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace1/quotas/Standard_NV_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 24,
+            "name": {
+              "value": "Standard NV Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard NV Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace2/quotas/Standard_NV_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 24,
+            "name": {
+              "value": "Standard NV Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard NV Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          },
+          {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/demo_workspace3/quotas/Standard_NV_Family_Cluster_Dedicated_vCPUs",
+            "type": "Microsoft.MachineLearningServices/workspaces/quotas",
+            "limit": 24,
+            "name": {
+              "value": "Standard NV Family Cluster Dedicated vCPUs",
+              "localizedValue": "Standard NV Family Cluster Dedicated vCPUs"
+            },
+            "unit": "Count"
+          }
+        ]
+      }
+    }
+  }
+}

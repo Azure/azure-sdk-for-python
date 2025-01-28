@@ -1,0 +1,48 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "registryName": "my-aml-registry",
+    "componentName": "string",
+    "api-version": "2025-01-01-preview",
+    "$orderBy": "string",
+    "$top": 1,
+    "$skipToken": "string"
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "value": [
+          {
+            "id": "string",
+            "name": "string",
+            "type": "string",
+            "properties": {
+              "description": "string",
+              "tags": {
+                "string": "string"
+              },
+              "properties": {
+                "string": "string"
+              },
+              "isAnonymous": false,
+              "componentSpec": {
+                "50acbce5-cccc-475a-8ac6-c4da402afbd8": null
+              }
+            },
+            "systemData": {
+              "createdAt": "2020-01-01T12:34:56.999Z",
+              "createdBy": "string",
+              "createdByType": "User",
+              "lastModifiedAt": "2020-01-01T12:34:56.999Z",
+              "lastModifiedBy": "string",
+              "lastModifiedByType": "User"
+            }
+          }
+        ],
+        "nextLink": "string"
+      }
+    }
+  }
+}

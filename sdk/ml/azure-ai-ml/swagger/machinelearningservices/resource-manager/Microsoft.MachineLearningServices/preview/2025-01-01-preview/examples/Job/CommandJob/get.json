@@ -1,0 +1,99 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "id": "string",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "tags": {
+            "string": "string"
+          },
+          "properties": {
+            "string": "string"
+          },
+          "displayName": "string",
+          "status": "NotStarted",
+          "experimentName": "string",
+          "services": {
+            "string": {
+              "jobServiceType": "string",
+              "port": 1,
+              "endpoint": "string",
+              "status": "string",
+              "errorMessage": "string",
+              "properties": {
+                "string": "string"
+              }
+            }
+          },
+          "computeId": "string",
+          "jobType": "Command",
+          "parentJobName": "ParentRun",
+          "resources": {
+            "instanceCount": 1,
+            "instanceType": "string",
+            "properties": {
+              "string": {
+                "8385cf05-78c0-41ef-b31d-36796a678e19": null
+              }
+            }
+          },
+          "codeId": "string",
+          "command": "string",
+          "environmentId": "string",
+          "inputs": {
+            "string": {
+              "description": "string",
+              "jobInputType": "literal",
+              "value": "string"
+            }
+          },
+          "outputs": {
+            "string": {
+              "description": "string",
+              "jobOutputType": "uri_file",
+              "mode": "ReadWriteMount",
+              "uri": "string"
+            }
+          },
+          "distribution": {
+            "distributionType": "TensorFlow",
+            "workerCount": 1,
+            "parameterServerCount": 1
+          },
+          "limits": {
+            "timeout": "PT5M",
+            "jobLimitsType": "Command"
+          },
+          "environmentVariables": {
+            "string": "string"
+          },
+          "identity": {
+            "identityType": "AMLToken"
+          },
+          "parameters": {
+            "string": "string"
+          }
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999Z",
+          "createdBy": "string",
+          "createdByType": "User",
+          "lastModifiedAt": "2020-01-01T12:34:56.999Z",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "User"
+        }
+      }
+    }
+  }
+}

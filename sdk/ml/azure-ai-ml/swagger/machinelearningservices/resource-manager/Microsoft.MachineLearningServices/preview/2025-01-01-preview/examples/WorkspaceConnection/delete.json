@@ -1,0 +1,13 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "resourceGroup-1",
+    "workspaceName": "workspace-1",
+    "connectionName": "connection-1",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {},
+    "204": {}
+  }
+}

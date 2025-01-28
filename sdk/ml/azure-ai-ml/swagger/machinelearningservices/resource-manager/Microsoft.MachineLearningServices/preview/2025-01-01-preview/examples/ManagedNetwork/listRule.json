@@ -1,0 +1,39 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "aml-workspace-name",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/test-rg/providers/Microsoft.MachineLearningServices/workspaces/aml-workspace-name/outboundRules/rule_name_1",
+            "name": "rule_name_1",
+            "type": "workspace/outboundRules",
+            "properties": {
+              "type": "FQDN",
+              "destination": "destination_of_the_fqdn_rule",
+              "status": "Inactive",
+              "category": "Required"
+            }
+          },
+          {
+            "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/test-rg/providers/Microsoft.MachineLearningServices/workspaces/aml-workspace-name/outboundRules/rule_name_2",
+            "name": "rule_name_2",
+            "type": "workspace/outboundRules",
+            "properties": {
+              "type": "FQDN",
+              "destination": "destination_of_the_fqdn_rule",
+              "status": "Inactive",
+              "category": "Required"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

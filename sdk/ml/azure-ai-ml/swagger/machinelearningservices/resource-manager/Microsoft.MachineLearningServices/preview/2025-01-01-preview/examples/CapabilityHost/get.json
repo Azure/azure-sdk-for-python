@@ -1,0 +1,35 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "name": "capabilityHostName",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/test-rg/providers/Microsoft.MachineLearningServices/workspaces/my-aml-workspace/capabilityHosts/capabilityHostName",
+        "name": "capabilityHostName",
+        "type": "Microsoft.MachineLearningServices/workspaces/capabilityHosts",
+        "properties": {
+          "description": "string",
+          "tags": {
+            "string": "string"
+          },
+          "customerSubnet": "subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/myResourceGroups/providers/Microsoft.Network/virtualNetworks/myVnet/subnets/mySubne",
+          "provisioningState": "Succeeded"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999+00:22",
+          "createdBy": "string",
+          "createdByType": "ManagedIdentity",
+          "lastModifiedAt": "2020-01-01T12:34:56.999+00:22",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "ManagedIdentity"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "endpointName": "testEndpointName",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "accessToken": "string",
+        "tokenType": "string",
+        "expiryTimeUtc": 1,
+        "refreshAfterTimeUtc": 1
+      }
+    }
+  }
+}

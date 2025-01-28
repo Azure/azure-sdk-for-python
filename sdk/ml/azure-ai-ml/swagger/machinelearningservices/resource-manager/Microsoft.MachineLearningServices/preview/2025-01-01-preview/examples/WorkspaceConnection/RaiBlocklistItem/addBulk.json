@@ -1,0 +1,42 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "aml-workspace-name",
+    "connectionName": "testConnection",
+    "raiBlocklistName": "raiBlocklistName",
+    "api-version": "2025-01-01-preview",
+    "body": [
+      {
+        "name": "myblocklistitem1",
+        "properties": {
+          "pattern": "^[a-z0-9_-]{2,16}$",
+          "isRegex": true
+        }
+      },
+      {
+        "name": "myblocklistitem2",
+        "properties": {
+          "pattern": "blockwords",
+          "isRegex": false
+        }
+      }
+    ]
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "name": "myblocklist",
+        "properties": {
+          "description": "Brief description of the blocklist"
+        },
+        "etag": "\"00000000-0000-0000-0000-000000000000\""
+      }
+    },
+    "202": {
+      "headers": {
+        "Location": "example_location"
+      }
+    }
+  }
+}

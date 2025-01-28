@@ -1,0 +1,112 @@
+{
+  "parameters": {
+    "subscriptionId": "34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
+    "resourceGroupName": "testrg123",
+    "workspaceName": "workspaces123",
+    "computeName": "compute123",
+    "api-version": "2025-01-01-preview",
+    "parameters": {
+      "location": "eastus",
+      "properties": {
+        "computeType": "ComputeInstance",
+        "properties": {
+          "vmSize": "STANDARD_NC6",
+          "subnet": {
+            "id": "test-subnet-resource-id"
+          },
+          "applicationSharingPolicy": "Personal",
+          "autologgerSettings": {
+            "mlflowAutologger": "Enabled"
+          },
+          "sshSettings": {
+            "sshPublicAccess": "Disabled"
+          },
+          "enableOSPatching": true,
+          "releaseQuotaOnStop": true,
+          "enableSSO": true,
+          "enableRootAccess": true,
+          "customServices": [
+            {
+              "name": "rstudio-workbench",
+              "image": {
+                "type": "docker",
+                "reference": "ghcr.io/azure/rstudio-workbench:latest"
+              },
+              "environmentVariables": {
+                "RSP_LICENSE": {
+                  "type": "local",
+                  "value": "XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX"
+                }
+              },
+              "docker": {
+                "privileged": true
+              },
+              "endpoints": [
+                {
+                  "protocol": "http",
+                  "name": "connect",
+                  "target": 8787,
+                  "published": 4444,
+                  "hostIp": null
+                }
+              ],
+              "volumes": [
+                {
+                  "type": "bind",
+                  "source": "/mnt/azureuser/",
+                  "target": "/home/testuser/",
+                  "readOnly": true
+                }
+              ],
+              "kernel": {
+                "displayName": "TestKernel",
+                "language": "python",
+                "argv": [
+                  "option1",
+                  "option2",
+                  "option3"
+                ]
+              }
+            }
+          ],
+          "computeInstanceAuthorizationType": "personal",
+          "personalComputeInstanceSettings": {
+            "assignedUser": {
+              "objectId": "00000000-0000-0000-0000-000000000000",
+              "tenantId": "00000000-0000-0000-0000-000000000000"
+            }
+          }
+        }
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "id": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/testrg123/providers/Microsoft.MachineLearningServices/workspaces/workspaces123/computes/compute123",
+        "type": "Microsoft.MachineLearningServices/workspaces/computes",
+        "name": "compute123",
+        "location": "eastus",
+        "properties": {
+          "computeType": "ComputeInstance",
+          "provisioningState": "Creating"
+        }
+      }
+    },
+    "201": {
+      "body": {
+        "id": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/testrg123/providers/Microsoft.MachineLearningServices/workspaces/workspaces123/computes/compute123",
+        "type": "Microsoft.MachineLearningServices/workspaces/computes",
+        "name": "compute123",
+        "location": "eastus",
+        "properties": {
+          "computeType": "ComputeInstance",
+          "provisioningState": "Creating"
+        }
+      },
+      "headers": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/...pathToOperationStatus..."
+      }
+    }
+  }
+}

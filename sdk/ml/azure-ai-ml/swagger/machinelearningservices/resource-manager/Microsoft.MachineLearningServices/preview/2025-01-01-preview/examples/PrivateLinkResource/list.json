@@ -1,0 +1,28 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "rg-1234",
+    "workspaceName": "testworkspace",
+    "api-version": "2025-01-01-preview",
+    "monitor": "true"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "value": [
+          {
+            "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/rg-1234/providers/Microsoft.MachineLearningServices/workspaces/testworkspace/privateLinkResources/amlworkspace",
+            "name": "amlworkspace",
+            "type": "Microsoft.MachineLearningServices/workspaces/privateLinkResources",
+            "properties": {
+              "groupId": "amlworkspace",
+              "requiredMembers": [
+                "default"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

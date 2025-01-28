@@ -1,0 +1,149 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "name": "string",
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "properties": {
+        "modelSettings": {
+          "modelId": "string"
+        },
+        "authMode": "Key",
+        "contentSafety": {
+          "contentSafetyStatus": "Enabled",
+          "contentSafetyLevel": "Blocking"
+        }
+      },
+      "tags": {},
+      "location": "string",
+      "kind": "string",
+      "identity": {
+        "type": "SystemAssigned",
+        "userAssignedIdentities": {
+          "string": {}
+        }
+      },
+      "sku": {
+        "name": "string",
+        "tier": "Standard",
+        "size": "string",
+        "family": "string",
+        "capacity": 1
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "modelSettings": {
+            "modelId": "string"
+          },
+          "authMode": "Key",
+          "inferenceEndpoint": {
+            "uri": "https://www.contoso.com/example",
+            "headers": {
+              "string": "string"
+            }
+          },
+          "provisioningState": "Updating",
+          "endpointState": "Deleting",
+          "marketplaceSubscriptionId": "string",
+          "contentSafety": {
+            "contentSafetyStatus": "Disabled"
+          }
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999+00:14",
+          "createdBy": "string",
+          "createdByType": "Application",
+          "lastModifiedAt": "2020-01-01T12:34:56.999+00:14",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "Key"
+        },
+        "tags": {},
+        "location": "string",
+        "kind": "string",
+        "identity": {
+          "type": "UserAssigned",
+          "principalId": "00000000-1111-2222-3333-444444444444",
+          "tenantId": "00000000-1111-2222-3333-444444444444",
+          "userAssignedIdentities": {
+            "string": {
+              "principalId": "00000000-1111-2222-3333-444444444444",
+              "clientId": "00000000-1111-2222-3333-444444444444"
+            }
+          }
+        },
+        "sku": {
+          "name": "string",
+          "tier": "Free",
+          "size": "string",
+          "family": "string",
+          "capacity": 1
+        }
+      }
+    },
+    "201": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "modelSettings": {
+            "modelId": "string"
+          },
+          "authMode": "Key",
+          "inferenceEndpoint": {
+            "uri": "https://www.contoso.com/example",
+            "headers": {
+              "string": "string"
+            }
+          },
+          "provisioningState": "Failed",
+          "endpointState": "Deleting",
+          "marketplaceSubscriptionId": "string",
+          "contentSafety": {
+            "contentSafetyStatus": "Disabled"
+          }
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999+00:14",
+          "createdBy": "string",
+          "createdByType": "ManagedIdentity",
+          "lastModifiedAt": "2020-01-01T12:34:56.999+00:14",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "Key"
+        },
+        "tags": {},
+        "location": "string",
+        "kind": "string",
+        "identity": {
+          "type": "SystemAssigned,UserAssigned",
+          "principalId": "00000000-1111-2222-3333-444444444444",
+          "tenantId": "00000000-1111-2222-3333-444444444444",
+          "userAssignedIdentities": {
+            "string": {
+              "principalId": "00000000-1111-2222-3333-444444444444",
+              "clientId": "00000000-1111-2222-3333-444444444444"
+            }
+          }
+        },
+        "sku": {
+          "name": "string",
+          "tier": "Standard",
+          "size": "string",
+          "family": "string",
+          "capacity": 1
+        }
+      }
+    }
+  }
+}
