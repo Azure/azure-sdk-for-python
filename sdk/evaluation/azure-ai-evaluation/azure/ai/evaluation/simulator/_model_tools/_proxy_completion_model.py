@@ -89,7 +89,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         self.tkey = template_key
         self.tparam = template_parameters
         self.result_url: Optional[str] = None
-        self.simuation_id: Optional[str] = kwargs.get("simulation_id", "")
+        self.simulation_id: Optional[str] = kwargs.get("simulation_id", "")
 
         super().__init__(name=name, **kwargs)
 
