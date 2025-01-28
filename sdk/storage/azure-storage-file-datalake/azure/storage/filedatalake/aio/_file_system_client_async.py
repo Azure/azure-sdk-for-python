@@ -7,7 +7,7 @@
 
 import functools
 from typing import (
-    Union, Optional, Any, Dict,
+    Any, cast, Dict, Optional, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -21,7 +21,6 @@ from azure.storage.blob.aio import ContainerClient
 from .._deserialize import is_file_path, process_storage_error
 from .._file_system_client_helpers import _format_url, _parse_url, _undelete_path_options
 from .._generated.aio import AzureDataLakeStorageRESTAPI
-from .._generated.models import ListBlobsIncludeItem
 from .._models import (
     DeletedPathProperties,
     DirectoryProperties,
@@ -31,8 +30,8 @@ from .._models import (
     PublicAccess
 )
 from .._serialize import convert_dfs_url_to_blob_url, get_api_version
-from .._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from .._shared.base_client import parse_query, StorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._data_lake_file_client_async import DataLakeFileClient
@@ -42,11 +41,12 @@ from ._list_paths_helper import DeletedPathPropertiesPaged, PathPropertiesPaged
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.storage.blob._models import AccessPolicy as BlobAccessPolicy
     from datetime import datetime
     from .._models import AccessPolicy, PathProperties
 
 
-class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
+class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore [misc]
     """A client to interact with a specific file system, even if that file system
     may not yet exist.
 
@@ -147,7 +147,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
             file_system=self.file_system_name,
             pipeline=self._pipeline
         )
-        client._config.version = self._api_version  # pylint: disable=protected-access
+        client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
         return client
 
     def _format_url(self, hostname: str) -> str:
@@ -328,7 +328,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         return await self._container_client.exists(**kwargs)
 
     @distributed_trace_async
-    async def _rename_file_system(self, new_name: str, **kwargs: Any) -> Self:
+    async def _rename_file_system(self, new_name: str, **kwargs: Any) -> "FileSystemClient":
         """Renames a filesystem.
 
         Operation is successful only if the source filesystem exists.
@@ -532,7 +532,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         :rtype: Dict[str, Union[str, datetime]]
         """
         return await self._container_client.set_container_access_policy(
-            signed_identifiers,
+            cast(Dict[str, "BlobAccessPolicy"], signed_identifiers),
             public_access=public_access,
             **kwargs
         )
@@ -940,14 +940,14 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: Returns the DataLake client for the restored soft-deleted path.
-        :rtype: ~azure.storage.file.datalake.aio.DataLakeDirectoryClient
-                or azure.storage.file.datalake.aio.DataLakeFileClient
+        :rtype: ~azure.storage.file.datalake.aio.DataLakeDirectoryClient or
+                ~azure.storage.file.datalake.aio.DataLakeFileClient
         """
         _, url, undelete_source = _undelete_path_options(deleted_path_name, deletion_id, self.url)
 
         pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         path_client = AzureDataLakeStorageRESTAPI(
             url,
@@ -956,7 +956,8 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
             pipeline=pipeline
         )
         try:
-            is_file = await path_client.path.undelete(undelete_source=undelete_source, cls=is_file_path, **kwargs)
+            is_file = cast(bool, await path_client.path.undelete(
+                undelete_source=undelete_source, cls=is_file_path, **kwargs))
             if is_file:
                 return self.get_file_client(deleted_path_name)
             return self.get_directory_client(deleted_path_name)
@@ -998,7 +999,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
             directory_name = str(directory)
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return DataLakeDirectoryClient(self.url, self.file_system_name, directory_name=directory_name,
                                        credential=self._raw_credential,
@@ -1029,12 +1030,12 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
                 :caption: Getting the file client to interact with a specific file.
         """
         if isinstance(file_path, FileProperties):
-            file_path = file_path.get('name')
+            file_path = file_path.name
         else:
             file_path = str(file_path)
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
-            policies=self._pipeline._impl_policies  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
@@ -1070,7 +1071,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._datalake_client_for_blob_operation.file_system.list_blob_hierarchy_segment,
-            showonly=ListBlobsIncludeItem.deleted,
+            showonly="deleted",
             timeout=timeout,
             **kwargs)
         return AsyncItemPaged(

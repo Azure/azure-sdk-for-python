@@ -1170,11 +1170,11 @@ class AccessControlChangeResult(DictMixin):
 
     counters: Optional[AccessControlChangeCounters] = None
     """Contains counts of paths changed from start of the operation."""
-    continuation: str
+    continuation: Optional[str]
     """Continuation token. Value is present when operation is split into 
         multiple batches and can be used to resume progress."""
 
-    def __init__(self, counters: Optional[AccessControlChangeCounters], continuation: str) -> None:
+    def __init__(self, counters: Optional[AccessControlChangeCounters], continuation: Optional[str]) -> None:
         self.counters = counters
         self.continuation = continuation
 
@@ -1208,14 +1208,14 @@ class AccessControlChanges(DictMixin):
     """Contains counts of paths changed from start of the operation."""
     batch_failures: List[AccessControlChangeFailure]
     """List of path entries that failed to update Access Control List within single batch."""
-    continuation: str
+    continuation: Optional[str]
     """An opaque continuation token that may be used to resume the operations in case of failures."""
 
     def __init__(
         self, batch_counters: AccessControlChangeCounters,
         aggregate_counters: AccessControlChangeCounters,
         batch_failures: List[AccessControlChangeFailure],
-        continuation: str
+        continuation: Optional[str]
     ) -> None:
         self.batch_counters = batch_counters
         self.aggregate_counters = aggregate_counters
