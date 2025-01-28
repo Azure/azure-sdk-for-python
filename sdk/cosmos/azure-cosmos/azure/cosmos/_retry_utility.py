@@ -203,12 +203,10 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
-            if e.exc_type == ReadTimeout:
-                _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
-            elif e.exc_type == ConnectTimeout:
+            if e.exc_type == ConnectTimeout:
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
             else:
-                raise
+                _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 def ExecuteFunction(function, *args, **kwargs):
     """Stub method so that it can be used for mocking purposes as well.
@@ -311,10 +309,9 @@ class ConnectionRetryPolicy(RetryPolicy):
                 raise err
             except ServiceResponseError as err:
                 retry_error = err
-                if err.exc_type == ReadTimeout:
-                    if _has_read_retryable_headers(request.http_request.headers):
-                        # raise exception immediately to be dealt with in client retry policies
-                        raise err
+                if _has_read_retryable_headers(request.http_request.headers):
+                    # raise exception immediately to be dealt with in client retry policies
+                    raise err
                 elif err.exc_type == ConnectTimeout:
                     raise err
                 if self._is_method_retryable(retry_settings, request.http_request):
@@ -322,17 +319,6 @@ class ConnectionRetryPolicy(RetryPolicy):
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)
                         continue
-                raise err
-            except ServiceResponseError as err:
-                retry_error = err
-                if err.exc_type in [ReadTimeout, ConnectTimeout]:
-                    if _has_read_retryable_headers(request.http_request.headers):
-                        # raise exception immediately to be dealt with in client retry policies
-                        raise err
-                retry_active = self.increment(retry_settings, response=request, error=err)
-                if retry_active:
-                    self.sleep(retry_settings, request.context.transport)
-                    continue
                 raise err
             except AzureError as err:
                 retry_error = err

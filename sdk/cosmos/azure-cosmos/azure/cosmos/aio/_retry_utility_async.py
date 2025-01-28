@@ -29,7 +29,6 @@ from aiohttp.client_exceptions import ( # pylint: disable=networking-import-outs
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
-from azure.core.pipeline.transport._base import HttpRequest
 
 from .. import exceptions
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
@@ -203,12 +202,10 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
-            if e.exc_type == ServerTimeoutError:
-                _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
-            elif e.exc_type == ConnectionTimeoutError:
+            if e.exc_type == ConnectionTimeoutError:
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
             else:
-                raise
+                _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 
 async def ExecuteFunctionAsync(function, *args, **kwargs):
@@ -271,8 +268,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 raise err
             except ServiceResponseError as err:
                 retry_error = err
-                if err.exc_type == ServerTimeoutError:
-                    if _has_read_retryable_headers(request.http_request.headers):
+                if _has_read_retryable_headers(request.http_request.headers):
                         # raise exception immediately to be dealt with in client retry policies
                         raise err
                 elif err.exc_type == ConnectionTimeoutError:
