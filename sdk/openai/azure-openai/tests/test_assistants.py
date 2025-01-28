@@ -450,7 +450,7 @@ class TestAssistants(AzureRecordedTestCase):
             )
             assert vector_store_file_batch.id
             assert vector_store_file_batch.object == "vector_store.file_batch"
-            assert vector_store_file_batch.created_at
+            assert vector_store_file_batch.created_at is not None
             assert vector_store_file_batch.status
 
             vectors = client.beta.vector_stores.file_batches.list_files(
@@ -460,7 +460,7 @@ class TestAssistants(AzureRecordedTestCase):
             for vector in vectors:
                 assert vector.id
                 assert vector.object == "vector_store.file"
-                assert vector.created_at
+                assert vector.created_at is not None
 
             retrieved_vector_store_file_batch = client.beta.vector_stores.file_batches.retrieve(
                 vector_store_id=vector_store.id,

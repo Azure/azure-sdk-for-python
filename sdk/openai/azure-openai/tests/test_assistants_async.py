@@ -453,17 +453,17 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             )
             assert vector_store_file_batch.id
             assert vector_store_file_batch.object == "vector_store.file_batch"
-            assert vector_store_file_batch.created_at
+            assert vector_store_file_batch.created_at is not None
             assert vector_store_file_batch.status
 
             vectors = await client_async.beta.vector_stores.file_batches.list_files(
                 vector_store_id=vector_store.id,
                 batch_id=vector_store_file_batch.id
             )
-            for vector in vectors:
+            async for vector in vectors:
                 assert vector.id
                 assert vector.object == "vector_store.file"
-                assert vector.created_at
+                assert vector.created_at is not None
 
             retrieved_vector_store_file_batch = await client_async.beta.vector_stores.file_batches.retrieve(
                 vector_store_id=vector_store.id,
