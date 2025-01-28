@@ -252,6 +252,10 @@ class HttpHeaders:
     CosmosQuorumAckedLsn = "x-ms-cosmos-quorum-acked-llsn"  # cspell:disable-line
     RequestDurationMs = "x-ms-request-duration-ms"
 
+    # Thin Client headers
+    ThinClientProxyOperationType = "x-ms-thinclient-proxy-operation-type"
+    ThinClientProxyResourceType = "x-ms-thinclient-proxy-resource-type"
+
 class HttpHeaderPreferenceTokens:
     """Constants of http header preference tokens.
     """
