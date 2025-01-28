@@ -34,20 +34,17 @@ class ServiceResponseRetryPolicy(object):
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
 
-        self.failover_retry_count += 1
-        if self.failover_retry_count >= self.total_retries:
-            return False
-
-        self.in_region_retry_count += 1
-        self.request.last_routed_location_endpoint_within_region = self.request.location_endpoint_to_route
-        # The reason for this check is that we retry on
-        # current and previous regional endpoint for every region before moving to next region
-        if self.in_region_retry_count > 1:
-            self.in_region_retry_count = 0
-            self.failover_retry_count += 1
-            self.request.last_routed_location_endpoint_within_region = None
-
         if self.request:
+            self.in_region_retry_count += 1
+            self.request.last_routed_location_endpoint_within_region = self.request.location_endpoint_to_route
+            # The reason for this check is that we retry on
+            # current and previous regional endpoint for every region before moving to next region
+            if self.in_region_retry_count > 1:
+                self.in_region_retry_count = 0
+                self.failover_retry_count += 1
+                self.request.last_routed_location_endpoint_within_region = None
+            if self.failover_retry_count >= self.total_retries:
+                return False
             if not _OperationType.IsReadOnlyOperation(self.request.operation_type):
                 return False
             # clear previous location-based routing directive

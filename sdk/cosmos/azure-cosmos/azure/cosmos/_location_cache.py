@@ -65,7 +65,7 @@ class RegionalEndpoint(object):
         self.current_endpoint = self.previous_endpoint
         self.previous_endpoint = temp
 
-def get_endpoints_by_location(new_locations, old_endpoints_by_location):
+def get_endpoints_by_location(new_locations, old_endpoints_by_location, default_regional_endpoint, writes):
     # construct from previous object
     endpoints_by_location = collections.OrderedDict()
     parsed_locations = []
@@ -82,12 +82,14 @@ def get_endpoints_by_location(new_locations, old_endpoints_by_location):
                 if new_location["name"] in old_endpoints_by_location:
                     regional_object = old_endpoints_by_location[new_location["name"]]
                     current = regional_object.get_current()
-                    # The aim is to always keep current and previous uris different
                     if current != region_uri:
                         regional_object.set_previous(current)
-                    regional_object.set_current(region_uri)
+                        regional_object.set_current(region_uri)
                 else:
-                    regional_object = RegionalEndpoint(region_uri, region_uri)
+                    if writes:
+                        regional_object = RegionalEndpoint(region_uri, default_regional_endpoint.get_current())
+                    else:
+                        regional_object = RegionalEndpoint(region_uri, region_uri)
 
                 endpoints_by_location.update({new_location["name"]: regional_object}) # pass in object with region uri , last known good, curr etc
 
@@ -216,12 +218,13 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             if self.enable_endpoint_discovery and self.available_write_locations:
                 location_index = min(location_index % 2, len(self.available_write_locations) - 1)
                 write_location = self.available_write_locations[location_index]
-                write_regional_endpoint = self.available_write_regional_endpoints_by_location[write_location]
-                if (request.last_routed_location_endpoint_within_region is not None
-                        and request.last_routed_location_endpoint_within_region == write_regional_endpoint.get_current()):
-                    return write_regional_endpoint.get_previous()
-                return write_regional_endpoint.get_current()
-            return self.default_regional_endpoint.get_current()
+                if self.available_write_locations and write_location in self.available_write_regional_endpoints_by_location:
+                    write_regional_endpoint = self.available_write_regional_endpoints_by_location[write_location]
+                    if (request.last_routed_location_endpoint_within_region is not None
+                            and request.last_routed_location_endpoint_within_region == write_regional_endpoint.get_current()):
+                        return write_regional_endpoint.get_previous()
+                    return write_regional_endpoint.get_current()
+                return self.default_regional_endpoint.get_current()
 
         regional_endpoints = (
             self.get_write_regional_endpoints()
@@ -349,16 +352,18 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             if read_locations:
                 self.available_read_regional_endpoints_by_location, self.available_read_locations = get_endpoints_by_location(  # pylint: disable=line-too-long
                     read_locations,
-                    self.available_read_regional_endpoints_by_location
+                    self.available_read_regional_endpoints_by_location,
+                    self.default_regional_endpoint,
+                    False
                 )
-                print(self.available_read_regional_endpoints_by_location)
 
             if write_locations:
                 self.available_write_regional_endpoints_by_location, self.available_write_locations = get_endpoints_by_location(  # pylint: disable=line-too-long
                     write_locations,
-                    self.available_write_regional_endpoints_by_location
+                    self.available_write_regional_endpoints_by_location,
+                    self.default_regional_endpoint,
+                    True
                 )
-                print(self.available_write_regional_endpoints_by_location)
 
         self.write_regional_endpoints = self.get_preferred_available_regional_endpoints(
             self.available_write_regional_endpoints_by_location,

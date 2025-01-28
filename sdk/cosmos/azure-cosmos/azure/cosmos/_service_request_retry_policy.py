@@ -62,16 +62,18 @@ class ServiceRequestRetryPolicy(object):
                     self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.location_endpoint, refresh_cache)
                     self.logger.warning("Marking %s unavailable for write", self.location_endpoint)
 
-        self.in_region_retry_count += 1
-        self.request.last_routed_location_endpoint_within_region = self.request.location_endpoint_to_route
-        # The reason for this check is that we retry on
-        # current and previous regional endpoint for every region before moving to next region
-        if self.in_region_retry_count > 1:
-            self.in_region_retry_count = 0
-            self.failover_retry_count += 1
-            self.request.last_routed_location_endpoint_within_region = None
+            self.in_region_retry_count += 1
+            self.request.last_routed_location_endpoint_within_region = self.request.location_endpoint_to_route
+            # The reason for this check is that we retry on
+            # current and previous regional endpoint for every region before moving to next region
+            if self.in_region_retry_count > 1:
+                self.in_region_retry_count = 0
+                self.failover_retry_count += 1
+                self.request.last_routed_location_endpoint_within_region = None
 
-        if self.request:
+            if self.failover_retry_count >= self.total_retries:
+                return False
+
             # clear previous location-based routing directive
             self.request.clear_route_to_location()
 
