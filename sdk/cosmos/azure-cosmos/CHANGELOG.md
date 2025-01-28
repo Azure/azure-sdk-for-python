@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.9.2b1 (unreleased)
+### 4.9.1b3 (unreleased)
 
 #### Features Added
 * Improved retry logic by retrying last known good endpoint within a region before performing a cross region retry. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
