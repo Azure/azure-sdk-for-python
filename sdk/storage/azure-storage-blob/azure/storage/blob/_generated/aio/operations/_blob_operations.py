@@ -2287,6 +2287,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         legal_hold: Optional[bool] = None,
         copy_source_authorization: Optional[str] = None,
         copy_source_tags: Optional[Union[str, _models.BlobCopySourceTags]] = None,
+        file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -2344,6 +2345,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          copied or replaced with the tags specified by x-ms-tags. Known values are: "REPLACE" and
          "COPY". Default value is None.
         :type copy_source_tags: str or ~azure.storage.blob.models.BlobCopySourceTags
+        :param file_request_intent: Valid value is backup. "backup" Default value is None.
+        :type file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
@@ -2425,6 +2428,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             copy_source_authorization=copy_source_authorization,
             encryption_scope=_encryption_scope,
             copy_source_tags=copy_source_tags,
+            file_request_intent=file_request_intent,
             x_ms_requires_sync=x_ms_requires_sync,
             version=self._config.version,
             headers=_headers,

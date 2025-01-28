@@ -66,7 +66,7 @@ def build_download_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -147,7 +147,7 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -215,7 +215,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -266,7 +266,7 @@ def build_undelete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -304,7 +304,7 @@ def build_set_expiry_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["expiry"] = kwargs.pop("comp", _params.pop("comp", "expiry"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -355,7 +355,7 @@ def build_set_http_headers_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -426,7 +426,7 @@ def build_set_immutability_policy_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["immutabilityPolicies"] = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -478,7 +478,7 @@ def build_delete_immutability_policy_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["immutabilityPolicies"] = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -521,7 +521,7 @@ def build_set_legal_hold_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["legalhold"] = kwargs.pop("comp", _params.pop("comp", "legalhold"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -573,7 +573,7 @@ def build_set_metadata_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -641,7 +641,7 @@ def build_acquire_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -699,7 +699,7 @@ def build_release_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -754,7 +754,7 @@ def build_renew_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -810,7 +810,7 @@ def build_change_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -866,7 +866,7 @@ def build_break_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -926,7 +926,7 @@ def build_create_snapshot_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["snapshot"] = kwargs.pop("comp", _params.pop("comp", "snapshot"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1005,7 +1005,7 @@ def build_start_copy_from_url_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1102,13 +1102,14 @@ def build_copy_from_url_request(
     copy_source_authorization: Optional[str] = None,
     encryption_scope: Optional[str] = None,
     copy_source_tags: Optional[Union[str, _models.BlobCopySourceTags]] = None,
+    file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     x_ms_requires_sync: Literal["true"] = kwargs.pop("x_ms_requires_sync", _headers.pop("x-ms-requires-sync", "true"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1179,6 +1180,8 @@ def build_copy_from_url_request(
         _headers["x-ms-encryption-scope"] = _SERIALIZER.header("encryption_scope", encryption_scope, "str")
     if copy_source_tags is not None:
         _headers["x-ms-copy-source-tag-option"] = _SERIALIZER.header("copy_source_tags", copy_source_tags, "str")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1200,7 +1203,7 @@ def build_abort_copy_from_url_request(
     copy_action_abort_constant: Literal["abort"] = kwargs.pop(
         "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
     )
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1246,7 +1249,7 @@ def build_set_tier_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["tier"] = kwargs.pop("comp", _params.pop("comp", "tier"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1290,7 +1293,7 @@ def build_get_account_info_request(
 
     restype: Literal["account"] = kwargs.pop("restype", _params.pop("restype", "account"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1339,7 +1342,7 @@ def build_query_request(
 
     comp: Literal["query"] = kwargs.pop("comp", _params.pop("comp", "query"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1403,7 +1406,7 @@ def build_get_tags_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["tags"] = kwargs.pop("comp", _params.pop("comp", "tags"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1454,7 +1457,7 @@ def build_set_tags_request(
 
     comp: Literal["tags"] = kwargs.pop("comp", _params.pop("comp", "tags"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -3718,6 +3721,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         legal_hold: Optional[bool] = None,
         copy_source_authorization: Optional[str] = None,
         copy_source_tags: Optional[Union[str, _models.BlobCopySourceTags]] = None,
+        file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -3775,6 +3779,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          copied or replaced with the tags specified by x-ms-tags. Known values are: "REPLACE" and
          "COPY". Default value is None.
         :type copy_source_tags: str or ~azure.storage.blob.models.BlobCopySourceTags
+        :param file_request_intent: Valid value is backup. "backup" Default value is None.
+        :type file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
@@ -3856,6 +3862,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             copy_source_authorization=copy_source_authorization,
             encryption_scope=_encryption_scope,
             copy_source_tags=copy_source_tags,
+            file_request_intent=file_request_intent,
             x_ms_requires_sync=x_ms_requires_sync,
             version=self._config.version,
             headers=_headers,
