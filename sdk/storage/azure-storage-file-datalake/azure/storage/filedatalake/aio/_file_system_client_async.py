@@ -21,7 +21,6 @@ from azure.storage.blob.aio import ContainerClient
 from .._deserialize import is_file_path, process_storage_error
 from .._file_system_client_helpers import _format_url, _parse_url, _undelete_path_options
 from .._generated.aio import AzureDataLakeStorageRESTAPI
-from .._generated.models import ListBlobsIncludeItem
 from .._models import (
     DeletedPathProperties,
     DirectoryProperties,

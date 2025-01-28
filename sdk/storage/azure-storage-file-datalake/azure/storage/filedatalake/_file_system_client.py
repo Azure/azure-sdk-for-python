@@ -23,7 +23,6 @@ from ._data_lake_lease import DataLakeLeaseClient
 from ._deserialize import is_file_path, process_storage_error
 from ._file_system_client_helpers import _format_url, _parse_url, _undelete_path_options
 from ._generated import AzureDataLakeStorageRESTAPI
-from ._generated.models import ListBlobsIncludeItem
 from ._list_paths_helper import DeletedPathPropertiesPaged, PathPropertiesPaged
 from ._models import (
     DeletedPathProperties,
