@@ -3,7 +3,7 @@
 1P teams need to run Safety Evaluations for DSB review readiness. Currently, onboarding to Azure Safety Evaluations has proven difficult for customers due to the process's complexities**NOTE TO SELF - ADD MORE HERE**. Currently, users need to:
 
 - Identify the relevant `AdversarialScenario` for their use-case
-- Construct an appropraite callback method to manage the interactions between their endpoint and the simulator
+- Construct an appropriate callback method to manage the interactions between their endpoint and the simulator
 - Run the `AdversarialSimulator` to generate the appropriate amount of data for their use-case
 - Convert the outputs to a format that can be evaluated
 - Identify the relevant evaluation metric for their use-case
@@ -31,7 +31,7 @@ The following is an example of usage and output:
 
     credential = DefaultAzureCredential()
 
-    evaluate_dsb_ouputs = evaluate_dsb(
+    evaluate_dsb_outputs = evaluate_dsb(
         adversarial_scenario=AdversarialScenario.ADVERSARIAL_CONVERSATION,
         azure_ai_project=azure_ai_project,
         credential=credential,
