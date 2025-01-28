@@ -6,7 +6,7 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 from typing import (
-    Any, Dict, Optional, Union,
+    Any, cast, Dict, Optional, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -34,6 +34,7 @@ from ._shared.base_client import parse_connection_str, parse_query, StorageAccou
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from datetime import datetime
     from ._models import PublicAccess
 
 
@@ -116,7 +117,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         self._hosts[LocationMode.SECONDARY] = ""
 
         self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
 
     def __enter__(self) -> Self:
         self._blob_service_client.__enter__()
@@ -224,7 +225,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def list_file_systems(
         self, name_starts_with: Optional[str] = None,
-        include_metadata: Optional[bool] = None,
+        include_metadata: bool = False,
         **kwargs: Any
     ) -> ItemPaged[FileSystemProperties]:
         """Returns a generator to list the file systems under the specified account.
@@ -272,7 +273,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             **kwargs
         )
         item_paged._page_iterator_class = FileSystemPropertiesPaged  # pylint: disable=protected-access
-        return item_paged
+        return cast(ItemPaged[FileSystemProperties], item_paged)
 
     @distributed_trace
     def create_file_system(

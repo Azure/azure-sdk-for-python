@@ -24,8 +24,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._deserialize import deserialize_dir_properties
 from .._models import DirectoryProperties, FileProperties
 from .._path_client_helpers import _parse_rename_path
-from .._shared.base_client import parse_connection_str
-from .._shared.base_client_async import AsyncTransportWrapper
+from .._shared.base_client_async import AsyncTransportWrapper, parse_connection_str
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._list_paths_helper import PathPropertiesPaged
 from ._path_client_async import PathClient
@@ -360,7 +359,7 @@ class DataLakeDirectoryClient(PathClient):
         return cast(DirectoryProperties, props)
 
     @distributed_trace_async
-    async def rename_directory(self, new_name: str, **kwargs: Any) -> Self:
+    async def rename_directory(self, new_name: str, **kwargs: Any) -> "DataLakeDirectoryClient":
         """
         Rename the source directory.
 
@@ -444,7 +443,7 @@ class DataLakeDirectoryClient(PathClient):
         self, sub_directory: Union[DirectoryProperties, str],
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Self:
+    ) -> "DataLakeDirectoryClient":
         """
         Create a subdirectory and return the subdirectory client to be interacted with.
 
@@ -527,7 +526,10 @@ class DataLakeDirectoryClient(PathClient):
         return subdir
 
     @distributed_trace_async
-    async def delete_sub_directory(self, sub_directory: Union[DirectoryProperties, str], **kwargs: Any) -> Self:
+    async def delete_sub_directory(
+        self, sub_directory: Union[DirectoryProperties, str],
+        **kwargs: Any
+    ) -> "DataLakeDirectoryClient":
         """
         Marks the specified subdirectory for deletion.
 
@@ -723,15 +725,15 @@ class DataLakeDirectoryClient(PathClient):
             file_path = self.path_name + '/' + str(file)
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return DataLakeFileClient(
             self.url, self.file_system_name, file_path=file_path, credential=self._raw_credential,
             api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=_pipeline)
 
-    def get_sub_directory_client(self, sub_directory: Union[DirectoryProperties, str]) -> Self:
+    def get_sub_directory_client(self, sub_directory: Union[DirectoryProperties, str]) -> "DataLakeDirectoryClient":
         """Get a client to interact with the specified subdirectory of the current directory.
 
         The sub subdirectory need not already exist.
@@ -749,8 +751,8 @@ class DataLakeDirectoryClient(PathClient):
             subdir_path = self.path_name + '/' + str(sub_directory)
 
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # pylint: disable = protected-access
+            transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         return DataLakeDirectoryClient(
             self.url, self.file_system_name, directory_name=subdir_path, credential=self._raw_credential,
