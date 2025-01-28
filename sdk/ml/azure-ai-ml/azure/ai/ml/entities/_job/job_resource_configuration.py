@@ -6,7 +6,7 @@ import json
 import logging
 from typing import Any, Dict, List, Optional, Union, cast
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2025_01_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
@@ -98,7 +98,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     :keyword docker_args: Extra arguments to pass to the Docker run command. This would override any
         parameters that have already been set by the system, or in this section. This parameter is only
         supported for Azure ML compute types.
-    :paramtype docker_args: Optional[str]
+    :paramtype docker_args: Optional[Union[str, List[str]]]
     :keyword shm_size: The size of the docker container's shared memory block. This should be in the
         format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
         b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
@@ -125,7 +125,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         instance_count: Optional[int] = None,
         instance_type: Optional[Union[str, List]] = None,
         properties: Optional[Union[Properties, Dict]] = None,
-        docker_args: Optional[str] = None,
+        docker_args: Optional[Union[str, List[str]]] = None,
         shm_size: Optional[str] = None,
         max_instance_count: Optional[int] = None,
         **kwargs: Any
@@ -169,7 +169,8 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
             instance_type=self.instance_type,
             max_instance_count=self.max_instance_count,
             properties=self.properties.as_dict() if isinstance(self.properties, Properties) else None,
-            docker_args=self.docker_args,
+            docker_args=self.docker_args if isinstance(self.docker_args, str) else None,
+            docker_args_list=None if isinstance(self.docker_args, str) else self.docker_args,
             shm_size=self.shm_size,
         )
 

@@ -4,6 +4,8 @@
 
 from marshmallow import fields, post_load
 
+from azure.ai.ml._schema.core.fields import UnionField
+
 from .resource_configuration import ResourceConfigurationSchema
 
 
@@ -22,7 +24,12 @@ class JobResourceConfigurationSchema(ResourceConfigurationSchema):
     max_instance_count = fields.Int(
         metadata={"description": "The maximum number of instances to make available to this job."}
     )
-    docker_args = fields.Str(metadata={"description": "arguments to pass to the Docker run command."})
+    docker_args = UnionField(
+        [
+            fields.Str(metadata={"description": "arguments to pass to the Docker run command."}),
+            fields.List(fields.Str()),
+        ]
+    )
 
     @post_load
     def make(self, data, **kwargs):
