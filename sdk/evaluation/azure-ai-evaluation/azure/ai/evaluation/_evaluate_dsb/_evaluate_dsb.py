@@ -28,10 +28,12 @@ async def _simulate_dsb(
         azure_ai_project: AzureAIProject,
         target: Callable, 
         adversarial_scenario: AdversarialScenario, 
-        credential: DefaultAzureCredential,
+        credential: TokenCredential,
         max_conversation_turns: int = 1,
         max_simulation_results: int = 3
 ) -> str:
+    
+
     ## Define callback
     async def callback(
         messages: List[Dict],
@@ -43,7 +45,6 @@ async def _simulate_dsb(
         latest_message = messages_list[-1]
         application_input = latest_message["content"]
         latest_context = latest_message.get("context", None)
-
         try:
             response = target(query=application_input)
         except Exception as e:
@@ -83,7 +84,7 @@ async def _simulate_dsb(
 def get_evaluators(
         evaluators: List[DSBEvaluator], 
         azure_ai_project: AzureAIProject,
-        credential: DefaultAzureCredential, 
+        credential: TokenCredential, 
         model_config: Optional[dict] = None
 ) -> Dict[str, Callable]:
     evaluators_dict = {}
@@ -132,7 +133,6 @@ async def evaluate_dsb(
         model_config: Optional[dict] = None,
         output_path: Optional[Union[str, os.PathLike]] = None,
 ) -> EvaluationResult:
-    credential = DefaultAzureCredential()
     ## If `data_path` is not provided, run simulator
     if data_path is None:
         data_path = await _simulate_dsb(
