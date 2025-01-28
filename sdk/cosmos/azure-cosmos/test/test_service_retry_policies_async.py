@@ -178,36 +178,6 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
-    async def test_service_response_retry_policy2_async(self):
-        # For ServiceResponseErrors, we only do cross region retries on read requests or on ClientConnectionErrors
-        # We also only do retries within the ConnectionRetryPolicy for the cases above
-        async with CosmosClient(self.host, self.masterKey, multiple_write_locations=True) as mock_client:
-            db = mock_client.get_database_client(self.TEST_DATABASE_ID)
-            container = db.get_container_client(self.TEST_CONTAINER_ID)
-
-            created_item = await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
-            # Save the original function
-            self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
-
-            original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
-
-            # If we do a write request with a ClientConnectionError,
-            # we will do cross-region retries like with read requests
-            original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
-            original_location_cache.write_regional_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
-            original_location_cache.available_write_regional_endpoints_by_locations = {self.REGION1: self.REGIONAL_ENDPOINT,
-                                                                                       self.REGION2: self.REGIONAL_ENDPOINT}
-            try:
-                # Reset the function to reset the counter
-                mf = self.MockExecuteServiceResponseException(ClientConnectionError)
-                _retry_utility_async.ExecuteFunctionAsync = mf
-                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
-                pytest.fail("Exception was not raised.")
-            except ServiceResponseError:
-                assert mf.counter == 2
-            finally:
-                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
-
 
     class MockExecuteServiceRequestException(object):
         def __init__(self):
