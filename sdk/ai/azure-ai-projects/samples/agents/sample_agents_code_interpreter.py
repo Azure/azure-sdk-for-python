@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_code_interpreter.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with code interpreter from
     the Azure Agents service using a synchronous client.
@@ -17,20 +15,19 @@ USAGE:
 
     pip install azure-ai-projects azure-identity
 
-    Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    Set these environment variables with your own values:
+    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
+       Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+       the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
 import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import CodeInterpreterTool
-from azure.ai.projects.models import FilePurpose
+from azure.ai.projects.models import FilePurpose, MessageRole
 from azure.identity import DefaultAzureCredential
 from pathlib import Path
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
@@ -38,7 +35,7 @@ project_client = AIProjectClient.from_connection_string(
 
 with project_client:
 
-    # upload a file and wait for it to be processed
+    # Upload a file and wait for it to be processed
     # [START upload_file_and_create_agent_with_code_interpreter]
     file = project_client.agents.upload_file_and_poll(
         file_path="nifty_500_quarterly_results.csv", purpose=FilePurpose.AGENTS
@@ -47,9 +44,9 @@ with project_client:
 
     code_interpreter = CodeInterpreterTool(file_ids=[file.id])
 
-    # create agent with code interpreter tool and tools_resources
+    # Create agent with code interpreter tool and tools_resources
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview",
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are helpful assistant",
         tools=code_interpreter.definitions,
@@ -61,7 +58,7 @@ with project_client:
     thread = project_client.agents.create_thread()
     print(f"Created thread, thread ID: {thread.id}")
 
-    # create a message
+    # Create a message
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",
@@ -80,7 +77,7 @@ with project_client:
     print("Deleted file")
 
     # [START get_messages_and_save_files]
-    messages = project_client.agents.get_messages(thread_id=thread.id)
+    messages = project_client.agents.list_messages(thread_id=thread.id)
     print(f"Messages: {messages}")
 
     for image_content in messages.image_contents:
@@ -99,7 +96,7 @@ with project_client:
         print(f"End Index: {file_path_annotation.end_index}")
     # [END get_messages_and_save_files]
 
-    last_msg = messages.get_last_text_message_by_sender("assistant")
+    last_msg = messages.get_last_text_message_by_role(MessageRole.AGENT)
     if last_msg:
         print(f"Last Message: {last_msg.text.value}")
 

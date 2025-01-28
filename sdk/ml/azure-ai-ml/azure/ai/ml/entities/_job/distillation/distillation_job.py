@@ -262,7 +262,7 @@ class DistillationJob(Job, JobIOMixin):
         """
         self._hyperparameters = hyperparameters if hyperparameters is not None else self._hyperparameters
 
-    def _to_dict(self) -> Dict:  # pylint: disable=arguments-differ
+    def _to_dict(self) -> Dict:
         """Convert the object to a dictionary.
 
         :return: dictionary representation of the object.
@@ -334,6 +334,7 @@ class DistillationJob(Job, JobIOMixin):
             "tags": properties.tags,
             "properties": properties.properties,
             "experiment_name": properties.experiment_name,
+            "services": properties.services,
             "status": properties.status,
             "creation_context": obj.system_data,
             "display_name": properties.display_name,
@@ -381,6 +382,7 @@ class DistillationJob(Job, JobIOMixin):
             display_name=self.display_name,
             description=self.description,
             experiment_name=self.experiment_name,
+            services=self.services,
             tags=self.tags,
             properties=self.properties,
             fine_tuning_details=distillation,
@@ -496,17 +498,11 @@ class DistillationJob(Job, JobIOMixin):
     def _restore_inputs(self) -> None:
         """Restore UriFileJobInputs to JobInputs within data_settings."""
         if isinstance(self.training_data, UriFileJobInput):
-            self.training_data = Input(
-                type=AssetTypes.URI_FILE, path=self.training_data.uri  # pylint: disable=no-member
-            )
+            self.training_data = Input(type=AssetTypes.URI_FILE, path=self.training_data.uri)
         if isinstance(self.validation_data, UriFileJobInput):
-            self.validation_data = Input(
-                type=AssetTypes.URI_FILE, path=self.validation_data.uri  # pylint: disable=no-member
-            )
+            self.validation_data = Input(type=AssetTypes.URI_FILE, path=self.validation_data.uri)
         if isinstance(self.student_model, MLFlowModelJobInput):
-            self.student_model = Input(
-                type=AssetTypes.MLFLOW_MODEL, path=self.student_model.uri
-            )  # pylint: disable=no-member
+            self.student_model = Input(type=AssetTypes.MLFLOW_MODEL, path=self.student_model.uri)
 
     def __eq__(self, other: object) -> bool:
         """Returns True if both instances have the same values.

@@ -20,6 +20,7 @@ from .._generated.models import (
     RejectCallRequest,
     StartCallRecordingRequest,
     CallIntelligenceOptions,
+    CustomCallingContext,
     ConnectRequest
 )
 from .._models import (
@@ -32,6 +33,7 @@ from .._models import (
 )
 from ._content_downloader_async import ContentDownloader
 from .._utils import (
+    build_external_storage,
     serialize_phone_identifier,
     serialize_identifier,
     serialize_communication_user_identifier,
@@ -40,11 +42,7 @@ from .._utils import (
     process_repeatability_first_sent
 )
 if TYPE_CHECKING:
-    from .._models  import (
-        ServerCallLocator,
-        GroupCallLocator,
-        RoomCallLocator
-    )
+    from .._models import ServerCallLocator, GroupCallLocator, MediaStreamingConfiguration, TranscriptionConfiguration
     from azure.core.credentials_async import (
         AsyncTokenCredential,
     )
@@ -82,13 +80,14 @@ class CallAutomationClient:
     :paramtype source: ~azure.communication.callautomation.CommunicationUserIdentifier
     """
     def __init__(
-            self,
-            endpoint: str,
-            credential: Union['AsyncTokenCredential', 'AzureKeyCredential'],
-            *,
-            api_version: Optional[str] = None,
-            source: Optional['CommunicationUserIdentifier'] = None,
-            **kwargs
+        self,
+        endpoint: str,
+        credential: Union["AsyncTokenCredential", "AzureKeyCredential"],
+        *,
+        api_version: Optional[str] = None,
+        source: Optional["CommunicationUserIdentifier"] = None,
+        ops_source: Optional["MicrosoftTeamsAppIdentifier"] = None,
+        **kwargs,
     ) -> None:
         if not credential:
             raise ValueError("credential can not be None")
@@ -154,117 +153,6 @@ class CallAutomationClient:
             **kwargs
         )
 
-    @overload
-    async def connect_call(
-        self,
-        callback_url: str,
-        *,
-        server_call_id: str,
-        cognitive_services_endpoint: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        **kwargs
-    ) -> CallConnectionProperties:
-        """The request payload for creating a connection to a room CallLocator.
-        All required parameters must be populated in order to send to server.
-        :param callback_url: The call back url where callback events are sent. Required
-        :type callback_url: str
-        :keyword server_call_id: The server call ID to locate ongoing call.
-        :paramtype server_call_id: str
-        :keyword cognitive_services_endpoint:
-         The identifier of the Cognitive Service resource assigned to this call.
-        :paramtype cognitive_services_endpoint: str or None
-        :keyword operation_context: Value that can be used to track the call and its associated events.
-        :paramtype operation_context: str or None
-        :return: CallConnectionProperties
-        :rtype: ~azure.communication.callautomation.CallConnectionProperties
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def connect_call(
-        self,
-        callback_url: str,
-        *,
-        group_call_id: str,
-        cognitive_services_endpoint: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        **kwargs
-    ) -> CallConnectionProperties:
-        """The request payload for creating a connection to a room CallLocator.
-        All required parameters must be populated in order to send to server.
-        :param callback_url: The call back url where callback events are sent. Required
-        :type callback_url: str
-        :keyword group_call_id: The group call ID to locate ongoing call.
-        :paramtype group_call_id: str
-        :keyword cognitive_services_endpoint:
-         The identifier of the Cognitive Service resource assigned to this call.
-        :paramtype cognitive_services_endpoint: str or None
-        :keyword operation_context: Value that can be used to track the call and its associated events.
-        :paramtype operation_context: str or None
-        :return: CallConnectionProperties
-        :rtype: ~azure.communication.callautomation.CallConnectionProperties
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def connect_call(
-        self,
-        callback_url: str,
-        *,
-        room_id: str,
-        cognitive_services_endpoint: Optional[str] = None,
-        operation_context: Optional[str] = None,
-        **kwargs
-    ) -> CallConnectionProperties:
-        """The request payload for creating a connection to a room CallLocator.
-        All required parameters must be populated in order to send to server.
-        :param callback_url: The call back url where callback events are sent. Required
-        :type callback_url: str
-        :keyword room_id: Acs room id. Required
-        :paramtype room_id: str
-        :keyword cognitive_services_endpoint:
-         The identifier of the Cognitive Service resource assigned to this call.
-        :paramtype cognitive_services_endpoint: str or None
-        :keyword operation_context: Value that can be used to track the call and its associated events.
-        :paramtype operation_context: str or None
-        :return: CallConnectionProperties
-        :rtype: ~azure.communication.callautomation.CallConnectionProperties
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def connect_call(
-        self,
-        callback_url: str,
-        **kwargs
-    ) -> CallConnectionProperties:
-
-        cognitive_services_endpoint=kwargs.pop("cognitive_services_endpoint", None)
-        call_intelligence_options = CallIntelligenceOptions(
-            cognitive_services_endpoint=cognitive_services_endpoint
-            ) if cognitive_services_endpoint else None
-
-        call_locator = build_call_locator(
-            kwargs.pop("call_locator", None),
-            kwargs.pop("server_call_id", None),
-            kwargs.pop("group_call_id", None),
-            kwargs.pop("room_id", None)
-        )
-        connect_call_request = ConnectRequest(
-            call_locator=call_locator,
-            callback_uri=callback_url,
-            operation_context=kwargs.pop("operation_context", None),
-            call_intelligence_options=call_intelligence_options
-        )
-
-        process_repeatability_first_sent(kwargs)
-        result = await self._client.connect(
-            connect_call_request=connect_call_request,
-            **kwargs
-        )
-
-        return CallConnectionProperties._from_generated(result)  # pylint:disable=protected-access
-
     @distributed_trace_async
     async def create_call(
         self,
@@ -275,7 +163,11 @@ class CallAutomationClient:
         source_display_name: Optional[str] = None,
         operation_context: Optional[str] = None,
         cognitive_services_endpoint: Optional[str] = None,
-        **kwargs
+        sip_headers: Optional[Dict[str, str]] = None,
+        voip_headers: Optional[Dict[str, str]] = None,
+        media_streaming_configuration: Optional["MediaStreamingConfiguration"] = None,
+        transcription_configuration: Optional["TranscriptionConfiguration"] = None,
+        **kwargs,
     ) -> CallConnectionProperties:
         """Create a call connection request to a target identity.
 
@@ -295,6 +187,16 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
+        :keyword sip_headers: Sip Headers for PSTN Call
+        :paramtype sip_headers: Dict[str, str] or None
+        :keyword voip_headers: Voip Headers for Voip Call
+        :paramtype voip_headers: Dict[str, str] or None
+        :keyword media_streaming_configuration: Media Streaming Configuration.
+        :paramtype media_streaming_configuration: ~azure.communication.callautomation.MediaStreamingConfiguration
+         or None
+        :keyword transcription_configuration: Configuration of live transcription.
+        :paramtype transcription_configuration: ~azure.communication.callautomation.TranscriptionConfiguration
+         or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -313,14 +215,21 @@ class CallAutomationClient:
             targets = [serialize_identifier(p) for p in target_participant]
         except TypeError:
             targets = [serialize_identifier(target_participant)]
+        media_config = media_streaming_configuration.to_generated() if media_streaming_configuration else None
+        transcription_config = transcription_configuration.to_generated() if transcription_configuration else None
         create_call_request = CreateCallRequest(
             targets=targets,
             callback_uri=callback_url,
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             source_display_name=source_display_name,
             source=serialize_communication_user_identifier(self.source),
+            ops_source=serialize_msft_teams_app_identifier(self.ops_source),
             operation_context=operation_context,
-            call_intelligence_options=call_intelligence_options
+            media_streaming_configuration=media_config,
+            transcription_configuration=transcription_config,
+            cognitive_services_endpoint=cognitive_services_endpoint,
+            CustomCallingContext=user_custom_context,
+            call_intelligence_options=call_intelligence_options,
         )
         process_repeatability_first_sent(kwargs)
         result = await self._client.create_call(
@@ -386,7 +295,9 @@ class CallAutomationClient:
         *,
         cognitive_services_endpoint: Optional[str] = None,
         operation_context: Optional[str] = None,
-        **kwargs
+        media_streaming_configuration: Optional["MediaStreamingConfiguration"] = None,
+        transcription_configuration: Optional["TranscriptionConfiguration"] = None,
+        **kwargs,
     ) -> CallConnectionProperties:
         """Answer incoming call with Azure Communication Service's IncomingCall event
         Retrieving IncomingCall event can be set on Azure Communication Service's Azure Portal.
@@ -401,10 +312,23 @@ class CallAutomationClient:
         :paramtype cognitive_services_endpoint: str
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
+        :keyword media_streaming_configuration: Media Streaming Configuration.
+        :paramtype media_streaming_configuration: ~azure.communication.callautomation.MediaStreamingConfiguration
+        :keyword transcription_configuration: Configuration of live transcription.
+        :paramtype transcription_configuration: ~azure.communication.callautomation.TranscriptionConfiguration
+         or None
+        :keyword media_streaming_configuration: Media Streaming Configuration.
+        :paramtype media_streaming_configuration: ~azure.communication.callautomation.MediaStreamingConfiguration
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        call_intelligence_options = (
+            CallIntelligenceOptions(cognitive_services_endpoint=cognitive_services_endpoint)
+            if cognitive_services_endpoint
+            else None
+        )
+
         call_intelligence_options = CallIntelligenceOptions(
             cognitive_services_endpoint=cognitive_services_endpoint
         ) if cognitive_services_endpoint else None
@@ -412,10 +336,17 @@ class CallAutomationClient:
         answer_call_request = AnswerCallRequest(
             incoming_call_context=incoming_call_context,
             callback_uri=callback_url,
-            answered_by=serialize_communication_user_identifier(
-                self.source) if self.source else None,
+            media_streaming_configuration=(
+                media_streaming_configuration.to_generated() if media_streaming_configuration else None
+            ),
+            transcription_configuration=(
+                transcription_configuration.to_generated() if transcription_configuration else None
+            ),
+            cognitive_services_endpoint=cognitive_services_endpoint,
+            answered_by=serialize_communication_user_identifier(self.source) if self.source else None,
             call_intelligence_options=call_intelligence_options,
             operation_context=operation_context,
+            custom_calling_context=user_custom_context
         )
 
         process_repeatability_first_sent(kwargs)
@@ -530,10 +461,12 @@ class CallAutomationClient:
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
         :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
-        :keyword recording_storage: Defines the kind of external storage. Known values are:
-          ``AzureCommunicationsRecordingStorage`` and ``AzureBlobContainerRecordingStorage``.
-          If no storage option is provided, the default is Azure Communications recording storage.
-        :paramtype recording_storage: AzureCommunicationsRecordingStorage or AzureBlobContainerRecordingStorage or None
+        :keyword recording_storage_type: Recording storage mode.
+         ``External`` enables bring your own storage.
+        :paramtype recording_storage_type: str or None
+        :keyword external_storage_location: The location where recording is stored,
+         when RecordingStorageKind is set to 'AzureBlobStorage'.
+        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None
         :return: RecordingProperties
@@ -581,60 +514,12 @@ class CallAutomationClient:
          'channel' will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
         :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
-        :keyword recording_storage: Defines the kind of external storage. Known values are:
-          ``AzureCommunicationsRecordingStorage`` and ``AzureBlobContainerRecordingStorage``.
-          If no storage option is provided, the default is Azure Communications recording storage.
-        :paramtype recording_storage: AzureCommunicationsRecordingStorage or AzureBlobContainerRecordingStorage or None
-        :keyword pause_on_start: The state of the pause on start option.
-        :paramtype pause_on_start: bool or None
-        :return: RecordingProperties
-        :rtype: ~azure.communication.callautomation.RecordingProperties
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def start_recording(
-        self,
-        *,
-        room_id: str,
-        recording_state_callback_url: Optional[str] = None,
-        recording_content_type: Optional[Union[str, 'RecordingContent']] = None,
-        recording_channel_type: Optional[Union[str, 'RecordingChannel']] = None,
-        recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
-        audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
-        channel_affinity: Optional[List['ChannelAffinity']] = None,
-        recording_storage: Optional[Union['AzureCommunicationsRecordingStorage',
-                                          'AzureBlobContainerRecordingStorage']] = None,
-        pause_on_start: Optional[bool] = None,
-        **kwargs
-    ) -> RecordingProperties:
-        """Start recording for a ongoing call. Locate the call with call locator.
-        :keyword str room_id: The acs room id to locate ongoing call.
-        :keyword recording_state_callback_url: The url to send notifications to.
-        :paramtype recording_state_callback_url: str or None
-        :keyword recording_content_type: The content type of call recording.
-        :paramtype recording_content_type: str or ~azure.communication.callautomation.RecordingContent or None
-        :keyword recording_channel_type: The channel type of call recording.
-        :paramtype recording_channel_type: str or ~azure.communication.callautomation.RecordingChannel or None
-        :keyword recording_format_type: The format type of call recording.
-        :paramtype recording_format_type: str or ~azure.communication.callautomation.RecordingFormat or None
-        :keyword audio_channel_participant_ordering:
-         The sequential order in which audio channels are assigned to participants in the unmixed recording.
-         When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not specified,
-         the audio channel to participant mapping will be automatically assigned based on the order in
-         which participant first audio was detected.
-         Channel to participant mapping details can be found in the metadata of the recording.
-        :paramtype audio_channel_participant_ordering:
-         list[~azure.communication.callautomation.CommunicationIdentifier] or None
-        :keyword channel_affinity: The channel affinity of call recording
-         When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
-         'channel' will be automatically assigned.
-         Channel-Participant mapping details can be found in the metadata of the recording.
-        :paramtype channel_affinity: list[~azure.communication.callautomation.ChannelAffinity] or None
-        :keyword recording_storage: Defines the kind of external storage. Known values are:
-          ``AzureCommunicationsRecordingStorage`` and ``AzureBlobContainerRecordingStorage``.
-          If no storage option is provided, the default is Azure Communications recording storage.
-        :paramtype recording_storage: AzureCommunicationsRecordingStorage or AzureBlobContainerRecordingStorage or None
+        :keyword recording_storage_type: Recording storage mode.
+         ``External`` enables bring your own storage.
+        :paramtype recording_storage_type: str or None
+        :keyword external_storage_location: The location where recording is stored,
+         when RecordingStorageType is set to 'AzureBlobStorage'.
+        :paramtype external_storage_location: str or ~azure.communication.callautomation.RecordingStorage or None
         :keyword pause_on_start: The state of the pause on start option.
         :paramtype pause_on_start: bool or None
         :return: RecordingProperties
@@ -655,14 +540,10 @@ class CallAutomationClient:
             kwargs.pop("call_locator", None),
             kwargs.pop("server_call_id", None),
             kwargs.pop("group_call_id", None),
-            kwargs.pop("room_id", None),
-            args
         )
-
-        external_storage = build_external_storage(kwargs.pop("recording_storage", None))
-
         start_recording_request = StartCallRecordingRequest(
-            call_locator=call_locator,
+            call_locator=call_locator if call_locator else None,
+            call_connection_id=call_connection_id if call_connection_id else None,
             recording_state_callback_uri=kwargs.pop("recording_state_callback_url", None),
             recording_content_type=kwargs.pop("recording_content_type", None),
             recording_channel_type=kwargs.pop("recording_channel_type", None),

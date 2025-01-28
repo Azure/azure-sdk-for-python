@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the audio format used for encoding, including sample rate and channel type."""
+
+    PCM16_K_MONO = "Pcm16KMono"
+    """Pcm16KMono"""
+    PCM24_K_MONO = "Pcm24KMono"
+    """Pcm24KMono"""
+
+
 class CallConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of the call connection."""
 
@@ -76,6 +85,49 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     D = "d"
     POUND = "pound"
     ASTERISK = "asterisk"
+
+
+class MediaStreamingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MediaStreamingStatus."""
+
+    MEDIA_STREAMING_STARTED = "mediaStreamingStarted"
+    MEDIA_STREAMING_FAILED = "mediaStreamingFailed"
+    MEDIA_STREAMING_STOPPED = "mediaStreamingStopped"
+    UNSPECIFIED_ERROR = "unspecifiedError"
+
+
+class MediaStreamingStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MediaStreamingStatusDetails."""
+
+    SUBSCRIPTION_STARTED = "subscriptionStarted"
+    STREAM_CONNECTION_REESTABLISHED = "streamConnectionReestablished"
+    STREAM_CONNECTION_UNSUCCESSFUL = "streamConnectionUnsuccessful"
+    STREAM_URL_MISSING = "streamUrlMissing"
+    SERVICE_SHUTDOWN = "serviceShutdown"
+    STREAM_CONNECTION_INTERRUPTED = "streamConnectionInterrupted"
+    SPEECH_SERVICES_CONNECTION_ERROR = "speechServicesConnectionError"
+    SUBSCRIPTION_STOPPED = "subscriptionStopped"
+    UNSPECIFIED_ERROR = "unspecifiedError"
+    AUTHENTICATION_FAILURE = "authenticationFailure"
+    BAD_REQUEST = "badRequest"
+    TOO_MANY_REQUESTS = "tooManyRequests"
+    FORBIDDEN = "forbidden"
+    SERVICE_TIMEOUT = "serviceTimeout"
+    INITIAL_WEB_SOCKET_CONNECTION_FAILED = "initialWebSocketConnectionFailed"
+
+
+class MediaStreamingSubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Media streaming subscription state."""
+
+    DISABLED = "disabled"
+    INACTIVE = "inactive"
+    ACTIVE = "active"
+
+
+class MediaStreamingTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of transport to be used for media streaming, eg. Websocket."""
+
+    WEBSOCKET = "websocket"
 
 
 class PlaySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -152,6 +204,58 @@ class RecordingStorageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage managed by Azure Communication Services"""
     AZURE_BLOB_STORAGE = "AzureBlobStorage"
     """Storage managed by provided Azure blob"""
+
+
+class TranscriptionResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TranscriptionResultType."""
+
+    FINAL = "final"
+    INTERMEDIATE = "intermediate"
+
+
+class TranscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TranscriptionStatus."""
+
+    TRANSCRIPTION_STARTED = "transcriptionStarted"
+    TRANSCRIPTION_FAILED = "transcriptionFailed"
+    TRANSCRIPTION_RESUMED = "transcriptionResumed"
+    TRANSCRIPTION_UPDATED = "transcriptionUpdated"
+    TRANSCRIPTION_STOPPED = "transcriptionStopped"
+    UNSPECIFIED_ERROR = "unspecifiedError"
+
+
+class TranscriptionStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TranscriptionStatusDetails."""
+
+    SUBSCRIPTION_STARTED = "subscriptionStarted"
+    STREAM_CONNECTION_REESTABLISHED = "streamConnectionReestablished"
+    STREAM_CONNECTION_UNSUCCESSFUL = "streamConnectionUnsuccessful"
+    STREAM_URL_MISSING = "streamUrlMissing"
+    SERVICE_SHUTDOWN = "serviceShutdown"
+    STREAM_CONNECTION_INTERRUPTED = "streamConnectionInterrupted"
+    SPEECH_SERVICES_CONNECTION_ERROR = "speechServicesConnectionError"
+    SUBSCRIPTION_STOPPED = "subscriptionStopped"
+    UNSPECIFIED_ERROR = "unspecifiedError"
+    AUTHENTICATION_FAILURE = "authenticationFailure"
+    BAD_REQUEST = "badRequest"
+    TOO_MANY_REQUESTS = "tooManyRequests"
+    FORBIDDEN = "forbidden"
+    SERVICE_TIMEOUT = "serviceTimeout"
+    TRANSCRIPTION_LOCALE_UPDATED = "transcriptionLocaleUpdated"
+
+
+class TranscriptionSubscriptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Transcription subscription state."""
+
+    DISABLED = "disabled"
+    INACTIVE = "inactive"
+    ACTIVE = "active"
+
+
+class TranscriptionTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of transport to be used for live transcription, eg. Websocket."""
+
+    WEBSOCKET = "websocket"
 
 
 class VoiceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):

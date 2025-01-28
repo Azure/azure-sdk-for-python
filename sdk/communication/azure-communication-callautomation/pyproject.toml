@@ -3,3 +3,4 @@ mypy = false
 pyright = false
 verifytypes = false
 type_check_samples = false
+verifytypes = false

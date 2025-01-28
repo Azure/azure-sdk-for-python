@@ -19,16 +19,14 @@ from ._models import (
     AddParticipantResult,
     RemoveParticipantResult,
     TransferCallResult,
+    MediaStreamingOptions,
+    TranscriptionOptions,
     ChannelAffinity,
     MuteParticipantResult,
     SendDtmfTonesResult,
     CancelAddParticipantOperationResult,
-    CallInvite,
-    ServerCallLocator,
-    GroupCallLocator,
-    RoomCallLocator,
     AzureBlobContainerRecordingStorage,
-    AzureCommunicationsRecordingStorage
+    AzureCommunicationsRecordingStorage,
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -51,7 +49,8 @@ from ._generated.models._enums import (
     DtmfTone,
     CallConnectionState,
     RecordingState,
-    VoiceKind
+    VoiceKind,
+    AudioFormat
 )
 
 __all__ = [
@@ -65,6 +64,8 @@ __all__ = [
     "SsmlSource",
     "RecognitionChoice",
     "ChannelAffinity",
+    "MediaStreamingOptions",
+    "TranscriptionOptions",
     "AzureBlobContainerRecordingStorage",
     "AzureCommunicationsRecordingStorage",
 
@@ -101,12 +102,7 @@ __all__ = [
     "CallConnectionState",
     "RecordingState",
     "VoiceKind",
-
-    # deprecated models
-    "CallInvite",
-    "ServerCallLocator",
-    "GroupCallLocator",
-    "RoomCallLocator",
+    "AudioFormat"
 ]
 __version__ = VERSION
 

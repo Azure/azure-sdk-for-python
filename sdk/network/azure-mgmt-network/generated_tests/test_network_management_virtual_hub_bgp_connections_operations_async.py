@@ -21,11 +21,11 @@ class TestNetworkManagementVirtualHubBgpConnectionsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_virtual_hub_bgp_connections_list(self, resource_group):
         response = self.client.virtual_hub_bgp_connections.list(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestNetworkManagementVirtualHubBgpConnectionsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_list_learned_routes(self, resource_group):
+    async def test_virtual_hub_bgp_connections_begin_list_learned_routes(self, resource_group):
         response = await (
             await self.client.virtual_hub_bgp_connections.begin_list_learned_routes(
                 resource_group_name=resource_group.name,
                 hub_name="str",
                 connection_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -48,13 +48,13 @@ class TestNetworkManagementVirtualHubBgpConnectionsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_list_advertised_routes(self, resource_group):
+    async def test_virtual_hub_bgp_connections_begin_list_advertised_routes(self, resource_group):
         response = await (
             await self.client.virtual_hub_bgp_connections.begin_list_advertised_routes(
                 resource_group_name=resource_group.name,
                 hub_name="str",
                 connection_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

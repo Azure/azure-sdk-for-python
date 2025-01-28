@@ -1,14 +1,19 @@
 # Release History
 
-## 5.13.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 5.13.1 (2025-02-11)
 
 ### Bugs Fixed
 
+- Fix to handle websocket disconnect/close on aiohttp, as aiohttp raises a `TypeError` while asserting bytes. ([#32061](https://github.com/Azure/azure-sdk-for-python/pull/32061))
+- Fixed a bug where pyAMQP was doubly retrying, causing latency on reconnect. ([#39037](https://github.com/Azure/azure-sdk-for-python/pull/39037))
+- Fix to handle large messages being sent twice due to incoming flow frames triggering a resend. ([#38067](https://github.com/Azure/azure-sdk-for-python/pull/38067))
+- Missing await in sender async on pyAMQP. ([#39182](https://github.com/Azure/azure-sdk-for-python/pull/39182))
+
 ### Other Changes
+
+- Updates to the Event Hubs Troubleshooting guidelines
+- Updates to mypy/pylint
+- Removed python 2.7 code ([#38735](https://github.com/Azure/azure-sdk-for-python/pull/38735))
 
 ## 5.13.0 (2024-11-12)
 
@@ -577,7 +582,7 @@ after which the underlying connection will close if there is no further activity
 **Breaking changes**
 
 - Removed support for IoT Hub direct connection.
-    - [EventHubs compatible connection string](https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messages-read-builtin) of an IotHub can be used to create `EventHubClient` and read properties or events from an IoT Hub.
+    - [EventHubs compatible connection string](https://learn.microsoft.com/azure/iot-hub/iot-hub-devguide-messages-read-builtin) of an IotHub can be used to create `EventHubClient` and read properties or events from an IoT Hub.
 - Removed support for sending EventData to IoT Hub.
 - Removed parameter `exception` in method `close()` of `EventHubConsumer` and `EventHubProcuer`.
 - Updated uAMQP dependency to 1.2.3.
@@ -616,7 +621,7 @@ after which the underlying connection will close if there is no further activity
     - `backoff_max`: The maximum delay time in total.
 - Added support for context manager on `EventHubClient`.
 - Added new error type `OperationTimeoutError` for send operation.
-- Introduced a new class `EventProcessor` which replaces the older concept of [Event Processor Host](https://docs.microsoft.com/azure/event-hubs/event-hubs-event-processor-host). This early preview is intended to allow users to test the new design using a single instance of `EventProcessor`. The ability to checkpoints to a durable store will be added in future updates.
+- Introduced a new class `EventProcessor` which replaces the older concept of [Event Processor Host](https://learn.microsoft.com/azure/event-hubs/event-hubs-event-processor-host). This early preview is intended to allow users to test the new design using a single instance of `EventProcessor`. The ability to checkpoints to a durable store will be added in future updates.
     - `EventProcessor`: EventProcessor creates and runs consumers for all partitions of the eventhub.
     - `PartitionManager`: PartitionManager defines the interface for getting/claiming ownerships of partitions and updating checkpoints.
     - `PartitionProcessor`: PartitionProcessor defines the interface for processing events.

@@ -46,8 +46,14 @@ from ._generated.models import (
     MuteParticipantsRequest,
     CancelAddParticipantRequest,
     CustomCallingContext,
+    StartTranscriptionRequest,
+    StopTranscriptionRequest,
+    UpdateTranscriptionRequest,
     HoldRequest,
-    UnholdRequest
+    UnholdRequest,
+    StartMediaStreamingRequest,
+    StopMediaStreamingRequest,
+    InterruptAudioAndAnnounceRequest,
 )
 from ._generated.models._enums import RecognizeInputType
 from ._shared.auth_policy_utils import get_authentication_policy
@@ -492,6 +498,86 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
                            List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
+        *,
+        loop: bool = False,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Play media to specific participant(s) in this call.
+
+        :param play_source: A PlaySource representing the source to play.
+        :type play_source: ~azure.communication.callautomation.FileSource or
+         ~azure.communication.callautomation.TextSource or
+         ~azure.communication.callautomation.SsmlSource or
+         list[~azure.communication.callautomation.FileSource] or
+         list[~azure.communication.callautomation.TextSource] or
+         list[~azure.communication.callautomation.SsmlSource]
+        :param play_to: The targets to play media to. Default value is 'all', to play media
+         to all participants in the call.
+        :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
+        :keyword loop: Whether the media should be repeated until cancelled.
+        :paramtype loop: bool
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str or None
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def play_media(
+        self,
+        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
+                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+        play_to: Literal["all"] = 'all',
+        *,
+        loop: bool = False,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        interrupt_call_media_operation: bool = False,
+        **kwargs
+    ) -> None:
+        """Play media to specific participant(s) in this call.
+
+        :param play_source: A PlaySource representing the source to play.
+        :type play_source: ~azure.communication.callautomation.FileSource or
+         ~azure.communication.callautomation.TextSource or
+         ~azure.communication.callautomation.SsmlSource or
+         list[~azure.communication.callautomation.FileSource] or
+         list[~azure.communication.callautomation.TextSource] or
+         list[~azure.communication.callautomation.SsmlSource]
+        :param play_to: The targets to play media to. Default value is 'all', to play media
+         to all participants in the call.
+        :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
+        :keyword loop: Whether the media should be repeated until cancelled.
+        :paramtype loop: bool
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str or None
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :keyword interrupt_call_media_operation: If set, media will take priority over other existing
+         queued-up/currently-processing requests. This is applicable only when play_to set to all.
+        :paramtype interrupt_call_media_operation: bool
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def play_media(
+        self,
+        play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
+                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+        play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         **kwargs
     ) -> None:
 
@@ -509,12 +595,12 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         self,
         play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
                            List[Union['FileSource', 'TextSource', 'SsmlSource']]],
-        play_to: Union[Literal["all"], List['CocmmunicationIdentifier']] = 'all',
+        play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
-        interrupt_call_media_operation: Optional[bool] = None,
+        interrupt_call_media_operation: Optional[bool] = False,
         **kwargs
     ) -> None:
         """Play media to specific participant(s) in this call.
@@ -545,7 +631,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
         play_source_single: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None
         play_sources: Optional[List[Union['FileSource', 'TextSource', 'SsmlSource']]] = None
         if isinstance(play_source, list):
@@ -560,8 +645,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             play_sources=[play_source_single._to_generated()] if play_source_single else # pylint:disable=protected-access
             [source._to_generated() for source in play_sources] if play_sources else None,  # pylint:disable=protected-access
             play_to=audience,
-            play_options=PlayOptions(loop=loop),
-            interrupt_call_media_operation=interrupt_call_media_operation,
+            play_options=PlayOptions(loop=loop,interrupt_call_media_operation=interrupt_call_media_operation),
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
             **kwargs
@@ -627,7 +711,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         *,
         initial_silence_timeout: Optional[int] = None,
         play_prompt: Optional[Union[Union['FileSource', 'TextSource', 'SsmlSource'],
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]]] = None,
+                                    List[Union['FileSource', 'TextSource', 'SsmlSource']]]] = None,
         interrupt_call_media_operation: bool = False,
         operation_context: Optional[str] = None,
         interrupt_prompt: bool = False,
@@ -649,10 +733,12 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword initial_silence_timeout: Time to wait for first input after prompt in seconds (if any).
         :paramtype initial_silence_timeout: int
-        :keyword play_prompt: The source of the audio to be played for recognition.
-        :paramtype play_prompt: ~azure.communication.callautomation.FileSource or
+        :type play_prompt: ~azure.communication.callautomation.FileSource or
          ~azure.communication.callautomation.TextSource or
-         ~azure.communication.callautomation.SsmlSource
+         ~azure.communication.callautomation.SsmlSource or         
+         list[~azure.communication.callautomation.FileSource] or
+         list[~azure.communication.callautomation.TextSource] or
+         list[~azure.communication.callautomation.SsmlSource]
         :keyword interrupt_call_media_operation:
          If set recognize can barge into other existing queued-up/currently-processing requests.
         :paramtype interrupt_call_media_operation: bool
@@ -703,6 +789,14 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             speech_language=speech_language,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id
         )
+
+        play_prompt_single: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None
+        play_prompts: Optional[List[Union['FileSource', 'TextSource', 'SsmlSource']]] = None
+        if isinstance(play_prompt, list):
+            if play_prompt:  # Check if the list is not empty
+                play_prompts = play_prompt
+        else:
+            play_prompt_single = play_prompt
 
         if input_type == RecognizeInputType.DTMF:
             dtmf_options=DtmfOptions(
@@ -920,11 +1014,109 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         )
         process_repeatability_first_sent(kwargs)
         response = self._call_connection_client.cancel_add_participant(
-            self._call_connection_id,
-            cancel_add_participant_request,
+            self._call_connection_id, cancel_add_participant_request, **kwargs
+        )
+        return CancelAddParticipantOperationResult._from_generated(response)  # pylint:disable=protected-access
+
+    @distributed_trace
+    def start_transcription(
+        self,
+        *,
+        locale: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Starts transcription in the call.
+
+        :keyword locale: Defines Locale for the transcription e,g en-US.
+        :paramtype locale: str
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+        :paramtype speech_recognition_model_endpoint_id: str
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        start_transcription_request = StartTranscriptionRequest(
+            locale=locale,
+            operation_context=operation_context,
+            speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
+            operation_callback_uri=operation_callback_url,
             **kwargs
         )
-        return CancelAddParticipantOperationResult._from_generated(response) # pylint:disable=protected-access
+        self._call_media_client.start_transcription(self._call_connection_id, start_transcription_request)
+
+    @distributed_trace
+    def stop_transcription(
+        self,
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs) -> None:
+        """Stops transcription in the call.
+
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        stop_transcription_request = StopTranscriptionRequest(
+            operation_context=operation_context,
+            operation_callback_uri=operation_callback_url,
+            **kwargs
+        )
+        self._call_media_client.stop_transcription(self._call_connection_id, stop_transcription_request)
+
+    @distributed_trace
+    def update_transcription(
+        self,
+        locale: str,
+        *,
+        operation_context: Optional[str] = None,
+        speech_recognition_model_endpoint_id: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs) -> None:
+        """API to change transcription language.
+
+        :param locale: Defines new locale for transcription.
+        :type locale: str
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
+        :paramtype speech_recognition_model_endpoint_id: str
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        update_transcription_request = UpdateTranscriptionRequest(
+            locale=locale,
+            operation_context=operation_context,
+            speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id,
+            operation_callback_uri=operation_callback_url,
+            **kwargs
+        )
+        self._call_media_client.update_transcription(self._call_connection_id, update_transcription_request)
 
     @distributed_trace
     def hold(
@@ -1002,3 +1194,101 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         )
 
         self._call_media_client.unhold(self._call_connection_id, unhold_request)
+
+    @distributed_trace
+    def start_media_streaming(
+        self,
+        *,
+        operation_callback_url: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Starts media streaming in the call.
+        
+        :keyword operation_callback_url: (Optional) Set a callback URL that overrides the default 
+         callback URL set by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :keyword operation_context: (Optional) Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: If there's an HTTP response error.
+        """
+        start_media_streaming_request=StartMediaStreamingRequest(
+            operation_callback_uri=operation_callback_url,
+            operation_context=operation_context
+        )
+        self._call_media_client.start_media_streaming(
+            self._call_connection_id,
+            start_media_streaming_request,
+            **kwargs)
+
+    @distributed_trace
+    def stop_media_streaming(
+        self,
+        *,
+        operation_callback_url: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Stops media streaming in the call.
+        
+        :keyword operation_callback_url: (Optional) Set a callback URL that overrides the default 
+         callback URL set by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :keyword operation_context: (Optional) Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError: If there's an HTTP response error.
+        """
+        stop_media_streaming_request=StopMediaStreamingRequest(
+            operation_callback_uri=operation_callback_url,
+            operation_context=operation_context
+            )
+        self._call_media_client.stop_media_streaming(
+            self._call_connection_id,
+            stop_media_streaming_request,
+            **kwargs
+            )
+
+    @distributed_trace
+    def interrupt_audio_and_announce(
+        self,
+        target_participant: "CommunicationIdentifier",
+        play_sources: List[Union['FileSource', 'TextSource', 'SsmlSource']],
+        *,
+        operation_context: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        """Interrupt audio and announce to specific participant(s) in this call.
+
+        :param target_participant: The participant being added.
+        :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+        :param play_sources: A PlaySource representing the source to play.
+        :type play_sources: list[~azure.communication.callautomation.FileSource] or
+         list[~azure.communication.callautomation.TextSource] or
+         list[~azure.communication.callautomation.SsmlSource]
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        interrupt_audio_announce_request = InterruptAudioAndAnnounceRequest(
+            play_sources=[source._to_generated() for source in play_sources] if play_sources else None, # pylint: disable=protected-access
+            play_to=serialize_identifier(target_participant),
+            operation_context=operation_context,
+            kwargs=kwargs,
+        )
+
+        self._call_media_client.interrupt_audio_and_announce(
+            self._call_connection_id,
+            interrupt_audio_announce_request,
+            **kwargs
+            )

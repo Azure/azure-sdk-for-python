@@ -34,6 +34,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._configuration import QuickpulseClientConfiguration
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import MonitoringDataPoint
+from azure.monitor.opentelemetry.exporter._quickpulse._filter import _update_filter_configuration
 from azure.monitor.opentelemetry.exporter._quickpulse._policy import _QuickpulseRedirectPolicy
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
     _get_and_clear_quickpulse_documents,
@@ -46,7 +47,6 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import (
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
     _metric_to_quick_pulse_data_points,
-    _update_filter_configuration,
 )
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._utils import (
@@ -83,7 +83,7 @@ class _UnsuccessfulQuickPulsePostError(Exception):
 
 class _QuickpulseExporter(MetricExporter):
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
+    def __init__(self, **kwargs: Any) -> None:
         """Metric exporter for Quickpulse.
 
         :param str connection_string: The connection string used for your Application Insights resource.
@@ -125,8 +125,8 @@ class _QuickpulseExporter(MetricExporter):
     def export(
         self,
         metrics_data: OTMetricsData,
-        timeout_millis: float = 10_000,  # pylint: disable=unused-argument
-        **kwargs: Any,  # pylint: disable=unused-argument
+        timeout_millis: float = 10_000,
+        **kwargs: Any,
     ) -> MetricExportResult:
         """Exports a batch of metric data
 
@@ -148,6 +148,7 @@ class _QuickpulseExporter(MetricExporter):
         )
         configuration_etag = _get_quickpulse_etag() or ""
         token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
+        # pylint: disable=R1702
         try:
             post_response = self._client.publish(  # type: ignore
                 endpoint=self._live_endpoint,
@@ -170,7 +171,7 @@ class _QuickpulseExporter(MetricExporter):
                 else:
                     # Check if etag has changed
                     etag = post_response._response_headers.get(  # pylint: disable=protected-access
-                        _QUICKPULSE_ETAG_HEADER_NAME  # pylint: disable=protected-access
+                        _QUICKPULSE_ETAG_HEADER_NAME
                     )
                     if etag and etag != configuration_etag:
                         config = (
@@ -179,8 +180,12 @@ class _QuickpulseExporter(MetricExporter):
                         # Content will only be populated if configuration has changed (etag is different)
                         if config:
                             # Update and apply configuration changes
-                            _update_filter_configuration(etag, config)
-        except Exception:  # pylint: disable=broad-except,invalid-name
+                            try:
+                                _update_filter_configuration(etag, config)
+                            except Exception:  # pylint: disable=broad-except
+                                _logger.exception("Exception occurred while updating filter config.")
+                                result = MetricExportResult.FAILURE
+        except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while publishing live metrics.")
             result = MetricExportResult.FAILURE
         finally:
@@ -204,8 +209,8 @@ class _QuickpulseExporter(MetricExporter):
 
     def shutdown(
         self,
-        timeout_millis: float = 30_000,  # pylint: disable=unused-argument
-        **kwargs: Any,  # pylint: disable=unused-argument
+        timeout_millis: float = 30_000,
+        **kwargs: Any,
     ) -> None:
         """Shuts down the exporter.
 
@@ -234,7 +239,7 @@ class _QuickpulseExporter(MetricExporter):
                 cls=_Response,
             )
             return ping_response  # type: ignore
-        except Exception:  # pylint: disable=broad-except,invalid-name
+        except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while pinging live metrics.")
         detach(token)
         return ping_response
@@ -295,8 +300,8 @@ class _QuickpulseMetricReader(MetricReader):
                                 _set_global_quickpulse_state(_QuickpulseState.PING_LONG)
                             # Reset etag to default if not subscribed
                             _set_quickpulse_etag("")
-                    except Exception:  # pylint: disable=broad-except,invalid-name
-                        _logger.exception("Exception occurred while pinging live metrics.")
+                    except Exception:  # pylint: disable=broad-except
+                        _logger.exception("Exception occurred while reading live metrics ping response.")
                         _set_quickpulse_etag("")
                 # TODO: Implement redirect
                 else:

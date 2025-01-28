@@ -18,7 +18,7 @@ import logging
 import os
 import uuid
 from datetime import datetime
-from typing import Any, Dict, Tuple
+from typing import Dict, Tuple
 from uuid import uuid4
 
 from marshmallow import ValidationError
@@ -30,6 +30,8 @@ from azure.core.exceptions import HttpResponseError
 
 # Get environment variable IS_IN_CI_PIPELINE to decide whether it's in CI test
 IS_IN_CI_PIPELINE = _str_to_bool(os.environ.get("IS_IN_CI_PIPELINE", "False"))
+
+ACTIVITY_SPAN = "activity_span"
 
 
 class ActivityType(object):
@@ -93,10 +95,7 @@ class ActivityLoggerAdapter(logging.LoggerAdapter):
         if "extra" not in kwargs:
             kwargs["extra"] = {}
 
-        if "properties" not in kwargs["extra"]:
-            kwargs["extra"]["properties"] = {}
-
-        kwargs["extra"]["properties"].update(self._activity_info)
+        kwargs["extra"].update(self._activity_info)
 
         return msg, kwargs
 
@@ -154,12 +153,12 @@ def error_preprocess(activityLogger, exception):
 
 
 @contextlib.contextmanager
-def log_activity(  # pylint:disable=useless-return
+def log_activity(
     logger,
     activity_name,
     activity_type=ActivityType.INTERNALCALL,
     custom_dimensions=None,
-) -> Any:
+):
     """Log an activity.
 
     An activity is a logical block of code that consumers want to monitor.
@@ -197,7 +196,7 @@ def log_activity(  # pylint:disable=useless-return
 
     try:
         yield activityLogger
-    except BaseException as e:  # pylint: disable=W0718
+    except BaseException as e:
         exception = error_preprocess(activityLogger, e)
         completion_status = ActivityCompletionStatus.FAILURE
         # All the system and unknown errors except for NotImplementedError will be wrapped with a new exception.
@@ -249,7 +248,7 @@ def log_activity(  # pylint:disable=useless-return
             else:
                 activityLogger.info(message)
         except Exception:  # pylint: disable=W0718
-            return  # pylint: disable=lost-exception,return-in-finally
+            pass
 
 
 # pylint: disable-next=docstring-missing-rtype
@@ -282,7 +281,7 @@ def monitor_with_activity(
         def wrapper(*args, **kwargs):
             tracer = logger.package_tracer if isinstance(logger, OpsLogger) else None
             if tracer:
-                with tracer.span():
+                with tracer.start_as_current_span(ACTIVITY_SPAN):
                     with log_activity(
                         logger.package_logger, activity_name or f.__name__, activity_type, custom_dimensions
                     ):

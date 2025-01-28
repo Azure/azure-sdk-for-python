@@ -35,7 +35,7 @@ class TestTableChallengeAuth(AzureRecordedTestCase, TableTestCase):
 
         Recorded using an incorrect tenant for the credential provided to our client. To run this live, ensure that the
         service principal used for testing is enabled for multitenant authentication
-        (https://docs.microsoft.com/azure/active-directory/develop/howto-convert-app-to-be-multi-tenant). Set the
+        (https://learn.microsoft.com/azure/active-directory/develop/howto-convert-app-to-be-multi-tenant). Set the
         TABLES_TENANT_ID environment variable to a different, existing tenant than the one the storage account exists
         in, and set CHALLENGE_TABLES_TENANT_ID to the tenant that the storage account exists in.
         """
@@ -57,7 +57,7 @@ class TestTableChallengeAuth(AzureRecordedTestCase, TableTestCase):
 
         Recorded using an incorrect tenant for the credential provided to our client. To run this live, ensure that the
         service principal used for testing is enabled for multitenant authentication
-        (https://docs.microsoft.com/azure/active-directory/develop/howto-convert-app-to-be-multi-tenant). Set the
+        (https://learn.microsoft.com/azure/active-directory/develop/howto-convert-app-to-be-multi-tenant). Set the
         TABLES_TENANT_ID environment variable to a different, existing tenant than the one the storage account exists
         in, and set CHALLENGE_TABLES_TENANT_ID to the tenant that the storage account exists in.
         """
@@ -249,7 +249,7 @@ def test_challenge_policy_disable_scopes_discovery(http_request):
             raise ValueError("unexpected token request")
 
         credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
-        policy = BearerTokenChallengePolicy(credential, "scope", discover_scopes=False)
+        policy = BearerTokenChallengePolicy(credential, ["scope1", "scope2"], discover_scopes=False)
         pipeline = Pipeline(policies=[policy], transport=Mock(send=send))
         pipeline.run(http_request("GET", "https://localhost"))
 
@@ -300,7 +300,9 @@ def test_challenge_policy_disable_any_discovery(http_request):
             raise ValueError("unexpected token request")
 
         credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
-        policy = BearerTokenChallengePolicy(credential, "scope", discover_tenant=False, discover_scopes=False)
+        policy = BearerTokenChallengePolicy(
+            credential, ["scope1", "scope2"], discover_tenant=False, discover_scopes=False
+        )
         pipeline = Pipeline(policies=[policy], transport=Mock(send=send))
         pipeline.run(http_request("GET", "https://localhost"))
 

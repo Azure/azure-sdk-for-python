@@ -42,7 +42,6 @@ from ..amqp import AmqpAnnotatedMessage
 
 if TYPE_CHECKING:
     try:
-        # pylint:disable=unused-import
         from uamqp import types as uamqp_types
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
     except ImportError:
@@ -95,6 +94,9 @@ def create_properties(
     :param str user_agent: If specified,
     this will be added in front of the built-in user agent string.
 
+    :keyword amqp_transport: The AMQP transport type.
+    :paramtype amqp_transport: ~azure.servicebus._transport._base.AmqpTransport
+
     :return: The properties to add to the connection.
     :rtype: dict
     """
@@ -131,7 +133,6 @@ def get_renewable_start_time(renewable):
 
 
 def get_renewable_lock_duration(renewable: Union["ServiceBusReceivedMessage", "BaseSession"]) -> datetime.timedelta:
-    # pylint: disable=protected-access
     try:
         return max(renewable.locked_until_utc - utc_now(), datetime.timedelta(seconds=0))
     except AttributeError:

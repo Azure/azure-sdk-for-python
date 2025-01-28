@@ -4,6 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-VERSION = "1.3.0"
+VERSION = "1.4.0b2"
 
 SDK_MONIKER = f"communication-callautomation/{format(VERSION)}"

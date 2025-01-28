@@ -32,7 +32,6 @@ from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from .._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
 from .._shared.base_client import parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import parse_connection_str, AsyncStorageAccountHostsMixin, AsyncTransportWrapper
-from .._shared.parser import _str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers
 from .._shared.response_handlers import process_storage_error, return_response_headers
@@ -299,13 +298,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             If not set, the default value would be "none" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :paramtype file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
-        :keyword file_creation_time:
-            Creation time for the directory. Default value: "now".
-        :paramtype file_creation_time: str or ~datetime.datetime
-        :keyword file_last_write_time:
-            Last write time for the directory. Default value: "now".
-        :paramtype file_last_write_time: str or ~datetime.datetime
+        :paramtype file_attributes: str or ~azure.storage.fileshare.NTFSAttributes or None
+        :keyword file_creation_time: Creation time for the directory.
+        :paramtype file_creation_time: str or ~datetime.datetime or None
+        :keyword file_last_write_time: Last write time for the directory.
+        :paramtype file_last_write_time: str or ~datetime.datetime or None
         :keyword str file_permission:
             If specified the permission (security descriptor) shall be set
             for the directory/file. This header can be used if Permission size is
@@ -329,6 +326,12 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         :keyword metadata:
             Name-value pairs associated with the directory as metadata.
         :paramtype metadata: Optional[dict[str, str]]
+        :keyword str owner:
+            NFS only. The owner of the directory.
+        :keyword str group:
+            NFS only. The owning group of the directory.
+        :keyword str file_mode:
+            NFS only. The file mode of the directory.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -352,17 +355,17 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
 
-        file_attributes = kwargs.pop('file_attributes', 'none')
-        file_creation_time = kwargs.pop('file_creation_time', 'now')
-        file_last_write_time = kwargs.pop('file_last_write_time', 'now')
+        file_attributes = kwargs.pop('file_attributes', None)
+        file_creation_time = kwargs.pop('file_creation_time', None)
+        file_last_write_time = kwargs.pop('file_last_write_time', None)
         file_change_time = kwargs.pop('file_change_time', None)
         file_permission = kwargs.pop('file_permission', None)
         file_permission_key = kwargs.pop('file_permission_key', None)
-        file_permission = _get_file_permission(file_permission, file_permission_key, 'inherit')
+        file_permission = _get_file_permission(file_permission, file_permission_key, None)
 
         try:
             return cast(Dict[str, Any], await self._client.directory.create(
-                file_attributes=str(file_attributes),
+                file_attributes=str(file_attributes) if file_attributes is not None else file_attributes,
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_change_time=_datetime_to_str(file_change_time),
@@ -760,9 +763,9 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
 
     @distributed_trace_async
     async def set_http_headers(
-        self, file_attributes: Union[str, "NTFSAttributes"] = "none",
-        file_creation_time: Optional[Union[str, datetime]] = "preserve",
-        file_last_write_time: Optional[Union[str, datetime]] = "preserve",
+        self, file_attributes: Optional[Union[str, "NTFSAttributes"]] = None,
+        file_creation_time: Optional[Union[str, datetime]] = None,
+        file_last_write_time: Optional[Union[str, datetime]] = None,
         file_permission: Optional[str] = None,
         permission_key: Optional[str] = None,
         **kwargs: Any
@@ -773,13 +776,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
-        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
+        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes or None
         :param file_creation_time: Creation time for the file
-            Default value: Preserve.
-        :type file_creation_time: str or ~datetime.datetime
+        :type file_creation_time: str or ~datetime.datetime or None
         :param file_last_write_time: Last write time for the file
-            Default value: Preserve.
-        :type file_last_write_time: str or ~datetime.datetime
+        :type file_last_write_time: str or ~datetime.datetime or None
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -802,6 +803,12 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 This parameter was introduced in API version '2021-06-08'.
 
         :paramtype file_change_time: str or ~datetime.datetime
+        :keyword str owner:
+            NFS only. The owner of the directory.
+        :keyword str group:
+            NFS only. The owning group of the directory.
+        :keyword str file_mode:
+            NFS only. The file mode of the directory.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -812,11 +819,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         :rtype: dict[str, Any]
         """
         timeout = kwargs.pop('timeout', None)
-        file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
+        file_permission = _get_file_permission(file_permission, permission_key, None)
         file_change_time = kwargs.pop('file_change_time', None)
         try:
             return cast(Dict[str, Any], await self._client.directory.set_properties(
-                file_attributes=_str(file_attributes),
+                file_attributes=str(file_attributes) if file_attributes is not None else file_attributes,
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_change_time=_datetime_to_str(file_change_time),

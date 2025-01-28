@@ -21,20 +21,21 @@ from ._generated.models import (
     PhoneNumberIdentifierModel,
     CallLocator,
     ExternalStorage,
-    RecordingStorageKind
+    RecordingStorageKind,
+    MicrosoftTeamsAppIdentifierModel,
 )
 if TYPE_CHECKING:
     from ._models import (
-        ServerCallLocator,
-        GroupCallLocator,
-        RoomCallLocator,
-        AzureBlobContainerRecordingStorage,
-        AzureCommunicationsRecordingStorage
-        )
+    ServerCallLocator,
+    GroupCallLocator,
+    RoomCallLocator,
+    AzureBlobContainerRecordingStorage,
+    AzureCommunicationsRecordingStorage
+)
 
 def build_external_storage(
     recording_storage: Union['AzureCommunicationsRecordingStorage',
-                                      'AzureBlobContainerRecordingStorage'] = None
+                             'AzureBlobContainerRecordingStorage'] = None
 ) -> Optional[ExternalStorage]:
     request: Optional[ExternalStorage] = None
     if recording_storage:

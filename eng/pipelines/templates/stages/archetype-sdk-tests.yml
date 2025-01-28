@@ -60,9 +60,6 @@ parameters:
       Preview:
       Canary:
         Location: 'centraluseuap'
-      UsGov:
-      China:
-        Location: 'chinanorth3'
   - name: MatrixConfigs
     type: object
     default:

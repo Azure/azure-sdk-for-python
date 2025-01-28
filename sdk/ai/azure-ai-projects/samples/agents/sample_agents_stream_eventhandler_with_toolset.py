@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_stream_eventhandler_with_toolset.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with an event handler and toolset from
     the Azure Agents service using a synchronous client.
@@ -17,14 +15,16 @@ USAGE:
 
     pip install azure-ai-projects azure-identity
 
-    Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    Set these environment variables with your own values:
+    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
+       Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+       the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     MessageDeltaChunk,
-    MessageDeltaTextContent,
     RunStep,
     ThreadMessage,
     ThreadRun,
@@ -33,16 +33,9 @@ from azure.ai.projects.models import AgentEventHandler
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import FunctionTool, ToolSet
 
-
 import os
 from typing import Any
-
 from user_functions import user_functions
-
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
@@ -54,10 +47,7 @@ project_client = AIProjectClient.from_connection_string(
 class MyEventHandler(AgentEventHandler):
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        for content_part in delta.delta.content:
-            if isinstance(content_part, MessageDeltaTextContent):
-                text_value = content_part.text.value if content_part.text else "No text"
-                print(f"Text delta received: {text_value}")
+        print(f"Text delta received: {delta.text}")
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
         print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
@@ -88,7 +78,10 @@ with project_client:
     toolset.add(functions)
 
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
+        name="my-assistant",
+        instructions="You are a helpful assistant",
+        toolset=toolset,
     )
     # [END create_agent_with_function_tool]
     print(f"Created agent, ID: {agent.id}")

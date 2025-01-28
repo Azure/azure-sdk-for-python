@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_stream_eventhandler_with_functions.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with an event handler and toolset from
     the Azure Agents service using a synchronous client.
@@ -17,8 +15,11 @@ USAGE:
 
     pip install azure-ai-projects azure-identity
 
-    Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    Set these environment variables with your own values:
+    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
+       Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+       the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 from typing import Any
 
@@ -28,7 +29,6 @@ from azure.ai.projects.models import (
     AgentEventHandler,
     FunctionTool,
     MessageDeltaChunk,
-    MessageDeltaTextContent,
     RequiredFunctionToolCall,
     RunStep,
     SubmitToolOutputsAction,
@@ -39,11 +39,6 @@ from azure.ai.projects.models import (
 from azure.identity import DefaultAzureCredential
 from user_functions import user_functions
 
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
-
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
@@ -52,13 +47,11 @@ project_client = AIProjectClient.from_connection_string(
 class MyEventHandler(AgentEventHandler):
 
     def __init__(self, functions: FunctionTool) -> None:
+        super().__init__()
         self.functions = functions
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
-        for content_part in delta.delta.content:
-            if isinstance(content_part, MessageDeltaTextContent):
-                text_value = content_part.text.value if content_part.text else "No text"
-                print(f"Text delta received: {text_value}")
+        print(f"Text delta received: {delta.text}")
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
         print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
@@ -88,10 +81,11 @@ class MyEventHandler(AgentEventHandler):
 
             print(f"Tool outputs: {tool_outputs}")
             if tool_outputs:
-                with project_client.agents.submit_tool_outputs_to_stream(
+                # Once we receive 'requires_action' status, the next event will be DONE.
+                # Here we associate our existing event handler to the next stream.
+                project_client.agents.submit_tool_outputs_to_stream(
                     thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=self
-                ) as stream:
-                    stream.until_done()
+                )
 
     def on_run_step(self, step: "RunStep") -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
@@ -112,7 +106,7 @@ with project_client:
     functions = FunctionTool(user_functions)
 
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview",
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are a helpful assistant",
         tools=functions.definitions,
