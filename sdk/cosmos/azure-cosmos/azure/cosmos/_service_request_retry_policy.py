@@ -85,5 +85,7 @@ class ServiceRequestRetryPolicy(object):
             # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
             # This enables marking the endpoint unavailability on endpoint failover/unreachability
             self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
+            if self.location_endpoint is None:
+                return False
             self.request.route_to_location(self.location_endpoint)
         return True

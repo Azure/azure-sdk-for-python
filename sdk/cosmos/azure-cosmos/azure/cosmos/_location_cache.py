@@ -89,7 +89,7 @@ def get_endpoints_by_location(new_locations, old_endpoints_by_location, default_
                     if writes:
                         regional_object = RegionalEndpoint(region_uri, default_regional_endpoint.get_current())
                     else:
-                        regional_object = RegionalEndpoint(region_uri, region_uri)
+                        regional_object = RegionalEndpoint(region_uri, None)
 
                 endpoints_by_location.update({new_location["name"]: regional_object}) # pass in object with region uri , last known good, curr etc
 
