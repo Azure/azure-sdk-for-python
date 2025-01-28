@@ -340,7 +340,6 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             delete_file = await client_async.files.delete(file.id)
             assert delete_file.deleted is True
 
-    @pytest.mark.skip("Entra ID auth not supported yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
@@ -421,7 +420,6 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             )
             assert deleted_vector_store.deleted is True
 
-    @pytest.mark.skip("Entra ID auth not supported yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
@@ -538,7 +536,6 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
 
-    @pytest.mark.skip("Entra ID auth not supported yet")
     @configure_async
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
@@ -568,16 +565,28 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 },
                 model="gpt-4-1106-preview"
             )
+            thread = await client_async.beta.threads.create(
+                messages=[
+                    {"role": "user", "content": "How many vacation days am I required to take as a Contoso employee?"}
+                ]
+            )
 
-            run = await client_async.beta.threads.create_and_run_poll(
+            run = await client_async.beta.threads.runs.create_and_poll(
                 assistant_id=assistant.id,
-                thread={
-                    "messages": [
-                        {"role": "user", "content": "How many vacation days am I required to take as a Contoso employee?"}
-                    ]
-                }
+                thread_id=thread.id,
             )
             self.handle_run_failure(run)
+
+            run_steps = client_async.beta.threads.runs.steps.list(
+                thread_id=thread.id,
+                run_id=run.id,
+                include=["step_details.tool_calls[*].file_search.results[*].content"]
+            )
+            async for step in run_steps:
+                assert step
+                if step.step_details.type == "tool_calls":
+                    assert step.step_details.tool_calls[0].file_search.results[0].content[0].text
+
             if run.status == "completed":
                 messages = client_async.beta.threads.messages.list(thread_id=run.thread_id)
 

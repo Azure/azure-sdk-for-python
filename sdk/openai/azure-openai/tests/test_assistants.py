@@ -339,7 +339,6 @@ class TestAssistants(AzureRecordedTestCase):
             delete_file = client.files.delete(file.id)
             assert delete_file.deleted is True
 
-    @pytest.mark.skip("Entra ID auth not supported yet")
     @configure
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     def test_assistants_vector_stores_crud(self, client, api_type, api_version, **kwargs):
@@ -419,7 +418,6 @@ class TestAssistants(AzureRecordedTestCase):
             )
             assert deleted_vector_store.deleted is True
 
-    @pytest.mark.skip("Entra ID auth not supported yet")
     @configure
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     def test_assistants_vector_stores_batch_crud(self, client, api_type, api_version, **kwargs):
@@ -535,7 +533,6 @@ class TestAssistants(AzureRecordedTestCase):
             assert delete_thread.id == thread.id
             assert delete_thread.deleted is True
 
-    @pytest.mark.skip("Entra ID auth not supported yet")
     @configure
     @pytest.mark.parametrize("api_type, api_version", [(ASST_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     def test_assistants_runs_file_search(self, client, api_type, api_version, **kwargs):
@@ -565,14 +562,28 @@ class TestAssistants(AzureRecordedTestCase):
                 model="gpt-4-1106-preview"
             )
 
-            run = client.beta.threads.create_and_run_poll(
-                assistant_id=assistant.id,
-                thread={
-                    "messages": [
-                        {"role": "user", "content": "How many vacation days am I required to take as a Contoso employee?"}
-                    ]
-                }
+            thread = client.beta.threads.create(
+                messages=[
+                    {"role": "user", "content": "How many vacation days am I required to take as a Contoso employee?"}
+                ]
             )
+
+            run = client.beta.threads.runs.create_and_poll(
+                assistant_id=assistant.id,
+                thread_id=thread.id,
+            )
+            self.handle_run_failure(run)
+
+            run_steps = client.beta.threads.runs.steps.list(
+                thread_id=thread.id,
+                run_id=run.id,
+                include=["step_details.tool_calls[*].file_search.results[*].content"]
+            )
+            for step in run_steps:
+                assert step
+                if step.step_details.type == "tool_calls":
+                    assert step.step_details.tool_calls[0].file_search.results[0].content[0].text
+
             self.handle_run_failure(run)
             if run.status == "completed":
                 messages = client.beta.threads.messages.list(thread_id=run.thread_id)
