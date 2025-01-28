@@ -34,7 +34,6 @@ TEST_DIRECTORY_PREFIX = 'directory'
 class TestStorageFileNFS(StorageRecordedTestCase):
 
     fsc: ShareServiceClient = None
-
     def _setup(self, storage_account_name: str):
         self.account_url = self.account_url(storage_account_name, 'file')
         self.credential = self.get_credential(ShareServiceClient)
