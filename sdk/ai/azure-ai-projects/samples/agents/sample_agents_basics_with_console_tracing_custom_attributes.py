@@ -37,7 +37,8 @@ from azure.identity import DefaultAzureCredential
 from opentelemetry import trace
 from opentelemetry.sdk.trace import SpanProcessor, ReadableSpan, Span
 
-# Define the custom span processor
+# Define the custom span processor that is used for adding the custom
+# attributes to spans when they are started.
 class CustomAttributeSpanProcessor(SpanProcessor):
     def __init__(self):
         pass
@@ -48,7 +49,6 @@ class CustomAttributeSpanProcessor(SpanProcessor):
 
         # Add another attribute only to create_message spans
         if span.name == "create_message":
-            # Add attributes to the span when it is started
             span.set_attribute("trace_sample.message.context", "abc")
 
     def on_end(self, span: ReadableSpan):
