@@ -4,13 +4,14 @@
 # ------------------------------------
 
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional, Tuple
 
 from azure.core.tracing import AbstractSpan, SpanKind  # type: ignore
 from azure.core.settings import settings  # type: ignore
 
 try:
     from opentelemetry.trace import StatusCode, Span  # noqa: F401 # pylint: disable=unused-import
+    from opentelemetry import context
 
     _span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
 except ModuleNotFoundError:
@@ -79,6 +80,25 @@ def trace_tool_execution(
     return span
 
 
+def _set_attributes(span: "AbstractSpan", *attrs: Tuple[str, Any]) -> None:
+    for attr in attrs:
+        key, value = attr
+        if value is not None:
+            span.add_attribute(key, value)
+
+
+def get_global_attributes():
+    """
+    Retrieve global attributes from the context.  
+  
+    :return: The attributes stored in the context.  
+    """
+    # type: ignore
+    current_context = context.get_current()
+    items = current_context.items()
+    return {key: value for key, value in items}
+
+
 def start_span(
     operation_name: OperationName,
     server_address: Optional[str],
@@ -94,6 +114,7 @@ def start_span(
     response_format: Optional[str] = None,
     gen_ai_system: Optional[str] = AZ_AI_AGENT_SYSTEM,
     kind: SpanKind = SpanKind.CLIENT,
+    trace_context_attributes: bool = False
 ) -> "Optional[AbstractSpan]":
     if _span_impl_type is None:
         return None
@@ -135,5 +156,10 @@ def start_span(
 
         if response_format:
             span.add_attribute(GEN_AI_REQUEST_RESPONSE_FORMAT, response_format)
+
+        if trace_context_attributes:
+            attributes = get_global_attributes()
+            for key, value in attributes.items():
+                span.add_attribute(key, str(value))
 
     return span

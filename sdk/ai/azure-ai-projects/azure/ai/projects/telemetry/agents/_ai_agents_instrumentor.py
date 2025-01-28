@@ -73,6 +73,7 @@ __all__ = [
 
 _agents_traces_enabled: bool = False
 _trace_agents_content: bool = False
+_trace_context_attributes: bool = False
 
 
 class TraceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):  # pylint: disable=C4747
@@ -100,7 +101,7 @@ class AIAgentsInstrumentor:
         # and have a parameter that specifies the version to use.
         self._impl = _AIAgentsInstrumentorPreview()
 
-    def instrument(self, enable_content_recording: Optional[bool] = None) -> None:
+    def instrument(self, enable_content_recording: Optional[bool] = None, enable_context_attribute_tracing: Optional[bool] = False) -> None:
         """
         Enable trace instrumentation for AI Agents.
 
@@ -119,7 +120,9 @@ class AIAgentsInstrumentor:
         :type enable_content_recording: bool, optional
 
         """
-        self._impl.instrument(enable_content_recording)
+        if enable_context_attribute_tracing is None:
+            enable_context_attribute_tracing = False
+        self._impl.instrument(enable_content_recording, enable_context_attribute_tracing)
 
     def uninstrument(self) -> None:
         """
@@ -147,6 +150,13 @@ class AIAgentsInstrumentor:
         """
         return self._impl.is_content_recording_enabled()
 
+    def is_context_attribute_tracing_enabled(self) -> bool:
+        """This function gets the content recording value.
+
+        :return: A bool value indicating whether content recording is enabled.
+        :rtype: bool
+        """
+        return self._impl.is_context_attribute_tracing_enabled()
 
 class _AIAgentsInstrumentorPreview:
     # pylint: disable=R0904
@@ -162,7 +172,7 @@ class _AIAgentsInstrumentorPreview:
             return False
         return str(s).lower() == "true"
 
-    def instrument(self, enable_content_recording: Optional[bool] = None):
+    def instrument(self, enable_content_recording: Optional[bool] = None, enable_context_attribute_tracing: bool = False):
         """
         Enable trace instrumentation for AI Agents.
 
@@ -180,9 +190,10 @@ class _AIAgentsInstrumentorPreview:
             var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
             enable_content_recording = self._str_to_bool(var_value)
         if not self.is_instrumented():
-            self._instrument_agents(enable_content_recording)
+            self._instrument_agents(enable_content_recording, enable_context_attribute_tracing)
         else:
             self._set_enable_content_recording(enable_content_recording=enable_content_recording)
+            self._set_enable_context_attribute_tracing(enable_context_attribute_tracing=enable_context_attribute_tracing)
 
     def uninstrument(self):
         """
@@ -473,6 +484,7 @@ class _AIAgentsInstrumentorPreview:
             max_prompt_tokens=max_prompt_tokens,
             max_completion_tokens=max_completion_tokens,
             response_format=_AIAgentsInstrumentorPreview.agent_api_response_to_str(response_format),
+            trace_context_attributes=_trace_context_attributes
         )
         if span and span.span_instance.is_recording and instructions and additional_instructions:
             self._add_instructions_event(
@@ -501,7 +513,7 @@ class _AIAgentsInstrumentorPreview:
         else:
             recorded = False
 
-        span = start_span(OperationName.SUBMIT_TOOL_OUTPUTS, project_name, thread_id=thread_id, run_id=run_id)
+        span = start_span(OperationName.SUBMIT_TOOL_OUTPUTS, project_name, thread_id=thread_id, run_id=run_id, trace_context_attributes=_trace_agents_content)
         if not recorded:
             self._add_tool_message_events(span, tool_outputs)
         return span
@@ -542,6 +554,7 @@ class _AIAgentsInstrumentorPreview:
             temperature=temperature,
             top_p=top_p,
             response_format=_AIAgentsInstrumentorPreview.agent_api_response_to_str(response_format),
+            trace_context_attributes=_trace_context_attributes
         )
         if span and span.span_instance.is_recording:
             if name:
@@ -558,7 +571,7 @@ class _AIAgentsInstrumentorPreview:
         messages: Optional[List[ThreadMessage]] = None,
         _tool_resources: Optional[ToolResources] = None,
     ) -> "Optional[AbstractSpan]":
-        span = start_span(OperationName.CREATE_THREAD, project_name)
+        span = start_span(OperationName.CREATE_THREAD, project_name, trace_context_attributes=_trace_context_attributes)
         if span and span.span_instance.is_recording:
             for message in messages or []:
                 self.add_thread_message_event(span, message)
@@ -566,7 +579,7 @@ class _AIAgentsInstrumentorPreview:
         return span
 
     def start_list_messages_span(self, project_name: str, thread_id: Optional[str] = None) -> "Optional[AbstractSpan]":
-        return start_span(OperationName.LIST_MESSAGES, project_name, thread_id=thread_id)
+        return start_span(OperationName.LIST_MESSAGES, project_name, thread_id=thread_id, trace_context_attributes=_trace_context_attributes)
 
     def trace_create_agent(self, function, *args, **kwargs):
         project_name = args[  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
@@ -1291,7 +1304,7 @@ class _AIAgentsInstrumentorPreview:
         attachments: Optional[List[MessageAttachment]] = None,
     ) -> "Optional[AbstractSpan]":
         role_str = self._get_role(role)
-        span = start_span(OperationName.CREATE_MESSAGE, project_name, thread_id=thread_id)
+        span = start_span(OperationName.CREATE_MESSAGE, project_name, thread_id=thread_id, trace_context_attributes=_trace_context_attributes)
         if span and span.span_instance.is_recording:
             self._add_message_event(span, role_str, content, attachments=attachments, thread_id=thread_id)
         return span
@@ -1560,7 +1573,7 @@ class _AIAgentsInstrumentorPreview:
         """
         yield from self._generate_api_and_injector(self._agents_api_list())
 
-    def _instrument_agents(self, enable_content_tracing: bool = False):
+    def _instrument_agents(self, enable_content_tracing: bool = False, enable_context_attribute_tracing: bool = False):
         """This function modifies the methods of the Agents API classes to
         inject logic before calling the original methods.
         The original methods are stored as _original attributes of the methods.
@@ -1573,10 +1586,12 @@ class _AIAgentsInstrumentorPreview:
         # pylint: disable=W0603
         global _agents_traces_enabled
         global _trace_agents_content
+        global _trace_context_attributes
         if _agents_traces_enabled:
             raise RuntimeError("Traces already started for AI Agents")
         _agents_traces_enabled = True
         _trace_agents_content = enable_content_tracing
+        _trace_context_attributes = enable_context_attribute_tracing
         for (
             api,
             method,
@@ -1629,6 +1644,24 @@ class _AIAgentsInstrumentorPreview:
         """
         return _trace_agents_content
 
+    def _set_enable_context_attribute_tracing(self, enable_context_attribute_tracing: bool = False) -> None:
+        """This function sets the content recording value.
+
+        :param enable_content_recording: Indicates whether tracing of message content should be enabled.
+                                    This also controls whether function call tool function names,
+                                    parameter names and parameter values are traced.
+        :type enable_content_recording: bool
+        """
+        global _trace_context_attributes  # pylint: disable=W0603
+        _trace_context_attributes = enable_context_attribute_tracing
+
+    def _is_context_attribute_tracing_enabled(self) -> bool:
+        """This function gets the content recording value.
+
+        :return: A bool value indicating whether content tracing is enabled.
+        :rtype bool
+        """
+        return _trace_context_attributes
 
 class _AgentEventHandlerTraceWrapper(AgentEventHandler):
     def __init__(
