@@ -2598,8 +2598,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     async def test_get_and_set_access_policy_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
-        credential = self.get_credential(BlobServiceClient, is_async=True)
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential)
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), token_credential)
         container: ContainerClient = await self._create_container(bsc)
 
         # Act
@@ -2614,8 +2614,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
     async def test_get_account_information_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
-        credential = self.get_credential(BlobServiceClient, is_async=True)
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential)
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), token_credential)
         container: ContainerClient = await self._create_container(bsc)
 
         # Act / Assert

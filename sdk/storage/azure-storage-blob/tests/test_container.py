@@ -2728,8 +2728,8 @@ class TestStorageContainer(StorageRecordedTestCase):
     def test_get_and_set_access_policy_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
-        credential = self.get_credential(BlobServiceClient)
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential)
+        token_credential = self.get_credential(BlobServiceClient)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), token_credential)
         container = self._create_container(bsc)
 
         # Act
@@ -2744,8 +2744,8 @@ class TestStorageContainer(StorageRecordedTestCase):
     def test_get_account_information_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
-        credential = self.get_credential(BlobServiceClient)
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential)
+        token_credential = self.get_credential(BlobServiceClient)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), token_credential)
         container = self._create_container(bsc)
 
         # Act / Assert
