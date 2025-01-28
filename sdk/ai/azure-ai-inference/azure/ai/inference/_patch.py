@@ -117,6 +117,8 @@ def load_client(
     """
     Load a client from a given endpoint URL. The method makes a REST API call to the `/info` route
     on the given endpoint, to determine the model type and therefore which client to instantiate.
+    Keyword arguments are passed to the appropriate client's constructor, so if you need to set things like
+    `api_version`, `logging_enable`, `user_agent`, etc., you can do so here.
     This method will only work when using Serverless API or Managed Compute endpoint.
     It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
     Keyword arguments are passed through to the client constructor (you can set keywords such as

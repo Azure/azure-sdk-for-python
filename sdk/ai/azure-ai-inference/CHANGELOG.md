@@ -2,6 +2,10 @@
 
 ## 1.0.0b8 (Unreleased)
 
+### Features Added
+
+### Breaking Changes
+
 ### Bugs Fixed
 
 * Fix a bug that caused filtering of a package with token usage from Azure OpanAI models in the streaming mode.

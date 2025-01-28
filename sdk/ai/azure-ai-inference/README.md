@@ -165,7 +165,7 @@ from azure.core.credentials import AzureKeyCredential
 # For Serverless API or Managed Compute endpoints
 client = ChatCompletionsClient(
     endpoint=endpoint,
-    credential=AzureKeyCredential(key)
+    credential=AzureKeyCredential(key),
     temperature=0.5,
     max_tokens=1000
 )
@@ -281,6 +281,7 @@ The following types of messages are supported: `SystemMessage`,`UserMessage`, `A
 includes sending an image URL.
 * [sample_chat_completions_with_image_data.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_image_data.py) for usage of `UserMessage` that
 includes sending image data read from a local file.
+* [sample_chat_completions_with_audio_data.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_image_data.py) for usage of `UserMessage` that includes sending audio data read from a local file.
 * [sample_chat_completions_with_structured_output.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_structured_output.py) and [sample_chat_completions_with_structured_output_pydantic.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_structured_output_pydantic.py) for configuring the service to respond with a JSON-formatted string, adhering to your schema.
 
 
