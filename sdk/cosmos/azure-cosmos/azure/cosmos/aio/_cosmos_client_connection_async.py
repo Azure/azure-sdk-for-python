@@ -25,6 +25,7 @@
 """
 import os
 from urllib.parse import urlparse
+import uuid
 from typing import (
     Callable, Dict, Any, Iterable, Mapping, Optional, List,
     Sequence, Tuple, Type, Union, cast
@@ -410,7 +411,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         initial_headers = dict(self.default_headers)
         headers = base.GetHeaders(self, initial_headers, "get", "", "", "",
-                                  documents._OperationType.Read, {})  # path  # id  # type
+                                  documents._OperationType.Read, {},
+                                  client_id=str(uuid.uuid4()))  # path  # id  # type
 
         request_params = _request_object.RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
 

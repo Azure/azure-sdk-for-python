@@ -132,6 +132,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     :param str operation_type:
     :param dict options:
     :param str partition_key_range_id:
+    :param str client_id:
     :return: The HTTP request headers.
     :rtype: dict
     """

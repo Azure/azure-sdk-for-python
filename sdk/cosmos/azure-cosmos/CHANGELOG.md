@@ -8,6 +8,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed refreshing Database Account when marking the region unavailable. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
 
 #### Other Changes
 

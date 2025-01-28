@@ -82,18 +82,19 @@ def get_endpoints_by_location(new_locations, old_endpoints_by_location, default_
                 if new_location["name"] in old_endpoints_by_location:
                     regional_object = old_endpoints_by_location[new_location["name"]]
                     current = regional_object.get_current()
+                    # swap the previous with current and current with new region_uri received from the gateway
                     if current != region_uri:
                         regional_object.set_previous(current)
                         regional_object.set_current(region_uri)
+                # This is the bootstrapping condition
                 else:
+                    regional_object = RegionalEndpoint(region_uri, region_uri)
+                    # if it is for writes, then we update the previous to default_endpoint
                     if writes:
                         regional_object = RegionalEndpoint(region_uri, default_regional_endpoint.get_current())
-                    else:
-                        regional_object = RegionalEndpoint(region_uri, None)
 
-                endpoints_by_location.update({new_location["name"]: regional_object}) # pass in object with region uri , last known good, curr etc
-
-
+                # pass in object with region uri , last known good, curr etc
+                endpoints_by_location.update({new_location["name"]: regional_object})
             except Exception as e:
                 raise e
 

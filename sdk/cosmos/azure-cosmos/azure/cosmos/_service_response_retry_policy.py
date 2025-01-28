@@ -17,7 +17,6 @@ class ServiceResponseRetryPolicy(object):
         self.args = args
         self.global_endpoint_manager = global_endpoint_manager
         self.total_retries = len(self.global_endpoint_manager.location_cache.read_regional_endpoints)
-        self.in_region_retry_count = 0
         self.failover_retry_count = 0
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
@@ -34,32 +33,29 @@ class ServiceResponseRetryPolicy(object):
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
 
+        # Check if the next retry about to be done is safe
+        if (self.failover_retry_count + 1) >= self.total_retries:
+            return False
+
         if self.request:
-            self.in_region_retry_count += 1
-            self.request.last_routed_location_endpoint_within_region = self.request.location_endpoint_to_route
-            # The reason for this check is that we retry on
-            # current and previous regional endpoint for every region before moving to next region
-            if self.in_region_retry_count > 1:
-                self.in_region_retry_count = 0
-                self.failover_retry_count += 1
-                self.request.last_routed_location_endpoint_within_region = None
-            if self.failover_retry_count >= self.total_retries:
-                return False
             if not _OperationType.IsReadOnlyOperation(self.request.operation_type):
                 return False
-            # clear previous location-based routing directive
-            self.request.clear_route_to_location()
 
-            # set location-based routing directive based on retry count
-            # ensuring usePreferredLocations is set to True for retry
-            self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, True)
-
-            # We need to update request use_previous_endpoint_within_region flag
-
-            # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
-            # This enables marking the endpoint unavailability on endpoint failover/unreachability
-            self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
-            if self.location_endpoint is None:
-                return False
+            self.location_endpoint = self.resolve_next_region_service_endpoint()
             self.request.route_to_location(self.location_endpoint)
         return True
+
+    # This function prepares the request to go to the next region
+    def resolve_next_region_service_endpoint(self):
+        # This acts as an index for next location in the list of available locations
+        self.failover_retry_count += 1
+        # clear previous location-based routing directive
+        self.request.clear_route_to_location()
+        # clear the last routed endpoint within same region since we are going to a new region now
+        self.request.clear_last_routed_location()
+        # set location-based routing directive based on retry count
+        # ensuring usePreferredLocations is set to True for retry
+        self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, True)
+        # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
+        # This enables marking the endpoint unavailability on endpoint failover/unreachability
+        return self.global_endpoint_manager.resolve_service_endpoint(self.request)

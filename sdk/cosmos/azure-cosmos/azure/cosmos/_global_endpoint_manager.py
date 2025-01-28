@@ -77,9 +77,13 @@ class _GlobalEndpointManager(object):
 
     def mark_endpoint_unavailable_for_read(self, endpoint, refresh_cache):
         self.location_cache.mark_endpoint_unavailable_for_read(endpoint, refresh_cache)
+        if refresh_cache:
+            self.force_refresh(None)
 
     def mark_endpoint_unavailable_for_write(self, endpoint, refresh_cache):
         self.location_cache.mark_endpoint_unavailable_for_write(endpoint, refresh_cache)
+        if refresh_cache:
+            self.force_refresh(None)
 
     def get_ordered_write_locations(self):
         return self.location_cache.get_ordered_write_locations()

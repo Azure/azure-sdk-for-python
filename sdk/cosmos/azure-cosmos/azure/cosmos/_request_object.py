@@ -52,3 +52,6 @@ class RequestObject(object):
         self.location_index_to_route = None
         self.use_preferred_locations = None
         self.location_endpoint_to_route = None
+
+    def clear_last_routed_location(self) -> None:
+        self.last_routed_location_endpoint_within_region = None
