@@ -60,7 +60,8 @@ class _TimeoutFailoverRetryPolicy(object):
             # So that we can check in location cache if we need to return the current or previous
             # based on where the request was routed previously.
             self.request.last_routed_location_endpoint_within_region = self.request.location_endpoint_to_route
-            print("In Timeout retry policy: last routed location endpoint within region: ", self.request.last_routed_location_endpoint_within_region)
+            print("In Timeout retry policy: last routed location endpoint within region: ",
+                  self.request.last_routed_location_endpoint_within_region)
 
             if _OperationType.IsReadOnlyOperation(self.request.operation_type):
                 # We just directly got to the next location in case of read requests
@@ -102,4 +103,3 @@ class _TimeoutFailoverRetryPolicy(object):
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
         # This enables marking the endpoint unavailability on endpoint failover/unreachability
         return self.global_endpoint_manager.resolve_service_endpoint(self.request)
-
