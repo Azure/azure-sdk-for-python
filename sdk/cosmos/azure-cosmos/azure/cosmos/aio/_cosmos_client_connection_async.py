@@ -135,6 +135,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The default consistency policy for client operations.
 
         """
+        self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
         self.master_key: Optional[str] = None
         self.resource_tokens: Optional[Mapping[str, Any]] = None
@@ -412,7 +413,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers = dict(self.default_headers)
         headers = base.GetHeaders(self, initial_headers, "get", "", "", "",
                                   documents._OperationType.Read, {},
-                                  client_id=str(uuid.uuid4()))  # path  # id  # type
+                                  client_id=self.client_id)  # path  # id  # type
 
         request_params = _request_object.RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
 
