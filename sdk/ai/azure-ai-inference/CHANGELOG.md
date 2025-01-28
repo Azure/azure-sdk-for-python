@@ -6,8 +6,6 @@
 
 * Added support for Chat Completions with audio input. See new sample `sample_chat_completions_with_audio_data.py`.
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 * Fix a bug that caused filtering of a package with token usage from Azure OpenAI models in the streaming mode.
