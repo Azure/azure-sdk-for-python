@@ -88,7 +88,7 @@ directive:
 - from: swagger-document
   where: $.info
   transform: |
-    $["description"] = "The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms. The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview";
+    $["description"] = "The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms. The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in https://learn.microsoft.com/azure/cognitive-services/text-analytics/overview";
 ```
 
 ```yaml
