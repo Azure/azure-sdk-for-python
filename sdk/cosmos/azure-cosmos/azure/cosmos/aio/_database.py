@@ -42,6 +42,8 @@ from ._user import UserProxy
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
 
+# pylint: disable=docstring-keyword-should-match-keyword-only
+
 __all__ = ("DatabaseProxy",)
 
 
