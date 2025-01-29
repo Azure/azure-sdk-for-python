@@ -4,8 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from datetime import timedelta
-from typing import TYPE_CHECKING, List, Optional, Union, Tuple
+from typing import TYPE_CHECKING, List, Union, Tuple
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.credentials import AccessToken
 from azure.core.credentials_async import AsyncTokenCredential
@@ -88,9 +87,8 @@ class CommunicationIdentityClient:
         return CommunicationUserIdentifier(identity_access_token.identity.id, raw_id=identity_access_token.identity.id)
 
     @distributed_trace_async
-    async def create_user_and_token(
-        self, scopes: List[Union[str, "CommunicationTokenScope"]], *,
-        token_expires_in: Optional[timedelta] = None,
+    async def create_user_and_token( # pylint: disable=C4758
+        self, scopes: List[Union[str, "CommunicationTokenScope"]],
         **kwargs
     ) -> Tuple["CommunicationUserIdentifier", AccessToken]:
         """Create a single Communication user with an identity token.
@@ -138,10 +136,9 @@ class CommunicationIdentityClient:
         await self._identity_service_client.communication_identity.delete(user.properties["id"], **kwargs)
 
     @distributed_trace_async
-    async def get_token(
+    async def get_token( # pylint: disable=C4758
         self, user: CommunicationUserIdentifier,
-        scopes: List[Union[str, "CommunicationTokenScope"]], *,
-        token_expires_in: Optional[timedelta] = None,
+        scopes: List[Union[str, "CommunicationTokenScope"]],
         **kwargs
     ) -> AccessToken:
         """Generates a new token for an identity.
