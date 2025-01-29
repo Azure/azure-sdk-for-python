@@ -16,6 +16,7 @@ from ._shared.models import CommunicationUserIdentifier
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 from ._utils import convert_timedelta_to_mins
+from ._generated.models import CommunicationTokenScope
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential, AzureKeyCredential
@@ -94,7 +95,7 @@ class CommunicationIdentityClient(object):
     @distributed_trace
     def create_user_and_token( # pylint: disable=C4758
         self,
-        scopes: List[Union[str, "CommunicationTokenScope"]],
+        scopes: List[Union[str, CommunicationTokenScope]],
         **kwargs: Any
     ) -> Tuple[CommunicationUserIdentifier, AccessToken]:
         """Create a single Communication user with an identity token.
@@ -146,7 +147,7 @@ class CommunicationIdentityClient(object):
     def get_token( # pylint: disable=C4758
         self,
         user: CommunicationUserIdentifier,
-        scopes: List[Union[str, "CommunicationTokenScope"]],
+        scopes: List[Union[str, CommunicationTokenScope]],
         **kwargs: Any
     ) -> AccessToken:
         """Generates a new token for an identity.

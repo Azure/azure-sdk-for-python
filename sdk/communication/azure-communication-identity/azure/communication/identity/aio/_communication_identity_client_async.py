@@ -18,9 +18,7 @@ from .._shared.models import CommunicationUserIdentifier
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 from .._utils import convert_timedelta_to_mins
-
-if TYPE_CHECKING:
-    from .._generated.models import CommunicationTokenScope
+from .._generated.models import CommunicationTokenScope
 
 
 class CommunicationIdentityClient:
@@ -88,7 +86,7 @@ class CommunicationIdentityClient:
 
     @distributed_trace_async
     async def create_user_and_token( # pylint: disable=C4758
-        self, scopes: List[Union[str, "CommunicationTokenScope"]],
+        self, scopes: List[Union[str, CommunicationTokenScope]],
         **kwargs
     ) -> Tuple["CommunicationUserIdentifier", AccessToken]:
         """Create a single Communication user with an identity token.
@@ -138,7 +136,7 @@ class CommunicationIdentityClient:
     @distributed_trace_async
     async def get_token( # pylint: disable=C4758
         self, user: CommunicationUserIdentifier,
-        scopes: List[Union[str, "CommunicationTokenScope"]],
+        scopes: List[Union[str, CommunicationTokenScope]],
         **kwargs
     ) -> AccessToken:
         """Generates a new token for an identity.
