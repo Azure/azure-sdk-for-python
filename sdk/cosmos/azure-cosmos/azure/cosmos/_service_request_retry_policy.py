@@ -120,11 +120,11 @@ class ServiceRequestRetryPolicy(object):
     def mark_endpoint_unavailable(self, refresh_cache: bool):
         print("Marking endpoint unavailable - refresh_cache : {}".format(refresh_cache))
         if _OperationType.IsReadOnlyOperation(self.request.operation_type):
-            self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.location_endpoint, True)
             self.logger.warning("Marking %s unavailable for read", self.location_endpoint)
+            self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.location_endpoint, True)
         else:
-            self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.location_endpoint, refresh_cache)
             self.logger.warning("Marking %s unavailable for write", self.location_endpoint)
+            self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.location_endpoint, refresh_cache)
 
     def force_refresh_cache(self):
         self.global_endpoint_manager.force_refresh(None)

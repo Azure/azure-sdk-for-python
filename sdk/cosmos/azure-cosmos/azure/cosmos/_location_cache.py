@@ -75,7 +75,7 @@ def get_endpoints_by_location(new_locations,
     parsed_locations = []
 
 
-    for new_location in new_locations:
+    for new_location in new_locations: # pylint: disable=too-many-nested-blocks
         # if name in new_location and same for database account endpoint
         if "name" in new_location and "databaseAccountEndpoint" in new_location:
             if len(old_endpoints_by_location) == 0 or new_location["name"] in old_endpoints_by_location:
@@ -133,8 +133,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         self.location_unavailability_info_by_endpoint = {}
         self.refresh_time_interval_in_ms = refresh_time_interval_in_ms
         self.last_cache_update_time_stamp = 0
-        self.available_read_regional_endpoints_by_location = {}
-        self.available_write_regional_endpoints_by_location = {}
+        self.available_read_regional_endpoints_by_location = {} # pylint: disable=name-too-long
+        self.available_write_regional_endpoints_by_location = {} # pylint: disable=name-too-long
         self.available_write_locations = []
         self.available_read_locations = []
 
@@ -399,7 +399,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             print("In location cache: Updated read regional endpoint: ", endpoint)
         self.last_cache_update_timestamp = self.current_time_millis()  # pylint: disable=attribute-defined-outside-init
 
-    def get_preferred_available_regional_endpoints(
+    def get_preferred_available_regional_endpoints( # pylint: disable=name-too-long
         self, endpoints_by_location, orderedLocations, expected_available_operation, fallback_endpoint
     ):
         endpoints = []

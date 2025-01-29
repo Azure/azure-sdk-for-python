@@ -110,7 +110,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     _DefaultStringHashPrecision = 3
     _DefaultStringRangePrecision = -1
 
-    def __init__(
+    def __init__( # pylint: disable=too-many-statements
         self,
         url_connection: str,
         auth: CredentialDict,
