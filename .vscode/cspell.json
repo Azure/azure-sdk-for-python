@@ -116,6 +116,7 @@
     "sdk/monitor/azure-monitor-opentelemetry/samples/tracing/django/sample/db.sqlite3",
     "sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/django/sample/db.sqlite3",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
+    "sdk/openai/azure-openai/tests/assets/**",
     "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
     "sdk/translation/azure-ai-translation-text/tests/test_translation.py",
