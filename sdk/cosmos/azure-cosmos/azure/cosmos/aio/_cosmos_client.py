@@ -247,7 +247,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -258,10 +257,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource has changed.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
@@ -284,8 +280,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             kwargs["initial_headers"] = initial_headers
         if etag is not None:
             kwargs["etag"] = etag
-        if match_condition is not None:
-            kwargs["match_condition"] = match_condition
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
@@ -301,7 +295,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -318,10 +311,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource has changed.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
@@ -334,8 +324,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             kwargs["initial_headers"] = initial_headers
         if etag is not None:
             kwargs["etag"] = etag
-        if match_condition is not None:
-            kwargs["match_condition"] = match_condition
         try:
             database_proxy = self.get_database_client(id)
             await database_proxy.read(**kwargs)
@@ -447,7 +435,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         response_hook: Optional[Callable[[CaseInsensitiveDict], None]] = None,
         **kwargs: Any
     ) -> None:
@@ -458,10 +445,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :type database: Union[str, ~azure.cosmos.DatabaseProxy, Dict[str, Any]]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource has changed.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[CaseInsensitiveDict], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
@@ -473,8 +457,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             kwargs["initial_headers"] = initial_headers
         if etag is not None:
             kwargs["etag"] = etag
-        if match_condition is not None:
-            kwargs["match_condition"] = match_condition
         request_options = _build_options(kwargs)
 
         database_link = _get_database_link(database)
