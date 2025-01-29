@@ -248,14 +248,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
          in reduced feature compatibility.
         :paramtype api_version: str or ApiVersion
         """
-        (
-            endpoint,
-            shared_access_key_name,
-            shared_access_key,
-            _,
-            token,
-            token_expiry,
-        ) = _parse_conn_str(conn_str)
+        (endpoint, shared_access_key_name, shared_access_key, _, token, token_expiry, emulator) = _parse_conn_str(
+            conn_str
+        )
+        kwargs["use_tls"] = not emulator
+        credential: Union[ServiceBusSASTokenCredential, ServiceBusSharedKeyCredential]
         if token and token_expiry:
             credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif shared_access_key_name and shared_access_key:
@@ -433,7 +430,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         Before calling this method, you should use `get_queue`, `create_queue` or `list_queues` to get a
         `QueueProperties` instance, then update the properties. Only a portion of properties can
-        be updated. Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-queue.
+        be updated. Refer to https://learn.microsoft.com/rest/api/servicebus/update-queue.
         You could also pass keyword arguments for updating properties in the form of
         `<property_name>=<property_value>` which will override whatever was specified in
         the `QueueProperties` instance. Refer to ~azure.servicebus.management.QueueProperties for names of properties.
@@ -653,7 +650,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         Before calling this method, you should use `get_topic`, `create_topic` or `list_topics` to get a
         `TopicProperties` instance, then update the properties. Only a portion of properties can be updated.
-        Refer to https://docs.microsoft.com/en-us/rest/api/servicebus/update-topic.
+        Refer to https://learn.microsoft.com/rest/api/servicebus/update-topic.
         You could also pass keyword arguments for updating properties in the form of
         `<property_name>=<property_value>` which will override whatever was specified in
         the `TopicProperties` instance. Refer to ~azure.servicebus.management.TopicProperties for names of properties.

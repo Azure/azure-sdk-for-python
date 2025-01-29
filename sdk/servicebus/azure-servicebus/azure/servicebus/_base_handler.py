@@ -38,7 +38,6 @@ if TYPE_CHECKING:
     from .exceptions import ServiceBusError
 
     try:
-        # pylint:disable=unused-import
         from uamqp import AMQPClient as uamqp_AMQPClientSync
     except ImportError:
         pass
@@ -50,15 +49,16 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-def _parse_conn_str(
+def _parse_conn_str(  # pylint:disable=too-many-statements
     conn_str: str, check_case: Optional[bool] = False
-) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
+) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int], bool]:
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
     entity_path: Optional[str] = None
     shared_access_signature: Optional[str] = None
     shared_access_signature_expiry: Optional[int] = None
+    use_emulator: Optional[str] = None
 
     # split connection string into properties
     conn_properties = [s.split("=", 1) for s in conn_str.strip().rstrip(";").split(";")]
@@ -72,6 +72,7 @@ def _parse_conn_str(
         shared_access_key_name = conn_settings.get("SharedAccessKeyName")
         endpoint = conn_settings.get("Endpoint")
         entity_path = conn_settings.get("EntityPath")
+        use_emulator = conn_settings.get("UseDevelopmentEmulator")
 
     # non case sensitive check when parsing connection string for internal use
     for key, value in conn_settings.items():
@@ -101,6 +102,8 @@ def _parse_conn_str(
                 shared_access_key = value
             elif key.lower() == "entitypath":
                 entity_path = value
+            elif key.lower() == "usedevelopmentemulator":
+                use_emulator = value
 
     entity = cast(str, entity_path)
 
@@ -111,6 +114,8 @@ def _parse_conn_str(
     if not parsed.netloc:
         raise ValueError("Invalid Endpoint on the Connection String.")
     host = cast(str, parsed.netloc.strip())
+
+    emulator = use_emulator == "true"
 
     if any([shared_access_key, shared_access_key_name]) and not all([shared_access_key, shared_access_key_name]):
         raise ValueError("Connection string must have both SharedAccessKeyName and SharedAccessKey.")
@@ -126,6 +131,7 @@ def _parse_conn_str(
         entity,
         str(shared_access_signature) if shared_access_signature else None,
         shared_access_signature_expiry,
+        emulator,
     )
 
 
@@ -274,7 +280,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
     @classmethod
     def _convert_connection_string_to_kwargs(cls, conn_str: str, **kwargs: Any) -> Dict[str, Any]:
-        host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(conn_str)
+        host, policy, key, entity_in_conn_str, token, token_expiry, emulator = _parse_conn_str(conn_str)
         queue_name = kwargs.get("queue_name")
         topic_name = kwargs.get("topic_name")
         if not (queue_name or topic_name or entity_in_conn_str):
@@ -295,6 +301,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         kwargs["fully_qualified_namespace"] = host
         kwargs["entity_name"] = entity_in_conn_str or entity_in_kwargs
+        # Check if emulator is in use, unset tls if it is
+        if emulator:
+            kwargs["use_tls"] = False
 
         # Set the type to sync credentials, unless async credentials are passed in.
         token_cred_type = kwargs.pop("token_cred_type", ServiceBusSASTokenCredential)
@@ -362,7 +371,6 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def _do_retryable_operation(  # pylint: disable=inconsistent-return-statements
         self, operation: Callable, timeout: Optional[float] = None, **kwargs: Any
     ) -> Any:
-        # pylint: disable=protected-access
         require_last_exception = kwargs.pop("require_last_exception", False)
         operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
         retried_times = 0
@@ -425,7 +433,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         )
         if backoff <= self._config.retry_backoff_max and (
             abs_timeout_time is None or (backoff + time.time()) <= abs_timeout_time
-        ):  # pylint:disable=no-else-return
+        ):
             time.sleep(backoff)
             _LOGGER.info(
                 "%r has an exception (%r). Retrying...",
@@ -507,7 +515,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 timeout=timeout,
                 callback=callback,
             )
-        except Exception as exp:  # pylint: disable=broad-except
+        except Exception as exp:
             if isinstance(exp, self._amqp_transport.TIMEOUT_ERROR):
                 raise OperationTimeoutError(error=exp) from exp
             raise

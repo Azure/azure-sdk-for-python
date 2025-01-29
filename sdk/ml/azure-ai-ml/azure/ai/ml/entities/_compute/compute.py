@@ -123,7 +123,7 @@ class Compute(Resource, RestTranslatableMixin):
 
         class_type = cast(
             Optional[Union[AmlCompute, ComputeInstance, VirtualMachineCompute, KubernetesCompute, SynapseSparkCompute]],
-            mapping.get(compute_type, None),
+            mapping.get(compute_type, None),  # type: ignore
         )
         if class_type:
             return class_type._load_from_rest(obj)
@@ -154,7 +154,6 @@ class Compute(Resource, RestTranslatableMixin):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
         res: dict = ComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 

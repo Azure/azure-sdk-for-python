@@ -42,7 +42,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(FeatureStoreEntityOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._operation = service_client.featurestore_entity_versions
         self._container_operation = service_client.featurestore_entity_containers
         self._service_client = service_client
@@ -170,7 +170,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         self,
         name: str,
         version: str,
-        **kwargs: Dict,  # pylint:disable=unused-argument
+        **kwargs: Dict,
     ) -> None:
         """Restore an archived FeatureStoreEntity asset.
 

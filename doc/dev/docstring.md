@@ -111,7 +111,7 @@ For adding a version specific change use the `versionadded` docstring:
 
 ```
 
-Additional sphinx directives are documented [here](https://review.docs.microsoft.com/help/onboard/admin/reference/python/documenting-api?branch=master#supported-sphinx-directives)
+Additional sphinx directives are documented [here](https://review.learn.microsoft.com/help/onboard/admin/reference/python/documenting-api#supported-sphinx-directives)
 
 ### Model and Client Docstrings
 
