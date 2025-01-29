@@ -5,13 +5,13 @@ import unittest
 import uuid
 
 import pytest
+from aiohttp.client_exceptions import ClientConnectionError
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
-from azure.cosmos.aio import CosmosClient, _retry_utility_async
 import test_config
 from azure.cosmos import PartitionKey
 from azure.cosmos._location_cache import RegionalEndpoint
-from aiohttp.client_exceptions import ClientConnectionError
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+from azure.cosmos.aio import CosmosClient, _retry_utility_async
 
 
 @pytest.mark.cosmosEmulator

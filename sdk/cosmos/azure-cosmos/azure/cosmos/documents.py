@@ -22,7 +22,8 @@
 """Classes and enums for documents in the Azure Cosmos database service.
 """
 
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import List, Optional, TYPE_CHECKING, Union, Dict, Any
+
 from typing_extensions import Literal, TypedDict
 
 from ._retry_options import RetryOptions
@@ -74,12 +75,12 @@ class DatabaseAccount:  # pylint: disable=too-many-instance-attributes
         self.ReservedDocumentStorageInMB: int = 0
         self.ProvisionedDocumentStorageInMB: int = 0
         self.ConsistencyPolicy: Optional[UserConsistencyPolicy] = None
-        self._WritableLocations: List[str] = []
-        self._ReadableLocations: List[str] = []
+        self._WritableLocations: List[Dict[Any, Any]] = []
+        self._ReadableLocations: List[Dict[Any, Any]] = []
         self._EnableMultipleWritableLocations = False
 
     @property
-    def WritableLocations(self) -> List[str]:
+    def WritableLocations(self) -> List[Dict[Any, Any]]:
         """The list of writable locations for a geo-replicated database account.
         :returns: List of writable locations for the database account.
         :rtype: List[str]
@@ -87,7 +88,7 @@ class DatabaseAccount:  # pylint: disable=too-many-instance-attributes
         return self._WritableLocations
 
     @property
-    def ReadableLocations(self) -> List[str]:
+    def ReadableLocations(self) -> List[Dict[Any, Any]]:
         """The list of readable locations for a geo-replicated database account.
         :returns: List of readable locations for the database account.
         :rtype: List[str]
