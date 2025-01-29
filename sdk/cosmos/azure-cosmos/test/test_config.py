@@ -3,13 +3,16 @@
 
 import collections
 import os
+import time
 import uuid
 
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
-from azure.cosmos import ContainerProxy, DatabaseProxy, documents, exceptions, ConnectionRetryPolicy
-from azure.core.exceptions import ServiceRequestError
+from azure.cosmos import (ContainerProxy, DatabaseProxy, documents, exceptions, ConnectionRetryPolicy,
+                          http_constants, _retry_utility)
+from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
+from azure.core.pipeline.policies import RetryPolicy
 from devtools_testutils.azure_recorded_testcase import get_credential
 from devtools_testutils.helpers import is_live
 
@@ -266,3 +269,69 @@ class MockConnectionRetryPolicy(ConnectionRetryPolicy):
 
     def mock_send(self):
         raise ServiceRequestError("mock-service")
+
+class MockServiceConnectionRetryPolicy(RetryPolicy):
+    def __init__(self, resource_type, error, **kwargs):
+        self.resource_type = resource_type
+        self.error = error
+        self.counter = 0
+        clean_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+        super().__init__(**clean_kwargs)
+
+    def send(self, request):
+        self.counter = 0
+        absolute_timeout = request.context.options.pop('timeout', None)
+
+        retry_active = True
+        response = None
+        retry_settings = self.configure_retries(request.context.options)
+        while retry_active:
+            start_time = time.time()
+            try:
+                # raise the passed in exception for the passed in resource + operation combination
+                if request.http_request.headers.get(http_constants.HttpHeaders.ThinClientProxyResourceType) == self.resource_type:
+                    raise self.error
+                response = self.next.send(request)
+                if self.is_retry(retry_settings, response):
+                    retry_active = self.increment(retry_settings, response=response)
+                    if retry_active:
+                        self.sleep(retry_settings, request.context.transport, response=response)
+                        continue
+                break
+            except ServiceRequestError as err:
+                # the request ran into a socket timeout or failed to establish a new connection
+                # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
+                # This logic is based on the _retry.py file from azure-core
+                if retry_settings['connect'] > 0:
+                    self.counter += 1
+                    retry_active = self.increment(retry_settings, response=request, error=err)
+                    if retry_active:
+                        self.sleep(retry_settings, request.context.transport)
+                        continue
+                raise err
+            except ServiceResponseError as err:
+                # Only read operations can be safely retried with ServiceResponseError
+                if not _retry_utility._has_read_retryable_headers(request.http_request.headers):
+                    raise err
+                # This logic is based on the _retry.py file from azure-core
+                if retry_settings['read'] > 0:
+                    self.counter += 1
+                    retry_active = self.increment(retry_settings, response=request, error=err)
+                    if retry_active:
+                        self.sleep(retry_settings, request.context.transport)
+                        continue
+                raise err
+            except AzureError as err:
+                if self._is_method_retryable(retry_settings, request.http_request):
+                    retry_active = self.increment(retry_settings, response=request, error=err)
+                    if retry_active:
+                        self.sleep(retry_settings, request.context.transport)
+                        continue
+                raise err
+            finally:
+                end_time = time.time()
+                if absolute_timeout:
+                    absolute_timeout -= (end_time - start_time)
+
+        self.update_context(response.context, retry_settings)
+        return response

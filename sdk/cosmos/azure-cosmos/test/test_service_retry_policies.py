@@ -1,17 +1,16 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-
+import time
 import unittest
 import uuid
 
 import pytest
 
 import test_config
-from azure.cosmos import CosmosClient, PartitionKey, _retry_utility
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError
-
+from azure.cosmos import (CosmosClient, PartitionKey, _retry_utility, DatabaseAccount,
+                          _cosmos_client_connection, _global_endpoint_manager)
 from azure.cosmos._location_cache import RegionalEndpoint
-
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 @pytest.mark.cosmosEmulator
 class TestServiceRetryPolicies(unittest.TestCase):
@@ -38,7 +37,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
         cls.created_container = cls.created_database.create_container_if_not_exists(cls.TEST_CONTAINER_ID,
                                                                                     PartitionKey(path="/id"))
 
-    def test_service_request_retry(self):
+    def test_service_request_read_retry(self):
         mock_client = CosmosClient(self.host, self.masterKey)
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_ID)
@@ -158,6 +157,73 @@ class TestServiceRetryPolicies(unittest.TestCase):
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
+    def test_service_request_connection_retry_policy(self):
+        # Mock the client retry policy to see the same-region retries that happen there
+        exception = ServiceRequestError("mock exception")
+        exception.exc_type = Exception
+        connection_retry_policy = test_config.MockServiceConnectionRetryPolicy(resource_type="docs", error=exception)
+        mock_client = CosmosClient(self.host, self.masterKey, connection_retry_policy=connection_retry_policy)
+        db = mock_client.get_database_client(self.TEST_DATABASE_ID)
+        container = db.get_container_client(self.TEST_CONTAINER_ID)
+
+        # We retry ServiceRequestExceptions 3 times in the to the same endpoint before raising the exception
+        # regardless of operation type
+        try:
+            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+            pytest.fail("Exception was not raised.")
+        except ServiceRequestError:
+            assert connection_retry_policy.counter == 3
+
+        try:
+            container.read_item("some_id", "some_pk")
+            pytest.fail("Exception was not raised.")
+        except ServiceRequestError:
+            assert connection_retry_policy.counter == 3
+
+    def test_service_response_connection_retry_policy(self):
+        # Mock the client retry policy to see the same-region retries that happen there
+        exception = ServiceResponseError("mock exception")
+        exception.exc_type = Exception
+        connection_retry_policy = test_config.MockServiceConnectionRetryPolicy(resource_type="docs", error=exception)
+        mock_client = CosmosClient(self.host, self.masterKey, connection_retry_policy=connection_retry_policy)
+        db = mock_client.get_database_client(self.TEST_DATABASE_ID)
+        container = db.get_container_client(self.TEST_CONTAINER_ID)
+
+        # We retry ServiceResponseExceptions 3 times in the to the same endpoint before raising the exception
+        # for read operations, but 0 times for write requests
+        try:
+            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+            pytest.fail("Exception was not raised.")
+        except ServiceResponseError:
+            assert connection_retry_policy.counter == 0
+
+        try:
+            container.read_item("some_id", "some_pk")
+            pytest.fail("Exception was not raised.")
+        except ServiceResponseError:
+            assert connection_retry_policy.counter == 3
+
+
+    def test_global_endpoint_manager_retry(self):
+        self.original_get_database_account_stub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
+        _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
+        mock_client = CosmosClient(self.host, self.masterKey, preferred_locations=[self.REGION1, self.REGION2, self.REGION3])
+        db = mock_client.get_database_client(self.TEST_DATABASE_ID)
+        container = db.get_container_client(self.TEST_CONTAINER_ID)
+
+        # Save the original function
+        self.original_execute_function = _retry_utility.ExecuteFunction
+        try:
+            # Mock the function to return the ReadTimeout we retry
+            mf = self.MockExecuteServiceResponseException(Exception)
+            _retry_utility.ExecuteFunction = mf
+            container.read_item("some_id", "some_pk")
+            pytest.fail("Exception was not raised.")
+        except ServiceResponseError:
+            assert mf.counter == 2
+        finally:
+            _retry_utility.ExecuteFunction = self.original_execute_function
+            _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_get_database_account_stub
 
     class MockExecuteServiceRequestException(object):
         def __init__(self):
@@ -179,3 +245,24 @@ class TestServiceRetryPolicies(unittest.TestCase):
             exception = ServiceResponseError("mock exception")
             exception.exc_type = self.err_type
             raise exception
+
+    def MockGetDatabaseAccountStub(self, endpoint):
+        read_regions = ["West US", "East US"]
+        read_locations = []
+        for loc in read_regions:
+            read_locations.append({'databaseAccountEndpoint': endpoint + loc, 'name': loc})
+        read_locations = read_locations
+        write_regions = ["West US", "West US 2"]
+        write_locations = []
+        for loc in write_regions:
+            write_locations.append({'databaseAccountEndpoint': endpoint + loc, 'name': loc})
+        write_locations = write_locations
+        multi_write = False
+
+        db_acc = DatabaseAccount()
+        db_acc.DatabasesLink = "/dbs/"
+        db_acc.MediaLink = "/media/"
+        db_acc._ReadableLocations = read_locations
+        db_acc._WriteableLocations = write_locations
+        db_acc._EnableMultipleWritableLocations = multi_write
+        return db_acc
