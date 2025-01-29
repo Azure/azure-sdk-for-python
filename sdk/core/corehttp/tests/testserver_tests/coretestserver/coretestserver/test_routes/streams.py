@@ -48,6 +48,14 @@ def stream_jsonl_basic():
     yield from data
 
 
+def stream_jsonl_multiple_kv():
+    data = [
+        b'{"msg": "this is a hello world message", "planet": {"earth": "hello earth", "mars": "hello mars"}}\n',
+        b'{"msg": "this is a hello world message", "planet": {"venus": "hello venus", "jupiter": "hello jupiter"}}\n',
+    ]
+    yield from data
+
+
 def stream_jsonl_no_final_line_separator():
     data = b'{"msg": "this is a message"}'
     yield data
@@ -55,6 +63,21 @@ def stream_jsonl_no_final_line_separator():
 
 def stream_jsonl_broken_up_data():
     data = [b'{"msg": "this is a third message"}\n{"msg": ', b'"this is a fourth message"}\n']
+    yield from data
+
+
+def stream_jsonl_invalid_data():
+    data = [b'{"msg": "this is a third m']
+    yield from data
+
+
+def stream_jsonl_escaped_newline_data():
+    data = b'{"msg": "this is a...\\nmessage"}\n'
+    yield data
+
+
+def stream_jsonl_escaped_broken_newline_data():
+    data = [b'{"msg": "this is a third message"}\n{"msg": "\\n', b'this is a fourth message"}\n']
     yield from data
 
 
@@ -130,6 +153,11 @@ def jsonl_basic():
     return Response(stream_jsonl_basic(), status=200, headers={"Content-Type": "application/jsonl"})
 
 
+@streams_api.route("/jsonl_multiple_kv", methods=["GET"])
+def jsonl_multiple_kv():
+    return Response(stream_jsonl_multiple_kv(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
 @streams_api.route("/jsonl_no_final_line_separator", methods=["GET"])
 def jsonl_no_final_line_separator():
     return Response(stream_jsonl_no_final_line_separator(), status=200, headers={"Content-Type": "application/jsonl"})
@@ -138,3 +166,23 @@ def jsonl_no_final_line_separator():
 @streams_api.route("/jsonl_broken_up_data", methods=["GET"])
 def jsonl_broken_up_data():
     return Response(stream_jsonl_broken_up_data(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_invalid_data", methods=["GET"])
+def jsonl_invalid_data():
+    return Response(stream_jsonl_invalid_data(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_escaped_newline_data", methods=["GET"])
+def jsonl_escaped_newline_data():
+    return Response(stream_jsonl_escaped_newline_data(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_escaped_broken_newline_data", methods=["GET"])
+def jsonl_escaped_broken_newline_data():
+    return Response(stream_jsonl_escaped_broken_newline_data(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_invalid_content_type", methods=["GET"])
+def jsonl_invalid_content_type():
+    return Response(stream_jsonl_basic(), status=200, headers={"content-type": "application/json"})

@@ -24,11 +24,12 @@
 #
 # --------------------------------------------------------------------------
 
+import json
+
 import pytest
 
 from corehttp.rest import HttpRequest
 from corehttp.streaming import Stream
-from corehttp.streaming._decoders import JSONLDecoder
 from corehttp.runtime.pipeline import PipelineResponse
 
 
@@ -64,6 +65,17 @@ def test_stream_jsonl_basic(stream):
         {"msg": "this is another message"},
         {"msg": "this is a third message"},
         {"msg": "this is a fourth message"},
+    ]
+
+
+def test_stream_jsonl_multiple_kv(stream):
+    jsonl_stream = stream(HttpRequest("GET", "/streams/jsonl_multiple_kv"))
+    messages = []
+    for s in jsonl_stream:
+        messages.append(s)
+    assert messages == [
+        {"msg": "this is a hello world message", "planet": {"earth": "hello earth", "mars": "hello mars"}},
+        {"msg": "this is a hello world message", "planet": {"venus": "hello venus", "jupiter": "hello jupiter"}}
     ]
 
 
@@ -105,3 +117,35 @@ def test_stream_jsonl_context_manager(stream):
         for _ in streaming:
             break
     assert streaming._response.is_closed
+
+
+def test_stream_jsonl_invalid_data(stream):
+    jsonl_stream = stream(HttpRequest("GET", "/streams/jsonl_invalid_data"))
+
+    with pytest.raises(json.decoder.JSONDecodeError):
+        for _ in jsonl_stream:
+            ...
+
+
+def test_stream_jsonl_escaped_newline_data(stream):
+    jsonl_stream = stream(HttpRequest("GET", "/streams/jsonl_escaped_newline_data"))
+
+    for s in jsonl_stream:
+        assert s == {"msg": "this is a...\nmessage"}
+
+
+def test_stream_jsonl_escaped_broken_newline_data(stream):
+    jsonl_stream = stream(HttpRequest("GET", "/streams/jsonl_escaped_broken_newline_data"))
+    messages = []
+    for s in jsonl_stream:
+        messages.append(s)
+    assert messages == [
+        {"msg": "this is a third message"},
+        {"msg": "\nthis is a fourth message"},
+    ]
+
+
+def test_stream_jsonl_unsupported_content_type(stream):
+    with pytest.raises(ValueError) as e:
+        stream(HttpRequest("GET", "/streams/jsonl_invalid_content_type"))
+    assert e.value.args[0] == "Unsupported content-type 'application/json' for streaming. Provide a custom decoder."

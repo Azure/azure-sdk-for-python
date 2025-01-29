@@ -24,11 +24,12 @@
 #
 # --------------------------------------------------------------------------
 
+import json
+
 import pytest
 
 from corehttp.rest import HttpRequest
 from corehttp.streaming import AsyncStream
-from corehttp.streaming._decoders import JSONLDecoder
 from corehttp.runtime.pipeline import PipelineResponse
 
 
@@ -65,6 +66,18 @@ async def test_stream_jsonl_basic(stream):
         {"msg": "this is another message"},
         {"msg": "this is a third message"},
         {"msg": "this is a fourth message"},
+    ]
+
+
+@pytest.mark.asyncio
+async def test_stream_jsonl_multiple_kv(stream):
+    jsonl_stream = await stream(HttpRequest("GET", "/streams/jsonl_multiple_kv"))
+    messages = []
+    async for s in jsonl_stream:
+        messages.append(s)
+    assert messages == [
+        {"msg": "this is a hello world message", "planet": {"earth": "hello earth", "mars": "hello mars"}},
+        {"msg": "this is a hello world message", "planet": {"venus": "hello venus", "jupiter": "hello jupiter"}}
     ]
 
 
@@ -110,3 +123,39 @@ async def test_stream_jsonl_context_manager(stream):
         async for _ in streaming:
             break
     assert streaming._response.is_closed
+
+
+@pytest.mark.asyncio
+async def test_stream_jsonl_invalid_data(stream):
+    jsonl_stream = await stream(HttpRequest("GET", "/streams/jsonl_invalid_data"))
+
+    with pytest.raises(json.decoder.JSONDecodeError):
+        async for _ in jsonl_stream:
+            ...
+
+
+@pytest.mark.asyncio
+async def test_stream_jsonl_escaped_newline_data(stream):
+    jsonl_stream = await stream(HttpRequest("GET", "/streams/jsonl_escaped_newline_data"))
+
+    async for s in jsonl_stream:
+        assert s == {"msg": "this is a...\nmessage"}
+
+
+@pytest.mark.asyncio
+async def test_stream_jsonl_escaped_broken_newline_data(stream):
+    jsonl_stream = await stream(HttpRequest("GET", "/streams/jsonl_escaped_broken_newline_data"))
+    messages = []
+    async for s in jsonl_stream:
+        messages.append(s)
+    assert messages == [
+        {"msg": "this is a third message"},
+        {"msg": "\nthis is a fourth message"},
+    ]
+
+
+@pytest.mark.asyncio
+async def test_stream_jsonl_unsupported_content_type(stream):
+    with pytest.raises(ValueError) as e:
+        await stream(HttpRequest("GET", "/streams/jsonl_invalid_content_type"))
+    assert e.value.args[0] == "Unsupported content-type 'application/json' for streaming. Provide a custom decoder."

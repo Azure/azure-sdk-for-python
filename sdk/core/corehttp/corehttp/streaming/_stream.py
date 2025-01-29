@@ -96,7 +96,7 @@ class Stream(Iterator[ReturnType]):
         else:
             raise ValueError(
                 f"Unsupported content-type "
-                f"'{self._response.headers.get('Content-Type')}' "
+                f"'{self._response.headers.get('Content-Type', '')}' "
                 "for streaming. Provide a custom decoder."
             )
 
@@ -159,7 +159,7 @@ class AsyncStream(AsyncIterator[ReturnType]):
         else:
             raise ValueError(
                 f"Unsupported content-type "
-                f"'{self._response.headers.get('Content-Type')}' "
+                f"'{self._response.headers.get('Content-Type', '')}' "
                 "for streaming. Provide a custom decoder."
             )
 
