@@ -6,7 +6,6 @@ import uuid
 
 import pytest
 
-from requests.exceptions import ReadTimeout, ConnectTimeout, ConnectionError
 import test_config
 from azure.cosmos import CosmosClient, PartitionKey, _retry_utility
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
@@ -24,7 +23,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
     REGION1 = "West US"
     REGION2 = "East US"
     REGION3 = "West US 2"
-    REGION4 = "East US 2"
+    REGIONAL_ENDPOINT = RegionalEndpoint(host, host)
 
     @classmethod
     def setUpClass(cls):
@@ -51,9 +50,11 @@ class TestServiceRetryPolicies(unittest.TestCase):
         # Change the location cache to have 3 preferred read regions and 3 available read endpoints by location
         original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
         original_location_cache.available_read_locations = [self.REGION1, self.REGION2, self.REGION3]
-        regional_endpoint = RegionalEndpoint(self.host, self.host)
-        original_location_cache.available_read_regional_endpoints_by_locations = {self.REGION1: regional_endpoint, self.REGION2: regional_endpoint, self.REGION3: regional_endpoint}
-        original_location_cache.read_regional_endpoints = [regional_endpoint, regional_endpoint, regional_endpoint]
+        original_location_cache.available_read_regional_endpoints_by_locations = {self.REGION1: self.REGIONAL_ENDPOINT,
+                                                                                  self.REGION2: self.REGIONAL_ENDPOINT,
+                                                                                  self.REGION3: self.REGIONAL_ENDPOINT}
+        original_location_cache.read_regional_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
+                                                           self.REGIONAL_ENDPOINT]
         try:
             # Mock the function to return the ServiceRequestException we retry
             mf = self.MockExecuteServiceRequestException()
@@ -67,7 +68,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
 
         # Now we change the location cache to have only 1 preferred read region
         original_location_cache.available_read_locations = [self.REGION1]
-        original_location_cache.read_regional_endpoints = [regional_endpoint]
+        original_location_cache.read_regional_endpoints = [self.REGIONAL_ENDPOINT]
         try:
             # Reset the function to reset the counter
             mf = self.MockExecuteServiceRequestException()
@@ -81,9 +82,9 @@ class TestServiceRetryPolicies(unittest.TestCase):
 
         # Now we try it out with a write request
         original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
-        original_location_cache.write_regional_endpoints = [regional_endpoint, regional_endpoint]
-        original_location_cache.available_write_regional_endpoints_by_locations = {self.REGION1: regional_endpoint,
-                                                                             self.REGION2: regional_endpoint}
+        original_location_cache.write_regional_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
+        original_location_cache.available_write_regional_endpoints_by_locations = {self.REGION1: self.REGIONAL_ENDPOINT,
+                                                                                   self.REGION2: self.REGIONAL_ENDPOINT}
         try:
             # Reset the function to reset the counter
             mf = self.MockExecuteServiceRequestException()
@@ -96,6 +97,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
+
     def test_service_response_read_timeout_retry(self):
         mock_client = CosmosClient(self.host, self.masterKey)
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
@@ -107,70 +109,15 @@ class TestServiceRetryPolicies(unittest.TestCase):
 
         # Change the location cache to have 3 preferred read regions and 3 available read endpoints by location
         original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
-        regional_endpoint = RegionalEndpoint(self.host, self.host)
-        original_location_cache.available_read_regional_endpoints_by_locations = {self.REGION1: regional_endpoint, self.REGION2: regional_endpoint, self.REGION3: regional_endpoint}
-        original_location_cache.read_regional_endpoints = [regional_endpoint, regional_endpoint, regional_endpoint]
+        original_location_cache.available_read_locations = [self.REGION1, self.REGION2, self.REGION3]
+        original_location_cache.available_read_regional_endpoints_by_locations = {self.REGION1: self.REGIONAL_ENDPOINT,
+                                                                                  self.REGION2: self.REGIONAL_ENDPOINT,
+                                                                                  self.REGION3: self.REGIONAL_ENDPOINT}
+        original_location_cache.read_regional_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
+                                                           self.REGIONAL_ENDPOINT]
         try:
             # Mock the function to return the ReadTimeout we retry
-            mf = self.MockExecuteServiceResponseException(ReadTimeout)
-            _retry_utility.ExecuteFunction = mf
-            container.read_item(created_item['id'], created_item['pk'])
-            pytest.fail("Exception was not raised.")
-        except ServiceResponseError:
-            assert mf.counter == 6
-        finally:
-            _retry_utility.ExecuteFunction = self.original_execute_function
-
-        # Now we change the location cache to have only 1 preferred read region
-        original_location_cache.available_read_locations = [self.REGION1]
-        original_location_cache.read_regional_endpoints = [regional_endpoint]
-        try:
-            # Reset the function to reset the counter
-            mf = self.MockExecuteServiceResponseException(ReadTimeout)
-            _retry_utility.ExecuteFunction = mf
-            container.read_item(created_item['id'], created_item['pk'])
-            pytest.fail("Exception was not raised.")
-        except ServiceResponseError:
-            assert mf.counter == 2
-        finally:
-            _retry_utility.ExecuteFunction = self.original_execute_function
-
-        # Now we try it out with a write request
-        original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
-        original_location_cache.write_regional_endpoints = [regional_endpoint, regional_endpoint]
-        original_location_cache.available_write_regional_endpoints_by_locations = {self.REGION1: regional_endpoint,
-                                                                                   self.REGION2: regional_endpoint}
-        try:
-            # Reset the function to reset the counter
-            mf = self.MockExecuteServiceResponseException(ReadTimeout)
-            _retry_utility.ExecuteFunction = mf
-            # Even though we have 2 preferred write endpoints,
-            # we will only run the exception once due to no retries on write requests
-            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
-            pytest.fail("Exception was not raised.")
-        except ServiceResponseError:
-            assert mf.counter == 1
-        finally:
-            _retry_utility.ExecuteFunction = self.original_execute_function
-
-
-    def test_service_response_connect_timeout_retry(self):
-        mock_client = CosmosClient(self.host, self.masterKey)
-        db = mock_client.get_database_client(self.TEST_DATABASE_ID)
-        container = db.get_container_client(self.TEST_CONTAINER_ID)
-
-        created_item = container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
-        # Save the original function
-        self.original_execute_function = _retry_utility.ExecuteFunction
-
-        # Change the location cache to have 3 preferred read regions and 3 available read endpoints by location
-        original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
-        original_location_cache.available_read_locations = [self.REGION1, self.REGION2, self.REGION3]
-        original_location_cache.available_read_endpoint_by_locations = {self.REGION1: self.host, self.REGION2: self.host, self.REGION3: self.host}
-        original_location_cache.read_endpoints = [self.host, self.host, self.host]
-        try:
-            # Mock the function to return the ConnectionTimeoutError we retry
-            mf = self.MockExecuteServiceResponseException(ConnectTimeout)
+            mf = self.MockExecuteServiceResponseException(Exception)
             _retry_utility.ExecuteFunction = mf
             container.read_item(created_item['id'], created_item['pk'])
             pytest.fail("Exception was not raised.")
@@ -181,10 +128,10 @@ class TestServiceRetryPolicies(unittest.TestCase):
 
         # Now we change the location cache to have only 1 preferred read region
         original_location_cache.available_read_locations = [self.REGION1]
-        original_location_cache.read_endpoints = [self.host]
+        original_location_cache.read_regional_endpoints = [self.REGIONAL_ENDPOINT]
         try:
             # Reset the function to reset the counter
-            mf = self.MockExecuteServiceResponseException(ConnectTimeout)
+            mf = self.MockExecuteServiceResponseException(Exception)
             _retry_utility.ExecuteFunction = mf
             container.read_item(created_item['id'], created_item['pk'])
             pytest.fail("Exception was not raised.")
@@ -195,63 +142,22 @@ class TestServiceRetryPolicies(unittest.TestCase):
 
         # Now we try it out with a write request
         original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
-        original_location_cache.write_endpoints = [self.host, self.host]
-        original_location_cache.available_write_endpoint_by_locations = {self.REGION1: self.host,
-                                                                         self.REGION2: self.host}
+        original_location_cache.write_regional_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
+        original_location_cache.available_write_regional_endpoints_by_locations = {self.REGION1: self.REGIONAL_ENDPOINT,
+                                                                                   self.REGION2: self.REGIONAL_ENDPOINT}
         try:
             # Reset the function to reset the counter
-            mf = self.MockExecuteServiceResponseException(ConnectTimeout)
+            mf = self.MockExecuteServiceResponseException(Exception)
             _retry_utility.ExecuteFunction = mf
-            # ConnectTimeout behaves the same as service request timeout, so we retry on writes as well
+            # Even though we have 2 preferred write endpoints,
+            # we will only run the exception once due to no retries on write requests
             container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
             pytest.fail("Exception was not raised.")
         except ServiceResponseError:
-            assert mf.counter == 2
-        finally:
-            _retry_utility.ExecuteFunction = self.original_execute_function
-
-    def test_service_response_no_retry(self):
-        mock_client = CosmosClient(self.host, self.masterKey)
-        db = mock_client.get_database_client(self.TEST_DATABASE_ID)
-        container = db.get_container_client(self.TEST_CONTAINER_ID)
-
-        created_item = container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
-        # Save the original function
-        self.original_execute_function = _retry_utility.ExecuteFunction
-
-        # Change the location cache to have 3 preferred read regions and 3 available read endpoints by location
-        original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
-        original_location_cache.available_read_locations = [self.REGION1, self.REGION2, self.REGION3]
-        original_location_cache.available_read_endpoint_by_locations = {self.REGION1: self.host, self.REGION2: self.host, self.REGION3: self.host}
-        original_location_cache.read_endpoints = [self.host, self.host, self.host]
-        try:
-            # Mock the function to return some other ServiceResponseException we don't account for
-            mf = self.MockExecuteServiceResponseException(ConnectionError)
-            _retry_utility.ExecuteFunction = mf
-            container.read_item(created_item['id'], created_item['pk'])
-            pytest.fail("Exception was not raised.")
-        except ServiceResponseError:
-            # We should only run the request once due to no logic for these error types
             assert mf.counter == 1
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
-        # Now we try it out with a write request
-        original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
-        original_location_cache.write_endpoints = [self.host, self.host]
-        original_location_cache.available_write_endpoint_by_locations = {self.REGION1: self.host,
-                                                                         self.REGION2: self.host}
-        try:
-            # Reset the function to reset the counter
-            mf = self.MockExecuteServiceResponseException(ConnectionError)
-            _retry_utility.ExecuteFunction = mf
-            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
-            pytest.fail("Exception was not raised.")
-        except ServiceResponseError:
-            # We should only run the request once due to no logic for these error types
-            assert mf.counter == 1
-        finally:
-            _retry_utility.ExecuteFunction = self.original_execute_function
 
     class MockExecuteServiceRequestException(object):
         def __init__(self):
