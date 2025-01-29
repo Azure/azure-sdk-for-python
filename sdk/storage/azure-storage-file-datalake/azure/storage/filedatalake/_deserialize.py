@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import logging
 from typing import (
-    Any, Collection, Dict, List, NoReturn, Tuple,
+    Any, cast, Collection, Dict, List, NoReturn, Tuple,
     TYPE_CHECKING
 )
 from xml.etree.ElementTree import Element
@@ -41,6 +41,7 @@ if TYPE_CHECKING:
         Path,
         PathList
     )
+    from ._models import ContentSettings
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -101,9 +102,9 @@ def return_headers_and_deserialized_path_list(  # pylint: disable=name-too-long,
 def get_deleted_path_properties_from_generated_code(generated: "BlobItemInternal") -> DeletedPathProperties:  # pylint: disable=name-too-long
     deleted_path = DeletedPathProperties()
     deleted_path.name = generated.name
-    deleted_path.deleted_time = generated.properties.deleted_time  # type: ignore [assignment]
-    deleted_path.remaining_retention_days = generated.properties.remaining_retention_days  # type: ignore [assignment]
-    deleted_path.deletion_id = generated.deletion_id  # type: ignore [assignment]
+    deleted_path.deleted_time = generated.properties.deleted_time
+    deleted_path.remaining_retention_days = generated.properties.remaining_retention_days
+    deleted_path.deletion_id = generated.deletion_id
     return deleted_path
 
 
@@ -128,16 +129,16 @@ def from_blob_properties(blob_properties: "BlobProperties", **additional_args: A
     file_props = FileProperties()
     file_props.name = blob_properties.name
     file_props.etag = blob_properties.etag
-    file_props.deleted = blob_properties.deleted  # type: ignore [assignment]
+    file_props.deleted = blob_properties.deleted
     file_props.metadata = blob_properties.metadata
-    file_props.lease = blob_properties.lease  # type: ignore [assignment]
+    file_props.lease = cast(LeaseProperties, blob_properties.lease)
     file_props.lease.__class__ = LeaseProperties
     file_props.last_modified = blob_properties.last_modified
     file_props.creation_time = blob_properties.creation_time
     file_props.size = blob_properties.size
     file_props.deleted_time = blob_properties.deleted_time
     file_props.remaining_retention_days = blob_properties.remaining_retention_days
-    file_props.content_settings = blob_properties.content_settings  # type: ignore [assignment]
+    file_props.content_settings = cast("ContentSettings", blob_properties.content_settings)
 
     # Parse additional Datalake-only properties
     file_props.encryption_context = additional_args.pop('encryption_context', None)
