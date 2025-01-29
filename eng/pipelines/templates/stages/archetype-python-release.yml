@@ -38,11 +38,6 @@ stages:
                 inputs:
                   versionSpec: '3.12'
 
-              - script: |
-                  set -e
-                  python -m pip install -r eng/release_requirements.txt
-                displayName: Install Release Dependencies
-
               - template: /eng/common/pipelines/templates/steps/retain-run.yml
 
               - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
@@ -99,6 +94,9 @@ stages:
                 isProduction: true
                 inputs:
                 - input: pipelineArtifact
+                  artifactName: release_artifacts
+                  targetPath: $(Pipeline.Workspace)/release_artifacts
+                - input: pipelineArtifact
                   artifactName: packages_extended
                   targetPath: $(Pipeline.Workspace)/packages_extended
 
@@ -111,28 +109,14 @@ stages:
                 runOnce:
                   deploy:
                     steps:
-                      # - checkout: self
-
-# todo: re-enable by publishing the necessary scripts as a build artifact that can be downloaded
-                      # - download: current
-                      #   artifact:
-                      #   timeoutInMinutes: 5
 
                       - task: UsePythonVersion@0
                         inputs:
                           versionSpec: '3.9'
 
-                      # - script: |
-                      #     set -e
-                      #     python -m pip install -r eng/release_requirements.txt
-                      #   displayName: Install Release Dependencies
-
-                      # - task: PythonScript@0
-                      #   displayName: Verify Dependency Presence
-                      #   condition: and(succeeded(), ne(variables['Skip.VerifyDependencies'], 'true'))
-                      #   inputs:
-                      #     scriptPath: 'scripts/devops_tasks/verify_dependencies_present.py'
-                      #     arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
+                      - script: |
+                          python -m pip install -r $(Pipeline.Workspace)/release_artifacts/release_requirements.txt
+                        displayName: Install Release Dependencies
 
                       - task: TwineAuthenticate@0
                         displayName: 'Authenticate to feed: ${{parameters.DevFeedName}}'
