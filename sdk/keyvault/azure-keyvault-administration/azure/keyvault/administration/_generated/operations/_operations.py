@@ -531,7 +531,7 @@ class RoleAssignmentsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.keyvault.administration.KeyVaultClient`'s
+        :class:`~azure.keyvault.administration._generated.KeyVaultClient`'s
         :attr:`role_assignments` attribute.
     """
 
@@ -551,7 +551,7 @@ class RoleAssignmentsOperations:
         :param role_assignment_name: The name of the role assignment to delete. Required.
         :type role_assignment_name: str
         :return: RoleAssignment. The RoleAssignment is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.RoleAssignment
+        :rtype: ~azure.keyvault.administration._generated.models.RoleAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -626,12 +626,12 @@ class RoleAssignmentsOperations:
          GUID. Required.
         :type role_assignment_name: str
         :param parameters: Parameters for the role assignment. Required.
-        :type parameters: ~azure.keyvault.administration.models.RoleAssignmentCreateParameters
+        :type parameters: ~azure.keyvault.administration._generated.models.RoleAssignmentCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: RoleAssignment. The RoleAssignment is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.RoleAssignment
+        :rtype: ~azure.keyvault.administration._generated.models.RoleAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -658,7 +658,7 @@ class RoleAssignmentsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: RoleAssignment. The RoleAssignment is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.RoleAssignment
+        :rtype: ~azure.keyvault.administration._generated.models.RoleAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -685,7 +685,7 @@ class RoleAssignmentsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: RoleAssignment. The RoleAssignment is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.RoleAssignment
+        :rtype: ~azure.keyvault.administration._generated.models.RoleAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -706,10 +706,10 @@ class RoleAssignmentsOperations:
         :type role_assignment_name: str
         :param parameters: Parameters for the role assignment. Is one of the following types:
          RoleAssignmentCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.keyvault.administration.models.RoleAssignmentCreateParameters or JSON
+        :type parameters: ~azure.keyvault.administration._generated.models.RoleAssignmentCreateParameters or JSON
          or IO[bytes]
         :return: RoleAssignment. The RoleAssignment is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.RoleAssignment
+        :rtype: ~azure.keyvault.administration._generated.models.RoleAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -785,7 +785,7 @@ class RoleAssignmentsOperations:
         :param role_assignment_name: The name of the role assignment to get. Required.
         :type role_assignment_name: str
         :return: RoleAssignment. The RoleAssignment is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.RoleAssignment
+        :rtype: ~azure.keyvault.administration._generated.models.RoleAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -855,7 +855,7 @@ class RoleAssignmentsOperations:
          assignments at, above or below the scope for the specified principal. Default value is None.
         :paramtype filter: str
         :return: An iterator like instance of RoleAssignment
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration.models.RoleAssignment]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration._generated.models.RoleAssignment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -942,7 +942,7 @@ class RoleDefinitionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.keyvault.administration.KeyVaultClient`'s
+        :class:`~azure.keyvault.administration._generated.KeyVaultClient`'s
         :attr:`role_definitions` attribute.
     """
 
@@ -963,7 +963,7 @@ class RoleDefinitionsOperations:
         :param role_definition_name: The name (GUID) of the role definition to delete. Required.
         :type role_definition_name: str
         :return: RoleDefinition. The RoleDefinition is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.RoleDefinition
+        :rtype: ~azure.keyvault.administration._generated.models.RoleDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1039,12 +1039,12 @@ class RoleDefinitionsOperations:
          valid GUID. Required.
         :type role_definition_name: str
         :param parameters: Parameters for the role definition. Required.
-        :type parameters: ~azure.keyvault.administration.models.RoleDefinitionCreateParameters
+        :type parameters: ~azure.keyvault.administration._generated.models.RoleDefinitionCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: RoleDefinition. The RoleDefinition is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.RoleDefinition
+        :rtype: ~azure.keyvault.administration._generated.models.RoleDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1072,7 +1072,7 @@ class RoleDefinitionsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: RoleDefinition. The RoleDefinition is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.RoleDefinition
+        :rtype: ~azure.keyvault.administration._generated.models.RoleDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1100,7 +1100,7 @@ class RoleDefinitionsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: RoleDefinition. The RoleDefinition is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.RoleDefinition
+        :rtype: ~azure.keyvault.administration._generated.models.RoleDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1122,10 +1122,10 @@ class RoleDefinitionsOperations:
         :type role_definition_name: str
         :param parameters: Parameters for the role definition. Is one of the following types:
          RoleDefinitionCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.keyvault.administration.models.RoleDefinitionCreateParameters or JSON
+        :type parameters: ~azure.keyvault.administration._generated.models.RoleDefinitionCreateParameters or JSON
          or IO[bytes]
         :return: RoleDefinition. The RoleDefinition is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.RoleDefinition
+        :rtype: ~azure.keyvault.administration._generated.models.RoleDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1201,7 +1201,7 @@ class RoleDefinitionsOperations:
         :param role_definition_name: The name of the role definition to get. Required.
         :type role_definition_name: str
         :return: RoleDefinition. The RoleDefinition is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.RoleDefinition
+        :rtype: ~azure.keyvault.administration._generated.models.RoleDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1268,7 +1268,7 @@ class RoleDefinitionsOperations:
          below the given scope as well. Default value is None.
         :paramtype filter: str
         :return: An iterator like instance of RoleDefinition
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration.models.RoleDefinition]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration._generated.models.RoleDefinition]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -1358,7 +1358,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param job_id: The id returned as part of the backup request. Required.
         :type job_id: str
         :return: FullBackupOperation. The FullBackupOperation is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.FullBackupOperation
+        :rtype: ~azure.keyvault.administration._generated.models.FullBackupOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1494,14 +1494,14 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param azure_storage_blob_container_uri: Azure blob shared access signature token pointing to a
          valid Azure blob container where full backup needs to be stored. This token needs to be valid
          for at least next 24 hours from the time of making this call. Required.
-        :type azure_storage_blob_container_uri: ~azure.keyvault.administration.models.SASTokenParameter
+        :type azure_storage_blob_container_uri: ~azure.keyvault.administration._generated.models.SASTokenParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of LROPoller that returns FullBackupOperation. The FullBackupOperation is
          compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.FullBackupOperation]
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.FullBackupOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1521,7 +1521,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :return: An instance of LROPoller that returns FullBackupOperation. The FullBackupOperation is
          compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.FullBackupOperation]
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.FullBackupOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1541,7 +1541,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :return: An instance of LROPoller that returns FullBackupOperation. The FullBackupOperation is
          compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.FullBackupOperation]
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.FullBackupOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1555,12 +1555,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          valid Azure blob container where full backup needs to be stored. This token needs to be valid
          for at least next 24 hours from the time of making this call. Is one of the following types:
          SASTokenParameter, JSON, IO[bytes] Required.
-        :type azure_storage_blob_container_uri: ~azure.keyvault.administration.models.SASTokenParameter
+        :type azure_storage_blob_container_uri: ~azure.keyvault.administration._generated.models.SASTokenParameter
          or JSON or IO[bytes]
         :return: An instance of LROPoller that returns FullBackupOperation. The FullBackupOperation is
          compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.FullBackupOperation]
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.FullBackupOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1707,14 +1707,14 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param pre_backup_operation_parameters: Optional parameters to validate prior to performing a
          full backup operation. Required.
         :type pre_backup_operation_parameters:
-         ~azure.keyvault.administration.models.PreBackupOperationParameters
+         ~azure.keyvault.administration._generated.models.PreBackupOperationParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of LROPoller that returns FullBackupOperation. The FullBackupOperation is
          compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.FullBackupOperation]
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.FullBackupOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1733,7 +1733,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :return: An instance of LROPoller that returns FullBackupOperation. The FullBackupOperation is
          compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.FullBackupOperation]
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.FullBackupOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1752,7 +1752,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :return: An instance of LROPoller that returns FullBackupOperation. The FullBackupOperation is
          compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.FullBackupOperation]
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.FullBackupOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1772,11 +1772,11 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          full backup operation. Is one of the following types: PreBackupOperationParameters, JSON,
          IO[bytes] Required.
         :type pre_backup_operation_parameters:
-         ~azure.keyvault.administration.models.PreBackupOperationParameters or JSON or IO[bytes]
+         ~azure.keyvault.administration._generated.models.PreBackupOperationParameters or JSON or IO[bytes]
         :return: An instance of LROPoller that returns FullBackupOperation. The FullBackupOperation is
          compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.FullBackupOperation]
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.FullBackupOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1844,7 +1844,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param job_id: The Job Id returned part of the restore operation. Required.
         :type job_id: str
         :return: RestoreOperation. The RestoreOperation is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.RestoreOperation
+        :rtype: ~azure.keyvault.administration._generated.models.RestoreOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1986,13 +1986,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param pre_restore_operation_parameters: Optional pre restore parameters to validate prior to
          performing a full restore operation. Required.
         :type pre_restore_operation_parameters:
-         ~azure.keyvault.administration.models.PreRestoreOperationParameters
+         ~azure.keyvault.administration._generated.models.PreRestoreOperationParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of LROPoller that returns RestoreOperation. The RestoreOperation is
          compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.RestoreOperation]
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.RestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2010,7 +2010,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :paramtype content_type: str
         :return: An instance of LROPoller that returns RestoreOperation. The RestoreOperation is
          compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.RestoreOperation]
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.RestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2028,7 +2028,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :paramtype content_type: str
         :return: An instance of LROPoller that returns RestoreOperation. The RestoreOperation is
          compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.RestoreOperation]
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.RestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2048,10 +2048,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          performing a full restore operation. Is one of the following types:
          PreRestoreOperationParameters, JSON, IO[bytes] Required.
         :type pre_restore_operation_parameters:
-         ~azure.keyvault.administration.models.PreRestoreOperationParameters or JSON or IO[bytes]
+         ~azure.keyvault.administration._generated.models.PreRestoreOperationParameters or JSON or IO[bytes]
         :return: An instance of LROPoller that returns RestoreOperation. The RestoreOperation is
          compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.RestoreOperation]
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.RestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2192,13 +2192,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
          successful full backup was stored. Required.
-        :type restore_blob_details: ~azure.keyvault.administration.models.RestoreOperationParameters
+        :type restore_blob_details: ~azure.keyvault.administration._generated.models.RestoreOperationParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of LROPoller that returns RestoreOperation. The RestoreOperation is
          compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.RestoreOperation]
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.RestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2217,7 +2217,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :paramtype content_type: str
         :return: An instance of LROPoller that returns RestoreOperation. The RestoreOperation is
          compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.RestoreOperation]
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.RestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2236,7 +2236,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :paramtype content_type: str
         :return: An instance of LROPoller that returns RestoreOperation. The RestoreOperation is
          compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.RestoreOperation]
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.RestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2250,11 +2250,11 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
          successful full backup was stored. Is one of the following types: RestoreOperationParameters,
          JSON, IO[bytes] Required.
-        :type restore_blob_details: ~azure.keyvault.administration.models.RestoreOperationParameters or
+        :type restore_blob_details: ~azure.keyvault.administration._generated.models.RestoreOperationParameters or
          JSON or IO[bytes]
         :return: An instance of LROPoller that returns RestoreOperation. The RestoreOperation is
          compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.RestoreOperation]
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.RestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2323,7 +2323,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type job_id: str
         :return: SelectiveKeyRestoreOperation. The SelectiveKeyRestoreOperation is compatible with
          MutableMapping
-        :rtype: ~azure.keyvault.administration.models.SelectiveKeyRestoreOperation
+        :rtype: ~azure.keyvault.administration._generated.models.SelectiveKeyRestoreOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2467,14 +2467,14 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
          successful full backup was stored. Required.
         :type restore_blob_details:
-         ~azure.keyvault.administration.models.SelectiveKeyRestoreOperationParameters
+         ~azure.keyvault.administration._generated.models.SelectiveKeyRestoreOperationParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of LROPoller that returns SelectiveKeyRestoreOperation. The
          SelectiveKeyRestoreOperation is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.SelectiveKeyRestoreOperation]
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.SelectiveKeyRestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2496,7 +2496,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :return: An instance of LROPoller that returns SelectiveKeyRestoreOperation. The
          SelectiveKeyRestoreOperation is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.SelectiveKeyRestoreOperation]
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.SelectiveKeyRestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2518,7 +2518,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :return: An instance of LROPoller that returns SelectiveKeyRestoreOperation. The
          SelectiveKeyRestoreOperation is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.SelectiveKeyRestoreOperation]
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.SelectiveKeyRestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2538,12 +2538,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          successful full backup was stored. Is one of the following types:
          SelectiveKeyRestoreOperationParameters, JSON, IO[bytes] Required.
         :type restore_blob_details:
-         ~azure.keyvault.administration.models.SelectiveKeyRestoreOperationParameters or JSON or
+         ~azure.keyvault.administration._generated.models.SelectiveKeyRestoreOperationParameters or JSON or
          IO[bytes]
         :return: An instance of LROPoller that returns SelectiveKeyRestoreOperation. The
          SelectiveKeyRestoreOperation is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.keyvault.administration.models.SelectiveKeyRestoreOperation]
+         ~azure.core.polling.LROPoller[~azure.keyvault.administration._generated.models.SelectiveKeyRestoreOperation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2623,12 +2623,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          Required.
         :type setting_name: str
         :param parameters: The parameters to update an account setting. Required.
-        :type parameters: ~azure.keyvault.administration.models.UpdateSettingRequest
+        :type parameters: ~azure.keyvault.administration._generated.models.UpdateSettingRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: Setting. The Setting is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.Setting
+        :rtype: ~azure.keyvault.administration._generated.models.Setting
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2650,7 +2650,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: Setting. The Setting is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.Setting
+        :rtype: ~azure.keyvault.administration._generated.models.Setting
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2672,7 +2672,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: Setting. The Setting is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.Setting
+        :rtype: ~azure.keyvault.administration._generated.models.Setting
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2690,10 +2690,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type setting_name: str
         :param parameters: The parameters to update an account setting. Is one of the following types:
          UpdateSettingRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.keyvault.administration.models.UpdateSettingRequest or JSON or
+        :type parameters: ~azure.keyvault.administration._generated.models.UpdateSettingRequest or JSON or
          IO[bytes]
         :return: Setting. The Setting is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.Setting
+        :rtype: ~azure.keyvault.administration._generated.models.Setting
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2769,7 +2769,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          Required.
         :type setting_name: str
         :return: Setting. The Setting is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.Setting
+        :rtype: ~azure.keyvault.administration._generated.models.Setting
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2832,7 +2832,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         Retrieves a list of all the available account settings that can be configured.
 
         :return: SettingsListResult. The SettingsListResult is compatible with MutableMapping
-        :rtype: ~azure.keyvault.administration.models.SettingsListResult
+        :rtype: ~azure.keyvault.administration._generated.models.SettingsListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {

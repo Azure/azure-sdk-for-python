@@ -28,10 +28,10 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
 
     :ivar role_assignments: RoleAssignmentsOperations operations
     :vartype role_assignments:
-     azure.keyvault.administration.aio.operations.RoleAssignmentsOperations
+     azure.keyvault.administration._generated.aio.operations.RoleAssignmentsOperations
     :ivar role_definitions: RoleDefinitionsOperations operations
     :vartype role_definitions:
-     azure.keyvault.administration.aio.operations.RoleDefinitionsOperations
+     azure.keyvault.administration._generated.aio.operations.RoleDefinitionsOperations
     :param vault_base_url: Required.
     :type vault_base_url: str
     :param credential: Credential used to authenticate requests to the service. Required.

@@ -22,11 +22,11 @@ class FullBackupOperation(_model_base.Model):
 
     :ivar status: Status of the backup operation. Known values are: "InProgress", "Succeeded",
      "Canceled", and "Failed".
-    :vartype status: str or ~azure.keyvault.administration.models.OperationStatus
+    :vartype status: str or ~azure.keyvault.administration._generated.models.OperationStatus
     :ivar status_details: The status details of backup operation.
     :vartype status_details: str
     :ivar error: Error encountered, if any, during the full backup operation.
-    :vartype error: ~azure.keyvault.administration.models.FullBackupOperationError
+    :vartype error: ~azure.keyvault.administration._generated.models.FullBackupOperationError
     :ivar start_time: The start time of the backup operation in UTC.
     :vartype start_time: ~datetime.datetime
     :ivar end_time: The end time of the backup operation in UTC.
@@ -88,7 +88,7 @@ class FullBackupOperationError(_model_base.Model):
     :ivar message: The error message.
     :vartype message: str
     :ivar inner_error: The key vault server error.
-    :vartype inner_error: ~azure.keyvault.administration.models.FullBackupOperationError
+    :vartype inner_error: ~azure.keyvault.administration._generated.models.FullBackupOperationError
     """
 
     code: Optional[str] = rest_field(visibility=["read"])
@@ -105,7 +105,7 @@ class KeyVaultError(_model_base.Model):
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar error: The key vault server error.
-    :vartype error: ~azure.keyvault.administration.models.FullBackupOperationError
+    :vartype error: ~azure.keyvault.administration._generated.models.FullBackupOperationError
     """
 
     error: Optional["_models.FullBackupOperationError"] = rest_field(visibility=["read"])
@@ -121,10 +121,10 @@ class Permission(_model_base.Model):
      other role definitions assigned to a principal.
     :vartype not_actions: list[str]
     :ivar data_actions: Data action permissions that are granted.
-    :vartype data_actions: list[str or ~azure.keyvault.administration.models.DataAction]
+    :vartype data_actions: list[str or ~azure.keyvault.administration._generated.models.DataAction]
     :ivar not_data_actions: Data action permissions that are excluded but not denied. They may be
      granted by other role definitions assigned to a principal.
-    :vartype not_data_actions: list[str or ~azure.keyvault.administration.models.DataAction]
+    :vartype not_data_actions: list[str or ~azure.keyvault.administration._generated.models.DataAction]
     """
 
     actions: Optional[List[str]] = rest_field()
@@ -205,7 +205,7 @@ class PreRestoreOperationParameters(_model_base.Model):
     """The authentication method and location for the restore operation.
 
     :ivar sas_token_parameters: A user-provided SAS token to an Azure blob storage container.
-    :vartype sas_token_parameters: ~azure.keyvault.administration.models.SASTokenParameter
+    :vartype sas_token_parameters: ~azure.keyvault.administration._generated.models.SASTokenParameter
     :ivar folder_to_restore: The Folder name of the blob where the previous successful full backup
      was stored.
     :vartype folder_to_restore: str
@@ -240,11 +240,11 @@ class RestoreOperation(_model_base.Model):
 
     :ivar status: Status of the restore operation. Known values are: "InProgress", "Succeeded",
      "Canceled", and "Failed".
-    :vartype status: str or ~azure.keyvault.administration.models.OperationStatus
+    :vartype status: str or ~azure.keyvault.administration._generated.models.OperationStatus
     :ivar status_details: The status details of restore operation.
     :vartype status_details: str
     :ivar error: Error encountered, if any, during the restore operation.
-    :vartype error: ~azure.keyvault.administration.models.FullBackupOperationError
+    :vartype error: ~azure.keyvault.administration._generated.models.FullBackupOperationError
     :ivar job_id: Identifier for the restore operation.
     :vartype job_id: str
     :ivar start_time: The start time of the restore operation.
@@ -297,7 +297,7 @@ class RestoreOperationParameters(_model_base.Model):
 
     :ivar sas_token_parameters: A user-provided SAS token to an Azure blob storage container.
      Required.
-    :vartype sas_token_parameters: ~azure.keyvault.administration.models.SASTokenParameter
+    :vartype sas_token_parameters: ~azure.keyvault.administration._generated.models.SASTokenParameter
     :ivar folder_to_restore: The Folder name of the blob where the previous successful full backup
      was stored. Required.
     :vartype folder_to_restore: str
@@ -339,7 +339,7 @@ class RoleAssignment(_model_base.Model):
     :ivar type: The role assignment type.
     :vartype type: str
     :ivar properties: Role assignment properties.
-    :vartype properties: ~azure.keyvault.administration.models.RoleAssignmentPropertiesWithScope
+    :vartype properties: ~azure.keyvault.administration._generated.models.RoleAssignmentPropertiesWithScope
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
@@ -375,7 +375,7 @@ class RoleAssignmentCreateParameters(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar properties: Role assignment properties. Required.
-    :vartype properties: ~azure.keyvault.administration.models.RoleAssignmentProperties
+    :vartype properties: ~azure.keyvault.administration._generated.models.RoleAssignmentProperties
     """
 
     properties: "_models.RoleAssignmentProperties" = rest_field()
@@ -440,7 +440,7 @@ class RoleAssignmentPropertiesWithScope(_model_base.Model):
     """Role assignment properties with scope.
 
     :ivar scope: The role scope. Known values are: "/" and "/keys".
-    :vartype scope: str or ~azure.keyvault.administration.models.RoleScope
+    :vartype scope: str or ~azure.keyvault.administration._generated.models.RoleScope
     :ivar role_definition_id: The role definition ID.
     :vartype role_definition_id: str
     :ivar principal_id: The principal ID.
@@ -484,9 +484,9 @@ class RoleDefinition(_model_base.Model):
     :ivar name: The role definition name.
     :vartype name: str
     :ivar type: The role definition type. "Microsoft.Authorization/roleDefinitions"
-    :vartype type: str or ~azure.keyvault.administration.models.RoleDefinitionType
+    :vartype type: str or ~azure.keyvault.administration._generated.models.RoleDefinitionType
     :ivar properties: Role definition properties.
-    :vartype properties: ~azure.keyvault.administration.models.RoleDefinitionProperties
+    :vartype properties: ~azure.keyvault.administration._generated.models.RoleDefinitionProperties
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
@@ -542,7 +542,7 @@ class RoleDefinitionCreateParameters(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar properties: Role definition properties. Required.
-    :vartype properties: ~azure.keyvault.administration.models.RoleDefinitionProperties
+    :vartype properties: ~azure.keyvault.administration._generated.models.RoleDefinitionProperties
     """
 
     properties: "_models.RoleDefinitionProperties" = rest_field()
@@ -574,11 +574,11 @@ class RoleDefinitionProperties(_model_base.Model):
     :ivar description: The role definition description.
     :vartype description: str
     :ivar role_type: The role type. Known values are: "AKVBuiltInRole" and "CustomRole".
-    :vartype role_type: str or ~azure.keyvault.administration.models.RoleType
+    :vartype role_type: str or ~azure.keyvault.administration._generated.models.RoleType
     :ivar permissions: Role definition permissions.
-    :vartype permissions: list[~azure.keyvault.administration.models.Permission]
+    :vartype permissions: list[~azure.keyvault.administration._generated.models.Permission]
     :ivar assignable_scopes: Role definition assignable scopes.
-    :vartype assignable_scopes: list[str or ~azure.keyvault.administration.models.RoleScope]
+    :vartype assignable_scopes: list[str or ~azure.keyvault.administration._generated.models.RoleScope]
     """
 
     role_name: Optional[str] = rest_field(name="roleName")
@@ -663,11 +663,11 @@ class SelectiveKeyRestoreOperation(_model_base.Model):
 
     :ivar status: Status of the restore operation. Known values are: "InProgress", "Succeeded",
      "Canceled", and "Failed".
-    :vartype status: str or ~azure.keyvault.administration.models.OperationStatus
+    :vartype status: str or ~azure.keyvault.administration._generated.models.OperationStatus
     :ivar status_details: The status details of restore operation.
     :vartype status_details: str
     :ivar error: Error encountered, if any, during the selective key restore operation.
-    :vartype error: ~azure.keyvault.administration.models.FullBackupOperationError
+    :vartype error: ~azure.keyvault.administration._generated.models.FullBackupOperationError
     :ivar job_id: Identifier for the selective key restore operation.
     :vartype job_id: str
     :ivar start_time: The start time of the restore operation.
@@ -720,7 +720,7 @@ class SelectiveKeyRestoreOperationParameters(_model_base.Model):
 
     :ivar sas_token_parameters: A user-provided SAS token to an Azure blob storage container.
      Required.
-    :vartype sas_token_parameters: ~azure.keyvault.administration.models.SASTokenParameter
+    :vartype sas_token_parameters: ~azure.keyvault.administration._generated.models.SASTokenParameter
     :ivar folder: The Folder name of the blob where the previous successful full backup was stored.
      Required.
     :vartype folder: str
@@ -759,7 +759,7 @@ class Setting(_model_base.Model):
     :ivar value: The value of the pool setting. Required.
     :vartype value: str
     :ivar type: The type specifier of the value. "boolean"
-    :vartype type: str or ~azure.keyvault.administration.models.SettingTypeEnum
+    :vartype type: str or ~azure.keyvault.administration._generated.models.SettingTypeEnum
     """
 
     name: str = rest_field()
@@ -796,7 +796,7 @@ class SettingsListResult(_model_base.Model):
 
     :ivar settings: A response message containing a list of account settings with their associated
      value.
-    :vartype settings: list[~azure.keyvault.administration.models.Setting]
+    :vartype settings: list[~azure.keyvault.administration._generated.models.Setting]
     """
 
     settings: Optional[List["_models.Setting"]] = rest_field(visibility=["read"])
