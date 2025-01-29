@@ -11,7 +11,7 @@
         },
         "PythonVersion": [ "3.8", "3.9", "3.10"],
         "CoverageArg": "--disablecov",
-        "TestSamples": "false",
+        "TestSamples": "true",
         "AZURE_LIVE_TEST_SERVICE_VERSION": [
             "V2019_02_02",
             "V2019_07_07",
@@ -41,7 +41,7 @@
             "Pool": "env:LINUXPOOL",
             "PythonVersion": "pypy3.9",
             "CoverageArg": "--disablecov",
-            "TestSamples": "false"
+            "TestSamples": "true"
           }
         }
       }

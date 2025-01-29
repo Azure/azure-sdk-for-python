@@ -23,7 +23,9 @@ import sys
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.blob import BlobServiceClient
 
-SOURCE_FILE = 'SampleSource.txt'
+SOURCE_FILE = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "SampleSource.txt")
 
 
 class CommonBlobSamples(object):
