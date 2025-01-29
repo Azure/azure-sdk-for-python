@@ -25,6 +25,7 @@
 from typing import Any, Dict, List, Union, Optional, Mapping, Callable
 
 import warnings
+from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import CaseInsensitiveDict
 from azure.core.paging import ItemPaged
