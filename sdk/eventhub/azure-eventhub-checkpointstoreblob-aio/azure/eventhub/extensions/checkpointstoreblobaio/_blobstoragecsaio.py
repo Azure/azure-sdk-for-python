@@ -32,11 +32,11 @@ class BlobCheckpointStore(CheckpointStore):
     :param container_name:
      The name of the container for the blobs.
     :type container_name: str
-    :param credential:
+    :keyword credential:
      The credentials with which to authenticate. This is optional if the
      account URL already has a SAS token. The value can be a AzureSasCredential, an AzureNamedKeyCredential,
      or a TokenCredential.If the URL already has a SAS token, specifying an explicit credential will take priority.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
+    :paramtype credential: ~azure.core.credentials_async.AsyncTokenCredential or
      ~azure.core.credentials.AzureSasCredential or ~azure.core.credentials.AzureNamedKeyCredential or None
     :keyword str api_version:
      The Storage API version to use for requests. Default value is '2019-07-07'.
@@ -48,8 +48,8 @@ class BlobCheckpointStore(CheckpointStore):
         self,
         blob_account_url: str,
         container_name: str,
-        credential: Optional[Union["AsyncTokenCredential", "AzureNamedKeyCredential", "AzureSasCredential"]] = None,
         *,
+        credential: Optional[Union["AsyncTokenCredential", "AzureNamedKeyCredential", "AzureSasCredential"]] = None,
         api_version: str = "2019-07-07",
         secondary_hostname: Optional[str] = None,
         **kwargs: Any
@@ -76,8 +76,8 @@ class BlobCheckpointStore(CheckpointStore):
         cls,
         conn_str: str,
         container_name: str,
-        credential: Optional[Union["AsyncTokenCredential", "AzureNamedKeyCredential", "AzureSasCredential"]] = None,
         *,
+        credential: Optional[Union["AsyncTokenCredential", "AzureNamedKeyCredential", "AzureSasCredential"]] = None,
         api_version: str = "2019-07-07",
         secondary_hostname: Optional[str] = None,
         **kwargs: Any
@@ -89,12 +89,12 @@ class BlobCheckpointStore(CheckpointStore):
         :param container_name:
          The container name for the blobs.
         :type container_name: str
-        :param credential:
+        :keyword credential:
          The credentials with which to authenticate. This is optional if the
          account URL already has a SAS token. The value can be a AzureSasCredential, an AzureNamedKeyCredential,
          or a TokenCredential.If the URL already has a SAS token,
          specifying an explicit credential will take priority.
-        :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
+        :paramtype credential: ~azure.core.credentials_async.AsyncTokenCredential or
          ~azure.core.credentials.AzureSasCredential or ~azure.core.credentials.AzureNamedKeyCredential or None
         :keyword str api_version:
          The Storage API version to use for requests. Default value is '2019-07-07'.
