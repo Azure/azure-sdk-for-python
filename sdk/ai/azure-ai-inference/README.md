@@ -16,7 +16,7 @@ The Inference client library supports AI models deployed to the following servic
 
 The Inference client library makes services calls using REST API version `2024-05-01-preview`, as documented in [Azure AI Model Inference API](https://aka.ms/azureai/modelinference).
 
-[Product documentation](https://aka.ms/azureai/modelinference)
+[Product documentation](https://aka.ms/aiservices/inference)
 | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples)
 | [API reference documentation](https://aka.ms/azsdk/azure-ai-inference/python/reference)
 | [Package (Pypi)](https://aka.ms/azsdk/azure-ai-inference/python/package)
