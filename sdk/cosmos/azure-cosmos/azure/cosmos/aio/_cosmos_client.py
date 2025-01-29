@@ -26,7 +26,6 @@ from typing import Any, Dict, List, Optional, Union, cast, Mapping, Iterable
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core import MatchConditions
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
@@ -245,8 +244,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -257,10 +254,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
@@ -281,10 +274,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             kwargs["session_token"] = session_token
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
-        if etag is not None:
-            kwargs["etag"] = etag
-        if match_condition is not None:
-            kwargs["match_condition"] = match_condition
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
@@ -299,8 +288,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -317,10 +304,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
@@ -331,10 +314,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             kwargs["session_token"] = session_token
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
-        if etag is not None:
-            kwargs["etag"] = etag
-        if match_condition is not None:
-            kwargs["match_condition"] = match_condition
         try:
             database_proxy = self.get_database_client(id)
             await database_proxy.read(**kwargs)
@@ -445,8 +424,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Delete the database with the given ID (name).
@@ -456,10 +433,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :type database: Union[str, ~azure.cosmos.DatabaseProxy, Dict[str, Any]]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
@@ -470,10 +443,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             kwargs["session_token"] = session_token
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
-        if etag is not None:
-            kwargs["etag"] = etag
-        if match_condition is not None:
-            kwargs["match_condition"] = match_condition
         request_options = _build_options(kwargs)
 
         database_link = _get_database_link(database)

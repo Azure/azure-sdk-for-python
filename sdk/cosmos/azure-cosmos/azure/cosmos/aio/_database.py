@@ -25,7 +25,6 @@
 from typing import Any, Dict, List, Mapping, Optional, Union
 
 import warnings
-from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
@@ -171,8 +170,6 @@ class DatabaseProxy(object):
         conflict_resolution_policy: Optional[Dict[str, str]] = None,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
@@ -195,10 +192,6 @@ class DatabaseProxy(object):
         :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
@@ -269,10 +262,6 @@ class DatabaseProxy(object):
             kwargs['session_token'] = session_token
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
@@ -294,8 +283,6 @@ class DatabaseProxy(object):
         conflict_resolution_policy: Optional[Dict[str, str]] = None,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
@@ -320,10 +307,6 @@ class DatabaseProxy(object):
         :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
@@ -364,8 +347,6 @@ class DatabaseProxy(object):
                 conflict_resolution_policy=conflict_resolution_policy,
                 analytical_storage_ttl=analytical_storage_ttl,
                 computed_properties=computed_properties,
-                etag=etag,
-                match_condition=match_condition,
                 session_token=session_token,
                 initial_headers=initial_headers,
                 vector_embedding_policy=vector_embedding_policy,
@@ -501,8 +482,6 @@ class DatabaseProxy(object):
         conflict_resolution_policy: Optional[Dict[str, str]] = None,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
@@ -522,10 +501,6 @@ class DatabaseProxy(object):
             If unspecified, items do not expire.
         :keyword dict[str, str] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
@@ -554,10 +529,6 @@ class DatabaseProxy(object):
             kwargs['session_token'] = session_token
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
 
         container_id = self._get_container_id(container)
@@ -590,8 +561,6 @@ class DatabaseProxy(object):
         *,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Delete a container.
@@ -602,10 +571,6 @@ class DatabaseProxy(object):
         :type container: str or Dict[str, Any] or ~azure.cosmos.aio.ContainerProxy
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], None], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
@@ -615,10 +580,6 @@ class DatabaseProxy(object):
             kwargs['session_token'] = session_token
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
         request_options = _build_options(kwargs)
 
         collection_link = self._get_container_link(container)

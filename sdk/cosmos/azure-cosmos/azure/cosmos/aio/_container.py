@@ -202,8 +202,6 @@ class ContainerProxy:
         enable_automatic_id_generation: bool = False,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
         **kwargs: Any
@@ -222,10 +220,6 @@ class ContainerProxy:
         :keyword bool enable_automatic_id_generation: Enable automatic id generation if no id present.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword match_condition: The match condition to use upon the etag.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
@@ -248,10 +242,6 @@ class ContainerProxy:
             kwargs['initial_headers'] = initial_headers
         if priority is not None:
             kwargs['priority'] = priority
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
         request_options = _build_options(kwargs)
@@ -866,8 +856,6 @@ class ContainerProxy:
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
         **kwargs: Any
@@ -887,9 +875,6 @@ class ContainerProxy:
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
@@ -911,10 +896,6 @@ class ContainerProxy:
             kwargs['session_token'] = session_token
         if priority is not None:
             kwargs['priority'] = priority
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
         if no_response is not None:
             kwargs['no_response'] = no_response
         request_options = _build_options(kwargs)
@@ -1246,8 +1227,6 @@ class ContainerProxy:
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
     ) -> CosmosList:
@@ -1260,9 +1239,6 @@ class ContainerProxy:
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
-            has changed, and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -1278,10 +1254,6 @@ class ContainerProxy:
             kwargs['post_trigger_include'] = post_trigger_include
         if session_token is not None:
             kwargs['session_token'] = session_token
-        if etag is not None:
-            kwargs['etag'] = etag
-        if match_condition is not None:
-            kwargs['match_condition'] = match_condition
         if priority is not None:
             kwargs['priority'] = priority
         request_options = _build_options(kwargs)
