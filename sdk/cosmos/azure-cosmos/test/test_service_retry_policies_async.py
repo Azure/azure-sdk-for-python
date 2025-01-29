@@ -24,7 +24,6 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
     REGION1 = "West US"
     REGION2 = "East US"
     REGION3 = "West US 2"
-    REGION4 = "East US 2"
     REGIONAL_ENDPOINT = RegionalEndpoint(host, host)
 
     @classmethod
