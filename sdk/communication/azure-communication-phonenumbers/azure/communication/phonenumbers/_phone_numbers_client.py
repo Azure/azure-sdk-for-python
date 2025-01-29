@@ -360,7 +360,7 @@ class PhoneNumbersClient:
 
     @distributed_trace
     def search_operator_information(
-        self, phone_numbers: Union[str, List[str]], options: Optional[OperatorInformationOptions] = None, **kwargs: Any
+        self, phone_numbers: Union[str, List[str]], *, options: Optional[OperatorInformationOptions] = None, **kwargs: Any
     ) -> OperatorInformationResult:
         """Searches for operator information for a given list of phone numbers.
 
