@@ -21,7 +21,7 @@ from ._data_lake_file_client_helpers import (
     _flush_data_options,
     _upload_options,
 )
-from ._deserialize import deserialize_file_properties, process_storage_error
+from ._deserialize import deserialize_file_properties
 from ._download import StorageStreamDownloader
 from ._models import DataLakeFileQueryError, FileProperties
 from ._path_client import PathClient
@@ -29,6 +29,7 @@ from ._path_client_helpers import _parse_rename_path
 from ._quick_query_helper import DataLakeFileQueryReader
 from ._serialize import convert_datetime_to_rfc1123
 from ._shared.base_client import parse_connection_str
+from ._shared.response_handlers import process_storage_error
 from ._upload_helper import upload_datalake_file
 
 if TYPE_CHECKING:

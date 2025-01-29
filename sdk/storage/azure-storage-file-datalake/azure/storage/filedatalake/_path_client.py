@@ -15,7 +15,6 @@ from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.storage.blob import BlobClient
 from ._data_lake_lease import DataLakeLeaseClient
-from ._deserialize import process_storage_error
 from ._generated import AzureDataLakeStorageRESTAPI
 from ._models import (
     AccessControlChangeCounters,
@@ -37,6 +36,7 @@ from ._path_client_helpers import (
     _set_access_control_recursive_options
 )
 from ._shared.base_client import StorageAccountHostsMixin, parse_query
+from ._shared.response_handlers import process_storage_error
 from ._serialize import (
     compare_api_versions,
     convert_dfs_url_to_blob_url,

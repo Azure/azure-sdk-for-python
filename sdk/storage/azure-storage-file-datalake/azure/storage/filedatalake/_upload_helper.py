@@ -4,12 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from ._deserialize import (
-    process_storage_error)
-from ._shared.response_handlers import return_response_headers
+from ._shared.response_handlers import process_storage_error, return_response_headers
 from ._shared.uploads import (
+    DataLakeFileChunkUploader,
     upload_data_chunks,
-    DataLakeFileChunkUploader, upload_substream_blocks)
+    upload_substream_blocks
+)
 from ...core.exceptions import HttpResponseError
 
 

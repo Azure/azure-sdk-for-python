@@ -4,12 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core.exceptions import HttpResponseError
-from .._deserialize import (
-    process_storage_error)
-from .._shared.response_handlers import return_response_headers
+from .._shared.response_handlers import process_storage_error, return_response_headers
 from .._shared.uploads_async import (
+    DataLakeFileChunkUploader,
     upload_data_chunks,
-    DataLakeFileChunkUploader, upload_substream_blocks)
+    upload_substream_blocks
+)
 
 
 def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disable=unused-argument

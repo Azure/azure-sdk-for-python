@@ -14,7 +14,6 @@ from typing import (
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import BlobClient
-from .._deserialize import process_storage_error
 from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._models import (
     AccessControlChangeCounters,
@@ -39,6 +38,7 @@ from .._serialize import compare_api_versions, convert_dfs_url_to_blob_url, get_
 from .._shared.base_client import parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
+from .._shared.response_handlers import process_storage_error
 from ._data_lake_lease_async import DataLakeLeaseClient
 
 if TYPE_CHECKING:

@@ -18,7 +18,7 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import ContainerClient
-from .._deserialize import is_file_path, process_storage_error
+from .._deserialize import is_file_path
 from .._file_system_client_helpers import _format_url, _parse_url, _undelete_path_options
 from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._models import (
@@ -33,6 +33,7 @@ from .._serialize import convert_dfs_url_to_blob_url, get_api_version
 from .._shared.base_client import parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
+from .._shared.response_handlers import process_storage_error
 from ._data_lake_directory_client_async import DataLakeDirectoryClient
 from ._data_lake_file_client_async import DataLakeFileClient
 from ._data_lake_lease_async import DataLakeLeaseClient
