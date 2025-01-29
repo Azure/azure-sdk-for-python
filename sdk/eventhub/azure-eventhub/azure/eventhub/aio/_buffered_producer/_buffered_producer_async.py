@@ -5,9 +5,8 @@
 from __future__ import annotations
 import asyncio
 import logging
-import queue
 import time
-from asyncio import Lock
+from asyncio import Lock, Queue
 from typing import Optional, Callable, Awaitable, TYPE_CHECKING
 
 from .._producer_async import EventHubProducer
@@ -35,7 +34,7 @@ class BufferedProducer:
         max_buffer_length: int,
         max_wait_time: float = 1,
     ):
-        self._buffered_queue: queue.Queue = queue.Queue()
+        self._buffered_queue: Queue = Queue()
         self._max_buffer_len = max_buffer_length
         self._cur_buffered_len = 0
         self._producer: EventHubProducer = producer
@@ -103,13 +102,13 @@ class BufferedProducer:
             except AttributeError:  # if the input events is a EventDataBatch, put the whole into the buffer
                 # if there are events in cur_batch, enqueue cur_batch to the buffer
                 if self._cur_batch:
-                    self._buffered_queue.put(self._cur_batch)
-                self._buffered_queue.put(events)
+                    await self._buffered_queue.put(self._cur_batch)
+                await self._buffered_queue.put(events)
                 # create a new batch for incoming events
                 self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
             except ValueError:
                 # add single event exceeds the cur batch size, create new batch
-                self._buffered_queue.put(self._cur_batch)
+                await self._buffered_queue.put(self._cur_batch)
                 self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
                 self._cur_batch.add(events)
             self._cur_buffered_len += new_events_len
@@ -137,14 +136,14 @@ class BufferedProducer:
         # try flushing all the buffered batch within given time
         _LOGGER.info("Partition: %r started flushing.", self.partition_id)
         if self._cur_batch:  # if there is batch, enqueue it to the buffer first
-            self._buffered_queue.put(self._cur_batch)
+            await self._buffered_queue.put(self._cur_batch)
             self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
         while self._buffered_queue.qsize() > 0:
             remaining_time = timeout_time - time.time() if timeout_time else None
             if (remaining_time and remaining_time > 0) or remaining_time is None:
                 try:
-                    batch = self._buffered_queue.get(block=False)
-                except queue.Empty:
+                    batch = self._buffered_queue.get_nowait()
+                except asyncio.QueueEmpty:
                     break
                 self._buffered_queue.task_done()
                 try:
