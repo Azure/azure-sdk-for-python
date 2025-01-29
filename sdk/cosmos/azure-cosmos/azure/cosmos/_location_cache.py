@@ -386,12 +386,17 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             EndpointOperationType.WriteType,
             self.default_regional_endpoint,
         )
+        for endpoint in self.write_regional_endpoints:
+            print("In location cache: Updated write regional endpoint: ", endpoint)
         self.read_regional_endpoints = self.get_preferred_available_regional_endpoints(
             self.available_read_regional_endpoints_by_location,
             self.available_read_locations,
             EndpointOperationType.ReadType,
             self.write_regional_endpoints[0],
         )
+
+        for endpoint in self.read_regional_endpoints:
+            print("In location cache: Updated read regional endpoint: ", endpoint)
         self.last_cache_update_timestamp = self.current_time_millis()  # pylint: disable=attribute-defined-outside-init
 
     def get_preferred_available_regional_endpoints(
@@ -414,6 +419,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     for location in self.preferred_locations:
                         regional_endpoint = endpoints_by_location[location] if location in endpoints_by_location \
                             else None
+                        print("In location cache: Regional Endpoint in get preferred: ", regional_endpoint)
                         if regional_endpoint:
                             if self.is_regional_endpoint_unavailable(regional_endpoint, expected_available_operation):
                                 unavailable_endpoints.append(regional_endpoint)

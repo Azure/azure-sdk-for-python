@@ -268,6 +268,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
                 if retry_settings['connect'] > 0:
                     retry_active = self.increment(retry_settings, response=request, error=err)
+                    print("Basic Retry in retry utility: ", retry_active)
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport)
                         continue

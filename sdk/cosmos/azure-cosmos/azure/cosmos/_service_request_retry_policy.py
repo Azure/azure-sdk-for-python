@@ -42,7 +42,7 @@ class ServiceRequestRetryPolicy(object):
         if self.request:
             # For database account calls, we loop through preferred locations
             # in global endpoint manager
-            if self.request.operation_type == ResourceType.DatabaseAccount:
+            if self.request.resource_type == ResourceType.DatabaseAccount:
                 return False
 
             refresh_cache = self.request.last_routed_location_endpoint_within_region is not None
@@ -58,6 +58,7 @@ class ServiceRequestRetryPolicy(object):
 
             self.request.last_routed_location_endpoint_within_region = self.request.location_endpoint_to_route
             if _OperationType.IsReadOnlyOperation(self.request.operation_type):
+                self.mark_endpoint_unavailable(True)
                 # We just directly got to the next location in case of read requests
                 # We don't retry again on the same region for regional endpoint
                 self.failover_retry_count += 1
@@ -97,7 +98,7 @@ class ServiceRequestRetryPolicy(object):
               .format(self.in_region_retry_count))
         # resolve the next service endpoint in the same region
         # since we maintain 2 endpoints per region for write operations
-        self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, True)
+        self.request.route_to_location_with_preferred_location_flag(0, True)
         return self.global_endpoint_manager.resolve_service_endpoint(self.request)
 
     # This function prepares the request to go to the next region
@@ -111,7 +112,7 @@ class ServiceRequestRetryPolicy(object):
         self.request.clear_last_routed_location()
         # set location-based routing directive based on retry count
         # ensuring usePreferredLocations is set to True for retry
-        self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, True)
+        self.request.route_to_location_with_preferred_location_flag(0, True)
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
         # This enables marking the endpoint unavailability on endpoint failover/unreachability
         return self.global_endpoint_manager.resolve_service_endpoint(self.request)

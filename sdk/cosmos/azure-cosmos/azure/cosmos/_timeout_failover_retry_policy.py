@@ -45,12 +45,12 @@ class _TimeoutFailoverRetryPolicy(object):
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
 
-        self.retry_count += 1
 
         # Check if the next retry about to be done is safe
         if _exception.status_code == http_constants.StatusCodes.SERVICE_UNAVAILABLE and \
                 self.retry_count >= self._max_service_unavailable_retry_count:
             return False
+        self.retry_count += 1
         # Check if the next retry about to be done is safe
         if self.retry_count >= self._max_retry_attempt_count:
             return False
