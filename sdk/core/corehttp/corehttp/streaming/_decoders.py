@@ -39,7 +39,7 @@ class JSONLDecoder:
         self._data = line.decode("utf-8")
 
     def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[JSONLEvent]:
-        data = b''
+        data = b""
         for chunk in iter_bytes:
             for line in chunk.splitlines(keepends=True):
                 data += line
@@ -47,7 +47,7 @@ class JSONLDecoder:
                     self.decode(data.splitlines()[0])
                     event = self.event()
                     yield event
-                    data = b''
+                    data = b""
 
         if data:
             # the last line did not end with a line separator
@@ -71,7 +71,7 @@ class AsyncJSONLDecoder:
         self._data = line.decode("utf-8")
 
     async def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[JSONLEvent]:
-        data = b''
+        data = b""
         async for chunk in iter_bytes:
             for line in chunk.splitlines(keepends=True):
                 data += line
@@ -79,7 +79,7 @@ class AsyncJSONLDecoder:
                     self.decode(data.splitlines()[0])
                     event = self.event()
                     yield event
-                    data = b''
+                    data = b""
 
         if data:
             # the last line did not end with a line separator

@@ -38,38 +38,32 @@ ReturnType = TypeVar("ReturnType")
 
 # TODO ensure protocols actually correctly represent the types
 
+
 @runtime_checkable
 class EventType(Protocol):
     data: str
 
-    def json(self) -> Any:
-        ...
+    def json(self) -> Any: ...
 
 
 @runtime_checkable
 class StreamDecoder(Protocol):
 
-    def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[EventType]:
-        ...
+    def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[EventType]: ...
 
-    def event(self) -> EventType:
-        ...
+    def event(self) -> EventType: ...
 
-    def decode(self, line: bytes) -> None:
-        ...
+    def decode(self, line: bytes) -> None: ...
 
 
 @runtime_checkable
 class AsyncStreamDecoder(Protocol):
 
-    async def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[EventType]:
-        ...
+    def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[EventType]: ...
 
-    def event(self) -> EventType:
-        ...
+    def event(self) -> EventType: ...
 
-    def decode(self, line: bytes) -> None:
-        ...
+    def decode(self, line: bytes) -> None: ...
 
 
 class Stream(Iterator[ReturnType]):
@@ -81,6 +75,7 @@ class Stream(Iterator[ReturnType]):
     :keyword terminal_event: A terminal event that indicates the end of the SSE stream.
     :paramtype terminal_event: Optional[str]
     """
+
     def __init__(
         self,
         *,
@@ -92,11 +87,11 @@ class Stream(Iterator[ReturnType]):
         self._response = response.http_response
         self._deserialization_callback = deserialization_callback
         self._terminal_event = terminal_event
-        self._iterator = self._iter_events()
+        self._iterator = self._iter_results()
 
         if decoder is not None:
             self._decoder = decoder
-        elif self._response.headers.get("Content-Type") == "application/jsonl":
+        elif self._response.headers.get("Content-Type", "").lower() == "application/jsonl":
             self._decoder = JSONLDecoder()
         else:
             raise ValueError(
@@ -111,7 +106,7 @@ class Stream(Iterator[ReturnType]):
     def __iter__(self) -> Iterator[ReturnType]:
         yield from self._iterator
 
-    def _iter_events(self) -> Iterator[ReturnType]:
+    def _iter_results(self) -> Iterator[ReturnType]:
         for event in self._decoder.iter_events(self._response.iter_bytes()):
             if event.data == self._terminal_event:
                 break
@@ -143,6 +138,7 @@ class AsyncStream(AsyncIterator[ReturnType]):
     :keyword terminal_event: A terminal event that indicates the end of the SSE stream.
     :paramtype terminal_event: Optional[str]
     """
+
     def __init__(
         self,
         *,
@@ -154,11 +150,11 @@ class AsyncStream(AsyncIterator[ReturnType]):
         self._response = response.http_response
         self._deserialization_callback = deserialization_callback
         self._terminal_event = terminal_event
-        self._iterator = self._aiter_events()
+        self._iterator = self._iter_results()
 
         if decoder is not None:
             self._decoder = decoder
-        elif self._response.headers.get("Content-Type") == "application/jsonl":
+        elif self._response.headers.get("Content-Type", "").lower() == "application/jsonl":
             self._decoder = AsyncJSONLDecoder()
         else:
             raise ValueError(
@@ -170,11 +166,11 @@ class AsyncStream(AsyncIterator[ReturnType]):
     async def __anext__(self) -> ReturnType:
         return await self._iterator.__anext__()
 
-    async def __aiter__(self) -> AsyncIterator[ReturnType]:
+    async def __aiter__(self) -> AsyncIterator[ReturnType]:  # pylint: disable=invalid-overridden-method
         async for item in self._iterator:
             yield item
 
-    async def _aiter_events(self) -> AsyncIterator[ReturnType]:
+    async def _iter_results(self) -> AsyncIterator[ReturnType]:
         async for event in self._decoder.aiter_events(self._response.iter_bytes()):
             if event.data == self._terminal_event:
                 break

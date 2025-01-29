@@ -47,9 +47,7 @@ def stream(client, deserialization_callback):
         return Stream(
             deserialization_callback=deserialization_callback,
             response=PipelineResponse(  # corehttp doesn't have _return_pipeline_response
-                http_request=request,
-                http_response=http_response,
-                context={}
+                http_request=request, http_response=http_response, context={}
             ),
         )
 

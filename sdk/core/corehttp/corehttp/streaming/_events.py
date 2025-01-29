@@ -30,11 +30,7 @@ from typing import Any
 
 class JSONLEvent:
 
-    def __init__(
-        self,
-        *,
-        data: str
-    ) -> None:
+    def __init__(self, *, data: str) -> None:
         self.data = data
 
     def json(self) -> Any:

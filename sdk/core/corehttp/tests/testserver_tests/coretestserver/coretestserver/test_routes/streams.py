@@ -40,7 +40,11 @@ def stream_compressed_header_error():
 
 
 def stream_jsonl_basic():
-    data = [b'{"msg": "this is a message"}\n', b'{"msg": "this is another message"}\n', b'{"msg": "this is a third message"}\n{"msg": "this is a fourth message"}\n']
+    data = [
+        b'{"msg": "this is a message"}\n',
+        b'{"msg": "this is another message"}\n',
+        b'{"msg": "this is a third message"}\n{"msg": "this is a fourth message"}\n',
+    ]
     yield from data
 
 
