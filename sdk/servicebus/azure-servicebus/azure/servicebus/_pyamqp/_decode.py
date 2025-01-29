@@ -49,6 +49,15 @@ c_signed_long_long = struct.Struct(">q")
 c_float = struct.Struct(">f")
 c_double = struct.Struct(">d")
 
+DECIMAL32_BIAS = 101
+DECIMAL64_BIAS = 398
+
+DECIMAL128_EXPONENT_MAX = 6144
+DECIMAL128_EXPONENT_MIN = -6143
+DECIMAL128_MAX_DIGITS = 34
+DECIMAL128_BIAS = 6176
+
+
 
 def _decode_null(buffer: memoryview) -> Tuple[memoryview, None]:
     return buffer, None
@@ -147,16 +156,62 @@ def _decode_binary_large(buffer: memoryview) -> Tuple[memoryview, bytes]:
     length_index = c_unsigned_long.unpack(buffer[:4])[0] + 4
     return buffer[length_index:], buffer[4:length_index].tobytes()
 
-DECIMAL128_BIAS = 6176
+def _decode_decimal32(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]:
+    dec_value = bytearray(buffer[:4])
+    biased_exponent = 0
+    if dec_value[0] & 0x60 != 0x60:
+        biased_exponent = ((dec_value[0] & 0x7F) << 1) | ((dec_value[1] & 0x80) >> 7)
+        dec_value[0] = 0
+        dec_value[1] &= 0x7F
+    elif dec_value[0] & 0x78 != 0:
+        return buffer[4:], decimal.Decimal('NaN') if (dec_value[0] & 0x78) == 0x78 else decimal.Decimal('-Infinity')
+    else:
+        return buffer[4:], decimal.Decimal(0)
+    exponent = biased_exponent - DECIMAL32_BIAS
+    digits = tuple(int(digit) for digit in f"{dec_value[1]:08}{dec_value[2]:08}{dec_value[3]:08}".lstrip('0'))
+    decimal_ctx = decimal.Context(
+        prec = 7,
+        Emin = -95,
+        Emax = 96,
+        capitals =  1,
+        clamp = 1,
+    )
+    with decimal.localcontext(decimal_ctx) as ctx:
+        return buffer[4:], ctx.create_decimal((0, digits, exponent))
+
+def _decode_decimal64(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]:
+    dec_value = bytearray(buffer[:8])
+    biased_exponent = 0
+    if dec_value[0] & 0x60 != 0x60:
+        biased_exponent = ((dec_value[0] & 0x7F) << 4) | ((dec_value[1] & 0xF0) >> 4)
+        dec_value[0] = 0
+        dec_value[1] &= 0x0F
+    elif dec_value[0] & 0x78 != 0:
+        return buffer[8:], decimal.Decimal('NaN') if (dec_value[0] & 0x78) == 0x78 else decimal.Decimal('-Infinity')
+    else:
+        return buffer[8:], decimal.Decimal(0)
+    exponent = biased_exponent - DECIMAL64_BIAS
+    hi = c_unsigned_int.unpack(dec_value[4:8])[0]
+    lo = c_unsigned_int.unpack(dec_value[0:4])[0]
+    digits = tuple(int(digit) for digit in f"{hi:08}{lo:08}".lstrip('0'))
+    decimal_ctx = decimal.Context(
+        prec = 16,
+        Emin = -383,
+        Emax = 384,
+        capitals =  1,
+        clamp = 1,
+    )
+    with decimal.localcontext(decimal_ctx) as ctx:
+        return buffer[8:], ctx.create_decimal((0, digits, exponent))
 
 def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]:
     dec_value = bytearray(buffer[:16])
 
     sign = 1 if dec_value[0] & 0x80 else 0
-    exponent = 0
+    biased_exponent = 0
 
     if dec_value[0] & 0x60 != 0x60:
-        exponent = ((dec_value[0] & 0x7F) << 9) | ((dec_value[1] & 0xFE) >> 1)
+        biased_exponent = ((dec_value[0] & 0x7F) << 9) | ((dec_value[1] & 0xFE) >> 1)
         dec_value[0] = 0
         dec_value[1] &= 0x01
     elif dec_value[0] & 0x78 != 0:
@@ -164,22 +219,20 @@ def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]
     else:
         return buffer[16:], decimal.Decimal(0)
     
+    exponent = biased_exponent - DECIMAL128_BIAS
     hi = c_unsigned_int.unpack(dec_value[4:8])[0]
     middle = c_unsigned_int.unpack(dec_value[8:12])[0]
     lo = c_unsigned_int.unpack(dec_value[12:16])[0]
     digits = tuple(int(digit) for digit in f"{hi:08}{middle:08}{lo:08}".lstrip('0'))
-    return buffer[16:], decimal.Decimal((sign, digits, exponent - DECIMAL128_BIAS)) #create_decimal(digits, sign, exponent - DECIMAL128_BIAS)
-
-def create_decimal(digits: Tuple[int,...], sign: int, exponent: int) -> decimal.Decimal:
-    if exponent <= 0:
-        exponent = abs(exponent)
-        return decimal.Decimal((sign,digits, -1 * (exponent%256)))
-
-    value = decimal.Decimal((sign, digits, 0))
-    return value * (10 ** exponent)
-
-
-
+    decimal_ctx = decimal.Context(
+        prec = DECIMAL128_MAX_DIGITS,
+        Emin = DECIMAL128_EXPONENT_MIN,
+        Emax = DECIMAL128_EXPONENT_MAX,
+        capitals =  1,
+        clamp = 1,
+    )
+    with decimal.localcontext(decimal_ctx) as ctx:
+        return buffer[16:], ctx.create_decimal((sign, digits, exponent))
 
 def _decode_list_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = buffer[1]
@@ -346,10 +399,12 @@ _DECODE_BY_CONSTRUCTOR[97] = _decode_short
 _DECODE_BY_CONSTRUCTOR[112] = _decode_uint_large
 _DECODE_BY_CONSTRUCTOR[113] = _decode_int_large
 _DECODE_BY_CONSTRUCTOR[114] = _decode_float
+_DECODE_BY_CONSTRUCTOR[116] = _decode_decimal32
 _DECODE_BY_CONSTRUCTOR[128] = _decode_ulong_large
 _DECODE_BY_CONSTRUCTOR[129] = _decode_long_large
 _DECODE_BY_CONSTRUCTOR[130] = _decode_double
 _DECODE_BY_CONSTRUCTOR[131] = _decode_timestamp
+_DECODE_BY_CONSTRUCTOR[132] = _decode_decimal64
 _DECODE_BY_CONSTRUCTOR[148] = _decode_decimal128
 _DECODE_BY_CONSTRUCTOR[152] = _decode_uuid
 _DECODE_BY_CONSTRUCTOR[160] = _decode_binary_small
