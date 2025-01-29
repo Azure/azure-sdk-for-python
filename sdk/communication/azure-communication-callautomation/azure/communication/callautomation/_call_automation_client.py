@@ -799,14 +799,14 @@ class CallAutomationClient:
     ) -> RecordingProperties:
         # pylint:disable=protected-access
         channel_affinity: List["ChannelAffinity"] = kwargs.pop("channel_affinity", None) or []
-        channel_affinity_internal = [c._to_generated() for c in channel_affinity]        
+        channel_affinity_internal = [c._to_generated() for c in channel_affinity]
         call_locator = build_call_locator(
             kwargs.pop("call_locator", None),
             kwargs.pop("server_call_id", None),
             kwargs.pop("group_call_id", None),
             kwargs.pop("room_id", None),
             args
-        ) if args else None 
+        ) if args else None
         external_storage = build_external_storage(kwargs.pop("recording_storage", None))
         call_connection_id = kwargs.pop("call_connection_id", None)
         start_recording_request = StartCallRecordingRequest(
