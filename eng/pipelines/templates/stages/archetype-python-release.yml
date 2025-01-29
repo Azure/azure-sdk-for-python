@@ -94,8 +94,8 @@ stages:
                 isProduction: true
                 inputs:
                 - input: pipelineArtifact
-                  artifactName: release_artifacts
-                  targetPath: $(Pipeline.Workspace)/release_artifacts
+                  artifactName: release_artifact
+                  targetPath: $(Pipeline.Workspace)/release_artifact
                 - input: pipelineArtifact
                   artifactName: packages_extended
                   targetPath: $(Pipeline.Workspace)/packages_extended
@@ -115,7 +115,7 @@ stages:
                           versionSpec: '3.9'
 
                       - script: |
-                          python -m pip install -r $(Pipeline.Workspace)/release_artifacts/release_requirements.txt
+                          python -m pip install -r $(Pipeline.Workspace)/release_artifact/release_requirements.txt
                         displayName: Install Release Dependencies
 
                       - task: TwineAuthenticate@0

@@ -141,8 +141,8 @@ steps:
   - ${{ if eq(parameters.ArtifactSuffix, 'linux') }}:
     - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
       parameters:
-        ArtifactPath: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'release_artifacts'
+        ArtifactPath: '$(Build.ArtifactStagingDirectory)/release_artifact'
+        ArtifactName: 'release_artifact'
 
   - ${{ if eq(parameters.ArtifactSuffix, '') }}:
     - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
