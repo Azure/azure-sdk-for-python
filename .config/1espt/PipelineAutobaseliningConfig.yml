@@ -1940,3 +1940,12 @@ pipelines:
           lastModifiedDate: 2025-01-29
         spotbugs:
           lastModifiedDate: 2025-01-29
+  1028:
+    retail:
+      binary:
+        credscan:
+          lastModifiedDate: 2025-01-29
+        binskim:
+          lastModifiedDate: 2025-01-29
+        spotbugs:
+          lastModifiedDate: 2025-01-29
