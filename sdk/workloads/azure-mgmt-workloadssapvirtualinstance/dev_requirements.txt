@@ -4,3 +4,4 @@ azure-mgmt-msi
 azure-mgmt-authorization
 azure-mgmt-network
 azure-mgmt-compute
+aiohttp
