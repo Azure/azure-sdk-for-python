@@ -360,8 +360,8 @@ class PhoneNumbersClient:
 
     @distributed_trace
     def search_operator_information(
-        self, phone_numbers: Union[str, List[str]], *, options: Optional[OperatorInformationOptions] = None, **kwargs: Any
-    ) -> OperatorInformationResult: # pylint: disable=line-too-long
+        self, phone_numbers: Union[str, List[str]], *, options: Optional[OperatorInformationOptions] = None, **kwargs: Any # pylint: disable=line-too-long
+    ) -> OperatorInformationResult:
         """Searches for operator information for a given list of phone numbers.
 
         :param phone_numbers: The phone number(s) whose operator information should be searched
