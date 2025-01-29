@@ -361,12 +361,12 @@ class PhoneNumbersClient:
     @distributed_trace
     def search_operator_information(
         self, phone_numbers: Union[str, List[str]], *, options: Optional[OperatorInformationOptions] = None, **kwargs: Any
-    ) -> OperatorInformationResult:
+    ) -> OperatorInformationResult: # pylint: disable=line-too-long
         """Searches for operator information for a given list of phone numbers.
 
         :param phone_numbers: The phone number(s) whose operator information should be searched
         :type phone_numbers: str or list[str]
-        :param options: Options to modify the search.  Please note: use of options can affect the cost of the search.
+        :keyword options: Options to modify the search.  Please note: use of options can affect the cost of the search.
         :type options: OperatorInformationOptions
         :return: A search result containing operator information associated with the requested phone numbers
         :rtype: ~azure.communication.phonenumbers.OperatorInformationResult
