@@ -150,7 +150,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
         role_name: Optional[str] = None,
         description: Optional[str] = None,
         permissions: Optional[List[KeyVaultPermission]] = None,
-        assignable_scopes: Optional[Union[List[str], List[KeyVaultRoleScope]]] = None,
+        assignable_scopes: Optional[List[Union[str, KeyVaultRoleScope]]] = None,
         **kwargs: Any,
     ) -> KeyVaultRoleDefinition:
         """Creates or updates a custom role definition.
