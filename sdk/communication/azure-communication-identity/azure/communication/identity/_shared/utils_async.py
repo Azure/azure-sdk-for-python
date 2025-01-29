@@ -4,8 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import asyncio
-
+from asyncio import sleep, ensure_future
 
 class AsyncTimer:
     """A non-blocking timer, that calls a function after a specified number of seconds:
@@ -19,10 +18,10 @@ class AsyncTimer:
         self._task = None
 
     def start(self):
-        self._task = asyncio.ensure_future(self._job())
+        self._task = ensure_future(self._job())
 
     async def _job(self):
-        await asyncio.sleep(self._interval)
+        await sleep(self._interval)
         await self._callback()
 
     def cancel(self):

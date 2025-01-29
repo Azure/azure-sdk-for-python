@@ -4,7 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING, Any, Tuple, Union
+from datetime import timedelta
+from typing import TYPE_CHECKING, Any, List, Optional, Tuple, Union
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AccessToken
 from ._generated._client import (
@@ -40,11 +41,10 @@ class CommunicationIdentityClient(object):
 
     def __init__(
         self,
-        endpoint,  # type: str
+        endpoint: str,
         credential,  # type: Union[TokenCredential, AzureKeyCredential]
         **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    ) -> None:
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
@@ -66,9 +66,9 @@ class CommunicationIdentityClient(object):
     @classmethod
     def from_connection_string(
         cls,
-        conn_str,  # type: str
-        **kwargs  # type: Any
-    ):  # type: (...) -> CommunicationIdentityClient
+        conn_str: str,
+        **kwargs: Any
+    ) -> "CommunicationIdentityClient":
         """Create CommunicationIdentityClient from a Connection String.
 
         :param str conn_str: A connection string to an Azure Communication Service resource.
@@ -82,8 +82,7 @@ class CommunicationIdentityClient(object):
         return cls(endpoint, access_key, **kwargs)  # type: ignore
 
     @distributed_trace
-    def create_user(self, **kwargs):
-        # type: (Any) -> CommunicationUserIdentifier
+    def create_user(self, **kwargs) -> CommunicationUserIdentifier:
         """create a single Communication user
 
         :return: CommunicationUserIdentifier
@@ -96,10 +95,11 @@ class CommunicationIdentityClient(object):
     @distributed_trace
     def create_user_and_token(
         self,
-        scopes,  # List[Union[str, CommunicationTokenScope]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Tuple[CommunicationUserIdentifier, AccessToken]
+        scopes: List[Union[str, "CommunicationTokenScope"]],
+        *,
+        token_expires_in: Optional[timedelta] = None,
+        **kwargs: Any
+    ) -> Tuple[CommunicationUserIdentifier, AccessToken]:
         """Create a single Communication user with an identity token.
 
         :param scopes: List of scopes to be added to the token.
@@ -133,10 +133,9 @@ class CommunicationIdentityClient(object):
     @distributed_trace
     def delete_user(
         self,
-        user,  # type: CommunicationUserIdentifier
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        user: CommunicationUserIdentifier,
+        **kwargs: Any
+    ) -> None:
         """Triggers revocation event for user and deletes all its data.
 
         :param user: Azure Communication User to delete
@@ -149,11 +148,12 @@ class CommunicationIdentityClient(object):
     @distributed_trace
     def get_token(
         self,
-        user,  # type: CommunicationUserIdentifier
-        scopes,  # List[Union[str, CommunicationTokenScope]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AccessToken
+        user: CommunicationUserIdentifier,
+        scopes: List[Union[str, "CommunicationTokenScope"]],
+        *,
+        token_expires_in: Optional[timedelta] = None,
+        **kwargs: Any
+    ) -> AccessToken:
         """Generates a new token for an identity.
 
         :param user: Azure Communication User
@@ -181,10 +181,9 @@ class CommunicationIdentityClient(object):
     @distributed_trace
     def revoke_tokens(
         self,
-        user,  # type: CommunicationUserIdentifier
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        user: CommunicationUserIdentifier,
+        **kwargs: Any
+    ) -> None:
         """Schedule revocation of all tokens of an identity.
 
         :param user: Azure Communication User.
@@ -199,12 +198,11 @@ class CommunicationIdentityClient(object):
     @distributed_trace
     def get_token_for_teams_user(
         self,
-        aad_token,  # type: str
-        client_id,  # type: str
-        user_object_id,  # type: str
-        **kwargs
-    ):
-        # type: (...) -> AccessToken
+        aad_token: str,
+        client_id: str,
+        user_object_id: str,
+        **kwargs: Any
+    ) -> AccessToken:
         """Exchanges an Azure AD access token of a Teams User for a new Communication Identity access token.
 
         :param aad_token: an Azure AD access token of a Teams User.
