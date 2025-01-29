@@ -102,11 +102,11 @@ class TestQuery(unittest.TestCase):
         self.assertTrue(INDEX_HEADER_NAME in created_collection.client_connection.last_response_headers)
         index_metrics = created_collection.client_connection.last_response_headers[INDEX_HEADER_NAME]
         self.assertIsNotNone(index_metrics)
-        expected_index_metrics = {'UtilizedSingleIndexes': [{'FilterExpression': '', 'IndexSpec': '/pk/?',
-                                                             'FilterPreciseSet': True, 'IndexPreciseSet': True,
-                                                             'IndexImpactScore': 'High'}],
-                                  'PotentialSingleIndexes': [], 'UtilizedCompositeIndexes': [],
-                                  'PotentialCompositeIndexes': []}
+        expected_index_metrics = {'PotentialIndexes':
+                                      {'CompositeIndexes': [], 'SingleIndexes': []},
+                                  'UtilizedIndexes':
+                                      {'CompositeIndexes': [], 'SingleIndexes': [{'IndexSpec': '/pk/?'}]}
+                                  }
         self.assertDictEqual(expected_index_metrics, index_metrics)
         self.created_db.delete_container(created_collection.id)
 
@@ -630,7 +630,6 @@ class TestQuery(unittest.TestCase):
             retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.created_db.delete_container(created_collection.id)
-
 
     def _MockExecuteFunctionSessionRetry(self, function, *args, **kwargs):
         if args:

@@ -15,6 +15,7 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos import http_constants
 
 
 @pytest.mark.cosmosEmulator
@@ -214,6 +215,35 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         metrics = metrics_header.split(';')
         assert len(metrics) > 1
         assert all(['=' in x for x in metrics])
+
+    async def test_populate_index_metrics_async(self):
+        created_collection = self.created_container
+        doc_id = 'MyId' + str(uuid.uuid4())
+        document_definition = {'pk': 'pk', 'id': doc_id}
+        await created_collection.create_item(body=document_definition)
+
+        query = 'SELECT * from c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            partition_key='pk',
+            populate_index_metrics=True
+        )
+
+        iter_list = [item async for item in query_iterable]
+        assert iter_list[0]['id'] == doc_id
+
+        index_header_name = http_constants.HttpHeaders.IndexUtilization
+        assert index_header_name in created_collection.client_connection.last_response_headers
+        index_metrics = created_collection.client_connection.last_response_headers[index_header_name]
+        assert index_metrics != {}
+        expected_index_metrics = {'PotentialIndexes':
+                                      {'CompositeIndexes': [], 'SingleIndexes': []},
+                                  'UtilizedIndexes':
+                                      {'CompositeIndexes': [], 'SingleIndexes': [{'IndexSpec': '/pk/?'}]}
+                                  }
+        assert expected_index_metrics == index_metrics
+
+        await self.created_db.delete_container(created_collection.id)
 
     async def validate_query_requests_count(self, query_iterable, expected_count):
         self.count = 0
