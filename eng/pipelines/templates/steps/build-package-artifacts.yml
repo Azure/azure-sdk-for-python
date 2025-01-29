@@ -134,7 +134,7 @@ steps:
   # we need to only publish this if runnning on linux. we only need one for the whole build
   - pwsh: |
       New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)/release_artifact"
-      Copy-Item -Path "$(Build.ArtifactStagingDirectory)/eng/release_requirements.txt" -Destination "$(Build.ArtifactStagingDirectory)/release_artifact/release_requirements.txt
+      Copy-Item -Path "$(Build.SourcesDirectory)/eng/release_requirements.txt" -Destination "$(Build.ArtifactStagingDirectory)/release_artifact/release_requirements.txt"
     displayName: 'Assemble Static Files for Release Stage'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
