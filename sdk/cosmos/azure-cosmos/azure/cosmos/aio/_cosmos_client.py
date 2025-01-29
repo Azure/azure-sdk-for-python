@@ -26,7 +26,6 @@ from typing import Any, Dict, List, Optional, Union, cast, Mapping, Iterable, Ca
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core import MatchConditions
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
