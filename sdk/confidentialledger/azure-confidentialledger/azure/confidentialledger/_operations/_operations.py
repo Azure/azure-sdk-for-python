@@ -2038,7 +2038,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-            
+
         if response.content:
             deserialized = response.json()
         else:

@@ -218,9 +218,9 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         # create_ledger_entry response, not the transaction status.
 
         post_result = kwargs.pop("_create_ledger_entry_response", None)
-        deserialization_callback = lambda x: (
-            x if post_result is None else post_result
-        )  # pylint: disable=unnecessary-lambda-assignment
+
+        def deserialization_callback(x):
+            return x if post_result is None else post_result
 
         async def operation() -> JSON:
             return await super(ConfidentialLedgerClientOperationsMixin, self).get_transaction_status(
