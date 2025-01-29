@@ -166,6 +166,7 @@ Streamable queries like `SELECT * FROM WHERE` *do* support continuation tokens.
 * Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
 * Get the connection string
 * Get the minimum RU/s of a container
+* Test
 
 ## Workarounds
 
