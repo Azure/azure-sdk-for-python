@@ -88,7 +88,8 @@ steps:
       $(VENV_ACTIVATION_SCRIPT)
       which python
       python -m pip install --force -r eng/ci_tools.txt
-      if $(env:AGENT_OS -eq "Linux") {
+      if ($env:AGENT_OS -eq "Linux") {
+        Write-Host "Installing release reqs"
         python -m pip install -r eng/release_requirements.txt
       }
       python -m pip freeze --all
