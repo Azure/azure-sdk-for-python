@@ -23,6 +23,7 @@ from ._models import ImageUrl as ImageUrlGenerated
 from ._models import ChatCompletions as ChatCompletionsGenerated
 from ._models import EmbeddingsResult as EmbeddingsResultGenerated
 from ._models import ImageEmbeddingInput as EmbeddingInputGenerated
+from ._models import InputAudio as InputAudioGenerated
 from .. import models as _models
 
 if sys.version_info >= (3, 11):
@@ -377,7 +378,7 @@ class BaseStreamingChatCompletions:
 
             # We skip any update that has a None or empty choices list
             # (this is what OpenAI Python SDK does)
-            if update.choices:
+            if update.choices or update.usage:
 
                 # We update all empty content strings to None
                 # (this is what OpenAI Python SDK does)
@@ -470,6 +471,33 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
         await self._response.close()
 
 
+class InputAudio(InputAudioGenerated):
+
+    @classmethod
+    def load(
+        cls,
+        *,
+        audio_file: str,
+        audio_format: str,
+    ) -> Self:
+        """
+        Create an InputAudio object from a local audio file. The method reads the audio
+        file and encodes it as a base64 string, which together with the audio format
+        is then used to create the InputAudio object passed to the request payload.
+
+        :keyword audio_file: The name of the local audio file to load. Required.
+        :vartype audio_file: str
+        :keyword audio_format: The MIME type format of the audio. For example: "wav", "mp3". Required.
+        :vartype audio_format: str
+        :return: An InputAudio object with the audio data encoded as a base64 string.
+        :rtype: ~azure.ai.inference.models.InputAudio
+        :raises FileNotFoundError: when the image file could not be opened.
+        """
+        with open(audio_file, "rb") as f:
+            audio_data = base64.b64encode(f.read()).decode("utf-8")
+        return cls(data=audio_data, format=audio_format)
+
+
 __all__: List[str] = [
     "AssistantMessage",
     "AsyncStreamingChatCompletions",
@@ -478,6 +506,7 @@ __all__: List[str] = [
     "EmbeddingsResult",
     "ImageEmbeddingInput",
     "ImageUrl",
+    "InputAudio",
     "StreamingChatCompletions",
     "SystemMessage",
     "ToolMessage",
