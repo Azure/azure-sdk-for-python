@@ -63,6 +63,13 @@ stages:
                 displayName: Install tool dependencies
 
               - task: PythonScript@0
+                displayName: Verify Dependency Presence
+                condition: and(succeeded(), ne(variables['Skip.VerifyDependencies'], 'true'))
+                inputs:
+                  scriptPath: 'scripts/devops_tasks/verify_dependencies_present.py'
+                  arguments: '--package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}'
+
+              - task: PythonScript@0
                 displayName: Verify CI enabled
                 condition: succeeded()
                 inputs:
