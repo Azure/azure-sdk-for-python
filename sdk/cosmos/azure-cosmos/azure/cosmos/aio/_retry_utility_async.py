@@ -200,11 +200,15 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
-            from aiohttp.client_exceptions import (
-                ClientConnectionError)  # pylint: disable=networking-import-outside-azure-core-transport
-            if isinstance(e.inner_exception, ClientConnectionError):
-                _handle_service_request_retries(client, service_request_retry_policy, e, *args)
-            else:
+            try:
+                from aiohttp.client_exceptions import (
+                    ClientConnectionError)  # pylint: disable=networking-import-outside-azure-core-transport
+                if isinstance(e.inner_exception, ClientConnectionError):
+                    _handle_service_request_retries(client, service_request_retry_policy, e, *args)
+                else:
+                    _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
+            # in case customer is not using aiohttp
+            except ImportError:
                 _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 
@@ -271,16 +275,19 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
             except ServiceResponseError as err:
                 retry_error = err
                 # Since this is ClientConnectionError, it is safe to be retried on both read and write requests
-                from aiohttp.client_exceptions import (
-                    ClientConnectionError)  # pylint: disable=networking-import-outside-azure-core-transport
-                if (isinstance(err.inner_exception, ClientConnectionError)
-                        or _has_read_retryable_headers(request.http_request.headers)):
-                    # This logic is based on the _retry.py file from azure-core
-                    if retry_settings['read'] > 0:
-                        retry_active = self.increment(retry_settings, response=request, error=err)
-                        if retry_active:
-                            await self.sleep(retry_settings, request.context.transport)
-                            continue
+                try:
+                    from aiohttp.client_exceptions import (
+                        ClientConnectionError)  # pylint: disable=networking-import-outside-azure-core-transport
+                    if (isinstance(err.inner_exception, ClientConnectionError)
+                            or _has_read_retryable_headers(request.http_request.headers)):
+                        # This logic is based on the _retry.py file from azure-core
+                        if retry_settings['read'] > 0:
+                            retry_active = self.increment(retry_settings, response=request, error=err)
+                            if retry_active:
+                                await self.sleep(retry_settings, request.context.transport)
+                                continue
+                except ImportError:
+                    raise err
                 raise err
             except AzureError as err:
                 retry_error = err
