@@ -611,7 +611,7 @@ class TestStorageQueueClient(StorageRecordedTestCase):
         queue_client.create_queue()
 
         # Act / Assert
-        queue_client.set_queue_access_policy(signed_identifiers=dict())
+        queue_client.set_queue_access_policy(signed_identifiers={})
         acl = queue_client.get_queue_access_policy()
         assert acl is not None
 

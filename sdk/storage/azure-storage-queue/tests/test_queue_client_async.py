@@ -574,7 +574,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         await queue_client.create_queue()
 
         # Act / Assert
-        await queue_client.set_queue_access_policy(signed_identifiers=dict())
+        await queue_client.set_queue_access_policy(signed_identifiers={})
         acl = await queue_client.get_queue_access_policy()
         assert acl is not None
 

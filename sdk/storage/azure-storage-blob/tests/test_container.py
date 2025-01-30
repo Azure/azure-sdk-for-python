@@ -2733,7 +2733,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc)
 
         # Act
-        container.set_container_access_policy(signed_identifiers=dict())
+        container.set_container_access_policy(signed_identifiers={})
 
         # Assert
         acl = container.get_container_access_policy()

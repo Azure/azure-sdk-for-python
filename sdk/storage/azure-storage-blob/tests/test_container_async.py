@@ -2603,7 +2603,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         container: ContainerClient = await self._create_container(bsc)
 
         # Act
-        await container.set_container_access_policy(signed_identifiers=dict())
+        await container.set_container_access_policy(signed_identifiers={})
 
         # Assert
         acl = await container.get_container_access_policy()
