@@ -1,10 +1,10 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 # TEST SCENARIO COVERAGE
@@ -31,37 +31,35 @@ import azure.core
 import azure.mgmt.eventhub.aio
 from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
-from _aio_testcase import AzureMgmtAsyncTestCase 
+from _aio_testcase import AzureMgmtAsyncTestCase
 
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
+
 
 class MgmtEventHubTest(AzureMgmtAsyncTestCase):
 
     def setUp(self):
         super(MgmtEventHubTest, self).setUp()
-        self.mgmt_client = self.create_mgmt_aio_client(
-            azure.mgmt.eventhub.aio.EventHubManagementClient
-        )
+        self.mgmt_client = self.create_mgmt_aio_client(azure.mgmt.eventhub.aio.EventHubManagementClient)
 
         if self.is_live:
             from azure.mgmt.storage import StorageManagementClient
-            self.storage_client = self.create_mgmt_client(
-                StorageManagementClient
-            )
+
+            self.storage_client = self.create_mgmt_client(StorageManagementClient)
             from azure.mgmt.network import NetworkManagementClient
-            self.network_client = self.create_mgmt_client(
-                NetworkManagementClient
-            )
+
+            self.network_client = self.create_mgmt_client(NetworkManagementClient)
 
     # TODO: use track 2 later
     def create_storage_account(self, group_name, location, storage_name):
         import azure.mgmt.storage
         import azure.mgmt.storage.models
+
         params_create = azure.mgmt.storage.models.StorageAccountCreateParameters(
             sku=azure.mgmt.storage.models.Sku(name=azure.mgmt.storage.models.SkuName.standard_lrs),
             kind=azure.mgmt.storage.models.Kind.storage,
-            location=location
+            location=location,
         )
         result_create = self.storage_client.storage_accounts.create(
             group_name,
@@ -74,17 +72,18 @@ class MgmtEventHubTest(AzureMgmtAsyncTestCase):
     def create_virtual_network(self, group_name, location, network_name, subnet_name):
         import azure.mgmt.network
         import azure.mgmt.network.models
+
         params_create = azure.mgmt.network.models.VirtualNetwork(
             location=location,
             address_space=azure.mgmt.network.models.AddressSpace(
                 address_prefixes=[
-                    '10.0.0.0/16',
+                    "10.0.0.0/16",
                 ],
             ),
             subnets=[
                 azure.mgmt.network.models.Subnet(
                     name=subnet_name,
-                    address_prefix='10.0.0.0/24',
+                    address_prefix="10.0.0.0/24",
                 ),
             ],
         )
@@ -103,7 +102,7 @@ class MgmtEventHubTest(AzureMgmtAsyncTestCase):
         )
         self.assertEqual(result_get.name, subnet_name)
 
-    @unittest.skip('skip temporarily')
+    @unittest.skip("skip temporarily")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     def test_eventhub(self, resource_group):
 
@@ -125,22 +124,14 @@ class MgmtEventHubTest(AzureMgmtAsyncTestCase):
 
         # NamespaceCreate[put]
         BODY = {
-          "sku": {
-            "name": "Standard",
-            "tier": "Standard"
-          },
-          "location": "South Central US",
-          "tags": {
-            "tag1": "value1",
-            "tag2": "value2"
-          }
+            "sku": {"name": "Standard", "tier": "Standard"},
+            "location": "South Central US",
+            "tags": {"tag1": "value1", "tag2": "value2"},
         }
         result = self.event_loop.run_until_complete(
             self.mgmt_client.namespaces.begin_create_or_update(resource_group.name, NAMESPACE_NAME, BODY)
         )
-        result = self.event_loop.run_until_complete(
-            result.result()
-        )
+        result = self.event_loop.run_until_complete(result.result())
 
         # GetNamespaceMessagingPlan[get]
         result = self.event_loop.run_until_complete(
@@ -149,21 +140,27 @@ class MgmtEventHubTest(AzureMgmtAsyncTestCase):
 
         # EventHubCreate[put]
         BODY = {
-          "message_retention_in_days": "4",
-          "partition_count": "4",
-          "status": "Active",
-          "capture_description": {
-            "enabled": True,
-            "encoding": "Avro",
-            "interval_in_seconds": "120",
-            "size_limit_in_bytes": "10485763",
-            "destination": {
-              "name": "EventHubArchive.AzureBlockBlob",
-              "storage_account_resource_id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Storage/storageAccounts/" + STORAGE_ACCOUNT_NAME + "",
-              "blob_container": "container",
-              "archive_name_format": "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"
-            }
-          }
+            "message_retention_in_days": "4",
+            "partition_count": "4",
+            "status": "Active",
+            "capture_description": {
+                "enabled": True,
+                "encoding": "Avro",
+                "interval_in_seconds": "120",
+                "size_limit_in_bytes": "10485763",
+                "destination": {
+                    "name": "EventHubArchive.AzureBlockBlob",
+                    "storage_account_resource_id": "/subscriptions/"
+                    + SUBSCRIPTION_ID
+                    + "/resourceGroups/"
+                    + RESOURCE_GROUP
+                    + "/providers/Microsoft.Storage/storageAccounts/"
+                    + STORAGE_ACCOUNT_NAME
+                    + "",
+                    "blob_container": "container",
+                    "archive_name_format": "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}",
+                },
+            },
         }
         result = self.event_loop.run_until_complete(
             self.mgmt_client.event_hubs.create_or_update(resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, BODY)
@@ -171,64 +168,65 @@ class MgmtEventHubTest(AzureMgmtAsyncTestCase):
 
         # NameSpaceNetworkRuleSetCreate[put]
         BODY = {
-          "default_action": "Deny",
-          "virtual_network_rules": [
-            {
-              "subnet": {
-                "id": "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Network/virtualNetworks/" + VIRTUAL_NETWORK_NAME + "/subnets/" + SUBNET_NAME + ""
-              },
-              "ignore_missing_vnet_service_endpoint": True
-            }
-          ],
-          "ip_rules": [
-            {
-              "ip_mask": "1.1.1.1",
-              "action": "Allow"
-            }
-          ]
+            "default_action": "Deny",
+            "virtual_network_rules": [
+                {
+                    "subnet": {
+                        "id": "/subscriptions/"
+                        + SUBSCRIPTION_ID
+                        + "/resourceGroups/"
+                        + RESOURCE_GROUP
+                        + "/providers/Microsoft.Network/virtualNetworks/"
+                        + VIRTUAL_NETWORK_NAME
+                        + "/subnets/"
+                        + SUBNET_NAME
+                        + ""
+                    },
+                    "ignore_missing_vnet_service_endpoint": True,
+                }
+            ],
+            "ip_rules": [{"ip_mask": "1.1.1.1", "action": "Allow"}],
         }
         result = self.event_loop.run_until_complete(
             self.mgmt_client.namespaces.create_or_update_network_rule_set(resource_group.name, NAMESPACE_NAME, BODY)
         )
 
         # NameSpaceAuthorizationRuleCreate[put]
-        BODY = {
-          "rights": [
-            "Listen",
-            "Send"
-          ]
-        }
+        BODY = {"rights": ["Listen", "Send"]}
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.namespaces.create_or_update_authorization_rule(resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME, BODY)
+            self.mgmt_client.namespaces.create_or_update_authorization_rule(
+                resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME, BODY
+            )
         )
 
         # ConsumerGroupCreate[put]
-        BODY = {
-          "user_metadata": "New consumergroup"
-        }
+        BODY = {"user_metadata": "New consumergroup"}
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.consumer_groups.create_or_update(resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, CONSUMERGROUP_NAME, BODY)
+            self.mgmt_client.consumer_groups.create_or_update(
+                resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, CONSUMERGROUP_NAME, BODY
+            )
         )
 
         # EventHubAuthorizationRuleCreate[put]
-        BODY = {
-          "rights": [
-            "Listen",
-            "Send"
-          ]
-        }
+        BODY = {"rights": ["Listen", "Send"]}
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.event_hubs.create_or_update_authorization_rule(resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATION_RULE_NAME, BODY)
+            self.mgmt_client.event_hubs.create_or_update_authorization_rule(
+                resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATION_RULE_NAME, BODY
+            )
         )
 
         # NameSpaceAuthorizationRuleGet[get]
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.namespaces.get_authorization_rule(resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME)
+            self.mgmt_client.namespaces.get_authorization_rule(
+                resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME
+            )
         )
 
         # EventHubAuthorizationRuleGet[get]
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.event_hubs.get_authorization_rule(resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATION_RULE_NAME)
+            self.mgmt_client.event_hubs.get_authorization_rule(
+                resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATION_RULE_NAME
+            )
         )
 
         # ConsumerGroupGet[get]
@@ -257,19 +255,13 @@ class MgmtEventHubTest(AzureMgmtAsyncTestCase):
         )
 
         # ListAuthorizationRules[get]
-        result = self.to_list(
-            self.mgmt_client.namespaces.list_authorization_rules(resource_group.name, NAMESPACE_NAME)
-        )
+        result = self.to_list(self.mgmt_client.namespaces.list_authorization_rules(resource_group.name, NAMESPACE_NAME))
 
         # NameSpaceNetworkRuleSetList[get]
-        result = self.to_list(
-            self.mgmt_client.namespaces.list_network_rule_sets(resource_group.name, NAMESPACE_NAME)
-        )
+        result = self.to_list(self.mgmt_client.namespaces.list_network_rule_sets(resource_group.name, NAMESPACE_NAME))
 
         # EventHubsListAll[get]
-        result = self.to_list(
-            self.mgmt_client.event_hubs.list_by_namespace(resource_group.name, NAMESPACE_NAME)
-        )
+        result = self.to_list(self.mgmt_client.event_hubs.list_by_namespace(resource_group.name, NAMESPACE_NAME))
 
         # NameSpaceGet[get]
         result = self.event_loop.run_until_complete(
@@ -277,47 +269,41 @@ class MgmtEventHubTest(AzureMgmtAsyncTestCase):
         )
 
         # NamespaceListByResourceGroup[get]
-        result = self.to_list(
-            self.mgmt_client.namespaces.list_by_resource_group(resource_group.name)
-        )
+        result = self.to_list(self.mgmt_client.namespaces.list_by_resource_group(resource_group.name))
 
         # RegionsListBySkuStandard[get]
         # result = self.mgmt_client.regions.list_by_sku(SKU_NAME)
 
         # RegionsListBySkuBasic[get]
-        result = self.to_list(
-            self.mgmt_client.regions.list_by_sku(SKU_NAME)
-        )
+        result = self.to_list(self.mgmt_client.regions.list_by_sku(SKU_NAME))
 
         # NamespacesListBySubscription[get]
-        result = self.to_list(
-            self.mgmt_client.namespaces.list()
-        )
+        result = self.to_list(self.mgmt_client.namespaces.list())
 
         # EHOperations_List[get]
-        result = self.to_list(
-            self.mgmt_client.operations.list()
-        )
+        result = self.to_list(self.mgmt_client.operations.list())
 
         # EventHubAuthorizationRuleRegenerateKey[post]
-        BODY = {
-          "key_type": "PrimaryKey"
-        }
+        BODY = {"key_type": "PrimaryKey"}
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.event_hubs.regenerate_keys(resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATION_RULE_NAME, BODY)
+            self.mgmt_client.event_hubs.regenerate_keys(
+                resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATION_RULE_NAME, BODY
+            )
         )
 
         # EventHubAuthorizationRuleListKey[post]
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.event_hubs.list_keys(resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATION_RULE_NAME)
+            self.mgmt_client.event_hubs.list_keys(
+                resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATION_RULE_NAME
+            )
         )
 
         # NameSpaceAuthorizationRuleRegenerateKey[post]
-        BODY = {
-          "key_type": "PrimaryKey"
-        }
+        BODY = {"key_type": "PrimaryKey"}
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.namespaces.regenerate_keys(resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME, BODY)
+            self.mgmt_client.namespaces.regenerate_keys(
+                resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME, BODY
+            )
         )
 
         # NameSpaceAuthorizationRuleListKey[post]
@@ -326,38 +312,34 @@ class MgmtEventHubTest(AzureMgmtAsyncTestCase):
         )
 
         # NamespacesUpdate[patch]
-        BODY = {
-          "location": "South Central US",
-          "tags": {
-            "tag3": "value3",
-            "tag4": "value4"
-          }
-        }
+        BODY = {"location": "South Central US", "tags": {"tag3": "value3", "tag4": "value4"}}
         result = self.event_loop.run_until_complete(
             self.mgmt_client.namespaces.update(resource_group.name, NAMESPACE_NAME, BODY)
         )
 
         # NamespacesCheckNameAvailability[post] TODO: need fix
-        BODY = {
-          "name": "sdk-DisasterRecovery-9474"
-        }
-        result = self.event_loop.run_until_complete(
-            self.mgmt_client.namespaces.check_name_availability(BODY)
-        )
+        BODY = {"name": "sdk-DisasterRecovery-9474"}
+        result = self.event_loop.run_until_complete(self.mgmt_client.namespaces.check_name_availability(BODY))
 
         # EventHubAuthorizationRuleDelete[delete]
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.event_hubs.delete_authorization_rule(resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATION_RULE_NAME)
+            self.mgmt_client.event_hubs.delete_authorization_rule(
+                resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, AUTHORIZATION_RULE_NAME
+            )
         )
 
         # ConsumerGroupDelete[delete]
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.consumer_groups.delete(resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, CONSUMERGROUP_NAME)
+            self.mgmt_client.consumer_groups.delete(
+                resource_group.name, NAMESPACE_NAME, EVENTHUB_NAME, CONSUMERGROUP_NAME
+            )
         )
 
         # NameSpaceAuthorizationRuleDelete[delete]
         result = self.event_loop.run_until_complete(
-            self.mgmt_client.namespaces.delete_authorization_rule(resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME)
+            self.mgmt_client.namespaces.delete_authorization_rule(
+                resource_group.name, NAMESPACE_NAME, AUTHORIZATION_RULE_NAME
+            )
         )
 
         # EventHubDelete[delete]
@@ -369,11 +351,9 @@ class MgmtEventHubTest(AzureMgmtAsyncTestCase):
         result = self.event_loop.run_until_complete(
             self.mgmt_client.namespaces.begin_delete(resource_group.name, NAMESPACE_NAME)
         )
-        result = self.event_loop.run_until_complete(
-            result.result()
-        )
-   
+        result = self.event_loop.run_until_complete(result.result())
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

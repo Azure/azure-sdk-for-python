@@ -55,8 +55,7 @@ class AcceptJobOfferResult(_model_base.Model):
         assignment_id: str,
         job_id: str,
         worker_id: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -115,8 +114,7 @@ class DistributionMode(_model_base.Model):
         min_concurrent_offers: Optional[int] = None,
         max_concurrent_offers: Optional[int] = None,
         bypass_selectors: Optional[bool] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -178,8 +176,7 @@ class BestWorkerMode(DistributionMode, discriminator="bestWorker"):
         bypass_selectors: Optional[bool] = None,
         scoring_rule: Optional["_models.RouterRule"] = None,
         scoring_rule_options: Optional["_models.ScoringRuleOptions"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -220,8 +217,7 @@ class ExceptionAction(_model_base.Model):
         *,
         kind: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -267,8 +263,7 @@ class CancelExceptionAction(ExceptionAction, discriminator="cancel"):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         note: Optional[str] = None,
         disposition_code: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -304,8 +299,7 @@ class CancelJobOptions(_model_base.Model):
         *,
         note: Optional[str] = None,
         disposition_code: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -377,8 +371,7 @@ class ClassificationPolicy(_model_base.Model):
         queue_selector_attachments: Optional[List["_models.QueueSelectorAttachment"]] = None,
         prioritization_rule: Optional["_models.RouterRule"] = None,
         worker_selector_attachments: Optional[List["_models.WorkerSelectorAttachment"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -422,8 +415,7 @@ class CloseJobOptions(_model_base.Model):
         disposition_code: Optional[str] = None,
         close_at: Optional[datetime.datetime] = None,
         note: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -456,8 +448,7 @@ class CompleteJobOptions(_model_base.Model):
         self,
         *,
         note: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -500,8 +491,7 @@ class QueueSelectorAttachment(_model_base.Model):
         self,
         *,
         kind: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -544,8 +534,7 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
         *,
         condition: "_models.RouterRule",
         queue_selectors: List["_models.RouterQueueSelector"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -585,8 +574,7 @@ class WorkerSelectorAttachment(_model_base.Model):
         self,
         *,
         kind: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -629,8 +617,7 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
         *,
         condition: "_models.RouterRule",
         worker_selectors: List["_models.RouterWorkerSelector"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -665,8 +652,7 @@ class DeclineJobOfferOptions(_model_base.Model):
         self,
         *,
         retry_offer_at: Optional[datetime.datetime] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -714,8 +700,7 @@ class RouterRule(_model_base.Model):
         self,
         *,
         kind: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -781,8 +766,7 @@ class DistributionPolicy(_model_base.Model):
         name: Optional[str] = None,
         offer_expires_after_seconds: Optional[float] = None,
         mode: Optional["_models.DistributionMode"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -827,8 +811,7 @@ class ExceptionPolicy(_model_base.Model):
         *,
         name: Optional[str] = None,
         exception_rules: Optional[List["_models.ExceptionRule"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -868,8 +851,7 @@ class ExceptionRule(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         trigger: "_models.ExceptionTrigger",
         actions: List["_models.ExceptionAction"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -905,8 +887,7 @@ class ExceptionTrigger(_model_base.Model):
         self,
         *,
         kind: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -948,8 +929,7 @@ class ExpressionRouterRule(RouterRule, discriminator="expression"):
         *,
         expression: str,
         language: Optional[Union[str, "_models.ExpressionRouterRuleLanguage"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -990,8 +970,7 @@ class FunctionRouterRule(RouterRule, discriminator="function"):
         *,
         function_uri: str,
         credential: Optional["_models.FunctionRouterRuleCredential"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1033,8 +1012,7 @@ class FunctionRouterRuleCredential(_model_base.Model):
         function_key: Optional[str] = None,
         app_key: Optional[str] = None,
         client_id: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1075,8 +1053,7 @@ class JobMatchingMode(_model_base.Model):
         self,
         *,
         kind: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1121,8 +1098,7 @@ class LongestIdleMode(DistributionMode, discriminator="longestIdle"):
         min_concurrent_offers: Optional[int] = None,
         max_concurrent_offers: Optional[int] = None,
         bypass_selectors: Optional[bool] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1172,8 +1148,7 @@ class ManualReclassifyExceptionAction(ExceptionAction, discriminator="manualRecl
         queue_id: Optional[str] = None,
         priority: Optional[int] = None,
         worker_selectors: Optional[List["_models.RouterWorkerSelector"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1207,8 +1182,7 @@ class OAuth2WebhookClientCredential(_model_base.Model):
         *,
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1254,8 +1228,7 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
         *,
         key: str,
         label_operator: Union[str, "_models.LabelOperator"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1307,8 +1280,7 @@ class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
         key: str,
         label_operator: Union[str, "_models.LabelOperator"],
         expires_after_seconds: Optional[float] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1361,8 +1333,7 @@ class QueueLengthExceptionTrigger(ExceptionTrigger, discriminator="queueLength")
         self,
         *,
         threshold: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1399,8 +1370,7 @@ class QueueWeightedAllocation(_model_base.Model):
         *,
         weight: float,
         queue_selectors: List["_models.RouterQueueSelector"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1447,8 +1417,7 @@ class ReclassifyExceptionAction(ExceptionAction, discriminator="reclassify"):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         classification_policy_id: Optional[str] = None,
         labels_to_upsert: Optional[Dict[str, Any]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1502,8 +1471,7 @@ class RoundRobinMode(DistributionMode, discriminator="roundRobin"):
         min_concurrent_offers: Optional[int] = None,
         max_concurrent_offers: Optional[int] = None,
         bypass_selectors: Optional[bool] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1546,8 +1514,7 @@ class RouterChannel(_model_base.Model):
         channel_id: str,
         capacity_cost_per_job: int,
         max_number_of_jobs: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1677,8 +1644,7 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
         tags: Optional[Dict[str, Any]] = None,
         notes: Optional[List["_models.RouterJobNote"]] = None,
         matching_mode: Optional["_models.JobMatchingMode"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1729,8 +1695,7 @@ class RouterJobAssignment(_model_base.Model):
         worker_id: Optional[str] = None,
         completed_at: Optional[datetime.datetime] = None,
         closed_at: Optional[datetime.datetime] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1766,8 +1731,7 @@ class RouterJobNote(_model_base.Model):
         *,
         message: str,
         added_at: Optional[datetime.datetime] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1818,8 +1782,7 @@ class RouterJobOffer(_model_base.Model):
         capacity_cost: int,
         offered_at: Optional[datetime.datetime] = None,
         expires_at: Optional[datetime.datetime] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1870,8 +1833,7 @@ class RouterJobPositionDetails(_model_base.Model):
         queue_id: str,
         queue_length: int,
         estimated_wait_time_minutes: float,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1930,8 +1892,7 @@ class RouterQueue(_model_base.Model):
         distribution_policy_id: Optional[str] = None,
         labels: Optional[Dict[str, Any]] = None,
         exception_policy_id: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1977,8 +1938,7 @@ class RouterQueueSelector(_model_base.Model):
         key: str,
         label_operator: Union[str, "_models.LabelOperator"],
         value: Optional[Any] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2026,8 +1986,7 @@ class RouterQueueStatistics(_model_base.Model):
         length: int,
         estimated_wait_time_minutes: Optional[Dict[str, float]] = None,
         longest_job_wait_time_minutes: Optional[float] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2123,8 +2082,7 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
         channels: Optional[List["_models.RouterChannel"]] = None,
         available_for_offers: Optional[bool] = None,
         max_concurrent_offers: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2170,8 +2128,7 @@ class RouterWorkerAssignment(_model_base.Model):
         job_id: str,
         capacity_cost: int,
         assigned_at: datetime.datetime,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2237,8 +2194,7 @@ class RouterWorkerSelector(_model_base.Model):
         value: Optional[Any] = None,
         expires_after_seconds: Optional[float] = None,
         expedite: Optional[bool] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2274,8 +2230,7 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment, discriminator="
         self,
         *,
         rule: "_models.RouterRule",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2311,8 +2266,7 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator
         self,
         *,
         rule: "_models.RouterRule",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2349,8 +2303,7 @@ class ScheduleAndSuspendMode(JobMatchingMode, discriminator="scheduleAndSuspend"
         self,
         *,
         schedule_at: datetime.datetime,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2408,8 +2361,7 @@ class ScoringRuleOptions(_model_base.Model):
         scoring_parameters: Optional[List[Union[str, "_models.ScoringRuleParameterSelector"]]] = None,
         is_batch_scoring_enabled: Optional[bool] = None,
         descending_order: Optional[bool] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2445,8 +2397,7 @@ class StaticQueueSelectorAttachment(QueueSelectorAttachment, discriminator="stat
         self,
         *,
         queue_selector: "_models.RouterQueueSelector",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2484,8 +2435,7 @@ class StaticRouterRule(RouterRule, discriminator="static"):
         self,
         *,
         value: Optional[Any] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2521,8 +2471,7 @@ class StaticWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="st
         self,
         *,
         worker_selector: "_models.RouterWorkerSelector",
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2565,8 +2514,7 @@ class UnassignJobOptions(_model_base.Model):
         self,
         *,
         suspend_matching: Optional[bool] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2601,8 +2549,7 @@ class UnassignJobResult(_model_base.Model):
         *,
         job_id: str,
         unassignment_count: int,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2638,8 +2585,7 @@ class WaitTimeExceptionTrigger(ExceptionTrigger, discriminator="waitTime"):
         self,
         *,
         threshold_seconds: float,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2687,8 +2633,7 @@ class WebhookRouterRule(RouterRule, discriminator="webhook"):
         authorization_server_uri: Optional[str] = None,
         client_credential: Optional["_models.OAuth2WebhookClientCredential"] = None,
         webhook_uri: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2727,8 +2672,7 @@ class WeightedAllocationQueueSelectorAttachment(
         self,
         *,
         allocations: List["_models.QueueWeightedAllocation"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2767,8 +2711,7 @@ class WeightedAllocationWorkerSelectorAttachment(
         self,
         *,
         allocations: List["_models.WorkerWeightedAllocation"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2805,8 +2748,7 @@ class WorkerWeightedAllocation(_model_base.Model):
         *,
         weight: float,
         worker_selectors: List["_models.RouterWorkerSelector"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):

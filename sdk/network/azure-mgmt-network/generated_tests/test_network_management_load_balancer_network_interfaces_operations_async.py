@@ -21,11 +21,11 @@ class TestNetworkManagementLoadBalancerNetworkInterfacesOperationsAsync(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_load_balancer_network_interfaces_list(self, resource_group):
         response = self.client.load_balancer_network_interfaces.list(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -68,7 +68,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(OnlineDeploymentOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._local_deployment_helper = local_deployment_helper
         self._online_deployment = service_client_04_2023_preview.online_deployments
         self._online_endpoint_operations = service_client_04_2023_preview.online_endpoints
@@ -148,10 +148,10 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 )
             if deployment and deployment.instance_type and deployment.instance_type.lower() in SmallSKUs:
                 module_logger.warning(
-                    "Instance type %s may be too small for compute resources. "  # pylint: disable=line-too-long
+                    "Instance type %s may be too small for compute resources. "
                     "Minimum recommended compute SKU is Standard_DS3_v2 for general purpose endpoints. Learn more about SKUs here: "  # pylint: disable=line-too-long
-                    "https://learn.microsoft.com/en-us/azure/machine-learning/referencemanaged-online-endpoints-vm-sku-list",
-                    deployment.instance_type,  # pylint: disable=line-too-long
+                    "https://learn.microsoft.com/azure/machine-learning/referencemanaged-online-endpoints-vm-sku-list",
+                    deployment.instance_type,
                 )
             if (
                 not skip_script_validation

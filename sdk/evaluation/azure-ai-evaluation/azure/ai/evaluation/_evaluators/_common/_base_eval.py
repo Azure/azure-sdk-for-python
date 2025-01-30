@@ -4,14 +4,18 @@
 
 import inspect
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, Generic, List, TypedDict, TypeVar, Union, cast, final
+from typing import Any, Callable, Dict, Generic, List, TypedDict, TypeVar, Union, cast, final, Optional
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from typing_extensions import ParamSpec, TypeAlias, get_overloads
 
-from azure.ai.evaluation._common.math import list_mean
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._common.utils import remove_optional_singletons
+from azure.ai.evaluation._constants import _AggregationType
+from azure.ai.evaluation._model_configurations import Conversation
+from azure.ai.evaluation._common._experimental import experimental
+
+from ._conversation_aggregators import GetAggregator, GetAggregatorType
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -24,6 +28,7 @@ class DerivedEvalInput(TypedDict, total=False):
     query: Dict[str, Any]
     response: Dict[str, Any]
     context: str
+    ground_truth: str
 
 
 AggregateResult: TypeAlias = Dict[str, Union[float, Dict[str, List[T]]]]
@@ -68,6 +73,13 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     :type not_singleton_inputs: List[str]
     :param eval_last_turn: If True, only the last turn of the conversation will be evaluated. Default is False.
     :type eval_last_turn: bool
+    :param conversation_aggregation_type: The type of aggregation to perform on the per-turn results of a conversation
+        to produce a single result.
+        Default is ~azure.ai.evaluation._AggregationType.MEAN.
+    :type conversation_aggregation_type: ~azure.ai.evaluation._AggregationType
+    :param conversation_aggregator_override: A function that will be used to aggregate per-turn results. If provided,
+        overrides the standard aggregator implied by conversation_aggregation_type. None by default.
+    :type conversation_aggregator_override: Optional[Callable[[List[float]], float]]
     """
 
     # ~~~ METHODS THAT ALMOST ALWAYS NEED TO BE OVERRIDDEN BY CHILDREN~~~
@@ -79,11 +91,17 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         *,
         not_singleton_inputs: List[str] = ["conversation", "kwargs"],
         eval_last_turn: bool = False,
+        conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,
+        conversation_aggregator_override: Optional[Callable[[List[float]], float]] = None,
     ):
         self._not_singleton_inputs = not_singleton_inputs
         self._eval_last_turn = eval_last_turn
         self._singleton_inputs = self._derive_singleton_inputs()
         self._async_evaluator = AsyncEvaluatorBase(self._real_call)
+        self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
+        if conversation_aggregator_override is not None:
+            # Type ignore since we already checked for None, but mypy doesn't know that.
+            self._conversation_aggregation_function = conversation_aggregator_override  # type: ignore[assignment]
 
     # This needs to be overridden just to change the function header into something more informative,
     # and to be able to add a more specific docstring. The actual function contents should just be
@@ -157,6 +175,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         include_context = "context" in self._singleton_inputs
         include_query = "query" in self._singleton_inputs
         include_response = "response" in self._singleton_inputs
+        include_ground_truth = "ground_truth" in self._singleton_inputs
 
         def converter(conversation: Dict) -> List[DerivedEvalInput]:
             messages = cast(List[Dict[str, Any]], conversation["messages"])
@@ -197,10 +216,65 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     eval_input["response"] = response.get("content", "")
                 if include_context:
                     eval_input["context"] = str(context)
+                if include_ground_truth:
+                    eval_input["ground_truth"] = response.get("ground_truth", "")
                 eval_inputs.append(eval_input)
             return eval_inputs
 
         return converter
+
+    def _derive_multi_modal_conversation_converter(self) -> Callable[[Dict], List[Dict[str, Any]]]:
+        """Produce the function that will be used to convert multi-modal conversations to a list of evaluable inputs.
+        This uses the inputs derived from the _derive_singleton_inputs function to determine which
+        aspects of a conversation ought to be extracted.
+
+        :return: The function that will be used to convert conversations to evaluable inputs.
+        :rtype: Callable
+        """
+
+        def multi_modal_converter(conversation: Dict) -> List[Dict[str, Any]]:
+            messages = cast(List[Dict[str, Any]], conversation["messages"])
+            # Extract user messages, assistant messages from conversation
+            user_messages: List[Dict[str, Any]] = []
+            assistant_messages: List[Dict[str, Any]] = []
+            system_messages: List[Dict[str, Any]] = []
+
+            # Convert conversation slice into queries and responses.
+            # Assume that 'user' role is asking queries and 'assistant' role is responding.
+            if self._eval_last_turn and len(messages) > 1:
+                messages = messages[-2:]
+
+            for each_turn in messages:
+                role = each_turn["role"]
+                if role == "user":
+                    user_messages.append(each_turn)
+                elif role == "assistant":
+                    assistant_messages.append(each_turn)
+                elif role == "system":
+                    system_messages.append(each_turn)
+
+            # validation
+            if len(user_messages) != len(assistant_messages):
+                raise EvaluationException(
+                    message="Mismatched number of user and assistant messages.",
+                    internal_message=("Mismatched number of user and assistant messages."),
+                )
+            if len(assistant_messages) > 1:
+                raise EvaluationException(
+                    message="Conversation can have only one assistant message.",
+                    internal_message=("Conversation can have only one assistant message."),
+                )
+            eval_conv_inputs = []
+            for user_msg, assist_msg in zip(user_messages, assistant_messages):
+                conv_messages = []
+                if len(system_messages) == 1:
+                    conv_messages.append(system_messages[0])
+                conv_messages.append(user_msg)
+                conv_messages.append(assist_msg)
+                eval_conv_inputs.append({"conversation": Conversation(messages=conv_messages)})
+            return eval_conv_inputs
+
+        return multi_modal_converter
 
     def _convert_kwargs_to_eval_input(self, **kwargs) -> Union[List[Dict], List[DerivedEvalInput]]:
         """Convert an arbitrary input into a list of inputs for evaluators.
@@ -210,7 +284,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         values.
 
         The self._singleton_inputs list assigned during initialization is used to find and extract
-        singleton keywords, and self._allow_converssation_input is used to determine if a conversation
+        singleton keywords, and self._allow_conversation_input is used to determine if a conversation
         is a valid input.
 
         If both conversations and singletons are allowed, the function will raise an exception if both
@@ -241,6 +315,8 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             )
         # Handle Conversation
         if conversation is not None:
+            if self._is_multi_modal_conversation(conversation):
+                return self._derive_multi_modal_conversation_converter()(conversation)
             return self._derive_conversation_converter()(conversation)
         # Handle Singletons
         required_singletons = remove_optional_singletons(self, singletons)
@@ -254,6 +330,20 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             category=ErrorCategory.INVALID_VALUE,
             target=ErrorTarget.CONVERSATION,
         )
+
+    def _is_multi_modal_conversation(self, conversation: Dict) -> bool:
+        if "messages" not in conversation:
+            return False
+        messages = conversation["messages"]
+        if not isinstance(messages, list):
+            return False
+        for message in messages:
+            if "content" in message:
+                content = message.get("content", "")
+                if isinstance(content, list):
+                    if any(item.get("type") == "image_url" and "url" in item.get("image_url", {}) for item in content):
+                        return True
+        return False
 
     def _aggregate_results(self, per_turn_results: List[DoEvalResult[T_EvalValue]]) -> AggregateResult[T_EvalValue]:
         """Aggregate the evaluation results of each conversation turn into a single result.
@@ -285,7 +375,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         # Find and average all numeric values
         for metric, values in evaluation_per_turn.items():
             if all(isinstance(value, (int, float)) for value in values):
-                aggregated[metric] = list_mean(cast(List[Union[int, float]], values))
+                aggregated[metric] = self._conversation_aggregation_function(cast(List[Union[int, float]], values))
         # Slap the per-turn results back in.
         aggregated["evaluation_per_turn"] = evaluation_per_turn
         return aggregated
@@ -313,9 +403,50 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         # Otherwise, aggregate results.
         return self._aggregate_results(per_turn_results=per_turn_results)
 
+    # ~~~ METHODS THAT SHOULD NOT BE OVERRIDDEN BY CHILDREN~~~``
+
     @final
     def _to_async(self) -> "AsyncEvaluatorBase":
         return self._async_evaluator
+
+    @experimental
+    @final
+    def _set_conversation_aggregation_type(self, conversation_aggregation_type: _AggregationType) -> None:
+        """Input a conversation aggregation type to re-assign the aggregator function used by this evaluator for
+        multi-turn conversations. This aggregator is used to combine numeric outputs from each evaluation of a
+        multi-turn conversation into a single top-level result.
+
+        :param conversation_aggregation_type: The type of aggregation to perform on the per-turn
+            results of a conversation to produce a single result.
+        :type conversation_aggregation_type: ~azure.ai.evaluation._AggregationType
+        """
+        self._conversation_aggregation_function = GetAggregator(conversation_aggregation_type)
+
+    @experimental
+    @final
+    def _set_conversation_aggregator(self, aggregator: Callable[[List[float]], float]) -> None:
+        """Set the conversation aggregator function directly. This function will be applied to all numeric outputs
+        of an evaluator when it evaluates a conversation with multiple-turns thus ends up with multiple results per
+        evaluation that is needs to coalesce into a single result. Use when built-in aggregators do not
+        suit your needs, but use with caution.
+
+        :param aggregator: The function to use to aggregate per-turn results.
+        :type aggregator: Callable[[List[float]], float]
+        """
+        self._conversation_aggregation_function = aggregator
+
+    @experimental
+    @final
+    def _get_conversation_aggregator_type(self) -> _AggregationType:
+        """Get the current conversation aggregation type used by this evaluator. This refers to the
+        method used when a single input produces multiple evaluation results (ex: when a multi-turn conversation
+        is inputted into an evaluator that evaluates each turn individually). The individual inputs
+        are combined by the function implied here to produce a single overall result.
+
+        :return: The conversation aggregation type.
+        :rtype: ~azure.ai.evaluation._AggregationType
+        """
+        return GetAggregatorType(self._conversation_aggregation_function)
 
 
 class AsyncEvaluatorBase:
@@ -332,7 +463,9 @@ class AsyncEvaluatorBase:
     # are just not passed into this function instead of ending up in kwargs.
     # Since we want this to be relatively call-agnostic, we just account for every input that any children
     # are known to throw at this, mash them into kwargs, and then pass them into the real call.
-    async def __call__(self, *, query=None, response=None, context=None, conversation=None, **kwargs):
+    async def __call__(
+        self, *, query=None, response=None, context=None, conversation=None, ground_truth=None, **kwargs
+    ):
         if conversation is not None:
             kwargs["conversation"] = conversation
         if query is not None:
@@ -341,4 +474,6 @@ class AsyncEvaluatorBase:
             kwargs["response"] = response
         if context is not None:
             kwargs["context"] = context
+        if ground_truth is not None:
+            kwargs["ground_truth"] = ground_truth
         return await self._real_call(**kwargs)

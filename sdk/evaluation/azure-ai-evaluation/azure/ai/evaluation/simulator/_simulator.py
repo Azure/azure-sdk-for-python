@@ -157,7 +157,7 @@ class Simulator:
                 f"You have specified 'num_queries' < len('tasks') ({num_queries} < {len(tasks)}). "
                 f"Only the first {num_queries} lines of the specified tasks will be simulated."
             )
-        num_queries = min(num_queries, len(tasks))
+
         max_conversation_turns *= 2  # account for both user and assistant turns
 
         prompty_model_config = self.model_config
@@ -586,7 +586,10 @@ class Simulator:
         for i, query_response_pair in enumerate(query_responses):
             query = query_response_pair["q"]
             response = query_response_pair["r"]
-            task = tasks[i]
+            try:
+                task = tasks[i]
+            except IndexError:
+                task = None
 
             conversation = await self._complete_conversation(
                 conversation_starter=query,
@@ -621,7 +624,7 @@ class Simulator:
         *,
         conversation_starter: str,
         max_conversation_turns: int,
-        task: str,
+        task: Optional[str],
         user_simulator_prompty: Optional[str],
         user_simulator_prompty_options: Dict[str, Any],
         target: Callable,
@@ -659,16 +662,21 @@ class Simulator:
                 user_simulator_prompty_options=user_simulator_prompty_options,
             )
             if len(conversation_history) == 0:
-                conversation_starter_from_simulated_user = await user_flow(
-                    task=task,
-                    conversation_history=[
-                        {
-                            "role": "assistant",
-                            "content": conversation_starter,
-                        }
-                    ],
-                    action="rewrite the assistant's message as you have to accomplish the task by asking the right questions. Make sure the original question is not lost in your rewrite.",
-                )
+                if task:
+                    conversation_starter_from_simulated_user = await user_flow(
+                        task=task,
+                        conversation_history=[
+                            {
+                                "role": "assistant",
+                                "content": conversation_starter,
+                            }
+                        ],
+                        action="rewrite the assistant's message as you have to accomplish the task by asking the right questions. Make sure the original question is not lost in your rewrite.",
+                    )
+                else:
+                    conversation_starter_from_simulated_user = {
+                        "content": conversation_starter,
+                    }
             else:
                 conversation_starter_from_simulated_user = await user_flow(
                     task=task,

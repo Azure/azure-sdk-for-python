@@ -20,7 +20,7 @@ USAGE:
         https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
-    2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
+    2) AZURE_AI_CHAT_KEY - Your model key. Keep it secret.
 """
 import asyncio
 
@@ -46,8 +46,8 @@ async def sample_chat_completions_async():
         # Do a single chat completion operation
         response = await client.complete(
             messages=[
-                SystemMessage(content="You are a helpful assistant."),
-                UserMessage(content="How many feet are in a mile?"),
+                SystemMessage("You are a helpful assistant."),
+                UserMessage("How many feet are in a mile?"),
             ]
         )
 

@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_with_resources_in_thread.py
-
 DESCRIPTION:
     This sample demonstrates how to use agent operations with file searching from
     the Azure Agents service using a synchronous client.   The file is attached to thread.
@@ -17,19 +15,17 @@ USAGE:
 
     pip install azure-ai-projects azure-identity
 
-    Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    Set these environment variables with your own values:
+    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
+       Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+       the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
 import os
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FileSearchTool
 from azure.identity import DefaultAzureCredential
-
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
@@ -49,7 +45,7 @@ with project_client:
     file_search = FileSearchTool(vector_store_ids=[vector_store.id])
 
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview",
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="Hello, you are helpful assistant and can search information from uploaded files",
         tools=file_search.definitions,

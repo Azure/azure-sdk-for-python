@@ -20,11 +20,11 @@ class TestComputeManagementCloudServicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_cloud_services_begin_create_or_update(self, resource_group):
         response = self.client.cloud_services.begin_create_or_update(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -32,11 +32,11 @@ class TestComputeManagementCloudServicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_cloud_services_begin_update(self, resource_group):
         response = self.client.cloud_services.begin_update(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -44,11 +44,11 @@ class TestComputeManagementCloudServicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_cloud_services_begin_delete(self, resource_group):
         response = self.client.cloud_services.begin_delete(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -56,11 +56,11 @@ class TestComputeManagementCloudServicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_cloud_services_get(self, resource_group):
         response = self.client.cloud_services.get(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         )
 
         # please add some check logic here by yourself
@@ -68,11 +68,11 @@ class TestComputeManagementCloudServicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_instance_view(self, resource_group):
+    def test_cloud_services_get_instance_view(self, resource_group):
         response = self.client.cloud_services.get_instance_view(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         )
 
         # please add some check logic here by yourself
@@ -80,9 +80,9 @@ class TestComputeManagementCloudServicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_all(self, resource_group):
+    def test_cloud_services_list_all(self, resource_group):
         response = self.client.cloud_services.list_all(
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -90,10 +90,10 @@ class TestComputeManagementCloudServicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_cloud_services_list(self, resource_group):
         response = self.client.cloud_services.list(
             resource_group_name=resource_group.name,
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -101,11 +101,11 @@ class TestComputeManagementCloudServicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_start(self, resource_group):
+    def test_cloud_services_begin_start(self, resource_group):
         response = self.client.cloud_services.begin_start(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -113,11 +113,11 @@ class TestComputeManagementCloudServicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_power_off(self, resource_group):
+    def test_cloud_services_begin_power_off(self, resource_group):
         response = self.client.cloud_services.begin_power_off(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -125,11 +125,11 @@ class TestComputeManagementCloudServicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_restart(self, resource_group):
+    def test_cloud_services_begin_restart(self, resource_group):
         response = self.client.cloud_services.begin_restart(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -137,11 +137,11 @@ class TestComputeManagementCloudServicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_reimage(self, resource_group):
+    def test_cloud_services_begin_reimage(self, resource_group):
         response = self.client.cloud_services.begin_reimage(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -149,11 +149,11 @@ class TestComputeManagementCloudServicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_rebuild(self, resource_group):
+    def test_cloud_services_begin_rebuild(self, resource_group):
         response = self.client.cloud_services.begin_rebuild(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -161,11 +161,11 @@ class TestComputeManagementCloudServicesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete_instances(self, resource_group):
+    def test_cloud_services_begin_delete_instances(self, resource_group):
         response = self.client.cloud_services.begin_delete_instances(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

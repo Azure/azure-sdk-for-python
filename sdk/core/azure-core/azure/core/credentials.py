@@ -147,7 +147,7 @@ class AzureKeyCredential:
     It provides the ability to update the key without creating a new client.
 
     :param str key: The key used to authenticate to an Azure service
-    :raises: TypeError
+    :raises TypeError: If the key is not a string.
     """
 
     def __init__(self, key: str) -> None:
@@ -185,7 +185,7 @@ class AzureSasCredential:
     It provides the ability to update the shared access signature without creating a new client.
 
     :param str signature: The shared access signature used to authenticate to an Azure service
-    :raises: TypeError
+    :raises TypeError: If the signature is not a string.
     """
 
     def __init__(self, signature: str) -> None:
@@ -209,7 +209,8 @@ class AzureSasCredential:
         to update long-lived clients.
 
         :param str signature: The shared access signature used to authenticate to an Azure service
-        :raises: ValueError or TypeError
+        :raises ValueError: If the signature is None or empty.
+        :raises TypeError: If the signature is not a string.
         """
         if not signature:
             raise ValueError("The signature used for updating can not be None or empty")
@@ -224,7 +225,7 @@ class AzureNamedKeyCredential:
 
     :param str name: The name of the credential used to authenticate to an Azure service.
     :param str key: The key used to authenticate to an Azure service.
-    :raises: TypeError
+    :raises TypeError: If the name or key is not a string.
     """
 
     def __init__(self, name: str, key: str) -> None:

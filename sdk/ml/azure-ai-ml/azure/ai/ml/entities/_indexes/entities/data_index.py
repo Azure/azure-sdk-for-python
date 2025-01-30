@@ -3,8 +3,6 @@
 # ---------------------------------------------------------
 """DataIndex entities."""
 
-# pylint: disable=no-member
-
 from typing import Dict, Optional
 
 from azure.ai.ml.constants._common import DataIndexTypes

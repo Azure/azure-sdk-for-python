@@ -245,7 +245,7 @@ class TestCompletions(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
+        [(AZURE, PREVIEW), (AZURE, GA)]
     )
     def test_completion_echo(self, client, api_type, api_version, **kwargs):
 

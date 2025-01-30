@@ -72,7 +72,7 @@ class DefaultScaleSettings(OnlineScaleSettings):
 
     def __init__(self, **kwargs: Any):
         super(DefaultScaleSettings, self).__init__(
-            type=ScaleType.DEFAULT.value,  # pylint: disable=no-member
+            type=ScaleType.DEFAULT.value,
         )
 
     def _to_rest_object(self) -> RestDefaultScaleSettings:
@@ -121,7 +121,7 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
         **kwargs: Any,
     ):
         super(TargetUtilizationScaleSettings, self).__init__(
-            type=ScaleType.TARGET_UTILIZATION.value,  # pylint: disable=no-member
+            type=ScaleType.TARGET_UTILIZATION.value,
         )
         self.min_instances = min_instances
         self.max_instances = max_instances
