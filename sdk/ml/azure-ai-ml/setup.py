@@ -93,12 +93,12 @@ setup(
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner along with this package
         # so user can submit @dsl.pipeline with @mldesigner.command_component inside it.
         "designer": [
-            "mldesigner",
+            "mldesigner; python_version < '3.13'",
         ],
         # user can run `pip install azure-ai-ml[mount]` to install azureml-dataprep-rslex along with this package
         # so user can call data.mount() and datastore.mount() operations supported by it.
         "mount": [
-            "azureml-dataprep-rslex>=2.22.0",
+            "azureml-dataprep-rslex>=2.22.0; python_version < '3.13'",
         ],
     },
     project_urls={
