@@ -38,7 +38,5 @@ extends:
       safeName: azureeventhubcheckpointstoreblobaio
     - name: azure-eventhub-checkpointstoreblob
       safeName: azureeventhubcheckpointstoreblob
-    - name: azure-eventhub-checkpointstoretable
-      safeName: azureeventhubcheckpointstoretable
     - name: azure-mgmt-eventhub
       safeName: azuremgmteventhub
