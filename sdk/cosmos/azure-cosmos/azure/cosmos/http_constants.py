@@ -435,6 +435,7 @@ class SubStatusCodes:
     # 404: LSN in session token is higher
     READ_SESSION_NOTAVAILABLE = 1002
     OWNER_RESOURCE_NOT_FOUND = 1003
+    CONTAINER_CREATE_IN_PROGRESS = 1013
 
     # 409: Conflict exception
     CONFLICT_WITH_CONTROL_PLANE = 1006
