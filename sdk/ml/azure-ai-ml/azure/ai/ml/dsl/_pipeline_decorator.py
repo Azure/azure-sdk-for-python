@@ -112,6 +112,13 @@ def pipeline(
     :paramtype experiment_name: str
     :keyword tags: The tags of pipeline component.
     :paramtype tags: dict[str, str]
+    :kwargs: A dictionary of additional configuration parameters. Defaults to None \
+        default_datastore: Name of the datastore to use as the default datastore for the pipeline job.
+        default_compute: Name of the compute target to use as the default
+        continue_on_step_failure: This setting determines what happens if a step in the pipeline fails.
+        continue_on_step_failure: This setting determines what happens if a step in the pipeline fails.
+        force_rerun: Whether to force rerun the whole pipeline. The default value is False.
+    :type kwargs: dict
     :return: Either
       * A decorator, if `func` is None
       * The decorated `func`
