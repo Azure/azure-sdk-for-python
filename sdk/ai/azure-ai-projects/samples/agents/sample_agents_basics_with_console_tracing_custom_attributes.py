@@ -32,10 +32,12 @@ USAGE:
 """
 
 import os, sys, time
+from typing import cast
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from opentelemetry import trace
-from opentelemetry.sdk.trace import SpanProcessor, ReadableSpan, Span
+from opentelemetry.sdk.trace import SpanProcessor, ReadableSpan, Span, TracerProvider
+
 
 # Define the custom span processor that is used for adding the custom
 # attributes to spans when they are started.
@@ -55,6 +57,7 @@ class CustomAttributeSpanProcessor(SpanProcessor):
         # Clean-up logic can be added here if necessary
         pass
 
+
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
     conn_str=os.environ["PROJECT_CONNECTION_STRING"],
@@ -65,8 +68,9 @@ project_client = AIProjectClient.from_connection_string(
 # project_client.telemetry.enable(destination="http://localhost:4317")
 project_client.telemetry.enable(destination=sys.stdout)
 
-# Add the custom span processor to the global tracer provider  
-trace.get_tracer_provider().add_span_processor(CustomAttributeSpanProcessor())  
+# Add the custom span processor to the global tracer provider
+provider = cast(TracerProvider, trace.get_tracer_provider())
+provider.add_span_processor(CustomAttributeSpanProcessor())
 
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
