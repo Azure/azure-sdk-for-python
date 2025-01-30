@@ -5,20 +5,9 @@
 # --------------------------------------------------------------------------
 import logging
 from typing import (
-    Any, cast, Collection, Dict, List, NoReturn, Tuple,
+    Any, cast, Collection, Dict, List, Tuple,
     TYPE_CHECKING
 )
-from xml.etree.ElementTree import Element
-
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    DecodeError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceModifiedError,
-    ResourceNotFoundError,
-)
-from azure.core.pipeline.policies import ContentDecodePolicy
 from ._models import (
     AnalyticsLogging,
     DeletedPathProperties,
@@ -30,7 +19,6 @@ from ._models import (
     RetentionPolicy,
     StaticWebsite
 )
-from ._shared.models import StorageErrorCode
 from ._shared.response_handlers import deserialize_metadata
 
 if TYPE_CHECKING:
@@ -41,7 +29,6 @@ if TYPE_CHECKING:
         Path,
         PathList
     )
-    from ._models import ContentSettings
 
 _LOGGER = logging.getLogger(__name__)
 
