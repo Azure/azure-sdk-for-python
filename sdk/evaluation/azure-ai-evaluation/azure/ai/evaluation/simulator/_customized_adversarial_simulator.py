@@ -10,6 +10,7 @@ import logging
 import random
 import time
 import itertools
+from jinja2 import Template, TemplateSyntaxError, TemplateAssertionError
 from typing import Any, Callable, Dict, List, Optional
 from datetime import datetime
 from tqdm import tqdm
@@ -267,8 +268,8 @@ class CustomAdversarialSimulator:
         randomization_seed: Optional[int] = None,
         personality: Optional[str] = None,
         application_scenario: Optional[str] = None,
-        temperature: float = 0.7,
-        pyrit_strategies: Optional[List[BasePyritStrategy]] = [],
+        code_based_strategies: Optional[List[BasePyritStrategy]] = [],
+        rai_client_based_strategies: Optional[List[BasePyritStrategy]] = [],
     ):
         """Run adversarial simulations asynchronously.
 
@@ -303,8 +304,6 @@ class CustomAdversarialSimulator:
         :paramtype personality: Optional[str]
         :keyword application_scenario: Used to specify the scenario context if needed.
         :paramtype application_scenario: Optional[str]
-        :keyword temperature: Temperature value affecting generation randomness.
-        :paramtype temperature: float
         :return: A list of simulation results, each containing conversation histories.
         :rtype: List[Any]
         """
@@ -313,8 +312,7 @@ class CustomAdversarialSimulator:
                      f"api_call_retry_sleep_sec={api_call_retry_sleep_sec}, api_call_delay_sec={api_call_delay_sec}, "
                      f"concurrent_async_task={concurrent_async_task}, _jailbreak_type={_jailbreak_type}, "
                      f"language={language}, randomize_order={randomize_order}, randomization_seed={randomization_seed}, "
-                     f"personality={personality}, application_scenario={application_scenario}, "
-                     f"temperature={temperature}")
+                     f"personality={personality}, application_scenario={application_scenario}, ")
 
         self._ensure_service_dependencies()
         self._validate_inputs(
@@ -374,8 +372,8 @@ class CustomAdversarialSimulator:
                 progress_bar=progress_bar,
                 jailbreak_dataset=jailbreak_dataset,
                 _jailbreak_type=_jailbreak_type,
-                temperature=temperature,
-                pyrit_strategies=pyrit_strategies,
+                code_based_strategies=code_based_strategies,
+                rai_client_based_strategies=rai_client_based_strategies,
             )
             for template, parameter in template_parameter_pairs[:max_simulation_results]
         ]
@@ -518,8 +516,8 @@ class CustomAdversarialSimulator:
         progress_bar,
         jailbreak_dataset=None,
         _jailbreak_type=None,
-        temperature=0.7,
-        pyrit_strategies=[]
+        code_based_strategies=[],
+        rai_client_based_strategies=[]
     ):
         """Create a single simulation asyncio task for an adversarial scenario.
 
@@ -551,8 +549,6 @@ class CustomAdversarialSimulator:
         :paramtype jailbreak_dataset: Optional[List[str]]
         :keyword _jailbreak_type: If set, modifies conversation with special jailbreak data.
         :paramtype _jailbreak_type: Optional[str]
-        :keyword temperature: Sampling temperature for generation.
-        :paramtype temperature: float
         :return: The scheduled asyncio Task.
         :rtype: asyncio.Task
         """
@@ -573,8 +569,8 @@ class CustomAdversarialSimulator:
                 api_call_retry_sleep_sec=api_call_retry_sleep_sec,
                 api_call_delay_sec=api_call_delay_sec,
                 progress_bar=progress_bar,
-                temperature=temperature,
-                pyrit_strategies=pyrit_strategies,
+                code_based_strategies=code_based_strategies,
+                rai_client_based_strategies=rai_client_based_strategies,
             )
         )
 
@@ -593,8 +589,8 @@ class CustomAdversarialSimulator:
         api_call_retry_sleep_sec,
         api_call_delay_sec,
         progress_bar,
-        temperature,
-        pyrit_strategies,
+        code_based_strategies,
+        rai_client_based_strategies
     ):
         """Perform a conversation simulation within a semaphore lock.
 
@@ -622,8 +618,6 @@ class CustomAdversarialSimulator:
         :paramtype api_call_delay_sec: int
         :keyword progress_bar: Progress tracking object.
         :paramtype progress_bar: Any
-        :keyword temperature: Sampling temperature for generation randomness.
-        :paramtype temperature: float
         :return: A JsonLineList containing the conversation output or empty on failure.
         :rtype: Any
         """
@@ -634,47 +628,47 @@ class CustomAdversarialSimulator:
             )
             extra_kwargs = {key: value for key, value in parameter.items() if isinstance(value, str)}
             await asyncio.sleep(api_call_delay_sec)
-            # Extract 'file_content' from 'extra_kwargs'
+            
             file_content = extra_kwargs.get('file_content', '')
-            
-            self.logger.info(f"Customizing this: template_key={template.template_name}, extra_kwargs={extra_kwargs}, ")
-            start_time = time.time()
-            first_turn, first_turn_full_response = await self.rai_client.customize_first_turn(
-                template_key=template.template_name,
-                personality=personality,
-                application_scenario=application_scenario,
-                other_template_kwargs=extra_kwargs,
-                logger=self.logger,
-                temperature=temperature,
-            )
-            end_time = time.time()
-            time_taken = end_time - start_time
-            self.logger.info(f"Generated response for customizing first turn. Time taken: {time_taken:.4f} seconds")
-            self.logger.info(f"Response: {first_turn}")
-            
+            first_turn = parameter.get('conversation_starter', '')
             try:
-                first_prompt = first_turn
+                jinja_template = Template(first_turn)
+                first_turn = jinja_template.render(parameter)
+            except (TemplateSyntaxError, TemplateAssertionError) as e:
+                self.logger.error(f"Conversation starter template error: {e}")
+
+            if code_based_strategies:
+                    for strategy in code_based_strategies:
+                        first_turn = strategy(first_turn)
+            try:
                 if language != SupportedLanguages.English:
                     if not isinstance(language, SupportedLanguages) or language not in SupportedLanguages:
                         raise Exception(
                             f"Language option '{language}' isn't supported. Select a supported language option from "
                             f"azure.ai.evaluation.simulator.SupportedLanguages: {[f'{e}' for e in SupportedLanguages]}"
                         )
-                    first_prompt += f" {SUPPORTED_LANGUAGES_MAPPING[language]}"
+                    first_turn += f" {SUPPORTED_LANGUAGES_MAPPING[language]}"
             
                 # Append 'file_content' to the first prompt
                 if file_content:
-                    first_prompt += f"\nFile Content: {file_content}"
-                if pyrit_strategies:
-                    for strategy in pyrit_strategies:
-                        first_prompt = strategy(first_prompt)
-                self.logger.info(f"First prompt after pyrit: {first_prompt}")
+                    first_turn += f"\nFile Content: {file_content}"
+                if rai_client_based_strategies:
+                    for strategy in rai_client_based_strategies:
+                        first_turn = await strategy(
+                            message=first_turn, 
+                            logger=self.logger, 
+                            template=template, 
+                            rai_client=self.rai_client, 
+                            extra_kwargs=extra_kwargs
+                        )
+                
+                self.logger.info(f"First turn after pyrit: {first_turn}")
                 conversation_history = [
                     ConversationTurn(
                         role=user_bot.role,
                         name=user_bot.name,
-                        message=first_prompt,
-                        full_response=first_turn_full_response,
+                        message=first_turn,
+                        full_response={},
                     )
                 ]
                 for current_turn in range(2, max_conversation_turns + 1):
