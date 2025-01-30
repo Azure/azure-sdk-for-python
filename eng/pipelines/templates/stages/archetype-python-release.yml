@@ -234,50 +234,49 @@ stages:
                     ArtifactLocation: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}'
 
           - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
-                - job: PublishDocs
-                  displayName: Docs.MS Release
-                  condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
-                  dependsOn: PublishPackage
+            - job: PublishDocs
+              displayName: Docs.MS Release
+              condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
+              dependsOn: PublishPackage
 
-                  pool:
-                    image: azsdk-pool-mms-ubuntu-2004-1espt
-                    name: azsdk-pool-mms-ubuntu-2004-general
-                    os: linux
+              pool:
+                image: azsdk-pool-mms-ubuntu-2004-1espt
+                name: azsdk-pool-mms-ubuntu-2004-general
+                os: linux
 
-                  steps:
-                    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-                      parameters:
-                        Paths:
-                          - sdk/**/*.md
-                          - .github/CODEOWNERS
+              steps:
+                - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+                  parameters:
+                    Paths:
+                      - sdk/**/*.md
+                      - .github/CODEOWNERS
 
-                    - download: current
+                - download: current
 
-                    # py2docfx requires Python >= 3.11
-                    - task: UsePythonVersion@0
-                      displayName: 'Use Python 3.11'
-                      inputs:
-                        versionSpec: '3.11'
+                # py2docfx requires Python >= 3.11
+                - task: UsePythonVersion@0
+                  displayName: 'Use Python 3.11'
+                  inputs:
+                    versionSpec: '3.11'
 
-                    - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
+                - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
-                    - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
-                      parameters:
-                        PackageInfoLocations:
-                          - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
-                        WorkingDirectory: $(System.DefaultWorkingDirectory)
-                        TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
-                        TargetDocRepoName: ${{parameters.TargetDocRepoName}}
-                        Language: 'python'
-                        SparseCheckoutPaths:
-                          - docs-ref-services/
-                          - metadata/
-                        PackageSourceOverride: ${{parameters.PackageSourceOverride}}
+                - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
+                  parameters:
+                    PackageInfoLocations:
+                      - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
+                    WorkingDirectory: $(System.DefaultWorkingDirectory)
+                    TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
+                    TargetDocRepoName: ${{parameters.TargetDocRepoName}}
+                    Language: 'python'
+                    SparseCheckoutPaths:
+                      - docs-ref-services/
+                      - metadata/
+                    PackageSourceOverride: ${{parameters.PackageSourceOverride}}
 
-          - deployment: UpdatePackageVersion
+          - job: UpdatePackageVersion
             displayName: "Update Package Version"
             condition: and(succeeded(), ne(variables['Skip.UpdatePackageVersion'], 'true'))
-            environment: github
             dependsOn: PublishPackage
 
             pool:
