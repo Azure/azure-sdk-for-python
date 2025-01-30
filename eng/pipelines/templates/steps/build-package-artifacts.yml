@@ -131,7 +131,7 @@ steps:
     displayName: Clean up repo
     condition: and(succeeded(), ne(variables['ENABLE_EXTENSION_BUILD'], 'true'), ne('${{ parameters.ArtifactSuffix }}', 'linux'))
 
-  # we need to only publish this if runnning on linux. we only need one for the whole build
+  # we need to only publish this if running on linux. we only need one for all stages
   - pwsh: |
       New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)/release_artifact"
       Copy-Item -Path "$(Build.SourcesDirectory)/eng/release_requirements.txt" -Destination "$(Build.ArtifactStagingDirectory)/release_artifact/release_requirements.txt"

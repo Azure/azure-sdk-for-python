@@ -93,7 +93,7 @@ stages:
             - deployment: PublishPackage
               displayName: "Publish to PyPI"
               condition: and(succeeded(), ne(variables['Skip.PublishPackage'], 'true'))
-              environment: pypi
+              environment: package-publish
               dependsOn: TagRepository
 
               templateContext:
