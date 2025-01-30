@@ -40,7 +40,7 @@ class JSONLDecoder:
     def decode(self, line: bytes) -> None:
         """Decode a line of bytes into a string.
 
-        :param line: A line of bytes to decode.
+        :param bytes line: A line of bytes to decode.
         :rtype: None
         """
         self._data = line.decode("utf-8")
@@ -49,6 +49,7 @@ class JSONLDecoder:
         """Iterate over JSONL events from a byte iterator.
 
         :param iter_bytes: An iterator of byte chunks.
+        :type iter_bytes: Iterator[bytes]
         :rtype: Iterator[JSONLEvent]
         :return: An iterator of JSONLEvent objects.
         """
@@ -90,7 +91,7 @@ class AsyncJSONLDecoder:
     def decode(self, line: bytes) -> None:
         """Decode a line of bytes into a string.
 
-        :param line: A line of bytes to decode.
+        :param bytes line: A line of bytes to decode.
         :rtype: None
         """
         self._data = line.decode("utf-8")
@@ -99,6 +100,7 @@ class AsyncJSONLDecoder:
         """Asynchronously iterate over JSONL events from a byte iterator.
 
         :param iter_bytes: An asynchronous iterator of byte chunks.
+        :type iter_bytes: AsyncIterator[bytes]
         :rtype: AsyncIterator[JSONLEvent]
         :return: An asynchronous iterator of JSONLEvent objects.
         """

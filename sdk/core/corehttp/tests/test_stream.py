@@ -75,7 +75,7 @@ def test_stream_jsonl_multiple_kv(stream):
         messages.append(s)
     assert messages == [
         {"msg": "this is a hello world message", "planet": {"earth": "hello earth", "mars": "hello mars"}},
-        {"msg": "this is a hello world message", "planet": {"venus": "hello venus", "jupiter": "hello jupiter"}}
+        {"msg": "this is a hello world message", "planet": {"venus": "hello venus", "jupiter": "hello jupiter"}},
     ]
 
 

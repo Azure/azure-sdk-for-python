@@ -60,6 +60,7 @@ class StreamDecoder(Protocol):
         """Iterate over events from a byte iterator.
 
         :param iter_bytes: An iterator of byte chunks.
+        :type iter_bytes: Iterator[bytes]
         :return: An iterator of events.
         """
         ...
@@ -67,6 +68,7 @@ class StreamDecoder(Protocol):
     def event(self) -> EventType:
         """Get the current event.
 
+        :rtype: EventType
         :return: The current event.
         """
         ...
@@ -74,7 +76,7 @@ class StreamDecoder(Protocol):
     def decode(self, line: bytes) -> None:
         """Decode a line of bytes.
 
-        :param line: A line of bytes to decode.
+        :param bytes line: A line of bytes to decode.
         """
         ...
 
@@ -83,12 +85,12 @@ class StreamDecoder(Protocol):
 class AsyncStreamDecoder(Protocol):
     """Protocol for async stream decoders."""
 
+    # Why this isn't async def: https://mypy.readthedocs.io/en/stable/more_types.html#asynchronous-iterators
     def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[EventType]:
-        # Why this is not async def: 
-        # https://mypy.readthedocs.io/en/stable/more_types.html#asynchronous-iterators    
         """Asynchronously iterate over events from a byte iterator.
 
         :param iter_bytes: An asynchronous iterator of byte chunks.
+        :type iter_bytes: AsyncIterator[bytes]
         :return: An asynchronous iterator of events.
         """
         ...
@@ -103,7 +105,7 @@ class AsyncStreamDecoder(Protocol):
     def decode(self, line: bytes) -> None:
         """Decode a line of bytes.
 
-        :param line: A line of bytes to decode.
+        :param bytes line: A line of bytes to decode.
         """
         ...
 
@@ -113,7 +115,7 @@ class Stream(Iterator[ReturnType]):
 
     :keyword response: The pipeline response object.
     :paramtype response: ~azure.core.pipeline.PipelineResponse
-    :keyword deserialization_callback: A callback that takes HttpResponse and JSON and 
+    :keyword deserialization_callback: A callback that takes HttpResponse and JSON and
         returns a deserialized object
     :paramtype deserialization_callback: Callable[[Any, Any], ReturnType]
     :keyword decoder: An optional decoder to use for the stream. If not provided, the content-type
@@ -182,7 +184,7 @@ class AsyncStream(AsyncIterator[ReturnType]):
 
     :keyword response: The pipeline response object.
     :paramtype response: ~azure.core.pipeline.PipelineResponse
-    :keyword deserialization_callback: A callback that takes AsyncHttpResponse and JSON and 
+    :keyword deserialization_callback: A callback that takes AsyncHttpResponse and JSON and
         returns a deserialized object
     :paramtype deserialization_callback: Callable[[Any, Any], ReturnType]
     :keyword decoder: An optional decoder to use for the stream. If not provided, the content-type

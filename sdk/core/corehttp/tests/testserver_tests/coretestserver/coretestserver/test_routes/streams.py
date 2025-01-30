@@ -180,7 +180,9 @@ def jsonl_escaped_newline_data():
 
 @streams_api.route("/jsonl_escaped_broken_newline_data", methods=["GET"])
 def jsonl_escaped_broken_newline_data():
-    return Response(stream_jsonl_escaped_broken_newline_data(), status=200, headers={"Content-Type": "application/jsonl"})
+    return Response(
+        stream_jsonl_escaped_broken_newline_data(), status=200, headers={"Content-Type": "application/jsonl"}
+    )
 
 
 @streams_api.route("/jsonl_invalid_content_type", methods=["GET"])

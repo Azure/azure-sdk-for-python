@@ -40,5 +40,9 @@ class JSONLEvent:
         self.data = data
 
     def json(self) -> Any:
-        """Parse the event data as JSON."""
+        """Parse the event data as JSON.
+
+        :rtype: any
+        :return: The JSON data for the event
+        """
         return json.loads(self.data)
