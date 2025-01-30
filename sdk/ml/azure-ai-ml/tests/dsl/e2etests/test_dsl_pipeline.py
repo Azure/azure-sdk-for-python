@@ -3288,6 +3288,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         job_res = client.jobs.create_or_update(job=pipeline_job, experiment_name="test_unknown_field")
         assert job_res.jobs["node"].unknown_field == "${{parent.inputs.input}}"
 
+    @pytest.mark.skip(reason="failing due to recording issue")
     def test_flow_in_dsl_pipeline_with_non_existed_data_input(self, client):
         component_func = load_component(
             "./tests/test_configs/flows/web_classification_with_additional_includes/flow.dag.yaml"
