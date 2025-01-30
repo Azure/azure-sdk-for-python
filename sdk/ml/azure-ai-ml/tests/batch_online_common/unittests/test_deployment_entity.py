@@ -21,6 +21,7 @@ from azure.ai.ml.entities import (
     ResourceRequirementsSettings,
     ResourceSettings,
     TargetUtilizationScaleSettings,
+    OnlineRequestSettings
 )
 from azure.ai.ml.constants._common import ArmConstants
 from azure.ai.ml.exceptions import DeploymentException
@@ -62,6 +63,7 @@ class TestDeploymentSanity:
 @pytest.mark.unittest
 class TestOnlineDeploymentFromYAML:
     BLUE_ONLINE_DEPLOYMENT = "tests/test_configs/deployments/online/online_deployment_blue.yaml"
+    BLUE_ONLINE_DEPLOYMENT_FULL = "tests/test_configs/deployments/online/online_deployment_blue_full.yaml"
     BLUE_K8S_ONLINE_DEPLOYMENT = "tests/test_configs/deployments/online/online_deployment_blue_k8s.yaml"
     MINIMAL_DEPLOYMENT = "tests/test_configs/deployments/online/online_endpoint_deployment_k8s_minimum.yml"
     PREVIEW_DEPLOYMENT = "tests/test_configs/deployments/online/online_deployment_1.yaml"
@@ -84,13 +86,20 @@ class TestOnlineDeploymentFromYAML:
         assert blue.description == target["description"]
 
     def test_generic_deployment_merge(self) -> None:
-        blue = load_online_deployment(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT)
+        blue = load_online_deployment(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT_FULL)
         blue_copy = copy.deepcopy(blue)
-
+        blue_copy.request_settings = OnlineRequestSettings(max_concurrent_requests_per_instance=1, max_queue_wait_ms=100, request_timeout_ms=100)
         blue_copy.code_configuration = CodeConfiguration(code="blah path", scoring_script="blah.py")
-        blue_copy.model = Model(name="blah code")
+        blue_copy.model = Model(name="blah model")
         blue_copy.environment = Environment(name="blah model")
         blue_copy.endpoint_name = "blah endpoint"
+        blue_copy.scale_settings = TargetUtilizationScaleSettings()
+        blue_copy.request_settings = OnlineRequestSettings(max_concurrent_requests_per_instance=1, max_queue_wait_ms=100, request_timeout_ms=100)
+        blue_copy.instance_count=3
+        blue_copy.instance_type = "STANDARD_L8S_V3"
+        blue_copy.tags = {"tag3": "value3"}
+        blue_copy.environment_variables = {"env3": "value3"}
+
 
         blue._merge_with(blue_copy)
 
@@ -99,6 +108,60 @@ class TestOnlineDeploymentFromYAML:
         assert blue.code_configuration.code == blue_copy.code_configuration.code
         assert blue.code_configuration.scoring_script == blue_copy.code_configuration.scoring_script
         assert blue.endpoint_name == blue_copy.endpoint_name
+        assert blue.scale_settings.type == blue_copy.scale_settings.type
+        assert blue.request_settings.max_concurrent_requests_per_instance == blue_copy.request_settings.max_concurrent_requests_per_instance
+        assert blue.request_settings.max_queue_wait_ms == blue_copy.request_settings.max_queue_wait_ms
+        assert blue.request_settings.request_timeout_ms == blue_copy.request_settings.request_timeout_ms
+        assert blue.liveness_probe.failure_threshold == blue_copy.liveness_probe.failure_threshold
+        assert blue.liveness_probe.success_threshold == blue_copy.liveness_probe.success_threshold
+        assert blue.liveness_probe.timeout == blue_copy.liveness_probe.timeout
+        assert blue.liveness_probe.period == blue_copy.liveness_probe.period
+        assert blue.liveness_probe.initial_delay == blue_copy.liveness_probe.initial_delay
+        assert blue.readiness_probe.failure_threshold == blue_copy.readiness_probe.failure_threshold
+        assert blue.readiness_probe.success_threshold == blue_copy.readiness_probe.success_threshold
+        assert blue.readiness_probe.timeout == blue_copy.readiness_probe.timeout
+        assert blue.readiness_probe.period == blue_copy.readiness_probe.period
+        assert blue.readiness_probe.initial_delay == blue_copy.readiness_probe.initial_delay
+        assert blue.instance_type == blue_copy.instance_type
+        assert blue.instance_count == blue_copy.instance_count
+        assert blue.tags == {**blue.tags,**blue_copy.tags}
+        assert blue.environment_variables == {**blue.environment_variables,**blue_copy.environment_variables}
+    
+    def test_generic_deployment_merge_when_original_attribues_not_set(self) -> None:
+        blue = load_online_deployment(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT)
+        blue_copy = copy.deepcopy(blue)
+        blue.liveness_probe = None
+        blue.readiness_probe = None
+        blue.scale_settings = None
+        blue.request_settings = None
+
+        blue_copy.code_configuration = CodeConfiguration(code="blah path", scoring_script="blah.py")
+        blue_copy.model = Model(name="blah code")
+        blue_copy.environment = Environment(name="blah model")
+        blue_copy.endpoint_name = "blah endpoint"
+        blue_copy.scale_settings = DefaultScaleSettings()
+        blue_copy.request_settings = OnlineRequestSettings(max_concurrent_requests_per_instance=1, max_queue_wait_ms=100, request_timeout_ms=100)
+
+        blue._merge_with(blue_copy)
+
+        assert blue.model.name == blue_copy.model.name
+        assert blue.environment.name == blue_copy.environment.name
+        assert blue.code_configuration.code == blue_copy.code_configuration.code
+        assert blue.code_configuration.scoring_script == blue_copy.code_configuration.scoring_script
+        assert blue.endpoint_name == blue_copy.endpoint_name
+        assert blue.scale_settings.type == blue_copy.scale_settings.type
+        assert blue.liveness_probe.failure_threshold == blue_copy.liveness_probe.failure_threshold
+        assert blue.liveness_probe.success_threshold == blue_copy.liveness_probe.success_threshold
+        assert blue.liveness_probe.timeout == blue_copy.liveness_probe.timeout
+        assert blue.liveness_probe.period == blue_copy.liveness_probe.period
+        assert blue.liveness_probe.initial_delay == blue_copy.liveness_probe.initial_delay
+        assert blue.readiness_probe.failure_threshold == blue_copy.readiness_probe.failure_threshold
+        assert blue.readiness_probe.success_threshold == blue_copy.readiness_probe.success_threshold
+        assert blue.readiness_probe.timeout == blue_copy.readiness_probe.timeout
+        assert blue.readiness_probe.period == blue_copy.readiness_probe.period
+        assert blue.request_settings.max_queue_wait_ms == blue_copy.request_settings.max_queue_wait_ms
+        assert blue.request_settings.request_timeout_ms == blue_copy.request_settings.request_timeout_ms
+
 
     def test_generic_deployment_merge_props(self) -> None:
         blue = load_online_deployment(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT)
