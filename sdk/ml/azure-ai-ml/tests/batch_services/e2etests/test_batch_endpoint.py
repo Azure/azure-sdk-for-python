@@ -39,7 +39,6 @@ class TestBatchEndpoint(AzureRecordedTestCase):
 
         raise Exception(f"Batch endpoint {name} is supposed to be deleted.")
 
-    @pytest.mark.skip("To support py313")
     @pytest.mark.usefixtures("light_gbm_model")
     def test_mlflow_batch_endpoint_create_and_update(
         self, client: MLClient, rand_batch_name: Callable[[], str]
