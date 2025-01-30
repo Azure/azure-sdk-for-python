@@ -103,17 +103,17 @@ async def test_stream_jsonl_broken_up_data(stream):
 @pytest.mark.asyncio
 async def test_stream_jsonl_next(stream):
     jsonl_stream = await stream(HttpRequest("GET", "/streams/jsonl_basic"))
-    message = await anext(jsonl_stream)
+    message = await jsonl_stream.__anext__()
     assert message == {"msg": "this is a message"}
-    message = await anext(jsonl_stream)
+    message = await jsonl_stream.__anext__()
     assert message == {"msg": "this is another message"}
-    message = await anext(jsonl_stream)
+    message = await jsonl_stream.__anext__()
     assert message == {"msg": "this is a third message"}
-    message = await anext(jsonl_stream)
+    message = await jsonl_stream.__anext__()
     assert message == {"msg": "this is a fourth message"}
 
     with pytest.raises(StopAsyncIteration):
-        await anext(jsonl_stream)
+        await jsonl_stream.__anext__()
 
 
 @pytest.mark.asyncio
