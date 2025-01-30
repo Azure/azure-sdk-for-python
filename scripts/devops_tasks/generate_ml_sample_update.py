@@ -7,8 +7,8 @@ import re
 from azure.storage.blob import BlobServiceClient
 from azure.identity import AzurePowerShellCredential, ChainedTokenCredential, AzureCliCredential
 
-UPLOAD_PATTERN = "{build_id}/{filename}"
-DEFAULT_CONTAINER = os.getenv("BLOB_CONTAINER", "ml-sample-submissions")
+UPLOAD_PATTERN = "python/distributions/ml-sample/{build_id}/{filename}"
+DEFAULT_CONTAINER = os.getenv("BLOB_CONTAINER", "$web")
 CONNECTION_STRING = os.getenv("BLOB_CONNECTION_STRING", None)
 
 TEST_INSTALL_TEMPLATE = """# <az_ml_sdk_test_install>
