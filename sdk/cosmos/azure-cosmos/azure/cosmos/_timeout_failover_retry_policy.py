@@ -24,14 +24,6 @@ class _TimeoutFailoverRetryPolicy(object):
         if self.request:
             self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
 
-    def needsRetry(self):
-        if self.args and self.request:
-            if (self.args[3].method == "GET") \
-                    or http_constants.HttpHeaders.IsQueryPlanRequest in self.args[3].headers\
-                    or http_constants.HttpHeaders.IsQuery in self.args[3].headers:
-                return True
-        return False
-
     def ShouldRetry(self, _exception):
         """Returns true if the request should retry based on the passed-in exception.
 
@@ -39,7 +31,7 @@ class _TimeoutFailoverRetryPolicy(object):
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """
-        if not self.needsRetry():
+        if _OperationType.IsReadOnlyOperation(self.request.operation_type):
             return False
 
         if not self.connection_policy.EnableEndpointDiscovery:
