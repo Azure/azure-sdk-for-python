@@ -4,14 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import (
-    Generic, IO, Iterator, TypeVar,
+    cast, Generic, IO, Iterator, TypeVar,
     TYPE_CHECKING
 )
 
+from azure.storage.blob import StorageStreamDownloader as BlobStorageStreamDownloader
 from ._deserialize import from_blob_properties
 
 if TYPE_CHECKING:
-    from azure.storage.blob import StorageStreamDownloader as BlobStorageStreamDownloader
     from ._models import FileProperties
 
 
@@ -30,8 +30,8 @@ class StorageStreamDownloader(Generic[T]):
     """The size of the total data in the stream. This will be the byte range if specified,
         otherwise the total size of the file."""
 
-    def __init__(self, downloader: "BlobStorageStreamDownloader[T]") -> None:
-        self._downloader = downloader
+    def __init__(self, downloader: BlobStorageStreamDownloader[T]) -> None:
+        self._downloader: BlobStorageStreamDownloader[T] = downloader
         self.name = self._downloader.name
 
         # Parse additional Datalake-only properties
@@ -71,7 +71,7 @@ class StorageStreamDownloader(Generic[T]):
             The requested data as bytes. If the return value is empty, there is no more data to read.
         :rtype: bytes
         """
-        return self._downloader.read(size)
+        return cast(bytes, self._downloader.read(size))
 
     def readall(self) -> bytes:
         """Download the contents of this file.
@@ -81,7 +81,7 @@ class StorageStreamDownloader(Generic[T]):
         :returns: The contents of the specified file.
         :rtype: bytes
         """
-        return self._downloader.readall()
+        return cast(bytes, self._downloader.readall())
 
     def readinto(self, stream: IO[bytes]) -> int:
         """Download the contents of this file to a stream.

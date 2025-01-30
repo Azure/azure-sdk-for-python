@@ -14,12 +14,13 @@ from io import BytesIO, StringIO
 from itertools import islice
 from typing import (
     Any, AsyncIterator, Awaitable,
-    Generator, Callable, cast, Dict,
-    Generic, IO, Optional, overload,
+    Callable, cast, Dict, Generator,
+    Generic, IO, List, Optional, overload,
     Tuple, TypeVar, Union, TYPE_CHECKING
 )
 
 from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
+from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import parse_length_from_content_range, process_storage_error
@@ -256,11 +257,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._encryption_options = encryption_options or {}
         self._progress_hook = kwargs.pop('progress_hook', None)
         self._request_options = kwargs
-        self._response = None
-        self._location_mode = None
+        self._response: AioHttpStreamDownloadGenerator = None  # type: ignore [assignment]
+        self._location_mode: Optional[str] = None
         self._current_content: Union[str, bytes] = b''
         self._file_size = 0
-        self._non_empty_ranges = None
+        self._non_empty_ranges: List[Dict[str, int]] = None  # type: ignore [assignment]
         self._encryption_data: Optional["_EncryptionData"] = None
 
         # The content download offset, after any processing (decryption), in bytes
@@ -347,7 +348,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             return self._download_offset >= self.size
         return self._raw_download_offset >= self.size
 
-    async def _initial_request(self):
+    async def _initial_request(self) -> AioHttpStreamDownloadGenerator:
         range_header, range_validation = validate_and_format_range_headers(
             self._initial_range[0],
             self._initial_range[1],
@@ -360,14 +361,17 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         retry_total = 3
         while retry_active:
             try:
-                location_mode, response = cast(Tuple[Optional[str], Any], await self._clients.blob.download(
-                    range=range_header,
-                    range_get_content_md5=range_validation,
-                    validate_content=self._validate_content,
-                    data_stream_total=None,
-                    download_stream_current=0,
-                    **self._request_options
-                ))
+                location_mode, response = cast(
+                    Tuple[Optional[str], AioHttpStreamDownloadGenerator],
+                    await self._clients.blob.download(
+                        range=range_header,
+                        range_get_content_md5=range_validation,
+                        validate_content=self._validate_content,
+                        data_stream_total=None,
+                        download_stream_current=0,
+                        **self._request_options
+                    )
+                )
 
                 # Check the location we read from to ensure we use the same one
                 # for subsequent requests.
@@ -395,11 +399,15 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                     # request a range, do a regular get request in order to get
                     # any properties.
                     try:
-                        _, response = cast(Tuple[Optional[Any], Any], await self._clients.blob.download(
-                            validate_content=self._validate_content,
-                            data_stream_total=0,
-                            download_stream_current=0,
-                            **self._request_options))
+                        _, response = cast(
+                            Tuple[Optional[Any], AioHttpStreamDownloadGenerator],
+                            await self._clients.blob.download(
+                                validate_content=self._validate_content,
+                                data_stream_total=0,
+                                download_stream_current=0,
+                                **self._request_options
+                            )
+                        )
                     except HttpResponseError as e:
                         process_storage_error(e)
 
