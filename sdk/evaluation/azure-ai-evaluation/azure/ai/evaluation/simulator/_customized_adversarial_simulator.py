@@ -30,6 +30,7 @@ from ._model_tools import (
     TokenScope,
 )
 from ._utils import JsonLineList
+from ._pyrit_strategies import BasePyritStrategy
 
 logger = logging.getLogger(__name__)
 
@@ -267,6 +268,7 @@ class CustomAdversarialSimulator:
         personality: Optional[str] = None,
         application_scenario: Optional[str] = None,
         temperature: float = 0.7,
+        pyrit_strategies: Optional[List[BasePyritStrategy]] = [],
     ):
         """Run adversarial simulations asynchronously.
 
@@ -373,6 +375,7 @@ class CustomAdversarialSimulator:
                 jailbreak_dataset=jailbreak_dataset,
                 _jailbreak_type=_jailbreak_type,
                 temperature=temperature,
+                pyrit_strategies=pyrit_strategies,
             )
             for template, parameter in template_parameter_pairs[:max_simulation_results]
         ]
@@ -516,6 +519,7 @@ class CustomAdversarialSimulator:
         jailbreak_dataset=None,
         _jailbreak_type=None,
         temperature=0.7,
+        pyrit_strategies=[]
     ):
         """Create a single simulation asyncio task for an adversarial scenario.
 
@@ -570,6 +574,7 @@ class CustomAdversarialSimulator:
                 api_call_delay_sec=api_call_delay_sec,
                 progress_bar=progress_bar,
                 temperature=temperature,
+                pyrit_strategies=pyrit_strategies,
             )
         )
 
@@ -589,6 +594,7 @@ class CustomAdversarialSimulator:
         api_call_delay_sec,
         progress_bar,
         temperature,
+        pyrit_strategies,
     ):
         """Perform a conversation simulation within a semaphore lock.
 
@@ -659,7 +665,10 @@ class CustomAdversarialSimulator:
                 # Append 'file_content' to the first prompt
                 if file_content:
                     first_prompt += f"\nFile Content: {file_content}"
-            
+                if pyrit_strategies:
+                    for strategy in pyrit_strategies:
+                        first_prompt = strategy(first_prompt)
+                self.logger.info(f"First prompt after pyrit: {first_prompt}")
                 conversation_history = [
                     ConversationTurn(
                         role=user_bot.role,
