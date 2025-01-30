@@ -42,7 +42,7 @@ def deserialize_dir_properties(
     metadata = deserialize_metadata(response, obj, headers)
     dir_properties = DirectoryProperties(
         metadata=metadata,
-        owner=response.Hyheaders.get('x-ms-owner'),
+        owner=response.headers.get('x-ms-owner'),
         group=response.headers.get('x-ms-group'),
         permissions=response.headers.get('x-ms-permissions'),
         acl=response.headers.get('x-ms-acl'),
