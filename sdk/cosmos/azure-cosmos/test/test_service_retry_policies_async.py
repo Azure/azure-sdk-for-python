@@ -119,7 +119,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             original_location_cache.read_regional_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
             try:
                 # Mock the function to return the ClientConnectionError we retry
-                mf = self.MockExecuteServiceResponseException(AttributeError)
+                mf = self.MockExecuteServiceResponseException(AttributeError, None)
                 _retry_utility_async.ExecuteFunctionAsync = mf
                 await container.read_item(created_item['id'], created_item['pk'])
                 pytest.fail("Exception was not raised.")
@@ -133,7 +133,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             original_location_cache.read_regional_endpoints = [self.REGIONAL_ENDPOINT]
             try:
                 # Reset the function to reset the counter
-                mf = self.MockExecuteServiceResponseException(AttributeError)
+                mf = self.MockExecuteServiceResponseException(AttributeError, None)
                 _retry_utility_async.ExecuteFunctionAsync = mf
                 await container.read_item(created_item['id'], created_item['pk'])
                 pytest.fail("Exception was not raised.")
@@ -149,7 +149,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                                                                                        self.REGION2: self.REGIONAL_ENDPOINT}
             try:
                 # Reset the function to reset the counter
-                mf = self.MockExecuteServiceResponseException(AttributeError)
+                mf = self.MockExecuteServiceResponseException(AttributeError, None)
                 _retry_utility_async.ExecuteFunctionAsync = mf
                 # Even though we have 2 preferred write endpoints,
                 # we will only run the exception once due to no retries on write requests
@@ -168,7 +168,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                                                                                    self.REGION2: self.REGIONAL_ENDPOINT}
         try:
             # Reset the function to reset the counter
-            mf = self.MockExecuteServiceResponseException(ClientConnectionError)
+            mf = self.MockExecuteServiceResponseException(ClientConnectionError, ClientConnectionError())
             _retry_utility_async.ExecuteFunctionAsync = mf
             await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
             pytest.fail("Exception was not raised.")
@@ -189,12 +189,14 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             raise exception
 
     class MockExecuteServiceResponseException(object):
-        def __init__(self, err_type):
+        def __init__(self, err_type, inner_exception):
             self.err_type = err_type
+            self.inner_exception = inner_exception
             self.counter = 0
 
         def __call__(self, func, *args, **kwargs):
             self.counter = self.counter + 1
             exception = ServiceResponseError("mock exception")
             exception.exc_type = self.err_type
+            exception.inner_exception = self.inner_exception
             raise exception
