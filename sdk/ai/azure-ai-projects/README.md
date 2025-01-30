@@ -574,30 +574,27 @@ print(f"Created agent, agent ID: {agent.id}")
 #### Create Agent With Logic Apps
 
 Logic Apps allow HTTP requests to trigger actions. For more information, refer to the guide [Logic App Workflows for Function Calling](https://learn.microsoft.com/azure/ai-services/openai/how-to/assistants-logic-apps#create-logic-apps-workflows-for-function-calling).
-Agents SDK accesses Logic Apps through Workflow URLs, which are called as requests in functions.
+Your Logic App must be in the same resource group as your Azure AI Project, shown in the Azure Portal. Agents SDK accesses Logic Apps through Workflow URLs, which are fetched and called as requests in functions. 
 
-<!-- SNIPPET:sample_agents_logic_apps.send_email_via_logic_app -->
+<!-- SNIPPET:user_logic_apps.create_send_email_function -->
 
 ```python
 def send_email_via_logic_app(recipient: str, subject: str, body: str) -> str:
-    """
-    Sends an email by triggering an Azure Logic App endpoint. 
-    The Logic App must be configured to accept JSON with 'to', 'subject', and 'body'.
-    """
-    if not LOGIC_APP_URL:
-        raise ValueError("Logic App URL is not set.")
- 
-    payload = {
-        "to": recipient,
-        "subject": subject,
-        "body": body
-    }
- 
-    response = requests.post(url=LOGIC_APP_URL, json=payload)
-    if response.ok:
-        return json.dumps({"result": "Email sent successfully."})
-    else:
-        return json.dumps({"error": f"Error sending email request ({response.status_code}): {response.text}"})
+        """
+        Sends an email by invoking the specified Logic App with the given recipient, subject, and body.
+
+        :param recipient: The email address of the recipient.
+        :param subject: The subject of the email.
+        :param body: The body of the email.
+        :return: A JSON string summarizing the result of the operation.
+        """
+        payload = {
+            "to": recipient,
+            "subject": subject,
+            "body": body,
+        }
+        result = service.invoke_logic_app(logic_app_name, payload)
+        return json.dumps(result)
 ```
 
 <!-- END SNIPPET -->
