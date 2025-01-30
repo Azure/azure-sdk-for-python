@@ -98,7 +98,7 @@ class CertificateOperationError(object):
         return f"CertificateOperationError({self.code}, {self.message}, {self.inner_error})"[:1024]
 
     @classmethod
-    def _from_error_bundle(cls, error_bundle: models.Error) -> "CertificateOperationError":
+    def _from_error_bundle(cls, error_bundle: models.KeyVaultError) -> "CertificateOperationError":
         return cls(
             code=error_bundle.code,  # type: ignore
             message=error_bundle.message,  # type: ignore
