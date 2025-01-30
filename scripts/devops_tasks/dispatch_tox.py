@@ -65,9 +65,9 @@ In the case of an environment invoking `pytest`, results can be collected in a j
 
     parser.add_argument(
         "--tenvparallel",
-        default=False,
-        help=("Flag. Enable tox parallel invocation."),
-        action="store_true",
+        default="",
+        dest="tenvparallel",
+        help=("Set tox parallel invocation.")
     )
 
     parser.add_argument(
