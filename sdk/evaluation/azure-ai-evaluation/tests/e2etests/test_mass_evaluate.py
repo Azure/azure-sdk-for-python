@@ -308,6 +308,7 @@ class TestMassEvaluate:
         multimodal_input_selector,
         azure_cred,
         project_scope,
+        run_from_temp_dir,
     ):
         # ContentSafetyMultimodalEvaluator is excluded due 2 reasons:
         # - It fails in playback mode for some reason

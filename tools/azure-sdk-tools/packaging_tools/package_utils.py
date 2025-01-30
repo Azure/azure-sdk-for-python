@@ -62,12 +62,15 @@ def change_log_generate(
         else:
             last_version[-1] = str(last_release)
     except:
-        return "### Other Changes\n\n  - Initial version"
+        return ("### Other Changes\n\n  - Initial version", last_version)
 
     # try new changelog tool
     if prefolder and not is_multiapi:
         try:
-            return change_log_new(str(Path(prefolder) / package_name), not (last_stable_release and tag_is_stable))
+            return (
+                change_log_new(str(Path(prefolder) / package_name), not (last_stable_release and tag_is_stable)),
+                last_version,
+            )
         except Exception as e:
             _LOGGER.warning(f"Failed to generate changelog with breaking_change_detector: {e}")
 
