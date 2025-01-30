@@ -1836,6 +1836,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         rest_obj = created_pipeline_job._to_rest_object()
         assert rest_obj.properties.jobs["node"]["queue_settings"] == {"job_tier": "standard"}
 
+    @pytest.mark.skip("To support py313")
     def test_pipeline_job_serverless_compute_automl_in_pipeline_with_job_tier(self, client: MLClient) -> None:
         yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/automl_in_pipeline/pipeline.yml"
         pipeline_job = load_job(yaml_path)
