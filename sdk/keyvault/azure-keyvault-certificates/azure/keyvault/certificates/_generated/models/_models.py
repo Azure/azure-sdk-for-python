@@ -22,7 +22,7 @@ class Action(_model_base.Model):
     """The action that will be executed.
 
     :ivar action_type: The type of the action. Known values are: "EmailContacts" and "AutoRenew".
-    :vartype action_type: str or ~azure.keyvault.certificates.models.CertificatePolicyAction
+    :vartype action_type: str or ~azure.keyvault.certificates._generated.models.CertificatePolicyAction
     """
 
     action_type: Optional[Union[str, "_models.CertificatePolicyAction"]] = rest_field()
@@ -126,7 +126,7 @@ class CertificateAttributes(_model_base.Model):
      retention interval. Known values are: "Purgeable", "Recoverable+Purgeable", "Recoverable",
      "Recoverable+ProtectedSubscription", "CustomizedRecoverable+Purgeable",
      "CustomizedRecoverable", and "CustomizedRecoverable+ProtectedSubscription".
-    :vartype recovery_level: str or ~azure.keyvault.certificates.models.DeletionRecoveryLevel
+    :vartype recovery_level: str or ~azure.keyvault.certificates._generated.models.DeletionRecoveryLevel
     """
 
     enabled: Optional[bool] = rest_field()
@@ -186,14 +186,14 @@ class CertificateBundle(_model_base.Model):
     :ivar x509_thumbprint: Thumbprint of the certificate.
     :vartype x509_thumbprint: bytes
     :ivar policy: The management policy.
-    :vartype policy: ~azure.keyvault.certificates.models.CertificatePolicy
+    :vartype policy: ~azure.keyvault.certificates._generated.models.CertificatePolicy
     :ivar cer: CER contents of x509 certificate.
     :vartype cer: bytes
     :ivar content_type: The content type of the secret. eg. 'application/x-pem-file' or
      'application/x-pkcs12',.
     :vartype content_type: str
     :ivar attributes: The certificate attributes.
-    :vartype attributes: ~azure.keyvault.certificates.models.CertificateAttributes
+    :vartype attributes: ~azure.keyvault.certificates._generated.models.CertificateAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar preserve_cert_order: Specifies whether the certificate chain preserves its original
@@ -249,9 +249,9 @@ class CertificateCreateParameters(_model_base.Model):
     """The certificate create parameters.
 
     :ivar certificate_policy: The management policy for the certificate.
-    :vartype certificate_policy: ~azure.keyvault.certificates.models.CertificatePolicy
+    :vartype certificate_policy: ~azure.keyvault.certificates._generated.models.CertificatePolicy
     :ivar certificate_attributes: The attributes of the certificate (optional).
-    :vartype certificate_attributes: ~azure.keyvault.certificates.models.CertificateAttributes
+    :vartype certificate_attributes: ~azure.keyvault.certificates._generated.models.CertificateAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar preserve_cert_order: Specifies whether the certificate chain preserves its original
@@ -302,9 +302,9 @@ class CertificateImportParameters(_model_base.Model):
      for encryption.
     :vartype password: str
     :ivar certificate_policy: The management policy for the certificate.
-    :vartype certificate_policy: ~azure.keyvault.certificates.models.CertificatePolicy
+    :vartype certificate_policy: ~azure.keyvault.certificates._generated.models.CertificatePolicy
     :ivar certificate_attributes: The attributes of the certificate (optional).
-    :vartype certificate_attributes: ~azure.keyvault.certificates.models.CertificateAttributes
+    :vartype certificate_attributes: ~azure.keyvault.certificates._generated.models.CertificateAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar preserve_cert_order: Specifies whether the certificate chain preserves its original
@@ -391,11 +391,11 @@ class CertificateIssuerSetParameters(_model_base.Model):
     :ivar provider: The issuer provider. Required.
     :vartype provider: str
     :ivar credentials: The credentials to be used for the issuer.
-    :vartype credentials: ~azure.keyvault.certificates.models.IssuerCredentials
+    :vartype credentials: ~azure.keyvault.certificates._generated.models.IssuerCredentials
     :ivar organization_details: Details of the organization as provided to the issuer.
-    :vartype organization_details: ~azure.keyvault.certificates.models.OrganizationDetails
+    :vartype organization_details: ~azure.keyvault.certificates._generated.models.OrganizationDetails
     :ivar attributes: Attributes of the issuer object.
-    :vartype attributes: ~azure.keyvault.certificates.models.IssuerAttributes
+    :vartype attributes: ~azure.keyvault.certificates._generated.models.IssuerAttributes
     """
 
     provider: str = rest_field()
@@ -434,11 +434,11 @@ class CertificateIssuerUpdateParameters(_model_base.Model):
     :ivar provider: The issuer provider.
     :vartype provider: str
     :ivar credentials: The credentials to be used for the issuer.
-    :vartype credentials: ~azure.keyvault.certificates.models.IssuerCredentials
+    :vartype credentials: ~azure.keyvault.certificates._generated.models.IssuerCredentials
     :ivar organization_details: Details of the organization as provided to the issuer.
-    :vartype organization_details: ~azure.keyvault.certificates.models.OrganizationDetails
+    :vartype organization_details: ~azure.keyvault.certificates._generated.models.OrganizationDetails
     :ivar attributes: Attributes of the issuer object.
-    :vartype attributes: ~azure.keyvault.certificates.models.IssuerAttributes
+    :vartype attributes: ~azure.keyvault.certificates._generated.models.IssuerAttributes
     """
 
     provider: Optional[str] = rest_field()
@@ -477,7 +477,7 @@ class CertificateItem(_model_base.Model):
     :ivar id: Certificate identifier.
     :vartype id: str
     :ivar attributes: The certificate management attributes.
-    :vartype attributes: ~azure.keyvault.certificates.models.CertificateAttributes
+    :vartype attributes: ~azure.keyvault.certificates._generated.models.CertificateAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar x509_thumbprint: Thumbprint of the certificate.
@@ -522,7 +522,7 @@ class CertificateMergeParameters(_model_base.Model):
     :ivar x509_certificates: The certificate or the certificate chain to merge. Required.
     :vartype x509_certificates: list[bytes]
     :ivar certificate_attributes: The attributes of the certificate (optional).
-    :vartype certificate_attributes: ~azure.keyvault.certificates.models.CertificateAttributes
+    :vartype certificate_attributes: ~azure.keyvault.certificates._generated.models.CertificateAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     """
@@ -562,7 +562,7 @@ class CertificateOperation(_model_base.Model):
     :ivar id: The certificate id.
     :vartype id: str
     :ivar issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
-    :vartype issuer_parameters: ~azure.keyvault.certificates.models.IssuerParameters
+    :vartype issuer_parameters: ~azure.keyvault.certificates._generated.models.IssuerParameters
     :ivar csr: The certificate signing request (CSR) that is being used in the certificate
      operation.
     :vartype csr: bytes
@@ -574,7 +574,7 @@ class CertificateOperation(_model_base.Model):
     :ivar status_details: The status details of the certificate operation.
     :vartype status_details: str
     :ivar error: Error encountered, if any, during the certificate operation.
-    :vartype error: ~azure.keyvault.certificates.models.KeyVaultErrorError
+    :vartype error: ~azure.keyvault.certificates._generated.models.KeyVaultErrorError
     :ivar target: Location which contains the result of the certificate operation.
     :vartype target: str
     :ivar preserve_cert_order: Specifies whether the certificate chain preserves its original
@@ -671,19 +671,19 @@ class CertificatePolicy(_model_base.Model):
     :ivar id: The certificate id.
     :vartype id: str
     :ivar key_properties: Properties of the key backing a certificate.
-    :vartype key_properties: ~azure.keyvault.certificates.models.KeyProperties
+    :vartype key_properties: ~azure.keyvault.certificates._generated.models.KeyProperties
     :ivar secret_properties: Properties of the secret backing a certificate.
-    :vartype secret_properties: ~azure.keyvault.certificates.models.SecretProperties
+    :vartype secret_properties: ~azure.keyvault.certificates._generated.models.SecretProperties
     :ivar x509_certificate_properties: Properties of the X509 component of a certificate.
     :vartype x509_certificate_properties:
-     ~azure.keyvault.certificates.models.X509CertificateProperties
+     ~azure.keyvault.certificates._generated.models.X509CertificateProperties
     :ivar lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a
      certificate.
-    :vartype lifetime_actions: list[~azure.keyvault.certificates.models.LifetimeAction]
+    :vartype lifetime_actions: list[~azure.keyvault.certificates._generated.models.LifetimeAction]
     :ivar issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
-    :vartype issuer_parameters: ~azure.keyvault.certificates.models.IssuerParameters
+    :vartype issuer_parameters: ~azure.keyvault.certificates._generated.models.IssuerParameters
     :ivar attributes: The certificate attributes.
-    :vartype attributes: ~azure.keyvault.certificates.models.CertificateAttributes
+    :vartype attributes: ~azure.keyvault.certificates._generated.models.CertificateAttributes
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
@@ -759,9 +759,9 @@ class CertificateUpdateParameters(_model_base.Model):
     """The certificate update parameters.
 
     :ivar certificate_policy: The management policy for the certificate.
-    :vartype certificate_policy: ~azure.keyvault.certificates.models.CertificatePolicy
+    :vartype certificate_policy: ~azure.keyvault.certificates._generated.models.CertificatePolicy
     :ivar certificate_attributes: The attributes of the certificate (optional).
-    :vartype certificate_attributes: ~azure.keyvault.certificates.models.CertificateAttributes
+    :vartype certificate_attributes: ~azure.keyvault.certificates._generated.models.CertificateAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     """
@@ -839,7 +839,7 @@ class Contacts(_model_base.Model):
     :ivar id: Identifier for the contacts collection.
     :vartype id: str
     :ivar contact_list: The contact list for the vault certificates.
-    :vartype contact_list: list[~azure.keyvault.certificates.models.Contact]
+    :vartype contact_list: list[~azure.keyvault.certificates._generated.models.Contact]
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
@@ -880,14 +880,14 @@ class DeletedCertificateBundle(_model_base.Model):
     :ivar x509_thumbprint: Thumbprint of the certificate.
     :vartype x509_thumbprint: bytes
     :ivar policy: The management policy.
-    :vartype policy: ~azure.keyvault.certificates.models.CertificatePolicy
+    :vartype policy: ~azure.keyvault.certificates._generated.models.CertificatePolicy
     :ivar cer: CER contents of x509 certificate.
     :vartype cer: bytes
     :ivar content_type: The content type of the secret. eg. 'application/x-pem-file' or
      'application/x-pkcs12',.
     :vartype content_type: str
     :ivar attributes: The certificate attributes.
-    :vartype attributes: ~azure.keyvault.certificates.models.CertificateAttributes
+    :vartype attributes: ~azure.keyvault.certificates._generated.models.CertificateAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar preserve_cert_order: Specifies whether the certificate chain preserves its original
@@ -965,7 +965,7 @@ class DeletedCertificateItem(_model_base.Model):
     :ivar id: Certificate identifier.
     :vartype id: str
     :ivar attributes: The certificate management attributes.
-    :vartype attributes: ~azure.keyvault.certificates.models.CertificateAttributes
+    :vartype attributes: ~azure.keyvault.certificates._generated.models.CertificateAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar x509_thumbprint: Thumbprint of the certificate.
@@ -1068,11 +1068,11 @@ class IssuerBundle(_model_base.Model):
     :ivar provider: The issuer provider.
     :vartype provider: str
     :ivar credentials: The credentials to be used for the issuer.
-    :vartype credentials: ~azure.keyvault.certificates.models.IssuerCredentials
+    :vartype credentials: ~azure.keyvault.certificates._generated.models.IssuerCredentials
     :ivar organization_details: Details of the organization as provided to the issuer.
-    :vartype organization_details: ~azure.keyvault.certificates.models.OrganizationDetails
+    :vartype organization_details: ~azure.keyvault.certificates._generated.models.OrganizationDetails
     :ivar attributes: Attributes of the issuer object.
-    :vartype attributes: ~azure.keyvault.certificates.models.IssuerAttributes
+    :vartype attributes: ~azure.keyvault.certificates._generated.models.IssuerAttributes
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
@@ -1190,14 +1190,14 @@ class KeyProperties(_model_base.Model):
     :vartype exportable: bool
     :ivar key_type: The type of key pair to be used for the certificate. Known values are: "EC",
      "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
-    :vartype key_type: str or ~azure.keyvault.certificates.models.JsonWebKeyType
+    :vartype key_type: str or ~azure.keyvault.certificates._generated.models.JsonWebKeyType
     :ivar key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
     :vartype key_size: int
     :ivar reuse_key: Indicates if the same key pair will be used on certificate renewal.
     :vartype reuse_key: bool
     :ivar curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Known values are:
      "P-256", "P-384", "P-521", and "P-256K".
-    :vartype curve: str or ~azure.keyvault.certificates.models.JsonWebKeyCurveName
+    :vartype curve: str or ~azure.keyvault.certificates._generated.models.JsonWebKeyCurveName
     """
 
     exportable: Optional[bool] = rest_field()
@@ -1242,7 +1242,7 @@ class KeyVaultError(_model_base.Model):
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar error: The key vault server error.
-    :vartype error: ~azure.keyvault.certificates.models.KeyVaultErrorError
+    :vartype error: ~azure.keyvault.certificates._generated.models.KeyVaultErrorError
     """
 
     error: Optional["_models.KeyVaultErrorError"] = rest_field(visibility=["read"])
@@ -1259,7 +1259,7 @@ class KeyVaultErrorError(_model_base.Model):
     :ivar message: The error message.
     :vartype message: str
     :ivar inner_error: The key vault server error.
-    :vartype inner_error: ~azure.keyvault.certificates.models.KeyVaultErrorError
+    :vartype inner_error: ~azure.keyvault.certificates._generated.models.KeyVaultErrorError
     """
 
     code: Optional[str] = rest_field(visibility=["read"])
@@ -1274,9 +1274,9 @@ class LifetimeAction(_model_base.Model):
     """Action and its trigger that will be performed by Key Vault over the lifetime of a certificate.
 
     :ivar trigger: The condition that will execute the action.
-    :vartype trigger: ~azure.keyvault.certificates.models.Trigger
+    :vartype trigger: ~azure.keyvault.certificates._generated.models.Trigger
     :ivar action: The action that will be executed.
-    :vartype action: ~azure.keyvault.certificates.models.Action
+    :vartype action: ~azure.keyvault.certificates._generated.models.Action
     """
 
     trigger: Optional["_models.Trigger"] = rest_field()
@@ -1309,7 +1309,7 @@ class OrganizationDetails(_model_base.Model):
     :ivar id: Id of the organization.
     :vartype id: str
     :ivar admin_details: Details of the organization administrator.
-    :vartype admin_details: list[~azure.keyvault.certificates.models.AdministratorDetails]
+    :vartype admin_details: list[~azure.keyvault.certificates._generated.models.AdministratorDetails]
     """
 
     id: Optional[str] = rest_field()
@@ -1448,9 +1448,9 @@ class X509CertificateProperties(_model_base.Model):
     :ivar ekus: The enhanced key usage.
     :vartype ekus: list[str]
     :ivar subject_alternative_names: The subject alternative names.
-    :vartype subject_alternative_names: ~azure.keyvault.certificates.models.SubjectAlternativeNames
+    :vartype subject_alternative_names: ~azure.keyvault.certificates._generated.models.SubjectAlternativeNames
     :ivar key_usage: Defines how the certificate's key may be used.
-    :vartype key_usage: list[str or ~azure.keyvault.certificates.models.KeyUsageType]
+    :vartype key_usage: list[str or ~azure.keyvault.certificates._generated.models.KeyUsageType]
     :ivar validity_in_months: The duration that the certificate is valid in months.
     :vartype validity_in_months: int
     """

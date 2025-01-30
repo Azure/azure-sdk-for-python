@@ -766,7 +766,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          provisioned. Default value is None.
         :paramtype include_pending: bool
         :return: An iterator like instance of CertificateItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates._generated.models.CertificateItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -858,7 +858,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type certificate_name: str
         :return: DeletedCertificateBundle. The DeletedCertificateBundle is compatible with
          MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.DeletedCertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.DeletedCertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -924,12 +924,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         certificates/managecontacts permission.
 
         :param contacts: The contacts for the key vault certificate. Required.
-        :type contacts: ~azure.keyvault.certificates.models.Contacts
+        :type contacts: ~azure.keyvault.certificates._generated.models.Contacts
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: Contacts. The Contacts is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.Contacts
+        :rtype: ~azure.keyvault.certificates._generated.models.Contacts
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -948,7 +948,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: Contacts. The Contacts is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.Contacts
+        :rtype: ~azure.keyvault.certificates._generated.models.Contacts
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -967,7 +967,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: Contacts. The Contacts is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.Contacts
+        :rtype: ~azure.keyvault.certificates._generated.models.Contacts
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -982,9 +982,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         :param contacts: The contacts for the key vault certificate. Is one of the following types:
          Contacts, JSON, IO[bytes] Required.
-        :type contacts: ~azure.keyvault.certificates.models.Contacts or JSON or IO[bytes]
+        :type contacts: ~azure.keyvault.certificates._generated.models.Contacts or JSON or IO[bytes]
         :return: Contacts. The Contacts is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.Contacts
+        :rtype: ~azure.keyvault.certificates._generated.models.Contacts
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1057,7 +1057,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         specified key vault. This operation requires the certificates/managecontacts permission.
 
         :return: Contacts. The Contacts is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.Contacts
+        :rtype: ~azure.keyvault.certificates._generated.models.Contacts
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1120,7 +1120,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         the certificates/managecontacts permission.
 
         :return: Contacts. The Contacts is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.Contacts
+        :rtype: ~azure.keyvault.certificates._generated.models.Contacts
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1189,7 +1189,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          service will return up to 25 results. Default value is None.
         :paramtype maxresults: int
         :return: An iterator like instance of CertificateIssuerItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateIssuerItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates._generated.models.CertificateIssuerItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -1287,12 +1287,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          identifiable or sensitive information. Required.
         :type issuer_name: str
         :param parameter: Certificate issuer set parameter. Required.
-        :type parameter: ~azure.keyvault.certificates.models.CertificateIssuerSetParameters
+        :type parameter: ~azure.keyvault.certificates._generated.models.CertificateIssuerSetParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: IssuerBundle. The IssuerBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.IssuerBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1315,7 +1315,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: IssuerBundle. The IssuerBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.IssuerBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1338,7 +1338,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: IssuerBundle. The IssuerBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.IssuerBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1357,10 +1357,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type issuer_name: str
         :param parameter: Certificate issuer set parameter. Is one of the following types:
          CertificateIssuerSetParameters, JSON, IO[bytes] Required.
-        :type parameter: ~azure.keyvault.certificates.models.CertificateIssuerSetParameters or JSON or
+        :type parameter: ~azure.keyvault.certificates._generated.models.CertificateIssuerSetParameters or JSON or
          IO[bytes]
         :return: IssuerBundle. The IssuerBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.IssuerBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1443,12 +1443,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param issuer_name: The name of the issuer. Required.
         :type issuer_name: str
         :param parameter: Certificate issuer update parameter. Required.
-        :type parameter: ~azure.keyvault.certificates.models.CertificateIssuerUpdateParameters
+        :type parameter: ~azure.keyvault.certificates._generated.models.CertificateIssuerUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: IssuerBundle. The IssuerBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.IssuerBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1469,7 +1469,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: IssuerBundle. The IssuerBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.IssuerBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1490,7 +1490,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: IssuerBundle. The IssuerBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.IssuerBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1510,10 +1510,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type issuer_name: str
         :param parameter: Certificate issuer update parameter. Is one of the following types:
          CertificateIssuerUpdateParameters, JSON, IO[bytes] Required.
-        :type parameter: ~azure.keyvault.certificates.models.CertificateIssuerUpdateParameters or JSON
+        :type parameter: ~azure.keyvault.certificates._generated.models.CertificateIssuerUpdateParameters or JSON
          or IO[bytes]
         :return: IssuerBundle. The IssuerBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.IssuerBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1590,7 +1590,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param issuer_name: The name of the issuer. Required.
         :type issuer_name: str
         :return: IssuerBundle. The IssuerBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.IssuerBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1656,7 +1656,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param issuer_name: The name of the issuer. Required.
         :type issuer_name: str
         :return: IssuerBundle. The IssuerBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.IssuerBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1731,12 +1731,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          personally identifiable or sensitive information. Required.
         :type certificate_name: str
         :param parameters: The parameters to create a certificate. Required.
-        :type parameters: ~azure.keyvault.certificates.models.CertificateCreateParameters
+        :type parameters: ~azure.keyvault.certificates._generated.models.CertificateCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateOperation. The CertificateOperation is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1759,7 +1759,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateOperation. The CertificateOperation is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1782,7 +1782,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateOperation. The CertificateOperation is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1804,10 +1804,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type certificate_name: str
         :param parameters: The parameters to create a certificate. Is one of the following types:
          CertificateCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.keyvault.certificates.models.CertificateCreateParameters or JSON or
+        :type parameters: ~azure.keyvault.certificates._generated.models.CertificateCreateParameters or JSON or
          IO[bytes]
         :return: CertificateOperation. The CertificateOperation is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1894,12 +1894,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          personally identifiable or sensitive information. Required.
         :type certificate_name: str
         :param parameters: The parameters to import the certificate. Required.
-        :type parameters: ~azure.keyvault.certificates.models.CertificateImportParameters
+        :type parameters: ~azure.keyvault.certificates._generated.models.CertificateImportParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1924,7 +1924,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1949,7 +1949,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1973,10 +1973,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type certificate_name: str
         :param parameters: The parameters to import the certificate. Is one of the following types:
          CertificateImportParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.keyvault.certificates.models.CertificateImportParameters or JSON or
+        :type parameters: ~azure.keyvault.certificates._generated.models.CertificateImportParameters or JSON or
          IO[bytes]
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2057,7 +2057,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          service will return up to 25 results. Default value is None.
         :paramtype maxresults: int
         :return: An iterator like instance of CertificateItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates._generated.models.CertificateItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -2147,7 +2147,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the certificate in a given key vault. Required.
         :type certificate_name: str
         :return: CertificatePolicy. The CertificatePolicy is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificatePolicy
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificatePolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2220,12 +2220,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the certificate in the given vault. Required.
         :type certificate_name: str
         :param certificate_policy: The policy for the certificate. Required.
-        :type certificate_policy: ~azure.keyvault.certificates.models.CertificatePolicy
+        :type certificate_policy: ~azure.keyvault.certificates._generated.models.CertificatePolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificatePolicy. The CertificatePolicy is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificatePolicy
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificatePolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2246,7 +2246,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificatePolicy. The CertificatePolicy is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificatePolicy
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificatePolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2272,7 +2272,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificatePolicy. The CertificatePolicy is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificatePolicy
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificatePolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2292,10 +2292,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type certificate_name: str
         :param certificate_policy: The policy for the certificate. Is one of the following types:
          CertificatePolicy, JSON, IO[bytes] Required.
-        :type certificate_policy: ~azure.keyvault.certificates.models.CertificatePolicy or JSON or
+        :type certificate_policy: ~azure.keyvault.certificates._generated.models.CertificatePolicy or JSON or
          IO[bytes]
         :return: CertificatePolicy. The CertificatePolicy is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificatePolicy
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificatePolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2382,12 +2382,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_version: The version of the certificate. Required.
         :type certificate_version: str
         :param parameters: The parameters for certificate update. Required.
-        :type parameters: ~azure.keyvault.certificates.models.CertificateUpdateParameters
+        :type parameters: ~azure.keyvault.certificates._generated.models.CertificateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2417,7 +2417,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2447,7 +2447,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2471,10 +2471,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type certificate_version: str
         :param parameters: The parameters for certificate update. Is one of the following types:
          CertificateUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.keyvault.certificates.models.CertificateUpdateParameters or JSON or
+        :type parameters: ~azure.keyvault.certificates._generated.models.CertificateUpdateParameters or JSON or
          IO[bytes]
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2556,7 +2556,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          not specified, the latest version of the certificate is returned. Required.
         :type certificate_version: str
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2631,12 +2631,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type certificate_name: str
         :param certificate_operation: The certificate operation response. Required.
         :type certificate_operation:
-         ~azure.keyvault.certificates.models.CertificateOperationUpdateParameter
+         ~azure.keyvault.certificates._generated.models.CertificateOperationUpdateParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateOperation. The CertificateOperation is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2662,7 +2662,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateOperation. The CertificateOperation is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2688,7 +2688,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateOperation. The CertificateOperation is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2709,9 +2709,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_operation: The certificate operation response. Is one of the following
          types: CertificateOperationUpdateParameter, JSON, IO[bytes] Required.
         :type certificate_operation:
-         ~azure.keyvault.certificates.models.CertificateOperationUpdateParameter or JSON or IO[bytes]
+         ~azure.keyvault.certificates._generated.models.CertificateOperationUpdateParameter or JSON or IO[bytes]
         :return: CertificateOperation. The CertificateOperation is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2787,7 +2787,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :return: CertificateOperation. The CertificateOperation is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2854,7 +2854,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :return: CertificateOperation. The CertificateOperation is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2928,12 +2928,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :param parameters: The parameters to merge certificate. Required.
-        :type parameters: ~azure.keyvault.certificates.models.CertificateMergeParameters
+        :type parameters: ~azure.keyvault.certificates._generated.models.CertificateMergeParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2955,7 +2955,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2977,7 +2977,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2998,10 +2998,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type certificate_name: str
         :param parameters: The parameters to merge certificate. Is one of the following types:
          CertificateMergeParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.keyvault.certificates.models.CertificateMergeParameters or JSON or
+        :type parameters: ~azure.keyvault.certificates._generated.models.CertificateMergeParameters or JSON or
          IO[bytes]
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3078,7 +3078,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :return: BackupCertificateResult. The BackupCertificateResult is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.BackupCertificateResult
+        :rtype: ~azure.keyvault.certificates._generated.models.BackupCertificateResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3144,12 +3144,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         certificates/restore permission.
 
         :param parameters: The parameters to restore the certificate. Required.
-        :type parameters: ~azure.keyvault.certificates.models.CertificateRestoreParameters
+        :type parameters: ~azure.keyvault.certificates._generated.models.CertificateRestoreParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3168,7 +3168,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3187,7 +3187,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
          Default value is "application/json".
         :paramtype content_type: str
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3202,10 +3202,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
 
         :param parameters: The parameters to restore the certificate. Is one of the following types:
          CertificateRestoreParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.keyvault.certificates.models.CertificateRestoreParameters or JSON or
+        :type parameters: ~azure.keyvault.certificates._generated.models.CertificateRestoreParameters or JSON or
          IO[bytes]
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3289,7 +3289,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :paramtype include_pending: bool
         :return: An iterator like instance of DeletedCertificateItem
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.DeletedCertificateItem]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates._generated.models.DeletedCertificateItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -3381,7 +3381,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :type certificate_name: str
         :return: DeletedCertificateBundle. The DeletedCertificateBundle is compatible with
          MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.DeletedCertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.DeletedCertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3506,7 +3506,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         :param certificate_name: The name of the deleted certificate. Required.
         :type certificate_name: str
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.certificates.models.CertificateBundle
+        :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
