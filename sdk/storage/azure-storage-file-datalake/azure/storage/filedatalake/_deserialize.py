@@ -22,7 +22,7 @@ from ._models import (
 from ._shared.response_handlers import deserialize_metadata
 
 if TYPE_CHECKING:
-    from azure.core.rest import RestRequestsTransportResponse
+    from azure.core.rest import RestRequestsTransportResponse  # type: ignore [attr-defined]
     from azure.storage.blob import BlobProperties
     from ._generated.models import (
         BlobItemInternal,
