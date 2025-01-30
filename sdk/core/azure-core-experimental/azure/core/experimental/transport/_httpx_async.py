@@ -179,6 +179,7 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         :rtype: ~azure.core.experimental.transport.AsyncHttpXTransportResponse
         """
         await self.open()
+        stream = kwargs.pop("stream", stream)
         stream_response = stream
         parameters = {
             "method": request.method,
