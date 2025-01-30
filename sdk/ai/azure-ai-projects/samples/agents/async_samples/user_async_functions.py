@@ -9,7 +9,7 @@ import sys
 import json
 import datetime
 from typing import Any, Callable, Set, Optional
-from azure.ai.projects.telemetry import trace_func
+from azure.ai.projects.telemetry import trace_function
 
 
 # Add parent directory to sys.path to import user_functions
@@ -36,7 +36,7 @@ async def send_email_async(recipient: str, subject: str, body: str) -> str:
 
 # The trace_func decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
-@trace_func
+@trace_function()
 async def fetch_current_datetime_async(format: Optional[str] = None) -> str:
     """
     Get the current time as a JSON string, optionally formatted.
