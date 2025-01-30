@@ -275,6 +275,7 @@ class MockServiceConnectionRetryPolicy(RetryPolicy):
         self.resource_type = resource_type
         self.error = error
         self.counter = 0
+        self.request_endpoints = []
         clean_kwargs = {k: v for k, v in kwargs.items() if v is not None}
         super().__init__(**clean_kwargs)
 
@@ -288,8 +289,10 @@ class MockServiceConnectionRetryPolicy(RetryPolicy):
         while retry_active:
             start_time = time.time()
             try:
+                print("ADDING THIS ONE {}".format(request.http_request.url))
                 # raise the passed in exception for the passed in resource + operation combination
                 if request.http_request.headers.get(http_constants.HttpHeaders.ThinClientProxyResourceType) == self.resource_type:
+                    self.request_endpoints.append(request.http_request.url)
                     raise self.error
                 response = self.next.send(request)
                 if self.is_retry(retry_settings, response):
