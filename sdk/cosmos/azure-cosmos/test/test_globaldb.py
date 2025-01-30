@@ -1,7 +1,7 @@
 ﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-
+import pytest
 import time
 import unittest
 from unittest.mock import patch
@@ -419,6 +419,8 @@ class TestGlobalDB(unittest.TestCase):
     def test_global_db_service_request_errors(self):
         mock_connection_policy = documents.ConnectionPolicy()
         mock_retry_policy = test_config.MockConnectionRetryPolicy(
+            "databaseaccount",
+            ServiceRequestError("mock-service"),
             retry_total=5,
             retry_connect=None,
             retry_read=None,
@@ -430,8 +432,9 @@ class TestGlobalDB(unittest.TestCase):
         mock_connection_policy.ConnectionRetryConfiguration = mock_retry_policy
         try:
             cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=mock_connection_policy)
+            pytest.fail("Exception was not raised")
         except ServiceRequestError:
-            assert mock_retry_policy.count == 3
+            assert mock_retry_policy.counter == 3
 
     def test_global_db_endpoint_discovery_retry_policy_mock(self):
         client = cosmos_client.CosmosClient(self.host, self.masterKey)
