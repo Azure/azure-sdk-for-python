@@ -163,7 +163,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
         # Mock the client retry policy to see the same-region retries that happen there
         exception = ServiceRequestError("mock exception")
         exception.exc_type = Exception
-        connection_retry_policy = test_config.MockServiceConnectionRetryPolicy(resource_type="docs", error=exception)
+        connection_retry_policy = test_config.MockConnectionRetryPolicy(resource_type="docs", error=exception)
         mock_client = CosmosClient(self.host, self.masterKey, connection_retry_policy=connection_retry_policy)
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_ID)
@@ -186,7 +186,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
         # Mock the client retry policy to see the same-region retries that happen there
         exception = ServiceResponseError("mock exception")
         exception.exc_type = Exception
-        connection_retry_policy = test_config.MockServiceConnectionRetryPolicy(resource_type="docs", error=exception)
+        connection_retry_policy = test_config.MockConnectionRetryPolicy(resource_type="docs", error=exception)
         mock_client = CosmosClient(self.host, self.masterKey, connection_retry_policy=connection_retry_policy)
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_ID)
@@ -214,9 +214,10 @@ class TestServiceRetryPolicies(unittest.TestCase):
         exception.exc_type = Exception
         self.original_get_database_account_stub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
         _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
-        connection_retry_policy = test_config.MockServiceConnectionRetryPolicy(resource_type="docs", error=exception)
+        connection_retry_policy = test_config.MockConnectionRetryPolicy(resource_type="docs", error=exception)
         mock_client = CosmosClient(self.host, self.masterKey, connection_retry_policy=connection_retry_policy,
                                    preferred_locations=[self.REGION1, self.REGION2])
+        _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_get_database_account_stub
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_ID)
 
@@ -230,6 +231,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
                 continue
 
         try:
+            _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
             container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
@@ -242,9 +244,9 @@ class TestServiceRetryPolicies(unittest.TestCase):
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_get_database_account_stub
 
         # Now we try with a read request - reset the policy to reset the counter
-        _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
         connection_retry_policy.request_endpoints = []
         try:
+            _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
             container.read_item("some_id", "some_pk")
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
