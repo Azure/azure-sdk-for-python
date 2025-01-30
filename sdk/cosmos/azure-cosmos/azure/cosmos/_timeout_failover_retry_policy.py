@@ -31,8 +31,9 @@ class _TimeoutFailoverRetryPolicy(object):
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """
-        if _OperationType.IsReadOnlyOperation(self.request.operation_type):
-            return False
+        if self.request:
+            if _OperationType.IsReadOnlyOperation(self.request.operation_type):
+                return False
 
         if not self.connection_policy.EnableEndpointDiscovery:
             return False

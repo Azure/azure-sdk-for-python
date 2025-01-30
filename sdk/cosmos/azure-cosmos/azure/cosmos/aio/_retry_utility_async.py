@@ -273,7 +273,8 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 # Since this is ClientConnectionError, it is safe to be retried on both read and write requests
                 from aiohttp.client_exceptions import (
                     ClientConnectionError)  # pylint: disable=networking-import-outside-azure-core-transport
-                if isinstance(err.inner_exception, ClientConnectionError) or _has_read_retryable_headers(request.http_request.headers):
+                if (isinstance(err.inner_exception, ClientConnectionError)
+                        or _has_read_retryable_headers(request.http_request.headers)):
                     # This logic is based on the _retry.py file from azure-core
                     if retry_settings['read'] > 0:
                         retry_active = self.increment(retry_settings, response=request, error=err)
