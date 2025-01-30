@@ -277,7 +277,7 @@ class TestBatchDeploymentSDK:
             target = yaml.safe_load(f)
         print(target)
         deployment = load_batch_deployment(TestBatchDeploymentSDK.DEPLOYMENT)
-        # test REST translation
+        # test REST translation s
         deployment_resource = deployment._to_rest_object(location="westus2")
         rest_representation_properties = deployment_resource.properties
         assert rest_representation_properties.max_concurrency_per_instance == target["max_concurrency_per_instance"]
