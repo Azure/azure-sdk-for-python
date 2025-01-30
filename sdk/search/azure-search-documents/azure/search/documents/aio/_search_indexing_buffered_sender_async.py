@@ -274,7 +274,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         :type batch: IndexDocumentsBatch
         :return: Indexing result for each action in the batch.
         :rtype:  list[IndexingResult]
-        :raises: ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
+        :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
         """
         return await self._index_documents_actions(actions=batch.actions, **kwargs)
 
