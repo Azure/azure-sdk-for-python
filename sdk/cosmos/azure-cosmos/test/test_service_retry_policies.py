@@ -39,7 +39,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
         cls.created_container = cls.created_database.create_container_if_not_exists(cls.TEST_CONTAINER_ID,
                                                                                     PartitionKey(path="/id"))
 
-    def test_service_request_client_retry(self):
+    def test_service_request_retry_policy(self):
         mock_client = CosmosClient(self.host, self.masterKey)
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_ID)
@@ -99,7 +99,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             _retry_utility.ExecuteFunction = self.original_execute_function
 
 
-    def test_service_response_client_retry(self):
+    def test_service_response_retry_policy(self):
         mock_client = CosmosClient(self.host, self.masterKey)
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_ID)

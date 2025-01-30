@@ -5,13 +5,15 @@ import unittest
 import uuid
 
 import pytest
-from aiohttp.client_exceptions import ClientConnectionError
+from aiohttp.client_exceptions import (ClientConnectionError, ClientConnectionResetError,
+                                       ClientOSError, ServerConnectionError)
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 import test_config
-from azure.cosmos import PartitionKey
+from azure.cosmos import PartitionKey, DatabaseAccount
 from azure.cosmos._location_cache import RegionalEndpoint
-from azure.cosmos.aio import CosmosClient, _retry_utility_async
+from azure.cosmos.aio import CosmosClient, _retry_utility_async, _global_endpoint_manager_async
+from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
 @pytest.mark.cosmosEmulator
@@ -160,22 +162,198 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             finally:
                 _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
-        # If we do a write request with a ClientConnectionError,
-        # we will do cross-region retries like with read requests
-        original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
-        original_location_cache.write_regional_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
-        original_location_cache.available_write_regional_endpoints_by_locations = {self.REGION1: self.REGIONAL_ENDPOINT,
-                                                                                   self.REGION2: self.REGIONAL_ENDPOINT}
-        try:
-            # Reset the function to reset the counter
-            mf = self.MockExecuteServiceResponseException(ClientConnectionError, ClientConnectionError())
-            _retry_utility_async.ExecuteFunctionAsync = mf
-            await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
-            pytest.fail("Exception was not raised.")
-        except ServiceResponseError:
-            assert mf.counter == 2
-        finally:
-            _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+            # If we do a write request with a ClientConnectionError,
+            # we will do cross-region retries like with read requests
+            original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
+            original_location_cache.write_regional_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
+            original_location_cache.available_write_regional_endpoints_by_locations = {self.REGION1: self.REGIONAL_ENDPOINT,
+                                                                                       self.REGION2: self.REGIONAL_ENDPOINT}
+            try:
+                # Reset the function to reset the counter
+                mf = self.MockExecuteServiceResponseException(ClientConnectionError, ClientConnectionError())
+                _retry_utility_async.ExecuteFunctionAsync = mf
+                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+                pytest.fail("Exception was not raised.")
+            except ServiceResponseError:
+                assert mf.counter == 2
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+
+    async def test_service_request_connection_retry_policy_async(self):
+        # Mock the client retry policy to see the same-region retries that happen there
+        exception = ServiceRequestError("mock exception")
+        exception.exc_type = Exception
+        connection_policy = self.connectionPolicy
+        connection_retry_policy = test_config.MockConnectionRetryPolicyAsync(resource_type="docs", error=exception)
+        # connection_retry_policy = _retry_utility_async._ConnectionRetryPolicy()
+        connection_policy.ConnectionRetryConfiguration = connection_retry_policy
+        async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as mock_client:
+            db = mock_client.get_database_client(self.TEST_DATABASE_ID)
+            container = db.get_container_client(self.TEST_CONTAINER_ID)
+
+            # We retry ServiceRequestExceptions 3 times in the to the same endpoint before raising the exception
+            # regardless of operation type
+            try:
+                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+                pytest.fail("Exception was not raised.")
+            except ServiceRequestError:
+                assert connection_retry_policy.counter == 3
+
+            try:
+                await container.read_item("some_id", "some_pk")
+                pytest.fail("Exception was not raised.")
+            except ServiceRequestError:
+                assert connection_retry_policy.counter == 3
+
+    async def test_service_response_connection_retry_policy_async(self):
+        # Mock the client retry policy to see the same-region retries that happen there
+        exception = ServiceResponseError("mock exception")
+        exception.exc_type = Exception
+        connection_policy = self.connectionPolicy
+        connection_retry_policy = test_config.MockConnectionRetryPolicyAsync(resource_type="docs", error=exception)
+        connection_policy.ConnectionRetryConfiguration = connection_retry_policy
+        async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as mock_client:
+            db = mock_client.get_database_client(self.TEST_DATABASE_ID)
+            container = db.get_container_client(self.TEST_CONTAINER_ID)
+
+            # We retry ServiceResponseExceptions 3 times in the to the same endpoint before raising the exception
+            # for read operations, but 0 times for write requests
+            try:
+                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+                pytest.fail("Exception was not raised.")
+            except ServiceResponseError:
+                assert connection_retry_policy.counter == 0
+
+            try:
+                await container.read_item("some_id", "some_pk")
+                pytest.fail("Exception was not raised.")
+            except ServiceResponseError:
+                assert connection_retry_policy.counter == 3
+
+    async def test_service_response_errors_async(self):
+        # Test for errors that are subclasses of ClientConnectionError for write requests
+        async with CosmosClient(self.host, self.masterKey) as mock_client:
+            db = mock_client.get_database_client(self.TEST_DATABASE_ID)
+            container = db.get_container_client(self.TEST_CONTAINER_ID)
+            await container.read()
+            # Save the original function
+            self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
+
+            original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
+            original_location_cache.available_read_locations = [self.REGION1, self.REGION2, self.REGION3]
+            original_location_cache.available_read_regional_endpoints_by_locations = {
+                self.REGION1: self.REGIONAL_ENDPOINT,
+                self.REGION2: self.REGIONAL_ENDPOINT,
+                self.REGION3: self.REGIONAL_ENDPOINT}
+            original_location_cache.read_regional_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
+                                                               self.REGIONAL_ENDPOINT]
+            original_location_cache.available_write_locations = [self.REGION1, self.REGION2]
+            original_location_cache.write_regional_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
+            original_location_cache.available_write_regional_endpoints_by_locations = {self.REGION1: self.REGIONAL_ENDPOINT,
+                                                                                       self.REGION2: self.REGIONAL_ENDPOINT}
+            try:
+                # Start with a normal ServiceResponseException with no special casing
+                mf = self.MockExecuteServiceResponseException(AttributeError, AttributeError())
+                _retry_utility_async.ExecuteFunctionAsync = mf
+                # Even though we have 2 preferred write endpoints,
+                # we will only run the exception once due to no retries on write requests
+                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+                pytest.fail("Exception was not raised.")
+            except ServiceResponseError:
+                assert mf.counter == 1
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+
+            # Now we test the base ClientConnectionError
+            try:
+                # Reset the function to reset the counter
+                mf = self.MockExecuteServiceResponseException(ClientConnectionError, ClientConnectionError())
+                _retry_utility_async.ExecuteFunctionAsync = mf
+                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+                pytest.fail("Exception was not raised.")
+            except ServiceResponseError:
+                assert mf.counter == 2
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+
+            await container.read()
+            # Now we test ClientConnectionResetError, the subclass of ClientConnectionError
+            try:
+                # Reset the function to reset the counter
+                mf = self.MockExecuteServiceResponseException(ClientConnectionResetError, ClientConnectionResetError())
+                _retry_utility_async.ExecuteFunctionAsync = mf
+                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+                pytest.fail("Exception was not raised.")
+            except ServiceResponseError:
+                assert mf.counter == 2
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+
+            await container.read()
+            # Now we test ServerConnectionError, the subclass of ClientConnectionError
+            try:
+                # Reset the function to reset the counter
+                mf = self.MockExecuteServiceResponseException(ServerConnectionError, ServerConnectionError())
+                _retry_utility_async.ExecuteFunctionAsync = mf
+                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+                pytest.fail("Exception was not raised.")
+            except ServiceResponseError:
+                assert mf.counter == 2
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+
+            # Now we test ClientOSError, the subclass of ClientConnectionError
+            try:
+                # Reset the function to reset the counter
+                mf = self.MockExecuteServiceResponseException(ClientOSError, ClientOSError())
+                _retry_utility_async.ExecuteFunctionAsync = mf
+                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+                pytest.fail("Exception was not raised.")
+            except ServiceResponseError:
+                assert mf.counter == 2
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+
+    async def test_global_endpoint_manager_retry_async(self):
+        # For this test we mock both the ConnectionRetryPolicy and the GetDatabaseAccountStub
+        # - ConnectionRetryPolicy allows us to raise Service exceptions only for chosen requests and track endpoints used
+        # - GetDatabaseAccountStub allows us to receive any number of endpoints for that call independent of account used
+        exception = ServiceRequestError("mock exception")
+        exception.exc_type = Exception
+        self.original_get_database_account_stub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
+        connection_policy = self.connectionPolicy
+        connection_retry_policy = test_config.MockConnectionRetryPolicyAsync(resource_type="docs", error=exception)
+        connection_policy.ConnectionRetryConfiguration = connection_retry_policy
+        async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy,
+                                   preferred_locations=[self.REGION1, self.REGION2]) as mock_client:
+            db = mock_client.get_database_client(self.TEST_DATABASE_ID)
+            container = db.get_container_client(self.TEST_CONTAINER_ID)
+
+            try:
+                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+                pytest.fail("Exception was not raised.")
+            except ServiceRequestError:
+                assert connection_retry_policy.counter == 3
+                # 4 total requests for each in-region (hub -> write locational endpoint -> hub)
+                assert len(connection_retry_policy.request_endpoints) == 12
+            except CosmosHttpResponseError as e:
+                print(e)
+            finally:
+                _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_get_database_account_stub
+
+            # Now we try with a read request - reset the policy to reset the counter
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
+            connection_retry_policy.request_endpoints = []
+            try:
+                await container.read_item("some_id", "some_pk")
+                pytest.fail("Exception was not raised.")
+            except ServiceRequestError:
+                assert connection_retry_policy.counter == 3
+                # 4 total requests in each main region (preferred read region 1 -> preferred read region 2)
+                assert len(connection_retry_policy.request_endpoints) == 8
+            finally:
+                _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_get_database_account_stub
 
 
     class MockExecuteServiceRequestException(object):
@@ -200,3 +378,25 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             exception.exc_type = self.err_type
             exception.inner_exception = self.inner_exception
             raise exception
+
+    async def MockGetDatabaseAccountStub(self, endpoint):
+        read_regions = ["West US", "East US"]
+        read_locations = []
+        for loc in read_regions:
+            locational_endpoint = _global_endpoint_manager_async._GlobalEndpointManager.GetLocationalEndpoint(endpoint, loc)
+            read_locations.append({'databaseAccountEndpoint': locational_endpoint, 'name': loc})
+        write_regions = ["West US"]
+        write_locations = []
+        for loc in write_regions:
+            locational_endpoint = _global_endpoint_manager_async._GlobalEndpointManager.GetLocationalEndpoint(endpoint, loc)
+            write_locations.append({'databaseAccountEndpoint': locational_endpoint, 'name': loc})
+        multi_write = False
+
+        db_acc = DatabaseAccount()
+        db_acc.DatabasesLink = "/dbs/"
+        db_acc.MediaLink = "/media/"
+        db_acc._ReadableLocations = read_locations
+        db_acc._WritableLocations = write_locations
+        db_acc._EnableMultipleWritableLocations = multi_write
+        db_acc.ConsistencyPolicy = {"defaultConsistencyLevel": "Session"}
+        return db_acc
