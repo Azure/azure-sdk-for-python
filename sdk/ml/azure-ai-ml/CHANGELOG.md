@@ -9,7 +9,7 @@
 
 ### Other Changes
 
-- Support for Python 3.13. Ensuring that azureml-dataprep-rslex and mldesigner are only installed for Python versions below 3.13.
+- Adding support for Python 3.13. Ensuring that azureml-dataprep-rslex is only installed for Python versions below 3.13.
 
 ## 1.24.0 (2025-01-07)
 
