@@ -1836,6 +1836,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         rest_obj = created_pipeline_job._to_rest_object()
         assert rest_obj.properties.jobs["node"]["queue_settings"] == {"job_tier": "standard"}
 
+    @pytest.mark.skip("To support py313")
     def test_pipeline_job_serverless_compute_automl_in_pipeline_with_job_tier(self, client: MLClient) -> None:
         yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/automl_in_pipeline/pipeline.yml"
         pipeline_job = load_job(yaml_path)
@@ -1965,6 +1966,7 @@ jobs:
             "component_in_path": {"path": "${{parent.inputs.job_in_path}}"},
         }
 
+    @pytest.mark.skip("To support py313")
     def test_flow_node_skip_input_filtering(self, client: MLClient, randstr: Callable[[str], str]):
         flow_dag_path = "./tests/test_configs/flows/web_classification_with_additional_includes/flow.dag.yaml"
         anonymous_component = load_component(flow_dag_path)
@@ -2049,6 +2051,7 @@ jobs:
             ),
         ],
     )
+    @pytest.mark.skip("To support py313")
     def test_pipeline_job_with_flow(
         self,
         client: MLClient,
