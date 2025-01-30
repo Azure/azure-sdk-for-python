@@ -35,7 +35,7 @@ import os, sys, time, json
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
-from azure.ai.projects.telemetry import trace_func
+from azure.ai.projects.telemetry import trace_function
 from opentelemetry import trace
 
 project_client = AIProjectClient.from_connection_string(
@@ -53,7 +53,7 @@ tracer = trace.get_tracer(__name__)
 
 # The trace_func decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
-@trace_func
+@trace_function()
 def fetch_weather(location: str) -> str:
     """
     Fetches the weather information for the specified location.

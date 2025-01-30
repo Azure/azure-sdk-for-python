@@ -6,9 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._trace_func import trace_func
+from ._trace_func import trace_function
 
 __all__ = [
-    "trace_func",
+    "trace_function",
 ]
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
