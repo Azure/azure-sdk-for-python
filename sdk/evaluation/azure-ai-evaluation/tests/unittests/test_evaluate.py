@@ -383,18 +383,31 @@ class TestEvaluate:
             assert "else2" in new_data_df.columns
             assert new_data_df["else2"][0] == "Another column 1"
 
-    def test_evaluate_invalid_evaluator_config(self, mock_model_config, evaluate_test_data_jsonl_file):
+    @pytest.mark.parametrize(
+        "column_mapping",
+        [
+            {"query": "${foo.query}"},
+            {"query": "${data.query"},
+            {"query": "data.query", "response": "target.response"},
+            {"query": "${data.query}", "response": "${target.response.one}"},
+        ]
+    )
+    def test_evaluate_invalid_column_mapping(self, mock_model_config, evaluate_test_data_jsonl_file, column_mapping):
         # Invalid source reference
         with pytest.raises(EvaluationException) as exc_info:
             evaluate(
                 data=evaluate_test_data_jsonl_file,
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
-                evaluator_config={"g": {"column_mapping": {"query": "${foo.query}"}}},
+                evaluator_config={
+                    "g": {
+                        "column_mapping": column_mapping,
+                    }
+                }
             )
 
         assert (
-            "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
-            in exc_info.value.args[0]
+                "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
+                in exc_info.value.args[0]
         )
 
     def test_renaming_column(self):

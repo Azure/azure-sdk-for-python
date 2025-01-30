@@ -525,7 +525,7 @@ def _process_column_mappings(
 
     processed_config: Dict[str, Dict[str, str]] = {}
 
-    unexpected_references = re.compile(r"\${(?!target\.|data\.).+?}")
+    expected_references = re.compile(r"^\$\{(target|data)\.[a-zA-Z_]+\}$")
 
     if column_mapping:
         for evaluator, mapping_config in column_mapping.items():
@@ -534,7 +534,7 @@ def _process_column_mappings(
 
                 for map_to_key, map_value in mapping_config.items():
                     # Check if there's any unexpected reference other than ${target.} or ${data.}
-                    if unexpected_references.search(map_value):
+                    if not expected_references.search(map_value):
                         msg = "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
                         raise EvaluationException(
                             message=msg,
