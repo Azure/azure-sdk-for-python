@@ -1,12 +1,6 @@
 # Release History
 
-## 1.3.0 (2025-02-11)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.3.0 (Unreleased)
 
 ### Other Changes
  - Improved user agent used in logging to align with azure standards.
