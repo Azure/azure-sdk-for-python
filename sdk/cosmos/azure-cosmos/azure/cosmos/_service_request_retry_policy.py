@@ -17,7 +17,7 @@ class ServiceRequestRetryPolicy(object):
         self.args = args
         self.global_endpoint_manager = global_endpoint_manager
         self.total_retries = len(self.global_endpoint_manager.location_cache.read_regional_endpoints)
-        self.total_in_region_retries = 2
+        self.total_in_region_retries = 1
         self.in_region_retry_count = 0
         self.failover_retry_count = 0
         self.connection_policy = connection_policy
