@@ -330,9 +330,11 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
     """
 
     __defaultRequestTimeout: int = 60  # seconds
+    __defaultMaxBackoff: int = 1 # seconds
 
     def __init__(self) -> None:
         self.RequestTimeout: int = self.__defaultRequestTimeout
+        self.MaxBackoff: int = self.__defaultMaxBackoff
         self.ConnectionMode: int = ConnectionMode.Gateway
         self.SSLConfiguration: Optional[SSLConfiguration] = None
         self.ProxyConfiguration: Optional[ProxyConfiguration] = None

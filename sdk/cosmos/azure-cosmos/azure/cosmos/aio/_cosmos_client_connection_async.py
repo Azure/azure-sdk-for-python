@@ -183,7 +183,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 retry_connect=self.connection_policy.ConnectionRetryConfiguration.connect,
                 retry_read=self.connection_policy.ConnectionRetryConfiguration.read,
                 retry_status=self.connection_policy.ConnectionRetryConfiguration.status,
-                retry_backoff_max=self.connection_policy.ConnectionRetryConfiguration.DEFAULT_BACKOFF_MAX,
+                retry_backoff_max=self.connection_policy.MaxBackoff,
                 retry_on_status_codes=list(self.connection_policy.ConnectionRetryConfiguration.status_forcelist),
                 retry_backoff_factor=self.connection_policy.ConnectionRetryConfiguration.backoff_factor
             )
