@@ -15,7 +15,9 @@ USAGE:
     python sample_tracing.py
 """
 from typing import Iterable, Union, Any
-from corehttp.instrumentation.tracing import distributed_trace
+from functools import partial
+
+from corehttp.instrumentation.tracing import distributed_trace as core_distributed_trace
 from corehttp.runtime import PipelineClient
 from corehttp.rest import HttpRequest, HttpResponse
 from corehttp.runtime.policies import (
@@ -27,7 +29,7 @@ from corehttp.runtime.policies import (
     DistributedTracingPolicy,
 )
 from corehttp.settings import settings
-from corehttp.instrumentation.tracing import TracerManager
+from corehttp.instrumentation.tracing import TracerProvider as SDKTracerProvider
 
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
@@ -44,12 +46,14 @@ tracer_provider.add_span_processor(SimpleSpanProcessor(exporter))
 tracer = trace.get_tracer(__name__)
 
 
-sdk_tracer_manager = TracerManager(
+sdk_tracer_provider = SDKTracerProvider(
     library_name="mylibrary",
     library_version="1.0.0",
     schema_url="https://opentelemetry.io/schemas/1.23.1",
     attributes={"namespace": "Sample.Namespace"},
 )
+
+distributed_trace = partial(core_distributed_trace, tracer_provider=sdk_tracer_provider)
 
 
 class SampleClient:
@@ -59,19 +63,18 @@ class SampleClient:
             HeadersPolicy(),
             UserAgentPolicy("myuseragent"),
             RetryPolicy(),
-            DistributedTracingPolicy(tracer=sdk_tracer_manager.tracer),
+            DistributedTracingPolicy(tracer_provider=sdk_tracer_provider),
         ]
 
         self._client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(endpoint, policies=policies)
 
-    @distributed_trace(tracer=sdk_tracer_manager.tracer)
+    @distributed_trace()
     def sample_method(self, **kwargs: Any) -> HttpResponse:
         request = HttpRequest("GET", "https://bing.com")
         response = self._client.send_request(request, **kwargs)
         return response
 
     @distributed_trace(
-        tracer=sdk_tracer_manager.tracer,
         pre_hook=lambda span, *args, **kwargs: span.set_attribute("pre-hook-key", "pre-hook-value"),
         post_hook=lambda span, result: span.set_attribute("post-hook-key", "post-hook-value"),
     )

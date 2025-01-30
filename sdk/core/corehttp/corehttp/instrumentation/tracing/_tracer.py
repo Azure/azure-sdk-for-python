@@ -17,7 +17,6 @@ if TYPE_CHECKING:
 def _get_tracer_impl():
     # Check if OpenTelemetry is available/installed.
     try:
-        print("weee")
         from .opentelemetry_tracer import OpenTelemetryTracer
 
         return OpenTelemetryTracer
@@ -25,7 +24,7 @@ def _get_tracer_impl():
         return None
 
 
-class TracerManager:
+class TracerProvider:
     """A manager for a tracer instance.
 
     :keyword library_name: The name of the library to use in the tracer.
@@ -52,8 +51,12 @@ class TracerManager:
         self._schema_url = schema_url
         self._attributes = attributes
 
-    @property
-    def tracer(self) -> Optional["OpenTelemetryTracer"]:
+    def get_tracer(self) -> Optional["OpenTelemetryTracer"]:
+        """Get the OpenTelemetry tracer instance if available.
+
+        :return: The OpenTelemetry tracer instance if available.
+        :rtype: Optional[OpenTelemetryTracer]
+        """
         if self._tracer is None:
             tracer_impl = _get_tracer_impl()
             if tracer_impl:
@@ -66,4 +69,4 @@ class TracerManager:
         return self._tracer
 
 
-default_tracer_manager = TracerManager()
+default_tracer_provider = TracerProvider()

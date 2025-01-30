@@ -8,20 +8,19 @@ import time
 import pytest
 
 from corehttp.settings import settings
-from corehttp.instrumentation.tracing._tracer import TracerManager
+from corehttp.instrumentation.tracing._tracer import TracerProvider
 from corehttp.instrumentation.tracing import distributed_trace_async
 from corehttp.instrumentation.tracing._models import SpanKind
 
 from opentelemetry.trace import SpanKind as OtelSpanKind, StatusCode as OtelStatusCode
 
 
-custom_tracer_manager = TracerManager(
+custom_tracer_provider = TracerProvider(
     library_name="mylibrary",
     library_version="1.0.0",
     schema_url="https://test.schema",
     attributes={"namespace": "Sample.Namespace"},
 )
-custom_tracer = custom_tracer_manager.tracer
 
 
 class MockClient:
@@ -30,58 +29,24 @@ class MockClient:
     async def nested_calls(self):
         time.sleep(0.001)
         await self.get_foo()
-        await self.check_name_is_different()
+        await self.method_with_kwargs()
 
     @distributed_trace_async
     async def get_foo(self):
         time.sleep(0.001)
         return 5
 
-    @distributed_trace_async(name_of_span="different name")
-    async def check_name_is_different(self):
-        time.sleep(0.001)
-
-    @distributed_trace_async(kind=SpanKind.PRODUCER)
-    async def kind_override(self):
-        time.sleep(0.001)
-
     @distributed_trace_async
     async def raising_exception(self, **kwargs):
         raise ValueError("Something went horribly wrong here")
 
-    @distributed_trace_async(tracer=custom_tracer)
-    async def method_with_custom_tracer(self):
+    @distributed_trace_async(tracer_provider=custom_tracer_provider)
+    async def method_with_custom_tracer_provider(self):
         time.sleep(0.001)
 
     @distributed_trace_async
     async def method_with_kwargs(self, **kwargs):
         time.sleep(0.001)
-
-
-@pytest.mark.asyncio
-async def test_decorator_kind_override(tracing_helper):
-    """Test that the span kind can be overridden."""
-    client = MockClient()
-    settings.tracing_enabled = True
-    with tracing_helper.tracer.start_as_current_span("Root"):
-        await client.kind_override()
-
-        finished_spans = tracing_helper.exporter.get_finished_spans()
-        assert len(finished_spans) == 1
-        assert finished_spans[0].name == "MockClient.kind_override"
-        assert finished_spans[0].kind == OtelSpanKind.PRODUCER
-
-
-@pytest.mark.asyncio
-async def test_decorator_name_override(tracing_helper):
-    client = MockClient()
-    settings.tracing_enabled = True
-    with tracing_helper.tracer.start_as_current_span("Root"):
-        await client.check_name_is_different()
-
-        finished_spans = tracing_helper.exporter.get_finished_spans()
-        assert len(finished_spans) == 1
-        assert finished_spans[0].name == "different name"
 
 
 @pytest.mark.asyncio
@@ -123,16 +88,16 @@ async def test_decorator_nested_calls(tracing_helper):
 
 
 @pytest.mark.asyncio
-async def test_decorator_custom_tracer(tracing_helper):
-    """Test that a custom tracer can be used."""
+async def test_decorator_custom_tracer_provider(tracing_helper):
+    """Test that a custom tracer provider can be used."""
     client = MockClient()
     settings.tracing_enabled = True
     with tracing_helper.tracer.start_as_current_span("Root"):
-        await client.method_with_custom_tracer()
+        await client.method_with_custom_tracer_provider()
 
         finished_spans = tracing_helper.exporter.get_finished_spans()
         assert len(finished_spans) == 1
-        assert finished_spans[0].name == "MockClient.method_with_custom_tracer"
+        assert finished_spans[0].name == "MockClient.method_with_custom_tracer_provider"
         assert finished_spans[0].instrumentation_scope.schema_url == "https://test.schema"
         assert finished_spans[0].instrumentation_scope.name == "mylibrary"
         assert finished_spans[0].instrumentation_scope.version == "1.0.0"

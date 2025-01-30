@@ -14,7 +14,7 @@ from corehttp.runtime.policies import (
     RetryPolicy,
 )
 from corehttp.settings import settings
-from corehttp.instrumentation.tracing._tracer import TracerManager
+from corehttp.instrumentation.tracing._tracer import TracerProvider
 from corehttp.runtime.pipeline import PipelineRequest, PipelineContext, PipelineResponse, Pipeline
 from corehttp.transport import HttpTransport
 
@@ -74,18 +74,17 @@ def test_distributed_tracing_policy_error_response(tracing_helper, http_response
 
 
 @pytest.mark.parametrize("http_response", HTTP_RESPONSES)
-def test_distributed_tracing_policy_custom_tracer(tracing_helper, http_response):
-    """Test policy when a custom tracer is provided."""
+def test_distributed_tracing_policy_custom_tracer_provider(tracing_helper, http_response):
+    """Test policy when a custom tracer provider is provided."""
     settings.tracing_enabled = True
-    custom_tracer_manager = TracerManager(
+    custom_tracer_provider = TracerProvider(
         library_name="mylibrary",
         library_version="1.0.0",
         schema_url="https://test.schema",
         attributes={"namespace": "Sample.Namespace"},
     )
     with tracing_helper.tracer.start_as_current_span("Root"):
-        tracer = custom_tracer_manager.tracer
-        policy = DistributedTracingPolicy(tracer=tracer)
+        policy = DistributedTracingPolicy(tracer_provider=custom_tracer_provider)
 
         request = HttpRequest("GET", "http://localhost/temp?query=query")
         pipeline_request = PipelineRequest(request, PipelineContext(None))

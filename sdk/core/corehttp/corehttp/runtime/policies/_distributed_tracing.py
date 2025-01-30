@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from __future__ import annotations
-from collections.abc import Callable
 import logging
 import urllib.parse
 from typing import Any, Optional, Tuple, Union, Type, TYPE_CHECKING
@@ -14,11 +13,10 @@ from ...rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
 from ._base import SansIOHTTPPolicy
 from ...settings import settings
 from ...instrumentation.tracing._models import SpanKind, TracingOptions
-from ...instrumentation.tracing._tracer import default_tracer_manager
+from ...instrumentation.tracing._tracer import TracerProvider, default_tracer_provider
 
 if TYPE_CHECKING:
     from ..pipeline import PipelineRequest, PipelineResponse
-    from ...instrumentation.tracing.opentelemetry_tracer import OpenTelemetryTracer
     from ...instrumentation.tracing.opentelemetry_span import OpenTelemetrySpan
 
 
@@ -38,12 +36,8 @@ def _get_span_name(http_request: HttpRequest) -> str:
 class DistributedTracingPolicy(SansIOHTTPPolicy[HttpRequest, SansIOHttpResponse]):
     """The policy to create tracing spans for API calls.
 
-    :keyword tracer: The tracer to use. If not provided, a default tracer will be used.
-    :paramtype tracer: ~corehttp.instrumentation.tracing.opentelemetry_tracer.OpenTelemetryTracer
-    :keyword pre_hook: A hook to run before the span is created. This hook can modify the span attributes.
-    :paramtype pre_hook: Callable[["OpenTelemetrySpan", HttpRequest], Any]
-    :keyword post_hook: A hook to run after the span is created. This hook can modify the span attributes.
-    :paramtype post_hook: Callable[["OpenTelemetrySpan", SansIOHttpResponse], Any]
+    :keyword tracer_provider: The tracer provider to use. If not provided, a default tracer provider will be used.
+    :paramtype tracer_provider: ~corehttp.instrumentation.tracing.TracerProvider
     """
 
     TRACING_CONTEXT = "TRACING_CONTEXT"
@@ -62,14 +56,10 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HttpRequest, SansIOHttpResponse]
     def __init__(  # pylint: disable=unused-argument
         self,
         *,
-        tracer: Optional["OpenTelemetryTracer"] = None,
-        pre_hook: Optional[Callable[["OpenTelemetrySpan", HttpRequest], Any]] = None,
-        post_hook: Optional[Callable[["OpenTelemetrySpan", SansIOHttpResponse], Any]] = None,
+        tracer_provider: Optional[TracerProvider] = None,
         **kwargs: Any,
     ) -> None:
-        self._tracer = tracer
-        self._pre_hook = pre_hook
-        self._post_hook = post_hook
+        self._tracer_provider = tracer_provider
 
     def on_request(self, request: PipelineRequest[HttpRequest]) -> None:
         ctxt = request.context.options
@@ -85,22 +75,21 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HttpRequest, SansIOHttpResponse]
             if not settings.tracing_enabled and user_enabled is None:
                 return
 
-            self._tracer = self._tracer or default_tracer_manager.tracer
-            if not self._tracer:
+            tracer = (
+                self._tracer_provider.get_tracer() if self._tracer_provider else default_tracer_provider.get_tracer()
+            )
+            if not tracer:
                 return
 
             span_name = _get_span_name(request.http_request)
-            span = self._tracer.start_span(
+            span = tracer.start_span(
                 name=span_name,
                 kind=SpanKind.CLIENT,
                 attributes=tracing_options.get("attributes"),
                 record_exception=tracing_options.get("record_exception", True),
             )
 
-            if self._pre_hook:
-                self._pre_hook(span, request.http_request)
-
-            trace_context_headers = self._tracer.get_trace_context()
+            trace_context_headers = tracer.get_trace_context()
             request.http_request.headers.update(trace_context_headers)
             request.context[self.TRACING_CONTEXT] = span
         except Exception as err:  # pylint: disable=broad-except
@@ -111,31 +100,15 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HttpRequest, SansIOHttpResponse]
         request: PipelineRequest[HttpRequest],
         response: PipelineResponse[HttpRequest, SansIOHttpResponse],
     ) -> None:
-        self._end_span(request, response=response.http_response)
-
-    def _end_span(
-        self,
-        request: PipelineRequest[HttpRequest],
-        response: Optional[SansIOHttpResponse] = None,
-    ) -> None:
-        """Ends the span that is tracing the network and updates its status.
-
-        :param request: The PipelineRequest object
-        :type request: ~corehttp.runtime.pipeline.PipelineRequest
-        :param response: The HttpResponse object
-        :type response: ~corehttp.rest.HTTPResponse
-        """
         if self.TRACING_CONTEXT not in request.context:
             return
 
         span: "OpenTelemetrySpan" = request.context[self.TRACING_CONTEXT]
         http_request = request.http_request
         if span:
-            self._add_http_attributes(span, http_request, response=response)
+            self._add_http_attributes(span, http_request, response=response.http_response)
             if request.context.get("retry_count"):
                 span.set_attribute(self._HTTP_RESEND_COUNT, request.context["retry_count"])
-            if self._post_hook and response:
-                self._post_hook(span, response)
             span.end()
 
     def _add_http_attributes(

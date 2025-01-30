@@ -7,20 +7,19 @@
 import time
 
 from corehttp.settings import settings
-from corehttp.instrumentation.tracing._tracer import TracerManager
+from corehttp.instrumentation.tracing._tracer import TracerProvider
 from corehttp.instrumentation.tracing import distributed_trace
 from corehttp.instrumentation.tracing._models import SpanKind
 
 from opentelemetry.trace import SpanKind as OtelSpanKind, StatusCode as OtelStatusCode
 
 
-custom_tracer_manager = TracerManager(
+custom_tracer_provider = TracerProvider(
     library_name="mylibrary",
     library_version="1.0.0",
     schema_url="https://test.schema",
     attributes={"namespace": "Sample.Namespace"},
 )
-custom_tracer = custom_tracer_manager.tracer
 
 
 class MockClient:
@@ -29,56 +28,24 @@ class MockClient:
     def nested_calls(self):
         time.sleep(0.001)
         self.get_foo()
-        self.check_name_is_different()
+        self.method_with_kwargs()
 
     @distributed_trace
     def get_foo(self):
         time.sleep(0.001)
         return 5
 
-    @distributed_trace(name_of_span="different name")
-    def check_name_is_different(self):
-        time.sleep(0.001)
-
-    @distributed_trace(kind=SpanKind.PRODUCER)
-    def kind_override(self):
-        time.sleep(0.001)
-
     @distributed_trace
     def raising_exception(self, **kwargs):
         raise ValueError("Something went horribly wrong here")
 
-    @distributed_trace(tracer=custom_tracer)
+    @distributed_trace(tracer_provider=custom_tracer_provider)
     def method_with_custom_tracer(self):
         time.sleep(0.001)
 
     @distributed_trace
     def method_with_kwargs(self, **kwargs):
         time.sleep(0.001)
-
-
-def test_decorator_kind_override(tracing_helper):
-    """Test that the span kind can be overridden."""
-    client = MockClient()
-    settings.tracing_enabled = True
-    with tracing_helper.tracer.start_as_current_span("Root"):
-        client.kind_override()
-
-        finished_spans = tracing_helper.exporter.get_finished_spans()
-        assert len(finished_spans) == 1
-        assert finished_spans[0].name == "MockClient.kind_override"
-        assert finished_spans[0].kind == OtelSpanKind.PRODUCER
-
-
-def test_decorator_name_override(tracing_helper):
-    client = MockClient()
-    settings.tracing_enabled = True
-    with tracing_helper.tracer.start_as_current_span("Root"):
-        client.check_name_is_different()
-
-        finished_spans = tracing_helper.exporter.get_finished_spans()
-        assert len(finished_spans) == 1
-        assert finished_spans[0].name == "different name"
 
 
 def test_decorator_raise_exception(tracing_helper):

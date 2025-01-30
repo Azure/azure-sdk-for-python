@@ -5,7 +5,7 @@
 """Common tracing functionality for SDK libraries."""
 from typing import Any, Callable
 
-from ._tracer import default_tracer_manager
+from ._tracer import default_tracer_provider
 from ...settings import settings
 
 
@@ -25,7 +25,7 @@ def with_current_context(func: Callable) -> Any:
     if not settings.tracing_enabled:
         return func
 
-    tracer = default_tracer_manager.tracer
+    tracer = default_tracer_provider.get_tracer()
     if not tracer:
         return func
     return tracer.with_current_context(func)
