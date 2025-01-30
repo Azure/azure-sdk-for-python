@@ -2513,6 +2513,13 @@ pipelines:
           lastModifiedDate: 2025-01-29
         spotbugs:
           lastModifiedDate: 2025-01-29
+      source:
+        credscan:
+          lastModifiedDate: 2025-01-30
+        psscriptanalyzer:
+          lastModifiedDate: 2025-01-30
+        armory:
+          lastModifiedDate: 2025-01-30
   6365:
     retail:
       binary:
