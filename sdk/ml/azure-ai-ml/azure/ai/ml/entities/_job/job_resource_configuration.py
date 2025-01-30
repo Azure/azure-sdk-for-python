@@ -164,7 +164,6 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
 
     def _to_rest_object(self) -> RestJobResourceConfiguration:
         return RestJobResourceConfiguration(
-            locations=self.locations,
             instance_count=self.instance_count,
             instance_type=self.instance_type,
             max_instance_count=self.max_instance_count,
@@ -181,7 +180,6 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         if isinstance(obj, dict):
             return cls(**obj)
         return JobResourceConfiguration(
-            locations=obj.locations,
             instance_count=obj.instance_count,
             instance_type=obj.instance_type,
             max_instance_count=obj.max_instance_count if hasattr(obj, "max_instance_count") else None,
