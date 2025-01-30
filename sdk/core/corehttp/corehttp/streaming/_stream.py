@@ -36,42 +36,90 @@ from ._decoders import JSONLDecoder, AsyncJSONLDecoder
 
 ReturnType = TypeVar("ReturnType")
 
-# TODO ensure protocols actually correctly represent the types
-
 
 @runtime_checkable
 class EventType(Protocol):
-    data: str
+    """Protocol for event types."""
 
-    def json(self) -> Any: ...
+    data: str
+    """The event data."""
+
+    def json(self) -> Any:
+        """Parse the event data as JSON.
+
+        :return: The parsed JSON data.
+        """
+        ...
 
 
 @runtime_checkable
 class StreamDecoder(Protocol):
+    """Protocol for stream decoders."""
 
-    def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[EventType]: ...
+    def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[EventType]:
+        """Iterate over events from a byte iterator.
 
-    def event(self) -> EventType: ...
+        :param iter_bytes: An iterator of byte chunks.
+        :return: An iterator of events.
+        """
+        ...
 
-    def decode(self, line: bytes) -> None: ...
+    def event(self) -> EventType:
+        """Get the current event.
+
+        :return: The current event.
+        """
+        ...
+
+    def decode(self, line: bytes) -> None:
+        """Decode a line of bytes.
+
+        :param line: A line of bytes to decode.
+        """
+        ...
 
 
 @runtime_checkable
 class AsyncStreamDecoder(Protocol):
+    """Protocol for async stream decoders."""
 
-    def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[EventType]: ...
+    def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[EventType]:
+        # Why this is not async def: 
+        # https://mypy.readthedocs.io/en/stable/more_types.html#asynchronous-iterators    
+        """Asynchronously iterate over events from a byte iterator.
 
-    def event(self) -> EventType: ...
+        :param iter_bytes: An asynchronous iterator of byte chunks.
+        :return: An asynchronous iterator of events.
+        """
+        ...
 
-    def decode(self, line: bytes) -> None: ...
+    def event(self) -> EventType:
+        """Get the current event.
+
+        :return: The current event.
+        """
+        ...
+
+    def decode(self, line: bytes) -> None:
+        """Decode a line of bytes.
+
+        :param line: A line of bytes to decode.
+        """
+        ...
 
 
 class Stream(Iterator[ReturnType]):
-    """Stream class.
-    :keyword response: The response object.
+    """Stream class for streaming JSONL or Server-Sent Events (SSE).
+
+    :keyword response: The pipeline response object.
     :paramtype response: ~azure.core.pipeline.PipelineResponse
-    :keyword deserialization_callback: A callback that takes HttpResponse and returns a deserialized object
-    :paramtype deserialization_callback: Callable
+    :keyword deserialization_callback: A callback that takes HttpResponse and JSON and 
+        returns a deserialized object
+    :paramtype deserialization_callback: Callable[[Any, Any], ReturnType]
+    :keyword decoder: An optional decoder to use for the stream. If not provided, the content-type
+        of the response will be used to determine the decoder.
+    :paramtype decoder: Optional[StreamDecoder]
+    :paramtype terminal_event: Optional[str]
     :keyword terminal_event: A terminal event that indicates the end of the SSE stream.
     :paramtype terminal_event: Optional[str]
     """
@@ -130,11 +178,17 @@ class Stream(Iterator[ReturnType]):
 
 
 class AsyncStream(AsyncIterator[ReturnType]):
-    """AsyncStream class.
-    :keyword response: The response object.
+    """AsyncStream class for asynchronously streaming JSONL or Server-Sent Events (SSE).
+
+    :keyword response: The pipeline response object.
     :paramtype response: ~azure.core.pipeline.PipelineResponse
-    :keyword deserialization_callback: A callback that takes HttpResponse and returns a deserialized object
-    :paramtype deserialization_callback: Callable
+    :keyword deserialization_callback: A callback that takes AsyncHttpResponse and JSON and 
+        returns a deserialized object
+    :paramtype deserialization_callback: Callable[[Any, Any], ReturnType]
+    :keyword decoder: An optional decoder to use for the stream. If not provided, the content-type
+        of the response will be used to determine the decoder.
+    :paramtype decoder: Optional[AsyncStreamDecoder]
+    :paramtype terminal_event: Optional[str]
     :keyword terminal_event: A terminal event that indicates the end of the SSE stream.
     :paramtype terminal_event: Optional[str]
     """

@@ -29,9 +29,16 @@ from typing import Any
 
 
 class JSONLEvent:
+    data: str
+    """The event data."""
 
     def __init__(self, *, data: str) -> None:
+        """Create a new JSONL event.
+
+        :keyword str data: The event data.
+        """
         self.data = data
 
     def json(self) -> Any:
+        """Parse the event data as JSON."""
         return json.loads(self.data)
