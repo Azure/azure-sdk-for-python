@@ -232,12 +232,12 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_service_response_errors_async(self):
         # Test for errors that are subclasses of ClientConnectionError for write requests
+        # Save the original ExecuteAsyncFunction function
+        self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
         async with CosmosClient(self.host, self.masterKey) as mock_client:
             db = mock_client.get_database_client(self.TEST_DATABASE_ID)
             container = db.get_container_client(self.TEST_CONTAINER_ID)
             await container.read()
-            # Save the original function
-            self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
 
             original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
             original_location_cache.available_read_locations = [self.REGION1, self.REGION2, self.REGION3]
@@ -264,7 +264,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             finally:
                 _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
-            # Now we test the base ClientConnectionError
+            # Now we test the base ClientConnectionError to see in-region retry
             try:
                 # Reset the function to reset the counter
                 mf = self.MockExecuteServiceResponseException(ClientConnectionError, ClientConnectionError())
@@ -273,10 +273,35 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceResponseError:
                 assert mf.counter == 2
+                assert len(original_location_cache.location_unavailability_info_by_endpoint) == 1
+                host_unavailable = original_location_cache.location_unavailability_info_by_endpoint.get(self.host)
+                assert host_unavailable is not None
+                assert len(host_unavailable.get('operationType')) == 1
+                assert 'Write' in host_unavailable.get('operationType')
             finally:
                 _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             await container.read()
+            # We send another request to the same error - since we marked one of the two in-region endpoints unavailable we don't retry
+            try:
+                # Reset the function to reset the counter
+                mf = self.MockExecuteServiceResponseException(ClientConnectionError, ClientConnectionError())
+                _retry_utility_async.ExecuteFunctionAsync = mf
+                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+                pytest.fail("Exception was not raised.")
+            except ServiceResponseError:
+                assert mf.counter == 1
+                host_unavailable = original_location_cache.location_unavailability_info_by_endpoint.get(self.host)
+                assert host_unavailable is not None
+                assert len(host_unavailable.get('operationType')) == 1
+                assert 'Write' in host_unavailable.get('operationType')
+            finally:
+                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+
+            # Reset the location cache's unavailable endpoints in order to try the same with other exceptions
+            original_location_cache.location_unavailability_info_by_endpoint = {}
+            original_location_cache.write_regional_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
+
             # Now we test ClientConnectionResetError, the subclass of ClientConnectionError
             try:
                 # Reset the function to reset the counter
@@ -286,10 +311,18 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceResponseError:
                 assert mf.counter == 2
+                assert len(original_location_cache.location_unavailability_info_by_endpoint) == 1
+                host_unavailable = original_location_cache.location_unavailability_info_by_endpoint.get(self.host)
+                assert host_unavailable is not None
+                assert len(host_unavailable.get('operationType')) == 1
+                assert 'Write' in host_unavailable.get('operationType')
             finally:
                 _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
-            await container.read()
+            # Reset the location cache's unavailable endpoints in order to try the same with other exceptions
+            original_location_cache.location_unavailability_info_by_endpoint = {}
+            original_location_cache.write_regional_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
+
             # Now we test ServerConnectionError, the subclass of ClientConnectionError
             try:
                 # Reset the function to reset the counter
@@ -301,6 +334,10 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 assert mf.counter == 2
             finally:
                 _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+
+            # Reset the location cache's unavailable endpoints in order to try the same with other exceptions
+            original_location_cache.location_unavailability_info_by_endpoint = {}
+            original_location_cache.write_regional_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
 
             # Now we test ClientOSError, the subclass of ClientConnectionError
             try:
