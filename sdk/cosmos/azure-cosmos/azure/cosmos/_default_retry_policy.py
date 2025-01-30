@@ -5,6 +5,7 @@
 Cosmos database service.
 """
 from . import http_constants
+from .documents import _OperationType
 
 # pylint: disable=protected-access
 
@@ -36,12 +37,12 @@ class DefaultRetryPolicy(object):
         self.current_retry_attempt_count = 0
         self.retry_after_in_milliseconds = 1000
         self.args = args
+        self.request = args[0] if args else None
 
     def needsRetry(self, error_code):
         if error_code in DefaultRetryPolicy.CONNECTION_ERROR_CODES:
             if self.args:
-                if (self.args[3].method == "GET") or (http_constants.HttpHeaders.IsQuery in self.args[3].headers) \
-                        or (http_constants.HttpHeaders.IsQueryPlanRequest in self.args[3].headers):
+                if _OperationType.IsReadOnlyOperation(self.request.operation_type):
                     return True
                 return False
             return True
