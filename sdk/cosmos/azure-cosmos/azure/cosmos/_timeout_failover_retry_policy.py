@@ -89,7 +89,7 @@ class _TimeoutFailoverRetryPolicy(object):
         # clear previous location-based routing directive
         self.request.clear_route_to_location()
         # clear the last routed endpoint within same region since we are going to a new region now
-        self.request.clear_last_routed_location()
+        self.request.last_routed_location_endpoint_within_region = None
         # set location-based routing directive based on retry count
         # ensuring usePreferredLocations is set to True for retry
         self.request.route_to_location_with_preferred_location_flag(self.location_index, True)
