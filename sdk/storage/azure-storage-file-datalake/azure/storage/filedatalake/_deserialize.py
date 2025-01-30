@@ -22,7 +22,7 @@ from ._models import (
 from ._shared.response_handlers import deserialize_metadata
 
 if TYPE_CHECKING:
-    from azure.core.rest import RestRequestsTransportResponse  # type: ignore [attr-defined]
+    from azure.core.rest import HttpResponse
     from azure.storage.blob import BlobProperties
     from ._generated.models import (
         BlobItemInternal,
@@ -35,7 +35,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def deserialize_dir_properties(
-    response: "RestRequestsTransportResponse",
+    response: "HttpResponse",
     obj: Any,
     headers: Dict[str, Any]
 ) -> DirectoryProperties:
@@ -52,7 +52,7 @@ def deserialize_dir_properties(
 
 
 def deserialize_file_properties(
-    response: "RestRequestsTransportResponse",
+    response: "HttpResponse",
     obj: Any,
     headers: Dict[str, Any]
 ) -> FileProperties:
