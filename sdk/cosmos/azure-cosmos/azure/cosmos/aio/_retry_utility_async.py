@@ -247,11 +247,6 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
             try:
                 _configure_timeout(request, absolute_timeout, per_request_timeout)
                 response = await self.next.send(request)
-                if self.is_retry(retry_settings, response):
-                    retry_active = self.increment(retry_settings, response=response)
-                    if retry_active:
-                        await self.sleep(retry_settings, request.context.transport, response=response)
-                        continue
                 break
             except ClientAuthenticationError:  # pylint:disable=try-except-raise
                 # the authentication policy failed such that the client's request can't
