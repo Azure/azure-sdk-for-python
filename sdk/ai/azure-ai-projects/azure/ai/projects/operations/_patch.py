@@ -2899,7 +2899,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             store_configuration = None
             if data_sources:
                 store_configuration = _models.VectorStoreConfiguration(data_sources=data_sources)
-            
+
             vector_store = super().create_vector_store(
                 file_ids=file_ids,
                 store_configuration=store_configuration,
