@@ -25,7 +25,25 @@
 # --------------------------------------------------------------------------
 
 import json
-from typing import Any
+from typing import Any, Protocol
+
+from typing_extensions import runtime_checkable
+
+
+@runtime_checkable
+class EventType(Protocol):
+    """Protocol for event types."""
+
+    data: str
+    """The event data."""
+
+    def json(self) -> Any:
+        """Parse the event data as JSON.
+
+        :return: The parsed JSON data.
+        """
+        ...
+
 
 
 class JSONLEvent:

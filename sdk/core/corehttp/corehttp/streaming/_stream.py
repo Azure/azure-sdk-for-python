@@ -25,89 +25,16 @@
 # --------------------------------------------------------------------------
 
 from types import TracebackType
-from typing import Iterator, AsyncIterator, TypeVar, Callable, Any, Optional, Type, Protocol
+from typing import Iterator, AsyncIterator, TypeVar, Callable, Any, Optional, Type
 
-from typing_extensions import Self, runtime_checkable
+from typing_extensions import Self
 
 from ..rest import HttpRequest, HttpResponse, AsyncHttpResponse
 from ..runtime.pipeline import PipelineResponse
-from ._decoders import JSONLDecoder, AsyncJSONLDecoder
+from ._decoders import JSONLDecoder, AsyncJSONLDecoder, StreamDecoder, AsyncStreamDecoder
 
 
 ReturnType = TypeVar("ReturnType")
-
-
-@runtime_checkable
-class EventType(Protocol):
-    """Protocol for event types."""
-
-    data: str
-    """The event data."""
-
-    def json(self) -> Any:
-        """Parse the event data as JSON.
-
-        :return: The parsed JSON data.
-        """
-        ...
-
-
-@runtime_checkable
-class StreamDecoder(Protocol):
-    """Protocol for stream decoders."""
-
-    def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[EventType]:
-        """Iterate over events from a byte iterator.
-
-        :param iter_bytes: An iterator of byte chunks.
-        :type iter_bytes: Iterator[bytes]
-        :return: An iterator of events.
-        """
-        ...
-
-    def event(self) -> EventType:
-        """Get the current event.
-
-        :rtype: EventType
-        :return: The current event.
-        """
-        ...
-
-    def decode(self, line: bytes) -> None:
-        """Decode a line of bytes.
-
-        :param bytes line: A line of bytes to decode.
-        """
-        ...
-
-
-@runtime_checkable
-class AsyncStreamDecoder(Protocol):
-    """Protocol for async stream decoders."""
-
-    # Why this isn't async def: https://mypy.readthedocs.io/en/stable/more_types.html#asynchronous-iterators
-    def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[EventType]:
-        """Asynchronously iterate over events from a byte iterator.
-
-        :param iter_bytes: An asynchronous iterator of byte chunks.
-        :type iter_bytes: AsyncIterator[bytes]
-        :return: An asynchronous iterator of events.
-        """
-        ...
-
-    def event(self) -> EventType:
-        """Get the current event.
-
-        :return: The current event.
-        """
-        ...
-
-    def decode(self, line: bytes) -> None:
-        """Decode a line of bytes.
-
-        :param bytes line: A line of bytes to decode.
-        """
-        ...
 
 
 class Stream(Iterator[ReturnType]):

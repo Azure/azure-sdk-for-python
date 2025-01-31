@@ -25,9 +25,69 @@
 # --------------------------------------------------------------------------
 
 
-from typing import Iterator, AsyncIterator, Tuple
+from typing import Iterator, AsyncIterator, Tuple, Protocol
 
-from ._events import JSONLEvent
+from typing_extensions import runtime_checkable
+
+from ._events import JSONLEvent, EventType
+
+
+@runtime_checkable
+class StreamDecoder(Protocol):
+    """Protocol for stream decoders."""
+
+    def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[EventType]:
+        """Iterate over events from a byte iterator.
+
+        :param iter_bytes: An iterator of byte chunks.
+        :type iter_bytes: Iterator[bytes]
+        :return: An iterator of events.
+        """
+        ...
+
+    def event(self) -> EventType:
+        """Get the current event.
+
+        :rtype: EventType
+        :return: The current event.
+        """
+        ...
+
+    def decode(self, line: bytes) -> None:
+        """Decode a line of bytes.
+
+        :param bytes line: A line of bytes to decode.
+        """
+        ...
+
+
+@runtime_checkable
+class AsyncStreamDecoder(Protocol):
+    """Protocol for async stream decoders."""
+
+    # Why this isn't async def: https://mypy.readthedocs.io/en/stable/more_types.html#asynchronous-iterators
+    def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[EventType]:
+        """Asynchronously iterate over events from a byte iterator.
+
+        :param iter_bytes: An asynchronous iterator of byte chunks.
+        :type iter_bytes: AsyncIterator[bytes]
+        :return: An asynchronous iterator of events.
+        """
+        ...
+
+    def event(self) -> EventType:
+        """Get the current event.
+
+        :return: The current event.
+        """
+        ...
+
+    def decode(self, line: bytes) -> None:
+        """Decode a line of bytes.
+
+        :param bytes line: A line of bytes to decode.
+        """
+        ...
 
 
 class JSONLDecoder:
