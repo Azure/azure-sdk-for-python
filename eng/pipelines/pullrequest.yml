@@ -1,0 +1,34 @@
+pr:
+  branches:
+    include:
+    - main
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
+    - pipelinev3*
+  paths:
+    include:
+    - "*"
+    # Note: The ExcludePaths template below needs to duplicate
+    # any excludes here. The reason being is that we can't access
+    # pr->paths->exclude
+    exclude:
+    - sdk/cosmos
+
+parameters:
+  - name: Service
+    type: string
+    default: auto
+
+extends:
+  template: ../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: ${{ parameters.Service }}
+    BuildTargetingString: "*"
+    TestProxy: true
+    TestTimeOutInMinutes: 180
+    # See pr->paths->exclude comment above. Anything added/removed there
+    # needs to be added/removed here.
+    ExcludePaths:
+      - sdk/cosmos
