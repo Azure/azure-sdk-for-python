@@ -41,7 +41,7 @@ class Stream(Iterator[ReturnType]):
     """Stream class for streaming JSONL or Server-Sent Events (SSE).
 
     :keyword response: The pipeline response object.
-    :paramtype response: ~azure.core.pipeline.PipelineResponse
+    :paramtype response: ~corehttp.runtime.pipeline.PipelineResponse
     :keyword deserialization_callback: A callback that takes HttpResponse and JSON and
         returns a deserialized object
     :paramtype deserialization_callback: Callable[[Any, Any], ReturnType]
@@ -111,7 +111,7 @@ class AsyncStream(AsyncIterator[ReturnType]):
     """AsyncStream class for asynchronously streaming JSONL or Server-Sent Events (SSE).
 
     :keyword response: The pipeline response object.
-    :paramtype response: ~azure.core.pipeline.PipelineResponse
+    :paramtype response: ~corehttp.runtime.pipeline.PipelineResponse
     :keyword deserialization_callback: A callback that takes AsyncHttpResponse and JSON and
         returns a deserialized object
     :paramtype deserialization_callback: Callable[[Any, Any], ReturnType]
