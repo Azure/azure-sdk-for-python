@@ -5,6 +5,7 @@ import time
 import unittest
 import uuid
 
+import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
@@ -32,6 +33,7 @@ def create_item(hpk):
     return item
 
 
+@pytest.mark.cosmosSplit
 class TestLatestSessionToken(unittest.TestCase):
     """Test for session token helpers"""
 

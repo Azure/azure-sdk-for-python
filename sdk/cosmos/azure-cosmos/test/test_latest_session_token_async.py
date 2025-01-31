@@ -5,6 +5,7 @@ import time
 import unittest
 import uuid
 
+import pytest
 
 import test_config
 from azure.cosmos import PartitionKey
@@ -33,6 +34,7 @@ def create_item(hpk):
     return item
 
 
+@pytest.mark.cosmosSplit
 class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
     """Test for session token helpers"""
 
