@@ -46,87 +46,8 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         certificate_credential = ConfidentialLedgerCertificateCredential(
             certificate_path=self.user_certificate_path
         )
-        certificate_based_client = ConfidentialLedgerClient(
-            credential=certificate_credential,
-            endpoint=endpoint,
-            ledger_certificate_path=self.network_certificate_path,  # type: ignore
-        )
-
-        # The Confidential Ledger always presents a self-signed certificate, so add that certificate
-        # to the recording options for the Confidential Ledger endpoint.
-        function_recording_options: Dict[str, Union[str, List[PemCertificate]]] = {
-            "tls_certificate": network_cert,
-            "tls_certificate_host": urlparse(endpoint).netloc,
-        }
-        if is_live():
-            set_function_recording_options(**function_recording_options)
-
-        if not is_live_and_not_recording():
-            # For live, non-recorded tests, we want to test normal client behavior so the only
-            # certificate used for TLS verification is the Confidential Ledger identity certificate.
-            #
-            # However, in this case outbound connections are to the proxy, so the certificate used
-            # for verifying the TLS connection should actually be the test proxy's certificate.
-            # With that in mind, we'll update the file at self.network_certificate_path to be a
-            # certificate bundle including both the ledger's TLS certificate (though technically
-            # unnecessary I think) and the test-proxy certificate. This way the client setup (i.e.
-            # the logic for overriding the default certificate verification) is still tested when
-            # the test-proxy is involved.
-            #
-            # Note the combined bundle should be created *after* any os.remove calls so we don't 
-            # interfere with auto-magic certificate retrieval tests.
-            create_combined_bundle(
-                [self.network_certificate_path, TEST_PROXY_CERT],
-                self.network_certificate_path
-            )
-
-        if not is_aad:
-            # We need to add the certificate-based user as an Administrator.
-            try:
-                await aad_based_client.create_or_update_user(
-                    USER_CERTIFICATE_THUMBPRINT, {"assignedRole": "Administrator"}
-                )
-            except Exception as e:
-                # For API version greater than 2024-08-22-preview, please use the new API at /ledgerUsers
-                pass
-            finally:
-                await aad_based_client.close()
-
-            # Sleep to make sure all replicas know the user is added.
-            await asyncio.sleep(3)
-
-            # Update the options to account for certificate-based authentication.
-            function_recording_options["certificates"] = [
-                PemCertificate(key=USER_CERTIFICATE_PRIVATE_KEY, data=USER_CERTIFICATE_PUBLIC_KEY)
-            ]
-            if is_live():
-                set_function_recording_options(**function_recording_options)
-
-            client = certificate_based_client
-        else:
-            client = aad_based_client
-
-        return client
-
-    async def create_confidentialledger_client_ledger_user(
-        self, endpoint, ledger_id, is_aad,
-    ):
-        # Always explicitly fetch the TLS certificate.
-        network_cert = await self.set_ledger_identity_async(ledger_id)
-
-        # The ACL instance should already have the potential AAD user added as an Administrator.
-        credential = self.get_credential(ConfidentialLedgerClient, is_async=True)
-        aad_based_client = self.create_client_from_credential(
+        certificate_based_client = self.create_client_from_credential(
             ConfidentialLedgerClient,
-            credential=credential,
-            endpoint=endpoint,
-            ledger_certificate_path=self.network_certificate_path,  # type: ignore
-        )
-
-        certificate_credential = ConfidentialLedgerCertificateCredential(
-            certificate_path=self.user_certificate_path
-        )
-        certificate_based_client = ConfidentialLedgerClient(
             credential=certificate_credential,
             endpoint=endpoint,
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
@@ -162,7 +83,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
         if not is_aad:
             # We need to add the certificate-based user as an Administrator.
-            try:
+            try: 
                 await aad_based_client.create_or_update_ledger_user(
                     USER_CERTIFICATE_THUMBPRINT, {"assignedRoles": ["Administrator"]}
                 )
@@ -203,7 +124,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     async def test_append_entry_flow_aad_ledger_user(self, **kwargs):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
-        client = await self.create_confidentialledger_client_ledger_user(
+        client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
         try:
@@ -229,7 +150,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     async def test_append_entry_flow_cert_ledger_user(self, **kwargs):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
-        client = await self.create_confidentialledger_client_ledger_user(
+        client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
         try:
@@ -494,7 +415,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     async def test_user_management_aad_ledger_user(self, **kwargs):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
-        client = await self.create_confidentialledger_client_ledger_user(
+        client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
         try:
@@ -520,78 +441,13 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     async def test_user_management_cert_ledger_user(self, **kwargs):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
-        client = await self.create_confidentialledger_client_ledger_user(
+        client = await self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
         try:
             await self.ledger_user_management_actions(client)
         finally:
             await client.close()
-
-    async def user_management_actions(self, client):
-        aad_user_id = "0" * 36  # AAD Object Ids have length 36
-        cert_user_id = (
-            "7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4"
-            ":77:30:1F"
-        )
-        for user_id in [aad_user_id, cert_user_id]:
-            try:
-                user = await client.create_or_update_user(user_id, {"assignedRole": "Contributor"})
-                assert user["userId"] == user_id
-                assert user["assignedRole"] == "Contributor"
-            except Exception as e:
-                pass
-
-            await asyncio.sleep(3)  # Let the PATCH user operation be committed, just in case.
-
-            try:
-                user = await client.get_user(user_id)
-                assert user["userId"] == user_id
-                assert user["assignedRole"] == "Contributor"
-            except Exception as e:
-                pass
-
-            try:
-                user = await client.create_or_update_user(user_id, {"assignedRole": "Reader"})
-                assert user["userId"] == user_id
-                assert user["assignedRole"] == "Reader"
-            except Exception as e:
-                pass
-
-            await asyncio.sleep(3)  # Let the PATCH user operation be committed, just in case.
-
-            try:
-                user = await client.get_user(user_id)
-                assert user["userId"] == user_id
-                assert user["assignedRole"] == "Reader"
-            except Exception as e:
-                pass
-
-            try:
-                await client.delete_user(user_id)
-            except Exception as e:
-                pass
-
-    async def ledger_user_management_actions(self, client):
-        aad_user_id = "0" * 36  # AAD Object Ids have length 36
-        cert_user_id = (
-            "7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4"
-            ":77:30:1F"
-        )
-        for user_id in [aad_user_id, cert_user_id]:
-            await client.delete_ledger_user(user_id)
-            await client.delete_ledger_user(user_id)
-            user = await client.create_or_update_ledger_user(user_id, {"assignedRoles": ["Contributor"]})
-            assert user["userId"] == user_id
-            assert user["assignedRoles"] == ["Contributor"]
-
-            await asyncio.sleep(3)  # Let the PATCH user operation be committed, just in case.
-
-            user = await client.get_ledger_user(user_id)
-            assert user["userId"] == user_id
-            assert user["assignedRoles"] == ["Contributor"]
-
-            await client.delete_ledger_user(user_id)
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy_async

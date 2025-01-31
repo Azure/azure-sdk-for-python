@@ -367,7 +367,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
-    def test_user_endpoint(self, **kwargs):
+    def test_user_endpoint_must_redirect(self, **kwargs):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
@@ -383,7 +383,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         for user_id in [aad_user_id, cert_user_id]:
             with pytest.raises(exceptions.HttpResponseError) as excinfo:
                 client.create_or_update_user(user_id, {"assignedRole": "Contributor"})
-                print(excinfo)
             assert str(excinfo.value).startswith("(ApiVersionRedirect)")
 
             with pytest.raises(exceptions.HttpResponseError) as excinfo:
@@ -392,7 +391,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
-    def test_ledgerUser_endpoint(self, **kwargs):
+    def test_ledger_user_endpoint(self, **kwargs):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
