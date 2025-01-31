@@ -25,7 +25,7 @@ EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 STORAGE_ACCOUNT = "https://{}.blob.core.windows.net".format(
         os.environ["AZURE_STORAGE_ACCOUNT"])
 BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
-STORAGE_SERVICE_API_VERSION = "2017-11-09"
+STORAGE_SERVICE_API_VERSION = "2019-02-02"
 
 
 async def on_event(partition_context, event):

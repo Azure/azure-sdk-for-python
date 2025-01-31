@@ -8,6 +8,7 @@ EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 STORAGE_ACCOUNT = "https://{}.blob.core.windows.net".format(
         os.environ["AZURE_STORAGE_ACCOUNT"])
 BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
+STORAGE_SERVICE_API_VERSION = "2019-02-02"
 
 
 def on_event(partition_context, event):
@@ -21,6 +22,7 @@ if __name__ == '__main__':
     checkpoint_store = BlobCheckpointStore(
         STORAGE_ACCOUNT,
         container_name=BLOB_CONTAINER_NAME,
+        api_version=STORAGE_SERVICE_API_VERSION,
         credential=DefaultAzureCredential()
     )
     client = EventHubConsumerClient(
