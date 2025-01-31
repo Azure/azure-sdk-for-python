@@ -78,12 +78,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          identifiable or sensitive information. Required.
         :type secret_name: str
         :param parameters: The parameters for setting the secret. Required.
-        :type parameters: ~azure.keyvault.secrets.models.SecretSetParameters
+        :type parameters: ~azure.keyvault.secrets._generated.models.SecretSetParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.SecretBundle
+        :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -107,7 +107,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.SecretBundle
+        :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -131,7 +131,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.SecretBundle
+        :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -151,9 +151,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type secret_name: str
         :param parameters: The parameters for setting the secret. Is one of the following types:
          SecretSetParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.keyvault.secrets.models.SecretSetParameters or JSON or IO[bytes]
+        :type parameters: ~azure.keyvault.secrets._generated.models.SecretSetParameters or JSON or IO[bytes]
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.SecretBundle
+        :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -229,7 +229,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
         :return: DeletedSecretBundle. The DeletedSecretBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.DeletedSecretBundle
+        :rtype: ~azure.keyvault.secrets._generated.models.DeletedSecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -306,12 +306,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param secret_version: The version of the secret. Required.
         :type secret_version: str
         :param parameters: The parameters for update secret operation. Required.
-        :type parameters: ~azure.keyvault.secrets.models.SecretUpdateParameters
+        :type parameters: ~azure.keyvault.secrets._generated.models.SecretUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.SecretBundle
+        :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -341,7 +341,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.SecretBundle
+        :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -371,7 +371,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.SecretBundle
+        :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -395,9 +395,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type secret_version: str
         :param parameters: The parameters for update secret operation. Is one of the following types:
          SecretUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.keyvault.secrets.models.SecretUpdateParameters or JSON or IO[bytes]
+        :type parameters: ~azure.keyvault.secrets._generated.models.SecretUpdateParameters or JSON or IO[bytes]
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.SecretBundle
+        :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -477,7 +477,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          specified, the latest version of the secret is returned. Required.
         :type secret_version: str
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.SecretBundle
+        :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -546,7 +546,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          service will return up to 25 results. Default value is None.
         :paramtype maxresults: int
         :return: An iterator like instance of SecretItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.secrets.models.SecretItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.secrets._generated.models.SecretItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -640,7 +640,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          service will return up to 25 results. Default value is None.
         :paramtype maxresults: int
         :return: An iterator like instance of SecretItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.secrets.models.SecretItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.secrets._generated.models.SecretItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -734,7 +734,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :paramtype maxresults: int
         :return: An iterator like instance of DeletedSecretItem
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.secrets.models.DeletedSecretItem]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.secrets._generated.models.DeletedSecretItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -823,7 +823,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
         :return: DeletedSecretBundle. The DeletedSecretBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.DeletedSecretBundle
+        :rtype: ~azure.keyvault.secrets._generated.models.DeletedSecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -944,7 +944,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param secret_name: The name of the deleted secret. Required.
         :type secret_name: str
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.SecretBundle
+        :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1010,7 +1010,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
         :return: BackupSecretResult. The BackupSecretResult is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.BackupSecretResult
+        :rtype: ~azure.keyvault.secrets._generated.models.BackupSecretResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1076,12 +1076,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         secrets/restore permission.
 
         :param parameters: The parameters to restore the secret. Required.
-        :type parameters: ~azure.keyvault.secrets.models.SecretRestoreParameters
+        :type parameters: ~azure.keyvault.secrets._generated.models.SecretRestoreParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.SecretBundle
+        :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1100,7 +1100,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.SecretBundle
+        :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1119,7 +1119,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.SecretBundle
+        :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1134,9 +1134,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         :param parameters: The parameters to restore the secret. Is one of the following types:
          SecretRestoreParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.keyvault.secrets.models.SecretRestoreParameters or JSON or IO[bytes]
+        :type parameters: ~azure.keyvault.secrets._generated.models.SecretRestoreParameters or JSON or IO[bytes]
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
-        :rtype: ~azure.keyvault.secrets.models.SecretBundle
+        :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
