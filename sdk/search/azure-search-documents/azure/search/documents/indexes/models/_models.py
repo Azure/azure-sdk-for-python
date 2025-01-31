@@ -108,7 +108,7 @@ class SearchIndexerSkillset(_serialization.Model):
         assert len(generated_skills) == len(self.skills)
         encryption_key = getattr(self, "encryption_key", None)
         return _SearchIndexerSkillset(
-            name=getattr(self, "name", None),
+            name=getattr(self, "name", ""),
             description=getattr(self, "description", None),
             skills=generated_skills,
             cognitive_services_account=getattr(self, "cognitive_services_account", None),
