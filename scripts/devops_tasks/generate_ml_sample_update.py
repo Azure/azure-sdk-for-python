@@ -8,8 +8,7 @@ from azure.storage.blob import BlobServiceClient
 from azure.identity import AzurePowerShellCredential, ChainedTokenCredential, AzureCliCredential
 
 UPLOAD_PATTERN = "python/distributions/ml-sample/{build_id}/{filename}"
-DEFAULT_CONTAINER = os.getenv("BLOB_CONTAINER", "$web")
-CONNECTION_STRING = os.getenv("BLOB_CONNECTION_STRING", None)
+BLOB_CONTAINER = "$web"
 
 TEST_INSTALL_TEMPLATE = """# <az_ml_sdk_test_install>
 {install_command}
@@ -38,7 +37,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="This python script modifies build.sh files for the azure ml samples repository. Inputs are a "
         + "folder containing the azure-ml whl, the root of a cloned azureml-samples repo, and an optional build id. "
-        + "Retrieves the necessary connection string from BLOB_CONNECTION_STRING."
     )
 
     parser.add_argument(
@@ -77,7 +75,7 @@ if __name__ == "__main__":
     credential_chain = ChainedTokenCredential(AzureCliCredential(), AzurePowerShellCredential())
 
     blob_service_client = BlobServiceClient(account_url=f"https://{args.storage_account_name}.blob.core.windows.net", credential=credential_chain)
-    container_client = blob_service_client.get_container_client(DEFAULT_CONTAINER)
+    container_client = blob_service_client.get_container_client(BLOB_CONTAINER)
     to_be_installed = []
 
     whls = glob.glob(target_glob)
@@ -90,7 +88,9 @@ if __name__ == "__main__":
 
             with open(whl, "rb") as data:
                 result = blob_client.upload_blob(data=data, overwrite=True)
-                to_be_installed.append(blob_client.primary_endpoint)
+                url = blob_client.primary_endpoint
+                url = url.replace(f"https://{args.storage_account_name}.blob.core.windows.net/{BLOB_CONTAINER}/", f"https://{args.storage_account_name}.z5.web.core.windows.net/")
+                to_be_installed.append(url)
         else:
             print("Operated on non-whl file or folder {}".format(whl))
             exit(1)
