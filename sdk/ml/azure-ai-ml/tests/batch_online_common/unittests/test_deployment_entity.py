@@ -7,7 +7,11 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_batch_deployment, load_online_deployment
 from azure.ai.ml._restclient.v2022_10_01.models import BatchOutputAction, EndpointComputeType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import OnlineDeployment as RestOnlineDeploymentData
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    OnlineDeployment as RestOnlineDeploymentData,
+    ManagedOnlineDeployment as RestManagedOnlineDeployment,
+    KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,    
+    )
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities import (
     BatchDeployment,
@@ -66,6 +70,7 @@ class TestOnlineDeploymentFromYAML:
     BLUE_ONLINE_DEPLOYMENT_FULL = "tests/test_configs/deployments/online/online_deployment_blue_full.yaml"
     BLUE_K8S_ONLINE_DEPLOYMENT = "tests/test_configs/deployments/online/online_deployment_blue_k8s.yaml"
     MINIMAL_DEPLOYMENT = "tests/test_configs/deployments/online/online_endpoint_deployment_k8s_minimum.yml"
+    MANAGED_DEPLOYMENT_FULL = "tests/test_configs/deployments/online/online_deployment_managed_full.yml"
     PREVIEW_DEPLOYMENT = "tests/test_configs/deployments/online/online_deployment_1.yaml"
 
     def test_generic_deployment(self) -> None:
@@ -196,6 +201,21 @@ class TestOnlineDeploymentFromYAML:
         with pytest.raises(Exception) as exc:
             blue._merge_with(blue_copy)
         assert "are not matched when merging" in str(exc.value)
+    
+    def test_managed_deployment_merge(self) -> None:
+        blue = load_online_deployment(TestOnlineDeploymentFromYAML.MINIMAL_DEPLOYMENT)
+        blue.scale_settings = TargetUtilizationScaleSettings(min_instances=2, max_instances=5, target_utilization_percentage=8, polling_interval=10)
+        blue_copy = copy.deepcopy(blue)
+        blue_copy.scale_settings = TargetUtilizationScaleSettings(min_instances=3, max_instances=4, target_utilization_percentage=11, polling_interval=100)
+        blue_copy.instance_type = "gpuinstance"
+
+        blue._merge_with(blue_copy)
+
+        assert blue.instance_type == blue_copy.instance_type
+        assert blue.scale_settings.min_instances == blue_copy.scale_settings.min_instances
+        assert blue.scale_settings.max_instances == blue_copy.scale_settings.max_instances
+        assert blue.scale_settings.target_utilization_percentage == blue_copy.scale_settings.target_utilization_percentage
+        assert blue.scale_settings.polling_interval == blue_copy.scale_settings.polling_interval
 
     def test_k8s_deployment(self) -> None:
         with open(TestOnlineDeploymentFromYAML.BLUE_K8S_ONLINE_DEPLOYMENT, "r") as f:
@@ -307,7 +327,65 @@ class TestOnlineDeploymentFromYAML:
         for key, value in target.items():
             if isinstance(value, str):
                 assert getattr(blue, key) == value
+    
+    def test_managed_online_deployment_to_rest_object(self) -> None:
+        managed_deployment = load_online_deployment(TestOnlineDeploymentFromYAML.MANAGED_DEPLOYMENT_FULL)
 
+        managed_deployment_rest = managed_deployment._to_rest_object(location="westus2")
+
+        assert isinstance(managed_deployment_rest.properties, RestManagedOnlineDeployment)
+        assert managed_deployment_rest.properties.code_configuration.code_id == managed_deployment.code_configuration.code
+        assert managed_deployment_rest.properties.code_configuration.scoring_script == managed_deployment.code_configuration.scoring_script
+        assert managed_deployment_rest.properties.environment_id == managed_deployment.environment.id
+        assert managed_deployment_rest.properties.model == managed_deployment.model.id
+        assert managed_deployment_rest.properties.model_mount_path == managed_deployment.model_mount_path
+        assert managed_deployment_rest.properties.scale_settings.scale_type.lower() == managed_deployment.scale_settings.type.lower()
+        assert managed_deployment_rest.properties.properties == managed_deployment.properties
+        assert managed_deployment_rest.properties.description == managed_deployment.description
+        assert managed_deployment_rest.properties.environment_variables == managed_deployment.environment_variables
+        assert managed_deployment_rest.properties.app_insights_enabled == managed_deployment.app_insights_enabled
+        assert managed_deployment_rest.properties.request_settings.max_concurrent_requests_per_instance == managed_deployment.request_settings.max_concurrent_requests_per_instance
+        assert managed_deployment_rest.properties.request_settings.max_queue_wait == 'PT1S'
+        assert managed_deployment_rest.properties.request_settings.request_timeout == 'PT10S'
+        assert managed_deployment_rest.properties.liveness_probe.timeout == 'PT10S'
+        assert managed_deployment_rest.properties.readiness_probe.timeout == 'PT10S'
+        assert managed_deployment_rest.properties.data_collector.rolling_rate == 'hour'
+        assert managed_deployment_rest.properties.data_collector.collections['model_inputs'].data_collection_mode == 'enabled'
+        assert managed_deployment_rest.properties.data_collector.request_logging.capture_headers == managed_deployment.data_collector.request_logging.capture_headers
+        assert managed_deployment_rest.properties.egress_public_network_access == managed_deployment.egress_public_network_access
+        assert managed_deployment_rest.sku.name == 'Default'
+        assert managed_deployment_rest.sku.capacity == managed_deployment.instance_count
+        assert managed_deployment_rest.location == 'westus2'
+        assert managed_deployment_rest.tags == managed_deployment.tags
+    
+    def test_kubernetes_online_deployment_to_rest_object(self) -> None:
+        kubernetes_deployment = load_online_deployment(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT_FULL)
+        kubernetes_deployment.scale_settings = TargetUtilizationScaleSettings(min_instances=2, max_instances=5, target_utilization_percentage=8, polling_interval=10)
+
+        kubernetes_deployment_rest = kubernetes_deployment._to_rest_object(location="westus2")
+
+        assert isinstance(kubernetes_deployment_rest.properties, RestKubernetesOnlineDeployment)
+        assert kubernetes_deployment_rest.properties.code_configuration.code_id == kubernetes_deployment.code_configuration.code
+        assert kubernetes_deployment_rest.properties.code_configuration.scoring_script == kubernetes_deployment.code_configuration.scoring_script
+        assert kubernetes_deployment_rest.properties.environment_id == kubernetes_deployment.environment.id
+        assert kubernetes_deployment_rest.properties.model == kubernetes_deployment.model.id
+        assert kubernetes_deployment_rest.properties.model_mount_path == kubernetes_deployment.model_mount_path
+        assert kubernetes_deployment_rest.properties.scale_settings.scale_type == 'TargetUtilization'
+        assert kubernetes_deployment_rest.properties.scale_settings.min_instances == kubernetes_deployment.scale_settings.min_instances
+        assert kubernetes_deployment_rest.properties.properties == kubernetes_deployment.properties
+        assert kubernetes_deployment_rest.properties.description == kubernetes_deployment.description
+        assert kubernetes_deployment_rest.properties.environment_variables == kubernetes_deployment.environment_variables
+        assert kubernetes_deployment_rest.properties.app_insights_enabled == kubernetes_deployment.app_insights_enabled
+        assert kubernetes_deployment_rest.properties.request_settings.max_concurrent_requests_per_instance == kubernetes_deployment.request_settings.max_concurrent_requests_per_instance
+        assert kubernetes_deployment_rest.properties.request_settings.max_queue_wait == 'PT1S'
+        assert kubernetes_deployment_rest.properties.request_settings.request_timeout == 'PT10S'
+        assert kubernetes_deployment_rest.properties.liveness_probe.timeout == 'PT10S'
+        assert kubernetes_deployment_rest.properties.readiness_probe.timeout == 'PT10S'
+        assert kubernetes_deployment_rest.sku.name == 'Default'
+        assert kubernetes_deployment_rest.sku.capacity == kubernetes_deployment.instance_count
+        assert kubernetes_deployment_rest.location == 'westus2'
+        assert kubernetes_deployment_rest.tags == kubernetes_deployment.tags
+        
 
 @pytest.mark.unittest
 class TestBatchDeploymentSDK:
@@ -348,7 +426,7 @@ class TestBatchDeploymentSDK:
         assert rest_representation_properties.error_threshold == target["error_threshold"]
         assert rest_representation_properties.output_action == BatchOutputAction.APPEND_ROW
         assert rest_representation_properties.description == target["description"]
-
+    
     def test_batch_deployment_promoted_properties(self) -> None:
         deployment = BatchDeployment(
             name="non-mlflow-deployment",
