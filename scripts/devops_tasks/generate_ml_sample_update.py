@@ -90,8 +90,9 @@ if __name__ == "__main__":
             with open(whl, "rb") as data:
                 result = blob_client.upload_blob(data=data, overwrite=True)
                 url = blob_client.primary_endpoint
-                print(url)
-                print(type(url))
+
+                # replace the original blob uri with the static website style uri
+                # this is such that the install command can be invoked directly without needing to authenticate to the storage account
                 url = url.replace(f"https://{args.storage_account_name}.blob.core.windows.net/%24web/", f"https://{args.storage_account_name}.z5.web.core.windows.net/")
                 to_be_installed.append(url)
         else:
