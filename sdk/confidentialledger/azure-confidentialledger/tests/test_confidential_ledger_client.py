@@ -1,20 +1,10 @@
 import hashlib
 import os
-import random
-import string
-import sys
-import logging
 import time
 from typing import Dict, List, Union
 from urllib.parse import urlparse
 from azure.core import exceptions
-
 import pytest
-
-logging.basicConfig(level=logging.DEBUG,
-              format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-               stream=sys.stdout)
-logger = logging.getLogger(__name__)
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils import (
@@ -614,7 +604,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         time.sleep(3)
 
         roles = client.get_user_defined_role(role_name=role_name)
-        logger.info(roles)
         assert roles[0]["role_name"] == role_name
         assert roles[0]["role_actions"] == ["/content/read"]
 
@@ -626,7 +615,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         time.sleep(3)
 
         roles = client.get_user_defined_role(role_name=role_name)
-        logger.info(roles)
         assert roles[0]["role_name"] == role_name
         assert roles[0]["role_actions"] == ["/content/write", "/content/read"]
 
