@@ -26,18 +26,22 @@ class CodeReporter:
     def __init__(
             self,
             pkg_dir: str,
-            pkg_name: Optional[str],
-            pkg_version: Optional[str],
-            target_module: Optional[str],
-            in_venv: Optional[bool] = False,
-            latest_pypi_version: Optional[bool] = False
+            **kwargs
         ):
         self.pkg_dir = pkg_dir
-        self.in_venv = in_venv
-        self.pkg_details = ParsedSetup.from_path(pkg_dir)
-        self.pkg_name = pkg_name or self.pkg_details.name
-        self.pkg_version = pkg_version or self._check_version(latest_pypi_version)
-        self.target_module = target_module or self.pkg_details.namespace
+        self.in_venv = kwargs.get("in_venv", False)
+        self.pkg_name = kwargs.get("pkg_name", None)
+        self.target_module = kwargs.get("target_module", None)
+        try:
+            self.pkg_details = ParsedSetup.from_path(self.pkg_dir)
+            # The package name may not be set, so we need to populate the value from the setup.py
+            self.pkg_name = self.pkg_name or self.pkg_details.name
+            # The target module may not be set, so we need to populate the value from the setup.py
+            self.target_module = self.target_module or self.pkg_details.namespace
+        except:
+            _LOGGER.warning(f"Unable to parse setup.py in {pkg_dir}. If the pkg_dir is incorrect or if pkg_name and target_module aren't specified this can result in unexpected failures.")
+        # Must have the pkg_name assigned correctly, before attempting to get the pkg_version
+        self.pkg_version = kwargs.get("pkg_version", None) or self._check_version(kwargs.get("latest_pypi_version", False))
 
     def report(self) -> None:
         """Creates a stable_report.json and a current_report.json for the target package.
@@ -69,23 +73,52 @@ class CodeReporter:
                     self.pkg_version
                 ]
                 try:
-                    subprocess.check_call(args)
+                    self._find_installed_source_package(self.pkg_name, venv.env_dir)
+                    return
                 except subprocess.CalledProcessError:
                     _LOGGER.warning(f"Version {self.pkg_version} failed to create a JSON report.")
                     exit(1)
 
         public_api = self.build_library_report()
 
-        if self.in_venv:
-            with open("stable.json", "w") as fd:
-                json.dump(public_api, fd, indent=2)
-            _LOGGER.info("stable.json is written.")
-            return
-
         with open("current.json", "w") as fd:
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("current.json is written.")
 
+    def _find_installed_source_package(self, pkg_name: str, venv_path: str):
+        import importlib.util
+        import sys
+        from pathlib import Path
+
+        pkg_name = pkg_name.replace("-", ".")
+
+        # Save the original sys.path
+        original_sys_path = sys.path.copy()
+        
+        # Determine the site-packages path based on the operating system
+        if sys.platform == 'win32':
+            site_packages_path = Path(venv_path) / 'Lib' / 'site-packages'
+        else:
+            site_packages_path = Path(venv_path) / 'lib' / f'python{sys.version_info.major}.{sys.version_info.minor}' / 'site-packages'
+        
+        # Add the virtual environment's site-packages directory to sys.path
+        sys.path.insert(0, str(site_packages_path))
+        
+        # Check if the package is installed
+        package_spec = importlib.util.find_spec(pkg_name)
+        if not package_spec:
+            _LOGGER.warning(f"Version {self.pkg_version} of {self.pkg_name} not found in the virtual environment.")
+            exit(1)
+
+        source_reporter = CodeReporter(os.path.dirname(package_spec.origin), pkg_name=self.pkg_name, target_module=self.target_module, in_venv=True, pkg_version=self.pkg_version)
+        
+        public_api = source_reporter.build_library_report()
+        with open("stable.json", "w") as fd:
+            json.dump(public_api, fd, indent=2)
+        _LOGGER.info("stable.json is written.")
+
+        # Restore the original sys.path
+        sys.path = original_sys_path
 
     def build_library_report(self) -> Dict:
         module = importlib.import_module(self.target_module)
