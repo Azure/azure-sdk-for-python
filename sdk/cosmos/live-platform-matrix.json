@@ -14,19 +14,29 @@
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosSplit"
-        }
+        },
+        "Ubuntu2004_313_split": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.13",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosSplit"
+        },
+        "TestMarkArgument": "cosmosSplit"
       }
     },
     {
       "MacTestConfig": {
-        "macos311_long": {
+        "macos311_query": {
           "OSVmImage": "env:MACVMIMAGE",
           "Pool": "env:MACPOOL",
           "PythonVersion": "3.11",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosLong"
-        }
+          "TestMarkArgument": "cosmosQuery"
+        },
+        "TestMarkArgument": "cosmosQuery"
       }
     },
     {
@@ -38,7 +48,8 @@
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosQuery"
-        }
+        },
+        "TestMarkArgument": "cosmosQuery"
       }
     },
     {
@@ -50,19 +61,12 @@
           "CoverageArg": "",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosQuery"
-        }
+        },
+        "TestMarkArgument": "cosmosQuery"
       }
     },
     {
-      "Config": {
-        "Ubuntu2004_313_query": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.13",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosQuery"
-        },
+      "WindowsConfig": {
         "Windows2022_38_long": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
           "Pool": "env:WINDOWSPOOL",
@@ -71,13 +75,13 @@
           "TestSamples": "false",
           "TestMarkArgument": "cosmosLong"
         },
-        "Windows2022_310_split": {
+        "Windows2022_310_long": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
           "Pool": "env:WINDOWSPOOL",
           "PythonVersion": "3.10",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosSplit"
+          "TestMarkArgument": "cosmosLong"
         },
         "Windows2022_312_long": {
           "OSVmImage": "env:WINDOWSVMIMAGE",
@@ -86,7 +90,8 @@
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosLong"
-        }
+        },
+        "TestMarkArgument": "cosmosLong"
       }
     }
   ]
