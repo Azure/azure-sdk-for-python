@@ -391,13 +391,25 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
-    def test_ledger_user_endpoint(self, **kwargs):
+    def test_user_management_aad_user(self, **kwargs):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
             confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
-    
+        self.user_management_actions(client)
+
+    @ConfidentialLedgerPreparer()
+    @recorded_by_proxy
+    def test_user_management_cert_user(self, **kwargs):
+        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
+        client = self.create_confidentialledger_client(
+            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+        )
+        self.user_management_actions(client)
+
+    def user_management_actions(self, client):    
         aad_user_id = "0" * 36  # AAD Object Ids have length 36
         cert_user_id = (
             "7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4"
@@ -406,6 +418,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
         for user_id in [aad_user_id, cert_user_id]:
             client.delete_ledger_user(user_id)
+
             time.sleep(3)  # Let the DELETE user operation be committed, just in case.
 
             user = client.create_or_update_ledger_user(user_id, {"assignedRoles": ["Contributor"]})
@@ -413,6 +426,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             assert user["assignedRoles"] == ["Contributor"]
 
             time.sleep(3)  # Let the PATCH user operation be committed, just in case.
+
             user = client.get_ledger_user(user_id)
             assert user["userId"] == user_id
             assert user["assignedRoles"] == ["Contributor"]
@@ -428,6 +442,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             assert user["assignedRoles"] == ["Contributor", "Reader"]
 
             client.delete_ledger_user(user_id)
+
             time.sleep(3)  # Let the DELETE user operation be committed, just in case.
 
     @ConfidentialLedgerPreparer()

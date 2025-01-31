@@ -46,8 +46,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         certificate_credential = ConfidentialLedgerCertificateCredential(
             certificate_path=self.user_certificate_path
         )
-        certificate_based_client = self.create_client_from_credential(
-            ConfidentialLedgerClient,
+        certificate_based_client = ConfidentialLedgerClient(
             credential=certificate_credential,
             endpoint=endpoint,
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
@@ -121,33 +120,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy_async
-    async def test_append_entry_flow_aad_ledger_user(self, **kwargs):
-        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
-        confidentialledger_id = kwargs.pop("confidentialledger_id")
-        client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
-        )
-        try:
-            await self.append_entry_flow_actions(client)
-        finally:
-            await client.close()
-
-    @ConfidentialLedgerPreparer()
-    @recorded_by_proxy_async
     async def test_append_entry_flow_cert_user(self, **kwargs):
-        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
-        confidentialledger_id = kwargs.pop("confidentialledger_id")
-        client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
-        )
-        try:
-            await self.append_entry_flow_actions(client)
-        finally:
-            await client.close()
-
-    @ConfidentialLedgerPreparer()
-    @recorded_by_proxy_async
-    async def test_append_entry_flow_cert_ledger_user(self, **kwargs):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
@@ -412,19 +385,6 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy_async
-    async def test_user_management_aad_ledger_user(self, **kwargs):
-        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
-        confidentialledger_id = kwargs.pop("confidentialledger_id")
-        client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
-        )
-        try:
-            await self.ledger_user_management_actions(client)
-        finally:
-            await client.close()
-
-    @ConfidentialLedgerPreparer()
-    @recorded_by_proxy_async
     async def test_user_management_cert_user(self, **kwargs):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
@@ -436,18 +396,39 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         finally:
             await client.close()
 
-    @ConfidentialLedgerPreparer()
-    @recorded_by_proxy_async
-    async def test_user_management_cert_ledger_user(self, **kwargs):
-        confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
-        confidentialledger_id = kwargs.pop("confidentialledger_id")
-        client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+    async def user_management_actions(self, client):
+        aad_user_id = "0" * 36  # AAD Object Ids have length 36
+        cert_user_id = (
+            "7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4"
+            ":77:30:1F"
         )
-        try:
-            await self.ledger_user_management_actions(client)
-        finally:
-            await client.close()
+        for user_id in [aad_user_id, cert_user_id]:
+            await client.delete_ledger_user(user_id)
+
+            await asyncio.sleep(3)  # Let the DELETE user operation be committed, just in case.
+
+            user = await client.create_or_update_ledger_user(user_id, {"assignedRoles": ["Contributor"]})
+            assert user["userId"] == user_id
+            assert user["assignedRoles"] == ["Contributor"]
+
+            await asyncio.sleep(3)  # Let the PATCH user operation be committed, just in case.
+
+            user = await client.get_ledger_user(user_id)
+            assert user["userId"] == user_id
+            assert user["assignedRoles"] == ["Contributor"]
+
+            user = await client.create_or_update_ledger_user(user_id, {"assignedRoles": ["Reader"]})
+            assert user["userId"] == user_id
+            assert user["assignedRoles"] == ["Contributor", "Reader"]
+
+            await asyncio.sleep(3)  # Let the PATCH user operation be committed, just in case.
+
+            user = await client.get_ledger_user(user_id)
+            assert user["userId"] == user_id
+            assert user["assignedRoles"] == ["Contributor", "Reader"]
+
+            await client.delete_ledger_user(user_id)
+            await asyncio.sleep(3)  # Let the DELETE user operation be committed, just in case.
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy_async
