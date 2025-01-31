@@ -372,8 +372,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
                 assert connection_retry_policy.counter == 3
-                # 4 total requests for each in-region (hub -> write locational endpoint -> hub)
-                assert len(connection_retry_policy.request_endpoints) == 12
+                # 4 total requests for each in-region (hub -> write locational endpoint)
+                assert len(connection_retry_policy.request_endpoints) == 8
             except CosmosHttpResponseError as e:
                 print(e)
             finally:
@@ -420,8 +420,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
         read_regions = ["West US", "East US"]
         read_locations = []
         for loc in read_regions:
-            locational_endpoint = _global_endpoint_manager_async._GlobalEndpointManager.GetLocationalEndpoint(endpoint, loc)
-            read_locations.append({'databaseAccountEndpoint': locational_endpoint, 'name': loc})
+            read_locations.append({'databaseAccountEndpoint': endpoint, 'name': loc})
         write_regions = ["West US"]
         write_locations = []
         for loc in write_regions:

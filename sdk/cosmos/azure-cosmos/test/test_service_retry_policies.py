@@ -282,8 +282,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
         read_regions = ["West US", "East US"]
         read_locations = []
         for loc in read_regions:
-            locational_endpoint = _global_endpoint_manager._GlobalEndpointManager.GetLocationalEndpoint(endpoint, loc)
-            read_locations.append({'databaseAccountEndpoint': locational_endpoint, 'name': loc})
+            read_locations.append({'databaseAccountEndpoint': endpoint, 'name': loc})
         write_regions = ["West US"]
         write_locations = []
         for loc in write_regions:
