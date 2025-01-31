@@ -1,4 +1,4 @@
 directory: specification/loadtestservice/LoadTestService
-commit: 63b63b060d62b3ff08fcc4685ddc72246fc90b79 # TODO(mitsha): Change it to a main branch commit
+commit: 7dcb1704183a4bfc6044e39397cfc829c9acde4c
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 
