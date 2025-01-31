@@ -303,64 +303,6 @@ def encode_double(output: bytearray, value: float, with_constructor: bool = True
     output.extend(_construct(ConstructorBytes.double, with_constructor))
     output.extend(struct.pack(">d", value))
 
-def encode_decimal32(output: bytearray, value: Decimal, with_constructor: bool = True, **kwargs: Any) -> None:
-    """
-    <encoding code="0x84" category="fixed" width="4" label="IEEE 754-2008 decimal32"/>
-
-    :param bytearray output: The output buffer to write to.
-    :param decimal value: The decimal to encode.
-    :param bool with_constructor: Whether to include the constructor byte.
-    """
-    output.extend(_construct(ConstructorBytes.decimal32, with_constructor))
-    sign, digits, exponent = value.as_tuple()
-    significand = int("".join(map(str, digits)))
-
-    # Split significand into high and low parts
-    high = significand >> 32
-    low = significand & ((1 << 32) - 1)
-
-    biased_exponent = exponent + 6176
-
-    # Adjust high part based on biased exponent
-    if high >> 23 == 1:
-        high = (high & 0x7FFFFF) | ((biased_exponent & 0xFF) << 23)
-    else:
-        high |= biased_exponent << 23
-
-    # Add sign bit to high part
-    high |= sign << 31
-
-    output.extend(struct.pack(">I", high))
-
-def encode_decimal64(output: bytearray, value: Decimal, with_constructor: bool = True, **kwargs: Any) -> None:
-    """
-    <encoding code="0x84" category="fixed" width="8" label="IEEE 754-2008 decimal64"/>
-
-    :param bytearray output: The output buffer to write to.
-    :param decimal value: The decimal to encode.
-    :param bool with_constructor: Whether to include the constructor byte.
-    """
-    output.extend(_construct(ConstructorBytes.decimal64, with_constructor))
-    sign, digits, exponent = value.as_tuple()
-    significand = int("".join(map(str, digits)))
-
-    # Split significand into high and low parts
-    high = significand >> 32
-    low = significand & ((1 << 32) - 1)
-
-    biased_exponent = exponent + 6176
-
-    # Adjust high part based on biased exponent
-    if high >> 52 == 1:
-        high = (high & 0x7FFFFFFFFFFFF) | ((biased_exponent & 0x7FF) << 52)
-    else:
-        high |= biased_exponent << 52
-
-    # Add sign bit to high part
-    high |= sign << 63
-
-    output.extend(struct.pack(">Q", high))
-    output.extend(struct.pack(">I", low))
 
 def encode_decimal128(output: bytearray, value: Decimal, with_constructor: bool = True, **kwargs: Any) -> None:
     """
@@ -877,16 +819,7 @@ def encode_unknown(output: bytearray, value: Optional[object], **kwargs: Any) ->
     elif isinstance(value, dict):
         encode_map(output, value, **kwargs)
     elif isinstance(value, Decimal):
-        precision = len(value.as_tuple().digits)
-        exponent = value.as_tuple().exponent
-        if isinstance(exponent, int):
-            exponent = abs(exponent)
-            if precision <= 9 and exponent <= 9:
-                encode_decimal32(output, value, **kwargs)
-            elif precision <= 16 and exponent <= 384:
-                encode_decimal64(output, value, **kwargs)
-            elif precision <= 34 and exponent <= 6144:
-                encode_decimal128(output, value, **kwargs)
+        encode_decimal128(output, value, **kwargs)
     else:
         raise TypeError("Unable to encode unknown value: {}".format(value))
 

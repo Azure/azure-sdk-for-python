@@ -33,8 +33,6 @@ class AMQPTypes:
     map = "MAP"
     array = "ARRAY"
     described = "DESCRIBED"
-    decimal32 = "DECIMAL32"
-    decimal64 = "DECIMAL64"
     decimal128 = "DECIMAL128"
 
 
