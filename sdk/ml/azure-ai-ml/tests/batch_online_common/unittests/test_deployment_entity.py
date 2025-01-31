@@ -615,3 +615,11 @@ class TestOnlineDeploymentSDK:
             with pytest.raises(DeploymentException) as exc:
                 OnlineDeployment._from_rest_object(rest_object)
             assert str(exc.value) == "Unsupported online endpoint type Other."
+    
+    def test_online_deployment_from_rest_object_unsupported_scale_settings_type(self) -> None:
+        with open("./tests/test_configs/deployments/online/online_deployment_kubernetes_rest.json", "r") as f:
+            rest_object = RestOnlineDeploymentData.deserialize(json.load(f))
+            rest_object.properties.scale_settings.scale_type = "Other"
+            with pytest.raises(DeploymentException) as exc:
+                OnlineDeployment._from_rest_object(rest_object)
+            assert str(exc.value) == "Unsupported online scale setting type Other."
