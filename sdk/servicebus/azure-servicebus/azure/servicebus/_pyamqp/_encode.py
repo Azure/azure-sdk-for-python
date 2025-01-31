@@ -74,6 +74,8 @@ _FRAME_OFFSET = b"\x02"
 _FRAME_TYPE = b"\x00"
 AQMPSimpleType = Union[bool, float, str, bytes, uuid.UUID, None]
 
+_DECIMAl128bias = 6176
+
 
 def _construct(byte: bytes, construct: bool) -> bytes:
     return byte if construct else b""
@@ -320,7 +322,10 @@ def encode_decimal128(output: bytearray, value: Decimal, with_constructor: bool 
     high = significand >> 64
     low = significand & ((1 << 64) - 1)
 
-    biased_exponent = exponent + 6176
+    if isinstance(exponent, int):
+        biased_exponent = exponent + _DECIMAl128bias
+    else:
+        raise ValueError(f"Invalid exponent type: {type(exponent)}")
 
     # Adjust high part based on biased exponent
     if high >> 49 == 1:
