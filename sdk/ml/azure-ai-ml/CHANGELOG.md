@@ -9,7 +9,7 @@
 
 ### Other Changes
 
-- Adding support for Python 3.13. Ensuring that azureml-dataprep-rslex is only installed for Python versions below 3.13.
+- Adding support for Python 3.13. Ensuring that azureml-dataprep-rslex is only installed for Python versions below 3.13. This change may break if `Annotated` used directly without parameters.
 
 ## 1.24.0 (2025-01-07)
 
