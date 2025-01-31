@@ -20,14 +20,11 @@ STORAGE_ENV_KEYS = [
 
 
 def get_live_storage_blob_client(storage_account):
-    try:
-        storage_account = os.environ[storage_account]
-        container_name = str(uuid.uuid4())
-        blob_service_client = BlobServiceClient(storage_account, credential=DefaultAzureCredential())
-        blob_service_client.create_container(container_name)
-        return storage_account, container_name
-    except:
-        pytest.skip("Storage blob client can't be created")
+    storage_account = os.environ[storage_account]
+    container_name = str(uuid.uuid4())
+    blob_service_client = BlobServiceClient(storage_account, credential=DefaultAzureCredential())
+    blob_service_client.create_container(container_name)
+    return storage_account, container_name
 
 
 def remove_live_storage_blob_client(storage_account, container_name):
