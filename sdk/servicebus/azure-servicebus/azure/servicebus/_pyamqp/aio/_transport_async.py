@@ -262,8 +262,7 @@ class AsyncTransport(AsyncTransportMixin):  # pylint: disable=too-many-instance-
             sock = self.writer.transport.get_extra_info("socket")
             if sock:
                 sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
-                # TODO: Investigate: doesn't work in WSL when running with amqpproxy.
-                #self._set_socket_options(sock, self.socket_settings)
+                self._set_socket_options(sock, self.socket_settings)
 
         except (OSError, IOError, SSLError) as e:
             _LOGGER.info("Transport connect failed: %r", e, extra=self.network_trace_params)
