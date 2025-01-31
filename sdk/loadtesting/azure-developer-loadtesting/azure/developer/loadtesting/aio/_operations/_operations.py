@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,7 +14,16 @@ from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeV
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, StreamClosedError, StreamConsumedError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
@@ -22,7 +32,43 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
-from ..._operations._operations import build_load_test_administration_begin_upload_test_file_request, build_load_test_administration_create_or_update_app_components_request, build_load_test_administration_create_or_update_server_metrics_config_request, build_load_test_administration_create_or_update_test_profile_request, build_load_test_administration_create_or_update_test_request, build_load_test_administration_delete_test_file_request, build_load_test_administration_delete_test_profile_request, build_load_test_administration_delete_test_request, build_load_test_administration_get_app_components_request, build_load_test_administration_get_server_metrics_config_request, build_load_test_administration_get_test_file_request, build_load_test_administration_get_test_profile_request, build_load_test_administration_get_test_request, build_load_test_administration_list_test_files_request, build_load_test_administration_list_test_profiles_request, build_load_test_administration_list_tests_request, build_load_test_run_begin_test_profile_run_request, build_load_test_run_begin_test_run_request, build_load_test_run_create_or_update_app_components_request, build_load_test_run_create_or_update_server_metrics_config_request, build_load_test_run_delete_test_profile_run_request, build_load_test_run_delete_test_run_request, build_load_test_run_get_app_components_request, build_load_test_run_get_metric_definitions_request, build_load_test_run_get_metric_namespaces_request, build_load_test_run_get_server_metrics_config_request, build_load_test_run_get_test_profile_run_request, build_load_test_run_get_test_run_file_request, build_load_test_run_get_test_run_request, build_load_test_run_list_metric_dimension_values_request, build_load_test_run_list_metrics_request, build_load_test_run_list_test_profile_runs_request, build_load_test_run_list_test_runs_request, build_load_test_run_stop_test_profile_run_request, build_load_test_run_stop_test_run_request
+from ..._operations._operations import (
+    build_load_test_administration_begin_upload_test_file_request,
+    build_load_test_administration_create_or_update_app_components_request,
+    build_load_test_administration_create_or_update_server_metrics_config_request,
+    build_load_test_administration_create_or_update_test_profile_request,
+    build_load_test_administration_create_or_update_test_request,
+    build_load_test_administration_delete_test_file_request,
+    build_load_test_administration_delete_test_profile_request,
+    build_load_test_administration_delete_test_request,
+    build_load_test_administration_get_app_components_request,
+    build_load_test_administration_get_server_metrics_config_request,
+    build_load_test_administration_get_test_file_request,
+    build_load_test_administration_get_test_profile_request,
+    build_load_test_administration_get_test_request,
+    build_load_test_administration_list_test_files_request,
+    build_load_test_administration_list_test_profiles_request,
+    build_load_test_administration_list_tests_request,
+    build_load_test_run_begin_test_profile_run_request,
+    build_load_test_run_begin_test_run_request,
+    build_load_test_run_create_or_update_app_components_request,
+    build_load_test_run_create_or_update_server_metrics_config_request,
+    build_load_test_run_delete_test_profile_run_request,
+    build_load_test_run_delete_test_run_request,
+    build_load_test_run_get_app_components_request,
+    build_load_test_run_get_metric_definitions_request,
+    build_load_test_run_get_metric_namespaces_request,
+    build_load_test_run_get_server_metrics_config_request,
+    build_load_test_run_get_test_profile_run_request,
+    build_load_test_run_get_test_run_file_request,
+    build_load_test_run_get_test_run_request,
+    build_load_test_run_list_metric_dimension_values_request,
+    build_load_test_run_list_metrics_request,
+    build_load_test_run_list_test_profile_runs_request,
+    build_load_test_run_list_test_runs_request,
+    build_load_test_run_stop_test_profile_run_request,
+    build_load_test_run_stop_test_run_request,
+)
 from ..._validation import api_version_validation
 from .._vendor import LoadTestAdministrationClientMixinABC, LoadTestRunClientMixinABC
 
@@ -30,22 +76,18 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore
-JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
-T = TypeVar('T')
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-long
+
+class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-long
     LoadTestAdministrationClientMixinABC
 ):
 
     @overload
     async def create_or_update_test(
-        self,
-        test_id: str,
-        body: _models.Test,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, test_id: str, body: _models.Test, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.Test:
         """Create a new test or update an existing test by providing the test Id.
 
@@ -66,12 +108,7 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
 
     @overload
     async def create_or_update_test(
-        self,
-        test_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.Test:
         """Create a new test or update an existing test by providing the test Id.
 
@@ -92,12 +129,7 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
 
     @overload
     async def create_or_update_test(
-        self,
-        test_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, test_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.Test:
         """Create a new test or update an existing test by providing the test Id.
 
@@ -116,13 +148,9 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def create_or_update_test(
-        self,
-        test_id: str,
-        body: Union[_models.Test, JSON, IO[bytes]],
-        **kwargs: Any
+        self, test_id: str, body: Union[_models.Test, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Test:
         """Create a new test or update an existing test by providing the test Id.
 
@@ -139,17 +167,18 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.Test] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Test] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -167,15 +196,13 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -192,17 +219,12 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.Test,
-                response.json()
-            )
+            deserialized = _deserialize(_models.Test, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def create_or_update_app_components(
@@ -232,12 +254,7 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
 
     @overload
     async def create_or_update_app_components(
-        self,
-        test_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.TestAppComponents:
         """Add an app component to a test.
 
@@ -258,12 +275,7 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
 
     @overload
     async def create_or_update_app_components(
-        self,
-        test_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, test_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.TestAppComponents:
         """Add an app component to a test.
 
@@ -282,13 +294,9 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def create_or_update_app_components(
-        self,
-        test_id: str,
-        body: Union[_models.TestAppComponents, JSON, IO[bytes]],
-        **kwargs: Any
+        self, test_id: str, body: Union[_models.TestAppComponents, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.TestAppComponents:
         """Add an app component to a test.
 
@@ -305,17 +313,18 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
-        cls: ClsType[_models.TestAppComponents] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        cls: ClsType[_models.TestAppComponents] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -333,15 +342,13 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -358,17 +365,12 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestAppComponents,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestAppComponents, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def create_or_update_server_metrics_config(
@@ -398,12 +400,7 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
 
     @overload
     async def create_or_update_server_metrics_config(
-        self,
-        test_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.TestServerMetricConfig:
         """Configure server metrics for a test.
 
@@ -424,12 +421,7 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
 
     @overload
     async def create_or_update_server_metrics_config(
-        self,
-        test_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, test_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.TestServerMetricConfig:
         """Configure server metrics for a test.
 
@@ -448,13 +440,9 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def create_or_update_server_metrics_config(
-        self,
-        test_id: str,
-        body: Union[_models.TestServerMetricConfig, JSON, IO[bytes]],
-        **kwargs: Any
+        self, test_id: str, body: Union[_models.TestServerMetricConfig, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.TestServerMetricConfig:
         """Configure server metrics for a test.
 
@@ -471,17 +459,18 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
-        cls: ClsType[_models.TestServerMetricConfig] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        cls: ClsType[_models.TestServerMetricConfig] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -499,15 +488,13 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -524,24 +511,15 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestServerMetricConfig,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestServerMetricConfig, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_app_components(
-        self,
-        test_id: str,
-        **kwargs: Any
-    ) -> _models.TestAppComponents:
+    async def get_app_components(self, test_id: str, **kwargs: Any) -> _models.TestAppComponents:
         """Get associated app component (collection of azure resources) for the given test.
 
         Get associated app component (collection of azure resources) for the given test.
@@ -554,18 +532,18 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestAppComponents] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.TestAppComponents] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_administration_get_app_components_request(
             test_id=test_id,
             api_version=self._config.api_version,
@@ -573,15 +551,13 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -598,24 +574,15 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestAppComponents,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestAppComponents, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_server_metrics_config(
-        self,
-        test_id: str,
-        **kwargs: Any
-    ) -> _models.TestServerMetricConfig:
+    async def get_server_metrics_config(self, test_id: str, **kwargs: Any) -> _models.TestServerMetricConfig:
         """List server metrics configuration for the given test.
 
         List server metrics configuration for the given test.
@@ -628,18 +595,18 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestServerMetricConfig] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.TestServerMetricConfig] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_administration_get_server_metrics_config_request(
             test_id=test_id,
             api_version=self._config.api_version,
@@ -647,15 +614,13 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -672,24 +637,15 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestServerMetricConfig,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestServerMetricConfig, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_test(
-        self,
-        test_id: str,
-        **kwargs: Any
-    ) -> _models.Test:
+    async def get_test(self, test_id: str, **kwargs: Any) -> _models.Test:
         """Get load test details by test Id.
 
         Get load test details by test Id.
@@ -702,18 +658,18 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Test] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.Test] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_administration_get_test_request(
             test_id=test_id,
             api_version=self._config.api_version,
@@ -721,15 +677,13 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -746,25 +700,15 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.Test,
-                response.json()
-            )
+            deserialized = _deserialize(_models.Test, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_test_file(
-        self,
-        test_id: str,
-        file_name: str,
-        **kwargs: Any
-    ) -> _models.TestFileInfo:
+    async def get_test_file(self, test_id: str, file_name: str, **kwargs: Any) -> _models.TestFileInfo:
         """Get all the files that are associated with a test.
 
         Get all the files that are associated with a test.
@@ -779,18 +723,18 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestFileInfo] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.TestFileInfo] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_administration_get_test_file_request(
             test_id=test_id,
             file_name=file_name,
@@ -799,15 +743,13 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -824,24 +766,15 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestFileInfo,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestFileInfo, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace
-    def list_test_files(
-        self,
-        test_id: str,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.TestFileInfo"]:
+    def list_test_files(self, test_id: str, **kwargs: Any) -> AsyncIterable["_models.TestFileInfo"]:
         """Get all test files.
 
         Get all test files.
@@ -857,17 +790,19 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.TestFileInfo]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[List[_models.TestFileInfo]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 _request = build_load_test_administration_list_test_files_request(
                     test_id=test_id,
                     api_version=self._config.api_version,
@@ -875,19 +810,25 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict({
-                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -897,7 +838,7 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.TestFileInfo], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem) # type: ignore
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
@@ -905,9 +846,7 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request,
-                stream=_stream,
-                **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -917,11 +856,7 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_tests(
@@ -960,17 +895,19 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.Test]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[List[_models.Test]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 _request = build_load_test_administration_list_tests_request(
                     orderby=orderby,
                     search=search,
@@ -982,19 +919,25 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict({
-                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1004,7 +947,7 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.Test], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem) # type: ignore
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
@@ -1012,9 +955,7 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request,
-                stream=_stream,
-                **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1024,11 +965,7 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def begin_upload_test_file(
@@ -1064,17 +1001,18 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/octet-stream"))
-        cls: ClsType[_models.TestFileInfo] = kwargs.pop(
-            'cls', None
-        )
+        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "application/octet-stream"))
+        cls: ClsType[_models.TestFileInfo] = kwargs.pop("cls", None)
 
         _content = body
 
@@ -1089,15 +1027,13 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1114,25 +1050,15 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestFileInfo,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestFileInfo, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def delete_test_file(
-        self,
-        test_id: str,
-        file_name: str,
-        **kwargs: Any
-    ) -> None:
+    async def delete_test_file(self, test_id: str, file_name: str, **kwargs: Any) -> None:
         """Delete file by the file name for a test.
 
         Delete file by the file name for a test.
@@ -1147,18 +1073,18 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_administration_delete_test_file_request(
             test_id=test_id,
             file_name=file_name,
@@ -1167,15 +1093,13 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1185,16 +1109,10 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def delete_test(
-        self,
-        test_id: str,
-        **kwargs: Any
-    ) -> None:
+    async def delete_test(self, test_id: str, **kwargs: Any) -> None:
         """Delete a test by its test Id.
 
         Delete a test by its test Id.
@@ -1207,18 +1125,18 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_administration_delete_test_request(
             test_id=test_id,
             api_version=self._config.api_version,
@@ -1226,15 +1144,13 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1244,9 +1160,7 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def create_or_update_test_profile(
@@ -1276,12 +1190,7 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
 
     @overload
     async def create_or_update_test_profile(
-        self,
-        test_profile_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, test_profile_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.TestProfile:
         """Create a new test profile or update an existing test profile.
 
@@ -1326,17 +1235,13 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={'2024-05-01-preview': ['api_version', 'test_profile_id', 'content_type', 'accept']},
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "content_type", "accept"]},
     )
     async def create_or_update_test_profile(
-        self,
-        test_profile_id: str,
-        body: Union[_models.TestProfile, JSON, IO[bytes]],
-        **kwargs: Any
+        self, test_profile_id: str, body: Union[_models.TestProfile, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.TestProfile:
         """Create a new test profile or update an existing test profile.
 
@@ -1353,17 +1258,18 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.TestProfile] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TestProfile] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -1381,15 +1287,13 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1406,28 +1310,19 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestProfile,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestProfile, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={'2024-05-01-preview': ['api_version', 'test_profile_id', 'accept']},
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "accept"]},
     )
-    async def delete_test_profile(
-        self,
-        test_profile_id: str,
-        **kwargs: Any
-    ) -> None:
+    async def delete_test_profile(self, test_profile_id: str, **kwargs: Any) -> None:
         """Delete a test profile.
 
         Delete a test profile by its test profile Id.
@@ -1440,18 +1335,18 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_administration_delete_test_profile_request(
             test_profile_id=test_profile_id,
             api_version=self._config.api_version,
@@ -1459,15 +1354,13 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1477,20 +1370,14 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={'2024-05-01-preview': ['api_version', 'test_profile_id', 'accept']},
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_id", "accept"]},
     )
-    async def get_test_profile(
-        self,
-        test_profile_id: str,
-        **kwargs: Any
-    ) -> _models.TestProfile:
+    async def get_test_profile(self, test_profile_id: str, **kwargs: Any) -> _models.TestProfile:
         """Get load test profile details.
 
         Get load test profile details by test profile Id.
@@ -1503,18 +1390,18 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestProfile] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.TestProfile] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_administration_get_test_profile_request(
             test_profile_id=test_profile_id,
             api_version=self._config.api_version,
@@ -1522,15 +1409,13 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1547,22 +1432,27 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestProfile,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestProfile, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={'2024-05-01-preview': ['api_version', 'maxpagesize', 'last_modified_start_time', 'last_modified_end_time', 'test_profile_ids', 'test_ids', 'accept']},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "maxpagesize",
+                "last_modified_start_time",
+                "last_modified_end_time",
+                "test_profile_ids",
+                "test_ids",
+                "accept",
+            ]
+        },
     )
     def list_test_profiles(
         self,
@@ -1598,17 +1488,19 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.TestProfile]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[List[_models.TestProfile]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 _request = build_load_test_administration_list_test_profiles_request(
                     maxpagesize=maxpagesize,
                     last_modified_start_time=last_modified_start_time,
@@ -1620,19 +1512,25 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict({
-                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1642,7 +1540,7 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.TestProfile], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem) # type: ignore
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
@@ -1650,9 +1548,7 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request,
-                stream=_stream,
-                **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1662,14 +1558,10 @@ class LoadTestAdministrationClientOperationsMixin(   # pylint: disable=name-too-
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
 
-class LoadTestRunClientOperationsMixin( 
-    LoadTestRunClientMixinABC
-):
+class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @overload
     async def begin_test_run(
@@ -1770,7 +1662,6 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def begin_test_run(
         self,
@@ -1801,17 +1692,18 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.TestRun] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TestRun] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -1830,15 +1722,13 @@ class LoadTestRunClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1855,17 +1745,12 @@ class LoadTestRunClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestRun,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestRun, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def create_or_update_app_components(
@@ -1895,12 +1780,7 @@ class LoadTestRunClientOperationsMixin(
 
     @overload
     async def create_or_update_app_components(
-        self,
-        test_run_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, test_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.TestRunAppComponents:
         """Add an app component to a test run.
 
@@ -1921,12 +1801,7 @@ class LoadTestRunClientOperationsMixin(
 
     @overload
     async def create_or_update_app_components(
-        self,
-        test_run_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, test_run_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.TestRunAppComponents:
         """Add an app component to a test run.
 
@@ -1945,13 +1820,9 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def create_or_update_app_components(
-        self,
-        test_run_id: str,
-        body: Union[_models.TestRunAppComponents, JSON, IO[bytes]],
-        **kwargs: Any
+        self, test_run_id: str, body: Union[_models.TestRunAppComponents, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.TestRunAppComponents:
         """Add an app component to a test run.
 
@@ -1968,17 +1839,18 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
-        cls: ClsType[_models.TestRunAppComponents] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        cls: ClsType[_models.TestRunAppComponents] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -1996,15 +1868,13 @@ class LoadTestRunClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2021,17 +1891,12 @@ class LoadTestRunClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestRunAppComponents,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestRunAppComponents, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def create_or_update_server_metrics_config(
@@ -2062,12 +1927,7 @@ class LoadTestRunClientOperationsMixin(
 
     @overload
     async def create_or_update_server_metrics_config(
-        self,
-        test_run_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, test_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.TestRunServerMetricConfig:
         """Configure server metrics for a test run.
 
@@ -2089,12 +1949,7 @@ class LoadTestRunClientOperationsMixin(
 
     @overload
     async def create_or_update_server_metrics_config(
-        self,
-        test_run_id: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, test_run_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.TestRunServerMetricConfig:
         """Configure server metrics for a test run.
 
@@ -2114,13 +1969,9 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     async def create_or_update_server_metrics_config(
-        self,
-        test_run_id: str,
-        body: Union[_models.TestRunServerMetricConfig, JSON, IO[bytes]],
-        **kwargs: Any
+        self, test_run_id: str, body: Union[_models.TestRunServerMetricConfig, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.TestRunServerMetricConfig:
         """Configure server metrics for a test run.
 
@@ -2138,17 +1989,18 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
-        cls: ClsType[_models.TestRunServerMetricConfig] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        cls: ClsType[_models.TestRunServerMetricConfig] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -2166,15 +2018,13 @@ class LoadTestRunClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2191,24 +2041,15 @@ class LoadTestRunClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestRunServerMetricConfig,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestRunServerMetricConfig, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def delete_test_run(
-        self,
-        test_run_id: str,
-        **kwargs: Any
-    ) -> None:
+    async def delete_test_run(self, test_run_id: str, **kwargs: Any) -> None:
         """Delete an existing load test run.
 
         Delete an existing load test run by providing the testRunId.
@@ -2221,18 +2062,18 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_run_delete_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -2240,15 +2081,13 @@ class LoadTestRunClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2258,16 +2097,10 @@ class LoadTestRunClientOperationsMixin(
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def get_app_components(
-        self,
-        test_run_id: str,
-        **kwargs: Any
-    ) -> _models.TestRunAppComponents:
+    async def get_app_components(self, test_run_id: str, **kwargs: Any) -> _models.TestRunAppComponents:
         """Get associated app component (collection of azure resources) for the given test
         run.
 
@@ -2282,18 +2115,18 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestRunAppComponents] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.TestRunAppComponents] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_run_get_app_components_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -2301,15 +2134,13 @@ class LoadTestRunClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2326,24 +2157,15 @@ class LoadTestRunClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestRunAppComponents,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestRunAppComponents, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_server_metrics_config(
-        self,
-        test_run_id: str,
-        **kwargs: Any
-    ) -> _models.TestRunServerMetricConfig:
+    async def get_server_metrics_config(self, test_run_id: str, **kwargs: Any) -> _models.TestRunServerMetricConfig:
         """Get associated server metrics configuration for the given test run.
 
         Get associated server metrics configuration for the given test run.
@@ -2357,18 +2179,18 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestRunServerMetricConfig] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.TestRunServerMetricConfig] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_run_get_server_metrics_config_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -2376,15 +2198,13 @@ class LoadTestRunClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2401,24 +2221,15 @@ class LoadTestRunClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestRunServerMetricConfig,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestRunServerMetricConfig, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_test_run(
-        self,
-        test_run_id: str,
-        **kwargs: Any
-    ) -> _models.TestRun:
+    async def get_test_run(self, test_run_id: str, **kwargs: Any) -> _models.TestRun:
         """Get test run details by test run Id.
 
         Get test run details by test run Id.
@@ -2431,18 +2242,18 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestRun] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.TestRun] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_run_get_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -2450,15 +2261,13 @@ class LoadTestRunClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2475,25 +2284,15 @@ class LoadTestRunClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestRun,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestRun, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_test_run_file(
-        self,
-        test_run_id: str,
-        file_name: str,
-        **kwargs: Any
-    ) -> _models.TestRunFileInfo:
+    async def get_test_run_file(self, test_run_id: str, file_name: str, **kwargs: Any) -> _models.TestRunFileInfo:
         """Get test run file by file name.
 
         Get test run file by file name.
@@ -2508,18 +2307,18 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestRunFileInfo] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.TestRunFileInfo] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_run_get_test_run_file_request(
             test_run_id=test_run_id,
             file_name=file_name,
@@ -2528,15 +2327,13 @@ class LoadTestRunClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2553,17 +2350,12 @@ class LoadTestRunClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestRunFileInfo,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestRunFileInfo, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace
     def list_metric_dimension_values(
@@ -2603,17 +2395,19 @@ class LoadTestRunClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[str]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 _request = build_load_test_run_list_metric_dimension_values_request(
                     test_run_id=test_run_id,
                     name=name,
@@ -2626,19 +2420,25 @@ class LoadTestRunClientOperationsMixin(
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict({
-                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2648,7 +2448,7 @@ class LoadTestRunClientOperationsMixin(
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[str], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem) # type: ignore
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
@@ -2656,9 +2456,7 @@ class LoadTestRunClientOperationsMixin(
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request,
-                stream=_stream,
-                **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2668,19 +2466,11 @@ class LoadTestRunClientOperationsMixin(
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def get_metric_definitions(
-        self,
-        test_run_id: str,
-        *,
-        metric_namespace: str,
-        **kwargs: Any
+        self, test_run_id: str, *, metric_namespace: str, **kwargs: Any
     ) -> _models.MetricDefinitionCollection:
         """List the metric definitions for a load test run.
 
@@ -2697,18 +2487,18 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.MetricDefinitionCollection] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.MetricDefinitionCollection] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_run_get_metric_definitions_request(
             test_run_id=test_run_id,
             metric_namespace=metric_namespace,
@@ -2717,15 +2507,13 @@ class LoadTestRunClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2742,24 +2530,15 @@ class LoadTestRunClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.MetricDefinitionCollection,
-                response.json()
-            )
+            deserialized = _deserialize(_models.MetricDefinitionCollection, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-
-
     @distributed_trace_async
-    async def get_metric_namespaces(
-        self,
-        test_run_id: str,
-        **kwargs: Any
-    ) -> _models.MetricNamespaceCollection:
+    async def get_metric_namespaces(self, test_run_id: str, **kwargs: Any) -> _models.MetricNamespaceCollection:
         """List the metric namespaces for a load test run.
 
         List the metric namespaces for a load test run.
@@ -2773,18 +2552,18 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.MetricNamespaceCollection] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.MetricNamespaceCollection] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_run_get_metric_namespaces_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -2792,15 +2571,13 @@ class LoadTestRunClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2817,17 +2594,12 @@ class LoadTestRunClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.MetricNamespaceCollection,
-                response.json()
-            )
+            deserialized = _deserialize(_models.MetricNamespaceCollection, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     def list_metrics(
@@ -2961,7 +2733,6 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace
     def list_metrics(
         self,
@@ -3005,15 +2776,16 @@ class LoadTestRunClientOperationsMixin(
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[List[_models.TimeSeriesElement]] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[List[_models.TimeSeriesElement]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -3023,9 +2795,10 @@ class LoadTestRunClientOperationsMixin(
                 _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
             else:
                 _content = None
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 _request = build_load_test_run_list_metrics_request(
                     test_run_id=test_run_id,
                     metric_name=metric_name,
@@ -3040,19 +2813,25 @@ class LoadTestRunClientOperationsMixin(
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict({
-                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3062,7 +2841,7 @@ class LoadTestRunClientOperationsMixin(
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.TimeSeriesElement], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem) # type: ignore
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
@@ -3070,9 +2849,7 @@ class LoadTestRunClientOperationsMixin(
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request,
-                stream=_stream,
-                **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3082,11 +2859,7 @@ class LoadTestRunClientOperationsMixin(
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_test_runs(
@@ -3129,17 +2902,19 @@ class LoadTestRunClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.TestRun]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[List[_models.TestRun]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 _request = build_load_test_run_list_test_runs_request(
                     orderby=orderby,
                     search=search,
@@ -3153,19 +2928,25 @@ class LoadTestRunClientOperationsMixin(
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict({
-                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3175,7 +2956,7 @@ class LoadTestRunClientOperationsMixin(
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.TestRun], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem) # type: ignore
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
@@ -3183,9 +2964,7 @@ class LoadTestRunClientOperationsMixin(
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request,
-                stream=_stream,
-                **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3195,18 +2974,10 @@ class LoadTestRunClientOperationsMixin(
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def stop_test_run(
-        self,
-        test_run_id: str,
-        **kwargs: Any
-    ) -> _models.TestRun:
+    async def stop_test_run(self, test_run_id: str, **kwargs: Any) -> _models.TestRun:
         """Stop test run by test run Id.
 
         Stop test run by test run Id.
@@ -3219,18 +2990,18 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestRun] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.TestRun] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_run_stop_test_run_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
@@ -3238,15 +3009,13 @@ class LoadTestRunClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3263,17 +3032,12 @@ class LoadTestRunClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestRun,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestRun, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @overload
     async def begin_test_profile_run(
@@ -3303,12 +3067,7 @@ class LoadTestRunClientOperationsMixin(
 
     @overload
     async def begin_test_profile_run(
-        self,
-        test_profile_run_id: str,
-        body: JSON,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, test_profile_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.TestProfileRun:
         """Create and start a new test profile run.
 
@@ -3353,17 +3112,13 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={'2024-05-01-preview': ['api_version', 'test_profile_run_id', 'content_type', 'accept']},
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "content_type", "accept"]},
     )
     async def begin_test_profile_run(
-        self,
-        test_profile_run_id: str,
-        body: Union[_models.TestProfileRun, JSON, IO[bytes]],
-        **kwargs: Any
+        self, test_profile_run_id: str, body: Union[_models.TestProfileRun, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.TestProfileRun:
         """Create and start a new test profile run.
 
@@ -3380,17 +3135,18 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
-        cls: ClsType[_models.TestProfileRun] = kwargs.pop(
-            'cls', None
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TestProfileRun] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -3408,15 +3164,13 @@ class LoadTestRunClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3433,28 +3187,19 @@ class LoadTestRunClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestProfileRun,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestProfileRun, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={'2024-05-01-preview': ['api_version', 'test_profile_run_id', 'accept']},
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]},
     )
-    async def delete_test_profile_run(
-        self,
-        test_profile_run_id: str,
-        **kwargs: Any
-    ) -> None:
+    async def delete_test_profile_run(self, test_profile_run_id: str, **kwargs: Any) -> None:
         """Delete an existing load test profile run.
 
         Delete an existing load test profile run by providing the test profile run Id.
@@ -3467,18 +3212,18 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_run_delete_test_profile_run_request(
             test_profile_run_id=test_profile_run_id,
             api_version=self._config.api_version,
@@ -3486,15 +3231,13 @@ class LoadTestRunClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3504,20 +3247,14 @@ class LoadTestRunClientOperationsMixin(
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {}) # type: ignore
-
-
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={'2024-05-01-preview': ['api_version', 'test_profile_run_id', 'accept']},
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]},
     )
-    async def get_test_profile_run(
-        self,
-        test_profile_run_id: str,
-        **kwargs: Any
-    ) -> _models.TestProfileRun:
+    async def get_test_profile_run(self, test_profile_run_id: str, **kwargs: Any) -> _models.TestProfileRun:
         """Get test profile run details.
 
         Get test profile run details by test profile run Id.
@@ -3530,18 +3267,18 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestProfileRun] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.TestProfileRun] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_run_get_test_profile_run_request(
             test_profile_run_id=test_profile_run_id,
             api_version=self._config.api_version,
@@ -3549,15 +3286,13 @@ class LoadTestRunClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3574,22 +3309,32 @@ class LoadTestRunClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestProfileRun,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestProfileRun, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
 
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={'2024-05-01-preview': ['api_version', 'maxpagesize', 'min_start_date_time', 'max_start_date_time', 'min_end_date_time', 'max_end_date_time', 'created_date_start_time', 'created_date_end_time', 'test_profile_run_ids', 'test_profile_ids', 'statuses', 'accept']},
+        params_added_on={
+            "2024-05-01-preview": [
+                "api_version",
+                "maxpagesize",
+                "min_start_date_time",
+                "max_start_date_time",
+                "min_end_date_time",
+                "max_end_date_time",
+                "created_date_start_time",
+                "created_date_end_time",
+                "test_profile_run_ids",
+                "test_profile_ids",
+                "statuses",
+                "accept",
+            ]
+        },
     )
     def list_test_profile_runs(
         self,
@@ -3645,17 +3390,19 @@ class LoadTestRunClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.TestProfileRun]] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[List[_models.TestProfileRun]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 _request = build_load_test_run_list_test_profile_runs_request(
                     maxpagesize=maxpagesize,
                     min_start_date_time=min_start_date_time,
@@ -3672,19 +3419,25 @@ class LoadTestRunClientOperationsMixin(
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict({
-                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3694,7 +3447,7 @@ class LoadTestRunClientOperationsMixin(
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.TestProfileRun], deserialized["value"])
             if cls:
-                list_of_elem = cls(list_of_elem) # type: ignore
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
@@ -3702,9 +3455,7 @@ class LoadTestRunClientOperationsMixin(
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request,
-                stream=_stream,
-                **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3714,22 +3465,14 @@ class LoadTestRunClientOperationsMixin(
 
             return pipeline_response
 
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2024-05-01-preview",
-        params_added_on={'2024-05-01-preview': ['api_version', 'test_profile_run_id', 'accept']},
+        params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "accept"]},
     )
-    async def stop_test_profile_run(
-        self,
-        test_profile_run_id: str,
-        **kwargs: Any
-    ) -> _models.TestProfileRun:
+    async def stop_test_profile_run(self, test_profile_run_id: str, **kwargs: Any) -> _models.TestProfileRun:
         """Stop test profile run.
 
         Stop test profile run for the given test profile run Id.
@@ -3742,18 +3485,18 @@ class LoadTestRunClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestProfileRun] = kwargs.pop(
-            'cls', None
-        )
+        cls: ClsType[_models.TestProfileRun] = kwargs.pop("cls", None)
 
-        
         _request = build_load_test_run_stop_test_profile_run_request(
             test_profile_run_id=test_profile_run_id,
             api_version=self._config.api_version,
@@ -3761,15 +3504,13 @@ class LoadTestRunClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str'),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request,
-            stream=_stream,
-            **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3786,14 +3527,9 @@ class LoadTestRunClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models.TestProfileRun,
-                response.json()
-            )
+            deserialized = _deserialize(_models.TestProfileRun, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-

@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Aggregation type.
-    """
+    """Aggregation type."""
 
     AVERAGE = "Average"
     """Average value."""
@@ -41,25 +40,25 @@ class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PERCENTILE9999 = "Percentile9999"
     """99.99th percentile."""
 
+
 class CertificateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Types of certificates supported.
-    """
+    """Types of certificates supported."""
 
     AKV_CERT_URI = "AKV_CERT_URI"
     """If the certificate is stored in an Azure Key Vault."""
 
+
 class CreateByTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the entity that created the test run. (E.x. User, ScheduleTrigger, etc).
-    """
+    """The type of the entity that created the test run. (E.x. User, ScheduleTrigger, etc)."""
 
     USER = "User"
     """Entity was created by a user."""
     SCHEDULED_TRIGGER = "ScheduledTrigger"
     """Entity was created by a scheduled trigger."""
 
+
 class FileStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """File status.
-    """
+    """File status."""
 
     NOT_VALIDATED = "NOT_VALIDATED"
     """File is not validated."""
@@ -72,9 +71,9 @@ class FileStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     VALIDATION_NOT_REQUIRED = "VALIDATION_NOT_REQUIRED"
     """Validation is not required."""
 
+
 class FileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Types of file supported.
-    """
+    """Types of file supported."""
 
     JMX_FILE = "JMX_FILE"
     """If the file is a JMX script."""
@@ -89,18 +88,18 @@ class FileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TEST_SCRIPT = "TEST_SCRIPT"
     """If the file is a test script."""
 
+
 class ManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Managed identity type.
-    """
+    """Managed identity type."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     """System-assigned managed identity."""
     USER_ASSIGNED = "UserAssigned"
     """User-assigned managed identity."""
 
+
 class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Metric unit.
-    """
+    """Metric unit."""
 
     NOT_SPECIFIED = "NotSpecified"
     """No unit specified."""
@@ -119,18 +118,18 @@ class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COUNT_PER_SECOND = "CountPerSecond"
     """Count per second"""
 
+
 class PFAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Action to take on failure of pass/fail criteria.
-    """
+    """Action to take on failure of pass/fail criteria."""
 
     CONTINUE = "continue"
     """Test will continue to run even if pass fail metric criteria metric gets failed."""
     STOP = "stop"
     """Test run will stop if pass fail criteria metric is not passed."""
 
+
 class PFAgFunc(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Aggregation functions for pass/fail criteria.
-    """
+    """Aggregation functions for pass/fail criteria."""
 
     COUNT = "count"
     """Criteria applies for count value."""
@@ -163,9 +162,9 @@ class PFAgFunc(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MAX = "max"
     """Criteria applies for maximum value."""
 
+
 class PFMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Metrics for pass/fail criteria.
-    """
+    """Metrics for pass/fail criteria."""
 
     RESPONSE_TIME_MS = "response_time_ms"
     """Pass fail criteria for response time metric in milliseconds."""
@@ -178,9 +177,9 @@ class PFMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REQUESTS_PER_SEC = "requests_per_sec"
     """Pass fail criteria for request per second."""
 
+
 class PFResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Pass/fail criteria result.
-    """
+    """Pass/fail criteria result."""
 
     PASSED = "passed"
     """Given pass fail criteria metric has passed."""
@@ -189,9 +188,9 @@ class PFResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "failed"
     """Given pass fail criteria metric has failed."""
 
+
 class PFTestResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Test result based on pass/fail criteria.
-    """
+    """Test result based on pass/fail criteria."""
 
     PASSED = "PASSED"
     """Pass/fail criteria has passed."""
@@ -200,9 +199,9 @@ class PFTestResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "FAILED"
     """Pass/fail criteria has failed."""
 
+
 class RecommendationCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Category of Recommendation.
-    """
+    """Category of Recommendation."""
 
     THROUGHPUT_OPTIMIZED = "ThroughputOptimized"
     """The recommendation for this category optimizes the throughput/RPS (Requests per Second) of the
@@ -210,34 +209,34 @@ class RecommendationCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COST_OPTIMIZED = "CostOptimized"
     """The recommendation for this category optimizes the cost of the app."""
 
+
 class RequestDataLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Request data collection level for test run.
-    """
+    """Request data collection level for test run."""
 
     NONE = "NONE"
     """No request data will be collected"""
     ERRORS = "ERRORS"
     """Request data will be collected in case of failed requests"""
 
+
 class ResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Kind of the resource on which test profile is created.
-    """
+    """Kind of the resource on which test profile is created."""
 
     FUNCTIONS_FLEX_CONSUMPTION = "FunctionsFlexConsumption"
     """Resource is a Azure FunctionApp on Flex Consumption Plan."""
 
+
 class SecretType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Types of secrets supported.
-    """
+    """Types of secrets supported."""
 
     AKV_SECRET_URI = "AKV_SECRET_URI"
     """If the secret is stored in an Azure Key Vault."""
     SECRET_VALUE = "SECRET_VALUE"
     """If the secret value provided as plain text."""
 
+
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Test run status.
-    """
+    """Test run status."""
 
     ACCEPTED = "ACCEPTED"
     """Test run request is accepted."""
@@ -272,9 +271,9 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     VALIDATION_FAILURE = "VALIDATION_FAILURE"
     """Test run JMX file validation is failed."""
 
+
 class TestKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Test kind.
-    """
+    """Test kind."""
 
     URL = "URL"
     """URL Test"""
@@ -283,9 +282,9 @@ class TestKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LOCUST = "Locust"
     """Locust Test"""
 
+
 class TestProfileRunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Test profile run status.
-    """
+    """Test profile run status."""
 
     ACCEPTED = "ACCEPTED"
     """Test profile run request is accepted."""
@@ -302,9 +301,9 @@ class TestProfileRunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "FAILED"
     """Test profile run has failed."""
 
+
 class TimeGrain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Time Grain.
-    """
+    """Time Grain."""
 
     PT5S = "PT5S"
     """5 seconds, available only if test run duration is less than 10 minutes."""

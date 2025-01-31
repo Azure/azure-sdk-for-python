@@ -9,6 +9,7 @@
 from azure.identity import DefaultAzureCredential
 
 from azure.developer.loadtesting import LoadTestRunClient
+
 """
 # PREREQUISITES
     pip install azure-identity
@@ -21,6 +22,8 @@ from azure.developer.loadtesting import LoadTestRunClient
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
+
+
 def main():
     client = LoadTestAdministrationClient(
         endpoint="ENDPOINT",
@@ -28,14 +31,15 @@ def main():
     )
 
     response = client.list_metric_dimension_values(
-        test_run_id='12316678-1234-1234-1234-122451189012',
-        name='SamplerName',
-        metric_name='ActiveThreads',
-        metric_namespace='LoadTestRunMetrics',
-        time_interval='2022-09-24T19:00:40Z/2022-09-25T19:28:40Z',
+        test_run_id="12316678-1234-1234-1234-122451189012",
+        name="SamplerName",
+        metric_name="ActiveThreads",
+        metric_namespace="LoadTestRunMetrics",
+        time_interval="2022-09-24T19:00:40Z/2022-09-25T19:28:40Z",
     )
     for item in response:
         print(item)
+
 
 # x-ms-original-file: 2024-12-01-preview/ListMetricDimensionValues.json
 if __name__ == "__main__":

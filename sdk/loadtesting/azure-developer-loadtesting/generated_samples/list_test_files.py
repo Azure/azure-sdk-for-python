@@ -9,6 +9,7 @@
 from azure.identity import DefaultAzureCredential
 
 from azure.developer.loadtesting import LoadTestAdministrationClient
+
 """
 # PREREQUISITES
     pip install azure-identity
@@ -21,6 +22,8 @@ from azure.developer.loadtesting import LoadTestAdministrationClient
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
+
+
 def main():
     client = LoadTestAdministrationClient(
         endpoint="ENDPOINT",
@@ -28,10 +31,11 @@ def main():
     )
 
     response = client.list_test_files(
-        test_id='12345678-1234-1234-1234-123456789012',
+        test_id="12345678-1234-1234-1234-123456789012",
     )
     for item in response:
         print(item)
+
 
 # x-ms-original-file: 2024-12-01-preview/ListTestFiles.json
 if __name__ == "__main__":

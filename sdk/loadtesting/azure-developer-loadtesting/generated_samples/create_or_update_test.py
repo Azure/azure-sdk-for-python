@@ -9,6 +9,7 @@
 from azure.identity import DefaultAzureCredential
 
 from azure.developer.loadtesting import LoadTestAdministrationClient
+
 """
 # PREREQUISITES
     pip install azure-identity
@@ -21,6 +22,8 @@ from azure.developer.loadtesting import LoadTestAdministrationClient
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 """
+
+
 def main():
     client = LoadTestAdministrationClient(
         endpoint="ENDPOINT",
@@ -28,10 +31,54 @@ def main():
     )
 
     response = client.create_or_update_test(
-        test_id='12345678-1234-1234-1234-123456789012',
-        body={'autoStopCriteria': {'autoStopDisabled': True, 'errorRate': 70, 'errorRateTimeWindowInSeconds': 60}, 'description': 'sample description', 'displayName': 'Performance_LoadTest', 'engineBuiltInIdentityIds': ['/subscriptions/10000000-0000-0000-0000-000000000000/resourceGroups/samplerg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/sampleresourcename'], 'engineBuiltInIdentityType': 'UserAssigned', 'environmentVariables': {'envvar1': 'sampletext'}, 'keyvaultReferenceIdentityId': '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/samplerg/providers/sampleprovider/sampleresourcetype/sampleresourcename', 'keyvaultReferenceIdentityType': 'UserAssigned', 'loadTestConfiguration': {'engineInstances': 6, 'splitAllCSVs': True}, 'metricsReferenceIdentityId': '/subscriptions/10000000-0000-0000-0000-000000000000/resourceGroups/samplerg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/sampleresourcename', 'metricsReferenceIdentityType': 'UserAssigned', 'passFailCriteria': {'passFailMetrics': {'fefd759d-7fe8-4f83-8b6d-aeebe0f491fe': {'action': 'continue', 'aggregate': 'percentage', 'clientMetric': 'response_time_ms', 'condition': '>', 'value': 20}}, 'passFailServerMetrics': {'fefd759d-7fe8-4f83-8b6d-aeebe0f491fe': {'action': 'continue', 'aggregation': 'Average', 'condition': '>', 'metricName': 'Percentage CPU', 'metricNamespace': 'Microsoft.Compute/virtualMachines', 'resourceId': '/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/MyResourceGroup/providers/Microsoft.Compute/virtualMachines/MyVM', 'value': 20}}}, 'secrets': {'secret1': {'type': 'AKV_SECRET_URI', 'value': 'https://samplevault.vault.azure.net/secrets/samplesecret/f113f91fd4c44a368049849c164db827'}}, 'subnetId': '/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/samplerg/providers/Microsoft.Network/virtualNetworks/samplenetworkresource/subnets/AAAAA0A0A0'},
+        test_id="12345678-1234-1234-1234-123456789012",
+        body={
+            "autoStopCriteria": {"autoStopDisabled": True, "errorRate": 70, "errorRateTimeWindowInSeconds": 60},
+            "description": "sample description",
+            "displayName": "Performance_LoadTest",
+            "engineBuiltInIdentityIds": [
+                "/subscriptions/10000000-0000-0000-0000-000000000000/resourceGroups/samplerg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/sampleresourcename"
+            ],
+            "engineBuiltInIdentityType": "UserAssigned",
+            "environmentVariables": {"envvar1": "sampletext"},
+            "keyvaultReferenceIdentityId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/samplerg/providers/sampleprovider/sampleresourcetype/sampleresourcename",
+            "keyvaultReferenceIdentityType": "UserAssigned",
+            "loadTestConfiguration": {"engineInstances": 6, "splitAllCSVs": True},
+            "metricsReferenceIdentityId": "/subscriptions/10000000-0000-0000-0000-000000000000/resourceGroups/samplerg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/sampleresourcename",
+            "metricsReferenceIdentityType": "UserAssigned",
+            "passFailCriteria": {
+                "passFailMetrics": {
+                    "fefd759d-7fe8-4f83-8b6d-aeebe0f491fe": {
+                        "action": "continue",
+                        "aggregate": "percentage",
+                        "clientMetric": "response_time_ms",
+                        "condition": ">",
+                        "value": 20,
+                    }
+                },
+                "passFailServerMetrics": {
+                    "fefd759d-7fe8-4f83-8b6d-aeebe0f491fe": {
+                        "action": "continue",
+                        "aggregation": "Average",
+                        "condition": ">",
+                        "metricName": "Percentage CPU",
+                        "metricNamespace": "Microsoft.Compute/virtualMachines",
+                        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/MyResourceGroup/providers/Microsoft.Compute/virtualMachines/MyVM",
+                        "value": 20,
+                    }
+                },
+            },
+            "secrets": {
+                "secret1": {
+                    "type": "AKV_SECRET_URI",
+                    "value": "https://samplevault.vault.azure.net/secrets/samplesecret/f113f91fd4c44a368049849c164db827",
+                }
+            },
+            "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/samplerg/providers/Microsoft.Network/virtualNetworks/samplenetworkresource/subnets/AAAAA0A0A0",
+        },
     )
     print(response)
+
 
 # x-ms-original-file: 2024-12-01-preview/CreateOrUpdateTest.json
 if __name__ == "__main__":
