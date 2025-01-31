@@ -447,7 +447,7 @@ class ApplicationInsightsConfiguration(InputData, discriminator="app_insights"):
     :vartype resource_id: str
     :ivar query: Query to fetch the data. Required.
     :vartype query: str
-    :ivar service_name: Service name. Required.
+    :ivar service_name: Service name.
     :vartype service_name: str
     :ivar connection_string: Connection String to connect to ApplicationInsights.
     :vartype connection_string: str
@@ -459,8 +459,8 @@ class ApplicationInsightsConfiguration(InputData, discriminator="app_insights"):
     """LogAnalytic Workspace resourceID associated with ApplicationInsights. Required."""
     query: str = rest_field()
     """Query to fetch the data. Required."""
-    service_name: str = rest_field(name="serviceName")
-    """Service name. Required."""
+    service_name: Optional[str] = rest_field(name="serviceName")
+    """Service name."""
     connection_string: Optional[str] = rest_field(name="connectionString")
     """Connection String to connect to ApplicationInsights."""
 
@@ -470,7 +470,7 @@ class ApplicationInsightsConfiguration(InputData, discriminator="app_insights"):
         *,
         resource_id: str,
         query: str,
-        service_name: str,
+        service_name: Optional[str] = None,
         connection_string: Optional[str] = None,
     ) -> None: ...
 
@@ -1744,11 +1744,11 @@ class InternalConnectionProperties(_model_base.Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     InternalConnectionPropertiesAADAuth, InternalConnectionPropertiesApiKeyAuth,
-    InternalConnectionPropertiesSASAuth
+    InternalConnectionPropertiesNoAuth, InternalConnectionPropertiesSASAuth
 
 
     :ivar auth_type: Authentication type of the connection target. Required. Known values are:
-     "ApiKey", "AAD", and "SAS".
+     "ApiKey", "AAD", "SAS", and "None".
     :vartype auth_type: str or ~azure.ai.projects.models.AuthenticationType
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
      "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
@@ -1760,7 +1760,7 @@ class InternalConnectionProperties(_model_base.Model):
     __mapping__: Dict[str, _model_base.Model] = {}
     auth_type: str = rest_discriminator(name="authType")
     """Authentication type of the connection target. Required. Known values are: \"ApiKey\", \"AAD\",
-     and \"SAS\"."""
+     \"SAS\", and \"None\"."""
     category: Union[str, "_models.ConnectionType"] = rest_field()
     """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\",
      \"AzureBlob\", \"AIServices\", and \"CognitiveSearch\"."""
@@ -1863,6 +1863,41 @@ class InternalConnectionPropertiesApiKeyAuth(InternalConnectionProperties, discr
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, auth_type=AuthenticationType.API_KEY, **kwargs)
+
+
+class InternalConnectionPropertiesNoAuth(InternalConnectionProperties, discriminator="None"):
+    """Connection properties for connections with no authentication.
+
+
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
+     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
+    :vartype category: str or ~azure.ai.projects.models.ConnectionType
+    :ivar target: The connection URL to be used for this service. Required.
+    :vartype target: str
+    :ivar auth_type: Authentication type of the connection target. Required. No authentication
+    :vartype auth_type: str or ~azure.ai.projects.models.NONE
+    """
+
+    auth_type: Literal[AuthenticationType.NONE] = rest_discriminator(name="authType")  # type: ignore
+    """Authentication type of the connection target. Required. No authentication"""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category: Union[str, "_models.ConnectionType"],
+        target: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, auth_type=AuthenticationType.NONE, **kwargs)
 
 
 class InternalConnectionPropertiesSASAuth(InternalConnectionProperties, discriminator="SAS"):

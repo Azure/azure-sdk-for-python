@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
- 
+
 """
 DESCRIPTION:
     This sample demonstrates how to use agents with Logic Apps to execute the task of sending an email.
@@ -33,7 +33,7 @@ USAGE:
         triggers in the Azure Portal is "When_a_HTTP_request_is_received").
     3) <RECIPIENT_EMAIL> - The email address of the recipient.
 """
- 
+
 
 import os
 import requests
@@ -47,10 +47,7 @@ from azure.identity import DefaultAzureCredential
 from user_functions import fetch_current_datetime
 
 # Import AzureLogicAppTool and the function factory from user_logic_apps
-from user_logic_apps import (
-    AzureLogicAppTool,
-    create_send_email_function
-)
+from user_logic_apps import AzureLogicAppTool, create_send_email_function
 
 # Create the project client
 project_client = AIProjectClient.from_connection_string(
@@ -102,15 +99,12 @@ with project_client:
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",
-        content="Hello, please send an email to <RECIPIENT_EMAIL> with the date and time in '%Y-%m-%d %H:%M:%S' format.", 
+        content="Hello, please send an email to <RECIPIENT_EMAIL> with the date and time in '%Y-%m-%d %H:%M:%S' format.",
     )
     print(f"Created message, ID: {message.id}")
 
     # Create and process an agent run in the thread
-    run = project_client.agents.create_and_process_run(
-        thread_id=thread.id,
-        assistant_id=agent.id
-    )
+    run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
     print(f"Run finished with status: {run.status}")
 
     if run.status == "failed":

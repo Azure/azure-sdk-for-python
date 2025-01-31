@@ -18,7 +18,7 @@ class AzureLogicAppTool:
         self.subscription_id = subscription_id
         self.resource_group = resource_group
         self.logic_client = LogicManagementClient(credential, subscription_id)
-        
+
         self.callback_urls: Dict[str, str] = {}
 
     def register_logic_app(self, logic_app_name: str, trigger_name: str) -> None:
@@ -34,7 +34,7 @@ class AzureLogicAppTool:
 
         if callback.value is None:
             raise ValueError(f"No callback URL returned for Logic App '{logic_app_name}'.")
-        
+
         self.callback_urls[logic_app_name] = callback.value
 
     def invoke_logic_app(self, logic_app_name: str, payload: Dict[str, Any]) -> Dict[str, Any]:
@@ -51,12 +51,7 @@ class AzureLogicAppTool:
         if response.ok:
             return {"result": f"Successfully invoked {logic_app_name}."}
         else:
-            return {
-                "error": (
-                    f"Error invoking {logic_app_name} "
-                    f"({response.status_code}): {response.text}"
-                )
-            }
+            return {"error": (f"Error invoking {logic_app_name} " f"({response.status_code}): {response.text}")}
 
 
 def create_send_email_function(service: AzureLogicAppTool, logic_app_name: str) -> Callable[[str, str, str], str]:
@@ -64,6 +59,7 @@ def create_send_email_function(service: AzureLogicAppTool, logic_app_name: str) 
     Returns a function that sends an email by invoking the specified Logic App in LogicAppService.
     This keeps the LogicAppService instance out of global scope by capturing it in a closure.
     """
+
     def send_email_via_logic_app(recipient: str, subject: str, body: str) -> str:
         """
         Sends an email by invoking the specified Logic App with the given recipient, subject, and body.
