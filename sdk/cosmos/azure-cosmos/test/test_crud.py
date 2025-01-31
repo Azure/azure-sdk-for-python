@@ -6,7 +6,6 @@
 """
 
 import json
-import logging
 import os.path
 import time
 import unittest

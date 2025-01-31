@@ -97,6 +97,15 @@ class TestConfig(object):
                 raise e
 
     @classmethod
+    def try_delete_database_with_id(cls, client, database_id):
+        # type: (CosmosClient, str) -> None
+        try:
+            client.delete_database(database_id)
+        except exceptions.CosmosHttpResponseError as e:
+            if e.status_code != StatusCodes.NOT_FOUND:
+                raise e
+
+    @classmethod
     async def _validate_distinct_on_different_types_and_field_orders(cls, collection, query, expected_results):
         query_iterable = collection.query_items(query)
         results = [item async for item in query_iterable]

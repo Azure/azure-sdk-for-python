@@ -17,7 +17,6 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 
 
-@pytest.mark.cosmosEmulator
 class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
