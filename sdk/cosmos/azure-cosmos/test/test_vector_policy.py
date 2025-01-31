@@ -72,6 +72,23 @@ class TestVectorPolicy(unittest.TestCase):
         assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
         self.test_db.delete_container(container_id)
 
+        # Pass a vector indexing policy with hierarchical vectorIndexShardKey value
+        indexing_policy = {
+            "vectorIndexes": [
+                {"path": "/vector2", "type": "diskANN", 'quantizationByteSize': 64, 'indexingSearchListSize': 100, "vectorIndexShardKey": ["/country/city"]}]
+        }
+        container_id = "vector_container" + str(uuid.uuid4())
+        created_container = self.test_db.create_container(
+            id=container_id,
+            partition_key=PartitionKey(path="/id"),
+            indexing_policy=indexing_policy,
+            vector_embedding_policy=vector_embedding_policy
+        )
+        properties = created_container.read()
+        assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
+        assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
+        self.test_db.delete_container(container_id)
+
     def test_fail_create_vector_indexing_policy(self):
         vector_embedding_policy = {
             "vectorEmbeddings": [
@@ -209,6 +226,50 @@ class TestVectorPolicy(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
             assert "The number of shard paths defined in the Vector Indexing Policy: 3 exceeds the maximum: 1." \
+                   in e.http_error_message
+
+        # Pass a vector indexing policy with an invalid type for vectorIndexShardKey
+        indexing_policy = {
+            "vectorIndexes": [
+                {"path": "/vector2", "type": "diskANN", "vectorIndexShardKey": "/country"}]
+        }
+        try:
+            self.test_db.create_container(
+                id='vector_container',
+                partition_key=PartitionKey(path="/id"),
+                indexing_policy=indexing_policy,
+                vector_embedding_policy=vector_embedding_policy
+            )
+            pytest.fail("Container creation should have failed for value mismatch.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert "One of the specified inputs is invalid" \
+                   in e.http_error_message
+
+        # Pass a vector indexing policy with dimensions above 512 to test the max range of  "quantizationByteSize"
+        vector_embedding_policy = {
+            "vectorEmbeddings": [
+                {
+                    "path": "/vector1",
+                    "dataType": "float32",
+                    "dimensions": 550,
+                    "distanceFunction": "euclidean"
+                }]}
+        indexing_policy = {
+            "vectorIndexes": [
+                {"path": "/vector1", "type": "quantizedFlat", "quantizationByteSize": 513 }]
+        }
+        try:
+            self.test_db.create_container(
+                id='vector_container',
+                partition_key=PartitionKey(path="/id"),
+                indexing_policy=indexing_policy,
+                vector_embedding_policy=vector_embedding_policy
+            )
+            pytest.fail("Container creation should have failed for value mismatch.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert "The Vector Indexing Policy parameter QuantizationByteSize value :: 513 is out of range." \
                    in e.http_error_message
 
     def test_fail_replace_vector_indexing_policy(self):
