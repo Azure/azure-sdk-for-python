@@ -26,6 +26,7 @@ from typing import (
     Sequence,
     Collection,
 )
+from decimal import Decimal
 
 try:
     from typing import TypeAlias  # type: ignore
@@ -301,6 +302,37 @@ def encode_double(output: bytearray, value: float, with_constructor: bool = True
     value = float(value)
     output.extend(_construct(ConstructorBytes.double, with_constructor))
     output.extend(struct.pack(">d", value))
+
+
+def encode_decimal128(output: bytearray, value: Decimal, with_constructor: bool = True, **kwargs: Any) -> None:
+    """
+    <encoding code="0x84" category="fixed" width="16" label="IEEE 754-2008 decimal128"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param decimal value: The decimal to encode.
+    :param bool with_constructor: Whether to include the constructor byte.
+    """
+    output.extend(_construct(ConstructorBytes.decimal128, with_constructor))
+    sign, digits, exponent = value.as_tuple()
+    significand = int("".join(map(str, digits)))
+
+    # Split significand into high and low parts
+    high = significand >> 64
+    low = significand & ((1 << 64) - 1)
+
+    biased_exponent = exponent + 6176
+
+    # Adjust high part based on biased exponent
+    if high >> 49 == 1:
+        high = (high & 0x7FFFFFFFFFFF) | ((biased_exponent & 0x3FFF) << 47)
+    else:
+        high |= biased_exponent << 49
+
+    # Add sign bit to high part
+    high |= sign << 63
+
+    output.extend(struct.pack(">Q", high))
+    output.extend(struct.pack(">Q", low))
 
 
 def encode_timestamp(
@@ -786,6 +818,8 @@ def encode_unknown(output: bytearray, value: Optional[object], **kwargs: Any) ->
         encode_described(output, cast(Tuple[Any, Any], value), **kwargs)
     elif isinstance(value, dict):
         encode_map(output, value, **kwargs)
+    elif isinstance(value, Decimal):
+        encode_decimal128(output, value, **kwargs)
     else:
         raise TypeError("Unable to encode unknown value: {}".format(value))
 
@@ -822,6 +856,7 @@ _ENCODE_MAP = {
     AMQPTypes.map: encode_map,
     AMQPTypes.array: encode_array,
     AMQPTypes.described: encode_described,
+    AMQPTypes.decimal128: encode_decimal128,
 }
 
 
