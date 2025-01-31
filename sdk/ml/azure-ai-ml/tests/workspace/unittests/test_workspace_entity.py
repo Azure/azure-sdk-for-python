@@ -140,7 +140,7 @@ class TestWorkspaceEntity:
             ServerlessComputeSettings(
                 custom_subnet="/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/default",
                 no_public_ip=True,
-            ),  # Override but using same valuehg
+            ),  # Override but using same value
             ServerlessComputeSettings(
                 custom_subnet="/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/testsubnet",
                 no_public_ip=True,
