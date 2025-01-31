@@ -19,6 +19,8 @@ from enum import Enum
 from typing import Any, Dict, Type, Callable, Optional
 from ci_tools.parsing import ParsedSetup
 from packaging_tools.venvtools import create_venv_with_package
+import sys
+from pathlib import Path
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -86,16 +88,12 @@ class CodeReporter:
         _LOGGER.info("current.json is written.")
 
     def _find_installed_source_package(self, pkg_name: str, venv_path: str):
-        import importlib.util
-        import sys
-        from pathlib import Path
-
         pkg_name = pkg_name.replace("-", ".")
 
         # Save the original sys.path
         original_sys_path = sys.path.copy()
         
-        # Determine the site-packages path based on the operating system
+        # Get site-packages path based on operating system
         if sys.platform == 'win32':
             site_packages_path = Path(venv_path) / 'Lib' / 'site-packages'
         else:
@@ -103,21 +101,15 @@ class CodeReporter:
         
         # Add the virtual environment's site-packages directory to sys.path
         sys.path.insert(0, str(site_packages_path))
-        
-        # Check if the package is installed
-        package_spec = importlib.util.find_spec(pkg_name)
-        if not package_spec:
-            _LOGGER.warning(f"Version {self.pkg_version} of {self.pkg_name} not found in the virtual environment.")
-            exit(1)
 
-        source_reporter = CodeReporter(os.path.dirname(package_spec.origin), pkg_name=self.pkg_name, target_module=self.target_module, in_venv=True, pkg_version=self.pkg_version)
+        source_reporter = CodeReporter(venv_path, pkg_name=self.pkg_name, target_module=self.target_module, in_venv=True, pkg_version=self.pkg_version)
         
         public_api = source_reporter.build_library_report()
         with open("stable.json", "w") as fd:
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("stable.json is written.")
 
-        # Restore the original sys.path
+        # Restore original sys.path
         sys.path = original_sys_path
 
     def build_library_report(self) -> Dict:
