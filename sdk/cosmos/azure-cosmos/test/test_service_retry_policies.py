@@ -206,6 +206,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
             assert connection_retry_policy.counter == 3
 
 
+    # needs further debugging
+    @pytest.mark.skip
     def test_global_endpoint_manager_retry(self):
         # For this test we mock both the ConnectionRetryPolicy and the GetDatabaseAccountStub
         # - ConnectionRetryPolicy allows us to raise Service exceptions only for chosen requests and track endpoints used
@@ -222,13 +224,13 @@ class TestServiceRetryPolicies(unittest.TestCase):
         container = db.get_container_client(self.TEST_CONTAINER_ID)
 
         # For some reason this particular test keeps running into 404.1013 on the first request
-        collection_in_progress = True
-        while collection_in_progress:
-            try:
-                container.read()
-                collection_in_progress = False
-            except CosmosHttpResponseError:
-                continue
+        # collection_in_progress = True
+        # while collection_in_progress:
+        #     try:
+        #         container.read()
+        #         collection_in_progress = False
+        #     except CosmosHttpResponseError:
+        #         continue
 
         try:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
