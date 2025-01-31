@@ -4,15 +4,14 @@ import pytest
 
 PACKAGE_NAME = "azureml-dataprep-rslex"
 
+
 def is_package_installed(package_name):
-        """Check if a package is installed in the current environment."""
-        result = subprocess.run(
-            [sys.executable, "-m", "pip", "show", package_name],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
-        return result.returncode == 0
+    """Check if a package is installed in the current environment."""
+    result = subprocess.run(
+        [sys.executable, "-m", "pip", "show", package_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+    )
+    return result.returncode == 0
+
 
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
