@@ -6,7 +6,7 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 from typing import (
-    Any, Callable, Optional, Union,
+    Any, Callable, cast, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import parse_qs
@@ -18,6 +18,8 @@ from ._shared.shared_access_signature import QueryStringConstants
 
 
 if TYPE_CHECKING:
+    from azure.storage.blob import BlobSasPermissions, ContainerSasPermissions
+    from azure.storage.blob._shared.models import Services as BlobServices
     from datetime import datetime
     from ._models import (
         AccountSasPermissions,
@@ -93,7 +95,7 @@ def generate_account_sas(
         resource_types=resource_types,
         permission=permission,
         expiry=expiry,
-        services=services,  # type: ignore [arg-type]
+        services=cast(Union["BlobServices", str], services),
         sts_hook=sts_hook,
         **kwargs
     )
@@ -203,7 +205,7 @@ def generate_file_system_sas(
         container_name=file_system_name,
         account_key=credential if isinstance(credential, str) else None,
         user_delegation_key=credential if not isinstance(credential, str) else None,
-        permission=permission,  # type: ignore [arg-type]
+        permission=cast(Optional[Union["ContainerSasPermissions", str]], permission),
         expiry=expiry,
         sts_hook=sts_hook,
         **kwargs
@@ -319,7 +321,7 @@ def generate_directory_sas(
         blob_name=directory_name,
         account_key=credential if isinstance(credential, str) else None,
         user_delegation_key=credential if not isinstance(credential, str) else None,
-        permission=permission,  # type: ignore [arg-type]
+        permission=cast(Optional[Union["BlobSasPermissions", str]], permission),
         expiry=expiry,
         sdd=depth,
         is_directory=True,
@@ -443,7 +445,7 @@ def generate_file_sas(
         blob_name=path,
         account_key=credential if isinstance(credential, str) else None,
         user_delegation_key=credential if not isinstance(credential, str) else None,
-        permission=permission,  # type: ignore [arg-type]
+        permission=cast(Optional[Union["BlobSasPermissions", str]], permission),
         expiry=expiry,
         sts_hook=sts_hook,
         **kwargs
