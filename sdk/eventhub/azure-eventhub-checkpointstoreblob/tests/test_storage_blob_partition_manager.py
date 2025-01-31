@@ -20,7 +20,8 @@ STORAGE_ENV_KEYS = [
 
 
 def get_live_storage_blob_client(storage_account):
-    storage_account = os.environ[storage_account]
+    storage_account = "https://{}.blob.core.windows.net".format(
+        os.environ[storage_account])
     container_name = str(uuid.uuid4())
     blob_service_client = BlobServiceClient(storage_account, credential=DefaultAzureCredential())
     blob_service_client.create_container(container_name)
