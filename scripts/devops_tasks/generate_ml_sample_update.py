@@ -92,7 +92,7 @@ if __name__ == "__main__":
                 url = blob_client.primary_endpoint
                 print(url)
                 print(type(url))
-                url = url.replace(f"https://{args.storage_account_name}.blob.core.windows.net/{BLOB_CONTAINER}/", f"https://{args.storage_account_name}.z5.web.core.windows.net/")
+                url = url.replace(f"https://{args.storage_account_name}.blob.core.windows.net/%24web/", f"https://{args.storage_account_name}.z5.web.core.windows.net/")
                 to_be_installed.append(url)
         else:
             print("Operated on non-whl file or folder {}".format(whl))
