@@ -71,7 +71,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Attempting to project RRF in a query should fail.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-            assert "One of the inputs is invalid" in e.message
+            assert "One of the input values is invalid" in e.message
 
         try:
             query = "SELECT TOP 10 c.index FROM c WHERE FullTextContains(c.title, 'John')" \
@@ -81,7 +81,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Attempting to set an ordering direction in a full text score query should fail.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-            assert "One of the inputs is invalid" in e.message
+            assert "One of the input values is invalid" in e.message
 
         try:
             query = "SELECT TOP 10 c.index FROM c WHERE FullTextContains(c.title, 'John')" \
@@ -91,7 +91,7 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Attempting to set an ordering direction in a hybrid search query should fail.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-            assert "One of the inputs is invalid" in e.message
+            assert "One of the input values is invalid" in e.message
 
     async def test_hybrid_search_queries_async(self):
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
