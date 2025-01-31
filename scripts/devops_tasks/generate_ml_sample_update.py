@@ -26,6 +26,7 @@ def replace_preview_install(content):
 
 def replace_test_install_command(content, targeted_urls):
     regex = r"^# \<az_ml_sdk_test_install\>[\s\S]*\<\/az_ml_sdk_test_install\>"
+    print(targeted_urls)
 
     install_commands = ["pip install {}".format(url) for url in targeted_urls]
     install_lines = "\n".join(install_commands)
@@ -89,6 +90,8 @@ if __name__ == "__main__":
             with open(whl, "rb") as data:
                 result = blob_client.upload_blob(data=data, overwrite=True)
                 url = blob_client.primary_endpoint
+                print(url)
+                print(type(url))
                 url = url.replace(f"https://{args.storage_account_name}.blob.core.windows.net/{BLOB_CONTAINER}/", f"https://{args.storage_account_name}.z5.web.core.windows.net/")
                 to_be_installed.append(url)
         else:
