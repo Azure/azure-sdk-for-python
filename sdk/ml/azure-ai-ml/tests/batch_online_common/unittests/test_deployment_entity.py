@@ -93,13 +93,12 @@ class TestOnlineDeploymentFromYAML:
         blue_copy.model = Model(name="blah model")
         blue_copy.environment = Environment(name="blah model")
         blue_copy.endpoint_name = "blah endpoint"
-        blue_copy.scale_settings = TargetUtilizationScaleSettings()
+        blue_copy.scale_settings = DefaultScaleSettings()
         blue_copy.request_settings = OnlineRequestSettings(max_concurrent_requests_per_instance=1, max_queue_wait_ms=100, request_timeout_ms=100)
         blue_copy.instance_count=3
         blue_copy.instance_type = "STANDARD_L8S_V3"
         blue_copy.tags = {"tag3": "value3"}
         blue_copy.environment_variables = {"env3": "value3"}
-
 
         blue._merge_with(blue_copy)
 
