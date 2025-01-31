@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from .. import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -64,7 +63,7 @@ class AccountEncryption(_serialization.Model):
         self.identity = identity
 
 
-class ActiveDirectory(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ActiveDirectory(_serialization.Model):
     """Active Directory.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -369,7 +368,7 @@ class ProxyResource(Resource):
     """
 
 
-class Backup(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class Backup(ProxyResource):
     """Backup under a Backup Vault.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -411,8 +410,6 @@ class Backup(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :vartype snapshot_name: str
     :ivar backup_policy_resource_id: ResourceId used to identify the backup policy.
     :vartype backup_policy_resource_id: str
-    :ivar is_large_volume: Specifies if the backup is for a large volume.
-    :vartype is_large_volume: bool
     """
 
     _validation = {
@@ -433,7 +430,6 @@ class Backup(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "failure_reason": {"readonly": True},
         "volume_resource_id": {"required": True},
         "backup_policy_resource_id": {"readonly": True},
-        "is_large_volume": {"readonly": True},
     }
 
     _attribute_map = {
@@ -452,7 +448,6 @@ class Backup(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "use_existing_snapshot": {"key": "properties.useExistingSnapshot", "type": "bool"},
         "snapshot_name": {"key": "properties.snapshotName", "type": "str"},
         "backup_policy_resource_id": {"key": "properties.backupPolicyResourceId", "type": "str"},
-        "is_large_volume": {"key": "properties.isLargeVolume", "type": "bool"},
     }
 
     def __init__(
@@ -487,7 +482,6 @@ class Backup(ProxyResource):  # pylint: disable=too-many-instance-attributes
         self.use_existing_snapshot = use_existing_snapshot
         self.snapshot_name = snapshot_name
         self.backup_policy_resource_id = None
-        self.is_large_volume = None
 
 
 class BackupPatch(_serialization.Model):
@@ -584,7 +578,7 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class BackupPolicy(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class BackupPolicy(TrackedResource):
     """Backup policy information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -608,7 +602,7 @@ class BackupPolicy(TrackedResource):  # pylint: disable=too-many-instance-attrib
     :vartype location: str
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar backup_policy_id: Backup Policy Resource ID.
+    :ivar backup_policy_id: Backup Policy GUID ID.
     :vartype backup_policy_id: str
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
@@ -694,7 +688,7 @@ class BackupPolicy(TrackedResource):  # pylint: disable=too-many-instance-attrib
         self.volume_backups = None
 
 
-class BackupPolicyPatch(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class BackupPolicyPatch(_serialization.Model):
     """Backup policy Details for create and update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -709,7 +703,7 @@ class BackupPolicyPatch(_serialization.Model):  # pylint: disable=too-many-insta
     :vartype type: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar backup_policy_id: Backup Policy Resource ID.
+    :ivar backup_policy_id: Backup Policy GUID ID.
     :vartype backup_policy_id: str
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
@@ -1129,7 +1123,7 @@ class BreakReplicationRequest(_serialization.Model):
         self.force_break_replication = force_break_replication
 
 
-class CapacityPool(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class CapacityPool(TrackedResource):
     """Capacity pool resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1159,7 +1153,7 @@ class CapacityPool(TrackedResource):  # pylint: disable=too-many-instance-attrib
      must be multiple of 1099511627776).
     :vartype size: int
     :ivar service_level: The service level of the file system. Known values are: "Standard",
-     "Premium", "Ultra", "StandardZRS", and "Flexible".
+     "Premium", "Ultra", and "StandardZRS".
     :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
@@ -1167,9 +1161,6 @@ class CapacityPool(TrackedResource):  # pylint: disable=too-many-instance-attrib
     :vartype total_throughput_mibps: float
     :ivar utilized_throughput_mibps: Utilized throughput of pool in MiB/s.
     :vartype utilized_throughput_mibps: float
-    :ivar custom_throughput_mibps: Maximum throughput in MiB/s that can be achieved by this pool
-     and this will be accepted as input only for manual qosType pool with Flexible service level.
-    :vartype custom_throughput_mibps: float
     :ivar qos_type: The qos type of the pool. Known values are: "Auto" and "Manual".
     :vartype qos_type: str or ~azure.mgmt.netapp.models.QosType
     :ivar cool_access: If enabled (true) the pool can contain cool Access enabled volumes.
@@ -1214,7 +1205,6 @@ class CapacityPool(TrackedResource):  # pylint: disable=too-many-instance-attrib
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "total_throughput_mibps": {"key": "properties.totalThroughputMibps", "type": "float"},
         "utilized_throughput_mibps": {"key": "properties.utilizedThroughputMibps", "type": "float"},
-        "custom_throughput_mibps": {"key": "properties.customThroughputMibps", "type": "float"},
         "qos_type": {"key": "properties.qosType", "type": "str"},
         "cool_access": {"key": "properties.coolAccess", "type": "bool"},
         "encryption_type": {"key": "properties.encryptionType", "type": "str"},
@@ -1227,7 +1217,6 @@ class CapacityPool(TrackedResource):  # pylint: disable=too-many-instance-attrib
         size: int = 4398046511104,
         service_level: Union[str, "_models.ServiceLevel"] = "Premium",
         tags: Optional[Dict[str, str]] = None,
-        custom_throughput_mibps: Optional[float] = None,
         qos_type: Optional[Union[str, "_models.QosType"]] = None,
         cool_access: bool = False,
         encryption_type: Union[str, "_models.EncryptionType"] = "Single",
@@ -1242,11 +1231,8 @@ class CapacityPool(TrackedResource):  # pylint: disable=too-many-instance-attrib
          (value must be multiple of 1099511627776).
         :paramtype size: int
         :keyword service_level: The service level of the file system. Known values are: "Standard",
-         "Premium", "Ultra", "StandardZRS", and "Flexible".
+         "Premium", "Ultra", and "StandardZRS".
         :paramtype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
-        :keyword custom_throughput_mibps: Maximum throughput in MiB/s that can be achieved by this pool
-         and this will be accepted as input only for manual qosType pool with Flexible service level.
-        :paramtype custom_throughput_mibps: float
         :keyword qos_type: The qos type of the pool. Known values are: "Auto" and "Manual".
         :paramtype qos_type: str or ~azure.mgmt.netapp.models.QosType
         :keyword cool_access: If enabled (true) the pool can contain cool Access enabled volumes.
@@ -1264,7 +1250,6 @@ class CapacityPool(TrackedResource):  # pylint: disable=too-many-instance-attrib
         self.provisioning_state = None
         self.total_throughput_mibps = None
         self.utilized_throughput_mibps = None
-        self.custom_throughput_mibps = custom_throughput_mibps
         self.qos_type = qos_type
         self.cool_access = cool_access
         self.encryption_type = encryption_type
@@ -1320,9 +1305,6 @@ class CapacityPoolPatch(_serialization.Model):
     :vartype qos_type: str or ~azure.mgmt.netapp.models.QosType
     :ivar cool_access: If enabled (true) the pool can contain cool Access enabled volumes.
     :vartype cool_access: bool
-    :ivar custom_throughput_mibps: Maximum throughput in MiB/s that can be achieved by this pool
-     and this will be accepted as input only for manual qosType pool with Flexible service level.
-    :vartype custom_throughput_mibps: float
     """
 
     _validation = {
@@ -1340,7 +1322,6 @@ class CapacityPoolPatch(_serialization.Model):
         "size": {"key": "properties.size", "type": "int"},
         "qos_type": {"key": "properties.qosType", "type": "str"},
         "cool_access": {"key": "properties.coolAccess", "type": "bool"},
-        "custom_throughput_mibps": {"key": "properties.customThroughputMibps", "type": "float"},
     }
 
     def __init__(
@@ -1351,7 +1332,6 @@ class CapacityPoolPatch(_serialization.Model):
         size: int = 4398046511104,
         qos_type: Optional[Union[str, "_models.QosType"]] = None,
         cool_access: Optional[bool] = None,
-        custom_throughput_mibps: Optional[float] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1366,9 +1346,6 @@ class CapacityPoolPatch(_serialization.Model):
         :paramtype qos_type: str or ~azure.mgmt.netapp.models.QosType
         :keyword cool_access: If enabled (true) the pool can contain cool Access enabled volumes.
         :paramtype cool_access: bool
-        :keyword custom_throughput_mibps: Maximum throughput in MiB/s that can be achieved by this pool
-         and this will be accepted as input only for manual qosType pool with Flexible service level.
-        :paramtype custom_throughput_mibps: float
         """
         super().__init__(**kwargs)
         self.location = location
@@ -1379,7 +1356,6 @@ class CapacityPoolPatch(_serialization.Model):
         self.size = size
         self.qos_type = qos_type
         self.cool_access = cool_access
-        self.custom_throughput_mibps = custom_throughput_mibps
 
 
 class ChangeKeyVault(_serialization.Model):
@@ -1595,54 +1571,6 @@ class DailySchedule(_serialization.Model):
         self.used_bytes = used_bytes
 
 
-class DestinationReplication(_serialization.Model):
-    """Destination replication properties.
-
-    :ivar resource_id: The resource ID of the remote volume.
-    :vartype resource_id: str
-    :ivar replication_type: Indicates whether the replication is cross zone or cross region. Known
-     values are: "CrossRegionReplication" and "CrossZoneReplication".
-    :vartype replication_type: str or ~azure.mgmt.netapp.models.ReplicationType
-    :ivar region: The remote region for the destination volume.
-    :vartype region: str
-    :ivar zone: The remote zone for the destination volume.
-    :vartype zone: str
-    """
-
-    _attribute_map = {
-        "resource_id": {"key": "resourceId", "type": "str"},
-        "replication_type": {"key": "replicationType", "type": "str"},
-        "region": {"key": "region", "type": "str"},
-        "zone": {"key": "zone", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        replication_type: Optional[Union[str, "_models.ReplicationType"]] = None,
-        region: Optional[str] = None,
-        zone: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword resource_id: The resource ID of the remote volume.
-        :paramtype resource_id: str
-        :keyword replication_type: Indicates whether the replication is cross zone or cross region.
-         Known values are: "CrossRegionReplication" and "CrossZoneReplication".
-        :paramtype replication_type: str or ~azure.mgmt.netapp.models.ReplicationType
-        :keyword region: The remote region for the destination volume.
-        :paramtype region: str
-        :keyword zone: The remote zone for the destination volume.
-        :paramtype zone: str
-        """
-        super().__init__(**kwargs)
-        self.resource_id = resource_id
-        self.replication_type = replication_type
-        self.region = region
-        self.zone = zone
-
-
 class Dimension(_serialization.Model):
     """Dimension of blobs, possibly be blob type or access tier.
 
@@ -1681,9 +1609,6 @@ class EncryptionIdentity(_serialization.Model):
      authenticate with key vault. Applicable if identity.type has 'UserAssigned'. It should match
      key of identity.userAssignedIdentities.
     :vartype user_assigned_identity: str
-    :ivar federated_client_id: ClientId of the multi-tenant AAD Application. Used to access
-     cross-tenant KeyVaults.
-    :vartype federated_client_id: str
     """
 
     _validation = {
@@ -1693,25 +1618,18 @@ class EncryptionIdentity(_serialization.Model):
     _attribute_map = {
         "principal_id": {"key": "principalId", "type": "str"},
         "user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
-        "federated_client_id": {"key": "federatedClientId", "type": "str"},
     }
 
-    def __init__(
-        self, *, user_assigned_identity: Optional[str] = None, federated_client_id: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, user_assigned_identity: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword user_assigned_identity: The ARM resource identifier of the user assigned identity used
          to authenticate with key vault. Applicable if identity.type has 'UserAssigned'. It should match
          key of identity.userAssignedIdentities.
         :paramtype user_assigned_identity: str
-        :keyword federated_client_id: ClientId of the multi-tenant AAD Application. Used to access
-         cross-tenant KeyVaults.
-        :paramtype federated_client_id: str
         """
         super().__init__(**kwargs)
         self.principal_id = None
         self.user_assigned_identity = user_assigned_identity
-        self.federated_client_id = federated_client_id
 
 
 class EncryptionTransitionRequest(_serialization.Model):
@@ -1841,7 +1759,7 @@ class ErrorResponse(_serialization.Model):
         self.error = error
 
 
-class ExportPolicyRule(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ExportPolicyRule(_serialization.Model):
     """Volume Export Policy Rule.
 
     :ivar rule_index: Order index.
@@ -2248,34 +2166,6 @@ class LdapSearchScopeOpt(_serialization.Model):
         self.group_membership_filter = group_membership_filter
 
 
-class ListQuotaReportResponse(_serialization.Model):
-    """Quota Report for volume.
-
-    :ivar value: List of volume quota report records.
-    :vartype value: list[~azure.mgmt.netapp.models.QuotaReport]
-    :ivar next_link: URL to get the next set of results.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[QuotaReport]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.QuotaReport"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: List of volume quota report records.
-        :paramtype value: list[~azure.mgmt.netapp.models.QuotaReport]
-        :keyword next_link: URL to get the next set of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
 class ListReplications(_serialization.Model):
     """List Replications.
 
@@ -2384,7 +2274,7 @@ class ManagedServiceIdentity(_serialization.Model):
         self.user_assigned_identities = user_assigned_identities
 
 
-class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class MetricSpecification(_serialization.Model):
     """Metric specification of operation.
 
     :ivar name: Name of metric specification.
@@ -2716,7 +2606,7 @@ class MountTargetProperties(_serialization.Model):
         self.smb_server_fqdn = smb_server_fqdn
 
 
-class NetAppAccount(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class NetAppAccount(TrackedResource):
     """NetApp account resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2751,11 +2641,6 @@ class NetAppAccount(TrackedResource):  # pylint: disable=too-many-instance-attri
     :ivar disable_showmount: Shows the status of disableShowmount for all volumes under the
      subscription, null equals false.
     :vartype disable_showmount: bool
-    :ivar nfs_v4_id_domain: Domain for NFSv4 user ID mapping. This property will be set for all
-     NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes.
-    :vartype nfs_v4_id_domain: str
-    :ivar is_multi_ad_enabled: This will have true value only if account is Multiple AD enabled.
-    :vartype is_multi_ad_enabled: bool
     """
 
     _validation = {
@@ -2767,8 +2652,6 @@ class NetAppAccount(TrackedResource):  # pylint: disable=too-many-instance-attri
         "etag": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "disable_showmount": {"readonly": True},
-        "nfs_v4_id_domain": {"max_length": 255, "pattern": r"^[a-zA-Z0-9][a-zA-Z0-9.-]{0,253}[a-zA-Z0-9]$"},
-        "is_multi_ad_enabled": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2784,8 +2667,6 @@ class NetAppAccount(TrackedResource):  # pylint: disable=too-many-instance-attri
         "active_directories": {"key": "properties.activeDirectories", "type": "[ActiveDirectory]"},
         "encryption": {"key": "properties.encryption", "type": "AccountEncryption"},
         "disable_showmount": {"key": "properties.disableShowmount", "type": "bool"},
-        "nfs_v4_id_domain": {"key": "properties.nfsV4IDDomain", "type": "str"},
-        "is_multi_ad_enabled": {"key": "properties.isMultiAdEnabled", "type": "bool"},
     }
 
     def __init__(
@@ -2796,7 +2677,6 @@ class NetAppAccount(TrackedResource):  # pylint: disable=too-many-instance-attri
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         active_directories: Optional[List["_models.ActiveDirectory"]] = None,
         encryption: Optional["_models.AccountEncryption"] = None,
-        nfs_v4_id_domain: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2810,9 +2690,6 @@ class NetAppAccount(TrackedResource):  # pylint: disable=too-many-instance-attri
         :paramtype active_directories: list[~azure.mgmt.netapp.models.ActiveDirectory]
         :keyword encryption: Encryption settings.
         :paramtype encryption: ~azure.mgmt.netapp.models.AccountEncryption
-        :keyword nfs_v4_id_domain: Domain for NFSv4 user ID mapping. This property will be set for all
-         NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes.
-        :paramtype nfs_v4_id_domain: str
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag = None
@@ -2821,8 +2698,6 @@ class NetAppAccount(TrackedResource):  # pylint: disable=too-many-instance-attri
         self.active_directories = active_directories
         self.encryption = encryption
         self.disable_showmount = None
-        self.nfs_v4_id_domain = nfs_v4_id_domain
-        self.is_multi_ad_enabled = None
 
 
 class NetAppAccountList(_serialization.Model):
@@ -2853,7 +2728,7 @@ class NetAppAccountList(_serialization.Model):
         self.next_link = next_link
 
 
-class NetAppAccountPatch(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class NetAppAccountPatch(_serialization.Model):
     """NetApp account patch resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2879,11 +2754,6 @@ class NetAppAccountPatch(_serialization.Model):  # pylint: disable=too-many-inst
     :ivar disable_showmount: Shows the status of disableShowmount for all volumes under the
      subscription, null equals false.
     :vartype disable_showmount: bool
-    :ivar nfs_v4_id_domain: Domain for NFSv4 user ID mapping. This property will be set for all
-     NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes.
-    :vartype nfs_v4_id_domain: str
-    :ivar is_multi_ad_enabled: This will have true value only if account is Multiple AD enabled.
-    :vartype is_multi_ad_enabled: bool
     """
 
     _validation = {
@@ -2892,8 +2762,6 @@ class NetAppAccountPatch(_serialization.Model):  # pylint: disable=too-many-inst
         "type": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "disable_showmount": {"readonly": True},
-        "nfs_v4_id_domain": {"max_length": 255, "pattern": r"^[a-zA-Z0-9][a-zA-Z0-9.-]{0,253}[a-zA-Z0-9]$"},
-        "is_multi_ad_enabled": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2907,8 +2775,6 @@ class NetAppAccountPatch(_serialization.Model):  # pylint: disable=too-many-inst
         "active_directories": {"key": "properties.activeDirectories", "type": "[ActiveDirectory]"},
         "encryption": {"key": "properties.encryption", "type": "AccountEncryption"},
         "disable_showmount": {"key": "properties.disableShowmount", "type": "bool"},
-        "nfs_v4_id_domain": {"key": "properties.nfsV4IDDomain", "type": "str"},
-        "is_multi_ad_enabled": {"key": "properties.isMultiAdEnabled", "type": "bool"},
     }
 
     def __init__(
@@ -2919,7 +2785,6 @@ class NetAppAccountPatch(_serialization.Model):  # pylint: disable=too-many-inst
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         active_directories: Optional[List["_models.ActiveDirectory"]] = None,
         encryption: Optional["_models.AccountEncryption"] = None,
-        nfs_v4_id_domain: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2933,9 +2798,6 @@ class NetAppAccountPatch(_serialization.Model):  # pylint: disable=too-many-inst
         :paramtype active_directories: list[~azure.mgmt.netapp.models.ActiveDirectory]
         :keyword encryption: Encryption settings.
         :paramtype encryption: ~azure.mgmt.netapp.models.AccountEncryption
-        :keyword nfs_v4_id_domain: Domain for NFSv4 user ID mapping. This property will be set for all
-         NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes.
-        :paramtype nfs_v4_id_domain: str
         """
         super().__init__(**kwargs)
         self.location = location
@@ -2948,8 +2810,6 @@ class NetAppAccountPatch(_serialization.Model):  # pylint: disable=too-many-inst
         self.active_directories = active_directories
         self.encryption = encryption
         self.disable_showmount = None
-        self.nfs_v4_id_domain = nfs_v4_id_domain
-        self.is_multi_ad_enabled = None
 
 
 class NetworkSiblingSet(_serialization.Model):
@@ -3360,76 +3220,6 @@ class QuotaAvailabilityRequest(_serialization.Model):
         self.resource_group = resource_group
 
 
-class QuotaReport(_serialization.Model):
-    """Quota report record properties.
-
-    :ivar quota_type: Type of quota. Known values are: "DefaultUserQuota", "DefaultGroupQuota",
-     "IndividualUserQuota", and "IndividualGroupQuota".
-    :vartype quota_type: str or ~azure.mgmt.netapp.models.Type
-    :ivar quota_target: UserID/GroupID/SID based on the quota target type. UserID and groupID can
-     be found by running ‘id’ or ‘getent’ command for the user or group and SID can be found by
-     running :code:`<wmic useraccount where name='user-name' get sid>`.
-    :vartype quota_target: str
-    :ivar quota_limit_used_in_ki_bs: Specifies the current usage in kibibytes for the user/group
-     quota.
-    :vartype quota_limit_used_in_ki_bs: int
-    :ivar quota_limit_total_in_ki_bs: Specifies the total size limit in kibibytes for the
-     user/group quota.
-    :vartype quota_limit_total_in_ki_bs: int
-    :ivar percentage_used: Percentage of used size compared to total size.
-    :vartype percentage_used: float
-    :ivar is_derived_quota: Flag to indicate whether the quota is derived from default quota.
-    :vartype is_derived_quota: bool
-    """
-
-    _attribute_map = {
-        "quota_type": {"key": "quotaType", "type": "str"},
-        "quota_target": {"key": "quotaTarget", "type": "str"},
-        "quota_limit_used_in_ki_bs": {"key": "quotaLimitUsedInKiBs", "type": "int"},
-        "quota_limit_total_in_ki_bs": {"key": "quotaLimitTotalInKiBs", "type": "int"},
-        "percentage_used": {"key": "percentageUsed", "type": "float"},
-        "is_derived_quota": {"key": "isDerivedQuota", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        quota_type: Optional[Union[str, "_models.Type"]] = None,
-        quota_target: Optional[str] = None,
-        quota_limit_used_in_ki_bs: Optional[int] = None,
-        quota_limit_total_in_ki_bs: Optional[int] = None,
-        percentage_used: Optional[float] = None,
-        is_derived_quota: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword quota_type: Type of quota. Known values are: "DefaultUserQuota", "DefaultGroupQuota",
-         "IndividualUserQuota", and "IndividualGroupQuota".
-        :paramtype quota_type: str or ~azure.mgmt.netapp.models.Type
-        :keyword quota_target: UserID/GroupID/SID based on the quota target type. UserID and groupID
-         can be found by running ‘id’ or ‘getent’ command for the user or group and SID can be found by
-         running :code:`<wmic useraccount where name='user-name' get sid>`.
-        :paramtype quota_target: str
-        :keyword quota_limit_used_in_ki_bs: Specifies the current usage in kibibytes for the user/group
-         quota.
-        :paramtype quota_limit_used_in_ki_bs: int
-        :keyword quota_limit_total_in_ki_bs: Specifies the total size limit in kibibytes for the
-         user/group quota.
-        :paramtype quota_limit_total_in_ki_bs: int
-        :keyword percentage_used: Percentage of used size compared to total size.
-        :paramtype percentage_used: float
-        :keyword is_derived_quota: Flag to indicate whether the quota is derived from default quota.
-        :paramtype is_derived_quota: bool
-        """
-        super().__init__(**kwargs)
-        self.quota_type = quota_type
-        self.quota_target = quota_target
-        self.quota_limit_used_in_ki_bs = quota_limit_used_in_ki_bs
-        self.quota_limit_total_in_ki_bs = quota_limit_total_in_ki_bs
-        self.percentage_used = percentage_used
-        self.is_derived_quota = is_derived_quota
-
-
 class ReestablishReplicationRequest(_serialization.Model):
     """Re-establish request object supplied in the body of the operation.
 
@@ -3771,13 +3561,10 @@ class ReplicationObject(_serialization.Model):
     :vartype remote_path: ~azure.mgmt.netapp.models.RemotePath
     :ivar remote_volume_region: The remote region for the other end of the Volume Replication.
     :vartype remote_volume_region: str
-    :ivar destination_replications: A list of destination replications.
-    :vartype destination_replications: list[~azure.mgmt.netapp.models.DestinationReplication]
     """
 
     _validation = {
         "replication_id": {"readonly": True},
-        "destination_replications": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3787,7 +3574,6 @@ class ReplicationObject(_serialization.Model):
         "remote_volume_resource_id": {"key": "remoteVolumeResourceId", "type": "str"},
         "remote_path": {"key": "remotePath", "type": "RemotePath"},
         "remote_volume_region": {"key": "remoteVolumeRegion", "type": "str"},
-        "destination_replications": {"key": "destinationReplications", "type": "[DestinationReplication]"},
     }
 
     def __init__(
@@ -3823,7 +3609,6 @@ class ReplicationObject(_serialization.Model):
         self.remote_volume_resource_id = remote_volume_resource_id
         self.remote_path = remote_path
         self.remote_volume_region = remote_volume_region
-        self.destination_replications = None
 
 
 class ReplicationStatus(_serialization.Model):
@@ -4135,7 +3920,7 @@ class SnapshotPoliciesList(_serialization.Model):
         self.value = value
 
 
-class SnapshotPolicy(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class SnapshotPolicy(TrackedResource):
     """Snapshot policy information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4237,7 +4022,7 @@ class SnapshotPolicy(TrackedResource):  # pylint: disable=too-many-instance-attr
         self.provisioning_state = None
 
 
-class SnapshotPolicyDetails(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class SnapshotPolicyDetails(_serialization.Model):
     """Snapshot policy properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4329,7 +4114,7 @@ class SnapshotPolicyDetails(_serialization.Model):  # pylint: disable=too-many-i
         self.provisioning_state = None
 
 
-class SnapshotPolicyPatch(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class SnapshotPolicyPatch(_serialization.Model):
     """Snapshot policy Details for create and update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4628,7 +4413,7 @@ class SubvolumeInfo(ProxyResource):
         self.provisioning_state = None
 
 
-class SubvolumeModel(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class SubvolumeModel(_serialization.Model):
     """Result of the post subvolume and action is to get metadata of the subvolume.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4978,7 +4763,7 @@ class UserAssignedIdentity(_serialization.Model):
         self.client_id = None
 
 
-class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Volume(TrackedResource):
     """Volume resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5010,12 +4795,12 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
      Required.
     :vartype creation_token: str
     :ivar service_level: The service level of the file system. Known values are: "Standard",
-     "Premium", "Ultra", "StandardZRS", and "Flexible".
+     "Premium", "Ultra", and "StandardZRS".
     :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
      quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
-     100TiB. For large volumes, valid values are in the range 100TiB to 1PiB, and on an exceptional
-     basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
+     100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
+     exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
     :vartype export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
@@ -5053,18 +4838,11 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar mount_targets: List of mount targets.
     :vartype mount_targets: list[~azure.mgmt.netapp.models.MountTargetProperties]
     :ivar volume_type: What type of volume is this. For destination volumes in Cross Region
-     Replication, set type to DataProtection. For creating clone volume, set type to ShortTermClone.
+     Replication, set type to DataProtection.
     :vartype volume_type: str
     :ivar data_protection: DataProtection type volumes include an object containing details of the
      replication.
     :vartype data_protection: ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
-    :ivar accept_grow_capacity_pool_for_short_term_clone_split: While auto splitting the short term
-     clone volume, if the parent pool does not have enough space to accommodate the volume after
-     split, it will be automatically resized, which will lead to increased billing. To accept
-     capacity pool size auto grow and create a short term clone volume, set the property as
-     accepted. Known values are: "Accepted" and "Declined".
-    :vartype accept_grow_capacity_pool_for_short_term_clone_split: str or
-     ~azure.mgmt.netapp.models.AcceptGrowCapacityPoolForShortTermCloneSplit
     :ivar is_restoring: Restoring.
     :vartype is_restoring: bool
     :ivar snapshot_directory_visible: If enabled (true) the volume will contain a read-only
@@ -5123,15 +4901,19 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
      "Default", "OnRead", and "Never".
     :vartype cool_access_retrieval_policy: str or
      ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
+    :ivar cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks are
+     moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks
+     in both the Snapshot copies and the active file system to the cool tier tier. This policy is
+     the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not
+     associated with the active file system to the cool tier. Known values are: "Auto" and
+     "SnapshotOnly".
+    :vartype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
     :ivar unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format. First
      digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit
      selects permission for the owner of the file: read (4), write (2) and execute (1). Third
      selects permissions for other users in the same group. the fourth for other users not in the
      group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
-     users.  Avoid passing null value for unixPermissions in volume update operation, As per the
-     behavior, If Null value is passed then user-visible unixPermissions value will became null, and
-     user will not be able to get unixPermissions value. On safer side, actual unixPermissions value
-     on volume will remain as its last saved value only.
+     users.
     :vartype unix_permissions: str
     :ivar clone_progress: When a volume is being restored from another volume's snapshot, will show
      the percentage completion of this cloning process. When this value is empty/null there is no
@@ -5185,19 +4967,6 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype is_large_volume: bool
     :ivar originating_resource_id: Id of the snapshot or backup that the volume is restored from.
     :vartype originating_resource_id: str
-    :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
-     bytes.
-    :vartype inherited_size_in_bytes: int
-    :ivar language: Language supported for volume. Known values are: "c.utf-8", "utf8mb4", "ar",
-     "ar.utf-8", "hr", "hr.utf-8", "cs", "cs.utf-8", "da", "da.utf-8", "nl", "nl.utf-8", "en",
-     "en.utf-8", "fi", "fi.utf-8", "fr", "fr.utf-8", "de", "de.utf-8", "he", "he.utf-8", "hu",
-     "hu.utf-8", "it", "it.utf-8", "ja", "ja.utf-8", "ja-v1", "ja-v1.utf-8", "ja-jp.pck",
-     "ja-jp.pck.utf-8", "ja-jp.932", "ja-jp.932.utf-8", "ja-jp.pck-v2", "ja-jp.pck-v2.utf-8", "ko",
-     "ko.utf-8", "no", "no.utf-8", "pl", "pl.utf-8", "pt", "pt.utf-8", "c", "ro", "ro.utf-8", "ru",
-     "ru.utf-8", "zh", "zh.utf-8", "zh.gbk", "zh.gbk.utf-8", "zh-tw.big5", "zh-tw.big5.utf-8",
-     "zh-tw", "zh-tw.utf-8", "sk", "sk.utf-8", "sl", "sl.utf-8", "es", "es.utf-8", "sv", "sv.utf-8",
-     "tr", "tr.utf-8", "en-us", and "en-us.utf-8".
-    :vartype language: str or ~azure.mgmt.netapp.models.VolumeLanguage
     """
 
     _validation = {
@@ -5244,7 +5013,6 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "encrypted": {"readonly": True},
         "provisioned_availability_zone": {"readonly": True},
         "originating_resource_id": {"readonly": True},
-        "inherited_size_in_bytes": {"readonly": True},
     }
 
     _attribute_map = {
@@ -5275,10 +5043,6 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "mount_targets": {"key": "properties.mountTargets", "type": "[MountTargetProperties]"},
         "volume_type": {"key": "properties.volumeType", "type": "str"},
         "data_protection": {"key": "properties.dataProtection", "type": "VolumePropertiesDataProtection"},
-        "accept_grow_capacity_pool_for_short_term_clone_split": {
-            "key": "properties.acceptGrowCapacityPoolForShortTermCloneSplit",
-            "type": "str",
-        },
         "is_restoring": {"key": "properties.isRestoring", "type": "bool"},
         "snapshot_directory_visible": {"key": "properties.snapshotDirectoryVisible", "type": "bool"},
         "kerberos_enabled": {"key": "properties.kerberosEnabled", "type": "bool"},
@@ -5298,6 +5062,7 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "cool_access": {"key": "properties.coolAccess", "type": "bool"},
         "coolness_period": {"key": "properties.coolnessPeriod", "type": "int"},
         "cool_access_retrieval_policy": {"key": "properties.coolAccessRetrievalPolicy", "type": "str"},
+        "cool_access_tiering_policy": {"key": "properties.coolAccessTieringPolicy", "type": "str"},
         "unix_permissions": {"key": "properties.unixPermissions", "type": "str"},
         "clone_progress": {"key": "properties.cloneProgress", "type": "int"},
         "file_access_logs": {"key": "properties.fileAccessLogs", "type": "str"},
@@ -5318,8 +5083,6 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "provisioned_availability_zone": {"key": "properties.provisionedAvailabilityZone", "type": "str"},
         "is_large_volume": {"key": "properties.isLargeVolume", "type": "bool"},
         "originating_resource_id": {"key": "properties.originatingResourceId", "type": "str"},
-        "inherited_size_in_bytes": {"key": "properties.inheritedSizeInBytes", "type": "int"},
-        "language": {"key": "properties.language", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -5340,9 +5103,6 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         network_features: Union[str, "_models.NetworkFeatures"] = "Basic",
         volume_type: Optional[str] = None,
         data_protection: Optional["_models.VolumePropertiesDataProtection"] = None,
-        accept_grow_capacity_pool_for_short_term_clone_split: Optional[
-            Union[str, "_models.AcceptGrowCapacityPoolForShortTermCloneSplit"]
-        ] = None,
         is_restoring: Optional[bool] = None,
         snapshot_directory_visible: bool = True,
         kerberos_enabled: bool = False,
@@ -5358,6 +5118,7 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         cool_access: bool = False,
         coolness_period: Optional[int] = None,
         cool_access_retrieval_policy: Optional[Union[str, "_models.CoolAccessRetrievalPolicy"]] = None,
+        cool_access_tiering_policy: Optional[Union[str, "_models.CoolAccessTieringPolicy"]] = None,
         unix_permissions: Optional[str] = None,
         avs_data_store: Union[str, "_models.AvsDataStore"] = "Disabled",
         is_default_quota_enabled: bool = False,
@@ -5369,7 +5130,6 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         placement_rules: Optional[List["_models.PlacementKeyValuePairs"]] = None,
         enable_subvolumes: Union[str, "_models.EnableSubvolumes"] = "Disabled",
         is_large_volume: bool = False,
-        language: Optional[Union[str, "_models.VolumeLanguage"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5383,12 +5143,12 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
          Required.
         :paramtype creation_token: str
         :keyword service_level: The service level of the file system. Known values are: "Standard",
-         "Premium", "Ultra", "StandardZRS", and "Flexible".
+         "Premium", "Ultra", and "StandardZRS".
         :paramtype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
         :keyword usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a
          soft quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
-         100TiB. For large volumes, valid values are in the range 100TiB to 1PiB, and on an exceptional
-         basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
+         100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
+         exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
         :paramtype usage_threshold: int
         :keyword export_policy: Set of export policy rules.
         :paramtype export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
@@ -5409,18 +5169,11 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
          "Standard_Basic".
         :paramtype network_features: str or ~azure.mgmt.netapp.models.NetworkFeatures
         :keyword volume_type: What type of volume is this. For destination volumes in Cross Region
-         Replication, set type to DataProtection. For creating clone volume, set type to ShortTermClone.
+         Replication, set type to DataProtection.
         :paramtype volume_type: str
         :keyword data_protection: DataProtection type volumes include an object containing details of
          the replication.
         :paramtype data_protection: ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
-        :keyword accept_grow_capacity_pool_for_short_term_clone_split: While auto splitting the short
-         term clone volume, if the parent pool does not have enough space to accommodate the volume
-         after split, it will be automatically resized, which will lead to increased billing. To accept
-         capacity pool size auto grow and create a short term clone volume, set the property as
-         accepted. Known values are: "Accepted" and "Declined".
-        :paramtype accept_grow_capacity_pool_for_short_term_clone_split: str or
-         ~azure.mgmt.netapp.models.AcceptGrowCapacityPoolForShortTermCloneSplit
         :keyword is_restoring: Restoring.
         :paramtype is_restoring: bool
         :keyword snapshot_directory_visible: If enabled (true) the volume will contain a read-only
@@ -5476,15 +5229,19 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
          "Default", "OnRead", and "Never".
         :paramtype cool_access_retrieval_policy: str or
          ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
+        :keyword cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks
+         are moved to cool tier. The possible values for this field are: Auto - Moves cold user data
+         blocks in both the Snapshot copies and the active file system to the cool tier tier. This
+         policy is the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that
+         are not associated with the active file system to the cool tier. Known values are: "Auto" and
+         "SnapshotOnly".
+        :paramtype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
         :keyword unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format.
          First digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second
          digit selects permission for the owner of the file: read (4), write (2) and execute (1). Third
          selects permissions for other users in the same group. the fourth for other users not in the
          group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
-         users.  Avoid passing null value for unixPermissions in volume update operation, As per the
-         behavior, If Null value is passed then user-visible unixPermissions value will became null, and
-         user will not be able to get unixPermissions value. On safer side, actual unixPermissions value
-         on volume will remain as its last saved value only.
+         users.
         :paramtype unix_permissions: str
         :keyword avs_data_store: Specifies whether the volume is enabled for Azure VMware Solution
          (AVS) datastore purpose. Known values are: "Enabled" and "Disabled".
@@ -5512,16 +5269,6 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
         :keyword is_large_volume: Specifies whether volume is a Large Volume or Regular Volume.
         :paramtype is_large_volume: bool
-        :keyword language: Language supported for volume. Known values are: "c.utf-8", "utf8mb4", "ar",
-         "ar.utf-8", "hr", "hr.utf-8", "cs", "cs.utf-8", "da", "da.utf-8", "nl", "nl.utf-8", "en",
-         "en.utf-8", "fi", "fi.utf-8", "fr", "fr.utf-8", "de", "de.utf-8", "he", "he.utf-8", "hu",
-         "hu.utf-8", "it", "it.utf-8", "ja", "ja.utf-8", "ja-v1", "ja-v1.utf-8", "ja-jp.pck",
-         "ja-jp.pck.utf-8", "ja-jp.932", "ja-jp.932.utf-8", "ja-jp.pck-v2", "ja-jp.pck-v2.utf-8", "ko",
-         "ko.utf-8", "no", "no.utf-8", "pl", "pl.utf-8", "pt", "pt.utf-8", "c", "ro", "ro.utf-8", "ru",
-         "ru.utf-8", "zh", "zh.utf-8", "zh.gbk", "zh.gbk.utf-8", "zh-tw.big5", "zh-tw.big5.utf-8",
-         "zh-tw", "zh-tw.utf-8", "sk", "sk.utf-8", "sl", "sl.utf-8", "es", "es.utf-8", "sv", "sv.utf-8",
-         "tr", "tr.utf-8", "en-us", and "en-us.utf-8".
-        :paramtype language: str or ~azure.mgmt.netapp.models.VolumeLanguage
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag = None
@@ -5545,7 +5292,6 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.mount_targets = None
         self.volume_type = volume_type
         self.data_protection = data_protection
-        self.accept_grow_capacity_pool_for_short_term_clone_split = accept_grow_capacity_pool_for_short_term_clone_split
         self.is_restoring = is_restoring
         self.snapshot_directory_visible = snapshot_directory_visible
         self.kerberos_enabled = kerberos_enabled
@@ -5562,6 +5308,7 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.cool_access = cool_access
         self.coolness_period = coolness_period
         self.cool_access_retrieval_policy = cool_access_retrieval_policy
+        self.cool_access_tiering_policy = cool_access_tiering_policy
         self.unix_permissions = unix_permissions
         self.clone_progress = None
         self.file_access_logs = None
@@ -5582,8 +5329,6 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.provisioned_availability_zone = None
         self.is_large_volume = is_large_volume
         self.originating_resource_id = None
-        self.inherited_size_in_bytes = None
-        self.language = language
 
 
 class VolumeBackupProperties(_serialization.Model):
@@ -5868,7 +5613,7 @@ class VolumeGroupMetaData(_serialization.Model):
         self.volumes_count = None
 
 
-class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class VolumeGroupVolumeProperties(_serialization.Model):
     """Volume resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5891,12 +5636,12 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
      Required.
     :vartype creation_token: str
     :ivar service_level: The service level of the file system. Known values are: "Standard",
-     "Premium", "Ultra", "StandardZRS", and "Flexible".
+     "Premium", "Ultra", and "StandardZRS".
     :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
      quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
-     100TiB. For large volumes, valid values are in the range 100TiB to 1PiB, and on an exceptional
-     basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
+     100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
+     exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
     :vartype export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
@@ -5934,18 +5679,11 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
     :ivar mount_targets: List of mount targets.
     :vartype mount_targets: list[~azure.mgmt.netapp.models.MountTargetProperties]
     :ivar volume_type: What type of volume is this. For destination volumes in Cross Region
-     Replication, set type to DataProtection. For creating clone volume, set type to ShortTermClone.
+     Replication, set type to DataProtection.
     :vartype volume_type: str
     :ivar data_protection: DataProtection type volumes include an object containing details of the
      replication.
     :vartype data_protection: ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
-    :ivar accept_grow_capacity_pool_for_short_term_clone_split: While auto splitting the short term
-     clone volume, if the parent pool does not have enough space to accommodate the volume after
-     split, it will be automatically resized, which will lead to increased billing. To accept
-     capacity pool size auto grow and create a short term clone volume, set the property as
-     accepted. Known values are: "Accepted" and "Declined".
-    :vartype accept_grow_capacity_pool_for_short_term_clone_split: str or
-     ~azure.mgmt.netapp.models.AcceptGrowCapacityPoolForShortTermCloneSplit
     :ivar is_restoring: Restoring.
     :vartype is_restoring: bool
     :ivar snapshot_directory_visible: If enabled (true) the volume will contain a read-only
@@ -6004,15 +5742,19 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
      "Default", "OnRead", and "Never".
     :vartype cool_access_retrieval_policy: str or
      ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
+    :ivar cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks are
+     moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks
+     in both the Snapshot copies and the active file system to the cool tier tier. This policy is
+     the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not
+     associated with the active file system to the cool tier. Known values are: "Auto" and
+     "SnapshotOnly".
+    :vartype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
     :ivar unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format. First
      digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit
      selects permission for the owner of the file: read (4), write (2) and execute (1). Third
      selects permissions for other users in the same group. the fourth for other users not in the
      group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
-     users.  Avoid passing null value for unixPermissions in volume update operation, As per the
-     behavior, If Null value is passed then user-visible unixPermissions value will became null, and
-     user will not be able to get unixPermissions value. On safer side, actual unixPermissions value
-     on volume will remain as its last saved value only.
+     users.
     :vartype unix_permissions: str
     :ivar clone_progress: When a volume is being restored from another volume's snapshot, will show
      the percentage completion of this cloning process. When this value is empty/null there is no
@@ -6066,19 +5808,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
     :vartype is_large_volume: bool
     :ivar originating_resource_id: Id of the snapshot or backup that the volume is restored from.
     :vartype originating_resource_id: str
-    :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
-     bytes.
-    :vartype inherited_size_in_bytes: int
-    :ivar language: Language supported for volume. Known values are: "c.utf-8", "utf8mb4", "ar",
-     "ar.utf-8", "hr", "hr.utf-8", "cs", "cs.utf-8", "da", "da.utf-8", "nl", "nl.utf-8", "en",
-     "en.utf-8", "fi", "fi.utf-8", "fr", "fr.utf-8", "de", "de.utf-8", "he", "he.utf-8", "hu",
-     "hu.utf-8", "it", "it.utf-8", "ja", "ja.utf-8", "ja-v1", "ja-v1.utf-8", "ja-jp.pck",
-     "ja-jp.pck.utf-8", "ja-jp.932", "ja-jp.932.utf-8", "ja-jp.pck-v2", "ja-jp.pck-v2.utf-8", "ko",
-     "ko.utf-8", "no", "no.utf-8", "pl", "pl.utf-8", "pt", "pt.utf-8", "c", "ro", "ro.utf-8", "ru",
-     "ru.utf-8", "zh", "zh.utf-8", "zh.gbk", "zh.gbk.utf-8", "zh-tw.big5", "zh-tw.big5.utf-8",
-     "zh-tw", "zh-tw.utf-8", "sk", "sk.utf-8", "sl", "sl.utf-8", "es", "es.utf-8", "sv", "sv.utf-8",
-     "tr", "tr.utf-8", "en-us", and "en-us.utf-8".
-    :vartype language: str or ~azure.mgmt.netapp.models.VolumeLanguage
     """
 
     _validation = {
@@ -6121,7 +5850,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         "encrypted": {"readonly": True},
         "provisioned_availability_zone": {"readonly": True},
         "originating_resource_id": {"readonly": True},
-        "inherited_size_in_bytes": {"readonly": True},
     }
 
     _attribute_map = {
@@ -6149,10 +5877,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         "mount_targets": {"key": "properties.mountTargets", "type": "[MountTargetProperties]"},
         "volume_type": {"key": "properties.volumeType", "type": "str"},
         "data_protection": {"key": "properties.dataProtection", "type": "VolumePropertiesDataProtection"},
-        "accept_grow_capacity_pool_for_short_term_clone_split": {
-            "key": "properties.acceptGrowCapacityPoolForShortTermCloneSplit",
-            "type": "str",
-        },
         "is_restoring": {"key": "properties.isRestoring", "type": "bool"},
         "snapshot_directory_visible": {"key": "properties.snapshotDirectoryVisible", "type": "bool"},
         "kerberos_enabled": {"key": "properties.kerberosEnabled", "type": "bool"},
@@ -6172,6 +5896,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         "cool_access": {"key": "properties.coolAccess", "type": "bool"},
         "coolness_period": {"key": "properties.coolnessPeriod", "type": "int"},
         "cool_access_retrieval_policy": {"key": "properties.coolAccessRetrievalPolicy", "type": "str"},
+        "cool_access_tiering_policy": {"key": "properties.coolAccessTieringPolicy", "type": "str"},
         "unix_permissions": {"key": "properties.unixPermissions", "type": "str"},
         "clone_progress": {"key": "properties.cloneProgress", "type": "int"},
         "file_access_logs": {"key": "properties.fileAccessLogs", "type": "str"},
@@ -6192,8 +5917,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         "provisioned_availability_zone": {"key": "properties.provisionedAvailabilityZone", "type": "str"},
         "is_large_volume": {"key": "properties.isLargeVolume", "type": "bool"},
         "originating_resource_id": {"key": "properties.originatingResourceId", "type": "str"},
-        "inherited_size_in_bytes": {"key": "properties.inheritedSizeInBytes", "type": "int"},
-        "language": {"key": "properties.language", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -6214,9 +5937,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         network_features: Union[str, "_models.NetworkFeatures"] = "Basic",
         volume_type: Optional[str] = None,
         data_protection: Optional["_models.VolumePropertiesDataProtection"] = None,
-        accept_grow_capacity_pool_for_short_term_clone_split: Optional[
-            Union[str, "_models.AcceptGrowCapacityPoolForShortTermCloneSplit"]
-        ] = None,
         is_restoring: Optional[bool] = None,
         snapshot_directory_visible: bool = True,
         kerberos_enabled: bool = False,
@@ -6232,6 +5952,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         cool_access: bool = False,
         coolness_period: Optional[int] = None,
         cool_access_retrieval_policy: Optional[Union[str, "_models.CoolAccessRetrievalPolicy"]] = None,
+        cool_access_tiering_policy: Optional[Union[str, "_models.CoolAccessTieringPolicy"]] = None,
         unix_permissions: Optional[str] = None,
         avs_data_store: Union[str, "_models.AvsDataStore"] = "Disabled",
         is_default_quota_enabled: bool = False,
@@ -6243,7 +5964,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         placement_rules: Optional[List["_models.PlacementKeyValuePairs"]] = None,
         enable_subvolumes: Union[str, "_models.EnableSubvolumes"] = "Disabled",
         is_large_volume: bool = False,
-        language: Optional[Union[str, "_models.VolumeLanguage"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6257,12 +5977,12 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
          Required.
         :paramtype creation_token: str
         :keyword service_level: The service level of the file system. Known values are: "Standard",
-         "Premium", "Ultra", "StandardZRS", and "Flexible".
+         "Premium", "Ultra", and "StandardZRS".
         :paramtype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
         :keyword usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a
          soft quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
-         100TiB. For large volumes, valid values are in the range 100TiB to 1PiB, and on an exceptional
-         basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
+         100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
+         exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
         :paramtype usage_threshold: int
         :keyword export_policy: Set of export policy rules.
         :paramtype export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
@@ -6283,18 +6003,11 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
          "Standard_Basic".
         :paramtype network_features: str or ~azure.mgmt.netapp.models.NetworkFeatures
         :keyword volume_type: What type of volume is this. For destination volumes in Cross Region
-         Replication, set type to DataProtection. For creating clone volume, set type to ShortTermClone.
+         Replication, set type to DataProtection.
         :paramtype volume_type: str
         :keyword data_protection: DataProtection type volumes include an object containing details of
          the replication.
         :paramtype data_protection: ~azure.mgmt.netapp.models.VolumePropertiesDataProtection
-        :keyword accept_grow_capacity_pool_for_short_term_clone_split: While auto splitting the short
-         term clone volume, if the parent pool does not have enough space to accommodate the volume
-         after split, it will be automatically resized, which will lead to increased billing. To accept
-         capacity pool size auto grow and create a short term clone volume, set the property as
-         accepted. Known values are: "Accepted" and "Declined".
-        :paramtype accept_grow_capacity_pool_for_short_term_clone_split: str or
-         ~azure.mgmt.netapp.models.AcceptGrowCapacityPoolForShortTermCloneSplit
         :keyword is_restoring: Restoring.
         :paramtype is_restoring: bool
         :keyword snapshot_directory_visible: If enabled (true) the volume will contain a read-only
@@ -6350,15 +6063,19 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
          "Default", "OnRead", and "Never".
         :paramtype cool_access_retrieval_policy: str or
          ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
+        :keyword cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks
+         are moved to cool tier. The possible values for this field are: Auto - Moves cold user data
+         blocks in both the Snapshot copies and the active file system to the cool tier tier. This
+         policy is the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that
+         are not associated with the active file system to the cool tier. Known values are: "Auto" and
+         "SnapshotOnly".
+        :paramtype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
         :keyword unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format.
          First digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second
          digit selects permission for the owner of the file: read (4), write (2) and execute (1). Third
          selects permissions for other users in the same group. the fourth for other users not in the
          group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
-         users.  Avoid passing null value for unixPermissions in volume update operation, As per the
-         behavior, If Null value is passed then user-visible unixPermissions value will became null, and
-         user will not be able to get unixPermissions value. On safer side, actual unixPermissions value
-         on volume will remain as its last saved value only.
+         users.
         :paramtype unix_permissions: str
         :keyword avs_data_store: Specifies whether the volume is enabled for Azure VMware Solution
          (AVS) datastore purpose. Known values are: "Enabled" and "Disabled".
@@ -6386,16 +6103,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         :paramtype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
         :keyword is_large_volume: Specifies whether volume is a Large Volume or Regular Volume.
         :paramtype is_large_volume: bool
-        :keyword language: Language supported for volume. Known values are: "c.utf-8", "utf8mb4", "ar",
-         "ar.utf-8", "hr", "hr.utf-8", "cs", "cs.utf-8", "da", "da.utf-8", "nl", "nl.utf-8", "en",
-         "en.utf-8", "fi", "fi.utf-8", "fr", "fr.utf-8", "de", "de.utf-8", "he", "he.utf-8", "hu",
-         "hu.utf-8", "it", "it.utf-8", "ja", "ja.utf-8", "ja-v1", "ja-v1.utf-8", "ja-jp.pck",
-         "ja-jp.pck.utf-8", "ja-jp.932", "ja-jp.932.utf-8", "ja-jp.pck-v2", "ja-jp.pck-v2.utf-8", "ko",
-         "ko.utf-8", "no", "no.utf-8", "pl", "pl.utf-8", "pt", "pt.utf-8", "c", "ro", "ro.utf-8", "ru",
-         "ru.utf-8", "zh", "zh.utf-8", "zh.gbk", "zh.gbk.utf-8", "zh-tw.big5", "zh-tw.big5.utf-8",
-         "zh-tw", "zh-tw.utf-8", "sk", "sk.utf-8", "sl", "sl.utf-8", "es", "es.utf-8", "sv", "sv.utf-8",
-         "tr", "tr.utf-8", "en-us", and "en-us.utf-8".
-        :paramtype language: str or ~azure.mgmt.netapp.models.VolumeLanguage
         """
         super().__init__(**kwargs)
         self.id = None
@@ -6422,7 +6129,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         self.mount_targets = None
         self.volume_type = volume_type
         self.data_protection = data_protection
-        self.accept_grow_capacity_pool_for_short_term_clone_split = accept_grow_capacity_pool_for_short_term_clone_split
         self.is_restoring = is_restoring
         self.snapshot_directory_visible = snapshot_directory_visible
         self.kerberos_enabled = kerberos_enabled
@@ -6439,6 +6145,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         self.cool_access = cool_access
         self.coolness_period = coolness_period
         self.cool_access_retrieval_policy = cool_access_retrieval_policy
+        self.cool_access_tiering_policy = cool_access_tiering_policy
         self.unix_permissions = unix_permissions
         self.clone_progress = None
         self.file_access_logs = None
@@ -6459,8 +6166,6 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         self.provisioned_availability_zone = None
         self.is_large_volume = is_large_volume
         self.originating_resource_id = None
-        self.inherited_size_in_bytes = None
-        self.language = language
 
 
 class VolumeList(_serialization.Model):
@@ -6491,7 +6196,7 @@ class VolumeList(_serialization.Model):
         self.next_link = next_link
 
 
-class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class VolumePatch(_serialization.Model):
     """Volume patch resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6507,12 +6212,12 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar service_level: The service level of the file system. Known values are: "Standard",
-     "Premium", "Ultra", "StandardZRS", and "Flexible".
+     "Premium", "Ultra", and "StandardZRS".
     :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
      quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
-     100TiB. For large volumes, valid values are in the range 100TiB to 1PiB, and on an exceptional
-     basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
+     100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
+     exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
     :vartype export_policy: ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
@@ -6555,6 +6260,13 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
      "Default", "OnRead", and "Never".
     :vartype cool_access_retrieval_policy: str or
      ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
+    :ivar cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks are
+     moved to cool tier. The possible values for this field are: Auto - Moves cold user data blocks
+     in both the Snapshot copies and the active file system to the cool tier tier. This policy is
+     the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that are not
+     associated with the active file system to the cool tier. Known values are: "Auto" and
+     "SnapshotOnly".
+    :vartype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
     :ivar snapshot_directory_visible: If enabled (true) the volume will contain a read-only
      snapshot directory which provides access to each of the volume's snapshots.
     :vartype snapshot_directory_visible: bool
@@ -6596,6 +6308,7 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         "cool_access": {"key": "properties.coolAccess", "type": "bool"},
         "coolness_period": {"key": "properties.coolnessPeriod", "type": "int"},
         "cool_access_retrieval_policy": {"key": "properties.coolAccessRetrievalPolicy", "type": "str"},
+        "cool_access_tiering_policy": {"key": "properties.coolAccessTieringPolicy", "type": "str"},
         "snapshot_directory_visible": {"key": "properties.snapshotDirectoryVisible", "type": "bool"},
         "smb_access_based_enumeration": {"key": "properties.smbAccessBasedEnumeration", "type": "str"},
         "smb_non_browsable": {"key": "properties.smbNonBrowsable", "type": "str"},
@@ -6619,6 +6332,7 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         cool_access: Optional[bool] = None,
         coolness_period: Optional[int] = None,
         cool_access_retrieval_policy: Optional[Union[str, "_models.CoolAccessRetrievalPolicy"]] = None,
+        cool_access_tiering_policy: Optional[Union[str, "_models.CoolAccessTieringPolicy"]] = None,
         snapshot_directory_visible: Optional[bool] = None,
         smb_access_based_enumeration: Optional[Union[str, "_models.SmbAccessBasedEnumeration"]] = None,
         smb_non_browsable: Optional[Union[str, "_models.SmbNonBrowsable"]] = None,
@@ -6630,12 +6344,12 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword service_level: The service level of the file system. Known values are: "Standard",
-         "Premium", "Ultra", "StandardZRS", and "Flexible".
+         "Premium", "Ultra", and "StandardZRS".
         :paramtype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
         :keyword usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a
          soft quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
-         100TiB. For large volumes, valid values are in the range 100TiB to 1PiB, and on an exceptional
-         basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
+         100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
+         exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
         :paramtype usage_threshold: int
         :keyword export_policy: Set of export policy rules.
         :paramtype export_policy: ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
@@ -6678,6 +6392,13 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
          "Default", "OnRead", and "Never".
         :paramtype cool_access_retrieval_policy: str or
          ~azure.mgmt.netapp.models.CoolAccessRetrievalPolicy
+        :keyword cool_access_tiering_policy: coolAccessTieringPolicy determines which cold data blocks
+         are moved to cool tier. The possible values for this field are: Auto - Moves cold user data
+         blocks in both the Snapshot copies and the active file system to the cool tier tier. This
+         policy is the default. SnapshotOnly - Moves user data blocks of the Volume Snapshot copies that
+         are not associated with the active file system to the cool tier. Known values are: "Auto" and
+         "SnapshotOnly".
+        :paramtype cool_access_tiering_policy: str or ~azure.mgmt.netapp.models.CoolAccessTieringPolicy
         :keyword snapshot_directory_visible: If enabled (true) the volume will contain a read-only
          snapshot directory which provides access to each of the volume's snapshots.
         :paramtype snapshot_directory_visible: bool
@@ -6709,6 +6430,7 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         self.cool_access = cool_access
         self.coolness_period = coolness_period
         self.cool_access_retrieval_policy = cool_access_retrieval_policy
+        self.cool_access_tiering_policy = cool_access_tiering_policy
         self.snapshot_directory_visible = snapshot_directory_visible
         self.smb_access_based_enumeration = smb_access_based_enumeration
         self.smb_non_browsable = smb_non_browsable

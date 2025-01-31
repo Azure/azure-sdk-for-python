@@ -1,5 +1,24 @@
 # Release History
 
+## 13.4.0 (2025-02-24)
+
+### Features Added
+
+  - Model `Volume` added property `cool_access_tiering_policy`
+  - Model `VolumeGroupVolumeProperties` added property `cool_access_tiering_policy`
+  - Model `VolumePatch` added property `cool_access_tiering_policy`
+  - Added model `ChangeKeyVault`
+  - Added enum `CoolAccessTieringPolicy`
+  - Added model `EncryptionTransitionRequest`
+  - Added model `KeyVaultPrivateEndpoint`
+  - Model `AccountsOperations` added method `begin_change_key_vault`
+  - Model `AccountsOperations` added method `begin_get_change_key_vault_information`
+  - Model `AccountsOperations` added method `begin_transition_to_cmk`
+  - Method `AccountsOperations.begin_change_key_vault` has a new overload `def begin_change_key_vault(self: None, resource_group_name: str, account_name: str, body: Optional[ChangeKeyVault], content_type: str)`
+  - Method `AccountsOperations.begin_change_key_vault` has a new overload `def begin_change_key_vault(self: None, resource_group_name: str, account_name: str, body: Optional[IO[bytes]], content_type: str)`
+  - Method `AccountsOperations.begin_transition_to_cmk` has a new overload `def begin_transition_to_cmk(self: None, resource_group_name: str, account_name: str, body: Optional[EncryptionTransitionRequest], content_type: str)`
+  - Method `AccountsOperations.begin_transition_to_cmk` has a new overload `def begin_transition_to_cmk(self: None, resource_group_name: str, account_name: str, body: Optional[IO[bytes]], content_type: str)`
+
 ## 13.4.0b1 (2024-11-18)
 
 ### Features Added
