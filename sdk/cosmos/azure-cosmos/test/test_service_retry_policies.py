@@ -205,9 +205,6 @@ class TestServiceRetryPolicies(unittest.TestCase):
         except ServiceResponseError:
             assert connection_retry_policy.counter == 3
 
-
-    # needs further debugging
-    @pytest.mark.skip
     def test_global_endpoint_manager_retry(self):
         # For this test we mock both the ConnectionRetryPolicy and the GetDatabaseAccountStub
         # - ConnectionRetryPolicy allows us to raise Service exceptions only for chosen requests and track endpoints used
