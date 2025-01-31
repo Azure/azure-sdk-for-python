@@ -220,15 +220,6 @@ class TestServiceRetryPolicies(unittest.TestCase):
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_ID)
 
-        # For some reason this particular test keeps running into 404.1013 on the first request
-        # collection_in_progress = True
-        # while collection_in_progress:
-        #     try:
-        #         container.read()
-        #         collection_in_progress = False
-        #     except CosmosHttpResponseError:
-        #         continue
-
         try:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
             container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
