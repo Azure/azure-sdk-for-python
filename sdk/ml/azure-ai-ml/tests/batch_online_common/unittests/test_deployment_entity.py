@@ -138,6 +138,7 @@ class TestOnlineDeploymentFromYAML:
         blue.readiness_probe = None
         blue.scale_settings = None
         blue.request_settings = None
+        blue.resources = ResourceRequirementsSettings()
 
         blue_copy.code_configuration = CodeConfiguration(code="blah path", scoring_script="blah.py")
         blue_copy.model = Model(name="blah code")
@@ -145,7 +146,7 @@ class TestOnlineDeploymentFromYAML:
         blue_copy.endpoint_name = "blah endpoint"
         blue_copy.scale_settings = DefaultScaleSettings()
         blue_copy.request_settings = OnlineRequestSettings(max_concurrent_requests_per_instance=1, max_queue_wait_ms=100, request_timeout_ms=100)
-
+        blue_copy.resources = ResourceRequirementsSettings(requests=ResourceSettings(cpu="1n", memory="2"), limits=ResourceSettings(cpu="2", memory="4"))
         blue._merge_with(blue_copy)
 
         assert blue.model.name == blue_copy.model.name

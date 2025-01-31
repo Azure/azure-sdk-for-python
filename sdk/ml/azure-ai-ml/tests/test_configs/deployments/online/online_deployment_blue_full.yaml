@@ -39,3 +39,12 @@ environment_variables:
   env1: value1
 tags:
   tag1: value1
+resources:
+  requests:
+    cpu: 1n
+    memory: 1Gi
+    gpu: 0n
+  limits:
+    cpu: 1n
+    memory: 1Gi
+    gpu: 0n
