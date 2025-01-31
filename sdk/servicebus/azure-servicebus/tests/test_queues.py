@@ -3642,10 +3642,10 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
 
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
             with receiver:
-                peek_message = receiver.peek_message()
-                assert peek_message.application_properties[b"index"] == 0
-                peek_message = receiver.peek_message()
-                assert peek_message.application_properties[b"index"] == 1
-                peek_message = receiver.peek_message()
-                assert peek_message.application_properties[b"index"] == 2
+                peek_message = receiver.peek_messages()
+                assert peek_message[0].application_properties[b"index"] == 0
+                peek_message = receiver.peek_messages()
+                assert peek_message[0].application_properties[b"index"] == 1
+                peek_message = receiver.peek_messages()
+                assert peek_message[0].application_properties[b"index"] == 2
                 
