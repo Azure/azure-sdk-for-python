@@ -5,7 +5,8 @@ from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
-STORAGE_ACCOUNT = os.environ["AZURE_STORAGE_ACCOUNT"]
+STORAGE_ACCOUNT = "https://{}.blob.core.windows.net".format(
+        os.environ["AZURE_STORAGE_ACCOUNT"])
 BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
 

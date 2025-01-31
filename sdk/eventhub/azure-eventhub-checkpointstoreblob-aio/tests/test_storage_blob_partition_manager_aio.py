@@ -10,30 +10,26 @@ import os
 import uuid
 import warnings
 import asyncio
-
+from azure.identity.aio import DefaultAzureCredential
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 from azure.eventhub.extensions.checkpointstoreblobaio._vendor.storage.blob import BlobServiceClient
 
 STORAGE_ENV_KEYS = [
-    "AZURE_STORAGE_CONN_STR",
-    "AZURE_STORAGE_DATA_LAKE_ENABLED_CONN_STR"
+    "AZURE_STORAGE_ACCOUNT",
 ]
 
+def get_live_storage_blob_client(storage_account):
+    storage_account = "https://{}.blob.core.windows.net".format(
+        os.environ[storage_account])
+    container_name = str(uuid.uuid4())
+    blob_service_client = BlobServiceClient(storage_account, credential=DefaultAzureCredential())
+    blob_service_client.create_container(container_name)
+    return storage_account, container_name
 
-def get_live_storage_blob_client(conn_str_env_key):
+
+def remove_live_storage_blob_client(storage_account, container_str):
     try:
-        storage_connection_str = os.environ[conn_str_env_key]
-        container_name = str(uuid.uuid4())
-        blob_service_client = BlobServiceClient.from_connection_string(storage_connection_str)
-        blob_service_client.create_container(container_name)
-        return storage_connection_str, container_name
-    except:
-        pytest.skip("Storage blob client can't be created")
-
-
-def remove_live_storage_blob_client(storage_connection_str, container_str):
-    try:
-        blob_service_client = BlobServiceClient.from_connection_string(storage_connection_str)
+        blob_service_client = BlobServiceClient.from_connection_string(storage_account)
         blob_service_client.delete_container(container_str)
     except:
         warnings.warn(UserWarning("storage container teardown failed"))
@@ -107,23 +103,23 @@ async def _update_checkpoint(connection_str, container_name):
             assert checkpoint['sequence_number'] == 20
 
 
-@pytest.mark.parametrize("conn_str_env_key", STORAGE_ENV_KEYS)
+@pytest.mark.parametrize("storage_account", STORAGE_ENV_KEYS)
 @pytest.mark.liveTest
-def test_claim_and_list_ownership(conn_str_env_key):
-    storage_connection_str, container_name = get_live_storage_blob_client(conn_str_env_key)
+def test_claim_and_list_ownership(storage_account):
+    storage_account, container_name = get_live_storage_blob_client(storage_account)
     try:
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(_claim_and_list_ownership(storage_connection_str, container_name))
+        loop.run_until_complete(_claim_and_list_ownership(storage_account, container_name))
     finally:
-        remove_live_storage_blob_client(storage_connection_str, container_name)
+        remove_live_storage_blob_client(storage_account, container_name)
 
 
-@pytest.mark.parametrize("conn_str_env_key", STORAGE_ENV_KEYS)
-@pytest.mark.liveTest
-def test_update_checkpoint(conn_str_env_key):
-    storage_connection_str, container_name = get_live_storage_blob_client(conn_str_env_key)
+@pytest.mark.parametrize("storage_account", STORAGE_ENV_KEYS)
+@pytest.mark.live_test_only
+def test_update_checkpoint(storage_account):
+    storage_account, container_name = get_live_storage_blob_client(storage_account)
     try:
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(_update_checkpoint(storage_connection_str, container_name))
+        loop.run_until_complete(_update_checkpoint(storage_account, container_name))
     finally:
-        remove_live_storage_blob_client(storage_connection_str, container_name)
+        remove_live_storage_blob_client(storage_account, container_name)
