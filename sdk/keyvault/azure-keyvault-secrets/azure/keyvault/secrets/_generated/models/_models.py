@@ -43,7 +43,7 @@ class DeletedSecretBundle(_model_base.Model):
     :ivar content_type: The content type of the secret.
     :vartype content_type: str
     :ivar attributes: The secret management attributes.
-    :vartype attributes: ~azure.keyvault.secrets.models.SecretAttributes
+    :vartype attributes: ~azure.keyvault.secrets._generated.models.SecretAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar kid: If this is a secret backing a KV certificate, then this field specifies the
@@ -119,7 +119,7 @@ class DeletedSecretItem(_model_base.Model):
     :ivar id: Secret identifier.
     :vartype id: str
     :ivar attributes: The secret management attributes.
-    :vartype attributes: ~azure.keyvault.secrets.models.SecretAttributes
+    :vartype attributes: ~azure.keyvault.secrets._generated.models.SecretAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar content_type: Type of the secret value such as a password.
@@ -186,7 +186,7 @@ class KeyVaultError(_model_base.Model):
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar error: The key vault server error.
-    :vartype error: ~azure.keyvault.secrets.models.KeyVaultErrorError
+    :vartype error: ~azure.keyvault.secrets._generated.models.KeyVaultErrorError
     """
 
     error: Optional["_models.KeyVaultErrorError"] = rest_field(visibility=["read"])
@@ -203,7 +203,7 @@ class KeyVaultErrorError(_model_base.Model):
     :ivar message: The error message.
     :vartype message: str
     :ivar inner_error: The key vault server error.
-    :vartype inner_error: ~azure.keyvault.secrets.models.KeyVaultErrorError
+    :vartype inner_error: ~azure.keyvault.secrets._generated.models.KeyVaultErrorError
     """
 
     code: Optional[str] = rest_field(visibility=["read"])
@@ -238,7 +238,7 @@ class SecretAttributes(_model_base.Model):
      interval. Known values are: "Purgeable", "Recoverable+Purgeable", "Recoverable",
      "Recoverable+ProtectedSubscription", "CustomizedRecoverable+Purgeable",
      "CustomizedRecoverable", and "CustomizedRecoverable+ProtectedSubscription".
-    :vartype recovery_level: str or ~azure.keyvault.secrets.models.DeletionRecoveryLevel
+    :vartype recovery_level: str or ~azure.keyvault.secrets._generated.models.DeletionRecoveryLevel
     """
 
     enabled: Optional[bool] = rest_field()
@@ -296,7 +296,7 @@ class SecretBundle(_model_base.Model):
     :ivar content_type: The content type of the secret.
     :vartype content_type: str
     :ivar attributes: The secret management attributes.
-    :vartype attributes: ~azure.keyvault.secrets.models.SecretAttributes
+    :vartype attributes: ~azure.keyvault.secrets._generated.models.SecretAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar kid: If this is a secret backing a KV certificate, then this field specifies the
@@ -354,7 +354,7 @@ class SecretItem(_model_base.Model):
     :ivar id: Secret identifier.
     :vartype id: str
     :ivar attributes: The secret management attributes.
-    :vartype attributes: ~azure.keyvault.secrets.models.SecretAttributes
+    :vartype attributes: ~azure.keyvault.secrets._generated.models.SecretAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar content_type: Type of the secret value such as a password.
@@ -439,7 +439,7 @@ class SecretSetParameters(_model_base.Model):
     :ivar content_type: Type of the secret value such as a password.
     :vartype content_type: str
     :ivar secret_attributes: The secret management attributes.
-    :vartype secret_attributes: ~azure.keyvault.secrets.models.SecretAttributes
+    :vartype secret_attributes: ~azure.keyvault.secrets._generated.models.SecretAttributes
     """
 
     value: str = rest_field()
@@ -478,7 +478,7 @@ class SecretUpdateParameters(_model_base.Model):
     :ivar content_type: Type of the secret value such as a password.
     :vartype content_type: str
     :ivar secret_attributes: The secret management attributes.
-    :vartype secret_attributes: ~azure.keyvault.secrets.models.SecretAttributes
+    :vartype secret_attributes: ~azure.keyvault.secrets._generated.models.SecretAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     """
