@@ -3077,6 +3077,8 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
 
         if response.content:
             deserialized = response.json()
+            if 'roles' in deserialized:
+                deserialized = deserialized['roles']
         else:
             deserialized = None
 
@@ -3168,7 +3170,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
         if isinstance(roles, (IOBase, bytes)):
             _content = roles
         else:
-            _json = roles
+            _json = {"roles": roles}
 
         _request = build_confidential_ledger_create_user_defined_role_request(
             content_type=content_type,
@@ -3283,7 +3285,7 @@ class ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publi
         if isinstance(roles, (IOBase, bytes)):
             _content = roles
         else:
-            _json = roles
+            _json = {"roles": roles}
 
         _request = build_confidential_ledger_update_user_defined_role_request(
             content_type=content_type,
