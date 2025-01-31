@@ -1460,7 +1460,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         last_modified_start_time: Optional[datetime.datetime] = None,
         last_modified_end_time: Optional[datetime.datetime] = None,
         test_profile_ids: Optional[List[str]] = None,
-        test_ids: Optional[str] = None,
+        test_ids: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.TestProfile"]:
         """List test profiles.
@@ -1478,7 +1478,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :paramtype test_profile_ids: list[str]
         :keyword test_ids: Comma separated list IDs of the tests which should be associated with the
          test profiles to fetch. Default value is None.
-        :paramtype test_ids: str
+        :paramtype test_ids: list[str]
         :return: An iterator like instance of TestProfile
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.developer.loadtesting.models.TestProfile]
