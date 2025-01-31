@@ -134,6 +134,7 @@ class Stream(Iterator[ReturnType]):
         decoder: Optional[StreamDecoder] = None,
         terminal_event: Optional[str] = None,
     ) -> None:
+        self._pipeline_response = response
         self._response = response.http_response
         self._deserialization_callback = deserialization_callback
         self._terminal_event = terminal_event
@@ -161,7 +162,7 @@ class Stream(Iterator[ReturnType]):
             if event.data == self._terminal_event:
                 break
 
-            result = self._deserialization_callback(self._response, event.json())
+            result = self._deserialization_callback(self._pipeline_response, event.json())
             yield result
 
     def __exit__(
@@ -203,6 +204,7 @@ class AsyncStream(AsyncIterator[ReturnType]):
         decoder: Optional[AsyncStreamDecoder] = None,
         terminal_event: Optional[str] = None,
     ) -> None:
+        self._pipeline_response = response
         self._response = response.http_response
         self._deserialization_callback = deserialization_callback
         self._terminal_event = terminal_event
@@ -231,7 +233,7 @@ class AsyncStream(AsyncIterator[ReturnType]):
             if event.data == self._terminal_event:
                 break
 
-            result = self._deserialization_callback(self._response, event.json())
+            result = self._deserialization_callback(self._pipeline_response, event.json())
             yield result
 
     async def __aexit__(

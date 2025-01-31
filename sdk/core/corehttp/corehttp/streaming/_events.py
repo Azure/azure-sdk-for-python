@@ -29,6 +29,8 @@ from typing import Any
 
 
 class JSONLEvent:
+    """Class representing a JSONL Event."""
+
     data: str
     """The event data."""
 
