@@ -43,6 +43,10 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
         self.created_container = await self.created_database.create_container_if_not_exists(self.TEST_CONTAINER_ID,
                                                                                     PartitionKey(path="/id"))
 
+    async def asyncTearDown(self):
+        await self.client.delete_database(self.TEST_DATABASE_ID)
+        await self.client.close()
+
     async def test_service_request_retry_policy_async(self):
         # ServiceRequestErrors will always retry, and will retry once per preferred region
         async with CosmosClient(self.host, self.masterKey) as mock_client:

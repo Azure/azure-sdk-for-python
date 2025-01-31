@@ -30,6 +30,10 @@ class TestVectorPolicy(unittest.TestCase):
         cls.created_database = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
         cls.test_db = cls.client.create_database(str(uuid.uuid4()))
 
+    @classmethod
+    def tearDownClass(cls):
+        test_config.TestConfig.try_delete_database_with_id(cls.client, cls.test_db.id)
+
     def test_create_vector_embedding_container(self):
         indexing_policy = {
             "vectorIndexes": [
