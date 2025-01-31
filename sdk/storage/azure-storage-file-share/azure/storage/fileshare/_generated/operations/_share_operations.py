@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,8 +8,9 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, List, Literal, Optional, Type, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Literal, Optional, TypeVar, Union, overload
 
+from azure.core import PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -24,12 +25,13 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._serialization import Serializer
+from .._configuration import AzureFileStorageConfiguration
+from .._serialization import Deserializer, Serializer
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -59,7 +61,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -131,7 +133,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -174,7 +176,7 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -222,7 +224,7 @@ def build_acquire_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -273,7 +275,7 @@ def build_release_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -322,7 +324,7 @@ def build_change_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -372,7 +374,7 @@ def build_renew_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -421,7 +423,7 @@ def build_break_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -469,7 +471,7 @@ def build_create_snapshot_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["snapshot"] = kwargs.pop("comp", _params.pop("comp", "snapshot"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -510,7 +512,7 @@ def build_create_permission_request(
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["filepermission"] = kwargs.pop("comp", _params.pop("comp", "filepermission"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -552,7 +554,7 @@ def build_get_permission_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["filepermission"] = kwargs.pop("comp", _params.pop("comp", "filepermission"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -605,7 +607,7 @@ def build_set_properties_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -677,7 +679,7 @@ def build_set_metadata_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -720,7 +722,7 @@ def build_get_access_policy_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -763,7 +765,7 @@ def build_set_access_policy_request(
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -806,7 +808,7 @@ def build_get_statistics_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["stats"] = kwargs.pop("comp", _params.pop("comp", "stats"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -849,7 +851,7 @@ def build_restore_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -897,10 +899,10 @@ class ShareOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureFileStorageConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def create(  # pylint: disable=inconsistent-return-statements
@@ -925,7 +927,7 @@ class ShareOperations:
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object. Default value is
@@ -968,7 +970,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1056,7 +1058,7 @@ class ShareOperations:
         :type sharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -1065,7 +1067,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1191,7 +1193,7 @@ class ShareOperations:
         :type sharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param delete_snapshots: Specifies the option include to delete the base share and all of its
@@ -1203,7 +1205,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1277,7 +1279,7 @@ class ShareOperations:
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param duration: Specifies the duration of the lease, in seconds, or negative one (-1) for a
@@ -1299,7 +1301,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1375,7 +1377,7 @@ class ShareOperations:
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
@@ -1389,7 +1391,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1464,7 +1466,7 @@ class ShareOperations:
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param proposed_lease_id: Proposed lease ID, in a GUID string format. The File service returns
@@ -1482,7 +1484,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1558,7 +1560,7 @@ class ShareOperations:
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
@@ -1572,7 +1574,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1646,7 +1648,7 @@ class ShareOperations:
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param break_period: For a break operation, proposed duration the lease should continue before
@@ -1670,7 +1672,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1743,7 +1745,7 @@ class ShareOperations:
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object. Default value is
@@ -1753,7 +1755,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1805,7 +1807,7 @@ class ShareOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
-    def create_permission(  # pylint: disable=inconsistent-return-statements
+    def create_permission(
         self,
         share_permission: _models.SharePermission,
         timeout: Optional[int] = None,
@@ -1820,7 +1822,7 @@ class ShareOperations:
         :type share_permission: ~azure.storage.fileshare.models.SharePermission
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1832,7 +1834,7 @@ class ShareOperations:
         """
 
     @overload
-    def create_permission(  # pylint: disable=inconsistent-return-statements
+    def create_permission(
         self,
         share_permission: IO[bytes],
         timeout: Optional[int] = None,
@@ -1847,7 +1849,7 @@ class ShareOperations:
         :type share_permission: IO[bytes]
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -1870,14 +1872,14 @@ class ShareOperations:
         :type share_permission: ~azure.storage.fileshare.models.SharePermission or IO[bytes]
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1961,14 +1963,14 @@ class ShareOperations:
         :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :return: SharePermission or the result of cls(response)
         :rtype: ~azure.storage.fileshare.models.SharePermission
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2042,7 +2044,7 @@ class ShareOperations:
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param quota: Specifies the maximum size of the share, in gigabytes. Default value is None.
@@ -2082,7 +2084,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2180,7 +2182,7 @@ class ShareOperations:
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object. Default value is
@@ -2192,7 +2194,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2259,7 +2261,7 @@ class ShareOperations:
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -2268,7 +2270,7 @@ class ShareOperations:
         :rtype: list[~azure.storage.fileshare.models.SignedIdentifier]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2339,7 +2341,7 @@ class ShareOperations:
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -2350,7 +2352,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2426,7 +2428,7 @@ class ShareOperations:
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -2435,7 +2437,7 @@ class ShareOperations:
         :rtype: ~azure.storage.fileshare.models.ShareStats
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2507,7 +2509,7 @@ class ShareOperations:
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
-         href="https://learn.microsoft.com/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
          Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -2524,7 +2526,7 @@ class ShareOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
