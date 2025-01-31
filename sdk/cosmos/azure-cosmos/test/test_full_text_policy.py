@@ -11,6 +11,7 @@ import test_config
 from azure.cosmos import CosmosClient, PartitionKey
 
 
+@pytest.mark.cosmosQuery
 class TestFullTextPolicy(unittest.TestCase):
     client: CosmosClient = None
     host = test_config.TestConfig.host

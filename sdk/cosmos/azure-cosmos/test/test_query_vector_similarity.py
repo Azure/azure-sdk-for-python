@@ -24,7 +24,7 @@ def verify_ordering(item_list, distance_function):
         for i in range(len(item_list) - 1):
             assert item_list[i]["SimilarityScore"] >= item_list[i + 1]["SimilarityScore"]
 
-
+@pytest.mark.cosmosQuery
 class TestVectorSimilarityQuery(unittest.TestCase):
     """Test to check vector similarity queries behavior."""
 

@@ -11,7 +11,7 @@ import test_config
 from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
-
+@pytest.mark.cosmosQuery
 class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey

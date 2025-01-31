@@ -4,15 +4,6 @@
     "false": "",
     "true": ""
   },
-  "matrix": {
-    "Agent": {
-      "ubuntu-20.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" },
-      "windows-2022": { "OSVmImage": "env:WINDOWSVMIMAGE", "Pool": "env:WINDOWSPOOL" }
-    },
-    "PythonVersion": [ "3.8", "3.10", "3.12" ],
-    "CoverageArg": "--disablecov",
-    "TestSamples": "false"
-  },
   "include": [
     {
       "SplitTestConfig": {
@@ -21,34 +12,34 @@
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.9",
           "CoverageArg": "--disablecov",
-          "TestSamples": "false"
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosSplit"
         }
-      },
-      "TestMarkArgument": "cosmosSplit"
+      }
     },
     {
       "MacTestConfig": {
-        "macos311": {
+        "macos311_long": {
           "OSVmImage": "env:MACVMIMAGE",
           "Pool": "env:MACPOOL",
           "PythonVersion": "3.11",
           "CoverageArg": "--disablecov",
-          "TestSamples": "false"
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosLong"
         }
-      },
-      "TestMarkArgument": "not cosmosSplit"
+      }
     },
     {
       "PyPyConfig": {
-        "ubuntu2004_pypy39": {
+        "ubuntu2004_pypy39_query_query": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "pypy3.9",
           "CoverageArg": "--disablecov",
-          "TestSamples": "false"
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosQuery"
         }
-      },
-      "TestMarkArgument": "not cosmosSplit"
+      }
     },
     {
       "CoverageConfig": {
@@ -57,22 +48,46 @@
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.9",
           "CoverageArg": "",
-          "TestSamples": "false"
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosQuery"
         }
-      },
-      "TestMarkArgument": "not cosmosSplit"
+      }
     },
     {
       "Config": {
-        "Ubuntu2004_313": {
+        "Ubuntu2004_313_query": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.13",
           "CoverageArg": "--disablecov",
-          "TestSamples": "false"
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosQuery"
+        },
+        "Windows2022_38_long": {
+          "OSVmImage": "env:WINDOWSVMIMAGE",
+          "Pool": "env:WINDOWSPOOL",
+          "PythonVersion": "3.8",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosLong"
+        },
+        "Windows2022_310_split": {
+          "OSVmImage": "env:WINDOWSVMIMAGE",
+          "Pool": "env:WINDOWSPOOL",
+          "PythonVersion": "3.10",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosSplit"
+        },
+        "Windows2022_312_long": {
+          "OSVmImage": "env:WINDOWSVMIMAGE",
+          "Pool": "env:WINDOWSPOOL",
+          "PythonVersion": "3.12",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosLong"
         }
-      },
-      "TestMarkArgument": "not cosmosSplit"
+      }
     }
   ]
 }

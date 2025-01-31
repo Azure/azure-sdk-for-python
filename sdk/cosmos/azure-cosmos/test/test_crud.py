@@ -48,7 +48,7 @@ class TimeoutTransport(RequestsTransport):
         return response
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestCRUDOperations(unittest.TestCase):
     """Python CRUD Tests.
     """
@@ -107,13 +107,13 @@ class TestCRUDOperations(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            read_db.read)
 
-        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=10000)
+        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(10000, database_proxy.read_offer().offer_throughput)
+        self.assertEqual(5000, database_proxy.read_offer().offer_throughput)
 
-        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=9000)
+        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(10000, database_proxy.read_offer().offer_throughput)
+        self.assertEqual(6000, database_proxy.read_offer().offer_throughput)
 
         self.client.delete_database(database_id)
 
@@ -2573,7 +2573,7 @@ class TestCRUDOperations(unittest.TestCase):
     #     created_recorder = RecordDiagnostics()
     #     created_collection = created_db.create_container(id=collection_id,
     #                                                      indexing_policy=collection_indexing_policy,
-    #                                                      partition_key=PartitionKey(path="/pk", kind="Hash"), 
+    #                                                      partition_key=PartitionKey(path="/pk", kind="Hash"),
     #                                                      response_hook=created_recorder)
     #     properties = created_collection.read()
     #     ttl_key = "analyticalStorageTtl"
@@ -2591,7 +2591,7 @@ class TestCRUDOperations(unittest.TestCase):
     #     created_collection = created_db.create_container(id=collection_id,
     #                                                      analytical_storage_ttl=-1,
     #                                                      indexing_policy=collection_indexing_policy,
-    #                                                      partition_key=PartitionKey(path="/pk", kind="Hash"), 
+    #                                                      partition_key=PartitionKey(path="/pk", kind="Hash"),
     #                                                      response_hook=created_recorder)
     #     properties = created_collection.read()
     #     ttl_key = "analyticalStorageTtl"

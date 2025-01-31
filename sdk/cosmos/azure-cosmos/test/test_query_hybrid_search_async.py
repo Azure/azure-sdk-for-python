@@ -15,7 +15,7 @@ import hybrid_search_data
 from azure.cosmos import http_constants, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
-
+@pytest.mark.cosmosQuery
 class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to check full text search and hybrid search queries behavior."""
 

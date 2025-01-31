@@ -13,6 +13,7 @@ import urllib.parse as urllib
 import uuid
 from typing import Any, Dict, Optional
 
+import pytest
 import requests
 from azure.core import MatchConditions
 from azure.core.exceptions import AzureError, ServiceResponseError
@@ -53,6 +54,7 @@ class TimeoutTransport(AsyncioRequestsTransport):
         return response
 
 
+@pytest.mark.cosmosLong
 class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """
@@ -119,15 +121,15 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         read_db = self.client.get_database_client(created_db.id)
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND, read_db.read)
 
-        database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=10000)
+        database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         assert database_id == database_proxy.id
         db_throughput = await database_proxy.get_throughput()
-        assert 10000 == db_throughput.offer_throughput
+        assert 5000 == db_throughput.offer_throughput
 
-        database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=9000)
+        database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         assert database_id == database_proxy.id
         db_throughput = await database_proxy.get_throughput()
-        assert 10000 == db_throughput.offer_throughput
+        assert 6000 == db_throughput.offer_throughput
 
         # delete database.
         await self.client.delete_database(database_id)
