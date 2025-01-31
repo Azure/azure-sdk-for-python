@@ -26,7 +26,6 @@ def replace_preview_install(content):
 
 def replace_test_install_command(content, targeted_urls):
     regex = r"^# \<az_ml_sdk_test_install\>[\s\S]*\<\/az_ml_sdk_test_install\>"
-    print(targeted_urls)
 
     install_commands = ["pip install {}".format(url) for url in targeted_urls]
     install_lines = "\n".join(install_commands)
