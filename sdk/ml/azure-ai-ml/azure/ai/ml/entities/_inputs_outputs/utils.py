@@ -12,7 +12,7 @@ from enum import EnumMeta
 from inspect import Parameter, getmro, signature
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, Union, cast
 
-from typing_extensions import Annotated, Literal, TypeAlias
+from typing_extensions import Annotated, _AnnotatedAlias, Literal, TypeAlias
 
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions import UserErrorException
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 SUPPORTED_RETURN_TYPES_PRIMITIVE = list(IOConstants.PRIMITIVE_TYPE_2_STR.keys())
 
 
-Annotation: TypeAlias = Union[str, Type, Annotated, None]  # type: ignore
+Annotation: TypeAlias = Union[str, Type, _AnnotatedAlias, None]  # type: ignore
 
 
 def is_group(obj: object) -> bool:
