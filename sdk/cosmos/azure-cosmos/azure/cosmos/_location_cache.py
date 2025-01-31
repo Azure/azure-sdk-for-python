@@ -102,6 +102,8 @@ def get_endpoints_by_location(new_locations,
                             regional_object = RegionalEndpoint(region_uri, default_regional_endpoint.get_current())
 
                         print("In location cache: This is regional object on initialization:", regional_object)
+                        print("In location cache: writes: ", writes)
+                        print("In location cache: use_multiple_write_locations: ", use_multiple_write_locations)
 
                     # pass in object with region uri , last known good, curr etc
                     endpoints_by_location.update({new_location["name"]: regional_object})
@@ -154,10 +156,10 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return self.read_regional_endpoints
 
     def get_write_regional_endpoint(self):
-        return self.get_write_regional_endpoints()[0]
+        return self.get_write_regional_endpoints()[0].get_current()
 
     def get_read_regional_endpoint(self):
-        return self.get_read_regional_endpoints()[0]
+        return self.get_read_regional_endpoints()[0].get_current()
 
     def mark_endpoint_unavailable_for_read(self, endpoint, refresh_cache):
         self.mark_endpoint_unavailable(endpoint, EndpointOperationType.ReadType, refresh_cache)
