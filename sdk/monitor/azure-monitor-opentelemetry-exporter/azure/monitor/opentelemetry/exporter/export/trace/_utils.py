@@ -40,7 +40,8 @@ def _get_default_port_db(db_system: str) -> int:
     return 0
 
 
-def _get_default_port_http(scheme: Optional[str]) -> int:
+def _get_default_port_http(attributes: Attributes) -> int:
+    scheme = _get_http_scheme(attributes)
     if scheme == "http":
         return 80
     if scheme == "https":
@@ -77,7 +78,8 @@ def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
 
 def _get_http_scheme(attributes: Attributes) -> Optional[str]:
     if attributes:
-        scheme = attributes.get(SpanAttributes.HTTP_SCHEME)
+        scheme = attributes.get(url_attributes.URL_SCHEME) or \
+            attributes.get(SpanAttributes.HTTP_SCHEME)
         if scheme:
             return str(scheme)
     return None
@@ -87,14 +89,17 @@ def _get_http_scheme(attributes: Attributes) -> Optional[str]:
 
 
 @no_type_check
-def _get_url_for_http_dependency(attributes: Attributes, scheme: Optional[str] = None) -> Optional[str]:
-    url = None
+def _get_url_for_http_dependency(attributes: Attributes) -> Optional[str]:
+    url = ""
     if attributes:
-        if not scheme:
-            scheme = _get_http_scheme(attributes)
+        # Stable sem conv only supports populating url from `url.full`
+        if url_attributes.URL_FULL in attributes:
+            return attributes[url_attributes.URL_FULL]
         if SpanAttributes.HTTP_URL in attributes:
-            url = attributes[SpanAttributes.HTTP_URL]
-        elif scheme and SpanAttributes.HTTP_TARGET in attributes:
+            return attributes[SpanAttributes.HTTP_URL]
+        # Scheme
+        scheme = _get_http_scheme(attributes)
+        if scheme and SpanAttributes.HTTP_TARGET in attributes:
             http_target = attributes[SpanAttributes.HTTP_TARGET]
             if SpanAttributes.HTTP_HOST in attributes:
                 url = "{}://{}{}".format(
@@ -138,9 +143,8 @@ def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str
                 port = attributes[SpanAttributes.NET_PEER_PORT]
                 # TODO: check default port for rpc
                 # This logic assumes default ports never conflict across dependency types
-                if port != _get_default_port_http(
-                    str(attributes.get(SpanAttributes.HTTP_SCHEME))
-                ) and port != _get_default_port_db(str(attributes.get(SpanAttributes.DB_SYSTEM))):
+                if port != _get_default_port_http(attributes) and \
+                    port != _get_default_port_db(str(attributes.get(SpanAttributes.DB_SYSTEM))):
                     target = "{}:{}".format(target, port)
     return target
 
@@ -148,42 +152,51 @@ def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str
 @no_type_check
 def _get_target_and_path_for_http_dependency(
     attributes: Attributes,
-    target: Optional[str],
-    url: Optional[str],
-    scheme: Optional[str] = None,
+    target: Optional[str] = "",
+    url: Optional[str] = "",  # Usually populated by _get_url_for_http_dependency()
 ) -> Tuple[Optional[str], str]:
-    target_from_url = None
-    path = ""
+    parsed_url = None
+    path = "/"
+    default_port = _get_default_port_http(attributes)
+    # Find path from url
+    try:
+        parsed_url = urlparse(url)
+        if parsed_url.path:
+            path = parsed_url.path
+    except Exception:  # pylint: disable=broad-except
+        pass
+    # Derive target
     if attributes:
-        if not scheme:
-            scheme = _get_http_scheme(attributes)
-        if url:
-            try:
-                parse_url = urlparse(url)
-                path = parse_url.path
-                if not path:
-                    path = "/"
-                if parse_url.port and parse_url.port == _get_default_port_http(scheme):
-                    target_from_url = parse_url.hostname
-                else:
-                    target_from_url = parse_url.netloc
-            except Exception:  # pylint: disable=broad-except
-                pass
-        if SpanAttributes.PEER_SERVICE not in attributes:
+        # Target from server.*
+        if server_attributes.SERVER_ADDRESS in attributes:
+            target = attributes[server_attributes.SERVER_ADDRESS]
+            server_port = attributes.get(server_attributes.SERVER_PORT)
+            # if not default port, include port in target
+            if server_port != default_port:
+                target = "{}:{}".format(target, server_port)
+        # We only use these values for target if not already populated by peer.service
+        elif not SpanAttributes.PEER_SERVICE in attributes:
+            # Target from http.host
             if SpanAttributes.HTTP_HOST in attributes:
                 host = attributes[SpanAttributes.HTTP_HOST]
                 try:
                     # urlparse insists on absolute URLs starting with "//"
                     # This logic assumes host does not include a "//"
                     host_name = urlparse("//" + str(host))
-                    if host_name.port == _get_default_port_http(scheme):
+                    # Ignore port from target if default port
+                    if host_name.port == default_port:
                         target = host_name.hostname
                     else:
+                        # Else include the whole host as the target
                         target = str(host)
                 except Exception:  # pylint: disable=broad-except
                     pass
-            elif target_from_url and not target:
-                target = target_from_url
+            elif parsed_url:
+                # Target from httpUrl
+                if parsed_url.port and parsed_url.port == default_port:
+                    target = parsed_url.hostname
+                else:
+                    target = parsed_url.netloc
     return (target, path)
 
 
@@ -250,7 +263,7 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
         if SpanAttributes.HTTP_URL in attributes:
             return attributes[SpanAttributes.HTTP_URL]
         # Scheme
-        scheme = attributes.get(url_attributes.URL_SCHEME) or attributes.get(SpanAttributes.HTTP_SCHEME)
+        scheme = _get_http_scheme(attributes)
         # Target
         http_target = ""
         if url_attributes.URL_PATH in attributes:
