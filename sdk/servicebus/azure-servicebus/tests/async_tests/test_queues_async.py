@@ -3624,3 +3624,38 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 messages_in_queue = await receiver1.peek_messages()
 
                 assert len(messages_in_queue) == 0
+    
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_queue_async_by_queue_client_peek_auto_increment(
+        self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
+    ):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential()
+        async with ServiceBusClient(
+            fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport
+        ) as sb_client:
+
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            with sender:
+                messages = []
+                for i in range(3):
+                    message = ServiceBusMessage("Handler message no. {}".format(i), application_properties={"index": i})
+                    messages.append(message)
+                await sender.send_messages(messages)
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
+            async with receiver:
+                peek_message = await receiver.peek_message()
+                assert peek_message.application_properties[b"index"] == 0
+                peek_message = await receiver.peek_message()
+                assert peek_message.application_properties[b"index"] == 1
+                peek_message = await receiver.peek_message()
+                assert peek_message.application_properties[b"index"] == 2
+       
