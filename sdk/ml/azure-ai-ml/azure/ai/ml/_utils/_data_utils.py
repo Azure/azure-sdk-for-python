@@ -53,15 +53,12 @@ def read_remote_mltable_metadata_contents(
         datastore_path_uri = AzureMLDatastorePathUri(base_uri)
         datastore_info = get_datastore_info(datastore_operations, datastore_path_uri.datastore)
         storage_client = get_storage_client(**datastore_info)
-        tmp_dir = tempfile.mkdtemp()
-        try:
+        with TemporaryDirectory() as tmp_dir:
             starts_with = datastore_path_uri.path.rstrip("/")
             storage_client.download(f"{starts_with}/MLTable", tmp_dir)
             downloaded_mltable_path = Path(tmp_dir, "MLTable")
             with open(downloaded_mltable_path, "r", encoding=DefaultOpenEncoding.READ) as f:
                 return yaml.safe_load(f)
-        finally:
-            Path(tmp_dir).rmdir()
     return None
 
 
