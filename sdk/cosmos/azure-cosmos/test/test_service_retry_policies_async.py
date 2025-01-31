@@ -363,8 +363,10 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
         exception.exc_type = Exception
         self.original_get_database_account_stub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
+        connection_policy = self.connectionPolicy
         connection_retry_policy = test_config.MockConnectionRetryPolicyAsync(resource_type="docs", error=exception)
-        async with CosmosClient(self.host, self.masterKey, connection_retry_policy=connection_retry_policy,
+        connection_policy.ConnectionRetryConfiguration = connection_retry_policy
+        async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy,
                                    preferred_locations=[self.REGION1, self.REGION2]) as mock_client:
             db = mock_client.get_database_client(self.TEST_DATABASE_ID)
             container = db.get_container_client(self.TEST_CONTAINER_ID)
