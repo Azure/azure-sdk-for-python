@@ -45,7 +45,6 @@ class EventType(Protocol):
         ...
 
 
-
 class JSONLEvent:
     """Class representing a JSONL Event."""
 
