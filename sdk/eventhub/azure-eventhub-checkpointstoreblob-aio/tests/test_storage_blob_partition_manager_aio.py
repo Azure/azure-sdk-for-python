@@ -104,7 +104,7 @@ async def _update_checkpoint(connection_str, container_name):
 
 
 @pytest.mark.parametrize("storage_account", STORAGE_ENV_KEYS)
-@pytest.mark.liveTest
+@pytest.mark.live_test_only
 def test_claim_and_list_ownership(storage_account):
     storage_account, container_name = get_live_storage_blob_client(storage_account)
     try:
