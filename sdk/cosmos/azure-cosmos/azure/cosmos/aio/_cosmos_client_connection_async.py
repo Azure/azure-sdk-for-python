@@ -23,6 +23,7 @@
 
 """Document client class for the Azure Cosmos database service.
 """
+import logging
 import os
 from urllib.parse import urlparse
 import uuid
@@ -81,6 +82,7 @@ from .._range_partition_resolver import RangePartitionResolver
 
 PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
 
+logger = logging.getLogger("azure.cosmos.CosmosClientConnectionAsync")
 
 class CredentialDict(TypedDict, total=False):
     masterKey: str
@@ -444,6 +446,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.UseMultipleWriteLocations = (
                 self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
         )
+        logger.info("Database account - writable locations: %s", database_account.WritableLocations)
+        logger.info("Database account - readable locations: %s", database_account.ReadableLocations)
         return database_account
 
     async def CreateDatabase(
