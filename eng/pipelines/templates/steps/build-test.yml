@@ -83,13 +83,13 @@ steps:
           }
           Write-Host (Get-Command python).Source
 
-          if ("$(TestMarkArgument)") {
-            $markArg = "$(TestMarkArgument)"
+          if ($env:TESTMARKARGUMENT) {
+            $markArg = $env:TESTMARKARGUMENT
           }
           else {
             $markArg = "${{ parameters.TestMarkArgument }}"
           }
-          
+
           python scripts/devops_tasks/dispatch_tox.py
           "$(TargetingString)"
           ${{ parameters.AdditionalTestArgs }}
@@ -111,9 +111,9 @@ steps:
           . $(VENV_LOCATION)/bin/activate.ps1
         }
         Write-Host (Get-Command python).Source
-        
-        if ("$(TestMarkArgument)") {
-          $markArg = "$(TestMarkArgument)"
+
+        if ($env:TESTMARKARGUMENT) {
+          $markArg = $env:TESTMARKARGUMENT
         }
         else {
           $markArg = "${{ parameters.TestMarkArgument }}"
