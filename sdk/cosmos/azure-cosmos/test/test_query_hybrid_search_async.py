@@ -18,7 +18,6 @@ from azure.cosmos.partition_key import PartitionKey
 class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to check full text search and hybrid search queries behavior."""
 
-    created_db: DatabaseProxy = None
     client: CosmosClient = None
     config = test_config.TestConfig
     host = config.host
@@ -36,10 +35,8 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
-
     async def asyncSetUp(self):
+        self.client = CosmosClient(self.host, self.masterKey)
         self.test_db = await self.client.create_database(str(uuid.uuid4()))
         self.test_container = await self.test_db.create_container(
             id="FTS" + self.TEST_CONTAINER_ID,

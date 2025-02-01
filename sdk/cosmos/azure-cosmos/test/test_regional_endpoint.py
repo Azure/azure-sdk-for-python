@@ -6,7 +6,7 @@ import uuid
 import pytest
 
 import test_config
-from azure.cosmos import (CosmosClient, PartitionKey, DatabaseAccount, _global_endpoint_manager)
+from azure.cosmos import (CosmosClient, DatabaseAccount, _global_endpoint_manager)
 from azure.cosmos._location_cache import RegionalEndpoint
 
 
@@ -18,8 +18,8 @@ class TestRegionalEndpoints(unittest.TestCase):
     REGION2 = "East US"
     REGION3 = "West US 2"
     REGIONAL_ENDPOINT = RegionalEndpoint(host, "something_different")
-    TEST_DATABASE_ID = "test_regional_endpoint_db" + str(uuid.uuid4())
-    TEST_CONTAINER_ID = "test_regional_endpoint_container" + str(uuid.uuid4())
+    TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
+    TEST_CONTAINER_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
 
     @classmethod
     def setUpClass(cls):
@@ -30,14 +30,8 @@ class TestRegionalEndpoints(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.created_database = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-        cls.created_container = cls.created_database.create_container_if_not_exists(cls.TEST_CONTAINER_ID,
-                                                                                    PartitionKey(path="/id"))
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(cls.TEST_DATABASE_ID)
-
+        cls.created_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        cls.created_container = cls.created_database.get_container_client(cls.TEST_CONTAINER_ID)
 
     def test_no_swaps_on_successful_request(self):
         original_get_database_account_stub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
@@ -50,7 +44,7 @@ class TestRegionalEndpoints(unittest.TestCase):
         original_read_endpoint = (mocked_client.client_connection._global_endpoint_manager
                                   .location_cache.get_read_regional_endpoint())
         try:
-            container.create_item(body={"id": "1"})
+            container.create_item(body={"id": str(uuid.uuid4())})
         finally:
             # Check for if there was a swap
             self.assertEqual(original_read_endpoint,
@@ -61,8 +55,6 @@ class TestRegionalEndpoints(unittest.TestCase):
                              mocked_client.client_connection._global_endpoint_manager
                              .location_cache.get_write_regional_endpoint())
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = original_get_database_account_stub
-
-
 
     def MockGetDatabaseAccountStub(self, endpoint):
         read_locations = []

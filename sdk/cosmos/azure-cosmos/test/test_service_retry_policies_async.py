@@ -36,9 +36,11 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.created_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
-        cls.created_container = cls.created_database.get_container_client(cls.TEST_CONTAINER_ID)
+
+    async def asyncSetUp(self):
+        self.client = CosmosClient(self.host, self.masterKey)
+        self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
+        self.created_container = self.created_database.get_container_client(self.TEST_CONTAINER_ID)
 
     async def test_service_request_retry_policy_async(self):
         # ServiceRequestErrors will always retry, and will retry once per preferred region
