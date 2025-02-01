@@ -663,20 +663,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         super().__init__(*args, **kwargs)
         self._toolset: Dict[str, _models.AsyncToolSet] = {}
 
-    @overload
-    async def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
-        """Creates a new agent.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Agent
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     # pylint: disable=arguments-differ
     @overload
     async def create_agent(  # pylint: disable=arguments-differ
@@ -801,6 +787,20 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
+    async def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
+        """Creates a new agent.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
     async def create_agent(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
@@ -895,24 +895,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         if toolset is not None:
             self._toolset[new_agent.id] = toolset
         return new_agent
-
-    @overload
-    async def update_agent(
-        self, assistant_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Agent:
-        """Modifies an existing agent.
-
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Agent. The Agent is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Agent
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
     # pylint: disable=arguments-differ
     @overload
@@ -1041,6 +1023,24 @@ class AgentsOperations(AgentsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_agent(
+        self, assistant_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
+
+        :param assistant_id: The ID of the agent to modify. Required.
+        :type assistant_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1186,35 +1186,6 @@ class AgentsOperations(AgentsOperationsGenerated):
                 "Tools must contain a CodeInterpreterToolDefinition when tool_resources.code_interpreter is provided"
             )
 
-    @overload
-    async def create_run(
-        self,
-        thread_id: str,
-        body: JSON,
-        *,
-        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.ThreadRun:
-        """Creates a new run for an agent thread.
-
-        :param thread_id: Required.
-        :type thread_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword include: A list of additional fields to include in the response.
-         Currently the only supported value is
-         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
-         content. Default value is None.
-        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     # pylint: disable=arguments-differ
     @overload
     async def create_run(  # pylint: disable=arguments-differ
@@ -1317,6 +1288,35 @@ class AgentsOperations(AgentsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_run(
+        self,
+        thread_id: str,
+        body: JSON,
+        *,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.ThreadRun:
+        """Creates a new run for an agent thread.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2096,28 +2096,6 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         return _models.AsyncAgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
 
-    @overload
-    async def submit_tool_outputs_to_run(
-        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadRun:
-        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
-        outputs will have a status of 'requires_action' with a required_action.type of
-        'submit_tool_outputs'.
-
-        :param thread_id: Required.
-        :type thread_id: str
-        :param run_id: Required.
-        :type run_id: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ThreadRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     # pylint: disable=arguments-differ
     @overload
     async def submit_tool_outputs_to_run(  # pylint: disable=arguments-differ
@@ -2139,6 +2117,28 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type run_id: str
         :keyword tool_outputs: Required.
         :paramtype tool_outputs: list[~azure.ai.projects.models.ToolOutput]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def submit_tool_outputs_to_run(
+        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        outputs will have a status of 'requires_action' with a required_action.type of
+        'submit_tool_outputs'.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param run_id: Required.
+        :type run_id: str
+        :param body: Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2347,17 +2347,6 @@ class AgentsOperations(AgentsOperationsGenerated):
                         thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=event_handler
                     )
 
-    @overload
-    async def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
-        """Uploads a file for use by other operations.
-
-        :param body: Required.
-        :type body: JSON
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     # pylint: disable=arguments-differ
     @overload
     async def upload_file(  # pylint: disable=arguments-differ
@@ -2372,6 +2361,17 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
         :keyword filename: Default value is None.
         :paramtype filename: str
+        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.OpenAIFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
+        """Uploads a file for use by other operations.
+
+        :param body: Required.
+        :type body: JSON
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
