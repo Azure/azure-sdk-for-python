@@ -507,7 +507,7 @@ class TestQuery(unittest.TestCase):
         # verify a second time
         self.assertLessEqual(len(token.encode('utf-8')), 1024)
 
-    @pytest.mark.cosmosLiveTest
+    @pytest.mark.cosmosQuery
     @pytest.mark.skip
     def test_computed_properties_query(self):
         computed_properties = [{'name': "cp_lower", 'query': "SELECT VALUE LOWER(c.db_group) FROM c"},

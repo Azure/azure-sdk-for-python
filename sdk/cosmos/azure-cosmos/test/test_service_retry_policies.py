@@ -2,16 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import unittest
 import uuid
-import time
 
 import pytest
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 import test_config
 from azure.cosmos import (CosmosClient, PartitionKey, _retry_utility, DatabaseAccount, _global_endpoint_manager)
 from azure.cosmos._location_cache import RegionalEndpoint
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError
-
-from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
 @pytest.mark.cosmosEmulator
@@ -19,8 +16,9 @@ class TestServiceRetryPolicies(unittest.TestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
-    TEST_DATABASE_ID = "test_service_retries_db" + str(uuid.uuid4())
-    TEST_CONTAINER_ID = "test_service_retries_container" + str(uuid.uuid4())
+    TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
+    TEST_CONTAINER_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
+
     REGION1 = "West US"
     REGION2 = "East US"
     REGION3 = "West US 2"
@@ -35,13 +33,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.created_database = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-        cls.created_container = cls.created_database.create_container_if_not_exists(cls.TEST_CONTAINER_ID,
-                                                                                    PartitionKey(path="/id"))
-
-    @classmethod
-    def tearDownClass(cls):
-        test_config.TestConfig.try_delete_database_with_id(cls.client, cls.TEST_DATABASE_ID)
+        cls.created_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        cls.created_container = cls.created_database.get_container_client(cls.TEST_CONTAINER_ID)
 
     def test_service_request_retry_policy(self):
         mock_client = CosmosClient(self.host, self.masterKey)
@@ -101,7 +94,6 @@ class TestServiceRetryPolicies(unittest.TestCase):
             assert mf.counter == 2
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
-
 
     def test_service_response_retry_policy(self):
         mock_client = CosmosClient(self.host, self.masterKey)
@@ -230,10 +222,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert connection_retry_policy.counter == 3
-            # 4 total requests for each in-region (hub -> write locational endpoint )
+            # 4 total requests for each in-region (hub -> write locational endpoint)
             assert len(connection_retry_policy.request_endpoints) == 8
-        except CosmosHttpResponseError as e:
-            print(e)
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_get_database_account_stub
 
@@ -249,7 +239,6 @@ class TestServiceRetryPolicies(unittest.TestCase):
             assert len(connection_retry_policy.request_endpoints) == 8
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_get_database_account_stub
-
 
     class MockExecuteServiceRequestException(object):
         def __init__(self):
