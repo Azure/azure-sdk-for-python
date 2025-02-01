@@ -2834,7 +2834,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @distributed_trace
     def create_vector_store_and_poll(
         self,
-        body: Union[JSON, IO[bytes], None] = None,
+        body: Union[JSON, IO[bytes]] = _Unset,
         *,
         content_type: str = "application/json",
         file_ids: Optional[List[str]] = None,
@@ -2878,29 +2878,41 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        if body is not None:
-            vector_store = self.create_vector_store(body=body, content_type=content_type, **kwargs)
-        elif file_ids is not None or data_sources is not None or (name is not None and expires_after is not None):
-            store_configuration = _models.VectorStoreConfiguration(data_sources=data_sources) if data_sources else None
-            vector_store = self.create_vector_store(
-                content_type=content_type,
+        if body is not _Unset:
+            if isinstance(body, dict):
+                vector_store = super().create_vector_store(
+                    body=body,
+                    content_type=content_type or "application/json",
+                    **kwargs
+                )
+            elif isinstance(body, io.IOBase):
+                vector_store = super().create_vector_store(
+                    body=body,
+                    content_type=content_type,
+                    **kwargs
+                )
+            else:
+                raise ValueError(
+                    "Invalid 'body' type: must be a dictionary (JSON) or a file-like object (IO[bytes])."
+                )
+        else:
+            store_configuration = None
+            if data_sources:
+                store_configuration = _models.VectorStoreConfiguration(data_sources=data_sources)
+
+            vector_store = super().create_vector_store(
                 file_ids=file_ids,
                 store_configuration=store_configuration,
                 name=name,
                 expires_after=expires_after,
                 chunking_strategy=chunking_strategy,
                 metadata=metadata,
-                **kwargs,
-            )
-        else:
-            raise ValueError(
-                "Invalid parameters for create_vector_store_and_poll. Please provide either 'body', "
-                "'file_ids', 'store_configuration', or 'name' and 'expires_after'."
+                **kwargs
             )
 
         while vector_store.status == "in_progress":
             time.sleep(sleep_interval)
-            vector_store = self.get_vector_store(vector_store.id)
+            vector_store = super().get_vector_store(vector_store.id)
 
         return vector_store
 
@@ -2997,11 +3009,12 @@ class AgentsOperations(AgentsOperationsGenerated):
     def create_vector_store_file_batch_and_poll(
         self,
         vector_store_id: str,
-        body: Union[JSON, IO[bytes], None] = None,
+        body: Union[JSON, IO[bytes]] = _Unset,
         *,
         file_ids: Optional[List[str]] = None,
         data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        content_type: str = "application/json",
         sleep_interval: float = 1,
         **kwargs: Any,
     ) -> _models.VectorStoreFileBatch:
@@ -3018,6 +3031,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
+        :keyword content_type: Body parameter content-type. Defaults to "application/json".
+        :paramtype content_type: str
         :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
         :paramtype sleep_interval: float
@@ -3026,18 +3041,32 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        if body is None:
+        if body is not _Unset:
+            if isinstance(body, dict):
+                vector_store_file_batch = super().create_vector_store_file_batch(
+                    vector_store_id=vector_store_id,
+                    body=body,
+                    content_type=content_type or "application/json",
+                    **kwargs,
+                )
+            elif isinstance(body, io.IOBase):
+                vector_store_file_batch = super().create_vector_store_file_batch(
+                    vector_store_id=vector_store_id,
+                    body=body,
+                    content_type=content_type,
+                    **kwargs,
+                )
+            else:
+                raise ValueError(
+                    "Invalid type for 'body'. Must be a dict (JSON) or file-like (IO[bytes])."
+                )
+        else:
             vector_store_file_batch = super().create_vector_store_file_batch(
                 vector_store_id=vector_store_id,
                 file_ids=file_ids,
                 data_sources=data_sources,
                 chunking_strategy=chunking_strategy,
                 **kwargs,
-            )
-        else:
-            content_type = kwargs.get("content_type", "application/json")
-            vector_store_file_batch = super().create_vector_store_file_batch(
-                body=body, content_type=content_type, **kwargs
             )
 
         while vector_store_file_batch.status == "in_progress":
@@ -3146,7 +3175,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         *,
         content_type: str = "application/json",
         file_id: Optional[str] = None,
-        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
+        data_source: Optional[_models.VectorStoreDataSource] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
         **kwargs: Any,
@@ -3160,8 +3189,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype content_type: str
         :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
-        :keyword data_sources: Azure asset ID. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :keyword data_source: Azure asset ID. Default value is None.
+        :paramtype data_source: ~azure.ai.projects.models.VectorStoreDataSource
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
@@ -3206,8 +3235,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         vector_store_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
+        content_type: str = "application/json",
         file_id: Optional[str] = None,
-        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
+        data_source: Optional[_models.VectorStoreDataSource] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
         **kwargs: Any,
@@ -3218,10 +3248,12 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type vector_store_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Defaults to 'application/json'.
+        :paramtype content_type: str
         :keyword file_id: Identifier of the file. Default value is None.
         :paramtype file_id: str
-        :keyword data_sources: Azure asset ID. Default value is None.
-        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
+        :keyword data_source: Azure asset ID. Default value is None.
+        :paramtype data_source: ~azure.ai.projects.models.VectorStoreDataSource
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest
@@ -3232,17 +3264,34 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.projects.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if body is None:
+
+        if body is not _Unset:
+            if isinstance(body, dict):
+                vector_store_file = super().create_vector_store_file(
+                    vector_store_id=vector_store_id,
+                    body=body,
+                    content_type=content_type or "application/json",
+                    **kwargs,
+                )
+            elif isinstance(body, io.IOBase):
+                vector_store_file = super().create_vector_store_file(
+                    vector_store_id=vector_store_id,
+                    body=body,
+                    content_type=content_type,
+                    **kwargs,
+                )
+            else:
+                raise ValueError(
+                    "Invalid type for 'body'. Must be a dict (JSON) or file-like object (IO[bytes])."
+                )
+        else:
             vector_store_file = super().create_vector_store_file(
                 vector_store_id=vector_store_id,
                 file_id=file_id,
-                data_sources=data_sources,
+                data_source=data_source,
                 chunking_strategy=chunking_strategy,
                 **kwargs,
             )
-        else:
-            content_type = kwargs.get("content_type", "application/json")
-            vector_store_file = super().create_vector_store_file(body=body, content_type=content_type, **kwargs)
 
         while vector_store_file.status == "in_progress":
             time.sleep(sleep_interval)
