@@ -5,7 +5,6 @@ import test_config
 from azure.cosmos import CosmosClient as CosmosSyncClient
 
 cosmos_sync_client = CosmosSyncClient(test_config.TestConfig.host, test_config.TestConfig.masterKey)
-
 def pytest_configure(config):
     """
     Allows plugins and conftest files to perform initial configuration.
@@ -20,7 +19,6 @@ def pytest_sessionstart(session):
     before performing collection and entering the run test loop.
     """
     config = test_config.TestConfig
-    cosmos_sync_client = CosmosSyncClient(test_config.TestConfig.host, test_config.TestConfig.masterKey)
     config.create_database_if_not_exist(cosmos_sync_client)
     config.create_single_partition_container_if_not_exist(cosmos_sync_client)
     config.create_multi_partition_container_if_not_exist(cosmos_sync_client)
