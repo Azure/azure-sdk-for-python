@@ -28,6 +28,7 @@ __all__: List[str] = [
     "BatchClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
+
 class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     """Customize generated code"""
 
@@ -362,62 +363,60 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         return await super().get_task_file(*args, **kwargs)
 
     def disable_node_scheduling(
-            self,
-            pool_id: str,
-            node_id: str,
-            parameters: Optional[_models.BatchNodeDisableSchedulingOption] = None,
-            *,
-            time_out_in_seconds: Optional[int] = None,
-            ocpdate: Optional[datetime.datetime] = None,
-            **kwargs: Any
-        ) -> None:
-            """Disables Task scheduling on the specified Compute Node.
+        self,
+        pool_id: str,
+        node_id: str,
+        parameters: Optional[_models.BatchNodeDisableSchedulingOption] = None,
+        *,
+        time_out_in_seconds: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """Disables Task scheduling on the specified Compute Node.
 
-            You can disable Task scheduling on a Compute Node only if its current
-            scheduling state is enabled.
+        You can disable Task scheduling on a Compute Node only if its current
+        scheduling state is enabled.
 
-            :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-            :type pool_id: str
-            :param node_id: The ID of the Compute Node on which you want to disable Task scheduling.
-            Required.
-            :type node_id: str
-            :param parameters: The options to use for disabling scheduling on the Compute Node. Default
-            value is None.
-            :type parameters: ~azure.batch.models.BatchNodeDisableSchedulingContent
-            :keyword time_out_in_seconds: The maximum time that the server can spend processing the
-            request, in seconds. The default is 30 seconds. If the value is larger than 30, the default
-            will be used instead.". Default value is None.
-            :paramtype time_out_in_seconds: int
-            :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
-            current system clock time; set it explicitly if you are calling the REST API
-            directly. Default value is None.
-            :paramtype ocpdate: ~datetime.datetime
-            :return: None
-            :rtype: None
-            :raises ~azure.core.exceptions.HttpResponseError:
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :type pool_id: str
+        :param node_id: The ID of the Compute Node on which you want to disable Task scheduling.
+        Required.
+        :type node_id: str
+        :param parameters: The options to use for disabling scheduling on the Compute Node. Default
+        value is None.
+        :type parameters: ~azure.batch.models.BatchNodeDisableSchedulingContent
+        :keyword time_out_in_seconds: The maximum time that the server can spend processing the
+        request, in seconds. The default is 30 seconds. If the value is larger than 30, the default
+        will be used instead.". Default value is None.
+        :paramtype time_out_in_seconds: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        current system clock time; set it explicitly if you are calling the REST API
+        directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
 
-            Example:
-                .. code-block:: python
+        Example:
+            .. code-block:: python
 
-                    # JSON input template you can fill out and use as your body input.
-                    parameters = {
-                        "nodeDisableSchedulingOption": "str"  # Optional. What to do with currently
-                        running Tasks when disabling Task scheduling on the Compute Node. The default
-                        value is requeue. Known values are: "requeue", "terminate", and "taskcompletion".
-                    }
-            """
-            content = _models.BatchNodeDisableSchedulingContent(
-                node_disable_scheduling_option=parameters
-            )
-            args = [pool_id, node_id, content]
-            kwargs.update(
-                {
-                    "time_out_in_seconds": time_out_in_seconds,
-                    "ocpdate": ocpdate,
+                # JSON input template you can fill out and use as your body input.
+                parameters = {
+                    "nodeDisableSchedulingOption": "str"  # Optional. What to do with currently
+                    running Tasks when disabling Task scheduling on the Compute Node. The default
+                    value is requeue. Known values are: "requeue", "terminate", and "taskcompletion".
                 }
-            )
-            return super().disable_node_scheduling(*args, **kwargs)
-    
+        """
+        content = _models.BatchNodeDisableSchedulingContent(node_disable_scheduling_option=parameters)
+        args = [pool_id, node_id, content]
+        kwargs.update(
+            {
+                "time_out_in_seconds": time_out_in_seconds,
+                "ocpdate": ocpdate,
+            }
+        )
+        return super().disable_node_scheduling(*args, **kwargs)
+
     def enable_pool_auto_scale(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
@@ -497,8 +496,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 }
         """
         content = _models.BatchPoolEnableAutoScaleContent(
-            auto_scale_formula=auto_scale_formula,
-            auto_scale_evaluation_interval=auto_scale_evaluation_interval
+            auto_scale_formula=auto_scale_formula, auto_scale_evaluation_interval=auto_scale_evaluation_interval
         )
         args = [pool_id, content]
         kwargs.update(
@@ -512,7 +510,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             }
         )
         return super().enable_pool_auto_scale(*args, **kwargs)
-    
+
     def terminate_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
@@ -592,7 +590,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
         return super().terminate_job(*args, **kwargs)
 
-class _TaskWorkflowManager():
+
+class _TaskWorkflowManager:
     """Worker class for one create_task_collection request
 
     :param ~TaskOperations task_operations: Parent object which instantiated this

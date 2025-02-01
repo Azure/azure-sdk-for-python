@@ -23,22 +23,23 @@ from azure.identity import DefaultAzureCredential
 
 from configparser import ConfigParser
 
-class BatchSamples():
+
+class BatchSamples:
 
     def create_pool(self, client: BatchClient, pool_id: str):
 
         # set up virtual machine configuration
-        vm_configuration=models.VirtualMachineConfiguration(
+        vm_configuration = models.VirtualMachineConfiguration(
             image_reference=models.ImageReference(
                 publisher="MicrosoftWindowsServer",
                 offer="WindowsServer",
                 sku="2016-Datacenter-smalldisk",
             ),
-            node_agent_sku_id="batch.node.windows amd64"
+            node_agent_sku_id="batch.node.windows amd64",
         )
 
         # set up parameters for a batch pool
-        pool_content=models.BatchPoolCreateContent(
+        pool_content = models.BatchPoolCreateContent(
             id=pool_id,
             vm_size="standard_d2_v2",
             target_dedicated_nodes=1,
@@ -50,7 +51,7 @@ class BatchSamples():
             client.create_pool(pool=pool_content)
         except Exception as e:
             print(e)
-    
+
     def create_job_and_submit_task(self, client: BatchClient, pool_id: str, job_id: str):
 
         # set up parameters for a batch job
@@ -64,7 +65,7 @@ class BatchSamples():
             client.create_job(job=job_content)
         except Exception as e:
             print(e)
-        
+
         # set up parameters for a batch task
         task_content = models.BatchTaskCreateContent(
             id="my_task",
@@ -76,14 +77,15 @@ class BatchSamples():
             client.create_task(job_id=job_id, task=task_content)
         except Exception as e:
             print(e)
-    
+
     def cleanup(self, client: BatchClient, pool_id: str, job_id: str):
         # deleting the job
         client.delete_job(job_id=job_id)
         # deleting the pool
         client.delete_pool(pool_id=pool_id)
-        
-if __name__ =='__main__':
+
+
+if __name__ == "__main__":
     pool_id = "my_pool"
     job_id = "my_job"
 

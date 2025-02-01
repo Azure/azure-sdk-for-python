@@ -370,7 +370,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
         kwargs["stream"] = True
         return super().get_task_file(*args, **kwargs)
-    
+
     def disable_node_scheduling(
         self,
         pool_id: str,
@@ -416,9 +416,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                       value is requeue. Known values are: "requeue", "terminate", and "taskcompletion".
                 }
         """
-        content = _models.BatchNodeDisableSchedulingContent(
-            node_disable_scheduling_option=parameters
-        )
+        content = _models.BatchNodeDisableSchedulingContent(node_disable_scheduling_option=parameters)
         args = [pool_id, node_id, content]
         kwargs.update(
             {
@@ -507,8 +505,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 }
         """
         content = _models.BatchPoolEnableAutoScaleContent(
-            auto_scale_formula=auto_scale_formula,
-            auto_scale_evaluation_interval=auto_scale_evaluation_interval
+            auto_scale_formula=auto_scale_formula, auto_scale_evaluation_interval=auto_scale_evaluation_interval
         )
         args = [pool_id, content]
         kwargs.update(
@@ -522,7 +519,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             }
         )
         return super().enable_pool_auto_scale(*args, **kwargs)
-    
+
     def terminate_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
@@ -602,6 +599,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
         return super().terminate_job(*args, **kwargs)
 
+
 def patch_sdk():
     """Do not remove from this file.
 
@@ -611,7 +609,7 @@ def patch_sdk():
     """
 
 
-class _TaskWorkflowManager():
+class _TaskWorkflowManager:
     """Worker class for one create_task_collection request
 
     :param ~TaskOperations task_operations: Parent object which instantiated this
@@ -627,7 +625,11 @@ class _TaskWorkflowManager():
     """
 
     def __init__(
-        self, original_create_task_collection, job_id: str, task_collection: _models.BatchTaskAddCollectionResult, **kwargs
+        self,
+        original_create_task_collection,
+        job_id: str,
+        task_collection: _models.BatchTaskAddCollectionResult,
+        **kwargs
     ):
         # Append operations thread safe - Only read once all threads have completed
         # List of tasks which failed to add due to a returned client error
