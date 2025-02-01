@@ -11,6 +11,7 @@ import test_config
 from azure.cosmos import CosmosClient, PartitionKey
 
 
+@pytest.mark.cosmosQuery
 class TestFullTextPolicy(unittest.TestCase):
     client: CosmosClient = None
     host = test_config.TestConfig.host
@@ -236,12 +237,13 @@ class TestFullTextPolicy(unittest.TestCase):
             ]
         }
         try:
-            self.test_db.create_container(
+            container = self.test_db.create_container(
                 id='full_text_container',
                 partition_key=PartitionKey(path="/id"),
                 indexing_policy=indexing_policy_wrong_path,
-                full_text_policy=full_text_policy
             )
+            container.read()
+            # TODO: This test is only failing on the pipelines, have been unable to see it pass locally
             pytest.fail("Container creation should have failed for lack of embedding policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
@@ -258,7 +260,8 @@ class TestFullTextPolicy(unittest.TestCase):
             self.test_db.create_container(
                 id='full_text_container',
                 partition_key=PartitionKey(path="/id"),
-                indexing_policy=indexing_policy_wrong_path
+                indexing_policy=indexing_policy_wrong_path,
+                full_text_policy=full_text_policy
             )
             pytest.fail("Container creation should have failed for lack of embedding policy.")
         except exceptions.CosmosHttpResponseError as e:
@@ -275,7 +278,8 @@ class TestFullTextPolicy(unittest.TestCase):
             self.test_db.create_container(
                 id='full_text_container',
                 partition_key=PartitionKey(path="/id"),
-                indexing_policy=indexing_policy_no_path
+                indexing_policy=indexing_policy_no_path,
+                full_text_policy=full_text_policy
             )
             pytest.fail("Container creation should have failed for lack of embedding policy.")
         except exceptions.CosmosHttpResponseError as e:

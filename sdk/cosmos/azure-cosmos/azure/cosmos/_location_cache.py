@@ -156,10 +156,10 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return self.read_regional_endpoints
 
     def get_write_regional_endpoint(self):
-        return self.get_write_regional_endpoints()[0]
+        return self.get_write_regional_endpoints()[0].get_current()
 
     def get_read_regional_endpoint(self):
-        return self.get_read_regional_endpoints()[0]
+        return self.get_read_regional_endpoints()[0].get_current()
 
     def mark_endpoint_unavailable_for_read(self, endpoint, refresh_cache):
         self.mark_endpoint_unavailable(endpoint, EndpointOperationType.ReadType, refresh_cache)

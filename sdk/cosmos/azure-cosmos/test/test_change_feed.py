@@ -65,7 +65,7 @@ def assert_change_feed(expected, actual):
                 assert key in actual_data
                 assert expected_data[key] == actual_data[key]
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosQuery
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
 class TestChangeFeed:

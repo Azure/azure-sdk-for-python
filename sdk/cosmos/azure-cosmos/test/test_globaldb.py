@@ -13,7 +13,7 @@ import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import documents, exceptions, DatabaseProxy, ContainerProxy,\
     _synchronized_request, _endpoint_discovery_retry_policy, PartitionKey, ConnectionRetryPolicy
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
+from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes, ResourceType
 from azure.core.exceptions import ServiceRequestError
 
 #   TODO: These tests need to be properly configured in the pipeline with locational endpoints.
@@ -58,7 +58,7 @@ def _mock_pipeline_run_function(pipeline_client, request, **kwargs):
     assert contoso_west in request.url
     return test_config.FakePipelineResponse()
 
-
+@pytest.mark.cosmosEmulator
 class TestGlobalDB(unittest.TestCase):
     host = test_config.TestConfig.global_host
     write_location_host = test_config.TestConfig.write_location_host
@@ -417,9 +417,8 @@ class TestGlobalDB(unittest.TestCase):
         self.assertEqual(locational_endpoint, 'https://contoso-EastUS.documents.azure.com:443/')
 
     def test_global_db_service_request_errors(self):
-        mock_connection_policy = documents.ConnectionPolicy()
         mock_retry_policy = test_config.MockConnectionRetryPolicy(
-            "databaseaccount",
+            ResourceType.DatabaseAccount,
             ServiceRequestError("mock-service"),
             retry_total=5,
             retry_connect=None,
@@ -429,9 +428,8 @@ class TestGlobalDB(unittest.TestCase):
             retry_on_status_codes=[],
             retry_backoff_factor=0.8,
         )
-        mock_connection_policy.ConnectionRetryConfiguration = mock_retry_policy
         try:
-            cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=mock_connection_policy)
+            cosmos_client.CosmosClient(self.host, self.masterKey, connection_retry_policy=mock_retry_policy)
             pytest.fail("Exception was not raised")
         except ServiceRequestError:
             assert mock_retry_policy.counter == 3

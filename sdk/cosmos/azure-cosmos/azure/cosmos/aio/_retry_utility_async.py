@@ -287,7 +287,7 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                                 await self.sleep(retry_settings, request.context.transport)
                                 continue
                 except ImportError:
-                    raise err
+                    raise err # pylint: disable=raise-missing-from
                 raise err
             except AzureError as err:
                 retry_error = err
