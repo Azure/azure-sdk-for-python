@@ -832,7 +832,7 @@ class FileProperties(DictMixin):
     """The name of the file."""
     etag: str
     """The ETag contains a value that you can use to perform operations conditionally."""
-    deleted: bool
+    deleted: Optional[bool]
     """Whether the currently file is mark as deleted."""
     metadata: Dict[str, str]
     """Name-value pairs associated with the file as metadata."""
@@ -1228,18 +1228,18 @@ class DeletedPathProperties(DictMixin):
 
     name: str
     """The name of the file in the path."""
-    deleted_time: "datetime"
+    deleted_time: Optional["datetime"]
     """A datetime object representing the time at which the path was deleted."""
-    remaining_retention_days: int
+    remaining_retention_days: Optional[int]
     """The number of days that the path will be retained before being permanently deleted by the service."""
-    deletion_id: str
+    deletion_id: Optional[str]
     """The id associated with the deleted path."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = kwargs.get('name')  # type: ignore [assignment]
-        self.deleted_time = None  # type: ignore [assignment]
-        self.remaining_retention_days = None  # type: ignore [assignment]
-        self.deletion_id = None  # type: ignore [assignment]
+        self.deleted_time = None
+        self.remaining_retention_days = None
+        self.deletion_id = None
 
 
 class AnalyticsLogging(GenLogging):
