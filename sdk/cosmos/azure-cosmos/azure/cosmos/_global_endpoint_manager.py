@@ -22,7 +22,7 @@
 """Internal class for global endpoint manager implementation in the Azure Cosmos
 database service.
 """
-
+import logging
 import threading
 from urllib.parse import urlparse
 
@@ -35,6 +35,7 @@ from ._location_cache import LocationCache
 
 # pylint: disable=protected-access
 
+logger = logging.getLogger("azure.cosmos.GlobalEndpointManager")
 
 class _GlobalEndpointManager(object):
     """
@@ -93,6 +94,9 @@ class _GlobalEndpointManager(object):
     def force_refresh(self, database_account):
         self.refresh_needed = True
         self.refresh_endpoint_list(database_account)
+
+    def update_location_cache(self):
+        self.location_cache.update_location_cache()
 
     def refresh_endpoint_list(self, database_account, **kwargs):
         if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:

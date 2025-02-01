@@ -90,6 +90,9 @@ class _GlobalEndpointManager(object):
         self.refresh_needed = True
         await self.refresh_endpoint_list(database_account)
 
+    def update_location_cache(self):
+        self.location_cache.update_location_cache()
+
     async def refresh_endpoint_list(self, database_account, **kwargs):
         if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
