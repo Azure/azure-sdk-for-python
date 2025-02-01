@@ -28,6 +28,7 @@ import time
 
 from . import documents
 from . import http_constants
+from .documents import _OperationType
 
 # pylint: disable=protected-access
 
@@ -289,11 +290,14 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         self.location_unavailability_info_by_endpoint = new_location_unavailability_info
 
     def is_regional_endpoint_unavailable(self, endpoint: RegionalEndpoint, operation_type: str):
-        if endpoint.get_previous():
+        # For writes only mark it unavailable if both are down
+        if not _OperationType.IsReadOnlyOperation(operation_type):
             return (self.is_endpoint_unavailable_internal(endpoint.get_current(), operation_type)
                     and self.is_endpoint_unavailable_internal(endpoint.get_previous(), operation_type))
 
-        return self.is_endpoint_unavailable_internal(endpoint.get_current(), operation_type)
+        # For reads mark the region as down if either of the endpoints are unavailable
+        return (self.is_endpoint_unavailable_internal(endpoint.get_current(), operation_type)
+                or self.is_endpoint_unavailable_internal(endpoint.get_previous(), operation_type))
 
     def is_endpoint_unavailable_internal(self, endpoint: str, expected_available_operation: str):
         unavailability_info = (
