@@ -241,7 +241,6 @@ class TestFullTextPolicy(unittest.TestCase):
                 id='full_text_container',
                 partition_key=PartitionKey(path="/id"),
                 indexing_policy=indexing_policy_wrong_path,
-                full_text_policy=full_text_policy
             )
             pytest.fail("Container creation should have failed for lack of embedding policy.")
         except exceptions.CosmosHttpResponseError as e:
@@ -259,7 +258,8 @@ class TestFullTextPolicy(unittest.TestCase):
             self.test_db.create_container(
                 id='full_text_container',
                 partition_key=PartitionKey(path="/id"),
-                indexing_policy=indexing_policy_wrong_path
+                indexing_policy=indexing_policy_wrong_path,
+                full_text_policy=full_text_policy
             )
             pytest.fail("Container creation should have failed for lack of embedding policy.")
         except exceptions.CosmosHttpResponseError as e:
@@ -276,7 +276,8 @@ class TestFullTextPolicy(unittest.TestCase):
             self.test_db.create_container(
                 id='full_text_container',
                 partition_key=PartitionKey(path="/id"),
-                indexing_policy=indexing_policy_no_path
+                indexing_policy=indexing_policy_no_path,
+                full_text_policy=full_text_policy
             )
             pytest.fail("Container creation should have failed for lack of embedding policy.")
         except exceptions.CosmosHttpResponseError as e:
