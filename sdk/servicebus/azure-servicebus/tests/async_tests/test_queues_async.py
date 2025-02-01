@@ -3643,7 +3643,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
         ) as sb_client:
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
-            with sender:
+            async with sender:
                 messages = []
                 for i in range(3):
                     message = ServiceBusMessage("Handler message no. {}".format(i), application_properties={"index": i})
