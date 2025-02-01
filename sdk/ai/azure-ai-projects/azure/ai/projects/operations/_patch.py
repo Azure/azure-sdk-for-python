@@ -480,7 +480,10 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
     ) -> ConnectionProperties:
         """Get the properties of the default connection of a certain connection type, with or without
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
-        exception if a connection with the given name was not found.
+        exception if there are no connections of the given type.
+
+        .. note:: `get_default(connection_type=ConnectionType.AZURE_BLOB_STORAGE, include_credentials=True)` does not
+        currently work. It does work with `include_credentials=False`.
 
         :keyword connection_type: The connection type. Required.
         :type connection_type: ~azure.ai.projects.models._models.ConnectionType
@@ -514,6 +517,8 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         """Get the properties of a single connection, given its connection name, with or without
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
         exception if a connection with the given name was not found.
+
+        .. note:: This method is not supported for Azure Blob Storage connections.
 
         :keyword connection_name: Connection Name. Required.
         :type connection_name: str
