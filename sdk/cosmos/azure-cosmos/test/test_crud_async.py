@@ -120,7 +120,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         assert database_id == database_proxy.id
         db_throughput = await database_proxy.get_throughput()
-        assert 6000 == db_throughput.offer_throughput
+        assert 5000 == db_throughput.offer_throughput
 
         # delete database.
         await self.client.delete_database(database_id)

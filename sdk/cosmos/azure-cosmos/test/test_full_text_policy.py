@@ -237,11 +237,13 @@ class TestFullTextPolicy(unittest.TestCase):
             ]
         }
         try:
-            self.test_db.create_container(
+            container = self.test_db.create_container(
                 id='full_text_container',
                 partition_key=PartitionKey(path="/id"),
                 indexing_policy=indexing_policy_wrong_path,
             )
+            container.read()
+            # TODO: This test is only failing on the pipelines, have been unable to see it pass locally
             pytest.fail("Container creation should have failed for lack of embedding policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400

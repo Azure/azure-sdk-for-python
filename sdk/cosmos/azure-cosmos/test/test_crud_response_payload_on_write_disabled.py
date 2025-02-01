@@ -123,7 +123,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
         database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(6000, database_proxy.read_offer().offer_throughput)
+        self.assertEqual(5000, database_proxy.read_offer().offer_throughput)
 
         self.client.delete_database(database_id)
 

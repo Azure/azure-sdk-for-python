@@ -161,7 +161,7 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 partition_key=PartitionKey(path="/id"),
                 full_text_policy=full_text_policy_wrong_path
             )
-            pytest.fail("Container creation should have failed for lack of embedding policy.")
+            pytest.fail("Container creation should have failed for invalid path.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
             assert "The Full Text Policy contains an invalid Path: abstract" in e.http_error_message
@@ -181,7 +181,7 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 partition_key=PartitionKey(path="/id"),
                 full_text_policy=full_text_policy_no_langs
             )
-            pytest.fail("Container creation should have failed for lack of embedding policy.")
+            pytest.fail("Container creation should have failed for lack of language.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
             assert "The Full Text Policy contains invalid syntax" in e.http_error_message
@@ -202,7 +202,7 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 partition_key=PartitionKey(path="/id"),
                 full_text_policy=full_text_policy_wrong_default
             )
-            pytest.fail("Container creation should have failed for lack of embedding policy.")
+            pytest.fail("Container creation should have failed for wrong supported language.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
             assert "The Full Text Policy contains an unsupported language spa-SPA. Supported languages are:"\
@@ -224,7 +224,7 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 partition_key=PartitionKey(path="/id"),
                 full_text_policy=full_text_policy_wrong_default
             )
-            pytest.fail("Container creation should have failed for lack of embedding policy.")
+            pytest.fail("Container creation should have failed for wrong supported language.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
             assert "The Full Text Policy contains an unsupported language spa-SPA. Supported languages are:"\
@@ -247,11 +247,13 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             ]
         }
         try:
-            await self.test_db.create_container(
+            container = await self.test_db.create_container(
                 id='full_text_container',
                 partition_key=PartitionKey(path="/id"),
                 indexing_policy=indexing_policy_wrong_path,
             )
+            await container.read()
+            # TODO: This test is only failing on the pipelines, have been unable to see it pass locally
             pytest.fail("Container creation should have failed for lack of embedding policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
