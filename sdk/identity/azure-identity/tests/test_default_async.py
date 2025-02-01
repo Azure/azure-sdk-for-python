@@ -12,6 +12,7 @@ from azure.identity.aio import (
     AzurePowerShellCredential,
     AzureCliCredential,
     AzureDeveloperCliCredential,
+    EnvironmentCredential,
     DefaultAzureCredential,
     ManagedIdentityCredential,
     SharedTokenCacheCredential,
@@ -344,3 +345,18 @@ def test_validate_cloud_shell_credential_in_dac():
         DefaultAzureCredential(identity_config={"client_id": "foo"})
         DefaultAzureCredential(identity_config={"object_id": "foo"})
         DefaultAzureCredential(identity_config={"resource_id": "foo"})
+
+
+def test_default_azure_credential_constructor_env_var():
+    with patch("os.environ", {"AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST": "ENVIRONMENT;CLI"}):
+        credential = DefaultAzureCredential()
+        assert len(credential.credentials) == 2
+        assert isinstance(credential.credentials[0], EnvironmentCredential)
+        assert isinstance(credential.credentials[1], AzureCliCredential)
+
+
+def test_default_azure_credential_constructor_with_param():
+    credential = DefaultAzureCredential(default_credential_allow_list="ENVIRONMENT;CLI")
+    assert len(credential.credentials) == 2
+    assert isinstance(credential.credentials[0], EnvironmentCredential)
+    assert isinstance(credential.credentials[1], AzureCliCredential)

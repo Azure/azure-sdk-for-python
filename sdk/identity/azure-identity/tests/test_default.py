@@ -9,6 +9,7 @@ from azure.identity import (
     AzureCliCredential,
     AzureDeveloperCliCredential,
     AzurePowerShellCredential,
+    EnvironmentCredential,
     CredentialUnavailableError,
     DefaultAzureCredential,
     InteractiveBrowserCredential,
@@ -18,6 +19,7 @@ from azure.identity import (
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.azure_cli import AzureCliCredential
 from azure.identity._credentials.azd_cli import AzureDeveloperCliCredential
+from azure.identity._credentials.default import parse_azure_dac
 from azure.identity._credentials.managed_identity import ManagedIdentityCredential
 import pytest
 from urllib.parse import urlparse
@@ -432,3 +434,76 @@ def test_validate_cloud_shell_credential_in_dac():
         DefaultAzureCredential(identity_config={"client_id": "foo"})
         DefaultAzureCredential(identity_config={"object_id": "foo"})
         DefaultAzureCredential(identity_config={"resource_id": "foo"})
+
+
+def test_valid_allow_list():
+    avail_credentials = {
+        "ENVIRONMENT": "MockEnvironmentCredential",
+        "MANAGED_IDENTITY": "MockManagedIdentityCredential",
+        "CLI": "MockAzureCliCredential",
+        "WORKLOAD_IDENTITY": "MockWorkloadIdentityCredential",
+        "DEVELOPER_CLI": "MockAzureDeveloperCliCredential",
+    }
+    az_dac = "ENVIRONMENT;CLI;MANAGED_IDENTITY"
+    credentials = parse_azure_dac(az_dac, avail_credentials)
+    expected_credentials = [
+        "MockEnvironmentCredential",
+        "MockAzureCliCredential",
+        "MockManagedIdentityCredential",
+    ]
+    assert credentials == expected_credentials
+
+
+def test_invalid_credential_in_allow_list():
+    avail_credentials = {
+        "ENVIRONMENT": "MockEnvironmentCredential",
+    }
+    az_dac = "ENVIRONMENT;INVALID_CREDENTIAL"
+    with pytest.raises(ValueError):
+        parse_azure_dac(az_dac, avail_credentials)
+
+
+def test_allow_list_with_trailing_semicolon():
+    avail_credentials = {
+        "ENVIRONMENT": "MockEnvironmentCredential",
+        "MANAGED_IDENTITY": "MockManagedIdentityCredential",
+        "CLI": "MockAzureCliCredential",
+    }
+    az_dac = "CLI;MANAGED_IDENTITY;"
+    credentials = parse_azure_dac(az_dac, avail_credentials)
+    expected_credentials = [
+        "MockAzureCliCredential",
+        "MockManagedIdentityCredential",
+    ]
+    assert credentials == expected_credentials
+
+
+def test_allow_list_with_extra_spaces():
+    avail_credentials = {
+        "ENVIRONMENT": "MockEnvironmentCredential",
+        "MANAGED_IDENTITY": "MockManagedIdentityCredential",
+        "CLI": "MockAzureCliCredential",
+    }
+    az_dac = "  ENVIRONMENT  ;  CLI  ; MANAGED_IDENTITY  "
+    credentials = parse_azure_dac(az_dac, avail_credentials)
+    expected_credentials = [
+        "MockEnvironmentCredential",
+        "MockAzureCliCredential",
+        "MockManagedIdentityCredential",
+    ]
+    assert credentials == expected_credentials
+
+
+def test_default_azure_credential_constructor_env_var():
+    with patch("os.environ", {"AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST": "ENVIRONMENT;CLI"}):
+        credential = DefaultAzureCredential()
+        assert len(credential.credentials) == 2
+        assert isinstance(credential.credentials[0], EnvironmentCredential)
+        assert isinstance(credential.credentials[1], AzureCliCredential)
+
+
+def test_default_azure_credential_constructor_with_param():
+    credential = DefaultAzureCredential(default_credential_allow_list="ENVIRONMENT;CLI")
+    assert len(credential.credentials) == 2
+    assert isinstance(credential.credentials[0], EnvironmentCredential)
+    assert isinstance(credential.credentials[1], AzureCliCredential)
