@@ -600,6 +600,7 @@ def pytest_sessionfinish() -> None:
 
     stop_promptflow_service()
 
+
 @pytest.fixture
 def run_from_temp_dir(tmp_path):
     original_cwd = os.getcwd()
