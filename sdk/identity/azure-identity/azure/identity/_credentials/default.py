@@ -4,7 +4,7 @@
 # ------------------------------------
 import logging
 import os
-from typing import List, Any, Optional, cast
+from typing import List, Any, Optional, cast, Dict
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo, TokenCredential
 from .._constants import EnvironmentVariables
@@ -97,7 +97,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             :caption: Create a DefaultAzureCredential.
     """
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-statements, too-many-locals
+    def __init__(self, **kwargs: Any) -> None:
+        # pylint: disable=too-many-statements, too-many-locals
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
@@ -145,7 +146,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
         credentials: List[SupportsTokenInfo] = []
-        avail_credentials = {}
+        avail_credentials: Dict[str, Any] = {}
         within_dac.set(True)
 
         if not exclude_environment_credential:
