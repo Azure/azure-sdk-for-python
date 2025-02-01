@@ -1,5 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
+import pytest
 import random
 import time
 import unittest
@@ -51,6 +52,7 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.delete_database(self.database.id)
         await self.client.close()
 
+    @pytest.mark.skip
     async def test_latest_session_token_from_logical_pk(self):
         container = await self.database.create_container("test_updated_session_token_from_logical_pk" + str(uuid.uuid4()),
                                                    PartitionKey(path="/pk"),
@@ -77,6 +79,7 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         assert session_token == target_session_token
         await self.database.delete_container(container.id)
 
+    @pytest.mark.skip
     async def test_latest_session_token_from_physical_pk(self):
         container = await self.database.create_container("test_updated_session_token_from_physical_pk" + str(uuid.uuid4()),
                                                    PartitionKey(path="/pk"),

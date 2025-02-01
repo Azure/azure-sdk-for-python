@@ -135,7 +135,7 @@ class TestVectorPolicy(unittest.TestCase):
         # Pass a vector indexing policy with wrong quantizationByteSize value
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector2", "type": "quantizedFlat", "quantizationByteSize": 0}]
+                {"path": "/vector1", "type": "quantizedFlat", "quantizationByteSize": 0}]
         }
         try:
             self.test_db.create_container(

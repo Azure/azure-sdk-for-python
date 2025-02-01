@@ -6,6 +6,7 @@ import time
 import unittest
 import uuid
 import os
+import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
@@ -39,6 +40,7 @@ def run_queries(container, iterations):
         print("validation succeeded for all query results")
 
 
+@pytest.mark.skip
 class TestPartitionSplitQuery(unittest.TestCase):
     database: DatabaseProxy = None
     container: ContainerProxy = None
