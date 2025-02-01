@@ -482,8 +482,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         populating authentication credentials. Raises ~azure.core.exceptions.ResourceNotFoundError
         exception if there are no connections of the given type.
 
-        .. note:: `get_default(connection_type=ConnectionType.AZURE_BLOB_STORAGE, include_credentials=True)` does not
-        currently work. It does work with `include_credentials=False`.
+        .. note:: 
+            `get_default(connection_type=ConnectionType.AZURE_BLOB_STORAGE, include_credentials=True)` does not
+            currently work. It does work with `include_credentials=False`.
 
         :keyword connection_type: The connection type. Required.
         :type connection_type: ~azure.ai.projects.models._models.ConnectionType
