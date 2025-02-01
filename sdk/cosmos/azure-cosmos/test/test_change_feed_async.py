@@ -299,7 +299,7 @@ class TestChangeFeedAsync:
 
         assert actual_ids == expected_ids
 
-    async def test_query_change_feed_with_all_versions_and_deletes(self, setup):
+    async def test_query_change_feed_all_versions_and_deletes_async(self, setup):
         partition_key = 'pk'
         # 'retentionDuration' was required to enable `ALL_VERSIONS_AND_DELETES` for Emulator testing
         change_feed_policy = {"retentionDuration": 10} if setup["is_emulator"] else None

@@ -98,7 +98,7 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
             pass
         await self.client.close()
 
-    async def test_wrong_queries_async(self):
+    async def test_wrong_vector_search_queries_async(self):
         vector_string = vector_test_data.get_embedding_string("I am having a wonderful day.")
         # try to send a vector search query without limit filters
         query = "SELECT c.text, VectorDistance(c.embedding, [{}]) AS " \
@@ -120,7 +120,7 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Client should not allow queries with ASC/DESC.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-            assert "Specifying a sorting order (ASC or DESC) with VectorDistance function is not supported." in e.message
+            assert "One of the input values is invalid." in e.message
 
     async def test_ordering_distances_async(self):
         # Besides ordering distances, we also verify that the query text properly replaces any set embedding policies
