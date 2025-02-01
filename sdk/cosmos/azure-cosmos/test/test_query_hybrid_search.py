@@ -82,7 +82,8 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             pytest.fail("Attempting to set an ordering direction in a full text score query should fail.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-            assert "One of the input values is invalid" in e.message
+            assert ("One of the input values is invalid" in e.message or
+                    "Specifying a sort order (ASC or DESC) in the ORDER BY RANK clause is not allowed." in e.message)
 
         try:
             query = "SELECT TOP 10 c.index FROM c WHERE FullTextContains(c.title, 'John')" \
@@ -92,7 +93,9 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             pytest.fail("Attempting to set an ordering direction in a hybrid search query should fail.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-            assert "One of the input values is invalid" in e.message
+            # TODO: Find why this behavior is inconsistent across runs - message should be the same
+            assert ("One of the input values is invalid" in e.message or
+                    "Specifying a sort order (ASC or DESC) in the ORDER BY RANK clause is not allowed." in e.message)
 
     def test_hybrid_search_queries(self):
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \
