@@ -769,7 +769,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         if not sequence_number:
-            sequence_number = self._last_received_sequenced_number or 1
+            sequence_number = (
+                self._last_received_sequenced_number + 1
+                if self._last_received_sequenced_number
+                else 1
+            )
         if int(max_message_count) < 0:
             raise ValueError("max_message_count must be 1 or greater.")
 
@@ -786,6 +790,8 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
             REQUEST_RESPONSE_PEEK_OPERATION, message, handler, timeout=timeout
         )
         links = get_receive_links(messages)
+        if messages:
+            self._last_received_sequenced_number = messages[-1].sequence_number
         with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time):
             return messages
 
