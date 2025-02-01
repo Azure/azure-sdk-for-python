@@ -6,7 +6,7 @@ import json
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_batch_deployment, load_online_deployment
-from azure.ai.ml._restclient.v2022_10_01.models import BatchOutputAction, EndpointComputeType
+from azure.ai.ml._restclient.v2022_10_01.models import (BatchOutputAction, EndpointComputeType, BatchDeployment as BatchDeploymentData)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     OnlineDeployment as RestOnlineDeploymentData,
     ManagedOnlineDeployment as RestManagedOnlineDeployment,
@@ -28,7 +28,7 @@ from azure.ai.ml.entities import (
     OnlineRequestSettings
 )
 from azure.ai.ml.constants._common import ArmConstants
-from azure.ai.ml.exceptions import DeploymentException
+from azure.ai.ml.exceptions import DeploymentException, ValidationException
 from azure.ai.ml.entities._assets import Environment, Model, Code
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
@@ -391,7 +391,7 @@ class TestOnlineDeploymentFromYAML:
 @pytest.mark.unittest
 class TestBatchDeploymentSDK:
     DEPLOYMENT = "tests/test_configs/deployments/batch/batch_deployment_mlflow.yaml"
-
+    DEPLOYMENT_REST = "tests/test_configs/deployments/batch/batch_deployment_full_rest.json"
     def test_batch_endpoint_deployment_load_and_dump(self) -> None:
         with open(TestBatchDeploymentSDK.DEPLOYMENT, "r") as f:
             target = yaml.safe_load(f)
@@ -427,6 +427,48 @@ class TestBatchDeploymentSDK:
         assert rest_representation_properties.error_threshold == target["error_threshold"]
         assert rest_representation_properties.output_action == BatchOutputAction.APPEND_ROW
         assert rest_representation_properties.description == target["description"]
+    
+    def test_to_rest_object_when_output_action_not_defined(self) -> None:
+        deployment = load_batch_deployment(TestBatchDeploymentSDK.DEPLOYMENT)
+        deployment.output_action = None
+        # test REST translation s
+        rest_deployment_resource = deployment._to_rest_object(location="westus2")
+        rest_representation_properties = rest_deployment_resource.properties
+        assert rest_deployment_resource.location == "westus2"
+        assert rest_deployment_resource.tags == {"tag1":"value1", "tag2":"value2"}
+        assert rest_representation_properties.output_action is None
+        assert rest_representation_properties.max_concurrency_per_instance == deployment.max_concurrency_per_instance
+        assert rest_representation_properties.retry_settings.max_retries == deployment.retry_settings.max_retries
+        assert rest_representation_properties.retry_settings.timeout == "PT30S"
+        assert rest_representation_properties.error_threshold == deployment.error_threshold
+        assert rest_representation_properties.description == deployment.description
+        assert rest_representation_properties.output_file_name == "append_row.txt"
+        assert rest_representation_properties.output_action is None
+    
+    def test_from_rest_object(self) -> None:
+        with open(TestBatchDeploymentSDK.DEPLOYMENT_REST, "r") as f:
+            deployment_rest = BatchDeploymentData.deserialize(json.load(f))
+            deployment = BatchDeployment._from_rest_object(deployment_rest)
+            assert isinstance(deployment, BatchDeployment)
+            assert deployment.name == deployment_rest.name
+            assert deployment.id == deployment_rest.id
+            assert deployment.endpoint_name == 'achauhan-endpoint-name'
+            assert deployment.description == deployment_rest.properties.description
+            assert deployment.tags == deployment_rest.tags
+            assert deployment.model == deployment_rest.properties.model.asset_id
+            assert deployment.environment == deployment_rest.properties.environment_id
+            assert deployment.code_configuration.code == deployment_rest.properties.code_configuration.code_id
+            assert deployment.code_configuration.scoring_script == deployment_rest.properties.code_configuration.scoring_script
+            assert deployment.output_file_name == deployment_rest.properties.output_file_name
+            assert deployment.output_action == 'append_row'
+            assert deployment.error_threshold == deployment_rest.properties.error_threshold
+            assert deployment.retry_settings.max_retries == deployment_rest.properties.retry_settings.max_retries
+            assert deployment.retry_settings.timeout == deployment_rest.properties.retry_settings.timeout.seconds
+            assert deployment.logging_level == deployment_rest.properties.logging_level
+            assert deployment.properties == deployment_rest.properties.properties
+            assert deployment.creation_context.created_by == deployment_rest.system_data.created_by
+            assert deployment.creation_context.created_at == deployment_rest.system_data.created_at
+            assert deployment.provisioning_state == deployment_rest.properties.provisioning_state
     
     def test_batch_deployment_promoted_properties(self) -> None:
         deployment = BatchDeployment(
@@ -494,7 +536,15 @@ class TestBatchDeploymentSDK:
                 output_file_name="predictions.csv",
                 retry_settings=BatchRetrySettings(max_retries=3, timeout=30),
             )
-
+    
+    def test_batch_deployment_raise_exception_when(self) -> None:
+        with pytest.raises(ValidationException) as exc:
+            BatchDeployment(
+            name="non-mlflow-deployment",
+            instance_count=2,
+            resources=ResourceConfiguration(instance_count=2)
+        )
+        assert "Can't set instance_count when resources is provided." == str(exc.value)
 
 @pytest.mark.unittest
 class TestOnlineDeploymentSDK:
