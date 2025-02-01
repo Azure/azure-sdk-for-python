@@ -1,6 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import unittest
+import uuid
 
 import pytest
 
@@ -46,7 +47,7 @@ class TestRegionalEndpoints(unittest.IsolatedAsyncioTestCase):
         original_read_endpoint = (mocked_client.client_connection._global_endpoint_manager
                                   .location_cache.get_read_regional_endpoint())
         try:
-            await container.create_item(body={"id": "1"})
+            await container.create_item(body={"id": str(uuid.uuid4())})
         finally:
             # Check for if there was a swap
             self.assertEqual(original_read_endpoint,
