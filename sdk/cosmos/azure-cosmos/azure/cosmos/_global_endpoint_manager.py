@@ -22,7 +22,7 @@
 """Internal class for global endpoint manager implementation in the Azure Cosmos
 database service.
 """
-import logging
+
 import threading
 from urllib.parse import urlparse
 
@@ -35,7 +35,6 @@ from ._location_cache import LocationCache
 
 # pylint: disable=protected-access
 
-logger = logging.getLogger("azure.cosmos.GlobalEndpointManager")
 
 class _GlobalEndpointManager(object):
     """

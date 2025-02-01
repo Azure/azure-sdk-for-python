@@ -89,21 +89,17 @@ def get_endpoints_by_location(new_locations,
                     parsed_locations.append(new_location["name"])
                     if new_location["name"] in old_endpoints_by_location:
                         regional_object = old_endpoints_by_location[new_location["name"]]
-                        logger.info("In location cache: Existing regional object: %s", str(regional_object))
                         current = regional_object.get_current()
                         # swap the previous with current and current with new region_uri received from the gateway
                         if current != region_uri:
                             regional_object.set_previous(current)
                             regional_object.set_current(region_uri)
-                        logger.info("In location cache: Updated regional object: %s", str(regional_object))
                     # This is the bootstrapping condition
                     else:
                         regional_object = RegionalEndpoint(region_uri, region_uri)
                         # if it is for writes, then we update the previous to default_endpoint
                         if writes and not use_multiple_write_locations:
                             regional_object = RegionalEndpoint(region_uri, default_regional_endpoint.get_current())
-
-                        logger.info("In location cache: This is regional object on initialization: %s", str(regional_object))
 
                     # pass in object with region uri , last known good, curr etc
                     endpoints_by_location.update({new_location["name"]: regional_object})
@@ -192,9 +188,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         )
         regional_endpoint = regional_endpoints[location_index % len(regional_endpoints)]
         if request.location_endpoint_to_route == regional_endpoint.get_current():
-            logger.info("Swapping regional endpoint values: %s", str(regional_endpoint))
+            logger.warning("Swapping regional endpoint values: %s", str(regional_endpoint))
             regional_endpoint.swap()
-            logger.info("Swapped regional endpoint values: %s", str(regional_endpoint))
+            logger.warning("Swapped regional endpoint values: %s", str(regional_endpoint))
 
     def resolve_service_endpoint(self, request):
         if request.location_endpoint_to_route:
@@ -204,8 +200,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         use_preferred_locations = (
             request.use_preferred_locations if request.use_preferred_locations is not None else True
         )
-
-        # print("In location cache: Last routed location: ", request.last_routed_location_endpoint_within_region)
 
         if not use_preferred_locations or (
             documents._OperationType.IsWriteOperation(request.operation_type)
@@ -223,14 +217,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     if (request.last_routed_location_endpoint_within_region is not None
                             and request.last_routed_location_endpoint_within_region
                             == write_regional_endpoint.get_current()):
-                        # print("In location cache: Returning previous for complex if: ",
-                        #       write_regional_endpoint.get_previous())
                         return write_regional_endpoint.get_previous()
-                    # print("In location cache: Returning current for complex if: ",
-                    #       write_regional_endpoint.get_current())
                     return write_regional_endpoint.get_current()
-                # print("In location cache: Returning default endpoint for complex if: ",
-                #       self.default_regional_endpoint.get_current())
                 return self.default_regional_endpoint.get_current()
 
         regional_endpoints = (
@@ -241,9 +229,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         regional_endpoint = regional_endpoints[location_index % len(regional_endpoints)]
         if (request.last_routed_location_endpoint_within_region is not None
                 and request.last_routed_location_endpoint_within_region == regional_endpoint.get_current()):
-            # print("In location cache: Returning previous: ", regional_endpoint.get_previous())
             return regional_endpoint.get_previous()
-        # print("In location cache: Returning current: ", regional_endpoint.get_current())
         return regional_endpoint.get_current()
 
     def should_refresh_endpoints(self):  # pylint: disable=too-many-return-statements
@@ -389,17 +375,12 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             EndpointOperationType.WriteType,
             self.default_regional_endpoint,
         )
-        # for endpoint in self.write_regional_endpoints:
-            # print("In location cache: Updated write regional endpoint: ", endpoint)
         self.read_regional_endpoints = self.get_preferred_available_regional_endpoints(
             self.available_read_regional_endpoints_by_location,
             self.available_read_locations,
             EndpointOperationType.ReadType,
             self.write_regional_endpoints[0],
         )
-
-        # for endpoint in self.read_regional_endpoints:
-        #     print("In location cache: Updated read regional endpoint: ", endpoint)
         self.last_cache_update_timestamp = self.current_time_millis()  # pylint: disable=attribute-defined-outside-init
 
     def get_preferred_available_regional_endpoints( # pylint: disable=name-too-long
@@ -422,7 +403,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     for location in self.preferred_locations:
                         regional_endpoint = endpoints_by_location[location] if location in endpoints_by_location \
                             else None
-                        # logger.info("In location cache: Regional Endpoint in get preferred: ", regional_endpoint)
                         if regional_endpoint:
                             if self.is_regional_endpoint_unavailable(regional_endpoint, expected_available_operation):
                                 unavailable_endpoints.append(regional_endpoint)
