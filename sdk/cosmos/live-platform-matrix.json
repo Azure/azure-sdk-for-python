@@ -22,8 +22,7 @@
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosSplit"
-        },
-        "TestMarkArgument": "cosmosSplit"
+        }
       }
     },
     {
@@ -35,8 +34,7 @@
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosQuery"
-        },
-        "TestMarkArgument": "cosmosQuery"
+        }
       }
     },
     {
@@ -61,8 +59,7 @@
           "CoverageArg": "",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosQuery"
-        },
-        "TestMarkArgument": "cosmosQuery"
+        }
       }
     },
     {
@@ -90,8 +87,7 @@
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosLong"
-        },
-        "TestMarkArgument": "cosmosLong"
+        }
       }
     }
   ]
