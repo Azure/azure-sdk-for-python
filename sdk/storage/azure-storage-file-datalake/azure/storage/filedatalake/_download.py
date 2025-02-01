@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import (
-    Any, cast, Generic, IO, Iterator, TypeVar,
+    Any, cast, IO, Iterator,
     TYPE_CHECKING
 )
 
@@ -14,10 +14,7 @@ if TYPE_CHECKING:
     from ._models import FileProperties
 
 
-T = TypeVar('T', bytes, str)
-
-
-class StorageStreamDownloader(Generic[T]):
+class StorageStreamDownloader:
     """A streaming object to download from Azure Storage."""
 
     name: str
@@ -30,7 +27,7 @@ class StorageStreamDownloader(Generic[T]):
         otherwise the total size of the file."""
 
     def __init__(self, downloader: Any) -> None:
-        self._downloader: Any = downloader
+        self._downloader = downloader
         self.name = self._downloader.name
 
         # Parse additional Datalake-only properties

@@ -4,21 +4,17 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import (
-    AsyncIterator, cast, Generic, IO, TypeVar,
+    Any, AsyncIterator, cast, IO,
     TYPE_CHECKING
 )
 
-from azure.storage.blob.aio import StorageStreamDownloader as BlobStorageStreamDownloader
 from .._deserialize import from_blob_properties
 
 if TYPE_CHECKING:
     from .._models import FileProperties
 
 
-T = TypeVar('T', bytes, str)
-
-
-class StorageStreamDownloader(Generic[T]):
+class StorageStreamDownloader:
     """A streaming object to download from Azure Storage."""
 
     name: str
@@ -30,8 +26,8 @@ class StorageStreamDownloader(Generic[T]):
     """The size of the total data in the stream. This will be the byte range if specified,
         otherwise the total size of the file."""
 
-    def __init__(self, downloader: BlobStorageStreamDownloader[T]) -> None:
-        self._downloader: BlobStorageStreamDownloader[T] = downloader
+    def __init__(self, downloader: Any) -> None:
+        self._downloader = downloader
         self.name = self._downloader.name
 
         # Parse additional Datalake-only properties
