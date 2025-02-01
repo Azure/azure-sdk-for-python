@@ -58,7 +58,7 @@ def _mock_pipeline_run_function(pipeline_client, request, **kwargs):
     assert contoso_west in request.url
     return test_config.FakePipelineResponse()
 
-
+@pytest.mark.cosmosEmulator
 class TestGlobalDB(unittest.TestCase):
     host = test_config.TestConfig.global_host
     write_location_host = test_config.TestConfig.write_location_host

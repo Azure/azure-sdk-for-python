@@ -4,6 +4,8 @@
 import time
 import unittest
 
+import pytest
+
 from azure.cosmos.documents import DatabaseAccount, _OperationType
 from azure.cosmos.http_constants import ResourceType
 from azure.cosmos._location_cache import LocationCache
@@ -41,7 +43,7 @@ def refresh_location_cache(preferred_locations, use_multiple_write_locations):
                        refresh_time_interval_in_ms=refresh_time_interval_in_ms)
     return lc
 
-
+@pytest.mark.cosmosEmulator
 class TestLocationCache(unittest.TestCase):
 
     def test_mark_endpoint_unavailable(self):

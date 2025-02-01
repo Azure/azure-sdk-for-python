@@ -11,7 +11,7 @@ import test_config
 from azure.cosmos import ThroughputProperties, PartitionKey
 from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
-
+@pytest.mark.cosmosSplit
 class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey

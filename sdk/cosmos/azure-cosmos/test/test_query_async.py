@@ -18,8 +18,7 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.partition_key import PartitionKey
 
-
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosQuery
 class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
@@ -97,7 +96,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.created_db.delete_container(created_collection.id)
 
-    async def test_populate_index_metrics(self):
+    async def test_populate_index_metrics_async(self):
         created_collection = await self.created_db.create_container(
             "index_metrics_test" + str(uuid.uuid4()),
             PartitionKey(path="/pk"))
@@ -490,7 +489,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         # verify a second time
         assert len(token.encode('utf-8')) <= 1024
 
-    @pytest.mark.cosmosLiveTest
+    @pytest.mark.cosmosQuery
     @pytest.mark.skip
     async def test_computed_properties_query(self):
         computed_properties = [{'name': "cp_lower", 'query': "SELECT VALUE LOWER(c.db_group) FROM c"},

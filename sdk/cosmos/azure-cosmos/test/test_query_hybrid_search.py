@@ -15,7 +15,7 @@ import hybrid_search_data
 from azure.cosmos import http_constants, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
-
+@pytest.mark.cosmosQuery
 class TestFullTextHybridSearchQuery(unittest.TestCase):
     """Test to check full text search and hybrid search queries behavior."""
 
@@ -62,15 +62,15 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         except exceptions.CosmosHttpResponseError:
             pass
 
-    def test_wrong_queries(self):
+    def test_wrong_hybrid_search_queries(self):
         try:
-            query = "SELECT c.index, RRF(VectorDistance(c.vector, [1,2,3]), FullTextScore(c.text, “test”) FROM c"
+            query = "SELECT c.index, RRF(VectorDistance(c.vector, [1,2,3]), FullTextScore(c.text, 'test') FROM c"
             results = self.test_container.query_items(query, enable_cross_partition_query=True)
             list(results)
             pytest.fail("Attempting to project RRF in a query should fail.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-            assert "One of the inputs is invalid" in e.message
+            assert "One of the input values is invalid" in e.message
 
         try:
             query = "SELECT TOP 10 c.index FROM c WHERE FullTextContains(c.title, 'John')" \
@@ -80,7 +80,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             pytest.fail("Attempting to set an ordering direction in a full text score query should fail.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-            assert "One of the inputs is invalid" in e.message
+            assert "One of the input values is invalid" in e.message
 
         try:
             query = "SELECT TOP 10 c.index FROM c WHERE FullTextContains(c.title, 'John')" \
@@ -90,7 +90,7 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             pytest.fail("Attempting to set an ordering direction in a hybrid search query should fail.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-            assert "One of the inputs is invalid" in e.message
+            assert "One of the input values is invalid" in e.message
 
     def test_hybrid_search_queries(self):
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \

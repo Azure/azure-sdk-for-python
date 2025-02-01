@@ -5,9 +5,9 @@ import uuid
 
 import pytest
 
+import test_config
 from azure.cosmos import (CosmosClient, PartitionKey, DatabaseAccount, _global_endpoint_manager)
 from azure.cosmos._location_cache import RegionalEndpoint
-from test import test_config
 
 
 @pytest.mark.cosmosEmulator

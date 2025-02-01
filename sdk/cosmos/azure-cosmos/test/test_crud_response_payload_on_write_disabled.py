@@ -56,7 +56,7 @@ class TimeoutTransport(RequestsTransport):
         return response
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
     """Python CRUD Tests.
     """
@@ -117,13 +117,13 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            read_db.read)
 
-        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=10000)
+        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(10000, database_proxy.read_offer().offer_throughput)
+        self.assertEqual(5000, database_proxy.read_offer().offer_throughput)
 
-        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=9000)
+        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(10000, database_proxy.read_offer().offer_throughput)
+        self.assertEqual(5000, database_proxy.read_offer().offer_throughput)
 
         self.client.delete_database(database_id)
 

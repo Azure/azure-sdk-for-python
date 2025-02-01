@@ -182,6 +182,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
     # This updates the current and previous of the regional endpoint
     # to keep it up to date with the success and failure cases
+    # This is only called on write operation failures as of now.
     def swap_regional_endpoint_values(self, request):
         location_index = int(request.location_index_to_route) if request.location_index_to_route else 0
         regional_endpoints = (
@@ -190,10 +191,10 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             else self.get_read_regional_endpoints()
         )
         regional_endpoint = regional_endpoints[location_index % len(regional_endpoints)]
-        if request.location_endpoint_to_route != regional_endpoint.get_current():
-            logger.info("In location cache: Request location to route: ",request.location_endpoint_to_route)
-            logger.info("In location cache: Calling swap with regional endpoint: ", regional_endpoint.get_current())
+        if request.location_endpoint_to_route == regional_endpoint.get_current():
+            logger.info("Swapping regional endpoint values: %s", str(regional_endpoint))
             regional_endpoint.swap()
+            logger.info("Swapped regional endpoint values: %s", str(regional_endpoint))
 
     def resolve_service_endpoint(self, request):
         if request.location_endpoint_to_route:

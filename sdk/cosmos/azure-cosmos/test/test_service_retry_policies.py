@@ -230,10 +230,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert connection_retry_policy.counter == 3
-            # 4 total requests for each in-region (hub -> write locational endpoint )
+            # 4 total requests for each in-region (hub -> write locational endpoint)
             assert len(connection_retry_policy.request_endpoints) == 8
-        except CosmosHttpResponseError as e:
-            print(e)
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_get_database_account_stub
 
