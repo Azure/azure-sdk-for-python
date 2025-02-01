@@ -120,7 +120,9 @@ class TestVectorSimilarityQuery(unittest.TestCase):
             pytest.fail("Client should not allow queries with ASC/DESC.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-            assert "One of the input values is invalid." in e.message
+            # TODO: Seems like this error message differs depending on Ubuntu vs. Windows runs?
+            assert ("One of the input values is invalid." in e.message
+                    or "Specifying a sorting order (ASC or DESC) with VectorDistance function is not supported." in e.message)
 
     def test_ordering_distances(self):
         # Besides ordering distances, we also verify that the query text properly replaces any set embedding policies
