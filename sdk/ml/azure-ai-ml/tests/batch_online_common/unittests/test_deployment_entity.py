@@ -623,3 +623,185 @@ class TestOnlineDeploymentSDK:
             with pytest.raises(DeploymentException) as exc:
                 OnlineDeployment._from_rest_object(rest_object)
             assert str(exc.value) == "Unsupported online scale setting type Other."
+
+from azure.ai.ml._restclient.v2022_05_01.models import (BatchRetrySettings as RestBatchRetrySettings,CodeConfiguration as RestCodeConfiguration)
+from azure.ai.ml.entities._deployment.data_collector import DataCollector
+from azure.ai.ml.entities._deployment.deployment_collection import DeploymentCollection
+from azure.ai.ml.entities._deployment.data_asset import DataAsset
+from azure.ai.ml.entities._deployment.request_logging import RequestLogging
+class TestOnlineDeploymentSettings:
+    def test_default_scale_settings_equality(self):
+        scale_settings1 = DefaultScaleSettings()
+        scale_settings2 = DefaultScaleSettings()
+        assert scale_settings1 == scale_settings2
+
+        scale_settings2 = TargetUtilizationScaleSettings()
+        assert not scale_settings1 == scale_settings2
+        assert not scale_settings1 == None
+    
+    def test_target_utilization_scale_settings_equality(self):
+        scale_settings1 = TargetUtilizationScaleSettings(min_instances=2, max_instances=5, target_utilization_percentage=8, polling_interval=10)
+        scale_settings2 = TargetUtilizationScaleSettings(min_instances=2, max_instances=5, target_utilization_percentage=8, polling_interval=10)
+        assert scale_settings1 == scale_settings2
+
+        scale_settings2 = TargetUtilizationScaleSettings(min_instances=3, max_instances=5, target_utilization_percentage=8, polling_interval=10)
+        assert not scale_settings1 == scale_settings2
+
+        scale_settings2 = TargetUtilizationScaleSettings(min_instances=2, max_instances=6, target_utilization_percentage=8, polling_interval=10)
+        assert not scale_settings1 == scale_settings2
+
+        scale_settings2 = TargetUtilizationScaleSettings(min_instances=2, max_instances=5, target_utilization_percentage=9, polling_interval=10)
+        assert not scale_settings1 == scale_settings2
+        scale_settings2 = TargetUtilizationScaleSettings(min_instances=2, max_instances=5, target_utilization_percentage=8, polling_interval=11)
+        assert not scale_settings1 == scale_settings2
+        assert not scale_settings1 == None
+        
+        scale_settings2 = DefaultScaleSettings()
+        assert not scale_settings1 == scale_settings2
+
+    def test_probe_settings_equality(self):
+        probe_settings1 = ProbeSettings(failure_threshold=3, success_threshold=2, timeout=10, period=5, initial_delay=5)
+        probe_settings2 = ProbeSettings(failure_threshold=3, success_threshold=2, timeout=10, period=5, initial_delay=5)
+        assert probe_settings1 == probe_settings2
+
+        probe_settings2 = ProbeSettings(failure_threshold=4, success_threshold=2, timeout=10, period=5, initial_delay=5)
+        assert not probe_settings1 == probe_settings2
+
+        probe_settings2 = ProbeSettings(failure_threshold=3, success_threshold=3, timeout=10, period=5, initial_delay=5)
+        assert not probe_settings1 == probe_settings2
+
+        probe_settings2 = ProbeSettings(failure_threshold=3, success_threshold=2, timeout=11, period=5, initial_delay=5)
+        assert not probe_settings1 == probe_settings2
+
+        probe_settings2 = ProbeSettings(failure_threshold=3, success_threshold=2, timeout=10, period=6, initial_delay=5)
+        assert not probe_settings1 == probe_settings2
+
+        probe_settings2 = ProbeSettings(failure_threshold=3, success_threshold=2, timeout=10, period=5, initial_delay=6)
+        assert not probe_settings1 == probe_settings2
+
+        assert not probe_settings1 == None
+    
+    def test_online_request_settings_equality(self):
+        request_settings1 = OnlineRequestSettings(max_concurrent_requests_per_instance=1, max_queue_wait_ms=100, request_timeout_ms=100)
+        request_settings2 = OnlineRequestSettings(max_concurrent_requests_per_instance=1, max_queue_wait_ms=100, request_timeout_ms=100)
+        assert request_settings1 == request_settings2
+
+        request_settings2 = OnlineRequestSettings(max_concurrent_requests_per_instance=2, max_queue_wait_ms=100, request_timeout_ms=100)
+        assert not request_settings1 == request_settings2
+
+        request_settings2 = OnlineRequestSettings(max_concurrent_requests_per_instance=1, max_queue_wait_ms=101, request_timeout_ms=100)
+        assert not request_settings1 == request_settings2
+
+        request_settings2 = OnlineRequestSettings(max_concurrent_requests_per_instance=1, max_queue_wait_ms=100, request_timeout_ms=101)
+        assert not request_settings1 == request_settings2
+        assert not request_settings1 == None
+        assert not request_settings1 == DefaultScaleSettings()
+
+    def test_batch_retry_settings_merge_with(self):
+        retry_settings1 = BatchRetrySettings(max_retries=3, timeout=30)
+        retry_settings2 = BatchRetrySettings(max_retries=4, timeout=40)
+        retry_settings1._merge_with(retry_settings2)
+        assert retry_settings1.max_retries == retry_settings2.max_retries
+        assert retry_settings1.timeout == retry_settings2.timeout
+    
+    def test_batch_retry_settings_from_rest_object(self):
+        rest_batch_retry_settings = RestBatchRetrySettings(max_retries=3, timeout=30)
+        retry_settings = BatchRetrySettings._from_rest_object(rest_batch_retry_settings)
+        assert retry_settings.max_retries == rest_batch_retry_settings.max_retries
+
+    def test_batch_retry_settings_to_rest_object(self):
+        retry_settings = BatchRetrySettings(max_retries=3, timeout=30)
+        rest_batch_retry_settings = retry_settings._to_rest_object()
+        assert rest_batch_retry_settings.max_retries == retry_settings.max_retries
+        assert rest_batch_retry_settings.timeout == "PT30S"
+    
+    def test_resource_settings_equality(self):
+        resource_settings1 = ResourceSettings(cpu="1n", memory="2")
+        resource_settings2 = ResourceSettings(cpu="1n", memory="2")
+        assert resource_settings1 == resource_settings2
+        assert not resource_settings1 != resource_settings2
+
+        resource_settings2 = ResourceSettings(cpu="2n", memory="2")
+        assert not resource_settings1 == resource_settings2
+        assert resource_settings1 != resource_settings2
+
+        resource_settings2 = ResourceSettings(cpu="1n", memory="3")
+        assert not resource_settings1 == resource_settings2
+        assert resource_settings1 != resource_settings2
+
+        assert not resource_settings1 == None
+        assert not resource_settings1 == DefaultScaleSettings()
+    
+    def test_resource_requirement_settings_equality(self):
+        resource_requirements_settings1 = ResourceRequirementsSettings(requests=ResourceSettings(cpu="1n", memory="2"), limits= ResourceSettings(cpu="2n", memory="2"))
+        resource_requirements_settings2 = ResourceRequirementsSettings(requests=ResourceSettings(cpu="1n", memory="2"), limits= ResourceSettings(cpu="2n", memory="2"))
+        resource_requirements_settings3 = ResourceRequirementsSettings(requests= ResourceSettings(cpu="2n", memory="2"), limits= ResourceSettings(cpu="2n", memory="2"))
+        assert resource_requirements_settings1 == resource_requirements_settings2
+        assert not resource_requirements_settings1 == resource_requirements_settings3
+        assert not resource_requirements_settings1 == None
+    
+    def test_code_configuration_equality(self):
+        code_configuration1 = CodeConfiguration(code="some_code", scoring_script="some_script")
+        code_configuration2 = CodeConfiguration(code="some_code", scoring_script="some_script")
+        assert code_configuration1 == code_configuration2
+        code_configuration2 = CodeConfiguration(code="some_code1", scoring_script="some_script")
+        assert not code_configuration1 == code_configuration2
+        code_configuration2 = CodeConfiguration(code="some_code", scoring_script="some_script1")
+        assert not code_configuration1 == code_configuration2
+        assert not code_configuration1 == None
+        assert not code_configuration1 == DefaultScaleSettings()
+    
+    def test_from_rest_code_configuration(self):
+        rest_code_configuration = RestCodeConfiguration(code_id="some_code", scoring_script="some_script")
+        code_configuration = CodeConfiguration._from_rest_code_configuration(rest_code_configuration)
+        assert code_configuration.code == rest_code_configuration.code_id
+        assert code_configuration.scoring_script == rest_code_configuration.scoring_script
+    
+    def test_data_collector_to_dict(self):
+        data_collector = DataCollector(rolling_rate="Hour", sampling_rate=1.2, collections={"model_inputs": DeploymentCollection(enabled="true",client_id="some_id",data=DataAsset(data_id="data_id", name="some_name", path="some_path", version=1))}, request_logging=RequestLogging(capture_headers=["header1", "header2"]))
+        data_collector_dict = data_collector._to_dict()
+        assert data_collector_dict["rolling_rate"] == data_collector.rolling_rate.lower()
+        assert data_collector_dict["sampling_rate"] == data_collector.sampling_rate
+        assert data_collector_dict["collections"]["model_inputs"]["enabled"] == data_collector.collections["model_inputs"].enabled
+        assert data_collector_dict["collections"]["model_inputs"]["client_id"] == data_collector.collections["model_inputs"].client_id
+        assert data_collector_dict["collections"]["model_inputs"]["data"]["data_id"] == data_collector.collections["model_inputs"].data.data_id
+        assert data_collector_dict["collections"]["model_inputs"]["data"]["name"] == data_collector.collections["model_inputs"].data.name
+        assert data_collector_dict["collections"]["model_inputs"]["data"]["path"] == data_collector.collections["model_inputs"].data.path
+        assert data_collector_dict["collections"]["model_inputs"]["data"]["version"] == str(data_collector.collections["model_inputs"].data.version)
+        assert data_collector_dict["request_logging"]["capture_headers"] == data_collector.request_logging.capture_headers
+
+    def test_data_asset_to_dict(self):
+        data_asset = DataAsset(data_id="data_id", name="some_name", path="some_path", version=1)
+        data_asset_dict = data_asset._to_dict()
+        assert data_asset_dict["data_id"] == data_asset.data_id
+        assert data_asset_dict["name"] == data_asset.name
+        assert data_asset_dict["path"] == data_asset.path
+        assert data_asset_dict["version"] == str(data_asset.version)
+    
+    def test_deployment_collection_to_dict(self):
+        deployment_collection = DeploymentCollection(enabled="true",client_id="some_id",data=DataAsset(data_id="data_id", name="some_name", path="some_path", version=1))
+        deployment_collection_dict = deployment_collection._to_dict()
+        assert deployment_collection_dict["enabled"] == deployment_collection.enabled
+        assert deployment_collection_dict["client_id"] == deployment_collection.client_id
+        assert deployment_collection_dict["data"]["data_id"] == deployment_collection.data.data_id
+        assert deployment_collection_dict["data"]["name"] == deployment_collection.data.name
+        assert deployment_collection_dict["data"]["path"] == deployment_collection.data.path
+        assert deployment_collection_dict["data"]["version"] == str(deployment_collection.data.version)
+    
+    def test_request_logging_to_dict(self):
+        request_logging = RequestLogging(capture_headers=["header1", "header2"])
+        request_logging_dict = request_logging._to_dict()
+        assert request_logging_dict["capture_headers"] == request_logging.capture_headers
+    
+    def test_data_asset_to_dict(self):
+        data_asset = DataAsset(data_id="data_id", name="some_name", path="some_path", version=1)
+        data_asset_dict = data_asset._to_dict()
+        assert data_asset_dict["data_id"] == data_asset.data_id
+        assert data_asset_dict["name"] == data_asset.name
+        assert data_asset_dict["path"] == data_asset.path
+        assert data_asset_dict["version"] == str(data_asset.version)
+    
+    def test_request_logging_from_rest_object(self):
+        rest_request_logging = RequestLogging(capture_headers=["header1", "header2"])
+        request_logging = RequestLogging._from_rest_object(rest_request_logging)
+        assert request_logging.capture_headers == rest_request_logging.capture_headers
