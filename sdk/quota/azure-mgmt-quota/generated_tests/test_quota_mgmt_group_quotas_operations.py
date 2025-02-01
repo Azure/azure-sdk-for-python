@@ -24,7 +24,7 @@ class TestQuotaMgmtGroupQuotasOperations(AzureMgmtRecordedTestCase):
         response = self.client.group_quotas.begin_create_or_update(
             management_group_id="str",
             group_quota_name="str",
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestQuotaMgmtGroupQuotasOperations(AzureMgmtRecordedTestCase):
         response = self.client.group_quotas.begin_update(
             management_group_id="str",
             group_quota_name="str",
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -48,7 +48,7 @@ class TestQuotaMgmtGroupQuotasOperations(AzureMgmtRecordedTestCase):
         response = self.client.group_quotas.get(
             management_group_id="str",
             group_quota_name="str",
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -60,7 +60,7 @@ class TestQuotaMgmtGroupQuotasOperations(AzureMgmtRecordedTestCase):
         response = self.client.group_quotas.begin_delete(
             management_group_id="str",
             group_quota_name="str",
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -71,7 +71,7 @@ class TestQuotaMgmtGroupQuotasOperations(AzureMgmtRecordedTestCase):
     def test_group_quotas_list(self, resource_group):
         response = self.client.group_quotas.list(
             management_group_id="str",
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
