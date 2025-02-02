@@ -7,7 +7,8 @@ import pytest
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 import test_config
-from azure.cosmos import (CosmosClient, PartitionKey, _retry_utility, DatabaseAccount, _global_endpoint_manager)
+from azure.cosmos import (CosmosClient, _retry_utility, DatabaseAccount, _global_endpoint_manager,
+                          _location_cache)
 from azure.cosmos._location_cache import RegionalEndpoint
 
 
@@ -269,7 +270,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
         write_regions = ["West US"]
         write_locations = []
         for loc in write_regions:
-            locational_endpoint = _global_endpoint_manager._GlobalEndpointManager.GetLocationalEndpoint(endpoint, loc)
+            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(endpoint, loc)
             write_locations.append({'databaseAccountEndpoint': locational_endpoint, 'name': loc})
         multi_write = False
 

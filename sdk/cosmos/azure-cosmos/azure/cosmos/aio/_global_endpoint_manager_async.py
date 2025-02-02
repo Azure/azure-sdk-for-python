@@ -24,7 +24,6 @@ database service.
 """
 
 import asyncio # pylint: disable=do-not-import-asyncio
-from urllib.parse import urlparse
 
 from azure.core.exceptions import AzureError
 
@@ -139,7 +138,7 @@ class _GlobalEndpointManager(object):
         # to get that info from any endpoints
         except (exceptions.CosmosHttpResponseError, AzureError):
             for location_name in self.PreferredLocations:
-                locational_endpoint = _GlobalEndpointManager.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
+                locational_endpoint = LocationCache.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
                     database_account = await self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
                     self._database_account_cache = database_account
@@ -157,29 +156,3 @@ class _GlobalEndpointManager(object):
         :rtype: ~azure.cosmos.DatabaseAccount
         """
         return await self.client.GetDatabaseAccount(endpoint, **kwargs)
-
-    @staticmethod
-    def GetLocationalEndpoint(default_endpoint, location_name):
-        # For default_endpoint like 'https://contoso.documents.azure.com:443/' parse it to
-        # generate URL format. This default_endpoint should be global endpoint(and cannot
-        # be a locational endpoint) and we agreed to document that
-        endpoint_url = urlparse(default_endpoint)
-
-        # hostname attribute in endpoint_url will return 'contoso.documents.azure.com'
-        if endpoint_url.hostname is not None:
-            hostname_parts = str(endpoint_url.hostname).lower().split(".")
-            if hostname_parts is not None:
-                # global_database_account_name will return 'contoso'
-                global_database_account_name = hostname_parts[0]
-
-                # Prepare the locational_database_account_name as contoso-EastUS for location_name 'East US'
-                locational_database_account_name = global_database_account_name + "-" + location_name.replace(" ", "")
-
-                # Replace 'contoso' with 'contoso-EastUS' and return locational_endpoint
-                # as https://contoso-EastUS.documents.azure.com:443/
-                locational_endpoint = default_endpoint.lower().replace(
-                    global_database_account_name, locational_database_account_name, 1
-                )
-                return locational_endpoint
-
-        return None

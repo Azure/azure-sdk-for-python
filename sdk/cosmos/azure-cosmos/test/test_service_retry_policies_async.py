@@ -10,7 +10,7 @@ from aiohttp.client_exceptions import (ClientConnectionError, ClientConnectionRe
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 import test_config
-from azure.cosmos import DatabaseAccount
+from azure.cosmos import DatabaseAccount, _location_cache
 from azure.cosmos._location_cache import RegionalEndpoint
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, _global_endpoint_manager_async
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -430,8 +430,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
         write_regions = ["West US"]
         write_locations = []
         for loc in write_regions:
-            locational_endpoint = (_global_endpoint_manager_async._GlobalEndpointManager
-                                   .GetLocationalEndpoint(endpoint, loc))
+
+            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(endpoint, loc)
             write_locations.append({'databaseAccountEndpoint': locational_endpoint, 'name': loc})
         multi_write = False
 
