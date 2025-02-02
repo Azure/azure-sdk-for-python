@@ -3637,7 +3637,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
         self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
     ):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
+        credential = get_credential(is_async=True)
         async with ServiceBusClient(
             fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport
         ) as sb_client:
