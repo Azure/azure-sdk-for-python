@@ -11,8 +11,8 @@ from urllib.parse import urlparse
 import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos import documents, exceptions, DatabaseProxy, ContainerProxy,\
-    _synchronized_request, _endpoint_discovery_retry_policy, PartitionKey, ConnectionRetryPolicy
+from azure.cosmos import documents, exceptions, DatabaseProxy, ContainerProxy, \
+    _synchronized_request, _endpoint_discovery_retry_policy, PartitionKey, ConnectionRetryPolicy, _location_cache
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes, ResourceType
 from azure.core.exceptions import ServiceRequestError
 
@@ -404,16 +404,14 @@ class TestGlobalDB(unittest.TestCase):
         location_name = 'East US'
 
         # Creating a locational endpoint from the location name using the parser method
-        locational_endpoint = global_endpoint_manager._GlobalEndpointManager.GetLocationalEndpoint(url_endpoint,
-                                                                                                   location_name)
+        locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(url_endpoint, location_name)
         self.assertEqual(locational_endpoint, 'https://contoso-EastUS.documents.azure.com:443/')
 
         url_endpoint = 'https://Contoso.documents.azure.com:443/'
         location_name = 'East US'
 
         # Note that the host name gets lowercased as the urlparser in Python doesn't retains the casing
-        locational_endpoint = global_endpoint_manager._GlobalEndpointManager.GetLocationalEndpoint(url_endpoint,
-                                                                                                   location_name)
+        locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(url_endpoint, location_name)
         self.assertEqual(locational_endpoint, 'https://contoso-EastUS.documents.azure.com:443/')
 
     def test_global_db_service_request_errors(self):
