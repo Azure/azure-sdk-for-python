@@ -39,7 +39,7 @@
     },
     {
       "PyPyConfig": {
-        "ubuntu2004_pypy39_query_query": {
+        "ubuntu2004_pypy39_query": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "pypy3.9",
@@ -52,7 +52,7 @@
     },
     {
       "CoverageConfig": {
-        "ubuntu2004_39_coverage": {
+        "ubuntu2004_39_coverage_query": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.9",
