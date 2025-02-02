@@ -3,6 +3,8 @@
 ## 1.25.0 (Unreleased)
 
 ### Features Added
+ - Adding parent job support for command job.
+ - Adding multiple docker argument support for command job.
 
 ### Bugs Fixed
   - #39187 - Submitting a Command job created using the __call__ method on another Command is missing outputs

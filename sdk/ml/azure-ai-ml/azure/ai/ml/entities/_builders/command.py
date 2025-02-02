@@ -11,8 +11,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union, cast, overload
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2025_01_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2025_01_01_preview.models import JobBase
 from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
@@ -181,6 +181,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         services = _resolve_job_services(services)
         kwargs.pop("type", None)
         self._parameters: dict = kwargs.pop("parameters", {})
+        self._parent_job_name = kwargs.pop("parent_job_name", None)
         BaseNode.__init__(
             self,
             type=NodeType.COMMAND,
@@ -473,7 +474,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         instance_count: Optional[int] = None,
         locations: Optional[List[str]] = None,
         properties: Optional[Dict] = None,
-        docker_args: Optional[str] = None,
+        docker_args: Optional[Union[str, List[str]]] = None,
         shm_size: Optional[str] = None,
         # pylint: disable=unused-argument
         **kwargs: Any,
@@ -492,7 +493,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         :keyword properties: The properties of the job.
         :paramtype properties: Optional[dict]
         :keyword docker_args: The Docker arguments for the job.
-        :paramtype docker_args: Optional[str]
+        :paramtype docker_args: Optional[Union[str,List[str]]]
         :keyword shm_size: The size of the docker container's shared memory block. This should be in the
             format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
             b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
@@ -745,6 +746,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
                 creation_context=self.creation_context,
                 parameters=self.parameters,
                 queue_settings=self.queue_settings,
+                parent_job_name=self._parent_job_name,
             )
 
         return CommandJob(
@@ -771,6 +773,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             creation_context=self.creation_context,
             parameters=self.parameters,
             queue_settings=self.queue_settings,
+            parent_job_name=self._parent_job_name,
         )
 
     @classmethod

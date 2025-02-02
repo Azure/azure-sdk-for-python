@@ -1,0 +1,124 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "aml-workspace-name",
+    "endpointName": "Azure.OpenAI",
+    "raiPolicyName": "raiPolicyName",
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "properties": {
+        "type": "SystemManaged",
+        "mode": "Blocking",
+        "basePolicyName": "112",
+        "promptBlocklists": [
+          {
+            "blocking": false,
+            "blocklistName": "blocklistName"
+          }
+        ],
+        "completionBlocklists": [
+          {
+            "blocking": false,
+            "blocklistName": "blocklistName"
+          }
+        ],
+        "contentFilters": [
+          {
+            "enabled": false,
+            "allowedContentLevel": "Low",
+            "name": "policyName",
+            "blocking": false,
+            "source": "Prompt"
+          }
+        ]
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "name": "raiPolicyName",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.MachineLearningServices/workspaces/aml-workspace-name/endpoints/Azure.OpenAI/raiPolicies/raiPolicyName",
+        "type": "Microsoft.MachineLearningServices/workspaces/endpoints/raiPolicies",
+        "properties": {
+          "type": "SystemManaged",
+          "mode": "Blocking",
+          "basePolicyName": "112",
+          "promptBlocklists": [
+            {
+              "blocking": false,
+              "blocklistName": "blocklistName"
+            }
+          ],
+          "completionBlocklists": [
+            {
+              "blocking": false,
+              "blocklistName": "blocklistName"
+            }
+          ],
+          "contentFilters": [
+            {
+              "enabled": false,
+              "allowedContentLevel": "Low",
+              "name": "policyName",
+              "blocking": false,
+              "source": "Prompt"
+            }
+          ]
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T00:00:00Z",
+          "createdBy": "00000000-1111-2222-3333-444444444444",
+          "createdByType": "Application",
+          "lastModifiedAt": "2020-01-01T00:00:00Z",
+          "lastModifiedBy": "00000000-1111-2222-3333-444444444444",
+          "lastModifiedByType": "Application"
+        }
+      }
+    },
+    "201": {
+      "headers": {},
+      "body": {
+        "name": "raiPolicyName",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.MachineLearningServices/workspaces/aml-workspace-name/endpoints/Azure.OpenAI/raiPolicies/raiPolicyName",
+        "type": "Microsoft.MachineLearningServices/workspaces/endpoints/raiPolicies",
+        "properties": {
+          "type": "SystemManaged",
+          "mode": "Blocking",
+          "basePolicyName": "112",
+          "promptBlocklists": [
+            {
+              "blocking": false,
+              "blocklistName": "blocklistName"
+            }
+          ],
+          "completionBlocklists": [
+            {
+              "blocking": false,
+              "blocklistName": "blocklistName"
+            }
+          ],
+          "contentFilters": [
+            {
+              "enabled": false,
+              "allowedContentLevel": "Low",
+              "name": "policyName",
+              "blocking": false,
+              "source": "Prompt"
+            }
+          ]
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T00:00:00Z",
+          "createdBy": "00000000-1111-2222-3333-444444444444",
+          "createdByType": "Application",
+          "lastModifiedAt": "2020-01-01T00:00:00Z",
+          "lastModifiedBy": "00000000-1111-2222-3333-444444444444",
+          "lastModifiedByType": "Application"
+        }
+      }
+    }
+  }
+}

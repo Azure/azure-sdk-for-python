@@ -1,0 +1,18 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "aml-workspace-name",
+    "endpointName": "Azure.OpenAI",
+    "raiPolicyName": "raiPolicyName",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "202": {
+      "headers": {
+        "Location": "example_location"
+      }
+    },
+    "204": {}
+  }
+}

@@ -1,0 +1,220 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "endpointName": "testEndpointName",
+    "deploymentName": "testDeploymentName",
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "properties": {
+        "description": "string",
+        "properties": {
+          "string": "string"
+        },
+        "codeConfiguration": {
+          "codeId": "string",
+          "scoringScript": "string"
+        },
+        "environmentId": "string",
+        "environmentVariables": {
+          "string": "string"
+        },
+        "compute": "string",
+        "errorThreshold": 1,
+        "retrySettings": {
+          "maxRetries": 1,
+          "timeout": "PT5M"
+        },
+        "miniBatchSize": 1,
+        "loggingLevel": "Info",
+        "model": {
+          "referenceType": "Id",
+          "assetId": "string"
+        },
+        "maxConcurrencyPerInstance": 1,
+        "outputAction": "SummaryOnly",
+        "outputFileName": "string",
+        "resources": {
+          "instanceCount": 1,
+          "instanceType": "string",
+          "properties": {
+            "string": {
+              "cd3c37dc-2876-4ca4-8a54-21bd7619724a": null
+            }
+          }
+        }
+      },
+      "tags": {},
+      "location": "string",
+      "kind": "string",
+      "identity": {
+        "type": "SystemAssigned",
+        "userAssignedIdentities": {
+          "string": {}
+        }
+      },
+      "sku": {
+        "name": "string",
+        "tier": "Free",
+        "size": "string",
+        "family": "string",
+        "capacity": 1
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "properties": {
+            "string": "string"
+          },
+          "codeConfiguration": {
+            "codeId": "string",
+            "scoringScript": "string"
+          },
+          "environmentId": "string",
+          "environmentVariables": {
+            "string": "string"
+          },
+          "compute": "string",
+          "errorThreshold": 1,
+          "retrySettings": {
+            "maxRetries": 1,
+            "timeout": "PT5M"
+          },
+          "miniBatchSize": 1,
+          "loggingLevel": "Info",
+          "model": {
+            "referenceType": "Id",
+            "assetId": "string"
+          },
+          "maxConcurrencyPerInstance": 1,
+          "outputAction": "SummaryOnly",
+          "outputFileName": "string",
+          "resources": {
+            "instanceCount": 1,
+            "instanceType": "string",
+            "properties": {
+              "string": {
+                "4939850d-8eae-4343-8566-0826259a2ad1": null
+              }
+            }
+          },
+          "provisioningState": "Creating"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999Z",
+          "createdBy": "string",
+          "createdByType": "User",
+          "lastModifiedAt": "2020-01-01T12:34:56.999Z",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "User"
+        },
+        "tags": {},
+        "location": "string",
+        "kind": "string",
+        "identity": {
+          "type": "SystemAssigned",
+          "principalId": "00000000-1111-2222-3333-444444444444",
+          "tenantId": "00000000-1111-2222-3333-444444444444",
+          "userAssignedIdentities": {
+            "string": {
+              "principalId": "00000000-1111-2222-3333-444444444444",
+              "clientId": "00000000-1111-2222-3333-444444444444"
+            }
+          }
+        },
+        "sku": {
+          "name": "string",
+          "tier": "Free",
+          "size": "string",
+          "family": "string",
+          "capacity": 1
+        }
+      }
+    },
+    "201": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "properties": {
+            "string": "string"
+          },
+          "codeConfiguration": {
+            "codeId": "string",
+            "scoringScript": "string"
+          },
+          "environmentId": "string",
+          "environmentVariables": {
+            "string": "string"
+          },
+          "compute": "string",
+          "errorThreshold": 1,
+          "retrySettings": {
+            "maxRetries": 1,
+            "timeout": "PT5M"
+          },
+          "miniBatchSize": 1,
+          "loggingLevel": "Info",
+          "model": {
+            "referenceType": "Id",
+            "assetId": "string"
+          },
+          "maxConcurrencyPerInstance": 1,
+          "outputAction": "SummaryOnly",
+          "outputFileName": "string",
+          "resources": {
+            "instanceCount": 1,
+            "instanceType": "string",
+            "properties": {
+              "string": {
+                "b76755e4-16bf-45d4-b625-6634df7444cc": null
+              }
+            }
+          },
+          "provisioningState": "Creating"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999Z",
+          "createdBy": "string",
+          "createdByType": "User",
+          "lastModifiedAt": "2020-01-01T12:34:56.999Z",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "User"
+        },
+        "tags": {},
+        "location": "string",
+        "kind": "string",
+        "identity": {
+          "type": "SystemAssigned",
+          "principalId": "00000000-1111-2222-3333-444444444444",
+          "tenantId": "00000000-1111-2222-3333-444444444444",
+          "userAssignedIdentities": {
+            "string": {
+              "principalId": "00000000-1111-2222-3333-444444444444",
+              "clientId": "00000000-1111-2222-3333-444444444444"
+            }
+          }
+        },
+        "sku": {
+          "name": "string",
+          "tier": "Free",
+          "size": "string",
+          "family": "string",
+          "capacity": 1
+        }
+      }
+    }
+  }
+}
