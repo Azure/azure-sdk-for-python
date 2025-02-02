@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Updated minimum `typing-extensions` version to 4.6.0
 
 ## 4.5.0 (2024-10-17)
 
