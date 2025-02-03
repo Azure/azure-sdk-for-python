@@ -15,6 +15,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     OnlineDeployment as RestOnlineDeploymentData,
     ManagedOnlineDeployment as RestManagedOnlineDeployment,
     KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
+    BatchPipelineComponentDeploymentConfiguration,
 )
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities import (
@@ -484,7 +485,7 @@ class TestBatchDeploymentSDK:
         assert rest_representation_properties.error_threshold == target["error_threshold"]
         assert rest_representation_properties.output_action == BatchOutputAction.APPEND_ROW
         assert rest_representation_properties.description == target["description"]
-    
+
     def test_to_rest_invalid_when_output_action_summary_and_file_name_provided(self) -> None:
         with open(TestBatchDeploymentSDK.DEPLOYMENT, "r") as f:
             target = yaml.safe_load(f)
@@ -492,11 +493,17 @@ class TestBatchDeploymentSDK:
         deployment.output_action = "summary_only"
         with pytest.raises(ValidationException) as exc:
             deployment._to_rest_object(location="westus2")
-        assert "When output_action is set to summary_only, the output_file_name need not to be specified." == str(exc.value)
-    
+        assert "When output_action is set to summary_only, the output_file_name need not to be specified." == str(
+            exc.value
+        )
+
     def test_batch_deployment_instance_count_endpoint_name(self) -> None:
-        deployment = load_batch_deployment(TestBatchDeploymentSDK.DEPLOYMENT, params_override=[{"endpoint_name": "test"}])
-        assert deployment.instance_count == deployment.resources.instance_count
+        deployment = load_batch_deployment(
+            TestBatchDeploymentSDK.DEPLOYMENT, params_override=[{"endpoint_name": "test"}]
+        )
+        deployment.resources = None
+        deployment.instance_count = 10
+        assert deployment.instance_count == 10
         assert deployment.endpoint_name == "test"
         deployment.instance_count = 3
         assert deployment.resources.instance_count == 3
@@ -521,6 +528,14 @@ class TestBatchDeploymentSDK:
     def test_from_rest_object(self) -> None:
         with open(TestBatchDeploymentSDK.DEPLOYMENT_REST, "r") as f:
             deployment_rest = BatchDeploymentData.deserialize(json.load(f))
+            deployment_rest.properties.deployment_configuration = BatchPipelineComponentDeploymentConfiguration(
+                deployment_configuration_type="PipelineComponent",
+                settings={
+                    "default_datastore": "workspaceblobstore",
+                    "default_compute": "aml-compute",
+                    "ComponentDeployment.Settings.continue_on_step_failure": "False",
+                },
+            )
             deployment = BatchDeployment._from_rest_object(deployment_rest)
             assert isinstance(deployment, BatchDeployment)
             assert deployment.name == deployment_rest.name
@@ -541,7 +556,20 @@ class TestBatchDeploymentSDK:
             assert deployment.retry_settings.max_retries == deployment_rest.properties.retry_settings.max_retries
             assert deployment.retry_settings.timeout == deployment_rest.properties.retry_settings.timeout.seconds
             assert deployment.logging_level == deployment_rest.properties.logging_level
-            assert deployment.properties == deployment_rest.properties.properties
+            assert (
+                deployment.properties["AzureAsyncOperationUri"]
+                == deployment_rest.properties.properties["AzureAsyncOperationUri"]
+            )
+            assert (
+                deployment.properties["deployment_configuration_type"]
+                == deployment_rest.properties.deployment_configuration.deployment_configuration_type
+            )
+            assert (
+                deployment.properties["componentDeployment.Settings.continue_on_step_failure"]
+                == deployment_rest.properties.deployment_configuration.settings[
+                    "ComponentDeployment.Settings.continue_on_step_failure"
+                ]
+            )
             assert deployment.creation_context.created_by == deployment_rest.system_data.created_by
             assert deployment.creation_context.created_at == deployment_rest.system_data.created_at
             assert deployment.provisioning_state == deployment_rest.properties.provisioning_state

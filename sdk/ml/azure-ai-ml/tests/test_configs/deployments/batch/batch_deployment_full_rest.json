@@ -4,7 +4,9 @@
     "type": "Microsoft.MachineLearningServices/workspaces/batchEndpoints/deployments",
     "properties": {
         "description": "some description",
-        "properties": {},
+        "properties": {
+            "AzureAsyncOperationUri": "azure-operation"
+        },
         "codeConfiguration": {
             "codeId": "/subscriptions/sub-id/resourceGroups/some-rg/providers/Microsoft.MachineLearningServices/workspaces/some-ws/onlineEndpoints/some-endpoint/deployments/blue",
             "scoringScript": "score.py"
@@ -12,9 +14,6 @@
         "environmentId": "/subscriptions/sub-id/resourceGroups/some-rg/providers/Microsoft.MachineLearningServices/workspaces/some-ws/onlineEndpoints/some-endpoint/deployments/blue",
         "environmentVariables": {},
         "compute": "/subscriptions/sub-id/resourceGroups/some-rg/providers/Microsoft.MachineLearningServices/workspaces/some-ws/onlineEndpoints/some-endpoint/deployments/blue",
-        "deploymentConfiguration": {
-            "deploymentConfigurationType": "Batch"
-        },
         "errorThreshold": -1,
         "retrySettings": {
             "maxRetries": 3,
