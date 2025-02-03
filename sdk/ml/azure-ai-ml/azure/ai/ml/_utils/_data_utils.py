@@ -5,7 +5,6 @@
 import io
 import json
 import logging
-import tempfile
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Dict, Union
