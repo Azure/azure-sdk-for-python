@@ -134,6 +134,8 @@ class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Entra ID authentication (formerly known as AAD)"""
     SAS = "SAS"
     """Shared Access Signature (SAS) authentication"""
+    NONE = "None"
+    """No authentication"""
 
 
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
