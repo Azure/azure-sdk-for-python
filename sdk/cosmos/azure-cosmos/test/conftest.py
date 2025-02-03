@@ -5,6 +5,8 @@ import test_config
 from azure.cosmos import CosmosClient as CosmosSyncClient
 
 cosmos_sync_client = CosmosSyncClient(test_config.TestConfig.host, test_config.TestConfig.masterKey)
+
+
 def pytest_configure(config):
     """
     Allows plugins and conftest files to perform initial configuration.
