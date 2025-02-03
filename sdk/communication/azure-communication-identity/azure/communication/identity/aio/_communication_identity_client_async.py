@@ -4,7 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import List, Union, Tuple
+from datetime import timedelta
+from typing import List, Optional, Union, Tuple
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.credentials import AccessToken
 from azure.core.credentials_async import AsyncTokenCredential
@@ -85,8 +86,9 @@ class CommunicationIdentityClient:
         return CommunicationUserIdentifier(identity_access_token.identity.id, raw_id=identity_access_token.identity.id)
 
     @distributed_trace_async
-    async def create_user_and_token( # pylint: disable=C4758
-        self, scopes: List[Union[str, CommunicationTokenScope]],
+    async def create_user_and_token(
+        self, scopes: List[Union[str, CommunicationTokenScope]], *,
+        token_expires_in: Optional[timedelta] = None,
         **kwargs
     ) -> Tuple["CommunicationUserIdentifier", AccessToken]:
         """Create a single Communication user with an identity token.
@@ -101,7 +103,6 @@ class CommunicationIdentityClient:
         :rtype:
             tuple of (~azure.communication.identity.CommunicationUserIdentifier, ~azure.core.credentials.AccessToken)
         """
-        token_expires_in = kwargs.pop("token_expires_in", None)
         request_body = {
             "createTokenWithScopes": scopes,
             "expiresInMinutes": convert_timedelta_to_mins(token_expires_in),
@@ -134,9 +135,10 @@ class CommunicationIdentityClient:
         await self._identity_service_client.communication_identity.delete(user.properties["id"], **kwargs)
 
     @distributed_trace_async
-    async def get_token( # pylint: disable=C4758
+    async def get_token(
         self, user: CommunicationUserIdentifier,
-        scopes: List[Union[str, CommunicationTokenScope]],
+        scopes: List[Union[str, CommunicationTokenScope]], *,
+        token_expires_in: Optional[timedelta] = None,
         **kwargs
     ) -> AccessToken:
         """Generates a new token for an identity.
@@ -151,7 +153,6 @@ class CommunicationIdentityClient:
         :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken
         """
-        token_expires_in = kwargs.pop("token_expires_in", None)
         request_body = {
             "scopes": scopes,
             "expiresInMinutes": convert_timedelta_to_mins(token_expires_in),
