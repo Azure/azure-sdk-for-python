@@ -8,7 +8,7 @@ Please note that this is a sync library, for async version of the Azure EventHub
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub-checkpointstoreblob/)
 | [Package (PyPi)](https://pypi.org/project/azure-eventhub-checkpointstoreblob)
 | [Package (Conda)](https://anaconda.org/microsoft/azure-eventhub/)
-| [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/latest/azure.eventhub.html#azure.eventhub.CheckpointStore)
+| [API reference documentation](https://azuresdkdocs.z19.web.core.windows.net/python/azure-eventhub/latest/azure.eventhub.html#azure.eventhub.CheckpointStore)
 | [Azure Eventhubs documentation](https://learn.microsoft.com/azure/event-hubs/)
 | [Azure Storage documentation](https://learn.microsoft.com/azure/storage/)
 
@@ -134,7 +134,7 @@ Get started with our [EventHubs Checkpoint Store samples](https://github.com/Azu
 
 ### Documentation
 
-Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/latest/azure.eventhub.html#azure.eventhub.CheckpointStore).
+Reference documentation is available [here](https://azuresdkdocs.z19.web.core.windows.net/python/azure-eventhub/latest/azure.eventhub.html#azure.eventhub.CheckpointStore).
 
 ### Provide Feedback
 
