@@ -2350,6 +2350,23 @@ class AgentsOperations(AgentsOperationsGenerated):
     # pylint: disable=arguments-differ
     @overload
     async def upload_file(  # pylint: disable=arguments-differ
+        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
+    ) -> _models.OpenAIFile:
+        """Uploads a file for use by other operations.
+
+        :keyword file_path: Required.
+        :type file_path: str
+        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+         "assistants_output", "batch", "batch_output", and "vision". Required.
+        :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
+        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.OpenAIFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    # pylint: disable=arguments-differ
+    @overload
+    async def upload_file(  # pylint: disable=arguments-differ
         self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
@@ -2372,23 +2389,6 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param body: Required.
         :type body: JSON
-        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIFile
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    # pylint: disable=arguments-differ
-    @overload
-    async def upload_file(  # pylint: disable=arguments-differ
-        self, *, file_path: str, purpose: Union[str, _models.FilePurpose], **kwargs: Any
-    ) -> _models.OpenAIFile:
-        """Uploads a file for use by other operations.
-
-        :keyword file_path: Required.
-        :type file_path: str
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-         "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.projects.models.FilePurpose
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
