@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._trace_func import trace_function
+from ._trace_function import trace_function
 
 __all__ = [
     "trace_function",
