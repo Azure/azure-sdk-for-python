@@ -52,7 +52,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword str default_credential_allow_list: A semicolon-separated list of credential names.
         The default is to try all available credentials. If this is set, only the credentials in the list are tried.
         e.g. "ENVIRONMENT;CLI;MANAGED_IDENTITY" will only try EnvironmentCredential, AzureCliCredential, and
-        ManagedIdentityCredential.
+        ManagedIdentityCredential. All valid credential names are "DEVELOPER_CLI", "WORKLOAD_IDENTITY", "CLI",
+        "ENVIRONMENT", "MANAGED_IDENTITY", "POWERSHELL" and "SHARED_CACHE".
     :keyword str managed_identity_client_id: The client ID of a user-assigned managed identity. Defaults to the value
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
     :keyword str workload_identity_client_id: The client ID of an identity assigned to the pod. Defaults to the value
