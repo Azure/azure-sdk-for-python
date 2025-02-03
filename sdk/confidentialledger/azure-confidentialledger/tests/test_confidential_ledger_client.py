@@ -30,7 +30,7 @@ from _shared.testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestC
 
 
 class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
-    def create_confidentialledger_client(self, endpoint, ledger_id, is_aad) -> ConfidentialLedgerClient:
+    def create_confidentialledger_client(self, endpoint, ledger_id, use_aad_auth) -> ConfidentialLedgerClient:
         # Always explicitly fetch the TLS certificate.
         network_cert = self.set_ledger_identity(ledger_id)
 
@@ -81,7 +81,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
                 self.network_certificate_path
             )
 
-        if not is_aad:
+        if not use_aad_auth:
             # We need to add the certificate-based user as an Administrator. 
             aad_based_client.create_or_update_ledger_user(
                 USER_CERTIFICATE_THUMBPRINT, {"assignedRoles": ["Administrator"]}
@@ -109,7 +109,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         self.append_entry_flow_actions(client)
 
@@ -119,7 +119,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         self.append_entry_flow_actions(client)
 
@@ -129,7 +129,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         self.append_entry_flow_actions(client)
 
@@ -139,7 +139,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         self.append_entry_flow_actions(client)
 
@@ -206,7 +206,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         self.append_entry_flow_with_collection_id_actions(client)
 
@@ -218,7 +218,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         self.append_entry_flow_with_collection_id_actions(client)
 
@@ -295,7 +295,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         self.range_query_actions(client)
 
@@ -305,7 +305,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         self.range_query_actions(client)
 
@@ -358,10 +358,12 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
     def test_user_endpoint_must_redirect(self, **kwargs):
+        # all API versions earlier than 2024-08-26 will be redirected to use the /ledgerUsers endpoint
+        # instead of the /users endpoint.
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
     
         aad_user_id = "0" * 36  # AAD Object Ids have length 36
@@ -385,7 +387,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         self.user_management_actions(client)
 
@@ -395,7 +397,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         self.user_management_actions(client)
 
@@ -441,7 +443,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         self.verification_methods_actions(client)
 
@@ -451,7 +453,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         self.verification_methods_actions(client)
 
@@ -539,7 +541,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     @recorded_by_proxy
     def test_user_defined_endpoint(self, confidentialledger_endpoint, confidentialledger_id):
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
 
         # We need to add the certificate-based user as an Administrator. 
@@ -595,7 +597,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     @recorded_by_proxy
     def test_user_defined_role(self, confidentialledger_endpoint, confidentialledger_id):
         client = self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
 
         role_name = 'modify'

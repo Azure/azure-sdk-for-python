@@ -29,7 +29,7 @@ from _shared.testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestC
 
 class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     async def create_confidentialledger_client(
-        self, endpoint, ledger_id, is_aad,
+        self, endpoint, ledger_id, use_aad_auth,
     ):
         # Always explicitly fetch the TLS certificate.
         network_cert = await self.set_ledger_identity_async(ledger_id)
@@ -80,7 +80,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
                 self.network_certificate_path
             )
 
-        if not is_aad:
+        if not use_aad_auth:
             # We need to add the certificate-based user as an Administrator.
             try: 
                 await aad_based_client.create_or_update_ledger_user(
@@ -111,7 +111,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         try:
             await self.append_entry_flow_actions(client)
@@ -124,7 +124,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         try:
             await self.append_entry_flow_actions(client)
@@ -196,7 +196,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         try:
             await self.append_entry_flow_with_collection_id_actions(client)
@@ -211,7 +211,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         try:
             await self.append_entry_flow_with_collection_id_actions(client)
@@ -297,7 +297,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         try:
             await self.range_query_actions(client)
@@ -310,7 +310,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         try:
             await self.range_query_actions(client)
@@ -376,7 +376,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         try:
             await self.user_management_actions(client)
@@ -389,7 +389,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         try:
             await self.user_management_actions(client)
@@ -436,7 +436,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=True
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=True
         )
         try:
             await self.verification_methods_actions(client)
@@ -449,7 +449,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
         client = await self.create_confidentialledger_client(
-            confidentialledger_endpoint, confidentialledger_id, is_aad=False
+            confidentialledger_endpoint, confidentialledger_id, use_aad_auth=False
         )
         try:
             await self.verification_methods_actions(client)
