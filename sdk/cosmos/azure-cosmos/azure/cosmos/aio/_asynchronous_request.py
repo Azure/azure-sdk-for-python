@@ -59,6 +59,8 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     start_time = time.time()
     if request_params.resource_type != http_constants.ResourceType.DatabaseAccount:
         await global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
+    else:
+        connection_timeout = connection_policy.GlobalDatabaseAccountRequestTimeout
     if client_timeout is not None:
         kwargs['timeout'] = client_timeout - (time.time() - start_time)
         if kwargs['timeout'] <= 0:

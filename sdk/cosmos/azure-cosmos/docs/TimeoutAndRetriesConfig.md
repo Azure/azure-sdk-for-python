@@ -7,8 +7,8 @@ These options can be passed in at the client constructor or on a per-request bas
 - `Client Timeout`: can be changed by passing the `timeout` option. Changes the value of the per-request client timeout. If not present,
 the 'Connection Timeout' connectivity timeouts below will be used. `timeout` must be smaller than your `connection_timeout` to be used.
 - `Connection Timeout`: can be changed through `connection_timeout` option. Changes the value on the client's http transport timeout when
-connecting to the socket, as well as the per-request client timeout. Default value is 60s. If you'd like to split the two timeouts,
-you will need to also use 'Client Timeout'.
+connecting to the socket, as well as the per-request client timeout. Default value for Database Account calls is 5s. Default value is 60s for the rest of the operations. 
+If you'd like to split the two timeouts, you will need to also use 'Client Timeout'.
 - `Read Timeout`: can be changed through `read_timeout` option. Changes the value on the client's http transport timeout when
 reading the service buffer stream, or receiving responses from the server. Default value is 300s.
 
@@ -29,6 +29,6 @@ The retry options below can be changed from the default client configurations. T
 - `Retry Read`: Maximum number of socket read retry attempts. Can be changed by passing the `retry_read` option. Default value is 3.
 - `Retry Status`: Maximum number of retry attempts on error status codes. Can be changed by passing the `retry_status` option. Default value is 3.
 - `Retry On Status Codes`: A list of specific status codes to retry on. Can be changed by passing the `retry_on_status_codes` option. Default value is an empty list.
-- `Retry Backoff Factor`: Factor to calculate wait time between retry attempts. Can be changed by passing the `retry_backoff_factor` option. Default value is 0.8.
+- `Retry Backoff Factor`: Factor to calculate wait time between retry attempts. Can be changed by passing the `retry_backoff_factor` option. Default value is 1.
 
 More information on the SDK's default retry behaviors can be found in our error codes and retries [document](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/ErrorCodesAndRetries.md).
