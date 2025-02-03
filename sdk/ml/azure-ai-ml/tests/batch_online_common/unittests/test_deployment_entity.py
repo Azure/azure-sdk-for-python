@@ -20,6 +20,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities import (
     BatchDeployment,
+    Deployment,
     CodeConfiguration,
     DefaultScaleSettings,
     KubernetesOnlineDeployment,
@@ -574,6 +575,19 @@ class TestBatchDeploymentSDK:
             assert deployment.creation_context.created_at == deployment_rest.system_data.created_at
             assert deployment.provisioning_state == deployment_rest.properties.provisioning_state
 
+    def test_deployment_from_rest_object_for_batch_deployment(self) -> None:
+        from azure.ai.ml._restclient.v2022_02_01_preview.models import BatchDeploymentData as RestBatchDeploymentData
+        with open(TestBatchDeploymentSDK.DEPLOYMENT_REST, "r") as f:
+            deployment_rest = RestBatchDeploymentData.deserialize(json.load(f))
+            deployment = Deployment._from_rest_object(deployment_rest)
+            assert isinstance(deployment, BatchDeployment)
+            assert deployment.name == deployment_rest.name
+            assert deployment.id == deployment_rest.id
+            assert deployment.endpoint_name == "achauhan-endpoint-name"
+            assert deployment.description == deployment_rest.properties.description
+            assert deployment.tags == deployment_rest.tags
+            assert deployment.code_path == deployment_rest.properties.code_configuration.code_id
+
     def test_batch_deployment_promoted_properties(self) -> None:
         deployment = BatchDeployment(
             name="non-mlflow-deployment",
@@ -591,7 +605,6 @@ class TestBatchDeploymentSDK:
             output_file_name="predictions.csv",
             retry_settings=BatchRetrySettings(max_retries=3, timeout=30),
         )
-
         assert isinstance(deployment.code_configuration, CodeConfiguration)
         assert deployment.code_configuration.scoring_script == "score.py"
         assert deployment.compute == "cpu-cluster"
@@ -760,6 +773,16 @@ class TestOnlineDeploymentSDK:
                 == rest_object.properties.data_collector.collections["some-collection"].client_id
             )
             assert blue_deployment.provisioning_state == rest_object.properties.provisioning_state
+    
+    def test_deployment_from_rest_object_for_online_deployment(self) -> None:
+        from azure.ai.ml._restclient.v2022_05_01.models import OnlineDeploymentData as OnlineDeploymentDataRest
+        with open("./tests/test_configs/deployments/online/online_deployment_kubernetes_rest.json", "r") as f:
+            rest_object = OnlineDeploymentDataRest.deserialize(json.load(f))
+            blue_deployment = Deployment._from_rest_object(rest_object)
+            assert isinstance(blue_deployment, KubernetesOnlineDeployment)
+            assert blue_deployment.name == "blue"
+            assert blue_deployment.id == rest_object.id
+            assert blue_deployment.instance_type == rest_object.properties.instance_type
 
     def test_online_deployment_from_rest_object_unsupported_type(self) -> None:
         with open("./tests/test_configs/deployments/online/online_deployment_kubernetes_rest.json", "r") as f:
