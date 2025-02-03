@@ -31,7 +31,6 @@ VALID_CREDENTIALS = [
     "MANAGED_IDENTITY",
     "POWERSHELL",
     "SHARED_CACHE",
-    "INTERACTIVE_BROWSER",
 ]
 
 
@@ -63,7 +62,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword str default_credential_allow_list: A semicolon-separated list of credential names.
         The default is to try all available credentials. If this is set, only the credentials in the list are tried.
         e.g. "ENVIRONMENT;CLI;MANAGED_IDENTITY" will only try EnvironmentCredential, AzureCliCredential, and
-        ManagedIdentityCredential.
+        ManagedIdentityCredential. All valid credential names are "DEVELOPER_CLI", "WORKLOAD_IDENTITY", "CLI",
+        "ENVIRONMENT", "MANAGED_IDENTITY", "POWERSHELL" and "SHARED_CACHE".
     :keyword str interactive_browser_tenant_id: Tenant ID to use when authenticating a user through
         :class:`~azure.identity.InteractiveBrowserCredential`. Defaults to the value of environment variable
         AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.

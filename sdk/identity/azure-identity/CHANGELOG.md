@@ -5,7 +5,7 @@
 ### Features Added
 
 - Added `subscription` parameter to `AzureCliCredential` to specify the subscription to use when authenticating with the Azure CLI. ([#37994](https://github.com/Azure/azure-sdk-for-python/pull/37994))
-- Added support for environment variable `AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST`.
+- Added support for environment variable `AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST` and argument `default_credential_allow_list` for customizing the behavior of `DefaultAzureCredential`. ([#39520](https://github.com/Azure/azure-sdk-for-python/pull/39520))
 
 ### Breaking Changes
 
