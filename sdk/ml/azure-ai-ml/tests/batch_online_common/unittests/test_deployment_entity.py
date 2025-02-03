@@ -484,6 +484,22 @@ class TestBatchDeploymentSDK:
         assert rest_representation_properties.error_threshold == target["error_threshold"]
         assert rest_representation_properties.output_action == BatchOutputAction.APPEND_ROW
         assert rest_representation_properties.description == target["description"]
+    
+    def test_to_rest_invalid_when_output_action_summary_and_file_name_provided(self) -> None:
+        with open(TestBatchDeploymentSDK.DEPLOYMENT, "r") as f:
+            target = yaml.safe_load(f)
+        deployment = load_batch_deployment(TestBatchDeploymentSDK.DEPLOYMENT)
+        deployment.output_action = "summary_only"
+        with pytest.raises(ValidationException) as exc:
+            deployment._to_rest_object(location="westus2")
+        assert "When output_action is set to summary_only, the output_file_name need not to be specified." == str(exc.value)
+    
+    def test_batch_deployment_instance_count_endpoint_name(self) -> None:
+        deployment = load_batch_deployment(TestBatchDeploymentSDK.DEPLOYMENT, params_override=[{"endpoint_name": "test"}])
+        assert deployment.instance_count == deployment.resources.instance_count
+        assert deployment.endpoint_name == "test"
+        deployment.instance_count = 3
+        assert deployment.resources.instance_count == 3
 
     def test_to_rest_object_when_output_action_not_defined(self) -> None:
         deployment = load_batch_deployment(TestBatchDeploymentSDK.DEPLOYMENT)
