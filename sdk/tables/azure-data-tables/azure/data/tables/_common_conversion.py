@@ -6,9 +6,34 @@
 import base64
 import hashlib
 import hmac
-from datetime import timezone
+from datetime import timezone, datetime
 from urllib.parse import ParseResult
-from typing import Optional, Tuple, List, Dict, Any, Union, cast
+from typing import Optional, Type, Tuple, List, Dict, Any, Union, cast, Literal
+from typing_extensions import Required, NotRequired
+
+from ._entity import EdmType
+
+SupportedDataTypes = Union[str, bool, int, float, None, datetime, bytes]
+
+
+def _annotations(obj: Any) -> Dict[str, Type]:
+    try:
+        # Supported in >=3.10
+        from inspect import get_annotations  # type: ignore[attr-defined]
+
+        return get_annotations(obj)
+    except ImportError:
+        return obj.__annotations__
+
+
+def _get_annotation_type(annotation: Any) -> Union[Type, EdmType]:
+    if hasattr(annotation, "__origin__"):
+        if annotation.__origin__ in [Required, NotRequired, Union, Literal]:
+            return _get_annotation_type(annotation.__args__[0])
+        raise TypeError(f"Unsupported type hint: {annotation}")
+    if isinstance(annotation, (type, EdmType)):
+        return annotation
+    return type(annotation)
 
 
 def _to_str(value):
@@ -30,7 +55,7 @@ def _to_utc_datetime(value):
 def _encode_base64(data):
     if isinstance(data, str):
         data = data.encode("utf-8")
-    encoded = base64.b64encode(data)
+    encoded = base64.b64encode(bytes(data))
     return encoded.decode("utf-8")
 
 
@@ -87,7 +112,7 @@ def _get_account(parsed_url: ParseResult) -> Tuple[List[str], Optional[str]]:
     return account, account_name
 
 
-def _prepare_key(key: Union[str, int, float, None]) -> str:
+def _prepare_key(key: SupportedDataTypes) -> str:
     """Duplicate the single quote char to escape.
 
     :param str key: The entity PartitionKey or RowKey value in table entity.
@@ -97,7 +122,7 @@ def _prepare_key(key: Union[str, int, float, None]) -> str:
     try:
         return cast(str, key).replace("'", "''")
     except (AttributeError, TypeError) as exc:
-        raise TypeError("PartitionKey or RowKey must be of type string.") from exc
+        raise TypeError("PartitionKey or RowKey must be of type string, or an encoder provided.") from exc
 
 
 def _get_enum_value(value):

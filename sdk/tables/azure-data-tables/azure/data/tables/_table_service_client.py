@@ -22,6 +22,8 @@ from ._models import (
     service_stats_deserialize,
     service_properties_deserialize,
 )
+from ._encoder import EncoderMapType
+from ._decoder import DecoderMapType
 from ._base_client import parse_connection_str, TablesBaseClient, TransportWrapper
 from ._error import _process_table_error, _reprocess_error
 from ._table_client import TableClient
@@ -53,6 +55,14 @@ class TableServiceClient(TablesBaseClient):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-02-02'.
         Setting to an older version may result in reduced feature compatibility.
+    :keyword custom_encode:
+        A mapping of object types and how they should be encoded, either as existing edm type, or by custom callable.
+    :paramtype custom_encode:
+        Mapping[Type, Union[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]]] or None  # pylint: disable=line-too-long
+    :keyword custom_decode:
+        A mapping of object types or edm types and how they should be decoded by callable.
+    :paramtype custom_decode:
+        Mapping[Union[Type, EdmType], Callable[[Union[str, bool, int, float]], Any]] or None
 
     .. admonition:: Example:
 
@@ -72,10 +82,29 @@ class TableServiceClient(TablesBaseClient):
     """
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "TableServiceClient":
+    def from_connection_string(
+        cls,
+        conn_str: str,
+        *,
+        api_version: Optional[str] = None,
+        custom_encode: Optional[EncoderMapType] = None,
+        custom_decode: Optional[DecoderMapType] = None,
+        **kwargs: Any,
+    ) -> "TableServiceClient":
         """Create TableServiceClient from a connection string.
 
         :param str conn_str: A connection string to an Azure Storage or Cosmos account.
+        :keyword api_version: Specifies the version of the operation to use for this request. Default value
+            is "2019-02-02".
+        :paramtype api_version: str or None
+        :keyword custom_encode:
+            A mapping of object types and how they should be encoded, either as existing edm type, or by custom callable.
+        :paramtype custom_encode:
+            Mapping[Type, Union[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]]] or None  # pylint: disable=line-too-long
+        :keyword custom_decode:
+            A mapping of object types or edm types and how they should be decoded by callable.
+        :paramtype custom_decode:
+            Mapping[Union[Type, EdmType], Callable[[Union[str, bool, int, float]], Any]] or None
         :returns: A Table service client.
         :rtype: ~azure.data.tables.TableServiceClient
 
@@ -89,7 +118,14 @@ class TableServiceClient(TablesBaseClient):
                 :caption: Authenticating a TableServiceClient from a connection_string
         """
         endpoint, credential = parse_connection_str(conn_str=conn_str, credential=None, keyword_args=kwargs)
-        return cls(endpoint, credential=credential, **kwargs)
+        return cls(
+            endpoint,
+            credential=credential,
+            api_version=api_version,
+            custom_encode=custom_encode,
+            custom_decode=custom_decode,
+            **kwargs,
+        )
 
     @distributed_trace
     def get_service_stats(self, **kwargs) -> Dict[str, object]:
@@ -167,11 +203,32 @@ class TableServiceClient(TablesBaseClient):
                 raise
 
     @distributed_trace
-    def create_table(self, table_name: str, **kwargs) -> TableClient:
+    def create_table(
+        self,
+        table_name: str,
+        *,
+        custom_encode: Optional[EncoderMapType] = None,
+        custom_decode: Optional[DecoderMapType] = None,
+        entity_format=None,
+        **kwargs,
+    ) -> TableClient:
         """Creates a new table under the current account.
 
         :param table_name: The Table name.
         :type table_name: str
+        :keyword custom_encode:
+            A mapping of object types and how they should be encoded, either as existing edm type, or by custom callable.
+        :paramtype custom_encode:
+            Mapping[Type, Union[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]]] or None  # pylint: disable=line-too-long
+        :keyword custom_decode:
+            A mapping of object types or edm types and how they should be decoded by callable.
+        :paramtype custom_decode:
+            Mapping[Union[Type, EdmType], Callable[[Union[str, bool, int, float]], Any]] or None
+        :keyword entity_format:
+            The typing definition of the entity to be used to apply specific encoding and decoding to
+            specific properties within the encoder and decoder. This can be a TypedDict definition, a dataclass
+            type definition, or a dictionary in the format: `{"PropertyName": type | EdmType}`. More information
+            can be found at `this README <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md>`_  # pylint: disable=line-too-long
         :return: TableClient
         :rtype: ~azure.data.tables.TableClient
         :raises: :class:`~azure.core.exceptions.ResourceExistsError`
@@ -185,18 +242,44 @@ class TableServiceClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Creating a table from the TableServiceClient object
         """
-        table = self.get_table_client(table_name=table_name)
+        table = self.get_table_client(
+            table_name=table_name,
+            custom_encode=custom_encode,
+            custom_decode=custom_decode,
+            entity_format=entity_format,
+        )
         table.create_table(**kwargs)
         return table
 
     @distributed_trace
-    def create_table_if_not_exists(self, table_name: str, **kwargs) -> TableClient:
+    def create_table_if_not_exists(
+        self,
+        table_name: str,
+        *,
+        custom_encode: Optional[EncoderMapType] = None,
+        custom_decode: Optional[DecoderMapType] = None,
+        entity_format=None,
+        **kwargs,
+    ) -> TableClient:
         """Creates a new table if it does not currently exist.
         If the table currently exists, the current table is
         returned.
 
         :param table_name: The Table name.
         :type table_name: str
+        :keyword custom_encode:
+            A mapping of object types and how they should be encoded, either as existing edm type, or by custom callable.
+        :paramtype custom_encode:
+            Mapping[Type, Union[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]]] or None  # pylint: disable=line-too-long
+        :keyword custom_decode:
+            A mapping of object types or edm types and how they should be decoded by callable.
+        :paramtype custom_decode:
+            Mapping[Union[Type, EdmType], Callable[[Union[str, bool, int, float]], Any]] or None
+        :keyword entity_format:
+            The typing definition of the entity to be used to apply specific encoding and decoding to
+            specific properties within the encoder and decoder. This can be a TypedDict definition, a dataclass
+            type definition, or a dictionary in the format: `{"PropertyName": type | EdmType}`. More information
+            can be found at `this README <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md>`_  # pylint: disable=line-too-long
         :return: TableClient
         :rtype: ~azure.data.tables.TableClient
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -210,7 +293,12 @@ class TableServiceClient(TablesBaseClient):
                 :dedent: 8
                 :caption: Creating a table if it doesn't exist, from the TableServiceClient object
         """
-        table = self.get_table_client(table_name=table_name)
+        table = self.get_table_client(
+            table_name=table_name,
+            custom_encode=custom_encode,
+            custom_decode=custom_decode,
+            entity_format=entity_format,
+        )
         try:
             table.create_table(**kwargs)
         except ResourceExistsError:
@@ -302,16 +390,40 @@ class TableServiceClient(TablesBaseClient):
             page_iterator_class=TablePropertiesPaged,
         )
 
-    def get_table_client(self, table_name: str, **kwargs: Any) -> TableClient:
+    def get_table_client(
+        self,
+        table_name: str,
+        *,
+        custom_encode: Optional[EncoderMapType] = None,
+        custom_decode: Optional[DecoderMapType] = None,
+        entity_format=None,
+        **kwargs: Any,
+    ) -> TableClient:
         """Get a client to interact with the specified table.
 
         The table need not already exist.
 
         :param str table_name: The table name
+        :keyword custom_encode:
+            A mapping of object types and how they should be encoded, either as existing edm type, or by custom callable.
+        :paramtype custom_encode:
+            Mapping[Type, Union[EdmType, Callable[[Any], Tuple[Optional[EdmType], Union[str, bool, int, float, datetime, bytes]]]]] or None  # pylint: disable=line-too-long
+        :keyword custom_decode:
+            A mapping of object types or edm types and how they should be decoded by callable.
+        :paramtype custom_decode:
+            Mapping[Union[Type, EdmType], Callable[[Union[str, bool, int, float]], Any]] or None
+        :keyword entity_format:
+            The typing definition of the entity to be used to apply specific encoding and decoding to
+            specific properties within the encoder and decoder. This can be a TypedDict definition, a dataclass
+            type definition, or a dictionary in the format: `{"PropertyName": type | EdmType}`. More information
+            can be found at `this README <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md>`_  # pylint: disable=line-too-long
         :returns: A :class:`~azure.data.tables.TableClient` object.
         :rtype: ~azure.data.tables.TableClient
-
         """
+        encoder_map = dict(self._encoder_map)
+        encoder_map.update(custom_encode or {})
+        decoder_map = dict(self._decoder_map)
+        decoder_map.update(custom_decode or {})
         pipeline = Pipeline(
             transport=TransportWrapper(self._client._client._pipeline._transport),  # pylint: disable = protected-access
             policies=self._policies,
@@ -321,6 +433,9 @@ class TableServiceClient(TablesBaseClient):
             table_name=table_name,
             credential=self.credential,
             api_version=self.api_version,
+            custom_encode=encoder_map,
+            custom_decode=decoder_map,
+            entity_format=entity_format,
             pipeline=pipeline,
             location_mode=self._location_mode,
             _hosts=self._hosts,

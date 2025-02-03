@@ -19,9 +19,9 @@ NEXT_TABLE_NAME = "x-ms-continuation-NextTableName"
 NEXT_PARTITION_KEY = "x-ms-continuation-NextPartitionKey"
 NEXT_ROW_KEY = "x-ms-continuation-NextRowKey"
 
-MAX_INT32 = (2**31) - 1  # 2147483647
+MAX_INT32 = 2**31  # 2147483648
 MIN_INT32 = -(2**31)  # -2147483648
-MAX_INT64 = (2**63) - 1  # 9223372036854775807
+MAX_INT64 = 2**63  # 9223372036854775808
 MIN_INT64 = -(2**63)  # -9223372036854775808
 
-_ERROR_VALUE_TOO_LARGE = "{0} is too large to be cast to type {1}."
+_ERROR_VALUE_TOO_LARGE = "{0} is out of range to be cast to type {1}."
