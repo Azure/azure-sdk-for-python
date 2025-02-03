@@ -21,18 +21,8 @@ STORAGE_ENV_KEYS = [
 def get_live_storage_blob_client(storage_account):
     storage_account = "https://{}.blob.core.windows.net".format(
         os.environ[storage_account])
-    container_name = str(uuid.uuid4())
-    blob_service_client = BlobServiceClient(storage_account, credential=DefaultAzureCredential())
-    blob_service_client.create_container(container_name)
+    container_name = "your-blob-container-name"
     return storage_account, container_name
-
-
-def remove_live_storage_blob_client(storage_account, container_str):
-    try:
-        blob_service_client = BlobServiceClient.from_connection_string(storage_account)
-        blob_service_client.delete_container(container_str)
-    except:
-        warnings.warn(UserWarning("storage container teardown failed"))
 
 
 async def _claim_and_list_ownership(connection_str, container_name):
@@ -108,11 +98,8 @@ async def _update_checkpoint(connection_str, container_name):
 @pytest.mark.asyncio
 async def test_claim_and_list_ownership_async(storage_account):
     storage_account, container_name = get_live_storage_blob_client(storage_account)
-    try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(_claim_and_list_ownership(storage_account, container_name))
-    finally:
-        remove_live_storage_blob_client(storage_account, container_name)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(_claim_and_list_ownership(storage_account, container_name))
 
 
 @pytest.mark.parametrize("storage_account", STORAGE_ENV_KEYS)
@@ -120,8 +107,5 @@ async def test_claim_and_list_ownership_async(storage_account):
 @pytest.mark.asyncio
 async def test_update_checkpoint_async(storage_account):
     storage_account, container_name = get_live_storage_blob_client(storage_account)
-    try:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(_update_checkpoint(storage_account, container_name))
-    finally:
-        remove_live_storage_blob_client(storage_account, container_name)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(_update_checkpoint(storage_account, container_name))
