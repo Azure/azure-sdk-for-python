@@ -269,9 +269,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :paramtype sip_headers: dict[str, str]
         :keyword voip_headers: Custom context for VOIP
         :paramtype voip_headers: dict[str, str]
-         ivar source_caller_id_number: The source caller Id, a phone number, that's will be used as the
-         transferor's(Contoso) caller id when transfering a call a pstn target.
-        :vartype source_caller_id_number:
+        :keyword source_caller_id_number: The source caller Id, a phone number, that's will be used as the
+        transferor's(Contoso) caller id when transfering a call a pstn target.
+        :paramtype source_caller_id_number:
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -767,6 +767,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         :param target_participant: Target participant.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -941,16 +943,16 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         :param target_participant: The participant being added.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
-        :param play_source: A PlaySource representing the source to play.
-        :type play_source: ~azure.communication.callautomation.FileSource or
-         ~azure.communication.callautomation.TextSource or
-         ~azure.communication.callautomation.SsmlSource
+        :keyword play_source: A PlaySource representing the source to play.
+        :paramtype play_source: ~azure.communication.callautomation.FileSource or
+        ~azure.communication.callautomation.TextSource or
+        ~azure.communication.callautomation.SsmlSource
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str or None
         :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
-         by CreateCall/AnswerCall for this operation.
-         This setup is per-action. If this is not set, the default callback URL set by
-         CreateCall/AnswerCall will be used.
+        by CreateCall/AnswerCall for this operation.
+        This setup is per-action. If this is not set, the default callback URL set by
+        CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
         :return: None
         :rtype: None

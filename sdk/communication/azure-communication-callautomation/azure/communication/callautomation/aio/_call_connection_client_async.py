@@ -416,7 +416,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     async def play_media(
         self,
         play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+                        List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         play_to: List['CommunicationIdentifier'],
         *,
         loop: bool = False,
@@ -428,26 +428,23 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         :param play_source: A PlaySource representing the source to play.
         :type play_source: ~azure.communication.callautomation.FileSource or
-         ~azure.communication.callautomation.TextSource or
-         ~azure.communication.callautomation.SsmlSource or
-         list[~azure.communication.callautomation.FileSource] or
-         list[~azure.communication.callautomation.TextSource] or
-         list[~azure.communication.callautomation.SsmlSource]
+        ~azure.communication.callautomation.TextSource or
+        ~azure.communication.callautomation.SsmlSource or
+        list[~azure.communication.callautomation.FileSource] or
+        list[~azure.communication.callautomation.TextSource] or
+        list[~azure.communication.callautomation.SsmlSource]
         :param play_to: The targets to play media to. Default value is 'all', to play media
-         to all participants in the call.
+        to all participants in the call.
         :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
         :keyword loop: Whether the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str or None
         :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
-         by CreateCall/AnswerCall for this operation.
-         This setup is per-action. If this is not set, the default callback URL set by
-         CreateCall/AnswerCall will be used.
+        by CreateCall/AnswerCall for this operation.
+        This setup is per-action. If this is not set, the default callback URL set by
+        CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
-        :keyword interrupt_call_media_operation: If set play can barge into other existing
-         queued-up/currently-processing requests. This is applicable only when play_to set to all.
-        :paramtype interrupt_call_media_operation: bool
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -457,7 +454,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     async def play_media(
         self,
         play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+                        List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         play_to: Literal["all"] = 'all',
         *,
         loop: bool = False,
@@ -483,12 +480,12 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str or None
         :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
-         by CreateCall/AnswerCall for this operation.
-         This setup is per-action. If this is not set, the default callback URL set by
-         CreateCall/AnswerCall will be used.
+        by CreateCall/AnswerCall for this operation.
+        This setup is per-action. If this is not set, the default callback URL set by
+        CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
         :keyword interrupt_call_media_operation: If set, media will take priority over other existing
-         queued-up/currently-processing requests. This is applicable only when play_to set to all.
+        queued-up/currently-processing requests. This is applicable only when play_to set to all.
         :paramtype interrupt_call_media_operation: bool
         :return: None
         :rtype: None
@@ -499,7 +496,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     async def play_media(
         self,
         play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+                        List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         **kwargs
     ) -> None:
@@ -517,7 +514,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     async def _play_media(
         self,
         play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+                        List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         *,
         loop: bool = False,
@@ -530,25 +527,25 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         :param play_source: A PlaySource representing the source to play.
         :type play_source: ~azure.communication.callautomation.FileSource or
-         ~azure.communication.callautomation.TextSource or
-         ~azure.communication.callautomation.SsmlSource or
-         list[~azure.communication.callautomation.FileSource] or
-         list[~azure.communication.callautomation.TextSource] or
-         list[~azure.communication.callautomation.SsmlSource]
+        ~azure.communication.callautomation.TextSource or
+        ~azure.communication.callautomation.SsmlSource or
+        list[~azure.communication.callautomation.FileSource] or
+        list[~azure.communication.callautomation.TextSource] or
+        list[~azure.communication.callautomation.SsmlSource]
         :param play_to: The targets to play media to. Default value is 'all', to play media
-         to all participants in the call.
+        to all participants in the call.
         :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
         :keyword loop: Whether the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str or None
         :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
-         by CreateCall/AnswerCall for this operation.
-         This setup is per-action. If this is not set, the default callback URL set by
-         CreateCall/AnswerCall will be used.
+        by CreateCall/AnswerCall for this operation.
+        This setup is per-action. If this is not set, the default callback URL set by
+        CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
         :keyword interrupt_call_media_operation: If set play can barge into other existing
-         queued-up/currently-processing requests.
+        queued-up/currently-processing requests.
         :paramtype interrupt_call_media_operation: bool
         :return: None
         :rtype: None
@@ -578,7 +575,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     async def play_media_to_all(
         self,
         play_source: Union[Union['FileSource', 'TextSource', 'SsmlSource'],
-                           List[Union['FileSource', 'TextSource', 'SsmlSource']]],
+                        List[Union['FileSource', 'TextSource', 'SsmlSource']]],
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -590,22 +587,22 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         :param play_source: A PlaySource representing the source to play.
         :type play_source: ~azure.communication.callautomation.FileSource or
-         ~azure.communication.callautomation.TextSource or
-         ~azure.communication.callautomation.SsmlSource or
-         list[~azure.communication.callautomation.FileSource] or
-         list[~azure.communication.callautomation.TextSource] or
-         list[~azure.communication.callautomation.SsmlSource]
+        ~azure.communication.callautomation.TextSource or
+        ~azure.communication.callautomation.SsmlSource or
+        list[~azure.communication.callautomation.FileSource] or
+        list[~azure.communication.callautomation.TextSource] or
+        list[~azure.communication.callautomation.SsmlSource]
         :keyword loop: Whether the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str or None
         :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
-         by CreateCall/AnswerCall for this operation.
-         This setup is per-action. If this is not set, the default callback URL set by
-         CreateCall/AnswerCall will be used.
+        by CreateCall/AnswerCall for this operation.
+        This setup is per-action. If this is not set, the default callback URL set by
+        CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
         :keyword interrupt_call_media_operation: If set play can barge into other existing
-         queued-up/currently-processing requests.
+        queued-up/currently-processing requests.
         :paramtype interrupt_call_media_operation: bool
         :return: None
         :rtype: None
@@ -657,37 +654,37 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :paramtype initial_silence_timeout: int
         :keyword play_prompt: The source of the audio to be played for recognition.
         :paramtype play_prompt: ~azure.communication.callautomation.FileSource or
-         ~azure.communication.callautomation.TextSource or
-         ~azure.communication.callautomation.SsmlSource
+        ~azure.communication.callautomation.TextSource or
+        ~azure.communication.callautomation.SsmlSource
         :keyword interrupt_call_media_operation:
-         If set recognize can barge into other existing queued-up/currently-processing requests.
+        If set recognize can barge into other existing queued-up/currently-processing requests.
         :paramtype interrupt_call_media_operation: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
         :keyword interrupt_prompt: Determines if we interrupt the prompt and start recognizing.
         :paramtype interrupt_prompt: bool
         :keyword dtmf_inter_tone_timeout: Time to wait between DTMF inputs to stop recognizing. Will be ignored
-         unless input_type is 'dtmf' or 'speechOrDtmf'.
+        unless input_type is 'dtmf' or 'speechOrDtmf'.
         :paramtype dtmf_inter_tone_timeout: int
         :keyword dtmf_max_tones_to_collect: Maximum number of DTMF tones to be collected. Will be ignored
-         unless input_type is 'dtmf' or 'speechOrDtmf'.
+        unless input_type is 'dtmf' or 'speechOrDtmf'.
         :paramtype dtmf_max_tones_to_collect: int
         :keyword dtmf_stop_tones: List of tones that will stop recognizing. Will be ignored
-         unless input_type is 'dtmf' or 'speechOrDtmf'.
+        unless input_type is 'dtmf' or 'speechOrDtmf'.
         :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
         :keyword speech_language: Speech language to be recognized, If not set default is en-US.
         :paramtype speech_language: str
         :keyword choices: Defines Ivr choices for recognize. Will be ignored unless input_type is 'choices'.
         :paramtype choices: list[~azure.communication.callautomation.RecognitionChoice]
         :keyword end_silence_timeout: The length of end silence when user stops speaking and cogservice
-         send response. Will be ingored unless input_type is 'speech' or 'speechOrDtmf'.
+        send response. Will be ingored unless input_type is 'speech' or 'speechOrDtmf'.
         :paramtype end_silence_timeout: int
         :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
         :paramtype speech_recognition_model_endpoint_id: str
         :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
-         by CreateCall/AnswerCall for this operation.
-         This setup is per-action. If this is not set, the default callback URL set by
-         CreateCall/AnswerCall will be used.
+        by CreateCall/AnswerCall for this operation.
+        This setup is per-action. If this is not set, the default callback URL set by
+        CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
         :return: None
         :rtype: None
@@ -805,9 +802,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
         :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
-         by CreateCall/AnswerCall for this operation.
-         This setup is per-action. If this is not set, the default callback URL set by
-         CreateCall/AnswerCall will be used.
+        by CreateCall/AnswerCall for this operation.
+        This setup is per-action. If this is not set, the default callback URL set by
+        CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
         :return: None
         :rtype: None
@@ -843,9 +840,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
         :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
-         by CreateCall/AnswerCall for this operation.
-         This setup is per-action. If this is not set, the default callback URL set by
-         CreateCall/AnswerCall will be used.
+        by CreateCall/AnswerCall for this operation.
+        This setup is per-action. If this is not set, the default callback URL set by
+        CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
         :return: SendDtmfTonesResult
         :rtype: ~azure.communication.callautomation.SendDtmfTonesResult
