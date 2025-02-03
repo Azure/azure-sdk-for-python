@@ -715,7 +715,7 @@ quantizationByteSize - the number of bytes used in product quantization of the v
 
 indexingSearchListSize - which represents the size of the candidate list of approximate neighbors stored while building the diskANN index as part of the optimization processes. This applies only to index type diskANN. The allowed range is between 25 and 500.
 
-vectorIndexShardKey - a list of strings containing the shard keys used for partitioning vector indexes. The maximum allowed size for this array is 1, meaning that there is only one allowed path.
+vectorIndexShardKey - a list of strings containing the shard keys used for partitioning vector indexes. The maximum allowed size for this array is 1, meaning that there is only one allowed path. This applies to index types diskANN and quantizedFlat.
 ```python
 indexing_policy = {
         "automatic": True,
