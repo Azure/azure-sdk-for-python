@@ -135,7 +135,7 @@ class TestChangeFeed:
         # with page size 1 and page size 100
         document_definition = {'pk': 'pk', 'id': 'doc2'}
         created_collection.create_item(body=document_definition)
-        document_definition = {'pk': 'pk', 'id': 'doc3'}
+        document_definition = {'pk': 'pk3', 'id': 'doc3'}
         created_collection.create_item(body=document_definition)
 
         for pageSize in [1, 100]:
@@ -147,6 +147,8 @@ class TestChangeFeed:
             )
             it = query_iterable.__iter__()
             expected_ids = 'doc2.doc3.'
+            if "partition_key" in filter_param:
+                expected_ids = 'doc2.'
             actual_ids = ''
             for item in it:
                 actual_ids += item['id'] + '.'
@@ -161,6 +163,8 @@ class TestChangeFeed:
             )
             count = 0
             expected_count = 2
+            if "partition_key" in filter_param:
+                expected_count = 1
             all_fetched_res = []
             for page in query_iterable.by_page():
                 fetched_res = list(page)
@@ -178,11 +182,14 @@ class TestChangeFeed:
             is_start_from_beginning=True,
             **filter_param
         )
-        expected_ids = ['doc1', 'doc2', 'doc3']
+        expected_ids = 'doc1.doc2.doc3.'
+        if "partition_key" in filter_param:
+            expected_ids = 'doc1.doc2.'
         it = query_iterable.__iter__()
-        for i in range(0, len(expected_ids)):
-            doc = next(it)
-            assert doc['id'] == expected_ids[i]
+        actual_ids = ''
+        for item in it:
+            actual_ids += item['id'] + '.'
+        assert actual_ids == expected_ids
         assert 'etag' in created_collection.client_connection.last_response_headers
         continuation3 = created_collection.client_connection.last_response_headers['etag']
 
@@ -331,6 +338,25 @@ class TestChangeFeed:
 
         expected_change_feeds = [{CURRENT: {ID: f'doc{i}'}, METADATA: {OPERATION_TYPE: CREATE}} for i in range(4)]\
                                 + [{CURRENT: {}, PREVIOUS: {ID: f'doc{i}'}, METADATA: {OPERATION_TYPE: DELETE}} for i in range(4)]
+        actual_change_feeds = list(query_iterable)
+        assert_change_feed(expected_change_feeds, actual_change_feeds)
+
+        query_iterable = created_collection.query_items_change_feed(
+            mode = mode,
+            partition_key = 'pk1'
+        )
+        empty_list = list(query_iterable)
+        pk_cont_token = created_collection.client_connection.last_response_headers[E_TAG]
+        new_documents = [{partition_key: f'pk{i}', ID: f'doc{i}'} for i in range(4)]
+        created_items = []
+        for document in new_documents:
+            created_item = created_collection.create_item(body=document)
+            created_items.append(created_item)
+        query_iterable = created_collection.query_items_change_feed(
+            continuation=pk_cont_token,
+            mode=mode
+        )
+        expected_change_feeds = [{CURRENT: {ID: f'doc1'}, METADATA: {OPERATION_TYPE: CREATE}}]
         actual_change_feeds = list(query_iterable)
         assert_change_feed(expected_change_feeds, actual_change_feeds)
 
