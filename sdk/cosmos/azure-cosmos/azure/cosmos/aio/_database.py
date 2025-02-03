@@ -199,7 +199,7 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
+        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A callable invoked with the response metadata.
@@ -324,7 +324,7 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
+        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A callable invoked with the response metadata.
