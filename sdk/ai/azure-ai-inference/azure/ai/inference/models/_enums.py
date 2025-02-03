@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AudioContentFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A representation of the possible audio formats for audio."""
+
+    WAV = "wav"
+    """Specifies audio in WAV format."""
+    MP3 = "mp3"
+    """Specifies audio in MP3 format."""
+
+
 class ChatCompletionsToolChoicePreset(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents a generic policy for how a chat completions tool may be selected."""
 
