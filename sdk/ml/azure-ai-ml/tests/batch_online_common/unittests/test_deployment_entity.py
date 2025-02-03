@@ -37,6 +37,7 @@ from azure.ai.ml.constants._common import ArmConstants
 from azure.ai.ml.exceptions import DeploymentException, ValidationException
 from azure.ai.ml.entities._assets import Environment, Model, Code
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
+from azure.ai.ml.entities._deployment.run_settings import RunSettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 
 
@@ -577,6 +578,7 @@ class TestBatchDeploymentSDK:
 
     def test_deployment_from_rest_object_for_batch_deployment(self) -> None:
         from azure.ai.ml._restclient.v2022_02_01_preview.models import BatchDeploymentData as RestBatchDeploymentData
+
         with open(TestBatchDeploymentSDK.DEPLOYMENT_REST, "r") as f:
             deployment_rest = RestBatchDeploymentData.deserialize(json.load(f))
             deployment = Deployment._from_rest_object(deployment_rest)
@@ -682,6 +684,12 @@ class TestOnlineDeploymentSDK:
         deployment = ManagedOnlineDeployment(name="test1", scale_settings=DefaultScaleSettings())
         deployment._validate_scale_settings()
 
+    def test_code_path_setter(self) -> None:
+        deployment = load_online_deployment(TestOnlineDeploymentFromYAML.BLUE_ONLINE_DEPLOYMENT)
+        deployment.code_path = "new_code_id"
+        assert deployment.code_path == "new_code_id"
+        assert deployment.code_configuration.code == "new_code_id"
+
     def test_managed_online_deployment_from_rest_object(self) -> None:
         with open("./tests/test_configs/deployments/online/online_deployment_managed_rest.json", "r") as f:
             rest_object = RestOnlineDeploymentData.deserialize(json.load(f))
@@ -773,9 +781,10 @@ class TestOnlineDeploymentSDK:
                 == rest_object.properties.data_collector.collections["some-collection"].client_id
             )
             assert blue_deployment.provisioning_state == rest_object.properties.provisioning_state
-    
+
     def test_deployment_from_rest_object_for_online_deployment(self) -> None:
         from azure.ai.ml._restclient.v2022_05_01.models import OnlineDeploymentData as OnlineDeploymentDataRest
+
         with open("./tests/test_configs/deployments/online/online_deployment_kubernetes_rest.json", "r") as f:
             rest_object = OnlineDeploymentDataRest.deserialize(json.load(f))
             blue_deployment = Deployment._from_rest_object(rest_object)
@@ -791,6 +800,13 @@ class TestOnlineDeploymentSDK:
             with pytest.raises(DeploymentException) as exc:
                 OnlineDeployment._from_rest_object(rest_object)
             assert str(exc.value) == "Unsupported online endpoint type Other."
+
+    def test__deployment_from_rest_object_unsupported_type(self) -> None:
+        with open("./tests/test_configs/deployments/online/online_deployment_kubernetes_rest.json", "r") as f:
+            rest_object = RestOnlineDeploymentData.deserialize(json.load(f))
+            with pytest.raises(DeploymentException) as exc:
+                Deployment._from_rest_object(rest_object)
+            assert str(exc.value) == f"Unsupported deployment type {type(rest_object)}"
 
     def test_online_deployment_from_rest_object_unsupported_scale_settings_type(self) -> None:
         with open("./tests/test_configs/deployments/online/online_deployment_kubernetes_rest.json", "r") as f:
@@ -961,6 +977,12 @@ class TestOnlineDeploymentSettings:
         assert not code_configuration1 == None
         assert not code_configuration1 == DefaultScaleSettings()
 
+    def test_code_configuration_to_rest(self) -> None:
+        code_configuration = CodeConfiguration(code="some_code", scoring_script="some_script")
+        rest_code_configuration = code_configuration._to_rest_code_configuration()
+        assert rest_code_configuration.code_id == code_configuration.code
+        assert rest_code_configuration.scoring_script == code_configuration.scoring_script
+
     def test_from_rest_code_configuration(self):
         rest_code_configuration = RestCodeConfiguration(code_id="some_code", scoring_script="some_script")
         code_configuration = CodeConfiguration._from_rest_code_configuration(rest_code_configuration)
@@ -1049,3 +1071,20 @@ class TestOnlineDeploymentSettings:
         rest_request_logging = RequestLogging(capture_headers=["header1", "header2"])
         request_logging = RequestLogging._from_rest_object(rest_request_logging)
         assert request_logging.capture_headers == rest_request_logging.capture_headers
+
+    def test_ru_settings_to_dict(self):
+        run_settings = RunSettings(
+            name="some-name",
+            display_name="some-display-name",
+            experiment_name="some-experiment-name",
+            description="some-description",
+            tags={"tag1": "value1"},
+            settings={"setting1": "value1"},
+        )
+        run_settings_dict = run_settings._to_dict()
+        assert run_settings_dict["name"] == run_settings.name
+        assert run_settings_dict["display_name"] == run_settings.display_name
+        assert run_settings_dict["experiment_name"] == run_settings.experiment_name
+        assert run_settings_dict["description"] == run_settings.description
+        assert run_settings_dict["tags"] == run_settings.tags
+        assert run_settings_dict["settings"] == run_settings.settings
