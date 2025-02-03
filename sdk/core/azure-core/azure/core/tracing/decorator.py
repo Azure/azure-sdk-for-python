@@ -27,14 +27,13 @@
 
 import functools
 
-from typing import Callable, Any, TypeVar, overload, Optional, Mapping, TYPE_CHECKING
+from typing import Callable, Any, TypeVar, overload, Optional, Mapping
 from typing_extensions import ParamSpec
-from .common import change_context, get_function_and_class_name
-from . import SpanKind as _SpanKind
+from .common import change_context
 from ..settings import settings
+from ._models import TracingOptions, SpanKind
+from ._tracer import default_tracer_provider, TracerProvider
 
-if TYPE_CHECKING:
-    from azure.core.tracing import SpanKind
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -51,6 +50,7 @@ def distributed_trace(
     name_of_span: Optional[str] = None,
     kind: Optional["SpanKind"] = None,
     tracing_attributes: Optional[Mapping[str, Any]] = None,
+    tracer_provider: Optional[TracerProvider] = None,
     **kwargs: Any,
 ) -> Callable[[Callable[P, T]], Callable[P, T]]:
     pass
@@ -62,6 +62,7 @@ def distributed_trace(
     name_of_span: Optional[str] = None,
     kind: Optional["SpanKind"] = None,
     tracing_attributes: Optional[Mapping[str, Any]] = None,
+    tracer_provider: Optional[TracerProvider] = None,
     **kwargs: Any,
 ) -> Any:
     """Decorator to apply to function to get traced automatically.
@@ -83,13 +84,15 @@ def distributed_trace(
     :paramtype kind: ~azure.core.tracing.SpanKind
     :keyword tracing_attributes: Attributes to add to the span.
     :paramtype tracing_attributes: Mapping[str, Any] or None
+    :keyword tracer_provider: The tracer provider to use. If not provided, a default tracer provider will be used.
+    :paramtype tracer_provider: ~azure.core.tracing.TracerProvider
     :return: The decorated function
     :rtype: Any
     """
     if tracing_attributes is None:
         tracing_attributes = {}
     if kind is None:
-        kind = _SpanKind.INTERNAL
+        kind = SpanKind.INTERNAL
 
     def decorator(func: Callable[P, T]) -> Callable[P, T]:
         @functools.wraps(func)
@@ -98,21 +101,48 @@ def distributed_trace(
             passed_in_parent = kwargs.pop("parent_span", None)
 
             # Assume this will be popped in DistributedTracingPolicy.
-            func_tracing_attributes = kwargs.pop("tracing_attributes", tracing_attributes)
+            tracing_options: TracingOptions = kwargs.get("tracing_options", {})
+            tracing_enabled = settings.tracing_enabled()
 
-            span_impl_type = settings.tracing_implementation()
-            if span_impl_type is None:
+            # User can explicitly disable tracing for this request.
+            user_enabled = tracing_options.get("enabled")
+            if user_enabled is False:
+                return func(*args, **kwargs)
+
+            # If tracing is disabled globally and user didn't explicitly enable it, don't trace.
+            if not tracing_enabled and user_enabled is None:
                 return func(*args, **kwargs)
 
             # Merge span is parameter is set, but only if no explicit parent are passed
             if merge_span and not passed_in_parent:
                 return func(*args, **kwargs)
 
-            with change_context(passed_in_parent):
-                name = name_of_span or get_function_and_class_name(func, *args)
-                with span_impl_type(name=name, kind=kind) as span:
-                    for key, value in func_tracing_attributes.items():
-                        span.add_attribute(key, value)
+            # Assume this will be popped in DistributedTracingPolicy.
+            func_tracing_attributes = kwargs.get("tracing_attributes", tracing_attributes)
+            span_attributes = {**func_tracing_attributes, **tracing_options.get("attributes", {})}
+
+            span_impl_type = settings.tracing_implementation()
+
+            name = name_of_span or func.__qualname__
+            if span_impl_type:
+                print(span_impl_type)
+                with change_context(passed_in_parent):
+                    with span_impl_type(name=name, kind=kind) as span:
+                        for key, value in span_attributes.items():
+                            span.add_attribute(key, value)  # type: ignore
+                        return func(*args, **kwargs)
+            else:
+                method_tracer = (
+                    tracer_provider.get_tracer() if tracer_provider else default_tracer_provider.get_tracer()
+                )
+                if not method_tracer:
+                    return func(*args, **kwargs)
+                with method_tracer.start_span(
+                    name=name,
+                    kind=kind,
+                    attributes=span_attributes,
+                    record_exception=tracing_options.get("record_exception", True),
+                ):
                     return func(*args, **kwargs)
 
         return wrapper_use_tracer

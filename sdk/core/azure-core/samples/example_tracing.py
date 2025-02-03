@@ -1,0 +1,96 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+"""
+FILE: example_tracing.py
+DESCRIPTION:
+    This sample demonstrates how to trace a client method.
+    Note: This sample requires the opentelemetry-sdk library to be installed.
+USAGE:
+    python example_tracing.py
+"""
+from typing import Iterable, Union, Any
+from functools import partial
+
+from azure.core.tracing.decorator import distributed_trace as core_distributed_trace
+from azure.core import PipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.pipeline.policies import (
+    HTTPPolicy,
+    SansIOHTTPPolicy,
+    HeadersPolicy,
+    UserAgentPolicy,
+    RetryPolicy,
+    DistributedTracingPolicy,
+)
+from azure.core.settings import settings
+from azure.core.tracing import TracerProvider as SDKTracerProvider
+
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+
+
+tracer_provider = TracerProvider()
+exporter = ConsoleSpanExporter()
+span_processor = SimpleSpanProcessor(exporter)
+
+trace.set_tracer_provider(tracer_provider)
+tracer_provider.add_span_processor(SimpleSpanProcessor(exporter))
+tracer = trace.get_tracer(__name__)
+
+
+sdk_tracer_provider = SDKTracerProvider(
+    library_name="my-library",
+    library_version="1.0.0",
+    schema_url="https://opentelemetry.io/schemas/1.23.1",
+    attributes={"namespace": "Sample.Namespace"},
+)
+
+distributed_trace = partial(core_distributed_trace, tracer_provider=sdk_tracer_provider)
+
+
+class SampleClient:
+
+    def __init__(self, endpoint: str) -> None:
+        policies: Iterable[Union[HTTPPolicy, SansIOHTTPPolicy]] = [
+            HeadersPolicy(),
+            UserAgentPolicy("myuseragent"),
+            RetryPolicy(),
+            DistributedTracingPolicy(tracer_provider=sdk_tracer_provider),
+        ]
+
+        self._client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(endpoint, policies=policies)
+
+    @distributed_trace()
+    def sample_method(self, **kwargs: Any) -> HttpResponse:
+        request = HttpRequest("GET", "https://bing.com")
+        response = self._client.send_request(request, **kwargs)
+        return response
+
+    def close(self) -> None:
+        self._client.close()
+
+    def __enter__(self) -> "SampleClient":
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *exc_details: Any) -> None:
+        self._client.__exit__(*exc_details)
+
+
+def sample_basic():
+    settings.tracing_enabled = True
+
+    endpoint = "https://bing.com"
+    with SampleClient(endpoint) as client:
+        with tracer.start_as_current_span(name="MyApplication"):  # type: ignore
+            response = client.sample_method(tracing_options={"attributes": {"custom_key": "custom_value"}})
+            print(f"Response: {response}")
+
+
+if __name__ == "__main__":
+    sample_basic()
