@@ -25,9 +25,64 @@ USAGE:
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
+from user_functions import user_functions
+from dotenv import load_dotenv
+
+load_dotenv()
 
 project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
 model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_weather",
+            "description": "Get the current weather",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "location": {
+                        "type": "string",
+                        "description": "The city and state, e.g. San Francisco, CA",
+                    },
+                    "format": {
+                        "type": "string",
+                        "enum": ["celsius", "fahrenheit"],
+                        "description": "The temperature unit to use. Infer this from the users location.",
+                    },
+                },
+                "required": ["location", "format"],
+            },
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_n_day_weather_forecast",
+            "description": "Get an N-day weather forecast",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "location": {
+                        "type": "string",
+                        "description": "The city and state, e.g. San Francisco, CA",
+                    },
+                    "format": {
+                        "type": "string",
+                        "enum": ["celsius", "fahrenheit"],
+                        "description": "The temperature unit to use. Infer this from the users location.",
+                    },
+                    "num_days": {
+                        "type": "integer",
+                        "description": "The number of days to forecast",
+                    }
+                },
+                "required": ["location", "format", "num_days"]
+            },
+        }
+    },
+]
 
 with AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
@@ -41,9 +96,10 @@ with AIProjectClient.from_connection_string(
             messages=[
                 {
                     "role": "user",
-                    "content": "How many feet are in a mile?",
+                    "content": "How is weather in Seattle ? and weather forecast for next 3 days",
                 },
             ],
+            tools=tools,
         )
 
         print(response.choices[0].message.content)

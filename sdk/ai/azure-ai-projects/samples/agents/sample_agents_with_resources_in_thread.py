@@ -27,6 +27,10 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import FileSearchTool
 from azure.identity import DefaultAzureCredential
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
@@ -88,4 +92,5 @@ with project_client:
 
     # Fetch and log all messages
     messages = project_client.agents.list_messages(thread_id=thread.id)
+    run_details = project_client.agents.list_run_steps(thread_id=thread.id, run_id=run.id)
     print(f"Messages: {messages}")

@@ -28,6 +28,10 @@ USAGE:
 import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
+from dotenv import load_dotenv
+from pprint import pprint
+
+load_dotenv()
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
@@ -48,6 +52,8 @@ configure_azure_monitor(connection_string=application_insights_connection_string
 
 scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
+
+os.environ["AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"] = "true"
 
 with tracer.start_as_current_span(scenario):
     with project_client:
@@ -81,3 +87,7 @@ with tracer.start_as_current_span(scenario):
 
         messages = project_client.agents.list_messages(thread_id=thread.id)
         print(f"messages: {messages}")
+
+        run = project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
+        run_details = project_client.agents.list_run_steps(thread_id=thread.id, run_id=run.id)
+        print(run_details)
