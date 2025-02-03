@@ -54,9 +54,8 @@ from .._generated.models import (
     InterruptAudioAndAnnounceRequest
 )
 from .._generated.models._enums import RecognizeInputType
-from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
-from .._credential.call_automation_auth_policy_utils import get_call_automation_auth_policy
+from .._credential.call_automation_auth_policy_utils import get_authentication_policy
 from .._credential.credential_utils import get_custom_enabled, get_custom_url
 
 if TYPE_CHECKING:
@@ -112,7 +111,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
                     custom_url,
                     credential,
                     api_version=api_version or DEFAULT_VERSION,
-                    authentication_policy=get_call_automation_auth_policy(
+                    authentication_policy=get_authentication_policy(
                         custom_url, credential, acs_url=endpoint, is_async=True
                     ),
                     sdk_moniker=SDK_MONIKER,
@@ -413,9 +412,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
-        :keyword interrupt_call_media_operation: If set play can barge into other existing
-         queued-up/currently-processing requests. This is applicable only when play_to set to all.
-        :paramtype interrupt_call_media_operation: bool
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -650,7 +646,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword initial_silence_timeout: Time to wait for first input after prompt in seconds (if any).
         :paramtype initial_silence_timeout: int
-        :type play_prompt: ~azure.communication.callautomation.FileSource or
+        :keyword play_prompt: A play_prompt representing the source to play.
+        :paramtype play_prompt: ~azure.communication.callautomation.FileSource or
          ~azure.communication.callautomation.TextSource or
          ~azure.communication.callautomation.SsmlSource or         
          list[~azure.communication.callautomation.FileSource] or
