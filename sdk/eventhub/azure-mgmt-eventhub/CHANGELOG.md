@@ -1,5 +1,15 @@
 # Release History
 
+## 11.2.0 (2025-01-20)
+
+### Features Added
+
+  - Added operation NamespacesOperations.begin_failover
+  - Model EHNamespace has a new parameter geo_data_replication
+  - Model Eventhub has a new parameter identifier
+  - Model Eventhub has a new parameter message_timestamp_description
+  - Model RetentionDescription has a new parameter min_compaction_lag_in_mins
+
 ## 11.1.0 (2024-09-02)
 
 ### Features Added

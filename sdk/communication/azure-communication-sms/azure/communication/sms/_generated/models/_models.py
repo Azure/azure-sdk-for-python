@@ -28,27 +28,24 @@ class SendMessageRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'from_property': {'required': True},
-        'sms_recipients': {'required': True},
-        'message': {'required': True, 'max_length': 2048, 'min_length': 0},
+        "from_property": {"required": True},
+        "sms_recipients": {"required": True},
+        "message": {"required": True, "max_length": 2048, "min_length": 0},
     }
 
     _attribute_map = {
-        'from_property': {'key': 'from', 'type': 'str'},
-        'sms_recipients': {'key': 'smsRecipients', 'type': '[SmsRecipient]'},
-        'message': {'key': 'message', 'type': 'str'},
-        'sms_send_options': {'key': 'smsSendOptions', 'type': 'SmsSendOptions'},
+        "from_property": {"key": "from", "type": "str"},
+        "sms_recipients": {"key": "smsRecipients", "type": "[SmsRecipient]"},
+        "message": {"key": "message", "type": "str"},
+        "sms_send_options": {"key": "smsSendOptions", "type": "SmsSendOptions"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SendMessageRequest, self).__init__(**kwargs)
-        self.from_property = kwargs['from_property']
-        self.sms_recipients = kwargs['sms_recipients']
-        self.message = kwargs['message']
-        self.sms_send_options = kwargs.get('sms_send_options', None)
+        self.from_property = kwargs["from_property"]
+        self.sms_recipients = kwargs["sms_recipients"]
+        self.message = kwargs["message"]
+        self.sms_send_options = kwargs.get("sms_send_options", None)
 
 
 class SmsRecipient(msrest.serialization.Model):
@@ -72,23 +69,20 @@ class SmsRecipient(msrest.serialization.Model):
     """
 
     _validation = {
-        'to': {'required': True},
+        "to": {"required": True},
     }
 
     _attribute_map = {
-        'to': {'key': 'to', 'type': 'str'},
-        'repeatability_request_id': {'key': 'repeatabilityRequestId', 'type': 'str'},
-        'repeatability_first_sent': {'key': 'repeatabilityFirstSent', 'type': 'str'},
+        "to": {"key": "to", "type": "str"},
+        "repeatability_request_id": {"key": "repeatabilityRequestId", "type": "str"},
+        "repeatability_first_sent": {"key": "repeatabilityFirstSent", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SmsRecipient, self).__init__(**kwargs)
-        self.to = kwargs['to']
-        self.repeatability_request_id = kwargs.get('repeatability_request_id', None)
-        self.repeatability_first_sent = kwargs.get('repeatability_first_sent', None)
+        self.to = kwargs["to"]
+        self.repeatability_request_id = kwargs.get("repeatability_request_id", None)
+        self.repeatability_first_sent = kwargs.get("repeatability_first_sent", None)
 
 
 class SmsSendOptions(msrest.serialization.Model):
@@ -105,21 +99,18 @@ class SmsSendOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'enable_delivery_report': {'required': True},
+        "enable_delivery_report": {"required": True},
     }
 
     _attribute_map = {
-        'enable_delivery_report': {'key': 'enableDeliveryReport', 'type': 'bool'},
-        'tag': {'key': 'tag', 'type': 'str'},
+        "enable_delivery_report": {"key": "enableDeliveryReport", "type": "bool"},
+        "tag": {"key": "tag", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SmsSendOptions, self).__init__(**kwargs)
-        self.enable_delivery_report = kwargs['enable_delivery_report']
-        self.tag = kwargs.get('tag', None)
+        self.enable_delivery_report = kwargs["enable_delivery_report"]
+        self.tag = kwargs.get("tag", None)
 
 
 class SmsSendResponse(msrest.serialization.Model):
@@ -132,19 +123,16 @@ class SmsSendResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SmsSendResponseItem]'},
+        "value": {"key": "value", "type": "[SmsSendResponseItem]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SmsSendResponse, self).__init__(**kwargs)
-        self.value = kwargs['value']
+        self.value = kwargs["value"]
 
 
 class SmsSendResponseItem(msrest.serialization.Model):
@@ -170,28 +158,25 @@ class SmsSendResponseItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'to': {'required': True},
-        'http_status_code': {'required': True},
-        'successful': {'required': True},
+        "to": {"required": True},
+        "http_status_code": {"required": True},
+        "successful": {"required": True},
     }
 
     _attribute_map = {
-        'to': {'key': 'to', 'type': 'str'},
-        'message_id': {'key': 'messageId', 'type': 'str'},
-        'http_status_code': {'key': 'httpStatusCode', 'type': 'int'},
-        'repeatability_result': {'key': 'repeatabilityResult', 'type': 'str'},
-        'successful': {'key': 'successful', 'type': 'bool'},
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        "to": {"key": "to", "type": "str"},
+        "message_id": {"key": "messageId", "type": "str"},
+        "http_status_code": {"key": "httpStatusCode", "type": "int"},
+        "repeatability_result": {"key": "repeatabilityResult", "type": "str"},
+        "successful": {"key": "successful", "type": "bool"},
+        "error_message": {"key": "errorMessage", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         super(SmsSendResponseItem, self).__init__(**kwargs)
-        self.to = kwargs['to']
-        self.message_id = kwargs.get('message_id', None)
-        self.http_status_code = kwargs['http_status_code']
-        self.repeatability_result = kwargs.get('repeatability_result', None)
-        self.successful = kwargs['successful']
-        self.error_message = kwargs.get('error_message', None)
+        self.to = kwargs["to"]
+        self.message_id = kwargs.get("message_id", None)
+        self.http_status_code = kwargs["http_status_code"]
+        self.repeatability_result = kwargs.get("repeatability_result", None)
+        self.successful = kwargs["successful"]
+        self.error_message = kwargs.get("error_message", None)

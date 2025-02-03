@@ -6,12 +6,12 @@
 
 import pytest
 import functools
-from devtools_testutils import recorded_by_proxy, get_credential
+from devtools_testutils import recorded_by_proxy, get_credential, set_bodiless_matcher
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import (
     DocumentAnalysisFeature,
     AnalyzeDocumentRequest,
-    AnalyzeResultOperation,
+    AnalyzeResult,
     AnalyzeOutputOption,
 )
 from testcase import DocumentIntelligenceTest
@@ -36,7 +36,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
                 "prebuilt-layout",
                 document,
                 features=DocumentAnalysisFeature.STYLE_FONT,
-                content_type="application/octet-stream",
             )
         assert "features must be type [str]." in str(e.value)
 
@@ -55,17 +54,15 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
             "prebuilt-layout",
             document,
             features=[DocumentAnalysisFeature.STYLE_FONT],
-            content_type="application/octet-stream",
             cls=callback,
         )
         raw_response = poller.result()
-        raw_analyze_result = AnalyzeResultOperation._deserialize(raw_response.http_response.json(), []).analyze_result
+        raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json()["analyzeResult"], [])
 
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
             features=[DocumentAnalysisFeature.STYLE_FONT],
-            content_type="application/octet-stream",
         )
         returned_model = poller.result()
 
@@ -100,16 +97,14 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
-            content_type="application/octet-stream",
             cls=callback,
         )
         raw_response = poller.result()
-        raw_analyze_result = AnalyzeResultOperation._deserialize(raw_response.http_response.json(), []).analyze_result
+        raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json()["analyzeResult"], [])
 
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
-            content_type="application/octet-stream",
         )
         returned_model = poller.result()
 
@@ -144,16 +139,14 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
-            content_type="application/octet-stream",
             cls=callback,
         )
         raw_response = poller.result()
-        raw_analyze_result = AnalyzeResultOperation._deserialize(raw_response.http_response.json(), []).analyze_result
+        raw_analyze_result = AnalyzeResult._deserialize(raw_response.http_response.json()["analyzeResult"], [])
 
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
-            content_type="application/octet-stream",
         )
         returned_model = poller.result()
 
@@ -184,7 +177,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
-            content_type="application/octet-stream",
         )
         layout = poller.result()
         assert len(layout.tables) == 3
@@ -205,7 +197,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
-            content_type="application/octet-stream",
         )
         continuation_token = poller.continuation_token()
         layout = client.begin_analyze_document(None, None, continuation_token=continuation_token).result()
@@ -222,6 +213,7 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
     @DocumentIntelligenceClientPreparer()
     @recorded_by_proxy
     def test_layout_url_barcode(self, client):
+        set_bodiless_matcher()
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             AnalyzeDocumentRequest(url_source=self.barcode_url_tif),
@@ -264,7 +256,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         poller = client.begin_analyze_document(
             "prebuilt-read",
             document,
-            content_type="application/octet-stream",
             output=[AnalyzeOutputOption.PDF],
         )
         result = poller.result()
@@ -282,7 +273,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         poller = client.begin_analyze_document(
             "prebuilt-layout",
             document,
-            content_type="application/octet-stream",
             output=[AnalyzeOutputOption.FIGURES],
         )
         result = poller.result()

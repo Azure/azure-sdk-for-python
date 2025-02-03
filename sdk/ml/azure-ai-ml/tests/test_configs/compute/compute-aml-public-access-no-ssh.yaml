@@ -1,0 +1,11 @@
+name: banchaml
+type: amlcompute
+description: some_desc_aml
+size: Standard_DS2_v2
+location: eastus
+tags:
+   test: "true"
+ssh_public_access_enabled: true
+max_instances: 2
+idle_time_before_scale_down: 100
+enable_node_public_ip: true

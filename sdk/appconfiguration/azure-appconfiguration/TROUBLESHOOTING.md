@@ -24,7 +24,7 @@ Basic information about HTTP sessions (URLs, headers, etc.) is logged at `INFO` 
 
 Detailed `DEBUG` level logging, including request/response bodies and **unredacted** headers, can be enabled on the client or per-operation with the `logging_enable` keyword argument.
 
-See full Python SDK logging documentation with examples [here](https://docs.microsoft.com/azure/developer/python/azure-sdk-logging).
+See full Python SDK logging documentation with examples [here](https://learn.microsoft.com/azure/developer/python/azure-sdk-logging).
 
 ## Troubleshooting authentication issues
 

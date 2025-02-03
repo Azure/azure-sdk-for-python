@@ -1,8 +1,10 @@
 psutil
+# To install from a specific git branch, replace the package with a req in the following format:
+# git+<gh-repo-url>@<branch>#subdirectory=<path/to/sdk>&egg=<package-name>
+# ex. git+https://github.com/kashifkhan/azure-sdk-for-python.git@fix_ws_none_error#subdirectory=sdk/eventhub/azure-eventhub&egg=azure-eventhub
 azure-eventhub
 azure-eventhub-checkpointstoreblob
 azure-eventhub-checkpointstoreblob-aio
-azure-servicebus
 azure-storage-blob
 azure-identity
 opencensus-ext-azure

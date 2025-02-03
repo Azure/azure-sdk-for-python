@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, Optional, Type, TypeVar, Union, cast
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, Optional, TypeVar, Union, cast
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -17,12 +16,13 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
@@ -30,7 +30,6 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._network_security_perimeter_configurations_operations import (
     build_get_request,
     build_list_request,
@@ -40,7 +39,7 @@ from ...operations._network_security_perimeter_configurations_operations import 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -69,6 +68,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.NetworkSecurityPerimeterConfiguration"]:
+        # pylint: disable=line-too-long
         """Gets list of effective NetworkSecurityPerimeterConfiguration for storage account.
 
         :param resource_group_name: The name of the resource group within the user's subscription. The
@@ -90,7 +90,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-05-01"))
         cls: ClsType[_models.NetworkSecurityPerimeterConfigurationList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -109,7 +109,6 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -125,7 +124,6 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -179,7 +177,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         :rtype: ~azure.mgmt.storage.v2023_05_01.models.NetworkSecurityPerimeterConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -202,7 +200,6 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -217,21 +214,21 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponseAutoGenerated, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NetworkSecurityPerimeterConfiguration", pipeline_response)
+        deserialized = self._deserialize("NetworkSecurityPerimeterConfiguration", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    async def _reconcile_initial(  # pylint: disable=inconsistent-return-statements
+    async def _reconcile_initial(
         self,
         resource_group_name: str,
         account_name: str,
         network_security_perimeter_configuration_name: str,
         **kwargs: Any
-    ) -> None:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -243,7 +240,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-05-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_reconcile_request(
             resource_group_name=resource_group_name,
@@ -254,10 +251,10 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -265,6 +262,10 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponseAutoGenerated, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -272,8 +273,12 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         response_headers = {}
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_reconcile(
@@ -308,7 +313,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._reconcile_initial(  # type: ignore
+            raw_result = await self._reconcile_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
                 network_security_perimeter_configuration_name=network_security_perimeter_configuration_name,
@@ -318,6 +323,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements

@@ -7,6 +7,7 @@ import struct
 import uuid
 import logging
 import time
+from threading import Lock
 
 from ._encode import encode_payload
 from .link import Link
@@ -45,6 +46,7 @@ class SenderLink(Link):
             kwargs["source_address"] = "sender-link-{}".format(name)
         super(SenderLink, self).__init__(session, handle, name, role, target_address=target_address, **kwargs)
         self._pending_deliveries = []
+        self.lock = Lock()
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
@@ -139,21 +141,24 @@ class SenderLink(Link):
         super()._on_session_state_change()
 
     def update_pending_deliveries(self):
-        if self.current_link_credit <= 0:
-            self.current_link_credit = self.link_credit
-            self._outgoing_flow()
-        now = time.time()
-        pending = []
-        for delivery in self._pending_deliveries:
-            if delivery.timeout and (now - delivery.start) >= delivery.timeout:
-                delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
-                continue
-            if not delivery.sent:
-                sent_and_settled = self._outgoing_transfer(delivery)
-                if sent_and_settled:
+        # TODO: Temporary fix until connection.listen removed from keep alive thread.
+        with self.lock:
+            if self.current_link_credit <= 0:
+                self.current_link_credit = self.link_credit
+                self._outgoing_flow()
+            now = time.time()
+            pending = []
+
+            for delivery in self._pending_deliveries:
+                if delivery.timeout and (now - delivery.start) >= delivery.timeout:
+                    delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
                     continue
-            pending.append(delivery)
-        self._pending_deliveries = pending
+                if not delivery.sent:
+                    sent_and_settled = self._outgoing_transfer(delivery)
+                    if sent_and_settled:
+                        continue
+                pending.append(delivery)
+            self._pending_deliveries = pending
 
     def send_transfer(self, message, *, send_async=False, **kwargs):
         self._check_if_closed()

@@ -19,16 +19,6 @@ class AnalyzeOutputOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Generate cropped images of detected figures."""
 
 
-class ContentFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Format of the content in analyzed result."""
-
-    TEXT = "text"
-    """Plain text representation of the document content without any formatting."""
-    MARKDOWN = "markdown"
-    """Markdown representation of the document content with section headings, tables,
-    etc."""
-
-
 class ContentSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of content source."""
 
@@ -107,8 +97,16 @@ class DocumentBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Target documents with similar visual templates."""
     NEURAL = "neural"
     """Support documents with diverse visual templates."""
-    GENERATIVE = "generative"
-    """Enable documents of all types using generative AI techniques."""
+
+
+class DocumentContentFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Format of the content in analyzed result."""
+
+    TEXT = "text"
+    """Plain text representation of the document content without any formatting."""
+    MARKDOWN = "markdown"
+    """Markdown representation of the document content with section headings, tables,
+    etc."""
 
 
 class DocumentFieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -146,6 +144,24 @@ class DocumentFieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Array of selected string values."""
 
 
+class DocumentFontStyle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Font style."""
+
+    NORMAL = "normal"
+    """Characters are represented normally."""
+    ITALIC = "italic"
+    """Characters are visually slanted to the right."""
+
+
+class DocumentFontWeight(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Font weight."""
+
+    NORMAL = "normal"
+    """Characters are represented normally."""
+    BOLD = "bold"
+    """Characters are represented with thicker strokes."""
+
+
 class DocumentFormulaKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Formula kind."""
 
@@ -153,6 +169,23 @@ class DocumentFormulaKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A formula embedded within the content of a paragraph."""
     DISPLAY = "display"
     """A formula in display mode that takes up an entire line."""
+
+
+class DocumentIntelligenceOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operation status."""
+
+    NOT_STARTED = "notStarted"
+    """The operation has not started yet."""
+    RUNNING = "running"
+    """The operation is in progress."""
+    FAILED = "failed"
+    """The operation has failed."""
+    SUCCEEDED = "succeeded"
+    """The operation has succeeded."""
+    CANCELED = "canceled"
+    """The operation has been canceled."""
+    SKIPPED = "skipped"
+    """The operation has been skipped."""
 
 
 class DocumentSelectionMarkState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -189,24 +222,6 @@ class DocumentTableCellKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes the content in (parts of) the table."""
 
 
-class FontStyle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Font style."""
-
-    NORMAL = "normal"
-    """Characters are represented normally."""
-    ITALIC = "italic"
-    """Characters are visually slanted to the right."""
-
-
-class FontWeight(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Font weight."""
-
-    NORMAL = "normal"
-    """Characters are represented normally."""
-    BOLD = "bold"
-    """Characters are represented with thicker strokes."""
-
-
 class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit used by the width, height, and polygon properties. For images, the unit is "pixel".
     For PDF, the unit is "inch".
@@ -233,23 +248,6 @@ class OperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     subscription."""
     DOCUMENT_CLASSIFIER_BUILD = "documentClassifierBuild"
     """Build a new custom classifier model."""
-
-
-class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Operation status."""
-
-    NOT_STARTED = "notStarted"
-    """The operation has not started yet."""
-    RUNNING = "running"
-    """The operation is in progress."""
-    FAILED = "failed"
-    """The operation has failed."""
-    SUCCEEDED = "succeeded"
-    """The operation has succeeded."""
-    COMPLETED = "completed"
-    """The operation has completed."""
-    CANCELED = "canceled"
-    """The operation has been canceled."""
 
 
 class ParagraphRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):

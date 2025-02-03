@@ -16,7 +16,7 @@ from ._models import MetricsQueryResult
 from ._enums import MetricAggregationType
 from ._helpers import get_authentication_policy, get_timespan_iso8601_endpoints, get_subscription_id_from_resource
 
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
@@ -192,8 +192,8 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
         return self._client.close()
 
     def __enter__(self) -> "MetricsClient":
-        self._client.__enter__()  # pylint:disable=no-member
+        self._client.__enter__()
         return self
 
     def __exit__(self, *args: Any) -> None:
-        self._client.__exit__(*args)  # pylint:disable=no-member
+        self._client.__exit__(*args)

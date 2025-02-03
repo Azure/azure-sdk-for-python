@@ -60,5 +60,5 @@ Check out our Django and Flask examples to see how to use the provider in a web 
 
 <!-- LINKS -->
 [azure_sub]: https://azure.microsoft.com/free/
-[azure_cli]: https://docs.microsoft.com/cli/azure
+[azure_cli]: https://learn.microsoft.com/cli/azure
 [configuration_store]: https://azure.microsoft.com/services/app-configuration/

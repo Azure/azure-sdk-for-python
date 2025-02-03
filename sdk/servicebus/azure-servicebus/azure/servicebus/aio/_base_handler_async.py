@@ -29,7 +29,6 @@ from ..exceptions import (
 
 if TYPE_CHECKING:
     try:
-        # pylint:disable=unused-import
         from uamqp.async_ops.client_async import AMQPClientAsync as uamqp_AMQPClientAsync
     except ImportError:
         pass
@@ -357,7 +356,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 timeout=timeout,
                 callback=callback,
             )
-        except Exception as exp:  # pylint: disable=broad-except
+        except Exception as exp:
             if isinstance(exp, self._amqp_transport.TIMEOUT_ERROR):
                 raise OperationTimeoutError(error=exp) from exp
             raise

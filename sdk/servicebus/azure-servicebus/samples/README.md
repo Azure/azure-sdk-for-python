@@ -123,5 +123,5 @@ pip install azure-identity
 
 ## Next steps
 
-Check out the [API reference documentation](https://docs.microsoft.com/python/api/overview/azure/servicebus-readme) to learn more about
+Check out the [API reference documentation](https://learn.microsoft.com/python/api/overview/azure/servicebus-readme) to learn more about
 what you can do with the Azure Service Bus client library.

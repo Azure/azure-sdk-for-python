@@ -63,7 +63,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._provision_network_operation = service_client.managed_network_provisions
         super().__init__(
             operation_scope=operation_scope,

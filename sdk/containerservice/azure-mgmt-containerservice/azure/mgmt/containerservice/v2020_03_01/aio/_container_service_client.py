@@ -21,11 +21,10 @@ from ._configuration import ContainerServiceClientConfiguration
 from .operations import AgentPoolsOperations, ManagedClustersOperations, Operations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ContainerServiceClient:  # pylint: disable=client-accepts-api-version-keyword
+class ContainerServiceClient:
     """The Container Service Client.
 
     :ivar operations: Operations operations

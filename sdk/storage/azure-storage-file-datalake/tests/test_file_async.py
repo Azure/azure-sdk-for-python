@@ -35,6 +35,7 @@ from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeFile
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import DataLakePreparer
+from test_helpers_async import AsyncStream, MockStorageTransport
 # ------------------------------------------------------------------------------
 
 TEST_DIRECTORY_PREFIX = 'directory'
@@ -1137,12 +1138,17 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             content_disposition='inline')
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         file_client = await directory_client.create_file("newfile", metadata=metadata, content_settings=content_settings)
+
+        # Act / Assert
         await file_client.set_file_expiry("Absolute", expires_on=expiry_time)
         properties = await file_client.get_file_properties()
-
-        # Assert
         assert properties
         assert properties.expiry_time is not None
+
+        await file_client.set_file_expiry("NeverExpire")
+        properties = await file_client.get_file_properties()
+        assert properties
+        assert properties.expiry_time is None
 
         return variables
 
@@ -1531,6 +1537,62 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         await fc.get_file_properties()
         await fc.upload_data(data, overwrite=True)
 
+    @DataLakePreparer()
+    async def test_mock_transport_no_content_validation(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        transport = MockStorageTransport()
+        file_client = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            "filesystem/",
+            "dir/file.txt",
+            credential=datalake_storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        data = await file_client.download_file()
+        assert data is not None
+
+        props = await file_client.get_file_properties()
+        assert props is not None
+
+        data = b"Hello Async World!"
+        stream = AsyncStream(data)
+        resp = await file_client.upload_data(stream, overwrite=True)
+        assert resp is not None
+
+        file_data = await (await file_client.download_file()).read()
+        assert file_data == b"Hello Async World!"  # data is fixed by mock transport
+
+        resp = await file_client.delete_file()
+        assert resp is not None
+
+    @DataLakePreparer()
+    async def test_mock_transport_with_content_validation(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        transport = MockStorageTransport()
+        file_client = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            "filesystem/",
+            "dir/file.txt",
+            credential=datalake_storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        data = b"Hello Async World!"
+        stream = AsyncStream(data)
+        resp = await file_client.upload_data(stream, overwrite=True, validate_content=True)
+        assert resp is not None
+
+        file_data = await (await file_client.download_file(validate_content=True)).read()
+        assert file_data == b"Hello Async World!"  # data is fixed by mock transport
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

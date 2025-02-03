@@ -6,7 +6,6 @@ extends:
       ServiceDirectory: eventhub
       TestTimeoutInMinutes: 240
       BuildTargetingString: azure-eventhub*
-      SupportedClouds: 'Public,UsGov,China'
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
       EnvVars:
@@ -14,4 +13,3 @@ extends:
         AZURE_SUBSCRIPTION_ID: $(EVENTHUB_SUBSCRIPTION_ID)
       MatrixReplace:
         - TestSamples=.*/true
-      Clouds: 'Public'

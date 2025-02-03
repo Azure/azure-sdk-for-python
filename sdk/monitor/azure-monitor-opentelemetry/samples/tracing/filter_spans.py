@@ -14,7 +14,7 @@ from opentelemetry.trace import get_tracer, SpanContext, SpanKind, TraceFlags
 class SpanFilteringProcessor(SpanProcessor):
 
     # Prevents exporting spans that are of kind INTERNAL
-    def on_start(self, span, parent_context):
+    def on_start(self, span, parent_context):  # type: ignore
         # Check if the span is an internal activity.
         if span._kind is SpanKind.INTERNAL:
             # Create a new span context with the following properties:

@@ -193,7 +193,13 @@ class TestAsyncStorageClient(AsyncStorageRecordedTestCase):
         file_name = self._get_file_reference()
 
         source_client = share.get_file_client(file_name)
-        await source_client.upload_file(self.short_byte_data)
+        await source_client.upload_file(
+            self.short_byte_data,
+            file_attributes='none',
+            file_creation_time='now',
+            file_last_write_time='now',
+            file_permission='inherit'
+        )
         source_prop = await source_client.get_file_properties()
 
         file_client = ShareFileClient(

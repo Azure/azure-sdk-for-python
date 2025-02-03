@@ -219,6 +219,11 @@ class HttpHeaders:
     # Change feed
     AIM = "A-IM"
     IncrementalFeedHeaderValue = "Incremental feed"
+    FullFidelityFeedHeaderValue = "Full-Fidelity Feed"
+    ChangeFeedWireFormatVersion = "x-ms-cosmos-changefeed-wire-format-version"
+
+    # Change feed wire format version
+    SeparateMetaWithCrts = "2021-09-15"
 
     # For Using Multiple Write Locations
     AllowTentativeWrites = "x-ms-cosmos-allow-tentative-writes"
@@ -246,6 +251,10 @@ class HttpHeaders:
     CosmosLsn = "x-ms-cosmos-llsn"  # cspell:disable-line
     CosmosQuorumAckedLsn = "x-ms-cosmos-quorum-acked-llsn"  # cspell:disable-line
     RequestDurationMs = "x-ms-request-duration-ms"
+
+    # Thin Client headers
+    ThinClientProxyOperationType = "x-ms-thinclient-proxy-operation-type"
+    ThinClientProxyResourceType = "x-ms-thinclient-proxy-resource-type"
 
 class HttpHeaderPreferenceTokens:
     """Constants of http header preference tokens.

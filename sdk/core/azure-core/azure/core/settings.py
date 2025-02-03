@@ -43,9 +43,12 @@ from typing import (
     Generic,
     Mapping,
     List,
+    TYPE_CHECKING,
 )
-from azure.core.tracing import AbstractSpan
 from ._azure_clouds import AzureClouds
+
+if TYPE_CHECKING:
+    from azure.core.tracing import AbstractSpan
 
 ValidInputType = TypeVar("ValidInputType")
 ValueType = TypeVar("ValueType")
@@ -299,7 +302,7 @@ class PrioritizedSetting(Generic[ValidInputType, ValueType]):
         :type value: str or int or float or None
         :returns: the value of the setting
         :rtype: str or int or float
-        :raises: RuntimeError if no value can be determined
+        :raises RuntimeError: if no value can be determined
         """
 
         # 4. immediate values

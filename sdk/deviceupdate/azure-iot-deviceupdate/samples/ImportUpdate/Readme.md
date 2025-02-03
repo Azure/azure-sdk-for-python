@@ -5,7 +5,7 @@ In this sample we will import update to Device Update for IoT Hub using Python S
 ## Prerequisites
 
 * Python 3.6 or later is required to use this package
-* You need an [Azure subscription][https://azure.microsoft.com/free/], and a [Device Update for IoT Hub][https://docs.microsoft.com/azure/iot-hub-device-update/understand-device-update] 
+* You need an [Azure subscription][https://azure.microsoft.com/free/], and a [Device Update for IoT Hub][https://learn.microsoft.com/azure/iot-hub-device-update/understand-device-update] 
 account and instance to use this package.
 
 Set the following environment variables:
@@ -30,7 +30,7 @@ The sample will import update to Device Update for IoT Hub.
 
 Let's assume you have device update (provided by device builder) and you want to import it into your Device Update for IoT Hub instance. 
 For device update to be importable you need not only the actual payload file but also the corresponding import manifest document. 
-See [Import-Concepts](https://docs.microsoft.com/azure/iot-hub-device-update/import-concepts) for details about import manifest.
+See [Import-Concepts](https://learn.microsoft.com/azure/iot-hub-device-update/import-concepts) for details about import manifest.
 
 ``` python
 endpoint = os.environ["DEVICEUPDATE_ENDPOINT"]

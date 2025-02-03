@@ -37,28 +37,28 @@ class Deployment(Resource, RestTranslatableMixin):
 
     :param name: Name of the deployment resource, defaults to None
     :type name: typing.Optional[str]
-    :keyword endpoint_name: Name of the Endpoint resource, defaults to None
-    :paramtype endpoint_name: typing.Optional[str]
-    :keyword description: Description of the deployment resource, defaults to None
-    :paramtype description: typing.Optional[str]
-    :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
-    :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
-    :keyword properties: The asset property dictionary, defaults to None
-    :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
-    :keyword model: The Model entity, defaults to None
-    :paramtype model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
-    :keyword code_configuration: Code Configuration, defaults to None
-    :paramtype code_configuration: typing.Optional[CodeConfiguration]
-    :keyword environment: The Environment entity, defaults to None
-    :paramtype environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
-    :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
-    :paramtype environment_variables: typing.Optional[typing.Dict[str, str]]
-    :keyword code_path: Folder path to local code assets. Equivalent to code_configuration.code.path
+    :param endpoint_name: Name of the Endpoint resource, defaults to None
+    :type endpoint_name: typing.Optional[str]
+    :param description: Description of the deployment resource, defaults to None
+    :type description: typing.Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+    :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+    :param properties: The asset property dictionary, defaults to None
+    :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+    :param model: The Model entity, defaults to None
+    :type model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
+    :param code_configuration: Code Configuration, defaults to None
+    :type code_configuration: typing.Optional[CodeConfiguration]
+    :param environment: The Environment entity, defaults to None
+    :type environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
+    :param environment_variables: Environment variables that will be set in deployment, defaults to None
+    :type environment_variables: typing.Optional[typing.Dict[str, str]]
+    :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.path
         , defaults to None
-    :paramtype code_path: typing.Optional[typing.Union[str, PathLike]]
-    :keyword scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script
+    :type code_path: typing.Optional[typing.Union[str, PathLike]]
+    :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script
         , defaults to None
-    :paramtype scoring_script: typing.Optional[typing.Union[str, PathLike]]
+    :type scoring_script: typing.Optional[typing.Union[str, PathLike]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Deployment cannot be successfully validated.
         Exception details will be provided in the error message.
     """
@@ -79,37 +79,6 @@ class Deployment(Resource, RestTranslatableMixin):
         scoring_script: Optional[Union[str, PathLike]] = None,
         **kwargs: Any,
     ):
-        """Endpoint Deployment base class.
-
-        Constructor of Endpoint Deployment base class.
-
-        :param name: Name of the deployment resource, defaults to None
-        :type name: typing.Optional[str]
-        :keyword endpoint_name: Name of the Endpoint resource, defaults to None
-        :paramtype endpoint_name: typing.Optional[str]
-        :keyword description: Description of the deployment resource, defaults to None
-        :paramtype description: typing.Optional[str]
-        :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
-        :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
-        :keyword properties: The asset property dictionary, defaults to None
-        :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
-        :keyword model: The Model entity, defaults to None
-        :paramtype model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
-        :keyword code_configuration: Code Configuration, defaults to None
-        :paramtype code_configuration: typing.Optional[CodeConfiguration]
-        :keyword environment: The Environment entity, defaults to None
-        :paramtype environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
-        :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
-        :paramtype environment_variables: typing.Optional[typing.Dict[str, str]]
-        :keyword code_path: Folder path to local code assets. Equivalent to code_configuration.code.path
-            , defaults to None
-        :paramtype code_path: typing.Optional[typing.Union[str, PathLike]]
-        :keyword scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script
-            , defaults to None
-        :paramtype scoring_script: typing.Optional[typing.Union[str, PathLike]]
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Deployment cannot be successfully validated.
-            Exception details will be provided in the error message.
-        """
         # MFE is case-insensitive for Name. So convert the name into lower case here.
         name = name.lower() if name else None
         self.endpoint_name = endpoint_name

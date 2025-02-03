@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from .. import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -574,7 +573,7 @@ class Cluster(_serialization.Model):
         self.cluster_size = cluster_size
 
 
-class Configuration(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class Configuration(ProxyResource):
     """Represents a Configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -670,7 +669,7 @@ class Configuration(ProxyResource):  # pylint: disable=too-many-instance-attribu
         self.documentation_link = None
 
 
-class ConfigurationForUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ConfigurationForUpdate(_serialization.Model):
     """Represents a Configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -985,7 +984,7 @@ class DbLevelValidationStatus(_serialization.Model):
         self.summary = summary
 
 
-class DbMigrationStatus(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class DbMigrationStatus(_serialization.Model):
     """Migration status of an individual database.
 
     :ivar database_name: Name of the database.
@@ -1432,7 +1431,7 @@ class FirewallRuleListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class FlexibleServerCapability(CapabilityBase):  # pylint: disable=too-many-instance-attributes
+class FlexibleServerCapability(CapabilityBase):
     """Capability for the PostgreSQL server.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1793,7 +1792,7 @@ class IndexRecommendationListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class IndexRecommendationResource(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class IndexRecommendationResource(ProxyResource):
     """Index recommendation properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2261,7 +2260,7 @@ class LtrPreBackupResponse(_serialization.Model):
         self.number_of_containers = number_of_containers
 
 
-class LtrServerBackupOperation(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class LtrServerBackupOperation(ProxyResource):
     """Response for the LTR backup Operation API call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2558,7 +2557,7 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class MigrationResource(TrackedResource):
     """Represents a migration resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2863,7 +2862,7 @@ class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-a
         self.dbs_to_cancel_migration_on = dbs_to_cancel_migration_on
 
 
-class MigrationResourceForPatch(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class MigrationResourceForPatch(_serialization.Model):
     """Represents a migration resource for patch.
 
     :ivar tags: Application-specific metadata in the form of key-value pairs.
@@ -3892,7 +3891,7 @@ class RestartParameter(_serialization.Model):
         self.failover_mode = failover_mode
 
 
-class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Server(TrackedResource):
     """Represents a server.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4227,7 +4226,7 @@ class ServerBackupListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ServerForUpdate(_serialization.Model):
     """Represents a server to be updated.
 
     :ivar sku: The SKU (pricing tier) of the server.
@@ -4269,6 +4268,8 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
     :ivar network: Network properties of a server. These are required to be passed only in case if
      server is a private access server.
     :vartype network: ~azure.mgmt.postgresqlflexibleservers.models.Network
+    :ivar cluster: Cluster properties of a server.
+    :vartype cluster: ~azure.mgmt.postgresqlflexibleservers.models.Cluster
     """
 
     _attribute_map = {
@@ -4288,6 +4289,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         "replication_role": {"key": "properties.replicationRole", "type": "str"},
         "replica": {"key": "properties.replica", "type": "Replica"},
         "network": {"key": "properties.network", "type": "Network"},
+        "cluster": {"key": "properties.cluster", "type": "Cluster"},
     }
 
     def __init__(
@@ -4309,6 +4311,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         replication_role: Optional[Union[str, "_models.ReplicationRole"]] = None,
         replica: Optional["_models.Replica"] = None,
         network: Optional["_models.Network"] = None,
+        cluster: Optional["_models.Cluster"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4352,6 +4355,8 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         :keyword network: Network properties of a server. These are required to be passed only in case
          if server is a private access server.
         :paramtype network: ~azure.mgmt.postgresqlflexibleservers.models.Network
+        :keyword cluster: Cluster properties of a server.
+        :paramtype cluster: ~azure.mgmt.postgresqlflexibleservers.models.Cluster
         """
         super().__init__(**kwargs)
         self.sku = sku
@@ -4370,6 +4375,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         self.replication_role = replication_role
         self.replica = replica
         self.network = network
+        self.cluster = cluster
 
 
 class ServerListResult(_serialization.Model):

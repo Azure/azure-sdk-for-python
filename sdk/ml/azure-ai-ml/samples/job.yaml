@@ -1,0 +1,20 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+code: ../src
+command: >-
+  python main.py train_check --config ${{inputs.data}}/model.yaml --train ${{inputs.data}}/train.csv --sanity-check ${{inputs.data}}/sanity_check.csv --min-accuracy 0.99 --min-precision 0.95 --min-recall 0.95 --model-dir ${{outputs.model}}
+inputs:
+  data:
+    path: .
+    mode: download
+outputs:
+  model:
+    type: uri_folder
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04
+  conda_file: ../src/environment.yml
+environment_variables:
+  AZUREML_COMMON_RUNTIME_USE_SBOM_CAPABILITY: "true"
+compute: azureml:gpu-t4-spot-vpn
+display_name: Compete
+experiment_name: sensei-compete
+description: Sensei Compete Model

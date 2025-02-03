@@ -8,7 +8,7 @@ DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to get an authenticated
     ChatCompletionsClient from the azure.ai.inference package. The client
     is already instrumented to upload traces to Azure Monitor. View the results
-    in the "Tracing" tab in your Azure AI Studio project page.
+    in the "Tracing" tab in your Azure AI Foundry project page.
 
 USAGE:
     python sample_chat_completions_with_azure_ai_inference_client_and_azure_monitor_tracing.py
@@ -18,8 +18,8 @@ USAGE:
     pip install azure-ai-projects azure-ai-inference azure-identity azure-monitor-opentelemetry
 
     Set these environment variables with your own values:
-    * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
-    * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Studio Project.
+    * PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
+    * MODEL_DEPLOYMENT_NAME - The model deployment name, as found in your AI Foundry project.
     * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
       messages, which may contain personal data. False by default.
 """
@@ -41,7 +41,7 @@ with AIProjectClient.from_connection_string(
     application_insights_connection_string = project_client.telemetry.get_connection_string()
     if not application_insights_connection_string:
         print("Application Insights was not enabled for this project.")
-        print("Enable it via the 'Tracing' tab in your AI Studio project page.")
+        print("Enable it via the 'Tracing' tab in your AI Foundry project page.")
         exit()
 
     # Enable additional instrumentations for openai and langchain

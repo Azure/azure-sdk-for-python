@@ -24,7 +24,7 @@ class AuthoringClient(AuthoringClientOperationsMixin):  # pylint: disable=client
     best-in-class Microsoft machine learning algorithms. The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
     detection and question answering. Further documentation can be found in
-    https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview.
+    https://learn.microsoft.com/azure/cognitive-services/text-analytics/overview.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com). Required.

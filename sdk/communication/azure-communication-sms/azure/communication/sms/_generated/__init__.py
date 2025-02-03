@@ -7,10 +7,12 @@
 # --------------------------------------------------------------------------
 
 from ._azure_communication_sms_service import AzureCommunicationSMSService
-__all__ = ['AzureCommunicationSMSService']
+
+__all__ = ["AzureCommunicationSMSService"]
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

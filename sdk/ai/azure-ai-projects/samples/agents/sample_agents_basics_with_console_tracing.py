@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_basics_with_console_tracing.py
-
 DESCRIPTION:
     This sample demonstrates how to use basic agent operations from
     the Azure Agents service using a synchronous client with tracing to console.
@@ -24,19 +22,18 @@ USAGE:
     pip install opentelemetry-exporter-otlp-proto-grpc
 
     Set these environment variables with your own values:
-    * PROJECT_CONNECTION_STRING - The Azure AI Project connection string, as found in your AI Studio Project.
-    * AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
-      messages, which may contain personal data. False by default.
+    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
+       Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+       the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED - Optional. Set to `true` to trace the content of chat
+       messages, which may contain personal data. False by default.
 """
 
 import os, sys, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from opentelemetry import trace
-
-# Create an AI Project Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
@@ -54,7 +51,7 @@ tracer = trace.get_tracer(__name__)
 with tracer.start_as_current_span(scenario):
     with project_client:
         agent = project_client.agents.create_agent(
-            model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+            model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-assistant", instructions="You are helpful assistant"
         )
         print(f"Created agent, agent ID: {agent.id}")
 
@@ -68,9 +65,9 @@ with tracer.start_as_current_span(scenario):
 
         run = project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
 
-        # poll the run as long as run status is queued or in progress
+        # Poll the run as long as run status is queued or in progress
         while run.status in ["queued", "in_progress", "requires_action"]:
-            # wait for a second
+            # Wait for a second
             time.sleep(1)
             run = project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
 

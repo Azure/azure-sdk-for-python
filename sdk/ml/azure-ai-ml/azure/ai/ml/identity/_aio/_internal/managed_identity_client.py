@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline import AsyncPipeline
 
 
-# pylint:disable=async-client-bad-name,missing-client-constructor-parameter-credential
+# pylint:disable=async-client-bad-name
 class AsyncManagedIdentityClient(AsyncContextManager, ManagedIdentityClientBase):
     async def __aenter__(self) -> "AsyncManagedIdentityClient":
         await self._pipeline.__aenter__()

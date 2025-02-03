@@ -1,10 +1,10 @@
 ﻿# coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import unittest
 import pytest
 
@@ -21,6 +21,7 @@ COMMUNICATION_SERVICE_DATA_LOCATION = "UnitedStates"
 DISABLE_MGMT_TESTS = True
 DISABLE_REASON = "Temporary issue causing the tests to fail"
 
+
 class MgmtCommunicationTest(AzureMgmtTestCase):
 
     def setUp(self):
@@ -36,13 +37,10 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
         resource_name = self.get_resource_name("test-resource-list-by-subscription")
 
         resource = CommunicationServiceResource(
-            location=COMMUNICATION_SERVICE_LOCATION,
-            data_location = COMMUNICATION_SERVICE_DATA_LOCATION
+            location=COMMUNICATION_SERVICE_LOCATION, data_location=COMMUNICATION_SERVICE_DATA_LOCATION
         )
         resource = self.communication_client.communication_service.begin_create_or_update(
-            GROUP_NAME,
-            resource_name,
-            resource
+            GROUP_NAME, resource_name, resource
         ).result()
 
         self.assertEqual(resource.name, resource_name)
@@ -70,13 +68,10 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
         resource_name = self.get_resource_name("test-resource-list-by-rg")
 
         resource = CommunicationServiceResource(
-            location=COMMUNICATION_SERVICE_LOCATION,
-            data_location = COMMUNICATION_SERVICE_DATA_LOCATION
+            location=COMMUNICATION_SERVICE_LOCATION, data_location=COMMUNICATION_SERVICE_DATA_LOCATION
         )
         resource = self.communication_client.communication_service.begin_create_or_update(
-            GROUP_NAME,
-            resource_name,
-            resource
+            GROUP_NAME, resource_name, resource
         ).result()
 
         self.assertEqual(resource.name, resource_name)
@@ -97,6 +92,7 @@ class MgmtCommunicationTest(AzureMgmtTestCase):
                 resource_found = True
         self.assertTrue(resource_found)
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

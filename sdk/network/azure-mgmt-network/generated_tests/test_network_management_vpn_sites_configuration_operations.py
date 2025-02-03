@@ -20,12 +20,12 @@ class TestNetworkManagementVpnSitesConfigurationOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_download(self, resource_group):
+    def test_vpn_sites_configuration_begin_download(self, resource_group):
         response = self.client.vpn_sites_configuration.begin_download(
             resource_group_name=resource_group.name,
             virtual_wan_name="str",
             request={"outputBlobSasUrl": "str", "vpnSites": ["str"]},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

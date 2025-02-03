@@ -745,7 +745,7 @@
         ],
         "responses": {
           "200": {
-            "description": "The response includes a paginated array of Machine Learning computes and a URI to the next set of results, if any. For the more information the limits of the number of items in a resource group, see https://azure.microsoft.com/en-us/documentation/articles/azure-subscription-service-limits/.",
+            "description": "The response includes a paginated array of Machine Learning computes and a URI to the next set of results, if any. For the more information the limits of the number of items in a resource group, see https://azure.microsoft.com/documentation/articles/azure-subscription-service-limits/.",
             "schema": {
               "$ref": "#/definitions/PaginatedComputeResourcesList"
             }
@@ -5825,7 +5825,7 @@
           "x-nullable": true
         },
         "timeZone": {
-          "description": "Specifies time zone in which the schedule runs.\r\nTimeZone should follow Windows time zone format. Refer: https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11",
+          "description": "Specifies time zone in which the schedule runs.\r\nTimeZone should follow Windows time zone format. Refer: https://learn.microsoft.com/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11",
           "default": "UTC",
           "type": "string"
         },
@@ -5845,7 +5845,7 @@
           "x-nullable": true
         },
         "timeZone": {
-          "description": "Specifies time zone in which the schedule runs.\r\nTimeZone should follow Windows time zone format. Refer: https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11",
+          "description": "Specifies time zone in which the schedule runs.\r\nTimeZone should follow Windows time zone format. Refer: https://learn.microsoft.com/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11",
           "type": "string",
           "default": "UTC"
         },

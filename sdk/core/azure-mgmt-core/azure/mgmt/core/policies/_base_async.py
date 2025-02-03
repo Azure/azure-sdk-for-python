@@ -52,7 +52,7 @@ class AsyncARMAutoResourceProviderRegistrationPolicy(
 ):  # pylint: disable=name-too-long
     """Auto register an ARM resource provider if not done yet."""
 
-    async def send(  # pylint: disable=invalid-overridden-method
+    async def send(
         self, request: PipelineRequest[HTTPRequestType]
     ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
         http_request = request.http_request

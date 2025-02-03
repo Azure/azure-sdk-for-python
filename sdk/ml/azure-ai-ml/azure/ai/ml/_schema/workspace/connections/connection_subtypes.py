@@ -23,7 +23,6 @@ from azure.ai.ml.entities import AadCredentialConfiguration
 from .workspace_connection import WorkspaceConnectionSchema
 
 
-# pylint: disable-next=name-too-long
 class AzureBlobStoreConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
@@ -51,7 +50,6 @@ class AzureBlobStoreConnectionSchema(WorkspaceConnectionSchema):
         return AzureBlobStoreConnection(**data)
 
 
-# pylint: disable-next=name-too-long
 class MicrosoftOneLakeConnectionSchema(WorkspaceConnectionSchema):
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.AZURE_ONE_LAKE, casing_transform=camel_to_snake, required=True
@@ -92,7 +90,6 @@ class MicrosoftOneLakeConnectionSchema(WorkspaceConnectionSchema):
         return MicrosoftOneLakeConnection(**data)
 
 
-# pylint: disable-next=name-too-long
 class AzureOpenAIConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
@@ -111,7 +108,6 @@ class AzureOpenAIConnectionSchema(WorkspaceConnectionSchema):
         return AzureOpenAIConnection(**data)
 
 
-# pylint: disable-next=name-too-long
 class AzureAIServicesConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
@@ -128,7 +124,6 @@ class AzureAIServicesConnectionSchema(WorkspaceConnectionSchema):
         return AzureAIServicesConnection(**data)
 
 
-# pylint: disable-next=name-too-long
 class AzureAISearchConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
@@ -144,7 +139,6 @@ class AzureAISearchConnectionSchema(WorkspaceConnectionSchema):
         return AzureAISearchConnection(**data)
 
 
-# pylint: disable-next=name-too-long
 class AzureContentSafetyConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
@@ -160,7 +154,6 @@ class AzureContentSafetyConnectionSchema(WorkspaceConnectionSchema):
         return AzureContentSafetyConnection(**data)
 
 
-# pylint: disable-next=name-too-long
 class AzureSpeechServicesConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
@@ -191,7 +184,6 @@ class APIKeyConnectionSchema(WorkspaceConnectionSchema):
         return APIKeyConnection(**data)
 
 
-# pylint: disable-next=name-too-long
 class OpenAIConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
@@ -206,7 +198,6 @@ class OpenAIConnectionSchema(WorkspaceConnectionSchema):
         return OpenAIConnection(**data)
 
 
-# pylint: disable-next=name-too-long
 class SerpConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(allowed_values=ConnectionCategory.SERP, casing_transform=camel_to_snake, required=True)
@@ -219,7 +210,6 @@ class SerpConnectionSchema(WorkspaceConnectionSchema):
         return SerpConnection(**data)
 
 
-# pylint: disable-next=name-too-long
 class ServerlessConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(

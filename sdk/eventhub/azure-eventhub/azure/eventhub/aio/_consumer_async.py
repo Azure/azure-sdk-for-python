@@ -18,7 +18,7 @@ from .._constants import EPOCH_SYMBOL, TIMEOUT_SYMBOL, RECEIVER_RUNTIME_METRIC_S
 
 if TYPE_CHECKING:
     try:
-        from uamqp import (  # pylint: disable=unused-import
+        from uamqp import (
             ReceiveClientAsync as uamqp_ReceiveClientAsync,
             Message as uamqp_Message,
         )
@@ -109,7 +109,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         if owner_level is not None:
             link_properties[EPOCH_SYMBOL] = int(owner_level)
         link_property_timeout_ms = (
-            self._client._config.receive_timeout or self._timeout  # pylint:disable=protected-access
+            self._client._config.receive_timeout or self._timeout
         ) * self._amqp_transport.TIMEOUT_FACTOR
         link_properties[TIMEOUT_SYMBOL] = int(link_property_timeout_ms)
         self._link_properties: Union[

@@ -1,2 +1,1 @@
 twine==5.1.1
-tools/azure-sdk-tools

@@ -104,7 +104,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     and language detection, and more.
 
     Further documentation can be found in
-    https://docs.microsoft.com/azure/cognitive-services/language-service/overview
+    https://learn.microsoft.com/azure/cognitive-services/language-service/overview
 
     :param str endpoint: Supported Cognitive Services or Language resource
         endpoints (protocol and hostname, for example: 'https://<resource-name>.cognitiveservices.azure.com').

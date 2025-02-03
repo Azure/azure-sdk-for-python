@@ -86,8 +86,7 @@ setup(
         "isodate",
         "azure-common>=1.1",
         "typing-extensions",
-        "opencensus-ext-azure",
-        "opencensus-ext-logging",
+        "azure-monitor-opentelemetry",
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner along with this package

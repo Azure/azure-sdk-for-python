@@ -416,10 +416,10 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
             assert queue.duplicate_detection_history_time_window == datetime.timedelta(minutes=12)
             assert queue.enable_batched_operations == True
             # enable_express is not supported for the premium sku, see doc
-            # https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-premium-messaging#express-entities
+            # https://learn.microsoft.com/azure/service-bus-messaging/service-bus-premium-messaging#express-entities
             # assert queue.enable_express == True
             # partitioning is not available for the the premium sku, see doc
-            # https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-partitioning
+            # https://learn.microsoft.com/azure/service-bus-messaging/service-bus-partitioning
             # assert queue.enable_partitioning == True
             assert queue.lock_duration == datetime.timedelta(seconds=13)
             assert queue.max_delivery_count == 14

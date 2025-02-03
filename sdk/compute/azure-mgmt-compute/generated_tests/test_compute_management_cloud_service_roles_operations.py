@@ -20,12 +20,12 @@ class TestComputeManagementCloudServiceRolesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_cloud_service_roles_get(self, resource_group):
         response = self.client.cloud_service_roles.get(
             role_name="str",
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         )
 
         # please add some check logic here by yourself
@@ -33,11 +33,11 @@ class TestComputeManagementCloudServiceRolesOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_cloud_service_roles_list(self, resource_group):
         response = self.client.cloud_service_roles.list(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

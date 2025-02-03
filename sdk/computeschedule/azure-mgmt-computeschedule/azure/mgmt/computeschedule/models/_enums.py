@@ -48,7 +48,7 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "Failed"
     """Operations that have failed"""
     CANCELLED = "Cancelled"
-    """Operations that have been cancelled by the user"""
+    """Operations that have been Cancelled by the user"""
     BLOCKED = "Blocked"
     """Operations that are blocked"""
 

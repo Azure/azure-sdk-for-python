@@ -1252,7 +1252,7 @@ class DockerProxy:
 
     def __getattribute__(self, name: str) -> Any:
         try:
-            import docker  # pylint: disable=import-error
+            import docker
 
             return getattr(docker, name)
         except ModuleNotFoundError as e:

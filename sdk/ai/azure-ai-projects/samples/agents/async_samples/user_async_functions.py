@@ -18,6 +18,15 @@ from user_functions import fetch_current_datetime, fetch_weather, send_email
 
 
 async def send_email_async(recipient: str, subject: str, body: str) -> str:
+    """
+    Sends an email with the specified subject and body to the recipient.
+
+    :param recipient (str): Email address of the recipient.
+    :param subject (str): Subject of the email.
+    :param body (str): Body content of the email.
+    :return: Confirmation message.
+    :rtype: str
+    """
     await asyncio.sleep(1)
     return send_email(recipient, subject, body)
 

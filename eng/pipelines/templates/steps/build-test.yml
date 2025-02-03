@@ -91,7 +91,7 @@ steps:
           --service="${{ parameters.ServiceDirectory }}"
           --toxenv="${{ parameters.ToxTestEnv }}"
           --injected-packages="${{ parameters.InjectedPackages }}"
-          ${{ parameters.ToxEnvParallel }};
+          --tenvparallel="${{ parameters.ToxEnvParallel }}";
           Write-Host "Last exit code: $LASTEXITCODE";
           exit $LASTEXITCODE;
 
@@ -111,7 +111,7 @@ steps:
           --service="${{ parameters.ServiceDirectory }}" `
           --toxenv="${{ parameters.ToxTestEnv }}" `
           --injected-packages="${{ parameters.InjectedPackages }}" `
-          ${{ parameters.ToxEnvParallel }}
+          --tenvparallel="${{ parameters.ToxEnvParallel }}";
         exit $LASTEXITCODE;
       env: ${{ parameters.EnvVars }}
       displayName: Run Tests

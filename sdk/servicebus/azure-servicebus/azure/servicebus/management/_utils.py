@@ -11,7 +11,6 @@ from . import _constants as constants
 from ._handle_response_error import _handle_response_error
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import, ungrouped-imports
     from ._models import (
         QueueProperties,
         TopicProperties,

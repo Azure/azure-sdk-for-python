@@ -126,7 +126,6 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         return self._parameters
 
     def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
         res: dict = CommandJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 

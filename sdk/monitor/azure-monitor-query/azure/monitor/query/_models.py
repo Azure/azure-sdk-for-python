@@ -18,7 +18,7 @@ from ._helpers import construct_iso8601, process_row
 if sys.version_info >= (3, 9):
     from collections.abc import Mapping
 else:
-    from typing import Mapping  # pylint: disable=ungrouped-imports
+    from typing import Mapping
 
 
 JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
@@ -272,7 +272,7 @@ class MetricsQueryResult:
 class MetricsList(list):
     """Custom list for metrics."""
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+    def __init__(self, **kwargs: Any) -> None:
         self._metrics = kwargs["metrics"]
         self._metric_names = {val.name: ind for ind, val in enumerate(self._metrics)}
 
@@ -326,7 +326,7 @@ class LogsBatchQuery:
         *,
         timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]],
         **kwargs: Any,
-    ) -> None:  # pylint: disable=super-init-not-called
+    ) -> None:
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)

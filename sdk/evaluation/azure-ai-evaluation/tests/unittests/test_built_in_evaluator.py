@@ -57,7 +57,7 @@ class TestBuiltInEvaluators:
 
     def test_similarity_evaluator_keys(self, mock_model_config):
         similarity_eval = SimilarityEvaluator(model_config=mock_model_config)
-        similarity_eval._async_evaluator._flow = MagicMock(return_value=quality_no_response_async_mock())
+        similarity_eval._flow = MagicMock(return_value=quality_no_response_async_mock())
 
         result = similarity_eval(
             query="What is the capital of Japan?",

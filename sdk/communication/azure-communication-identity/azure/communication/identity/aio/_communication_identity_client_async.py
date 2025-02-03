@@ -40,12 +40,7 @@ class CommunicationIdentityClient:
             :language: python
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AsyncTokenCredential, AzureKeyCredential],
-        **kwargs
-    ) -> None:
+    def __init__(self, endpoint: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs) -> None:
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
@@ -60,17 +55,13 @@ class CommunicationIdentityClient:
         self._identity_service_client = CommunicationIdentityClientGen(
             self._endpoint,
             api_version=self._api_version,
-            authentication_policy=get_authentication_policy(
-                endpoint, credential, decode_url=True, is_async=True
-            ),
+            authentication_policy=get_authentication_policy(endpoint, credential, decode_url=True, is_async=True),
             sdk_moniker=SDK_MONIKER,
             **kwargs
         )
 
     @classmethod
-    def from_connection_string(
-        cls, conn_str: str, **kwargs
-    ) -> "CommunicationIdentityClient":
+    def from_connection_string(cls, conn_str: str, **kwargs) -> "CommunicationIdentityClient":
         """Create CommunicationIdentityClient from a Connection String.
 
         :param str conn_str:
@@ -91,13 +82,9 @@ class CommunicationIdentityClient:
         :return: CommunicationUserIdentifier
         :rtype: ~azure.communication.identity.CommunicationUserIdentifier
         """
-        identity_access_token = (
-            await self._identity_service_client.communication_identity.create(**kwargs)
-        )
+        identity_access_token = await self._identity_service_client.communication_identity.create(**kwargs)
 
-        return CommunicationUserIdentifier(
-            identity_access_token.identity.id, raw_id=identity_access_token.identity.id
-        )
+        return CommunicationUserIdentifier(identity_access_token.identity.id, raw_id=identity_access_token.identity.id)
 
     @distributed_trace_async
     async def create_user_and_token(
@@ -145,16 +132,11 @@ class CommunicationIdentityClient:
         :return: None
         :rtype: None
         """
-        await self._identity_service_client.communication_identity.delete(
-            user.properties["id"], **kwargs
-        )
+        await self._identity_service_client.communication_identity.delete(user.properties["id"], **kwargs)
 
     @distributed_trace_async
     async def get_token(
-        self,
-        user: CommunicationUserIdentifier,
-        scopes: List[Union[str, "CommunicationTokenScope"]],
-        **kwargs
+        self, user: CommunicationUserIdentifier, scopes: List[Union[str, "CommunicationTokenScope"]], **kwargs
     ) -> AccessToken:
         """Generates a new token for an identity.
 

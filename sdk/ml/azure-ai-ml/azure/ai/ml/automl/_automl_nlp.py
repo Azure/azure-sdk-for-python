@@ -82,7 +82,7 @@ def text_classification_multilabel(
     A text classification multilabel job is used to train a model that can predict the classes/categories
     of a text data. Input training data should include a target column that classifies the text into class(es).
     For more information on format of multilabel data, refer to:
-    https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-nlp-models#multi-label
+    https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-nlp-models#multi-label
 
     :keyword training_data: The training data to be used within the experiment.
             It should contain both training features and a target column.
@@ -137,7 +137,7 @@ def text_ner(
     A text named entity recognition job is used to train a model that can predict the named entities in the text.
     Input training data should be a text file in CoNLL format. For more information on format of text NER data,
     refer to:
-    https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-nlp-models#named-entity-recognition-ner
+    https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-nlp-models#named-entity-recognition-ner
 
     :keyword training_data: The training data to be used within the experiment.
             It should contain both training features and a target column.

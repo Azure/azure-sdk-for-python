@@ -132,7 +132,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
 
         generated_response: JSON = {}
         try:
-            generated_response = self._query_op.execute(  # pylint: disable=protected-access
+            generated_response = self._query_op.execute(
                 workspace_id=workspace_id, body=body, prefer=prefer, **kwargs
             )
         except HttpResponseError as err:
@@ -250,7 +250,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
 
         generated_response: JSON = {}
         try:
-            generated_response = self._query_op.resource_execute(  # pylint: disable=protected-access
+            generated_response = self._query_op.resource_execute(
                 resource_id=resource_id, body=body, prefer=prefer, **kwargs
             )
         except HttpResponseError as err:
@@ -270,8 +270,8 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
         return self._client.close()
 
     def __enter__(self) -> "LogsQueryClient":
-        self._client.__enter__()  # pylint:disable=no-member
+        self._client.__enter__()
         return self
 
     def __exit__(self, *args: Any) -> None:
-        self._client.__exit__(*args)  # pylint:disable=no-member
+        self._client.__exit__(*args)

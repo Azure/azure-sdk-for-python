@@ -21,7 +21,7 @@ class TestContainerServicePrivateLinkResourcesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_private_link_resources_list(self, resource_group):
         response = await self.client.private_link_resources.list(
             resource_group_name=resource_group.name,
             resource_name="str",

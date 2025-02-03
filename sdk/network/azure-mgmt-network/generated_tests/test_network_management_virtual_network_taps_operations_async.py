@@ -21,12 +21,12 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_virtual_network_taps_begin_delete(self, resource_group):
         response = await (
             await self.client.virtual_network_taps.begin_delete(
                 resource_group_name=resource_group.name,
                 tap_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -35,11 +35,11 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_virtual_network_taps_get(self, resource_group):
         response = await self.client.virtual_network_taps.get(
             resource_group_name=resource_group.name,
             tap_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_virtual_network_taps_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.virtual_network_taps.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -127,6 +127,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                         }
                                     ],
                                     "ipConfigurations": [...],
+                                    "ipamPoolPrefixAllocations": [
+                                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                                    ],
                                     "name": "str",
                                     "natGateway": {"id": "str"},
                                     "networkSecurityGroup": {
@@ -220,6 +223,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                             {
                                                 "auxiliaryMode": "str",
                                                 "auxiliarySku": "str",
+                                                "defaultOutboundConnectivityEnabled": bool,
                                                 "disableTcpStateTracking": bool,
                                                 "dnsSettings": {
                                                     "appliedDnsServers": ["str"],
@@ -672,6 +676,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                 {
                                                     "auxiliaryMode": "str",
                                                     "auxiliarySku": "str",
+                                                    "defaultOutboundConnectivityEnabled": bool,
                                                     "disableTcpStateTracking": bool,
                                                     "dnsSettings": {
                                                         "appliedDnsServers": ["str"],
@@ -1262,6 +1267,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                     "subnet": ...,
                                 }
                             ],
+                            "ipamPoolPrefixAllocations": [
+                                {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                            ],
                             "name": "str",
                             "natGateway": {"id": "str"},
                             "networkSecurityGroup": {
@@ -1355,6 +1363,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                     {
                                         "auxiliaryMode": "str",
                                         "auxiliarySku": "str",
+                                        "defaultOutboundConnectivityEnabled": bool,
                                         "disableTcpStateTracking": bool,
                                         "dnsSettings": {
                                             "appliedDnsServers": ["str"],
@@ -1857,6 +1866,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                         {
                                             "auxiliaryMode": "str",
                                             "auxiliarySku": "str",
+                                            "defaultOutboundConnectivityEnabled": bool,
                                             "disableTcpStateTracking": bool,
                                             "dnsSettings": {
                                                 "appliedDnsServers": ["str"],
@@ -2527,6 +2537,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                         }
                                     ],
                                     "ipConfigurations": [...],
+                                    "ipamPoolPrefixAllocations": [
+                                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                                    ],
                                     "name": "str",
                                     "natGateway": {"id": "str"},
                                     "networkSecurityGroup": {
@@ -2620,6 +2633,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                             {
                                                 "auxiliaryMode": "str",
                                                 "auxiliarySku": "str",
+                                                "defaultOutboundConnectivityEnabled": bool,
                                                 "disableTcpStateTracking": bool,
                                                 "dnsSettings": {
                                                     "appliedDnsServers": ["str"],
@@ -2977,6 +2991,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                                 {
                                                     "auxiliaryMode": "str",
                                                     "auxiliarySku": "str",
+                                                    "defaultOutboundConnectivityEnabled": bool,
                                                     "disableTcpStateTracking": bool,
                                                     "dnsSettings": {
                                                         "appliedDnsServers": ["str"],
@@ -3471,6 +3486,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                     "subnet": ...,
                                 }
                             ],
+                            "ipamPoolPrefixAllocations": [
+                                {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                            ],
                             "name": "str",
                             "natGateway": {"id": "str"},
                             "networkSecurityGroup": {
@@ -3564,6 +3582,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                     {
                                         "auxiliaryMode": "str",
                                         "auxiliarySku": "str",
+                                        "defaultOutboundConnectivityEnabled": bool,
                                         "disableTcpStateTracking": bool,
                                         "dnsSettings": {
                                             "appliedDnsServers": ["str"],
@@ -3977,6 +3996,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                                         {
                                             "auxiliaryMode": "str",
                                             "auxiliarySku": "str",
+                                            "defaultOutboundConnectivityEnabled": bool,
                                             "disableTcpStateTracking": bool,
                                             "dnsSettings": {
                                                 "appliedDnsServers": ["str"],
@@ -4423,7 +4443,7 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -4432,12 +4452,12 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update_tags(self, resource_group):
+    async def test_virtual_network_taps_update_tags(self, resource_group):
         response = await self.client.virtual_network_taps.update_tags(
             resource_group_name=resource_group.name,
             tap_name="str",
             tap_parameters={"tags": {"str": "str"}},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -4445,9 +4465,9 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_all(self, resource_group):
+    async def test_virtual_network_taps_list_all(self, resource_group):
         response = self.client.virtual_network_taps.list_all(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -4455,10 +4475,10 @@ class TestNetworkManagementVirtualNetworkTapsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_virtual_network_taps_list_by_resource_group(self, resource_group):
         response = self.client.virtual_network_taps.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

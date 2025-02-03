@@ -20,7 +20,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_dscp_configuration_begin_create_or_update(self, resource_group):
         response = self.client.dscp_configuration.begin_create_or_update(
             resource_group_name=resource_group.name,
             dscp_configuration_name="str",
@@ -29,6 +29,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                     {
                         "auxiliaryMode": "str",
                         "auxiliarySku": "str",
+                        "defaultOutboundConnectivityEnabled": bool,
                         "disableTcpStateTracking": bool,
                         "dnsSettings": {
                             "appliedDnsServers": ["str"],
@@ -200,6 +201,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                 }
                                             ],
                                             "ipConfigurations": [...],
+                                            "ipamPoolPrefixAllocations": [
+                                                {
+                                                    "allocatedAddressPrefixes": ["str"],
+                                                    "id": "str",
+                                                    "numberOfIpAddresses": "str",
+                                                }
+                                            ],
                                             "name": "str",
                                             "natGateway": {"id": "str"},
                                             "networkSecurityGroup": {
@@ -638,6 +646,9 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                             "subnet": ...,
                                         }
                                     ],
+                                    "ipamPoolPrefixAllocations": [
+                                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                                    ],
                                     "name": "str",
                                     "natGateway": {"id": "str"},
                                     "networkSecurityGroup": {
@@ -1024,6 +1035,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                             }
                                                         ],
                                                         "ipConfigurations": [...],
+                                                        "ipamPoolPrefixAllocations": [
+                                                            {
+                                                                "allocatedAddressPrefixes": ["str"],
+                                                                "id": "str",
+                                                                "numberOfIpAddresses": "str",
+                                                            }
+                                                        ],
                                                         "name": "str",
                                                         "natGateway": {"id": "str"},
                                                         "networkSecurityGroup": {
@@ -1466,6 +1484,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                             "zones": ["str"],
                                                         },
                                                         "subnet": ...,
+                                                    }
+                                                ],
+                                                "ipamPoolPrefixAllocations": [
+                                                    {
+                                                        "allocatedAddressPrefixes": ["str"],
+                                                        "id": "str",
+                                                        "numberOfIpAddresses": "str",
                                                     }
                                                 ],
                                                 "name": "str",
@@ -2039,6 +2064,9 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                             "subnet": ...,
                                         }
                                     ],
+                                    "ipamPoolPrefixAllocations": [
+                                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                                    ],
                                     "name": "str",
                                     "natGateway": {"id": "str"},
                                     "networkSecurityGroup": ...,
@@ -2376,6 +2404,9 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                         },
                                         "subnet": ...,
                                     }
+                                ],
+                                "ipamPoolPrefixAllocations": [
+                                    {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
                                 ],
                                 "name": "str",
                                 "natGateway": {"id": "str"},
@@ -2731,6 +2762,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                     "zones": ["str"],
                                                 },
                                                 "subnet": ...,
+                                            }
+                                        ],
+                                        "ipamPoolPrefixAllocations": [
+                                            {
+                                                "allocatedAddressPrefixes": ["str"],
+                                                "id": "str",
+                                                "numberOfIpAddresses": "str",
                                             }
                                         ],
                                         "name": "str",
@@ -3117,6 +3155,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                     }
                                                 ],
                                                 "ipConfigurations": [...],
+                                                "ipamPoolPrefixAllocations": [
+                                                    {
+                                                        "allocatedAddressPrefixes": ["str"],
+                                                        "id": "str",
+                                                        "numberOfIpAddresses": "str",
+                                                    }
+                                                ],
                                                 "name": "str",
                                                 "natGateway": {"id": "str"},
                                                 "networkSecurityGroup": {
@@ -3554,6 +3599,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                     "zones": ["str"],
                                                 },
                                                 "subnet": ...,
+                                            }
+                                        ],
+                                        "ipamPoolPrefixAllocations": [
+                                            {
+                                                "allocatedAddressPrefixes": ["str"],
+                                                "id": "str",
+                                                "numberOfIpAddresses": "str",
                                             }
                                         ],
                                         "name": "str",
@@ -4040,6 +4092,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                     "subnet": ...,
                                                 }
                                             ],
+                                            "ipamPoolPrefixAllocations": [
+                                                {
+                                                    "allocatedAddressPrefixes": ["str"],
+                                                    "id": "str",
+                                                    "numberOfIpAddresses": "str",
+                                                }
+                                            ],
                                             "name": "str",
                                             "natGateway": {"id": "str"},
                                             "networkSecurityGroup": {
@@ -4381,6 +4440,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                         }
                                                     ],
                                                     "ipConfigurations": [...],
+                                                    "ipamPoolPrefixAllocations": [
+                                                        {
+                                                            "allocatedAddressPrefixes": ["str"],
+                                                            "id": "str",
+                                                            "numberOfIpAddresses": "str",
+                                                        }
+                                                    ],
                                                     "name": "str",
                                                     "natGateway": {"id": "str"},
                                                     "networkSecurityGroup": {
@@ -4820,6 +4886,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                         "zones": ["str"],
                                                     },
                                                     "subnet": ...,
+                                                }
+                                            ],
+                                            "ipamPoolPrefixAllocations": [
+                                                {
+                                                    "allocatedAddressPrefixes": ["str"],
+                                                    "id": "str",
+                                                    "numberOfIpAddresses": "str",
                                                 }
                                             ],
                                             "name": "str",
@@ -5293,6 +5366,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                         }
                                                     ],
                                                     "ipConfigurations": [...],
+                                                    "ipamPoolPrefixAllocations": [
+                                                        {
+                                                            "allocatedAddressPrefixes": ["str"],
+                                                            "id": "str",
+                                                            "numberOfIpAddresses": "str",
+                                                        }
+                                                    ],
                                                     "name": "str",
                                                     "natGateway": {"id": "str"},
                                                     "networkSecurityGroup": {
@@ -5733,6 +5813,13 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                                                     "subnet": ...,
                                                 }
                                             ],
+                                            "ipamPoolPrefixAllocations": [
+                                                {
+                                                    "allocatedAddressPrefixes": ["str"],
+                                                    "id": "str",
+                                                    "numberOfIpAddresses": "str",
+                                                }
+                                            ],
                                             "name": "str",
                                             "natGateway": {"id": "str"},
                                             "networkSecurityGroup": {
@@ -6087,7 +6174,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -6095,11 +6182,11 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_dscp_configuration_begin_delete(self, resource_group):
         response = self.client.dscp_configuration.begin_delete(
             resource_group_name=resource_group.name,
             dscp_configuration_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -6107,11 +6194,11 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_dscp_configuration_get(self, resource_group):
         response = self.client.dscp_configuration.get(
             resource_group_name=resource_group.name,
             dscp_configuration_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -6119,10 +6206,10 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_dscp_configuration_list(self, resource_group):
         response = self.client.dscp_configuration.list(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -6130,9 +6217,9 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_all(self, resource_group):
+    def test_dscp_configuration_list_all(self, resource_group):
         response = self.client.dscp_configuration.list_all(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

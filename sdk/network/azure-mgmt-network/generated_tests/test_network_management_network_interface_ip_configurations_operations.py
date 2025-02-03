@@ -20,11 +20,11 @@ class TestNetworkManagementNetworkInterfaceIPConfigurationsOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_network_interface_ip_configurations_list(self, resource_group):
         response = self.client.network_interface_ip_configurations.list(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestNetworkManagementNetworkInterfaceIPConfigurationsOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_network_interface_ip_configurations_get(self, resource_group):
         response = self.client.network_interface_ip_configurations.get(
             resource_group_name=resource_group.name,
             network_interface_name="str",
             ip_configuration_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself

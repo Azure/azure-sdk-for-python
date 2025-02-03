@@ -6,17 +6,23 @@
 # pylint: disable=invalid-overridden-method
 
 import asyncio
-import random
 import logging
-from typing import Any, TYPE_CHECKING
+import random
+from typing import Any, Dict, TYPE_CHECKING
 
-from azure.core.pipeline.policies import AsyncHTTPPolicy
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import AzureError, StreamClosedError, StreamConsumedError
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AsyncHTTPPolicy
 
-from .policies import is_retry, StorageRetryPolicy
+from .authentication import AzureSigningError, StorageHttpChallenge
+from .constants import DEFAULT_OAUTH_SCOPE
+from .policies import encode_base64, is_retry, StorageContentValidation, StorageRetryPolicy
 
 if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
+    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
+        PipelineRequest,
+        PipelineResponse
+    )
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -36,28 +42,49 @@ async def retry_hook(settings, **kwargs):
                 **kwargs)
 
 
+async def is_checksum_retry(response):
+    # retry if invalid content md5
+    if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
+        try:
+            await response.http_response.read()  # Load the body in memory and close the socket
+        except (StreamClosedError, StreamConsumedError):
+            pass
+        computed_md5 = response.http_request.headers.get('content-md5', None) or \
+                       encode_base64(StorageContentValidation.get_content_md5(response.http_response.content))
+        if response.http_response.headers['content-md5'] != computed_md5:
+            return True
+    return False
+
+
 class AsyncStorageResponseHook(AsyncHTTPPolicy):
 
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, **kwargs):
         self._response_callback = kwargs.get('raw_response_hook')
         super(AsyncStorageResponseHook, self).__init__()
 
-    async def send(self, request):
-        # type: (PipelineRequest) -> PipelineResponse
-        data_stream_total = request.context.get('data_stream_total') or \
-            request.context.options.pop('data_stream_total', None)
-        download_stream_current = request.context.get('download_stream_current') or \
-            request.context.options.pop('download_stream_current', None)
-        upload_stream_current = request.context.get('upload_stream_current') or \
-            request.context.options.pop('upload_stream_current', None)
+    async def send(self, request: "PipelineRequest") -> "PipelineResponse":
+        # Values could be 0
+        data_stream_total = request.context.get('data_stream_total')
+        if data_stream_total is None:
+            data_stream_total = request.context.options.pop('data_stream_total', None)
+        download_stream_current = request.context.get('download_stream_current')
+        if download_stream_current is None:
+            download_stream_current = request.context.options.pop('download_stream_current', None)
+        upload_stream_current = request.context.get('upload_stream_current')
+        if upload_stream_current is None:
+            upload_stream_current = request.context.options.pop('upload_stream_current', None)
+
         response_callback = request.context.get('response_callback') or \
             request.context.options.pop('raw_response_hook', self._response_callback)
 
         response = await self.next.send(request)
-        await response.http_response.load_body()
+        will_retry = is_retry(response, request.context.options.get('mode')) or await is_checksum_retry(response)
 
-        will_retry = is_retry(response, request.context.options.get('mode'))
-        if not will_retry and download_stream_current is not None:
+        # Auth error could come from Bearer challenge, in which case this request will be made again
+        is_auth_error = response.http_response.status_code == 401
+        should_update_counts = not (will_retry or is_auth_error)
+
+        if should_update_counts and download_stream_current is not None:
             download_stream_current += int(response.http_response.headers.get('Content-Length', 0))
             if data_stream_total is None:
                 content_range = response.http_response.headers.get('Content-Range')
@@ -65,15 +92,16 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
                     data_stream_total = int(content_range.split(' ', 1)[1].split('/', 1)[1])
                 else:
                     data_stream_total = download_stream_current
-        elif not will_retry and upload_stream_current is not None:
+        elif should_update_counts and upload_stream_current is not None:
             upload_stream_current += int(response.http_request.headers.get('Content-Length', 0))
         for pipeline_obj in [request, response]:
-            pipeline_obj.context['data_stream_total'] = data_stream_total
-            pipeline_obj.context['download_stream_current'] = download_stream_current
-            pipeline_obj.context['upload_stream_current'] = upload_stream_current
+            if hasattr(pipeline_obj, 'context'):
+                pipeline_obj.context['data_stream_total'] = data_stream_total
+                pipeline_obj.context['download_stream_current'] = download_stream_current
+                pipeline_obj.context['upload_stream_current'] = upload_stream_current
         if response_callback:
             if asyncio.iscoroutine(response_callback):
-                await response_callback(response)
+                await response_callback(response) # type: ignore
             else:
                 response_callback(response)
             request.context['response_callback'] = response_callback
@@ -97,7 +125,7 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
         while retries_remaining:
             try:
                 response = await self.next.send(request)
-                if is_retry(response, retry_settings['mode']):
+                if is_retry(response, retry_settings['mode']) or await is_checksum_retry(response):
                     retries_remaining = self.increment(
                         retry_settings,
                         request=request.http_request,
@@ -112,6 +140,8 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
                         continue
                 break
             except AzureError as err:
+                if isinstance(err, AzureSigningError):
+                    raise
                 retries_remaining = self.increment(
                     retry_settings, request=request.http_request, error=err)
                 if retries_remaining:
@@ -132,9 +162,23 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
 class ExponentialRetry(AsyncStorageRetryPolicy):
     """Exponential retry."""
 
-    def __init__(self, initial_backoff=15, increment_base=3, retry_total=3,
-                 retry_to_secondary=False, random_jitter_range=3, **kwargs):
-        '''
+    initial_backoff: int
+    """The initial backoff interval, in seconds, for the first retry."""
+    increment_base: int
+    """The base, in seconds, to increment the initial_backoff by after the
+    first retry."""
+    random_jitter_range: int
+    """A number in seconds which indicates a range to jitter/randomize for the back-off interval."""
+
+    def __init__(
+        self,
+        initial_backoff: int = 15,
+        increment_base: int = 3,
+        retry_total: int = 3,
+        retry_to_secondary: bool = False,
+        random_jitter_range: int = 3, **kwargs
+    ) -> None:
+        """
         Constructs an Exponential retry object. The initial_backoff is used for
         the first retry. Subsequent retries are retried after initial_backoff +
         increment_power^retry_count seconds. For example, by default the first retry
@@ -155,17 +199,18 @@ class ExponentialRetry(AsyncStorageRetryPolicy):
         :param int random_jitter_range:
             A number in seconds which indicates a range to jitter/randomize for the back-off interval.
             For example, a random_jitter_range of 3 results in the back-off interval x to vary between x+3 and x-3.
-        '''
+        """
         self.initial_backoff = initial_backoff
         self.increment_base = increment_base
         self.random_jitter_range = random_jitter_range
         super(ExponentialRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings):
+    def get_backoff_time(self, settings: Dict[str, Any]) -> float:
         """
         Calculates how long to sleep before retrying.
 
+        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -181,7 +226,18 @@ class ExponentialRetry(AsyncStorageRetryPolicy):
 class LinearRetry(AsyncStorageRetryPolicy):
     """Linear retry."""
 
-    def __init__(self, backoff=15, retry_total=3, retry_to_secondary=False, random_jitter_range=3, **kwargs):
+    initial_backoff: int
+    """The backoff interval, in seconds, between retries."""
+    random_jitter_range: int
+    """A number in seconds which indicates a range to jitter/randomize for the back-off interval."""
+
+    def __init__(
+        self, backoff: int = 15,
+        retry_total: int = 3,
+        retry_to_secondary: bool = False,
+        random_jitter_range: int = 3,
+        **kwargs: Any
+    ) -> None:
         """
         Constructs a Linear retry object.
 
@@ -202,10 +258,11 @@ class LinearRetry(AsyncStorageRetryPolicy):
         super(LinearRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings):
+    def get_backoff_time(self, settings: Dict[str, Any]) -> float:
         """
         Calculates how long to sleep before retrying.
 
+        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -218,3 +275,22 @@ class LinearRetry(AsyncStorageRetryPolicy):
             if self.backoff > self.random_jitter_range else 0
         random_range_end = self.backoff + self.random_jitter_range
         return random_generator.uniform(random_range_start, random_range_end)
+
+
+class AsyncStorageBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
+    """ Custom Bearer token credential policy for following Storage Bearer challenges """
+
+    def __init__(self, credential: "AsyncTokenCredential", audience: str, **kwargs: Any) -> None:
+        super(AsyncStorageBearerTokenCredentialPolicy, self).__init__(credential, audience, **kwargs)
+
+    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+        try:
+            auth_header = response.http_response.headers.get("WWW-Authenticate")
+            challenge = StorageHttpChallenge(auth_header)
+        except ValueError:
+            return False
+
+        scope = challenge.resource_id + DEFAULT_OAUTH_SCOPE
+        await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+
+        return True

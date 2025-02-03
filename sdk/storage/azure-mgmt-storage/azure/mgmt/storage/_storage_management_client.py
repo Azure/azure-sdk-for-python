@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from typing import Any, Optional, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.mgmt.core import ARMPipelineClient
@@ -60,7 +61,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
-            'usage': '2018-02-01',
+            'usage': '2017-10-01',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -95,7 +96,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
         super(StorageManagementClient, self).__init__(
             api_version=api_version,
             profile=profile
@@ -109,91 +110,19 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2015-06-15: :mod:`v2015_06_15.models<azure.mgmt.storage.v2015_06_15.models>`
            * 2016-01-01: :mod:`v2016_01_01.models<azure.mgmt.storage.v2016_01_01.models>`
-           * 2016-12-01: :mod:`v2016_12_01.models<azure.mgmt.storage.v2016_12_01.models>`
-           * 2017-06-01: :mod:`v2017_06_01.models<azure.mgmt.storage.v2017_06_01.models>`
            * 2017-10-01: :mod:`v2017_10_01.models<azure.mgmt.storage.v2017_10_01.models>`
-           * 2018-02-01: :mod:`v2018_02_01.models<azure.mgmt.storage.v2018_02_01.models>`
-           * 2018-03-01-preview: :mod:`v2018_03_01_preview.models<azure.mgmt.storage.v2018_03_01_preview.models>`
-           * 2018-07-01: :mod:`v2018_07_01.models<azure.mgmt.storage.v2018_07_01.models>`
-           * 2018-11-01: :mod:`v2018_11_01.models<azure.mgmt.storage.v2018_11_01.models>`
-           * 2019-04-01: :mod:`v2019_04_01.models<azure.mgmt.storage.v2019_04_01.models>`
            * 2019-06-01: :mod:`v2019_06_01.models<azure.mgmt.storage.v2019_06_01.models>`
-           * 2020-08-01-preview: :mod:`v2020_08_01_preview.models<azure.mgmt.storage.v2020_08_01_preview.models>`
-           * 2021-01-01: :mod:`v2021_01_01.models<azure.mgmt.storage.v2021_01_01.models>`
-           * 2021-02-01: :mod:`v2021_02_01.models<azure.mgmt.storage.v2021_02_01.models>`
-           * 2021-04-01: :mod:`v2021_04_01.models<azure.mgmt.storage.v2021_04_01.models>`
-           * 2021-06-01: :mod:`v2021_06_01.models<azure.mgmt.storage.v2021_06_01.models>`
-           * 2021-08-01: :mod:`v2021_08_01.models<azure.mgmt.storage.v2021_08_01.models>`
-           * 2021-09-01: :mod:`v2021_09_01.models<azure.mgmt.storage.v2021_09_01.models>`
-           * 2022-05-01: :mod:`v2022_05_01.models<azure.mgmt.storage.v2022_05_01.models>`
-           * 2022-09-01: :mod:`v2022_09_01.models<azure.mgmt.storage.v2022_09_01.models>`
-           * 2023-01-01: :mod:`v2023_01_01.models<azure.mgmt.storage.v2023_01_01.models>`
            * 2023-05-01: :mod:`v2023_05_01.models<azure.mgmt.storage.v2023_05_01.models>`
         """
-        if api_version == '2015-06-15':
-            from .v2015_06_15 import models
-            return models
-        elif api_version == '2016-01-01':
+        if api_version == '2016-01-01':
             from .v2016_01_01 import models
-            return models
-        elif api_version == '2016-12-01':
-            from .v2016_12_01 import models
-            return models
-        elif api_version == '2017-06-01':
-            from .v2017_06_01 import models
             return models
         elif api_version == '2017-10-01':
             from .v2017_10_01 import models
             return models
-        elif api_version == '2018-02-01':
-            from .v2018_02_01 import models
-            return models
-        elif api_version == '2018-03-01-preview':
-            from .v2018_03_01_preview import models
-            return models
-        elif api_version == '2018-07-01':
-            from .v2018_07_01 import models
-            return models
-        elif api_version == '2018-11-01':
-            from .v2018_11_01 import models
-            return models
-        elif api_version == '2019-04-01':
-            from .v2019_04_01 import models
-            return models
         elif api_version == '2019-06-01':
             from .v2019_06_01 import models
-            return models
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview import models
-            return models
-        elif api_version == '2021-01-01':
-            from .v2021_01_01 import models
-            return models
-        elif api_version == '2021-02-01':
-            from .v2021_02_01 import models
-            return models
-        elif api_version == '2021-04-01':
-            from .v2021_04_01 import models
-            return models
-        elif api_version == '2021-06-01':
-            from .v2021_06_01 import models
-            return models
-        elif api_version == '2021-08-01':
-            from .v2021_08_01 import models
-            return models
-        elif api_version == '2021-09-01':
-            from .v2021_09_01 import models
-            return models
-        elif api_version == '2022-05-01':
-            from .v2022_05_01 import models
-            return models
-        elif api_version == '2022-09-01':
-            from .v2022_09_01 import models
-            return models
-        elif api_version == '2023-01-01':
-            from .v2023_01_01 import models
             return models
         elif api_version == '2023-05-01':
             from .v2023_05_01 import models
@@ -204,57 +133,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
     def blob_containers(self):
         """Instance depends on the API version:
 
-           * 2018-02-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2018_02_01.operations.BlobContainersOperations>`
-           * 2018-03-01-preview: :class:`BlobContainersOperations<azure.mgmt.storage.v2018_03_01_preview.operations.BlobContainersOperations>`
-           * 2018-07-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2018_07_01.operations.BlobContainersOperations>`
-           * 2018-11-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2018_11_01.operations.BlobContainersOperations>`
-           * 2019-04-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2019_04_01.operations.BlobContainersOperations>`
            * 2019-06-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2019_06_01.operations.BlobContainersOperations>`
-           * 2020-08-01-preview: :class:`BlobContainersOperations<azure.mgmt.storage.v2020_08_01_preview.operations.BlobContainersOperations>`
-           * 2021-01-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2021_01_01.operations.BlobContainersOperations>`
-           * 2021-02-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2021_02_01.operations.BlobContainersOperations>`
-           * 2021-04-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2021_04_01.operations.BlobContainersOperations>`
-           * 2021-06-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2021_06_01.operations.BlobContainersOperations>`
-           * 2021-08-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2021_08_01.operations.BlobContainersOperations>`
-           * 2021-09-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2021_09_01.operations.BlobContainersOperations>`
-           * 2022-05-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2022_05_01.operations.BlobContainersOperations>`
-           * 2022-09-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2022_09_01.operations.BlobContainersOperations>`
-           * 2023-01-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2023_01_01.operations.BlobContainersOperations>`
            * 2023-05-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2023_05_01.operations.BlobContainersOperations>`
         """
         api_version = self._get_api_version('blob_containers')
-        if api_version == '2018-02-01':
-            from .v2018_02_01.operations import BlobContainersOperations as OperationClass
-        elif api_version == '2018-03-01-preview':
-            from .v2018_03_01_preview.operations import BlobContainersOperations as OperationClass
-        elif api_version == '2018-07-01':
-            from .v2018_07_01.operations import BlobContainersOperations as OperationClass
-        elif api_version == '2018-11-01':
-            from .v2018_11_01.operations import BlobContainersOperations as OperationClass
-        elif api_version == '2019-04-01':
-            from .v2019_04_01.operations import BlobContainersOperations as OperationClass
-        elif api_version == '2019-06-01':
+        if api_version == '2019-06-01':
             from .v2019_06_01.operations import BlobContainersOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import BlobContainersOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import BlobContainersOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import BlobContainersOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import BlobContainersOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import BlobContainersOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import BlobContainersOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import BlobContainersOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import BlobContainersOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import BlobContainersOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import BlobContainersOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import BlobContainersOperations as OperationClass
         else:
@@ -267,41 +151,11 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`BlobInventoryPoliciesOperations<azure.mgmt.storage.v2019_06_01.operations.BlobInventoryPoliciesOperations>`
-           * 2020-08-01-preview: :class:`BlobInventoryPoliciesOperations<azure.mgmt.storage.v2020_08_01_preview.operations.BlobInventoryPoliciesOperations>`
-           * 2021-01-01: :class:`BlobInventoryPoliciesOperations<azure.mgmt.storage.v2021_01_01.operations.BlobInventoryPoliciesOperations>`
-           * 2021-02-01: :class:`BlobInventoryPoliciesOperations<azure.mgmt.storage.v2021_02_01.operations.BlobInventoryPoliciesOperations>`
-           * 2021-04-01: :class:`BlobInventoryPoliciesOperations<azure.mgmt.storage.v2021_04_01.operations.BlobInventoryPoliciesOperations>`
-           * 2021-06-01: :class:`BlobInventoryPoliciesOperations<azure.mgmt.storage.v2021_06_01.operations.BlobInventoryPoliciesOperations>`
-           * 2021-08-01: :class:`BlobInventoryPoliciesOperations<azure.mgmt.storage.v2021_08_01.operations.BlobInventoryPoliciesOperations>`
-           * 2021-09-01: :class:`BlobInventoryPoliciesOperations<azure.mgmt.storage.v2021_09_01.operations.BlobInventoryPoliciesOperations>`
-           * 2022-05-01: :class:`BlobInventoryPoliciesOperations<azure.mgmt.storage.v2022_05_01.operations.BlobInventoryPoliciesOperations>`
-           * 2022-09-01: :class:`BlobInventoryPoliciesOperations<azure.mgmt.storage.v2022_09_01.operations.BlobInventoryPoliciesOperations>`
-           * 2023-01-01: :class:`BlobInventoryPoliciesOperations<azure.mgmt.storage.v2023_01_01.operations.BlobInventoryPoliciesOperations>`
            * 2023-05-01: :class:`BlobInventoryPoliciesOperations<azure.mgmt.storage.v2023_05_01.operations.BlobInventoryPoliciesOperations>`
         """
         api_version = self._get_api_version('blob_inventory_policies')
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import BlobInventoryPoliciesOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import BlobInventoryPoliciesOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import BlobInventoryPoliciesOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import BlobInventoryPoliciesOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import BlobInventoryPoliciesOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import BlobInventoryPoliciesOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import BlobInventoryPoliciesOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import BlobInventoryPoliciesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import BlobInventoryPoliciesOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import BlobInventoryPoliciesOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import BlobInventoryPoliciesOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import BlobInventoryPoliciesOperations as OperationClass
         else:
@@ -313,51 +167,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
     def blob_services(self):
         """Instance depends on the API version:
 
-           * 2018-07-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2018_07_01.operations.BlobServicesOperations>`
-           * 2018-11-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2018_11_01.operations.BlobServicesOperations>`
-           * 2019-04-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2019_04_01.operations.BlobServicesOperations>`
            * 2019-06-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2019_06_01.operations.BlobServicesOperations>`
-           * 2020-08-01-preview: :class:`BlobServicesOperations<azure.mgmt.storage.v2020_08_01_preview.operations.BlobServicesOperations>`
-           * 2021-01-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2021_01_01.operations.BlobServicesOperations>`
-           * 2021-02-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2021_02_01.operations.BlobServicesOperations>`
-           * 2021-04-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2021_04_01.operations.BlobServicesOperations>`
-           * 2021-06-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2021_06_01.operations.BlobServicesOperations>`
-           * 2021-08-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2021_08_01.operations.BlobServicesOperations>`
-           * 2021-09-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2021_09_01.operations.BlobServicesOperations>`
-           * 2022-05-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2022_05_01.operations.BlobServicesOperations>`
-           * 2022-09-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2022_09_01.operations.BlobServicesOperations>`
-           * 2023-01-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2023_01_01.operations.BlobServicesOperations>`
            * 2023-05-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2023_05_01.operations.BlobServicesOperations>`
         """
         api_version = self._get_api_version('blob_services')
-        if api_version == '2018-07-01':
-            from .v2018_07_01.operations import BlobServicesOperations as OperationClass
-        elif api_version == '2018-11-01':
-            from .v2018_11_01.operations import BlobServicesOperations as OperationClass
-        elif api_version == '2019-04-01':
-            from .v2019_04_01.operations import BlobServicesOperations as OperationClass
-        elif api_version == '2019-06-01':
+        if api_version == '2019-06-01':
             from .v2019_06_01.operations import BlobServicesOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import BlobServicesOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import BlobServicesOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import BlobServicesOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import BlobServicesOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import BlobServicesOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import BlobServicesOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import BlobServicesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import BlobServicesOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import BlobServicesOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import BlobServicesOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import BlobServicesOperations as OperationClass
         else:
@@ -369,40 +184,10 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
     def deleted_accounts(self):
         """Instance depends on the API version:
 
-           * 2020-08-01-preview: :class:`DeletedAccountsOperations<azure.mgmt.storage.v2020_08_01_preview.operations.DeletedAccountsOperations>`
-           * 2021-01-01: :class:`DeletedAccountsOperations<azure.mgmt.storage.v2021_01_01.operations.DeletedAccountsOperations>`
-           * 2021-02-01: :class:`DeletedAccountsOperations<azure.mgmt.storage.v2021_02_01.operations.DeletedAccountsOperations>`
-           * 2021-04-01: :class:`DeletedAccountsOperations<azure.mgmt.storage.v2021_04_01.operations.DeletedAccountsOperations>`
-           * 2021-06-01: :class:`DeletedAccountsOperations<azure.mgmt.storage.v2021_06_01.operations.DeletedAccountsOperations>`
-           * 2021-08-01: :class:`DeletedAccountsOperations<azure.mgmt.storage.v2021_08_01.operations.DeletedAccountsOperations>`
-           * 2021-09-01: :class:`DeletedAccountsOperations<azure.mgmt.storage.v2021_09_01.operations.DeletedAccountsOperations>`
-           * 2022-05-01: :class:`DeletedAccountsOperations<azure.mgmt.storage.v2022_05_01.operations.DeletedAccountsOperations>`
-           * 2022-09-01: :class:`DeletedAccountsOperations<azure.mgmt.storage.v2022_09_01.operations.DeletedAccountsOperations>`
-           * 2023-01-01: :class:`DeletedAccountsOperations<azure.mgmt.storage.v2023_01_01.operations.DeletedAccountsOperations>`
            * 2023-05-01: :class:`DeletedAccountsOperations<azure.mgmt.storage.v2023_05_01.operations.DeletedAccountsOperations>`
         """
         api_version = self._get_api_version('deleted_accounts')
-        if api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import DeletedAccountsOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import DeletedAccountsOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import DeletedAccountsOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import DeletedAccountsOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import DeletedAccountsOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import DeletedAccountsOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import DeletedAccountsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import DeletedAccountsOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import DeletedAccountsOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import DeletedAccountsOperations as OperationClass
-        elif api_version == '2023-05-01':
+        if api_version == '2023-05-01':
             from .v2023_05_01.operations import DeletedAccountsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'deleted_accounts'".format(api_version))
@@ -414,41 +199,11 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2019_06_01.operations.EncryptionScopesOperations>`
-           * 2020-08-01-preview: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2020_08_01_preview.operations.EncryptionScopesOperations>`
-           * 2021-01-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2021_01_01.operations.EncryptionScopesOperations>`
-           * 2021-02-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2021_02_01.operations.EncryptionScopesOperations>`
-           * 2021-04-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2021_04_01.operations.EncryptionScopesOperations>`
-           * 2021-06-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2021_06_01.operations.EncryptionScopesOperations>`
-           * 2021-08-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2021_08_01.operations.EncryptionScopesOperations>`
-           * 2021-09-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2021_09_01.operations.EncryptionScopesOperations>`
-           * 2022-05-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2022_05_01.operations.EncryptionScopesOperations>`
-           * 2022-09-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2022_09_01.operations.EncryptionScopesOperations>`
-           * 2023-01-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2023_01_01.operations.EncryptionScopesOperations>`
            * 2023-05-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2023_05_01.operations.EncryptionScopesOperations>`
         """
         api_version = self._get_api_version('encryption_scopes')
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import EncryptionScopesOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import EncryptionScopesOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import EncryptionScopesOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import EncryptionScopesOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import EncryptionScopesOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import EncryptionScopesOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import EncryptionScopesOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import EncryptionScopesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import EncryptionScopesOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import EncryptionScopesOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import EncryptionScopesOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import EncryptionScopesOperations as OperationClass
         else:
@@ -460,45 +215,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
     def file_services(self):
         """Instance depends on the API version:
 
-           * 2019-04-01: :class:`FileServicesOperations<azure.mgmt.storage.v2019_04_01.operations.FileServicesOperations>`
            * 2019-06-01: :class:`FileServicesOperations<azure.mgmt.storage.v2019_06_01.operations.FileServicesOperations>`
-           * 2020-08-01-preview: :class:`FileServicesOperations<azure.mgmt.storage.v2020_08_01_preview.operations.FileServicesOperations>`
-           * 2021-01-01: :class:`FileServicesOperations<azure.mgmt.storage.v2021_01_01.operations.FileServicesOperations>`
-           * 2021-02-01: :class:`FileServicesOperations<azure.mgmt.storage.v2021_02_01.operations.FileServicesOperations>`
-           * 2021-04-01: :class:`FileServicesOperations<azure.mgmt.storage.v2021_04_01.operations.FileServicesOperations>`
-           * 2021-06-01: :class:`FileServicesOperations<azure.mgmt.storage.v2021_06_01.operations.FileServicesOperations>`
-           * 2021-08-01: :class:`FileServicesOperations<azure.mgmt.storage.v2021_08_01.operations.FileServicesOperations>`
-           * 2021-09-01: :class:`FileServicesOperations<azure.mgmt.storage.v2021_09_01.operations.FileServicesOperations>`
-           * 2022-05-01: :class:`FileServicesOperations<azure.mgmt.storage.v2022_05_01.operations.FileServicesOperations>`
-           * 2022-09-01: :class:`FileServicesOperations<azure.mgmt.storage.v2022_09_01.operations.FileServicesOperations>`
-           * 2023-01-01: :class:`FileServicesOperations<azure.mgmt.storage.v2023_01_01.operations.FileServicesOperations>`
            * 2023-05-01: :class:`FileServicesOperations<azure.mgmt.storage.v2023_05_01.operations.FileServicesOperations>`
         """
         api_version = self._get_api_version('file_services')
-        if api_version == '2019-04-01':
-            from .v2019_04_01.operations import FileServicesOperations as OperationClass
-        elif api_version == '2019-06-01':
+        if api_version == '2019-06-01':
             from .v2019_06_01.operations import FileServicesOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import FileServicesOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import FileServicesOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import FileServicesOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import FileServicesOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import FileServicesOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import FileServicesOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import FileServicesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import FileServicesOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import FileServicesOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import FileServicesOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import FileServicesOperations as OperationClass
         else:
@@ -510,45 +232,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
     def file_shares(self):
         """Instance depends on the API version:
 
-           * 2019-04-01: :class:`FileSharesOperations<azure.mgmt.storage.v2019_04_01.operations.FileSharesOperations>`
            * 2019-06-01: :class:`FileSharesOperations<azure.mgmt.storage.v2019_06_01.operations.FileSharesOperations>`
-           * 2020-08-01-preview: :class:`FileSharesOperations<azure.mgmt.storage.v2020_08_01_preview.operations.FileSharesOperations>`
-           * 2021-01-01: :class:`FileSharesOperations<azure.mgmt.storage.v2021_01_01.operations.FileSharesOperations>`
-           * 2021-02-01: :class:`FileSharesOperations<azure.mgmt.storage.v2021_02_01.operations.FileSharesOperations>`
-           * 2021-04-01: :class:`FileSharesOperations<azure.mgmt.storage.v2021_04_01.operations.FileSharesOperations>`
-           * 2021-06-01: :class:`FileSharesOperations<azure.mgmt.storage.v2021_06_01.operations.FileSharesOperations>`
-           * 2021-08-01: :class:`FileSharesOperations<azure.mgmt.storage.v2021_08_01.operations.FileSharesOperations>`
-           * 2021-09-01: :class:`FileSharesOperations<azure.mgmt.storage.v2021_09_01.operations.FileSharesOperations>`
-           * 2022-05-01: :class:`FileSharesOperations<azure.mgmt.storage.v2022_05_01.operations.FileSharesOperations>`
-           * 2022-09-01: :class:`FileSharesOperations<azure.mgmt.storage.v2022_09_01.operations.FileSharesOperations>`
-           * 2023-01-01: :class:`FileSharesOperations<azure.mgmt.storage.v2023_01_01.operations.FileSharesOperations>`
            * 2023-05-01: :class:`FileSharesOperations<azure.mgmt.storage.v2023_05_01.operations.FileSharesOperations>`
         """
         api_version = self._get_api_version('file_shares')
-        if api_version == '2019-04-01':
-            from .v2019_04_01.operations import FileSharesOperations as OperationClass
-        elif api_version == '2019-06-01':
+        if api_version == '2019-06-01':
             from .v2019_06_01.operations import FileSharesOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import FileSharesOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import FileSharesOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import FileSharesOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import FileSharesOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import FileSharesOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import FileSharesOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import FileSharesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import FileSharesOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import FileSharesOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import FileSharesOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import FileSharesOperations as OperationClass
         else:
@@ -560,25 +249,10 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
     def local_users(self):
         """Instance depends on the API version:
 
-           * 2021-08-01: :class:`LocalUsersOperations<azure.mgmt.storage.v2021_08_01.operations.LocalUsersOperations>`
-           * 2021-09-01: :class:`LocalUsersOperations<azure.mgmt.storage.v2021_09_01.operations.LocalUsersOperations>`
-           * 2022-05-01: :class:`LocalUsersOperations<azure.mgmt.storage.v2022_05_01.operations.LocalUsersOperations>`
-           * 2022-09-01: :class:`LocalUsersOperations<azure.mgmt.storage.v2022_09_01.operations.LocalUsersOperations>`
-           * 2023-01-01: :class:`LocalUsersOperations<azure.mgmt.storage.v2023_01_01.operations.LocalUsersOperations>`
            * 2023-05-01: :class:`LocalUsersOperations<azure.mgmt.storage.v2023_05_01.operations.LocalUsersOperations>`
         """
         api_version = self._get_api_version('local_users')
-        if api_version == '2021-08-01':
-            from .v2021_08_01.operations import LocalUsersOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import LocalUsersOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import LocalUsersOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import LocalUsersOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import LocalUsersOperations as OperationClass
-        elif api_version == '2023-05-01':
+        if api_version == '2023-05-01':
             from .v2023_05_01.operations import LocalUsersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'local_users'".format(api_version))
@@ -589,51 +263,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
     def management_policies(self):
         """Instance depends on the API version:
 
-           * 2018-03-01-preview: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2018_03_01_preview.operations.ManagementPoliciesOperations>`
-           * 2018-11-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2018_11_01.operations.ManagementPoliciesOperations>`
-           * 2019-04-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2019_04_01.operations.ManagementPoliciesOperations>`
            * 2019-06-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2019_06_01.operations.ManagementPoliciesOperations>`
-           * 2020-08-01-preview: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2020_08_01_preview.operations.ManagementPoliciesOperations>`
-           * 2021-01-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2021_01_01.operations.ManagementPoliciesOperations>`
-           * 2021-02-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2021_02_01.operations.ManagementPoliciesOperations>`
-           * 2021-04-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2021_04_01.operations.ManagementPoliciesOperations>`
-           * 2021-06-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2021_06_01.operations.ManagementPoliciesOperations>`
-           * 2021-08-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2021_08_01.operations.ManagementPoliciesOperations>`
-           * 2021-09-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2021_09_01.operations.ManagementPoliciesOperations>`
-           * 2022-05-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2022_05_01.operations.ManagementPoliciesOperations>`
-           * 2022-09-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2022_09_01.operations.ManagementPoliciesOperations>`
-           * 2023-01-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2023_01_01.operations.ManagementPoliciesOperations>`
            * 2023-05-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2023_05_01.operations.ManagementPoliciesOperations>`
         """
         api_version = self._get_api_version('management_policies')
-        if api_version == '2018-03-01-preview':
-            from .v2018_03_01_preview.operations import ManagementPoliciesOperations as OperationClass
-        elif api_version == '2018-11-01':
-            from .v2018_11_01.operations import ManagementPoliciesOperations as OperationClass
-        elif api_version == '2019-04-01':
-            from .v2019_04_01.operations import ManagementPoliciesOperations as OperationClass
-        elif api_version == '2019-06-01':
+        if api_version == '2019-06-01':
             from .v2019_06_01.operations import ManagementPoliciesOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import ManagementPoliciesOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import ManagementPoliciesOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import ManagementPoliciesOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import ManagementPoliciesOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import ManagementPoliciesOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import ManagementPoliciesOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import ManagementPoliciesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ManagementPoliciesOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import ManagementPoliciesOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import ManagementPoliciesOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import ManagementPoliciesOperations as OperationClass
         else:
@@ -660,41 +295,11 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2019_06_01.operations.ObjectReplicationPoliciesOperations>`
-           * 2020-08-01-preview: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2020_08_01_preview.operations.ObjectReplicationPoliciesOperations>`
-           * 2021-01-01: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2021_01_01.operations.ObjectReplicationPoliciesOperations>`
-           * 2021-02-01: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2021_02_01.operations.ObjectReplicationPoliciesOperations>`
-           * 2021-04-01: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2021_04_01.operations.ObjectReplicationPoliciesOperations>`
-           * 2021-06-01: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2021_06_01.operations.ObjectReplicationPoliciesOperations>`
-           * 2021-08-01: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2021_08_01.operations.ObjectReplicationPoliciesOperations>`
-           * 2021-09-01: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2021_09_01.operations.ObjectReplicationPoliciesOperations>`
-           * 2022-05-01: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2022_05_01.operations.ObjectReplicationPoliciesOperations>`
-           * 2022-09-01: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2022_09_01.operations.ObjectReplicationPoliciesOperations>`
-           * 2023-01-01: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2023_01_01.operations.ObjectReplicationPoliciesOperations>`
            * 2023-05-01: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2023_05_01.operations.ObjectReplicationPoliciesOperations>`
         """
         api_version = self._get_api_version('object_replication_policies')
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import ObjectReplicationPoliciesOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import ObjectReplicationPoliciesOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import ObjectReplicationPoliciesOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import ObjectReplicationPoliciesOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import ObjectReplicationPoliciesOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import ObjectReplicationPoliciesOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import ObjectReplicationPoliciesOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import ObjectReplicationPoliciesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import ObjectReplicationPoliciesOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import ObjectReplicationPoliciesOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import ObjectReplicationPoliciesOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import ObjectReplicationPoliciesOperations as OperationClass
         else:
@@ -706,63 +311,15 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
     def operations(self):
         """Instance depends on the API version:
 
-           * 2017-06-01: :class:`Operations<azure.mgmt.storage.v2017_06_01.operations.Operations>`
            * 2017-10-01: :class:`Operations<azure.mgmt.storage.v2017_10_01.operations.Operations>`
-           * 2018-02-01: :class:`Operations<azure.mgmt.storage.v2018_02_01.operations.Operations>`
-           * 2018-03-01-preview: :class:`Operations<azure.mgmt.storage.v2018_03_01_preview.operations.Operations>`
-           * 2018-07-01: :class:`Operations<azure.mgmt.storage.v2018_07_01.operations.Operations>`
-           * 2018-11-01: :class:`Operations<azure.mgmt.storage.v2018_11_01.operations.Operations>`
-           * 2019-04-01: :class:`Operations<azure.mgmt.storage.v2019_04_01.operations.Operations>`
            * 2019-06-01: :class:`Operations<azure.mgmt.storage.v2019_06_01.operations.Operations>`
-           * 2020-08-01-preview: :class:`Operations<azure.mgmt.storage.v2020_08_01_preview.operations.Operations>`
-           * 2021-01-01: :class:`Operations<azure.mgmt.storage.v2021_01_01.operations.Operations>`
-           * 2021-02-01: :class:`Operations<azure.mgmt.storage.v2021_02_01.operations.Operations>`
-           * 2021-04-01: :class:`Operations<azure.mgmt.storage.v2021_04_01.operations.Operations>`
-           * 2021-06-01: :class:`Operations<azure.mgmt.storage.v2021_06_01.operations.Operations>`
-           * 2021-08-01: :class:`Operations<azure.mgmt.storage.v2021_08_01.operations.Operations>`
-           * 2021-09-01: :class:`Operations<azure.mgmt.storage.v2021_09_01.operations.Operations>`
-           * 2022-05-01: :class:`Operations<azure.mgmt.storage.v2022_05_01.operations.Operations>`
-           * 2022-09-01: :class:`Operations<azure.mgmt.storage.v2022_09_01.operations.Operations>`
-           * 2023-01-01: :class:`Operations<azure.mgmt.storage.v2023_01_01.operations.Operations>`
            * 2023-05-01: :class:`Operations<azure.mgmt.storage.v2023_05_01.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
-        if api_version == '2017-06-01':
-            from .v2017_06_01.operations import Operations as OperationClass
-        elif api_version == '2017-10-01':
+        if api_version == '2017-10-01':
             from .v2017_10_01.operations import Operations as OperationClass
-        elif api_version == '2018-02-01':
-            from .v2018_02_01.operations import Operations as OperationClass
-        elif api_version == '2018-03-01-preview':
-            from .v2018_03_01_preview.operations import Operations as OperationClass
-        elif api_version == '2018-07-01':
-            from .v2018_07_01.operations import Operations as OperationClass
-        elif api_version == '2018-11-01':
-            from .v2018_11_01.operations import Operations as OperationClass
-        elif api_version == '2019-04-01':
-            from .v2019_04_01.operations import Operations as OperationClass
         elif api_version == '2019-06-01':
             from .v2019_06_01.operations import Operations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import Operations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import Operations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import Operations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import Operations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import Operations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import Operations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import Operations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import Operations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import Operations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import Operations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import Operations as OperationClass
         else:
@@ -775,41 +332,11 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2019_06_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2020-08-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2020_08_01_preview.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-01-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2021_01_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-02-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2021_02_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-04-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2021_04_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-06-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2021_06_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-08-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2021_08_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2021-09-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2021_09_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-05-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2022_05_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2022-09-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2022_09_01.operations.PrivateEndpointConnectionsOperations>`
-           * 2023-01-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2023_01_01.operations.PrivateEndpointConnectionsOperations>`
            * 2023-05-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2023_05_01.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import PrivateEndpointConnectionsOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
@@ -822,41 +349,11 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2019_06_01.operations.PrivateLinkResourcesOperations>`
-           * 2020-08-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2020_08_01_preview.operations.PrivateLinkResourcesOperations>`
-           * 2021-01-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2021_01_01.operations.PrivateLinkResourcesOperations>`
-           * 2021-02-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2021_02_01.operations.PrivateLinkResourcesOperations>`
-           * 2021-04-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2021_04_01.operations.PrivateLinkResourcesOperations>`
-           * 2021-06-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2021_06_01.operations.PrivateLinkResourcesOperations>`
-           * 2021-08-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2021_08_01.operations.PrivateLinkResourcesOperations>`
-           * 2021-09-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2021_09_01.operations.PrivateLinkResourcesOperations>`
-           * 2022-05-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2022_05_01.operations.PrivateLinkResourcesOperations>`
-           * 2022-09-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2022_09_01.operations.PrivateLinkResourcesOperations>`
-           * 2023-01-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2023_01_01.operations.PrivateLinkResourcesOperations>`
            * 2023-05-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2023_05_01.operations.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import PrivateLinkResourcesOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import PrivateLinkResourcesOperations as OperationClass
         else:
@@ -869,41 +366,11 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`QueueOperations<azure.mgmt.storage.v2019_06_01.operations.QueueOperations>`
-           * 2020-08-01-preview: :class:`QueueOperations<azure.mgmt.storage.v2020_08_01_preview.operations.QueueOperations>`
-           * 2021-01-01: :class:`QueueOperations<azure.mgmt.storage.v2021_01_01.operations.QueueOperations>`
-           * 2021-02-01: :class:`QueueOperations<azure.mgmt.storage.v2021_02_01.operations.QueueOperations>`
-           * 2021-04-01: :class:`QueueOperations<azure.mgmt.storage.v2021_04_01.operations.QueueOperations>`
-           * 2021-06-01: :class:`QueueOperations<azure.mgmt.storage.v2021_06_01.operations.QueueOperations>`
-           * 2021-08-01: :class:`QueueOperations<azure.mgmt.storage.v2021_08_01.operations.QueueOperations>`
-           * 2021-09-01: :class:`QueueOperations<azure.mgmt.storage.v2021_09_01.operations.QueueOperations>`
-           * 2022-05-01: :class:`QueueOperations<azure.mgmt.storage.v2022_05_01.operations.QueueOperations>`
-           * 2022-09-01: :class:`QueueOperations<azure.mgmt.storage.v2022_09_01.operations.QueueOperations>`
-           * 2023-01-01: :class:`QueueOperations<azure.mgmt.storage.v2023_01_01.operations.QueueOperations>`
            * 2023-05-01: :class:`QueueOperations<azure.mgmt.storage.v2023_05_01.operations.QueueOperations>`
         """
         api_version = self._get_api_version('queue')
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import QueueOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import QueueOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import QueueOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import QueueOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import QueueOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import QueueOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import QueueOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import QueueOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import QueueOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import QueueOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import QueueOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import QueueOperations as OperationClass
         else:
@@ -916,41 +383,11 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2019_06_01.operations.QueueServicesOperations>`
-           * 2020-08-01-preview: :class:`QueueServicesOperations<azure.mgmt.storage.v2020_08_01_preview.operations.QueueServicesOperations>`
-           * 2021-01-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2021_01_01.operations.QueueServicesOperations>`
-           * 2021-02-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2021_02_01.operations.QueueServicesOperations>`
-           * 2021-04-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2021_04_01.operations.QueueServicesOperations>`
-           * 2021-06-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2021_06_01.operations.QueueServicesOperations>`
-           * 2021-08-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2021_08_01.operations.QueueServicesOperations>`
-           * 2021-09-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2021_09_01.operations.QueueServicesOperations>`
-           * 2022-05-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2022_05_01.operations.QueueServicesOperations>`
-           * 2022-09-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2022_09_01.operations.QueueServicesOperations>`
-           * 2023-01-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2023_01_01.operations.QueueServicesOperations>`
            * 2023-05-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2023_05_01.operations.QueueServicesOperations>`
         """
         api_version = self._get_api_version('queue_services')
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import QueueServicesOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import QueueServicesOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import QueueServicesOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import QueueServicesOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import QueueServicesOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import QueueServicesOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import QueueServicesOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import QueueServicesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import QueueServicesOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import QueueServicesOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import QueueServicesOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import QueueServicesOperations as OperationClass
         else:
@@ -962,63 +399,15 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
     def skus(self):
         """Instance depends on the API version:
 
-           * 2017-06-01: :class:`SkusOperations<azure.mgmt.storage.v2017_06_01.operations.SkusOperations>`
            * 2017-10-01: :class:`SkusOperations<azure.mgmt.storage.v2017_10_01.operations.SkusOperations>`
-           * 2018-02-01: :class:`SkusOperations<azure.mgmt.storage.v2018_02_01.operations.SkusOperations>`
-           * 2018-03-01-preview: :class:`SkusOperations<azure.mgmt.storage.v2018_03_01_preview.operations.SkusOperations>`
-           * 2018-07-01: :class:`SkusOperations<azure.mgmt.storage.v2018_07_01.operations.SkusOperations>`
-           * 2018-11-01: :class:`SkusOperations<azure.mgmt.storage.v2018_11_01.operations.SkusOperations>`
-           * 2019-04-01: :class:`SkusOperations<azure.mgmt.storage.v2019_04_01.operations.SkusOperations>`
            * 2019-06-01: :class:`SkusOperations<azure.mgmt.storage.v2019_06_01.operations.SkusOperations>`
-           * 2020-08-01-preview: :class:`SkusOperations<azure.mgmt.storage.v2020_08_01_preview.operations.SkusOperations>`
-           * 2021-01-01: :class:`SkusOperations<azure.mgmt.storage.v2021_01_01.operations.SkusOperations>`
-           * 2021-02-01: :class:`SkusOperations<azure.mgmt.storage.v2021_02_01.operations.SkusOperations>`
-           * 2021-04-01: :class:`SkusOperations<azure.mgmt.storage.v2021_04_01.operations.SkusOperations>`
-           * 2021-06-01: :class:`SkusOperations<azure.mgmt.storage.v2021_06_01.operations.SkusOperations>`
-           * 2021-08-01: :class:`SkusOperations<azure.mgmt.storage.v2021_08_01.operations.SkusOperations>`
-           * 2021-09-01: :class:`SkusOperations<azure.mgmt.storage.v2021_09_01.operations.SkusOperations>`
-           * 2022-05-01: :class:`SkusOperations<azure.mgmt.storage.v2022_05_01.operations.SkusOperations>`
-           * 2022-09-01: :class:`SkusOperations<azure.mgmt.storage.v2022_09_01.operations.SkusOperations>`
-           * 2023-01-01: :class:`SkusOperations<azure.mgmt.storage.v2023_01_01.operations.SkusOperations>`
            * 2023-05-01: :class:`SkusOperations<azure.mgmt.storage.v2023_05_01.operations.SkusOperations>`
         """
         api_version = self._get_api_version('skus')
-        if api_version == '2017-06-01':
-            from .v2017_06_01.operations import SkusOperations as OperationClass
-        elif api_version == '2017-10-01':
+        if api_version == '2017-10-01':
             from .v2017_10_01.operations import SkusOperations as OperationClass
-        elif api_version == '2018-02-01':
-            from .v2018_02_01.operations import SkusOperations as OperationClass
-        elif api_version == '2018-03-01-preview':
-            from .v2018_03_01_preview.operations import SkusOperations as OperationClass
-        elif api_version == '2018-07-01':
-            from .v2018_07_01.operations import SkusOperations as OperationClass
-        elif api_version == '2018-11-01':
-            from .v2018_11_01.operations import SkusOperations as OperationClass
-        elif api_version == '2019-04-01':
-            from .v2019_04_01.operations import SkusOperations as OperationClass
         elif api_version == '2019-06-01':
             from .v2019_06_01.operations import SkusOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import SkusOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import SkusOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import SkusOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import SkusOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import SkusOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import SkusOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import SkusOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import SkusOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import SkusOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import SkusOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import SkusOperations as OperationClass
         else:
@@ -1030,72 +419,18 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
     def storage_accounts(self):
         """Instance depends on the API version:
 
-           * 2015-06-15: :class:`StorageAccountsOperations<azure.mgmt.storage.v2015_06_15.operations.StorageAccountsOperations>`
            * 2016-01-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2016_01_01.operations.StorageAccountsOperations>`
-           * 2016-12-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2016_12_01.operations.StorageAccountsOperations>`
-           * 2017-06-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2017_06_01.operations.StorageAccountsOperations>`
            * 2017-10-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2017_10_01.operations.StorageAccountsOperations>`
-           * 2018-02-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2018_02_01.operations.StorageAccountsOperations>`
-           * 2018-03-01-preview: :class:`StorageAccountsOperations<azure.mgmt.storage.v2018_03_01_preview.operations.StorageAccountsOperations>`
-           * 2018-07-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2018_07_01.operations.StorageAccountsOperations>`
-           * 2018-11-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2018_11_01.operations.StorageAccountsOperations>`
-           * 2019-04-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2019_04_01.operations.StorageAccountsOperations>`
            * 2019-06-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2019_06_01.operations.StorageAccountsOperations>`
-           * 2020-08-01-preview: :class:`StorageAccountsOperations<azure.mgmt.storage.v2020_08_01_preview.operations.StorageAccountsOperations>`
-           * 2021-01-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2021_01_01.operations.StorageAccountsOperations>`
-           * 2021-02-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2021_02_01.operations.StorageAccountsOperations>`
-           * 2021-04-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2021_04_01.operations.StorageAccountsOperations>`
-           * 2021-06-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2021_06_01.operations.StorageAccountsOperations>`
-           * 2021-08-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2021_08_01.operations.StorageAccountsOperations>`
-           * 2021-09-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2021_09_01.operations.StorageAccountsOperations>`
-           * 2022-05-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2022_05_01.operations.StorageAccountsOperations>`
-           * 2022-09-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2022_09_01.operations.StorageAccountsOperations>`
-           * 2023-01-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2023_01_01.operations.StorageAccountsOperations>`
            * 2023-05-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2023_05_01.operations.StorageAccountsOperations>`
         """
         api_version = self._get_api_version('storage_accounts')
-        if api_version == '2015-06-15':
-            from .v2015_06_15.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2016-01-01':
+        if api_version == '2016-01-01':
             from .v2016_01_01.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2016-12-01':
-            from .v2016_12_01.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2017-06-01':
-            from .v2017_06_01.operations import StorageAccountsOperations as OperationClass
         elif api_version == '2017-10-01':
             from .v2017_10_01.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2018-02-01':
-            from .v2018_02_01.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2018-03-01-preview':
-            from .v2018_03_01_preview.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2018-07-01':
-            from .v2018_07_01.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2018-11-01':
-            from .v2018_11_01.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2019-04-01':
-            from .v2019_04_01.operations import StorageAccountsOperations as OperationClass
         elif api_version == '2019-06-01':
             from .v2019_06_01.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import StorageAccountsOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import StorageAccountsOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import StorageAccountsOperations as OperationClass
         else:
@@ -1150,41 +485,11 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`TableOperations<azure.mgmt.storage.v2019_06_01.operations.TableOperations>`
-           * 2020-08-01-preview: :class:`TableOperations<azure.mgmt.storage.v2020_08_01_preview.operations.TableOperations>`
-           * 2021-01-01: :class:`TableOperations<azure.mgmt.storage.v2021_01_01.operations.TableOperations>`
-           * 2021-02-01: :class:`TableOperations<azure.mgmt.storage.v2021_02_01.operations.TableOperations>`
-           * 2021-04-01: :class:`TableOperations<azure.mgmt.storage.v2021_04_01.operations.TableOperations>`
-           * 2021-06-01: :class:`TableOperations<azure.mgmt.storage.v2021_06_01.operations.TableOperations>`
-           * 2021-08-01: :class:`TableOperations<azure.mgmt.storage.v2021_08_01.operations.TableOperations>`
-           * 2021-09-01: :class:`TableOperations<azure.mgmt.storage.v2021_09_01.operations.TableOperations>`
-           * 2022-05-01: :class:`TableOperations<azure.mgmt.storage.v2022_05_01.operations.TableOperations>`
-           * 2022-09-01: :class:`TableOperations<azure.mgmt.storage.v2022_09_01.operations.TableOperations>`
-           * 2023-01-01: :class:`TableOperations<azure.mgmt.storage.v2023_01_01.operations.TableOperations>`
            * 2023-05-01: :class:`TableOperations<azure.mgmt.storage.v2023_05_01.operations.TableOperations>`
         """
         api_version = self._get_api_version('table')
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import TableOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import TableOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import TableOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import TableOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import TableOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import TableOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import TableOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import TableOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import TableOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import TableOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import TableOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import TableOperations as OperationClass
         else:
@@ -1197,41 +502,11 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2019-06-01: :class:`TableServicesOperations<azure.mgmt.storage.v2019_06_01.operations.TableServicesOperations>`
-           * 2020-08-01-preview: :class:`TableServicesOperations<azure.mgmt.storage.v2020_08_01_preview.operations.TableServicesOperations>`
-           * 2021-01-01: :class:`TableServicesOperations<azure.mgmt.storage.v2021_01_01.operations.TableServicesOperations>`
-           * 2021-02-01: :class:`TableServicesOperations<azure.mgmt.storage.v2021_02_01.operations.TableServicesOperations>`
-           * 2021-04-01: :class:`TableServicesOperations<azure.mgmt.storage.v2021_04_01.operations.TableServicesOperations>`
-           * 2021-06-01: :class:`TableServicesOperations<azure.mgmt.storage.v2021_06_01.operations.TableServicesOperations>`
-           * 2021-08-01: :class:`TableServicesOperations<azure.mgmt.storage.v2021_08_01.operations.TableServicesOperations>`
-           * 2021-09-01: :class:`TableServicesOperations<azure.mgmt.storage.v2021_09_01.operations.TableServicesOperations>`
-           * 2022-05-01: :class:`TableServicesOperations<azure.mgmt.storage.v2022_05_01.operations.TableServicesOperations>`
-           * 2022-09-01: :class:`TableServicesOperations<azure.mgmt.storage.v2022_09_01.operations.TableServicesOperations>`
-           * 2023-01-01: :class:`TableServicesOperations<azure.mgmt.storage.v2023_01_01.operations.TableServicesOperations>`
            * 2023-05-01: :class:`TableServicesOperations<azure.mgmt.storage.v2023_05_01.operations.TableServicesOperations>`
         """
         api_version = self._get_api_version('table_services')
         if api_version == '2019-06-01':
             from .v2019_06_01.operations import TableServicesOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import TableServicesOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import TableServicesOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import TableServicesOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import TableServicesOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import TableServicesOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import TableServicesOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import TableServicesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import TableServicesOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import TableServicesOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import TableServicesOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import TableServicesOperations as OperationClass
         else:
@@ -1243,26 +518,14 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
     def usage(self):
         """Instance depends on the API version:
 
-           * 2015-06-15: :class:`UsageOperations<azure.mgmt.storage.v2015_06_15.operations.UsageOperations>`
            * 2016-01-01: :class:`UsageOperations<azure.mgmt.storage.v2016_01_01.operations.UsageOperations>`
-           * 2016-12-01: :class:`UsageOperations<azure.mgmt.storage.v2016_12_01.operations.UsageOperations>`
-           * 2017-06-01: :class:`UsageOperations<azure.mgmt.storage.v2017_06_01.operations.UsageOperations>`
            * 2017-10-01: :class:`UsageOperations<azure.mgmt.storage.v2017_10_01.operations.UsageOperations>`
-           * 2018-02-01: :class:`UsageOperations<azure.mgmt.storage.v2018_02_01.operations.UsageOperations>`
         """
         api_version = self._get_api_version('usage')
-        if api_version == '2015-06-15':
-            from .v2015_06_15.operations import UsageOperations as OperationClass
-        elif api_version == '2016-01-01':
+        if api_version == '2016-01-01':
             from .v2016_01_01.operations import UsageOperations as OperationClass
-        elif api_version == '2016-12-01':
-            from .v2016_12_01.operations import UsageOperations as OperationClass
-        elif api_version == '2017-06-01':
-            from .v2017_06_01.operations import UsageOperations as OperationClass
         elif api_version == '2017-10-01':
             from .v2017_10_01.operations import UsageOperations as OperationClass
-        elif api_version == '2018-02-01':
-            from .v2018_02_01.operations import UsageOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'usage'".format(api_version))
         self._config.api_version = api_version
@@ -1272,54 +535,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
     def usages(self):
         """Instance depends on the API version:
 
-           * 2018-03-01-preview: :class:`UsagesOperations<azure.mgmt.storage.v2018_03_01_preview.operations.UsagesOperations>`
-           * 2018-07-01: :class:`UsagesOperations<azure.mgmt.storage.v2018_07_01.operations.UsagesOperations>`
-           * 2018-11-01: :class:`UsagesOperations<azure.mgmt.storage.v2018_11_01.operations.UsagesOperations>`
-           * 2019-04-01: :class:`UsagesOperations<azure.mgmt.storage.v2019_04_01.operations.UsagesOperations>`
            * 2019-06-01: :class:`UsagesOperations<azure.mgmt.storage.v2019_06_01.operations.UsagesOperations>`
-           * 2020-08-01-preview: :class:`UsagesOperations<azure.mgmt.storage.v2020_08_01_preview.operations.UsagesOperations>`
-           * 2021-01-01: :class:`UsagesOperations<azure.mgmt.storage.v2021_01_01.operations.UsagesOperations>`
-           * 2021-02-01: :class:`UsagesOperations<azure.mgmt.storage.v2021_02_01.operations.UsagesOperations>`
-           * 2021-04-01: :class:`UsagesOperations<azure.mgmt.storage.v2021_04_01.operations.UsagesOperations>`
-           * 2021-06-01: :class:`UsagesOperations<azure.mgmt.storage.v2021_06_01.operations.UsagesOperations>`
-           * 2021-08-01: :class:`UsagesOperations<azure.mgmt.storage.v2021_08_01.operations.UsagesOperations>`
-           * 2021-09-01: :class:`UsagesOperations<azure.mgmt.storage.v2021_09_01.operations.UsagesOperations>`
-           * 2022-05-01: :class:`UsagesOperations<azure.mgmt.storage.v2022_05_01.operations.UsagesOperations>`
-           * 2022-09-01: :class:`UsagesOperations<azure.mgmt.storage.v2022_09_01.operations.UsagesOperations>`
-           * 2023-01-01: :class:`UsagesOperations<azure.mgmt.storage.v2023_01_01.operations.UsagesOperations>`
            * 2023-05-01: :class:`UsagesOperations<azure.mgmt.storage.v2023_05_01.operations.UsagesOperations>`
         """
         api_version = self._get_api_version('usages')
-        if api_version == '2018-03-01-preview':
-            from .v2018_03_01_preview.operations import UsagesOperations as OperationClass
-        elif api_version == '2018-07-01':
-            from .v2018_07_01.operations import UsagesOperations as OperationClass
-        elif api_version == '2018-11-01':
-            from .v2018_11_01.operations import UsagesOperations as OperationClass
-        elif api_version == '2019-04-01':
-            from .v2019_04_01.operations import UsagesOperations as OperationClass
-        elif api_version == '2019-06-01':
+        if api_version == '2019-06-01':
             from .v2019_06_01.operations import UsagesOperations as OperationClass
-        elif api_version == '2020-08-01-preview':
-            from .v2020_08_01_preview.operations import UsagesOperations as OperationClass
-        elif api_version == '2021-01-01':
-            from .v2021_01_01.operations import UsagesOperations as OperationClass
-        elif api_version == '2021-02-01':
-            from .v2021_02_01.operations import UsagesOperations as OperationClass
-        elif api_version == '2021-04-01':
-            from .v2021_04_01.operations import UsagesOperations as OperationClass
-        elif api_version == '2021-06-01':
-            from .v2021_06_01.operations import UsagesOperations as OperationClass
-        elif api_version == '2021-08-01':
-            from .v2021_08_01.operations import UsagesOperations as OperationClass
-        elif api_version == '2021-09-01':
-            from .v2021_09_01.operations import UsagesOperations as OperationClass
-        elif api_version == '2022-05-01':
-            from .v2022_05_01.operations import UsagesOperations as OperationClass
-        elif api_version == '2022-09-01':
-            from .v2022_09_01.operations import UsagesOperations as OperationClass
-        elif api_version == '2023-01-01':
-            from .v2023_01_01.operations import UsagesOperations as OperationClass
         elif api_version == '2023-05-01':
             from .v2023_05_01.operations import UsagesOperations as OperationClass
         else:

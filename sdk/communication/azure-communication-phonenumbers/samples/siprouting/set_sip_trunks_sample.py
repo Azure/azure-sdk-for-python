@@ -27,8 +27,10 @@ fqdn = os.getenv("COMMUNICATION_SAMPLES_TRUNK_FQDN")
 signaling_port = os.getenv("COMMUNICATION_SAMPLES_SIGNALING_PORT")
 TRUNKS = [SipTrunk(fqdn=fqdn, sip_signaling_port=signaling_port)]
 
+
 def set_sip_trunks_sample():
     client.set_trunks(TRUNKS)
+
 
 if __name__ == "__main__":
     set_sip_trunks_sample()

@@ -128,15 +128,19 @@ class ConversationBot:
         self.conversation_starter: Optional[Union[str, jinja2.Template, Dict]] = None
         if role == ConversationRole.USER:
             if "conversation_starter" in self.persona_template_args:
+                print(self.persona_template_args)
                 conversation_starter_content = self.persona_template_args["conversation_starter"]
                 if isinstance(conversation_starter_content, dict):
                     self.conversation_starter = conversation_starter_content
+                    print(f"Conversation starter content: {conversation_starter_content}")
                 else:
                     try:
                         self.conversation_starter = jinja2.Template(
                             conversation_starter_content, undefined=jinja2.StrictUndefined
                         )
-                    except jinja2.exceptions.TemplateSyntaxError:  # noqa: F841
+                        print("Successfully created a Jinja2 template for the conversation starter.")
+                    except jinja2.exceptions.TemplateSyntaxError as e:  # noqa: F841
+                        print(f"Template syntax error: {e}. Using raw content.")
                         self.conversation_starter = conversation_starter_content
             else:
                 self.logger.info(
@@ -175,6 +179,9 @@ class ConversationBot:
                 samples = [self.conversation_starter.render(**self.persona_template_args)]
             else:
                 samples = [self.conversation_starter]
+            jailbreak_string = self.persona_template_args.get("jailbreak_string", None)
+            if jailbreak_string:
+                samples = [f"{jailbreak_string} {samples[0]}"]
             time_taken = 0
 
             finish_reason = ["stop"]

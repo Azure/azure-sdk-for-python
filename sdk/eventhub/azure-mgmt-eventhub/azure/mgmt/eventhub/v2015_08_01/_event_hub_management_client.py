@@ -21,11 +21,10 @@ from ._configuration import EventHubManagementClientConfiguration
 from .operations import ConsumerGroupsOperations, EventHubsOperations, NamespacesOperations, Operations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class EventHubManagementClient:  # pylint: disable=client-accepts-api-version-keyword
+class EventHubManagementClient:
     """Azure Event Hubs client.
 
     :ivar operations: Operations operations

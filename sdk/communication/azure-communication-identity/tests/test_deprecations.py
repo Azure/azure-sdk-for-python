@@ -6,7 +6,8 @@
 # --------------------------------------------------------------------------
 
 import pytest
-import azure.communication.identity as models 
+import azure.communication.identity as models
+
 
 class TestDeprecations:
 
@@ -18,9 +19,10 @@ class TestDeprecations:
         with pytest.deprecated_call():
             props = models.CommunicationIdentifierKind.MICROSOFT_BOT
             assert props == models.CommunicationIdentifierKind.MICROSOFT_TEAMS_APP
-    
+
     def test_deprecated_bot_identifier(self):
         from azure.communication.identity._shared.models import _MicrosoftBotIdentifier
+
         with pytest.deprecated_call():
             bot = _MicrosoftBotIdentifier("bot_id", is_resource_account_configured=False, cloud="PUBLIC")
             assert bot.kind == models.CommunicationIdentifierKind.microsoft_bot

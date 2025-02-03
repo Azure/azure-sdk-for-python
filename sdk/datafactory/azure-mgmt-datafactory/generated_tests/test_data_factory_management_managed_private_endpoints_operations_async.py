@@ -21,7 +21,7 @@ class TestDataFactoryManagementManagedPrivateEndpointsOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_factory(self, resource_group):
+    async def test_managed_private_endpoints_list_by_factory(self, resource_group):
         response = self.client.managed_private_endpoints.list_by_factory(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -34,7 +34,7 @@ class TestDataFactoryManagementManagedPrivateEndpointsOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_managed_private_endpoints_create_or_update(self, resource_group):
         response = await self.client.managed_private_endpoints.create_or_update(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -62,7 +62,7 @@ class TestDataFactoryManagementManagedPrivateEndpointsOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_managed_private_endpoints_get(self, resource_group):
         response = await self.client.managed_private_endpoints.get(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -76,7 +76,7 @@ class TestDataFactoryManagementManagedPrivateEndpointsOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_managed_private_endpoints_delete(self, resource_group):
         response = await self.client.managed_private_endpoints.delete(
             resource_group_name=resource_group.name,
             factory_name="str",

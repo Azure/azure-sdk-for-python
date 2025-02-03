@@ -20,11 +20,11 @@ class TestCosmosDBManagementGraphResourcesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_graphs(self, resource_group):
+    def test_graph_resources_list_graphs(self, resource_group):
         response = self.client.graph_resources.list_graphs(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestCosmosDBManagementGraphResourcesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_graph(self, resource_group):
+    def test_graph_resources_get_graph(self, resource_group):
         response = self.client.graph_resources.get_graph(
             resource_group_name=resource_group.name,
             account_name="str",
             graph_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestCosmosDBManagementGraphResourcesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_update_graph(self, resource_group):
+    def test_graph_resources_begin_create_update_graph(self, resource_group):
         response = self.client.graph_resources.begin_create_update_graph(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -65,7 +65,7 @@ class TestCosmosDBManagementGraphResourcesOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -73,12 +73,12 @@ class TestCosmosDBManagementGraphResourcesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete_graph_resource(self, resource_group):
+    def test_graph_resources_begin_delete_graph_resource(self, resource_group):
         response = self.client.graph_resources.begin_delete_graph_resource(
             resource_group_name=resource_group.name,
             account_name="str",
             graph_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

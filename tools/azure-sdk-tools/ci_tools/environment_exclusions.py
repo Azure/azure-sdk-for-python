@@ -15,8 +15,8 @@ from typing import Any
 # For CI exclusion of type checks, look into adding a pyproject.toml, as indicated in the `The pyproject.toml` section
 # of `.doc/eng_sys_checks.md`.
 
-IGNORE_FILTER = ["nspkg", "mgmt", "cognitiveservices"]
-FILTER_EXCLUSIONS = ["azure-mgmt-core"]
+IGNORE_FILTER = ["nspkg", "cognitiveservices"]
+FILTER_EXCLUSIONS = []
 IGNORE_PACKAGES = [
     "azure-applicationinsights",
     "azure-servicemanagement-legacy",

@@ -21,11 +21,11 @@ class TestServiceFabricManagedClustersManagementManagedClusterVersionOperationsA
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_managed_cluster_version_get(self, resource_group):
         response = await self.client.managed_cluster_version.get(
             location="str",
             cluster_version="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestServiceFabricManagedClustersManagementManagedClusterVersionOperationsA
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_environment(self, resource_group):
+    async def test_managed_cluster_version_get_by_environment(self, resource_group):
         response = await self.client.managed_cluster_version.get_by_environment(
             location="str",
             environment="str",
             cluster_version="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -46,10 +46,10 @@ class TestServiceFabricManagedClustersManagementManagedClusterVersionOperationsA
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_managed_cluster_version_list(self, resource_group):
         response = await self.client.managed_cluster_version.list(
             location="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -57,11 +57,11 @@ class TestServiceFabricManagedClustersManagementManagedClusterVersionOperationsA
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_environment(self, resource_group):
+    async def test_managed_cluster_version_list_by_environment(self, resource_group):
         response = await self.client.managed_cluster_version.list_by_environment(
             location="str",
             environment="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-09-01-preview",
         )
 
         # please add some check logic here by yourself

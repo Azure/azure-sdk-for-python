@@ -28,11 +28,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class EventHubManagementClient:  # pylint: disable=client-accepts-api-version-keyword
+class EventHubManagementClient:
     """Azure Event Hubs client.
 
     :ivar namespaces: NamespacesOperations operations

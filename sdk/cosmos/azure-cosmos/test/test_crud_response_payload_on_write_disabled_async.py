@@ -1707,7 +1707,8 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
             ]
         }
 
-        custom_logger = logging.getLogger("CustomLogger")
+        # TODO: Check on why custom logger was previously used here
+        # custom_logger = logging.getLogger("CustomLogger")
         created_container = await db.create_container(
             id='composite_index_spatial_index' + str(uuid.uuid4()),
             indexing_policy=indexing_policy,
@@ -1716,9 +1717,9 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
             user_agent="blah",
             user_agent_overwrite=True,
             logging_enable=True,
-            logger=custom_logger,
         )
-        created_properties = await created_container.read(logger=custom_logger)
+        # TODO: check on why custom logger was used for container read.
+        created_properties = await created_container.read()
         read_indexing_policy = created_properties['indexingPolicy']
 
         if 'localhost' in self.host or '127.0.0.1' in self.host:  # TODO: Differing result between live and emulator

@@ -78,7 +78,7 @@ class HttpXTransportResponse(HttpResponseImpl):
         """
         return self.internal_response.content
 
-    def stream_download(self, pipeline: Pipeline, **kwargs) -> Iterator[bytes]:
+    def stream_download(self, pipeline: Pipeline, *, decompress: bool = True, **kwargs) -> Iterator[bytes]:
         """Generator for streaming response data.
 
         :param pipeline: The pipeline object
@@ -88,7 +88,7 @@ class HttpXTransportResponse(HttpResponseImpl):
         :return: An iterator for streaming response data.
         :rtype: Iterator[bytes]
         """
-        return HttpXStreamDownloadGenerator(pipeline, self, **kwargs)
+        return HttpXStreamDownloadGenerator(pipeline, self, decompress=decompress, **kwargs)
 
 
 # pylint: disable=unused-argument
@@ -176,7 +176,9 @@ class HttpXTransport(HttpTransport):
     def __exit__(self, *args) -> None:
         self.close()
 
-    def send(self, request: Union[HttpRequest, LegacyHttpRequest], **kwargs) -> HttpXTransportResponse:
+    def send(
+        self, request: Union[HttpRequest, LegacyHttpRequest], *, stream: bool = False, **kwargs
+    ) -> HttpXTransportResponse:
         """Send a request and get back a response.
 
         :param request: The request object to be sent.
@@ -186,7 +188,7 @@ class HttpXTransport(HttpTransport):
         :rtype: ~azure.core.experimental.transport.HttpXTransportResponse
         """
         self.open()
-        stream_response = kwargs.pop("stream", False)
+        stream_response = stream
         timeout = kwargs.pop("connection_timeout", self.connection_config.timeout)
         # not needed here as its already handled during init
         kwargs.pop("connection_verify", None)

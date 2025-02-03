@@ -20,7 +20,7 @@ class TestDataFactoryManagementPrivateEndPointConnectionsOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_factory(self, resource_group):
+    def test_private_end_point_connections_list_by_factory(self, resource_group):
         response = self.client.private_end_point_connections.list_by_factory(
             resource_group_name=resource_group.name,
             factory_name="str",

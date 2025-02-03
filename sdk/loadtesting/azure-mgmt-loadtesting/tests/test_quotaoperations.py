@@ -6,7 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-
+import pytest
 import unittest
 from azure.mgmt.loadtesting import LoadTestMgmtClient
 from azure.mgmt.loadtesting.models import QuotaBucketRequest
@@ -15,6 +15,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 AZURE_LOCATION = "westus2"
 
 
+@pytest.mark.live_test_only
 class TestQuotaOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.loadtestservice_client = self.create_mgmt_client(LoadTestMgmtClient)

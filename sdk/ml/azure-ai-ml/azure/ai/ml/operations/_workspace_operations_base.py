@@ -45,6 +45,7 @@ from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml.entities import Hub, Project, Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace._ai_workspaces._constants import ENDPOINT_AI_SERVICE_KIND
+from azure.ai.ml.entities._workspace.network_acls import NetworkAcls
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
@@ -65,7 +66,7 @@ class WorkspaceOperationsBase(ABC):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._subscription_id = operation_scope.subscription_id
         self._resource_group_name = operation_scope.resource_group_name
         self._default_workspace_name = operation_scope.workspace_name
@@ -353,9 +354,19 @@ class WorkspaceOperationsBase(ABC):
 
         serverless_compute_settings = kwargs.get("serverless_compute", workspace.serverless_compute)
         if serverless_compute_settings:
-            serverless_compute_settings = (
-                serverless_compute_settings._to_rest_object()
-            )  # pylint: disable=protected-access
+            serverless_compute_settings = serverless_compute_settings._to_rest_object()
+
+        public_network_access = kwargs.get("public_network_access", workspace.public_network_access)
+        network_acls = kwargs.get("network_acls", workspace.network_acls)
+        if network_acls:
+            network_acls = network_acls._to_rest_object()  # pylint: disable=protected-access
+
+        if public_network_access == "Disabled" or (
+            existing_workspace
+            and existing_workspace.public_network_access == "Disabled"
+            and public_network_access is None
+        ):
+            network_acls = NetworkAcls()._to_rest_object()  # pylint: disable=protected-access
 
         update_param = WorkspaceUpdateParameters(
             tags=kwargs.get("tags", workspace.tags),
@@ -375,6 +386,7 @@ class WorkspaceOperationsBase(ABC):
             ),
             managed_network=managed_network,
             feature_store_settings=feature_store_settings,
+            network_acls=network_acls,
         )
         if serverless_compute_settings:
             update_param.serverless_compute_settings = serverless_compute_settings
@@ -404,7 +416,7 @@ class WorkspaceOperationsBase(ABC):
                 _ = workspace.tags.pop(bad_key, None)
 
         # pylint: disable=unused-argument, docstring-missing-param
-        def callback(_: Any, deserialized: Any, args: Any) -> Workspace:
+        def callback(_: Any, deserialized: Any, args: Any) -> Optional[Workspace]:
             """Callback to be called after completion
 
             :return: Workspace deserialized.
@@ -700,7 +712,6 @@ class WorkspaceOperationsBase(ABC):
         if workspace.identity:
             identity = workspace.identity._to_workspace_rest_object()
         else:
-            # pylint: disable=protected-access
             identity = IdentityConfiguration(
                 type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED)
             )._to_workspace_rest_object()
@@ -1117,7 +1128,9 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
             error_msg = f"Unable to create resource. \n {error}\n"
             module_logger.error(error_msg)
             raise error
-        module_logger.info("Total time : %s\n", from_iso_duration_format_min_sec(total_duration))
+        module_logger.info(
+            "Total time : %s\n", from_iso_duration_format_min_sec(total_duration)  # pylint: disable=E0606
+        )
         return self.func()
 
     # pylint: disable=docstring-missing-param

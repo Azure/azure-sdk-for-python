@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +7,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -43,7 +42,7 @@ from ...operations._application_type_versions_operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -88,7 +87,7 @@ class ApplicationTypeVersionsOperations:
         :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationTypeVersionResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -142,7 +141,7 @@ class ApplicationTypeVersionsOperations:
         parameters: Union[_models.ApplicationTypeVersionResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -223,6 +222,7 @@ class ApplicationTypeVersionsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ApplicationTypeVersionResource]:
+        # pylint: disable=line-too-long
         """Creates or updates a Service Fabric managed application type version resource.
 
         Create or update a Service Fabric managed application type version resource with the specified
@@ -261,6 +261,7 @@ class ApplicationTypeVersionsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ApplicationTypeVersionResource]:
+        # pylint: disable=line-too-long
         """Creates or updates a Service Fabric managed application type version resource.
 
         Create or update a Service Fabric managed application type version resource with the specified
@@ -296,6 +297,7 @@ class ApplicationTypeVersionsOperations:
         parameters: Union[_models.ApplicationTypeVersionResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ApplicationTypeVersionResource]:
+        # pylint: disable=line-too-long
         """Creates or updates a Service Fabric managed application type version resource.
 
         Create or update a Service Fabric managed application type version resource with the specified
@@ -470,7 +472,7 @@ class ApplicationTypeVersionsOperations:
         :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.ApplicationTypeVersionResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -530,7 +532,7 @@ class ApplicationTypeVersionsOperations:
     async def _delete_initial(
         self, resource_group_name: str, cluster_name: str, application_type_name: str, version: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -655,6 +657,7 @@ class ApplicationTypeVersionsOperations:
     def list_by_application_types(
         self, resource_group_name: str, cluster_name: str, application_type_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.ApplicationTypeVersionResource"]:
+        # pylint: disable=line-too-long
         """Gets the list of application type version resources created in the specified Service Fabric
         managed application type name resource.
 
@@ -679,7 +682,7 @@ class ApplicationTypeVersionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ApplicationTypeVersionResourceList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

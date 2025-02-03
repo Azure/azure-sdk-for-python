@@ -6,7 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-
+import pytest
 import unittest
 import os
 from azure.mgmt.loadtesting import LoadTestMgmtClient
@@ -31,6 +31,7 @@ from mgmt_test_helper import create_key, create_key_vault, create_managed_identi
 DEFAULT_SANITIZER = "00000000-0000-0000-0000-000000000000"
 
 
+@pytest.mark.live_test_only
 class TestResourceOperations(AzureMgmtRecordedTestCase):
     AZURE_LOCATION = "westus2"
 

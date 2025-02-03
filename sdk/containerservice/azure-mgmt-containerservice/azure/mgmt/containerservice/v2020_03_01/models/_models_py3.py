@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -12,7 +12,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from ... import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -50,7 +49,7 @@ class SubResource(_serialization.Model):
         self.type = None
 
 
-class AgentPool(SubResource):  # pylint: disable=too-many-instance-attributes
+class AgentPool(SubResource):
     """Agent Pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -559,7 +558,7 @@ class AgentPoolUpgradeProfilePropertiesUpgradesItem(_serialization.Model):  # py
         self.is_preview = is_preview
 
 
-class BaseManagedCluster(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class BaseManagedCluster(_serialization.Model):
     """BaseManagedCluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1355,7 +1354,7 @@ class Resource(_serialization.Model):
         self.tags = tags
 
 
-class ManagedCluster(Resource, BaseManagedCluster):  # pylint: disable=too-many-instance-attributes
+class ManagedCluster(Resource, BaseManagedCluster):
     """Managed cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1828,7 +1827,7 @@ class ManagedClusterAddonProfileIdentity(UserAssignedIdentity):
     """
 
 
-class ManagedClusterAgentPoolProfileProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
     """Properties for the container service agent pool profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2108,9 +2107,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):  # pylint:
         self.node_taints = node_taints
 
 
-class ManagedClusterAgentPoolProfile(
-    ManagedClusterAgentPoolProfileProperties
-):  # pylint: disable=too-many-instance-attributes
+class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     """Profile for the container service agent pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2976,20 +2973,20 @@ class ManagedClusterWindowsProfile(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar admin_username: Specifies the name of the administrator account. :code:`<br>`:code:`<br>`
-     **restriction:** Cannot end in "." :code:`<br>`:code:`<br>` **Disallowed values:**
-     "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3", "admin1", "1",
-     "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david", "guest",
-     "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys", "test2",
-     "test3", "user4", "user5". :code:`<br>`:code:`<br>` **Minimum-length:** 1 character
-     :code:`<br>`:code:`<br>` **Max-length:** 20 characters. Required.
+    :ivar admin_username: Specifies the name of the administrator account. :code:`<br>`\\
+     :code:`<br>` **restriction:** Cannot end in "." :code:`<br>`\\ :code:`<br>` **Disallowed
+     values:** "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3",
+     "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david",
+     "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys",
+     "test2", "test3", "user4", "user5". :code:`<br>`\\ :code:`<br>` **Minimum-length:** 1 character
+     :code:`<br>`\\ :code:`<br>` **Max-length:** 20 characters. Required.
     :vartype admin_username: str
-    :ivar admin_password: Specifies the password of the administrator account.
-     :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
-     **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
-     conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
-     characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
-     :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
+    :ivar admin_password: Specifies the password of the administrator account. :code:`<br>`\\
+     :code:`<br>` **Minimum-length:** 8 characters :code:`<br>`\\ :code:`<br>` **Max-length:** 123
+     characters :code:`<br>`\\ :code:`<br>` **Complexity requirements:** 3 out of 4 conditions below
+     need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters
+     :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
+     :code:`<br>`\\ :code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
      "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
     :vartype admin_password: str
     """
@@ -3005,20 +3002,20 @@ class ManagedClusterWindowsProfile(_serialization.Model):
 
     def __init__(self, *, admin_username: str, admin_password: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword admin_username: Specifies the name of the administrator account.
-         :code:`<br>`:code:`<br>` **restriction:** Cannot end in "." :code:`<br>`:code:`<br>`
-         **Disallowed values:** "administrator", "admin", "user", "user1", "test", "user2", "test1",
-         "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console",
-         "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0",
-         "sys", "test2", "test3", "user4", "user5". :code:`<br>`:code:`<br>` **Minimum-length:** 1
-         character :code:`<br>`:code:`<br>` **Max-length:** 20 characters. Required.
+        :keyword admin_username: Specifies the name of the administrator account. :code:`<br>`\\
+         :code:`<br>` **restriction:** Cannot end in "." :code:`<br>`\\ :code:`<br>` **Disallowed
+         values:** "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3",
+         "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david",
+         "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys",
+         "test2", "test3", "user4", "user5". :code:`<br>`\\ :code:`<br>` **Minimum-length:** 1 character
+         :code:`<br>`\\ :code:`<br>` **Max-length:** 20 characters. Required.
         :paramtype admin_username: str
-        :keyword admin_password: Specifies the password of the administrator account.
-         :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
-         **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
-         conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
-         characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
-         :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
+        :keyword admin_password: Specifies the password of the administrator account. :code:`<br>`\\
+         :code:`<br>` **Minimum-length:** 8 characters :code:`<br>`\\ :code:`<br>` **Max-length:** 123
+         characters :code:`<br>`\\ :code:`<br>` **Complexity requirements:** 3 out of 4 conditions below
+         need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters
+         :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
+         :code:`<br>`\\ :code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
          "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
         :paramtype admin_password: str
         """

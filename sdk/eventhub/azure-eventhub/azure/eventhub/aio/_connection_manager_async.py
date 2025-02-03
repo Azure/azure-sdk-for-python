@@ -57,13 +57,13 @@ class _SharedConnectionManager:  # pylint:disable=too-many-instance-attributes
         http_proxy: Optional[str] = None,
         max_frame_size: int,
         channel_max: int,
-        idle_timeout: float,
+        idle_timeout: Optional[float],
         remote_idle_timeout_empty_frame_send_ratio: float,
         amqp_transport: AmqpTransportAsync,
         **kwargs: Any,
     ) -> None:
         self._loop = kwargs.get("loop")
-        self._lock = Lock(loop=self._loop)
+        self._lock = Lock()
         self._conn: Optional[Union[uamqp_ConnectionAsync, ConnectionAsync]] = None
 
         self._container_id = container_id

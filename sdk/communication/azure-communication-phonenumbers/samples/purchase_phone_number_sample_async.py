@@ -21,23 +21,19 @@ USAGE:
 
 import asyncio
 import os
-from azure.communication.phonenumbers.aio import (
-    PhoneNumbersClient
-)
+from azure.communication.phonenumbers.aio import PhoneNumbersClient
 
-connection_str = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
+connection_str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
 search_id = os.getenv("AZURE_COMMUNICATION_SERVICE_SEARCH_ID_TO_PURCHASE")
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
+
 async def purchase_phone_number():
     async with phone_numbers_client:
-        poller = await phone_numbers_client.begin_purchase_phone_numbers(
-            search_id,
-            polling = True
-        )
+        poller = await phone_numbers_client.begin_purchase_phone_numbers(search_id, polling=True)
         await poller.result()
     print("Result from the purchase operation: " + poller.status())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(purchase_phone_number())

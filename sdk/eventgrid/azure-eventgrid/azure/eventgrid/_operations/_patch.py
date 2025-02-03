@@ -47,7 +47,7 @@ from .._serialization import Serializer
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
@@ -78,7 +78,7 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
         channel_name: Optional[str] = None,
         content_type: Optional[str] = None,
         **kwargs: Any,
-    ) -> None:  # pylint: disable=docstring-should-be-keyword, docstring-missing-param
+    ) -> None:
         """Send events to the Event Grid Service.
 
         :param events: The event(s) to send. If sending to an Event Grid Namespace, the dict, list of dicts,
@@ -117,7 +117,7 @@ class EventGridPublisherClientOperationsMixin(PublisherOperationsMixin):
             try:
                 # Try to send via namespace
                 self._publish(self._namespace, _serialize_events(events), **kwargs)
-            except Exception as exception:  # pylint: disable=broad-except
+            except Exception as exception:
                 self._http_response_error_handler(exception)
                 raise exception
         else:

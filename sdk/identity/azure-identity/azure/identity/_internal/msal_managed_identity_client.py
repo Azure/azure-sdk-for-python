@@ -59,6 +59,7 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
                 token_type=result.get("token_type", "Bearer"),
                 refresh_on=refresh_on,
             )
+        error_desc = ""
         if result and "error" in result:
             error_desc = cast(str, result["error"])
         error_message = self.get_unavailable_message(error_desc)
@@ -186,7 +187,7 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
                 exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
             )
             raise ClientAuthenticationError(self.get_unavailable_message(str(ex))) from ex
-        except Exception as ex:  # pylint:disable=broad-except
+        except Exception as ex:
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.WARNING,
                 "%s.%s failed: %s",

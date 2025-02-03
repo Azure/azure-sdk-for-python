@@ -27,7 +27,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin):  # pylint: disabl
     unstructured text for tasks such as sentiment analysis, key phrase extraction and language
     detection. Functionality for analysis of text specific to the healthcare domain and personal
     information are also available in the API. Further documentation can be found in :code:`<a
-    href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
+    href="https://learn.microsoft.com/azure/cognitive-services/text-analytics/overview">https://learn.microsoft.com/azure/cognitive-services/text-analytics/overview</a>`.
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential

@@ -1,13 +1,7 @@
 from ._version import VERSION
 from ._chat_client import ChatClient
 from ._chat_thread_client import ChatThreadClient
-from ._generated.models import (
-    ChatAttachmentType,
-    SendChatMessageResult,
-    ChatThreadItem,
-    ChatMessageType,
-    ChatError
-)
+from ._generated.models import ChatAttachmentType, SendChatMessageResult, ChatThreadItem, ChatMessageType, ChatError
 
 from ._models import (
     ChatAttachment,
@@ -16,7 +10,7 @@ from ._models import (
     ChatThreadProperties,
     ChatMessageReadReceipt,
     ChatMessageContent,
-    CreateChatThreadResult
+    CreateChatThreadResult,
 )
 
 from ._shared.user_credential import CommunicationTokenCredential
@@ -32,36 +26,36 @@ from ._shared.models import (
     MicrosoftTeamsAppProperties,
     MicrosoftTeamsUserIdentifier,
     MicrosoftTeamsUserProperties,
-    UnknownIdentifier
+    UnknownIdentifier,
 )
 
 __all__ = [
-    'ChatClient',
-    'ChatThreadClient',
-    'ChatMessage',
-    'ChatMessageContent',
-    'ChatMessageReadReceipt',
-    'SendChatMessageResult',
-    'ChatThreadProperties',
-    'ChatThreadItem',
-    'ChatParticipant',
-    'ChatMessageType',
-    'ChatAttachment',
-    'ChatAttachmentType',
-    'CreateChatThreadResult',
-    'ChatError',
-    'CommunicationTokenCredential',
-    'CommunicationIdentifier',
-    'CommunicationIdentifierKind',
-    'CommunicationUserIdentifier',
-    'CommunicationUserProperties',
-    'MicrosoftTeamsAppIdentifier',
-    'MicrosoftTeamsAppProperties',
-    'MicrosoftTeamsUserIdentifier',
-    'MicrosoftTeamsUserProperties',
-    'identifier_from_raw_id',
-    'PhoneNumberIdentifier',
-    'PhoneNumberProperties',
-    'UnknownIdentifier'
+    "ChatClient",
+    "ChatThreadClient",
+    "ChatMessage",
+    "ChatMessageContent",
+    "ChatMessageReadReceipt",
+    "SendChatMessageResult",
+    "ChatThreadProperties",
+    "ChatThreadItem",
+    "ChatParticipant",
+    "ChatMessageType",
+    "ChatAttachment",
+    "ChatAttachmentType",
+    "CreateChatThreadResult",
+    "ChatError",
+    "CommunicationTokenCredential",
+    "CommunicationIdentifier",
+    "CommunicationIdentifierKind",
+    "CommunicationUserIdentifier",
+    "CommunicationUserProperties",
+    "MicrosoftTeamsAppIdentifier",
+    "MicrosoftTeamsAppProperties",
+    "MicrosoftTeamsUserIdentifier",
+    "MicrosoftTeamsUserProperties",
+    "identifier_from_raw_id",
+    "PhoneNumberIdentifier",
+    "PhoneNumberProperties",
+    "UnknownIdentifier",
 ]
 __version__ = VERSION

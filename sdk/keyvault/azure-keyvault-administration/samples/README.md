@@ -13,9 +13,9 @@ urlFragment: keyvault-administration-samples
 ## Prerequisites
 
 You must have an [Azure subscription](https://azure.microsoft.com/free) and an
-[Azure Managed HSM](https://docs.microsoft.com/azure/key-vault/managed-hsm/) to run
+[Azure Managed HSM](https://learn.microsoft.com/azure/key-vault/managed-hsm/) to run
 these samples. You can create a managed HSM with the
-[Azure CLI](https://docs.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli).
+[Azure CLI](https://learn.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli).
 
 ## Setup
 

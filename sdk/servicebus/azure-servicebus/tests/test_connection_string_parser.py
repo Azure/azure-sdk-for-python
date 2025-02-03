@@ -108,3 +108,19 @@ class ServiceBusConnectionStringParserTests(AzureMgmtRecordedTestCase):
         with pytest.raises(ValueError) as e:
             parse_result = parse_connection_string(conn_str)
         assert str(e.value) == "Connection string must have both SharedAccessKeyName and SharedAccessKey."
+
+    def test_sb_parse_emulator_string(self, **kwargs):
+        conn_str = "Endpoint=sb://localhost;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;"
+        parse_result = parse_connection_string(conn_str)
+        assert parse_result.endpoint == "sb://localhost"
+        assert parse_result.fully_qualified_namespace == "localhost"
+
+        conn_str = "Endpoint=sb://servicebus-emulator;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;"
+        parse_result = parse_connection_string(conn_str)
+        assert parse_result.endpoint == "sb://servicebus-emulator"
+        assert parse_result.fully_qualified_namespace == "servicebus-emulator"
+
+        conn_str = "Endpoint=sb://192.168.y.z;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;"
+        parse_result = parse_connection_string(conn_str)
+        assert parse_result.endpoint == "sb://192.168.y.z"
+        assert parse_result.fully_qualified_namespace == "192.168.y.z"

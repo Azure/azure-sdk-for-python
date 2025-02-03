@@ -13,9 +13,9 @@ urlFragment: keyvault-certificates-samples
 ## Prerequisites
 
 You must have an [Azure subscription](https://azure.microsoft.com/free) and an
-[Azure Key Vault](https://docs.microsoft.com/azure/key-vault/general/overview) to run
+[Azure Key Vault](https://learn.microsoft.com/azure/key-vault/general/overview) to run
 these samples. You can create a key vault with the
-[Azure CLI](https://docs.microsoft.com/azure/key-vault/general/quick-create-cli).
+[Azure CLI](https://learn.microsoft.com/azure/key-vault/general/quick-create-cli).
 
 ## Setup
 
@@ -47,7 +47,7 @@ pip install azure-keyvault-certificates azure-identity
 [hello_world_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/samples/hello_world_async.py
 [import_certificate_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates/samples/import_certificate.py
 [import_certificate_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates/samples/import_certificate_async.py
-[keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
+[keyvault_docs]: https://learn.microsoft.com/azure/key-vault/
 [list_operations_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/samples/list_operations.py
 [list_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/samples/list_operations_async.py
 [recover_purge_operations_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/samples/recover_purge_operations.py

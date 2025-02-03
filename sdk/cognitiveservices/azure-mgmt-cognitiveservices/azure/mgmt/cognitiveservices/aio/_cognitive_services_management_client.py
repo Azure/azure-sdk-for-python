@@ -8,9 +8,12 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
+from typing_extensions import Self
 
+from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
 
 from .. import models as _models
 from .._serialization import Deserializer, Serializer
@@ -20,12 +23,21 @@ from .operations import (
     CognitiveServicesManagementClientOperationsMixin,
     CommitmentPlansOperations,
     CommitmentTiersOperations,
+    DefenderForAISettingsOperations,
     DeletedAccountsOperations,
     DeploymentsOperations,
+    EncryptionScopesOperations,
+    LocationBasedModelCapacitiesOperations,
+    ModelCapacitiesOperations,
     ModelsOperations,
+    NetworkSecurityPerimeterConfigurationsOperations,
     Operations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
+    RaiBlocklistItemsOperations,
+    RaiBlocklistsOperations,
+    RaiContentFiltersOperations,
+    RaiPoliciesOperations,
     ResourceSkusOperations,
     UsagesOperations,
 )
@@ -56,6 +68,12 @@ class CognitiveServicesManagementClient(
      azure.mgmt.cognitiveservices.aio.operations.CommitmentTiersOperations
     :ivar models: ModelsOperations operations
     :vartype models: azure.mgmt.cognitiveservices.aio.operations.ModelsOperations
+    :ivar location_based_model_capacities: LocationBasedModelCapacitiesOperations operations
+    :vartype location_based_model_capacities:
+     azure.mgmt.cognitiveservices.aio.operations.LocationBasedModelCapacitiesOperations
+    :ivar model_capacities: ModelCapacitiesOperations operations
+    :vartype model_capacities:
+     azure.mgmt.cognitiveservices.aio.operations.ModelCapacitiesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.cognitiveservices.aio.operations.PrivateEndpointConnectionsOperations
@@ -67,13 +85,33 @@ class CognitiveServicesManagementClient(
     :ivar commitment_plans: CommitmentPlansOperations operations
     :vartype commitment_plans:
      azure.mgmt.cognitiveservices.aio.operations.CommitmentPlansOperations
+    :ivar encryption_scopes: EncryptionScopesOperations operations
+    :vartype encryption_scopes:
+     azure.mgmt.cognitiveservices.aio.operations.EncryptionScopesOperations
+    :ivar rai_policies: RaiPoliciesOperations operations
+    :vartype rai_policies: azure.mgmt.cognitiveservices.aio.operations.RaiPoliciesOperations
+    :ivar rai_blocklists: RaiBlocklistsOperations operations
+    :vartype rai_blocklists: azure.mgmt.cognitiveservices.aio.operations.RaiBlocklistsOperations
+    :ivar rai_blocklist_items: RaiBlocklistItemsOperations operations
+    :vartype rai_blocklist_items:
+     azure.mgmt.cognitiveservices.aio.operations.RaiBlocklistItemsOperations
+    :ivar rai_content_filters: RaiContentFiltersOperations operations
+    :vartype rai_content_filters:
+     azure.mgmt.cognitiveservices.aio.operations.RaiContentFiltersOperations
+    :ivar network_security_perimeter_configurations:
+     NetworkSecurityPerimeterConfigurationsOperations operations
+    :vartype network_security_perimeter_configurations:
+     azure.mgmt.cognitiveservices.aio.operations.NetworkSecurityPerimeterConfigurationsOperations
+    :ivar defender_for_ai_settings: DefenderForAISettingsOperations operations
+    :vartype defender_for_ai_settings:
+     azure.mgmt.cognitiveservices.aio.operations.DefenderForAISettingsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-05-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2024-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -90,7 +128,25 @@ class CognitiveServicesManagementClient(
         self._config = CognitiveServicesManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                AsyncARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -107,6 +163,12 @@ class CognitiveServicesManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.models = ModelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.location_based_model_capacities = LocationBasedModelCapacitiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_capacities = ModelCapacitiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -117,8 +179,27 @@ class CognitiveServicesManagementClient(
         self.commitment_plans = CommitmentPlansOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.encryption_scopes = EncryptionScopesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.rai_policies = RaiPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.rai_blocklists = RaiBlocklistsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.rai_blocklist_items = RaiBlocklistItemsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.rai_content_filters = RaiContentFiltersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_security_perimeter_configurations = NetworkSecurityPerimeterConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.defender_for_ai_settings = DefenderForAISettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -138,12 +219,12 @@ class CognitiveServicesManagementClient(
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "CognitiveServicesManagementClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

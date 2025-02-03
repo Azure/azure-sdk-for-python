@@ -5720,7 +5720,7 @@ class ComponentContainerProperties(AssetContainer):
     .. raw:: html
 
        <see
-    href="https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command"
+    href="https://learn.microsoft.com/azure/machine-learning/reference-yaml-component-command"
     />.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5884,7 +5884,7 @@ class ComponentVersionProperties(AssetBase):
      .. raw:: html
 
         <see
-     href="https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command"
+     href="https://learn.microsoft.com/azure/machine-learning/reference-yaml-component-command"
      />.
     :vartype component_spec: JSON
     :ivar provisioning_state: Provisioning state for the component version. Known values are:
@@ -5935,7 +5935,7 @@ class ComponentVersionProperties(AssetBase):
          .. raw:: html
 
             <see
-         href="https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command"
+         href="https://learn.microsoft.com/azure/machine-learning/reference-yaml-component-command"
          />.
         :paramtype component_spec: JSON
         """
@@ -7165,7 +7165,7 @@ class Cron(_serialization.Model):
     :vartype start_time: str
     :ivar time_zone: Specifies time zone in which the schedule runs.
      TimeZone should follow Windows time zone format. Refer:
-     https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+     https://learn.microsoft.com/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
     :vartype time_zone: str
     :ivar expression: [Required] Specifies cron expression of schedule.
      The expression should follow NCronTab format.
@@ -7191,7 +7191,7 @@ class Cron(_serialization.Model):
         :paramtype start_time: str
         :keyword time_zone: Specifies time zone in which the schedule runs.
          TimeZone should follow Windows time zone format. Refer:
-         https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+         https://learn.microsoft.com/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
         :paramtype time_zone: str
         :keyword expression: [Required] Specifies cron expression of schedule.
          The expression should follow NCronTab format.
@@ -7221,7 +7221,7 @@ class TriggerBase(_serialization.Model):
     :vartype start_time: str
     :ivar time_zone: Specifies time zone in which the schedule runs.
      TimeZone should follow Windows time zone format. Refer:
-     https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+     https://learn.microsoft.com/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
     :vartype time_zone: str
     :ivar trigger_type: [Required]. Required. Known values are: "Recurrence" and "Cron".
     :vartype trigger_type: str or ~azure.mgmt.machinelearningservices.models.TriggerType
@@ -7254,7 +7254,7 @@ class TriggerBase(_serialization.Model):
         :paramtype start_time: str
         :keyword time_zone: Specifies time zone in which the schedule runs.
          TimeZone should follow Windows time zone format. Refer:
-         https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+         https://learn.microsoft.com/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
         :paramtype time_zone: str
         """
         super().__init__(**kwargs)
@@ -7279,7 +7279,7 @@ class CronTrigger(TriggerBase):
     :vartype start_time: str
     :ivar time_zone: Specifies time zone in which the schedule runs.
      TimeZone should follow Windows time zone format. Refer:
-     https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+     https://learn.microsoft.com/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
     :vartype time_zone: str
     :ivar trigger_type: [Required]. Required. Known values are: "Recurrence" and "Cron".
     :vartype trigger_type: str or ~azure.mgmt.machinelearningservices.models.TriggerType
@@ -7321,7 +7321,7 @@ class CronTrigger(TriggerBase):
         :paramtype start_time: str
         :keyword time_zone: Specifies time zone in which the schedule runs.
          TimeZone should follow Windows time zone format. Refer:
-         https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+         https://learn.microsoft.com/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
         :paramtype time_zone: str
         :keyword expression: [Required] Specifies cron expression of schedule.
          The expression should follow NCronTab format. Required.
@@ -10111,7 +10111,7 @@ class EnvironmentVersionProperties(AssetBase):  # pylint: disable=too-many-insta
      .. raw:: html
 
         <see
-     href="https://docs.microsoft.com/en-us/azure/machine-learning/resource-curated-environments"
+     href="https://learn.microsoft.com/azure/machine-learning/resource-curated-environments"
      />. Known values are: "Curated" and "UserCreated".
     :vartype environment_type: str or ~azure.mgmt.machinelearningservices.models.EnvironmentType
     :ivar image: Name of the image that will be used for the environment.
@@ -10120,7 +10120,7 @@ class EnvironmentVersionProperties(AssetBase):  # pylint: disable=too-many-insta
      .. raw:: html
 
         <seealso
-     href="https://docs.microsoft.com/en-us/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image"
+     href="https://learn.microsoft.com/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image"
      />.
     :vartype image: str
     :ivar inference_config: Defines configuration specific to inference.
@@ -10207,7 +10207,7 @@ class EnvironmentVersionProperties(AssetBase):  # pylint: disable=too-many-insta
          .. raw:: html
 
             <seealso
-         href="https://docs.microsoft.com/en-us/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image"
+         href="https://learn.microsoft.com/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image"
          />.
         :paramtype image: str
         :keyword inference_config: Defines configuration specific to inference.
@@ -13556,9 +13556,9 @@ class ImageModelDistributionSettings(_serialization.Model):  # pylint: disable=t
     valn)
     where distribution name can be: uniform, quniform, loguniform, etc
     For more details on how to compose distribution expressions please check the documentation:
-    https://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters
+    https://learn.microsoft.com/azure/machine-learning/how-to-tune-hyperparameters
     For more information on the available settings please visit the official documentation:
-    https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+    https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
 
     :ivar ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
     :vartype ams_gradient: str
@@ -13596,7 +13596,7 @@ class ImageModelDistributionSettings(_serialization.Model):  # pylint: disable=t
      For instance, passing 2 as value for 'seresnext' means
      freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
      please
-     see: https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+     see: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
     :vartype layers_to_freeze: str
     :ivar learning_rate: Initial learning rate. Must be a float in the range [0, 1].
     :vartype learning_rate: str
@@ -13605,7 +13605,7 @@ class ImageModelDistributionSettings(_serialization.Model):  # pylint: disable=t
     :vartype learning_rate_scheduler: str
     :ivar model_name: Name of the model to use for training.
      For more information on the available models please visit the official documentation:
-     https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+     https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
     :vartype model_name: str
     :ivar momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0, 1].
     :vartype momentum: str
@@ -13742,7 +13742,7 @@ class ImageModelDistributionSettings(_serialization.Model):  # pylint: disable=t
          For instance, passing 2 as value for 'seresnext' means
          freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
          please
-         see: https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+         see: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
         :paramtype layers_to_freeze: str
         :keyword learning_rate: Initial learning rate. Must be a float in the range [0, 1].
         :paramtype learning_rate: str
@@ -13751,7 +13751,7 @@ class ImageModelDistributionSettings(_serialization.Model):  # pylint: disable=t
         :paramtype learning_rate_scheduler: str
         :keyword model_name: Name of the model to use for training.
          For more information on the available models please visit the official documentation:
-         https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+         https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
         :paramtype model_name: str
         :keyword momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0,
          1].
@@ -13830,9 +13830,9 @@ class ImageModelDistributionSettingsClassification(
     LayersToFreeze = "choice(0, 2)";
     ```</example>`
     For more details on how to compose distribution expressions please check the documentation:
-    https://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters
+    https://learn.microsoft.com/azure/machine-learning/how-to-tune-hyperparameters
     For more information on the available settings please visit the official documentation:
-    https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+    https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
 
     :ivar ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
     :vartype ams_gradient: str
@@ -13870,7 +13870,7 @@ class ImageModelDistributionSettingsClassification(
      For instance, passing 2 as value for 'seresnext' means
      freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
      please
-     see: https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+     see: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
     :vartype layers_to_freeze: str
     :ivar learning_rate: Initial learning rate. Must be a float in the range [0, 1].
     :vartype learning_rate: str
@@ -13879,7 +13879,7 @@ class ImageModelDistributionSettingsClassification(
     :vartype learning_rate_scheduler: str
     :ivar model_name: Name of the model to use for training.
      For more information on the available models please visit the official documentation:
-     https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+     https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
     :vartype model_name: str
     :ivar momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0, 1].
     :vartype momentum: str
@@ -14037,7 +14037,7 @@ class ImageModelDistributionSettingsClassification(
          For instance, passing 2 as value for 'seresnext' means
          freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
          please
-         see: https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+         see: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
         :paramtype layers_to_freeze: str
         :keyword learning_rate: Initial learning rate. Must be a float in the range [0, 1].
         :paramtype learning_rate: str
@@ -14046,7 +14046,7 @@ class ImageModelDistributionSettingsClassification(
         :paramtype learning_rate_scheduler: str
         :keyword model_name: Name of the model to use for training.
          For more information on the available models please visit the official documentation:
-         https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+         https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
         :paramtype model_name: str
         :keyword momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0,
          1].
@@ -14144,9 +14144,9 @@ class ImageModelDistributionSettingsObjectDetection(
     LayersToFreeze = "choice(0, 2)";
     ```</example>`
     For more details on how to compose distribution expressions please check the documentation:
-    https://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters
+    https://learn.microsoft.com/azure/machine-learning/how-to-tune-hyperparameters
     For more information on the available settings please visit the official documentation:
-    https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+    https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
 
     :ivar ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
     :vartype ams_gradient: str
@@ -14184,7 +14184,7 @@ class ImageModelDistributionSettingsObjectDetection(
      For instance, passing 2 as value for 'seresnext' means
      freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
      please
-     see: https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+     see: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
     :vartype layers_to_freeze: str
     :ivar learning_rate: Initial learning rate. Must be a float in the range [0, 1].
     :vartype learning_rate: str
@@ -14193,7 +14193,7 @@ class ImageModelDistributionSettingsObjectDetection(
     :vartype learning_rate_scheduler: str
     :ivar model_name: Name of the model to use for training.
      For more information on the available models please visit the official documentation:
-     https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+     https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
     :vartype model_name: str
     :ivar momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0, 1].
     :vartype momentum: str
@@ -14408,7 +14408,7 @@ class ImageModelDistributionSettingsObjectDetection(
          For instance, passing 2 as value for 'seresnext' means
          freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
          please
-         see: https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+         see: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
         :paramtype layers_to_freeze: str
         :keyword learning_rate: Initial learning rate. Must be a float in the range [0, 1].
         :paramtype learning_rate: str
@@ -14417,7 +14417,7 @@ class ImageModelDistributionSettingsObjectDetection(
         :paramtype learning_rate_scheduler: str
         :keyword model_name: Name of the model to use for training.
          For more information on the available models please visit the official documentation:
-         https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+         https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
         :paramtype model_name: str
         :keyword momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0,
          1].
@@ -14553,7 +14553,7 @@ class ImageModelDistributionSettingsObjectDetection(
 class ImageModelSettings(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Settings used for training the model.
     For more information on the available settings please visit the official documentation:
-    https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+    https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
 
     :ivar advanced_settings: Settings for advanced scenarios.
     :vartype advanced_settings: str
@@ -14600,7 +14600,7 @@ class ImageModelSettings(_serialization.Model):  # pylint: disable=too-many-inst
      For instance, passing 2 as value for 'seresnext' means
      freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
      please
-     see: https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+     see: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
     :vartype layers_to_freeze: int
     :ivar learning_rate: Initial learning rate. Must be a float in the range [0, 1].
     :vartype learning_rate: float
@@ -14610,7 +14610,7 @@ class ImageModelSettings(_serialization.Model):  # pylint: disable=too-many-inst
      ~azure.mgmt.machinelearningservices.models.LearningRateScheduler
     :ivar model_name: Name of the model to use for training.
      For more information on the available models please visit the official documentation:
-     https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+     https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
     :vartype model_name: str
     :ivar momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0, 1].
     :vartype momentum: float
@@ -14765,7 +14765,7 @@ class ImageModelSettings(_serialization.Model):  # pylint: disable=too-many-inst
          For instance, passing 2 as value for 'seresnext' means
          freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
          please
-         see: https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+         see: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
         :paramtype layers_to_freeze: int
         :keyword learning_rate: Initial learning rate. Must be a float in the range [0, 1].
         :paramtype learning_rate: float
@@ -14775,7 +14775,7 @@ class ImageModelSettings(_serialization.Model):  # pylint: disable=too-many-inst
          ~azure.mgmt.machinelearningservices.models.LearningRateScheduler
         :keyword model_name: Name of the model to use for training.
          For more information on the available models please visit the official documentation:
-         https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+         https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
         :paramtype model_name: str
         :keyword momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0,
          1].
@@ -14848,7 +14848,7 @@ class ImageModelSettings(_serialization.Model):  # pylint: disable=too-many-inst
 class ImageModelSettingsClassification(ImageModelSettings):  # pylint: disable=too-many-instance-attributes
     """Settings used for training the model.
     For more information on the available settings please visit the official documentation:
-    https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+    https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
 
     :ivar advanced_settings: Settings for advanced scenarios.
     :vartype advanced_settings: str
@@ -14895,7 +14895,7 @@ class ImageModelSettingsClassification(ImageModelSettings):  # pylint: disable=t
      For instance, passing 2 as value for 'seresnext' means
      freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
      please
-     see: https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+     see: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
     :vartype layers_to_freeze: int
     :ivar learning_rate: Initial learning rate. Must be a float in the range [0, 1].
     :vartype learning_rate: float
@@ -14905,7 +14905,7 @@ class ImageModelSettingsClassification(ImageModelSettings):  # pylint: disable=t
      ~azure.mgmt.machinelearningservices.models.LearningRateScheduler
     :ivar model_name: Name of the model to use for training.
      For more information on the available models please visit the official documentation:
-     https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+     https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
     :vartype model_name: str
     :ivar momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0, 1].
     :vartype momentum: float
@@ -15081,7 +15081,7 @@ class ImageModelSettingsClassification(ImageModelSettings):  # pylint: disable=t
          For instance, passing 2 as value for 'seresnext' means
          freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
          please
-         see: https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+         see: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
         :paramtype layers_to_freeze: int
         :keyword learning_rate: Initial learning rate. Must be a float in the range [0, 1].
         :paramtype learning_rate: float
@@ -15091,7 +15091,7 @@ class ImageModelSettingsClassification(ImageModelSettings):  # pylint: disable=t
          ~azure.mgmt.machinelearningservices.models.LearningRateScheduler
         :keyword model_name: Name of the model to use for training.
          For more information on the available models please visit the official documentation:
-         https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+         https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
         :paramtype model_name: str
         :keyword momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0,
          1].
@@ -15183,7 +15183,7 @@ class ImageModelSettingsClassification(ImageModelSettings):  # pylint: disable=t
 class ImageModelSettingsObjectDetection(ImageModelSettings):  # pylint: disable=too-many-instance-attributes
     """Settings used for training the model.
     For more information on the available settings please visit the official documentation:
-    https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+    https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
 
     :ivar advanced_settings: Settings for advanced scenarios.
     :vartype advanced_settings: str
@@ -15230,7 +15230,7 @@ class ImageModelSettingsObjectDetection(ImageModelSettings):  # pylint: disable=
      For instance, passing 2 as value for 'seresnext' means
      freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
      please
-     see: https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+     see: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
     :vartype layers_to_freeze: int
     :ivar learning_rate: Initial learning rate. Must be a float in the range [0, 1].
     :vartype learning_rate: float
@@ -15240,7 +15240,7 @@ class ImageModelSettingsObjectDetection(ImageModelSettings):  # pylint: disable=
      ~azure.mgmt.machinelearningservices.models.LearningRateScheduler
     :ivar model_name: Name of the model to use for training.
      For more information on the available models please visit the official documentation:
-     https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+     https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
     :vartype model_name: str
     :ivar momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0, 1].
     :vartype momentum: float
@@ -15474,7 +15474,7 @@ class ImageModelSettingsObjectDetection(ImageModelSettings):  # pylint: disable=
          For instance, passing 2 as value for 'seresnext' means
          freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
          please
-         see: https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+         see: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
         :paramtype layers_to_freeze: int
         :keyword learning_rate: Initial learning rate. Must be a float in the range [0, 1].
         :paramtype learning_rate: float
@@ -15484,7 +15484,7 @@ class ImageModelSettingsObjectDetection(ImageModelSettings):  # pylint: disable=
          ~azure.mgmt.machinelearningservices.models.LearningRateScheduler
         :keyword model_name: Name of the model to use for training.
          For more information on the available models please visit the official documentation:
-         https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+         https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
         :paramtype model_name: str
         :keyword momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0,
          1].
@@ -21214,7 +21214,7 @@ class Recurrence(_serialization.Model):
     :vartype start_time: str
     :ivar time_zone: Specifies time zone in which the schedule runs.
      TimeZone should follow Windows time zone format. Refer:
-     https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+     https://learn.microsoft.com/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
     :vartype time_zone: str
     :ivar schedule: [Required] The recurrence schedule.
     :vartype schedule: ~azure.mgmt.machinelearningservices.models.ComputeRecurrenceSchedule
@@ -21249,7 +21249,7 @@ class Recurrence(_serialization.Model):
         :paramtype start_time: str
         :keyword time_zone: Specifies time zone in which the schedule runs.
          TimeZone should follow Windows time zone format. Refer:
-         https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+         https://learn.microsoft.com/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
         :paramtype time_zone: str
         :keyword schedule: [Required] The recurrence schedule.
         :paramtype schedule: ~azure.mgmt.machinelearningservices.models.ComputeRecurrenceSchedule
@@ -21330,7 +21330,7 @@ class RecurrenceTrigger(TriggerBase):
     :vartype start_time: str
     :ivar time_zone: Specifies time zone in which the schedule runs.
      TimeZone should follow Windows time zone format. Refer:
-     https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+     https://learn.microsoft.com/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
     :vartype time_zone: str
     :ivar trigger_type: [Required]. Required. Known values are: "Recurrence" and "Cron".
     :vartype trigger_type: str or ~azure.mgmt.machinelearningservices.models.TriggerType
@@ -21381,7 +21381,7 @@ class RecurrenceTrigger(TriggerBase):
         :paramtype start_time: str
         :keyword time_zone: Specifies time zone in which the schedule runs.
          TimeZone should follow Windows time zone format. Refer:
-         https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+         https://learn.microsoft.com/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
         :paramtype time_zone: str
         :keyword frequency: [Required] The frequency to trigger schedule. Required. Known values are:
          "Minute", "Hour", "Day", "Week", and "Month".

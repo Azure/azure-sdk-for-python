@@ -8,7 +8,7 @@ MASTER_KEY = config.settings['master_key']
 # Prerequisites -
 #
 # 1. An Azure Cosmos account -
-#    https://azure.microsoft.com/en-us/documentation/articles/documentdb-create-account/
+#    https://azure.microsoft.com/documentation/articles/documentdb-create-account/
 #
 # 2. Microsoft Azure Cosmos PyPi package -
 #    https://pypi.python.org/pypi/azure-cosmos/

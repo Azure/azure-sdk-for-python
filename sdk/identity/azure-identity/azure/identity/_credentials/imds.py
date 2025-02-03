@@ -89,7 +89,7 @@ class ImdsCredential(MsalManagedIdentityClient):
                 # IMDS responded
                 _check_forbidden_response(ex)
                 self._endpoint_available = True
-            except Exception as ex:  # pylint:disable=broad-except
+            except Exception as ex:
                 error_message = (
                     "ManagedIdentityCredential authentication unavailable, no response from the IMDS endpoint."
                 )
@@ -119,7 +119,7 @@ class ImdsCredential(MsalManagedIdentityClient):
             raise ClientAuthenticationError(message=ex.message, response=ex.response) from ex
         except json.decoder.JSONDecodeError as ex:
             raise CredentialUnavailableError(message="ManagedIdentityCredential authentication unavailable.") from ex
-        except Exception as ex:  # pylint:disable=broad-except
+        except Exception as ex:
             # if anything else was raised, assume the endpoint is unavailable
             error_message = "ManagedIdentityCredential authentication unavailable, no response from the IMDS endpoint."
             raise CredentialUnavailableError(error_message) from ex

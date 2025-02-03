@@ -20,11 +20,11 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_load_balancer_backend_address_pools_list(self, resource_group):
         response = self.client.load_balancer_backend_address_pools.list(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_load_balancer_backend_address_pools_get(self, resource_group):
         response = self.client.load_balancer_backend_address_pools.get(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             backend_address_pool_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_load_balancer_backend_address_pools_begin_create_or_update(self, resource_group):
         response = self.client.load_balancer_backend_address_pools.begin_create_or_update(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
@@ -173,6 +173,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                         }
                                     ],
                                     "ipConfigurations": [...],
+                                    "ipamPoolPrefixAllocations": [
+                                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                                    ],
                                     "name": "str",
                                     "natGateway": {"id": "str"},
                                     "networkSecurityGroup": {
@@ -266,6 +269,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                             {
                                                 "auxiliaryMode": "str",
                                                 "auxiliarySku": "str",
+                                                "defaultOutboundConnectivityEnabled": bool,
                                                 "disableTcpStateTracking": bool,
                                                 "dnsSettings": {
                                                     "appliedDnsServers": ["str"],
@@ -654,6 +658,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                 {
                                                     "auxiliaryMode": "str",
                                                     "auxiliarySku": "str",
+                                                    "defaultOutboundConnectivityEnabled": bool,
                                                     "disableTcpStateTracking": bool,
                                                     "dnsSettings": {
                                                         "appliedDnsServers": ["str"],
@@ -1179,6 +1184,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                     "subnet": ...,
                                 }
                             ],
+                            "ipamPoolPrefixAllocations": [
+                                {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                            ],
                             "name": "str",
                             "natGateway": {"id": "str"},
                             "networkSecurityGroup": {
@@ -1272,6 +1280,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                     {
                                         "auxiliaryMode": "str",
                                         "auxiliarySku": "str",
+                                        "defaultOutboundConnectivityEnabled": bool,
                                         "disableTcpStateTracking": bool,
                                         "dnsSettings": {
                                             "appliedDnsServers": ["str"],
@@ -1774,6 +1783,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                         {
                                             "auxiliaryMode": "str",
                                             "auxiliarySku": "str",
+                                            "defaultOutboundConnectivityEnabled": bool,
                                             "disableTcpStateTracking": bool,
                                             "dnsSettings": {
                                                 "appliedDnsServers": ["str"],
@@ -2363,6 +2373,13 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                     }
                                                 ],
                                                 "ipConfigurations": [...],
+                                                "ipamPoolPrefixAllocations": [
+                                                    {
+                                                        "allocatedAddressPrefixes": ["str"],
+                                                        "id": "str",
+                                                        "numberOfIpAddresses": "str",
+                                                    }
+                                                ],
                                                 "name": "str",
                                                 "natGateway": {"id": "str"},
                                                 "networkSecurityGroup": {
@@ -2456,6 +2473,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                         {
                                                             "auxiliaryMode": "str",
                                                             "auxiliarySku": "str",
+                                                            "defaultOutboundConnectivityEnabled": bool,
                                                             "disableTcpStateTracking": bool,
                                                             "dnsSettings": {
                                                                 "appliedDnsServers": ["str"],
@@ -2798,6 +2816,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                             {
                                                                 "auxiliaryMode": "str",
                                                                 "auxiliarySku": "str",
+                                                                "defaultOutboundConnectivityEnabled": bool,
                                                                 "disableTcpStateTracking": bool,
                                                                 "dnsSettings": {
                                                                     "appliedDnsServers": ["str"],
@@ -3282,6 +3301,13 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                 "subnet": ...,
                                             }
                                         ],
+                                        "ipamPoolPrefixAllocations": [
+                                            {
+                                                "allocatedAddressPrefixes": ["str"],
+                                                "id": "str",
+                                                "numberOfIpAddresses": "str",
+                                            }
+                                        ],
                                         "name": "str",
                                         "natGateway": {"id": "str"},
                                         "networkSecurityGroup": {
@@ -3375,6 +3401,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                 {
                                                     "auxiliaryMode": "str",
                                                     "auxiliarySku": "str",
+                                                    "defaultOutboundConnectivityEnabled": bool,
                                                     "disableTcpStateTracking": bool,
                                                     "dnsSettings": {
                                                         "appliedDnsServers": ["str"],
@@ -3712,6 +3739,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                     {
                                                         "auxiliaryMode": "str",
                                                         "auxiliarySku": "str",
+                                                        "defaultOutboundConnectivityEnabled": bool,
                                                         "disableTcpStateTracking": bool,
                                                         "dnsSettings": {
                                                             "appliedDnsServers": ["str"],
@@ -4116,7 +4144,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                 "type": "str",
                 "virtualNetwork": {"id": "str"},
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -4124,12 +4152,12 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_load_balancer_backend_address_pools_begin_delete(self, resource_group):
         response = self.client.load_balancer_backend_address_pools.begin_delete(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             backend_address_pool_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

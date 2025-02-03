@@ -5,37 +5,39 @@
 # --------------------------------------------------------------------------
 
 from io import BytesIO
-from typing import Union, Iterable, IO  # pylint: disable=unused-import
+from typing import Any, Dict, Generator, IO, Iterable, Optional, Type, Union, TYPE_CHECKING
 
-from ._shared.avro.datafile import DataFileReader
 from ._shared.avro.avro_io import DatumReader
+from ._shared.avro.datafile import DataFileReader
+
+if TYPE_CHECKING:
+    from ._models import BlobQueryError
 
 
 class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
-    """A streaming object to read query results.
+    """A streaming object to read query results."""
 
-    :ivar str name:
-        The name of the blob being quered.
-    :ivar str container:
-        The name of the container where the blob is.
-    :ivar dict response_headers:
-        The response_headers of the quick query request.
-    :ivar bytes record_delimiter:
-        The delimiter used to separate lines, or records with the data. The `records`
-        method will return these lines via a generator.
-    """
+    name: str
+    """The name of the blob being quered."""
+    container: str
+    """The name of the container where the blob is."""
+    response_headers: Dict[str, Any]
+    """The response_headers of the quick query request."""
+    record_delimiter: str
+    """The delimiter used to separate lines, or records with the data. The `records`
+    method will return these lines via a generator."""
 
     def __init__(
         self,
-        name=None,
-        container=None,
-        errors=None,
-        record_delimiter='\n',
-        encoding=None,
-        headers=None,
-        response=None,
-        error_cls=None,
-    ):
+        name: str = None,  # type: ignore [assignment]
+        container: str = None,  # type: ignore [assignment]
+        errors: Any = None,
+        record_delimiter: str = '\n',
+        encoding: Optional[str] = None,
+        headers: Dict[str, Any] = None,  # type: ignore [assignment]
+        response: Any = None,
+        error_cls: Type["BlobQueryError"] = None,  # type: ignore [assignment]
+    ) -> None:
         self.name = name
         self.container = container
         self.response_headers = headers
@@ -51,7 +53,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
     def __len__(self):
         return self._size
 
-    def _process_record(self, result):
+    def _process_record(self, result: Dict[str, Any]) -> Optional[bytes]:
         self._size = result.get('totalBytes', self._size)
         self._bytes_processed = result.get('bytesScanned', self._bytes_processed)
         if 'data' in result:
@@ -67,7 +69,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
                 self._errors(error)
         return None
 
-    def _iter_stream(self):
+    def _iter_stream(self) -> Generator[bytes, None, None]:
         if self._first_result is not None:
             yield self._first_result
         for next_result in self._parsed_results:
@@ -75,14 +77,14 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
             if processed_result is not None:
                 yield processed_result
 
-    def readall(self):
-        # type: () -> Union[bytes, str]
+    def readall(self) -> Union[bytes, str]:
         """Return all query results.
 
         This operation is blocking until all data is downloaded.
         If encoding has been configured - this will be used to decode individual
         records are they are received.
 
+        :returns: The query results.
         :rtype: Union[bytes, str]
         """
         stream = BytesIO()
@@ -92,11 +94,10 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
             return data.decode(self._encoding)
         return data
 
-    def readinto(self, stream):
-        # type: (IO) -> None
+    def readinto(self, stream: IO) -> None:
         """Download the query result to a stream.
 
-        :param stream:
+        :param IO stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream.
         :returns: None
@@ -104,14 +105,14 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         for record in self._iter_stream():
             stream.write(record)
 
-    def records(self):
-        # type: () -> Iterable[Union[bytes, str]]
+    def records(self) -> Iterable[Union[bytes, str]]:
         """Returns a record generator for the query result.
 
         Records will be returned line by line.
         If encoding has been configured - this will be used to decode individual
         records are they are received.
 
+        :returns: A record generator for the query result.
         :rtype: Iterable[Union[bytes, str]]
         """
         delimiter = self.record_delimiter.encode('utf-8')
@@ -121,7 +122,6 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
                     yield record.decode(self._encoding)
                 else:
                     yield record
-
 
 
 class QuickQueryStreamer(object):
@@ -153,8 +153,6 @@ class QuickQueryStreamer(object):
         self._download_offset += len(next_part)
         return next_part
 
-    next = __next__  # Python 2 compatibility.
-
     def tell(self):
         return self._point
 
@@ -165,7 +163,7 @@ class QuickQueryStreamer(object):
             self._point += offset
         else:
             raise ValueError("whence must be 0, or 1")
-        if self._point < 0:
+        if self._point < 0:    # pylint: disable=consider-using-max-builtin
             self._point = 0  # XXX is this right?
 
     def read(self, size):

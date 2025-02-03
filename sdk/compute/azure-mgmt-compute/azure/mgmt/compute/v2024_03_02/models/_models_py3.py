@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -12,7 +12,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from ... import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -171,7 +170,7 @@ class CopyCompletionError(_serialization.Model):
         self.error_message = error_message
 
 
-class CreationData(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class CreationData(_serialization.Model):
     """Data used when creating a disk.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -370,7 +369,7 @@ class Resource(_serialization.Model):
         self.tags = tags
 
 
-class Disk(Resource):  # pylint: disable=too-many-instance-attributes
+class Disk(Resource):
     """Disk resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -872,7 +871,7 @@ class DiskAccessUpdate(_serialization.Model):
         self.tags = tags
 
 
-class DiskEncryptionSet(Resource):  # pylint: disable=too-many-instance-attributes
+class DiskEncryptionSet(Resource):
     """disk encryption set resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1173,7 +1172,7 @@ class ProxyOnlyResource(_serialization.Model):
         self.type = None
 
 
-class DiskRestorePoint(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class DiskRestorePoint(ProxyOnlyResource):
     """Properties of disk restore point.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1446,7 +1445,7 @@ class DiskSku(_serialization.Model):
         self.tier = None
 
 
-class DiskUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class DiskUpdate(_serialization.Model):
     """Disk update resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2570,7 +2569,7 @@ class ShareInfoElement(_serialization.Model):
         self.vm_uri = None
 
 
-class Snapshot(Resource):  # pylint: disable=too-many-instance-attributes
+class Snapshot(Resource):
     """Snapshot resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2908,7 +2907,7 @@ class SnapshotSku(_serialization.Model):
         self.tier = None
 
 
-class SnapshotUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class SnapshotUpdate(_serialization.Model):
     """Snapshot update resource.
 
     :ivar tags: Resource tags.

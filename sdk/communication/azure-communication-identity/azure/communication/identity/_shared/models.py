@@ -14,8 +14,11 @@ class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
 
     def __getattribute__(cls, item):
         if item.upper() == "MICROSOFT_BOT":
-            warnings.warn("MICROSOFT_BOT is deprecated and has been replaced by \
-                          MICROSOFT_TEAMS_APP identifier.", DeprecationWarning)
+            warnings.warn(
+                "MICROSOFT_BOT is deprecated and has been replaced by \
+                          MICROSOFT_TEAMS_APP identifier.",
+                DeprecationWarning,
+            )
             item = "MICROSOFT_TEAMS_APP"
         return super().__getattribute__(item)
 
@@ -47,14 +50,17 @@ class CommunicationCloudEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta
 @runtime_checkable
 class CommunicationIdentifier(Protocol):
     """Communication Identifier."""
+
     @property
     def raw_id(self) -> str:
         """The raw ID of the identifier."""
         ...
+
     @property
     def kind(self) -> CommunicationIdentifierKind:
         """The type of identifier."""
         ...
+
     @property
     def properties(self) -> Mapping[str, Any]:
         """The properties of the identifier."""
@@ -83,12 +89,14 @@ SPOOL_USER_PREFIX = "8:spool:"
 
 class CommunicationUserProperties(TypedDict):
     """Dictionary of properties for a CommunicationUserIdentifier."""
+
     id: str
     """ID of the Communication user as returned from Azure Communication Identity."""
 
 
 class CommunicationUserIdentifier:
     """Represents a user in Azure Communication Service."""
+
     kind: Literal[CommunicationIdentifierKind.COMMUNICATION_USER] = CommunicationIdentifierKind.COMMUNICATION_USER
     """The type of identifier."""
     properties: CommunicationUserProperties
@@ -116,12 +124,14 @@ class CommunicationUserIdentifier:
 
 class PhoneNumberProperties(TypedDict):
     """Dictionary of properties for a PhoneNumberIdentifier."""
+
     value: str
     """The phone number in E.164 format."""
 
 
 class PhoneNumberIdentifier:
     """Represents a phone number."""
+
     kind: Literal[CommunicationIdentifierKind.PHONE_NUMBER] = CommunicationIdentifierKind.PHONE_NUMBER
     """The type of identifier."""
     properties: PhoneNumberProperties
@@ -165,6 +175,7 @@ class UnknownIdentifier:
     It is not advisable to rely on the `kind` property with a value `unknown`,
     as it could become a new or existing distinct type in the future.
     """
+
     kind: Literal[CommunicationIdentifierKind.UNKNOWN] = CommunicationIdentifierKind.UNKNOWN
     """The type of identifier."""
     properties: Mapping[str, Any]
@@ -188,6 +199,7 @@ class UnknownIdentifier:
 
 class MicrosoftTeamsUserProperties(TypedDict):
     """Dictionary of properties for a MicrosoftTeamsUserIdentifier."""
+
     user_id: str
     """The id of the Microsoft Teams user. If the user isn't anonymous, the id is the AAD object id of the user."""
     is_anonymous: bool
@@ -198,6 +210,7 @@ class MicrosoftTeamsUserProperties(TypedDict):
 
 class MicrosoftTeamsUserIdentifier:
     """Represents an identifier for a Microsoft Teams user."""
+
     kind: Literal[CommunicationIdentifierKind.MICROSOFT_TEAMS_USER] = CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
     """The type of identifier."""
     properties: MicrosoftTeamsUserProperties
@@ -246,6 +259,7 @@ class MicrosoftTeamsUserIdentifier:
 
 class MicrosoftTeamsAppProperties(TypedDict):
     """Dictionary of properties for a MicrosoftTeamsAppIdentifier."""
+
     app_id: str
     """The id of the Microsoft Teams application."""
     cloud: Union[CommunicationCloudEnvironment, str]
@@ -254,6 +268,7 @@ class MicrosoftTeamsAppProperties(TypedDict):
 
 class _botbackcompatdict(dict):
     """Backwards compatible properties."""
+
     def __getitem__(self, __key: Any) -> Any:
         try:
             return super().__getitem__(__key)
@@ -267,6 +282,7 @@ class _botbackcompatdict(dict):
 
 class MicrosoftTeamsAppIdentifier:
     """Represents an identifier for a Microsoft Teams application."""
+
     kind: Literal[CommunicationIdentifierKind.MICROSOFT_TEAMS_APP] = CommunicationIdentifierKind.MICROSOFT_TEAMS_APP
     """The type of identifier."""
     properties: MicrosoftTeamsAppProperties
@@ -282,10 +298,13 @@ class MicrosoftTeamsAppIdentifier:
         :keyword str raw_id: The raw ID of the identifier. If not specified, this value will be constructed
          from the other properties.
         """
-        self.properties = cast(MicrosoftTeamsAppProperties, _botbackcompatdict(
-            app_id=app_id,
-            cloud=kwargs.get("cloud") or CommunicationCloudEnvironment.PUBLIC,
-        ))
+        self.properties = cast(
+            MicrosoftTeamsAppProperties,
+            _botbackcompatdict(
+                app_id=app_id,
+                cloud=kwargs.get("cloud") or CommunicationCloudEnvironment.PUBLIC,
+            ),
+        )
         raw_id: Optional[str] = kwargs.get("raw_id")
         self.raw_id = raw_id if raw_id is not None else self._format_raw_id(self.properties)
 
@@ -323,7 +342,7 @@ class _MicrosoftBotIdentifier(MicrosoftTeamsAppIdentifier):
         """
         warnings.warn(
             "The MicrosoftBotIdentifier is deprecated and has been replaced by MicrosoftTeamsAppIdentifier.",
-            DeprecationWarning
+            DeprecationWarning,
         )
         super().__init__(bot_id, **kwargs)
 
@@ -339,9 +358,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
     :rtype: CommunicationIdentifier
     """
     if raw_id.startswith(PHONE_NUMBER_PREFIX):
-        return PhoneNumberIdentifier(
-            value=raw_id[len(PHONE_NUMBER_PREFIX) :], raw_id=raw_id
-        )
+        return PhoneNumberIdentifier(value=raw_id[len(PHONE_NUMBER_PREFIX) :], raw_id=raw_id)
 
     segments = raw_id.split(":", maxsplit=2)
     if len(segments) < 3:
@@ -350,9 +367,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
     prefix = f"{segments[0]}:{segments[1]}:"
     suffix = segments[2]
     if prefix == TEAMS_USER_ANONYMOUS_PREFIX:
-        return MicrosoftTeamsUserIdentifier(
-            user_id=suffix, is_anonymous=True, raw_id=raw_id
-        )
+        return MicrosoftTeamsUserIdentifier(user_id=suffix, is_anonymous=True, raw_id=raw_id)
     if prefix == TEAMS_USER_PUBLIC_CLOUD_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,

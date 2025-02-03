@@ -23,8 +23,11 @@
 database service.
 """
 
-import asyncio
+import asyncio # pylint: disable=do-not-import-asyncio
 from urllib.parse import urlparse
+
+from azure.core.exceptions import AzureError
+
 from .. import _constants as constants
 from .. import exceptions
 from .._location_cache import LocationCache
@@ -54,6 +57,7 @@ class _GlobalEndpointManager(object):
         self.refresh_needed = False
         self.refresh_lock = asyncio.Lock()
         self.last_refresh_time = 0
+        self._database_account_cache = None
 
     def get_refresh_time_interval_in_ms_stub(self):
         return constants._Constants.DefaultUnavailableLocationExpirationTime
@@ -119,6 +123,7 @@ class _GlobalEndpointManager(object):
         """
         try:
             database_account = await self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
+            self._database_account_cache = database_account
             return database_account
         # If for any reason(non-globaldb related), we are not able to get the database
         # account from the above call to GetDatabaseAccount, we would try to get this
@@ -126,13 +131,14 @@ class _GlobalEndpointManager(object):
         # specified (by creating a locational endpoint) and keeping eating the exception
         # until we get the database account and return None at the end, if we are not able
         # to get that info from any endpoints
-        except exceptions.CosmosHttpResponseError:
+        except (exceptions.CosmosHttpResponseError, AzureError):
             for location_name in self.PreferredLocations:
                 locational_endpoint = _GlobalEndpointManager.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
                     database_account = await self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
+                    self._database_account_cache = database_account
                     return database_account
-                except exceptions.CosmosHttpResponseError:
+                except (exceptions.CosmosHttpResponseError, AzureError):
                     pass
             raise
 

@@ -56,6 +56,7 @@ class TemplateParameters(TypedDict):
     category: NotRequired[str]
     target_population: NotRequired[str]
     topic: NotRequired[str]
+    jailbreak_string: NotRequired[str]
 
 
 class _CategorizedParameter(TypedDict):

@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
-
 from typing import Optional
 
 from azure.ai.ml.entities._mixins import RestTranslatableMixin

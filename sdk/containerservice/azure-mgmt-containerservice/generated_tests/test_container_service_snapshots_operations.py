@@ -20,7 +20,7 @@ class TestContainerServiceSnapshotsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_snapshots_list(self, resource_group):
         response = self.client.snapshots.list(
             api_version="2024-09-01",
         )
@@ -30,7 +30,7 @@ class TestContainerServiceSnapshotsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_snapshots_list_by_resource_group(self, resource_group):
         response = self.client.snapshots.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2024-09-01",
@@ -41,7 +41,7 @@ class TestContainerServiceSnapshotsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_snapshots_get(self, resource_group):
         response = self.client.snapshots.get(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -53,7 +53,7 @@ class TestContainerServiceSnapshotsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_snapshots_create_or_update(self, resource_group):
         response = self.client.snapshots.create_or_update(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -88,7 +88,7 @@ class TestContainerServiceSnapshotsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update_tags(self, resource_group):
+    def test_snapshots_update_tags(self, resource_group):
         response = self.client.snapshots.update_tags(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -101,7 +101,7 @@ class TestContainerServiceSnapshotsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_snapshots_delete(self, resource_group):
         response = self.client.snapshots.delete(
             resource_group_name=resource_group.name,
             resource_name="str",

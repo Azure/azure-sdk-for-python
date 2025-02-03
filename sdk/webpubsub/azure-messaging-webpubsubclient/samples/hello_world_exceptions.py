@@ -50,7 +50,7 @@ def main():
                 # no ack from service, you may want to try again
                 pass
             # for other name of error detail, it belongs to your business logic and you
-            # may want to handle it with reference of https://learn.microsoft.com/en-us/azure/azure-web-pubsub/concept-client-protocols#ack-response
+            # may want to handle it with reference of https://learn.microsoft.com/azure/azure-web-pubsub/concept-client-protocols#ack-response
             elif err.error_detail.name == "...":
                 pass
                 

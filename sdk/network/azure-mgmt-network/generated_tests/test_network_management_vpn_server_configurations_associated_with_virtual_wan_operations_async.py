@@ -21,12 +21,12 @@ class TestNetworkManagementVpnServerConfigurationsAssociatedWithVirtualWanOperat
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_list(self, resource_group):
+    async def test_vpn_server_configurations_associated_with_virtual_wan_begin_list(self, resource_group):
         response = await (
             await self.client.vpn_server_configurations_associated_with_virtual_wan.begin_list(
                 resource_group_name=resource_group.name,
                 virtual_wan_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

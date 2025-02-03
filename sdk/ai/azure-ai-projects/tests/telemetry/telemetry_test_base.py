@@ -50,10 +50,10 @@ class TelemetryTestBase(AzureRecordedTestCase):
         )
         return project_client
 
-    def get_async_client(self, **kwargs) -> AIProjectClient:
+    def get_async_client(self, **kwargs) -> AIProjectClientAsync:
         conn_str = kwargs.pop("azure_ai_projects_telemetry_tests_project_connection_string")
         project_client = AIProjectClientAsync.from_connection_string(
-            credential=self.get_credential(AIProjectClientAsync, is_async=False),
+            credential=self.get_credential(AIProjectClientAsync, is_async=True),
             conn_str=conn_str,
             logging_enable=LOGGING_ENABLED,
         )

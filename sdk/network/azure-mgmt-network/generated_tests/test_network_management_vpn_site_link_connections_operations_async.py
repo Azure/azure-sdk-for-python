@@ -21,13 +21,13 @@ class TestNetworkManagementVpnSiteLinkConnectionsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_vpn_site_link_connections_get(self, resource_group):
         response = await self.client.vpn_site_link_connections.get(
             resource_group_name=resource_group.name,
             gateway_name="str",
             connection_name="str",
             link_connection_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself

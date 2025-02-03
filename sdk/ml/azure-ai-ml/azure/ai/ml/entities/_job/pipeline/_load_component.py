@@ -186,7 +186,6 @@ class _PipelineNodeFactory:
             PipelineJobSchema.jobs.value
         :paramtype nested_schema: typing.Optional[typing.Union[NestedField, List[NestedField]]]
         """
-        # pylint: disable=no-member
         if create_instance_func is not None:
             self._create_instance_funcs[_type] = create_instance_func
         if load_from_rest_object_func is not None:

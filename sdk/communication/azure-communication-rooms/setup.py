@@ -25,9 +25,7 @@ package_folder_path = PACKAGE_NAME.replace("-", "/")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
-    version = re.search(
-        r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE
-    ).group(1)
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError("Cannot find version information")
@@ -44,7 +42,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-rooms",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
@@ -58,19 +56,17 @@ setup(
     zip_safe=False,
     packages=find_packages(
         exclude=[
-            'tests',
+            "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
             "azure.communication",
         ]
     ),
     install_requires=[
-        "azure-core>=1.29.0",
+        "azure-core>=1.32.0",
         "isodate>=0.6.1",
     ],
     python_requires=">=3.8",
     include_package_data=True,
-    extras_require={
-        ":python_version<'3.8'": ["typing-extensions"]
-    }
+    extras_require={":python_version<'3.8'": ["typing-extensions"]},
 )

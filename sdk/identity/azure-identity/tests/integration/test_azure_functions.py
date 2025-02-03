@@ -5,8 +5,9 @@
 import os
 import pytest
 
-from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
+
+from utils import get_pipeline_client
 
 
 @pytest.fixture(scope="module")
@@ -24,7 +25,7 @@ class TestAzureFunctionsIntegration:
     )
     def test_azure_functions_integration_sync(self, base_url):
         """Test the Azure Functions endpoint where the sync MI credential is used."""
-        client = PipelineClient(base_url)
+        client = get_pipeline_client(base_url)
         request = HttpRequest("GET", f"{base_url}RunTest")
         response: HttpResponse = client.send_request(request)
         assert response.status_code == 200
@@ -35,7 +36,7 @@ class TestAzureFunctionsIntegration:
     )
     def test_azure_functions_integration_async(self, base_url):
         """Test the Azure Functions endpoint where the async MI credential is used."""
-        client = PipelineClient(base_url)
+        client = get_pipeline_client(base_url)
         request = HttpRequest("GET", f"{base_url}RunAsyncTest")
         response: HttpResponse = client.send_request(request)
         assert response.status_code == 200

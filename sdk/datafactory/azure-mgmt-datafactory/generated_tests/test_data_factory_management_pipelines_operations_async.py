@@ -21,7 +21,7 @@ class TestDataFactoryManagementPipelinesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_factory(self, resource_group):
+    async def test_pipelines_list_by_factory(self, resource_group):
         response = self.client.pipelines.list_by_factory(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -33,7 +33,7 @@ class TestDataFactoryManagementPipelinesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_pipelines_create_or_update(self, resource_group):
         response = await self.client.pipelines.create_or_update(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -61,7 +61,7 @@ class TestDataFactoryManagementPipelinesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_pipelines_get(self, resource_group):
         response = await self.client.pipelines.get(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -74,7 +74,7 @@ class TestDataFactoryManagementPipelinesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_pipelines_delete(self, resource_group):
         response = await self.client.pipelines.delete(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -87,7 +87,7 @@ class TestDataFactoryManagementPipelinesOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_run(self, resource_group):
+    async def test_pipelines_create_run(self, resource_group):
         response = await self.client.pipelines.create_run(
             resource_group_name=resource_group.name,
             factory_name="str",

@@ -13,7 +13,7 @@ import config
 # Prerequisites -
 #
 # 1. An Azure Cosmos account -
-#    https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
+#    https://learn.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
 #
 # 2. Microsoft Azure Cosmos
 #    pip install azure-cosmos>=4.3.0b4
@@ -67,7 +67,7 @@ def run_sample():
     create_sample_resources()
 
     # With this done, you can use your AAD service principal id and secret to create your ClientSecretCredential.
-    aad_credentials = ClientSecretCredential(
+    aad_client_secret_credentials = ClientSecretCredential(
         tenant_id=TENANT_ID,
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET)

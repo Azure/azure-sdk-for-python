@@ -76,3 +76,19 @@ class TestEvaluation(EvaluationsTestBase):
 
         # This failed with error : AttributeError: 'InputData' object has no attribute 'id' # TODO : Fix this
         # assert created_evaluation.data.id == dataset_id
+
+    @servicePreparerEvaluationsTests()
+    @recorded_by_proxy
+    def test_model_config_from_default_connection(self, **kwargs):
+        set_bodiless_matcher()
+        default_aoai_connection_name = kwargs.pop("azure_ai_projects_evaluations_tests_default_aoai_connection_name")
+        project_client = self.get_sync_client(**kwargs)
+        default_aoai_connection = project_client.connections.get(
+            connection_name=default_aoai_connection_name, include_credentials=True
+        )
+        deployment_name = kwargs.get("azure_ai_projects_evaluations_tests_deployment_name")
+        api_version = kwargs.get("azure_ai_projects_evaluations_tests_api_version")
+        model_config = default_aoai_connection.to_evaluator_model_config(
+            deployment_name=deployment_name, api_version=api_version, include_credentials=True
+        )
+        assert model_config["api_key"] == default_aoai_connection.key

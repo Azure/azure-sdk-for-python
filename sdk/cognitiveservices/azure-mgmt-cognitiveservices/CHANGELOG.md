@@ -1,5 +1,106 @@
 # Release History
 
+## 13.6.0 (2024-12-19)
+
+### Features Added
+
+  - Client `CognitiveServicesManagementClient` added method `calculate_model_capacity`
+  - Client `CognitiveServicesManagementClient` added operation group `location_based_model_capacities`
+  - Client `CognitiveServicesManagementClient` added operation group `model_capacities`
+  - Client `CognitiveServicesManagementClient` added operation group `encryption_scopes`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_policies`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_blocklists`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_blocklist_items`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_content_filters`
+  - Client `CognitiveServicesManagementClient` added operation group `network_security_perimeter_configurations`
+  - Client `CognitiveServicesManagementClient` added operation group `defender_for_ai_settings`
+  - Model `AccountModel` added property `publisher`
+  - Model `AccountModel` added property `source_account`
+  - Model `AccountProperties` added property `aml_workspace`
+  - Model `AccountProperties` added property `rai_monitor_config`
+  - Model `CapacityConfig` added property `allowed_values`
+  - Model `CommitmentPlanAccountAssociation` added property `tags`
+  - Model `Deployment` added property `tags`
+  - Model `DeploymentModel` added property `publisher`
+  - Model `DeploymentModel` added property `source_account`
+  - Model `DeploymentProperties` added property `dynamic_throttling_enabled`
+  - Model `DeploymentProperties` added property `current_capacity`
+  - Model `DeploymentProperties` added property `capacity_settings`
+  - Model `DeploymentProperties` added property `parent_deployment_name`
+  - Model `Model` added property `description`
+  - Enum `ModelLifecycleStatus` added member `DEPRECATED`
+  - Enum `ModelLifecycleStatus` added member `DEPRECATING`
+  - Enum `ModelLifecycleStatus` added member `STABLE`
+  - Model `ModelSku` added property `cost`
+  - Model `NetworkRuleSet` added property `bypass`
+  - Added model `BillingMeterInfo`
+  - Added enum `ByPassSelection`
+  - Added model `CalculateModelCapacityParameter`
+  - Added model `CalculateModelCapacityResult`
+  - Added model `CalculateModelCapacityResultEstimatedCapacity`
+  - Added enum `ContentLevel`
+  - Added model `CustomBlocklistConfig`
+  - Added model `DefenderForAISetting`
+  - Added model `DefenderForAISettingResult`
+  - Added enum `DefenderForAISettingState`
+  - Added model `DeploymentCapacitySettings`
+  - Added model `DeploymentSkuListResult`
+  - Added model `EncryptionScope`
+  - Added model `EncryptionScopeListResult`
+  - Added model `EncryptionScopeProperties`
+  - Added enum `EncryptionScopeProvisioningState`
+  - Added enum `EncryptionScopeState`
+  - Added model `ModelCapacityCalculatorWorkload`
+  - Added model `ModelCapacityCalculatorWorkloadRequestParam`
+  - Added model `ModelCapacityListResult`
+  - Added model `ModelCapacityListResultValueItem`
+  - Added model `ModelSkuCapacityProperties`
+  - Added model `NetworkSecurityPerimeter`
+  - Added model `NetworkSecurityPerimeterAccessRule`
+  - Added model `NetworkSecurityPerimeterAccessRuleProperties`
+  - Added model `NetworkSecurityPerimeterAccessRulePropertiesSubscriptionsItem`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added model `NetworkSecurityPerimeterConfigurationAssociationInfo`
+  - Added model `NetworkSecurityPerimeterConfigurationList`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added model `NetworkSecurityPerimeterProfileInfo`
+  - Added enum `NspAccessRuleDirection`
+  - Added model `ProvisioningIssue`
+  - Added model `ProvisioningIssueProperties`
+  - Added model `RaiBlockListItemsResult`
+  - Added model `RaiBlockListResult`
+  - Added model `RaiBlocklist`
+  - Added model `RaiBlocklistConfig`
+  - Added model `RaiBlocklistItem`
+  - Added model `RaiBlocklistItemBulkRequest`
+  - Added model `RaiBlocklistItemProperties`
+  - Added model `RaiBlocklistProperties`
+  - Added model `RaiContentFilter`
+  - Added model `RaiContentFilterListResult`
+  - Added model `RaiContentFilterProperties`
+  - Added model `RaiMonitorConfig`
+  - Added model `RaiPolicy`
+  - Added model `RaiPolicyContentFilter`
+  - Added enum `RaiPolicyContentSource`
+  - Added model `RaiPolicyListResult`
+  - Added enum `RaiPolicyMode`
+  - Added model `RaiPolicyProperties`
+  - Added enum `RaiPolicyType`
+  - Added model `SkuResource`
+  - Added model `UserOwnedAmlWorkspace`
+  - Operation group `CognitiveServicesManagementClientOperationsMixin` added method `calculate_model_capacity`
+  - Operation group `DeploymentsOperations` added method `begin_update`
+  - Operation group `DeploymentsOperations` added method `list_skus`
+  - Added operation group `DefenderForAISettingsOperations`
+  - Added operation group `EncryptionScopesOperations`
+  - Added operation group `LocationBasedModelCapacitiesOperations`
+  - Added operation group `ModelCapacitiesOperations`
+  - Added operation group `NetworkSecurityPerimeterConfigurationsOperations`
+  - Added operation group `RaiBlocklistItemsOperations`
+  - Added operation group `RaiBlocklistsOperations`
+  - Added operation group `RaiContentFiltersOperations`
+  - Added operation group `RaiPoliciesOperations`
+
 ## 13.5.0 (2023-07-21)
 
 ### Features Added

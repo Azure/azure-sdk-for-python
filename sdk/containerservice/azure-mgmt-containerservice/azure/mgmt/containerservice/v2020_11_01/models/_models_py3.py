@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -12,7 +12,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from ... import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -50,7 +49,7 @@ class SubResource(_serialization.Model):
         self.type = None
 
 
-class AgentPool(SubResource):  # pylint: disable=too-many-instance-attributes
+class AgentPool(SubResource):
     """Agent Pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -725,9 +724,7 @@ class CloudErrorBody(_serialization.Model):
         self.details = details
 
 
-class Components1Q1Og48SchemasManagedclusterAllof1(
-    _serialization.Model
-):  # pylint: disable=too-many-instance-attributes,name-too-long
+class Components1Q1Og48SchemasManagedclusterAllof1(_serialization.Model):  # pylint: disable=name-too-long
     """Components1Q1Og48SchemasManagedclusterAllof1.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1713,9 +1710,7 @@ class Resource(_serialization.Model):
         self.tags = tags
 
 
-class ManagedCluster(
-    Resource, Components1Q1Og48SchemasManagedclusterAllof1
-):  # pylint: disable=too-many-instance-attributes
+class ManagedCluster(Resource, Components1Q1Og48SchemasManagedclusterAllof1):
     """Managed cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2186,7 +2181,7 @@ class ManagedClusterAddonProfileIdentity(UserAssignedIdentity):
     """
 
 
-class ManagedClusterAgentPoolProfileProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
     """Properties for the container service agent pool profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2529,9 +2524,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):  # pylint:
         self.linux_os_config = linux_os_config
 
 
-class ManagedClusterAgentPoolProfile(
-    ManagedClusterAgentPoolProfileProperties
-):  # pylint: disable=too-many-instance-attributes
+class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     """Profile for the container service agent pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3456,9 +3449,7 @@ class ManagedClusterPoolUpgradeProfileUpgradesItem(_serialization.Model):  # pyl
         self.is_preview = is_preview
 
 
-class ManagedClusterPropertiesAutoScalerProfile(
-    _serialization.Model
-):  # pylint: disable=too-many-instance-attributes,name-too-long
+class ManagedClusterPropertiesAutoScalerProfile(_serialization.Model):  # pylint: disable=name-too-long
     """Parameters to be applied to the cluster-autoscaler when enabled.
 
     :ivar balance_similar_node_groups:
@@ -3720,20 +3711,20 @@ class ManagedClusterWindowsProfile(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar admin_username: Specifies the name of the administrator account. :code:`<br>`:code:`<br>`
-     **restriction:** Cannot end in "." :code:`<br>`:code:`<br>` **Disallowed values:**
-     "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3", "admin1", "1",
-     "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david", "guest",
-     "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys", "test2",
-     "test3", "user4", "user5". :code:`<br>`:code:`<br>` **Minimum-length:** 1 character
-     :code:`<br>`:code:`<br>` **Max-length:** 20 characters. Required.
+    :ivar admin_username: Specifies the name of the administrator account. :code:`<br>`\\
+     :code:`<br>` **restriction:** Cannot end in "." :code:`<br>`\\ :code:`<br>` **Disallowed
+     values:** "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3",
+     "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david",
+     "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys",
+     "test2", "test3", "user4", "user5". :code:`<br>`\\ :code:`<br>` **Minimum-length:** 1 character
+     :code:`<br>`\\ :code:`<br>` **Max-length:** 20 characters. Required.
     :vartype admin_username: str
-    :ivar admin_password: Specifies the password of the administrator account.
-     :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
-     **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
-     conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
-     characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
-     :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
+    :ivar admin_password: Specifies the password of the administrator account. :code:`<br>`\\
+     :code:`<br>` **Minimum-length:** 8 characters :code:`<br>`\\ :code:`<br>` **Max-length:** 123
+     characters :code:`<br>`\\ :code:`<br>` **Complexity requirements:** 3 out of 4 conditions below
+     need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters
+     :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
+     :code:`<br>`\\ :code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
      "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
     :vartype admin_password: str
     :ivar license_type: The licenseType to use for Windows VMs. Windows_Server is used to enable
@@ -3760,20 +3751,20 @@ class ManagedClusterWindowsProfile(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword admin_username: Specifies the name of the administrator account.
-         :code:`<br>`:code:`<br>` **restriction:** Cannot end in "." :code:`<br>`:code:`<br>`
-         **Disallowed values:** "administrator", "admin", "user", "user1", "test", "user2", "test1",
-         "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console",
-         "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0",
-         "sys", "test2", "test3", "user4", "user5". :code:`<br>`:code:`<br>` **Minimum-length:** 1
-         character :code:`<br>`:code:`<br>` **Max-length:** 20 characters. Required.
+        :keyword admin_username: Specifies the name of the administrator account. :code:`<br>`\\
+         :code:`<br>` **restriction:** Cannot end in "." :code:`<br>`\\ :code:`<br>` **Disallowed
+         values:** "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3",
+         "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david",
+         "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys",
+         "test2", "test3", "user4", "user5". :code:`<br>`\\ :code:`<br>` **Minimum-length:** 1 character
+         :code:`<br>`\\ :code:`<br>` **Max-length:** 20 characters. Required.
         :paramtype admin_username: str
-        :keyword admin_password: Specifies the password of the administrator account.
-         :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
-         **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
-         conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
-         characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
-         :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
+        :keyword admin_password: Specifies the password of the administrator account. :code:`<br>`\\
+         :code:`<br>` **Minimum-length:** 8 characters :code:`<br>`\\ :code:`<br>` **Max-length:** 123
+         characters :code:`<br>`\\ :code:`<br>` **Complexity requirements:** 3 out of 4 conditions below
+         need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters
+         :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
+         :code:`<br>`\\ :code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
          "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
         :paramtype admin_password: str
         :keyword license_type: The licenseType to use for Windows VMs. Windows_Server is used to enable
@@ -4124,7 +4115,7 @@ class ResourceReference(_serialization.Model):
         self.id = id
 
 
-class SysctlConfig(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class SysctlConfig(_serialization.Model):
     """Sysctl settings for Linux agent nodes.
 
     :ivar net_core_somaxconn: Sysctl setting net.core.somaxconn.

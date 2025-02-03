@@ -119,7 +119,7 @@ def _default_sampling_ratio(configurations):
         try:
             default = float(environ[SAMPLING_RATIO_ENV_VAR])
         except ValueError as e:
-            _logger.error(
+            _logger.error(  # pylint: disable=C
                 _INVALID_FLOAT_MESSAGE,
                 SAMPLING_RATIO_ENV_VAR,
                 default,

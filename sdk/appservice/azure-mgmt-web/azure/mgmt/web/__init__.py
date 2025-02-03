@@ -7,10 +7,12 @@
 # --------------------------------------------------------------------------
 
 from ._web_site_management_client import WebSiteManagementClient
-__all__ = ['WebSiteManagementClient']
+
+__all__ = ["WebSiteManagementClient"]
 
 try:
     from ._patch import patch_sdk  # type: ignore
+
     patch_sdk()
 except ImportError:
     pass

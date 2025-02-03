@@ -21,11 +21,11 @@ class TestEventHubManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_private_endpoint_connections_list(self, resource_group):
         response = self.client.private_endpoint_connections.list(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2018-01-01-preview",
+            api_version="2024-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,20 +33,29 @@ class TestEventHubManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_private_endpoint_connections_create_or_update(self, resource_group):
         response = await self.client.private_endpoint_connections.create_or_update(
             resource_group_name=resource_group.name,
             namespace_name="str",
             private_endpoint_connection_name="str",
             parameters={
                 "id": "str",
+                "location": "str",
                 "name": "str",
                 "privateEndpoint": {"id": "str"},
                 "privateLinkServiceConnectionState": {"description": "str", "status": "str"},
                 "provisioningState": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "type": "str",
             },
-            api_version="2018-01-01-preview",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -54,13 +63,13 @@ class TestEventHubManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_private_endpoint_connections_begin_delete(self, resource_group):
         response = await (
             await self.client.private_endpoint_connections.begin_delete(
                 resource_group_name=resource_group.name,
                 namespace_name="str",
                 private_endpoint_connection_name="str",
-                api_version="2018-01-01-preview",
+                api_version="2024-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -69,12 +78,12 @@ class TestEventHubManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_private_endpoint_connections_get(self, resource_group):
         response = await self.client.private_endpoint_connections.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
             private_endpoint_connection_name="str",
-            api_version="2018-01-01-preview",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself

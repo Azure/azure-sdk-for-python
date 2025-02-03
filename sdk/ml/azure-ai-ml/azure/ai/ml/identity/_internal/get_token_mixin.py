@@ -46,7 +46,6 @@ class GetTokenMixin(ABC):
             return False
         return True
 
-    # pylint: disable-next=docstring-missing-return
     def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 

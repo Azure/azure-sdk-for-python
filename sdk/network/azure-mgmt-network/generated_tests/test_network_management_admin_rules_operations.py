@@ -20,13 +20,13 @@ class TestNetworkManagementAdminRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_admin_rules_list(self, resource_group):
         response = self.client.admin_rules.list(
             resource_group_name=resource_group.name,
             network_manager_name="str",
             configuration_name="str",
             rule_collection_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -34,14 +34,14 @@ class TestNetworkManagementAdminRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_admin_rules_get(self, resource_group):
         response = self.client.admin_rules.get(
             resource_group_name=resource_group.name,
             network_manager_name="str",
             configuration_name="str",
             rule_collection_name="str",
             rule_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestNetworkManagementAdminRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_admin_rules_create_or_update(self, resource_group):
         response = self.client.admin_rules.create_or_update(
             resource_group_name=resource_group.name,
             network_manager_name="str",
@@ -82,7 +82,7 @@ class TestNetworkManagementAdminRulesOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -90,14 +90,14 @@ class TestNetworkManagementAdminRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_admin_rules_begin_delete(self, resource_group):
         response = self.client.admin_rules.begin_delete(
             resource_group_name=resource_group.name,
             network_manager_name="str",
             configuration_name="str",
             rule_collection_name="str",
             rule_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

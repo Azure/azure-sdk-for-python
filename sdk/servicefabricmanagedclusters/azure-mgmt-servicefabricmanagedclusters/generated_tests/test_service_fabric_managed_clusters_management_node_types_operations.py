@@ -20,11 +20,11 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_managed_clusters(self, resource_group):
+    def test_node_types_list_by_managed_clusters(self, resource_group):
         response = self.client.node_types.list_by_managed_clusters(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-09-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,13 +32,13 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_restart(self, resource_group):
+    def test_node_types_begin_restart(self, resource_group):
         response = self.client.node_types.begin_restart(
             resource_group_name=resource_group.name,
             cluster_name="str",
             node_type_name="str",
             parameters={"force": bool, "nodes": ["str"], "updateType": "str"},
-            api_version="2024-06-01-preview",
+            api_version="2024-09-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -46,13 +46,13 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_reimage(self, resource_group):
+    def test_node_types_begin_reimage(self, resource_group):
         response = self.client.node_types.begin_reimage(
             resource_group_name=resource_group.name,
             cluster_name="str",
             node_type_name="str",
             parameters={"force": bool, "nodes": ["str"], "updateType": "str"},
-            api_version="2024-06-01-preview",
+            api_version="2024-09-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -60,13 +60,13 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete_node(self, resource_group):
+    def test_node_types_begin_delete_node(self, resource_group):
         response = self.client.node_types.begin_delete_node(
             resource_group_name=resource_group.name,
             cluster_name="str",
             node_type_name="str",
             parameters={"force": bool, "nodes": ["str"], "updateType": "str"},
-            api_version="2024-06-01-preview",
+            api_version="2024-09-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -74,12 +74,12 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_node_types_get(self, resource_group):
         response = self.client.node_types.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             node_type_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -87,7 +87,7 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_node_types_begin_create_or_update(self, resource_group):
         response = self.client.node_types.begin_create_or_update(
             resource_group_name=resource_group.name,
             cluster_name="str",
@@ -233,7 +233,7 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperations(AzureMgmtRec
                 "vmSize": "str",
                 "zones": ["str"],
             },
-            api_version="2024-06-01-preview",
+            api_version="2024-09-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -241,26 +241,26 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
-        response = self.client.node_types.update(
+    def test_node_types_begin_update(self, resource_group):
+        response = self.client.node_types.begin_update(
             resource_group_name=resource_group.name,
             cluster_name="str",
             node_type_name="str",
             parameters={"sku": {"capacity": 0, "name": "str", "tier": "str"}, "tags": {"str": "str"}},
-            api_version="2024-06-01-preview",
-        )
+            api_version="2024-09-01-preview",
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_node_types_begin_delete(self, resource_group):
         response = self.client.node_types.begin_delete(
             resource_group_name=resource_group.name,
             cluster_name="str",
             node_type_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-09-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

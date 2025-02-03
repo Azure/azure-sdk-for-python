@@ -20,7 +20,7 @@ class TestDataFactoryManagementPipelineRunsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_query_by_factory(self, resource_group):
+    def test_pipeline_runs_query_by_factory(self, resource_group):
         response = self.client.pipeline_runs.query_by_factory(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -39,7 +39,7 @@ class TestDataFactoryManagementPipelineRunsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_pipeline_runs_get(self, resource_group):
         response = self.client.pipeline_runs.get(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -52,7 +52,7 @@ class TestDataFactoryManagementPipelineRunsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cancel(self, resource_group):
+    def test_pipeline_runs_cancel(self, resource_group):
         response = self.client.pipeline_runs.cancel(
             resource_group_name=resource_group.name,
             factory_name="str",

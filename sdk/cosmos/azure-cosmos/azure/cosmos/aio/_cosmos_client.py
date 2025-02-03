@@ -40,6 +40,8 @@ from ._database import DatabaseProxy, _get_database_link
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
 
+# pylint: disable=docstring-keyword-should-match-keyword-only
+
 __all__ = ("CosmosClient",)
 
 CredentialType = Union[

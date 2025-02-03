@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +7,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -41,7 +40,7 @@ from ...operations._server_threat_protection_settings_operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -69,6 +68,7 @@ class ServerThreatProtectionSettingsOperations:
     def list_by_server(
         self, resource_group_name: str, server_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.ServerThreatProtectionSettingsModel"]:
+        # pylint: disable=line-too-long
         """Get a list of server's Threat Protection state.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -88,7 +88,7 @@ class ServerThreatProtectionSettingsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ServerThreatProtectionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -173,7 +173,7 @@ class ServerThreatProtectionSettingsOperations:
         :rtype: ~azure.mgmt.postgresqlflexibleservers.models.ServerThreatProtectionSettingsModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -225,7 +225,7 @@ class ServerThreatProtectionSettingsOperations:
         parameters: Union[_models.ServerThreatProtectionSettingsModel, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -301,6 +301,7 @@ class ServerThreatProtectionSettingsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerThreatProtectionSettingsModel]:
+        # pylint: disable=line-too-long
         """Creates or updates a server's Advanced Threat Protection settings.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -335,6 +336,7 @@ class ServerThreatProtectionSettingsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerThreatProtectionSettingsModel]:
+        # pylint: disable=line-too-long
         """Creates or updates a server's Advanced Threat Protection settings.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -366,6 +368,7 @@ class ServerThreatProtectionSettingsOperations:
         parameters: Union[_models.ServerThreatProtectionSettingsModel, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServerThreatProtectionSettingsModel]:
+        # pylint: disable=line-too-long
         """Creates or updates a server's Advanced Threat Protection settings.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

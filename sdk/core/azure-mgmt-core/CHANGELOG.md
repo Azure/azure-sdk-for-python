@@ -1,5 +1,11 @@
 # Release History
 
+## 1.5.1 (2023-XX-XX)
+
+### Other Changes
+
+- `ARMChallengeAuthenticationPolicy` adopt `on_challenge` in `BearerTokenCredentialPolicy` of `azure-core` to support complete CAE challenges.
+
 ## 1.5.0 (2024-10-31)
 
 ### Features Added

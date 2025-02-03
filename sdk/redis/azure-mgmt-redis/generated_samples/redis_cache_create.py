@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.redis import RedisManagementClient
@@ -36,7 +34,7 @@ def main():
         resource_group_name="rg1",
         name="cache1",
         parameters={
-            "location": "West US",
+            "location": "East US",
             "properties": {
                 "enableNonSslPort": True,
                 "minimumTlsVersion": "1.2",
@@ -54,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2024-03-01/examples/RedisCacheCreate.json
+# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2024-11-01/examples/RedisCacheCreate.json
 if __name__ == "__main__":
     main()

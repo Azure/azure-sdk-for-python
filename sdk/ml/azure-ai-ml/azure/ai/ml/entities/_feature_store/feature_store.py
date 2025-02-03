@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=too-many-instance-attributes,protected-access
+# pylint: disable=protected-access
 
 
 from os import PathLike
@@ -54,7 +54,7 @@ class FeatureStore(Workspace):
     :param hbi_workspace: Boolean for whether the customer data is of high business impact (HBI),
         containing sensitive business information. Defaults to False.
         For more information, see
-        https://docs.microsoft.com/azure/machine-learning/concept-data-encryption#encryption-at-rest.
+        https://learn.microsoft.com/azure/machine-learning/concept-data-encryption#encryption-at-rest.
     :type hbi_workspace: Optional[bool]
     :param storage_account: The resource ID of an existing storage account to use instead of creating a new one.
         Defaults to None.
@@ -222,6 +222,5 @@ class FeatureStore(Workspace):
         return FeatureStore(**loaded_schema)
 
     def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
         res: dict = FeatureStoreSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res

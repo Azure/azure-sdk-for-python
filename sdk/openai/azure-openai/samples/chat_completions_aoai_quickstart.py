@@ -25,7 +25,7 @@ USAGE:
 # These lines are intentionally excluded from the sample code, we use them to configure any vars
 # or to tweak usage in ways that keep samples looking consistent when rendered in docs and tools
 import os
-os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZ_OPENAI_ENDPOINT")
+os.environ["AZURE_OPENAI_ENDPOINT"] = os.environ["AZ_OPENAI_ENDPOINT"]
 
 def chat_completions_aoai_quickstart() -> None:
     #[START chat_completions_aoai_quickstart]

@@ -978,7 +978,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                                                 ],
                                                 "source": "str"  #
                                                   Optional. Source from which QnA was indexed e.g.
-                                                  https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs
+                                                  https://learn.microsoft.com/azure/cognitive-services/QnAMaker/FAQs
                                                   .
                                             },
                                             "qnaId": 0  # Optional. ID of
@@ -999,7 +999,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                                 ],
                                 "source": "str",  # Optional. Source from which QnA
                                   was indexed e.g.
-                                  https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs
+                                  https://learn.microsoft.com/azure/cognitive-services/QnAMaker/FAQs
                                   .
                                 "sourceDisplayName": "str"  # Optional. Friendly name
                                   of the Source.
@@ -1269,7 +1269,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                                                 ],
                                                 "source": "str"  #
                                                   Optional. Source from which QnA was indexed e.g.
-                                                  https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs
+                                                  https://learn.microsoft.com/azure/cognitive-services/QnAMaker/FAQs
                                                   .
                                             },
                                             "qnaId": 0  # Optional. ID of
@@ -1290,7 +1290,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                                 ],
                                 "source": "str",  # Optional. Source from which QnA
                                   was indexed e.g.
-                                  https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs
+                                  https://learn.microsoft.com/azure/cognitive-services/QnAMaker/FAQs
                                   .
                                 "sourceDisplayName": "str"  # Optional. Friendly name
                                   of the Source.
@@ -2490,7 +2490,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                                     ],
                                     "source": "str"  # Optional. Source from
                                       which QnA was indexed e.g.
-                                      https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs
+                                      https://learn.microsoft.com/azure/cognitive-services/QnAMaker/FAQs
                                       .
                                 },
                                 "qnaId": 0  # Optional. ID of the QnA corresponding
@@ -2509,7 +2509,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "str"  # Optional. List of questions associated with the answer.
                     ],
                     "source": "str"  # Optional. Source from which QnA was indexed e.g.
-                      https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs .
+                      https://learn.microsoft.com/azure/cognitive-services/QnAMaker/FAQs .
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -2744,7 +2744,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                             ],
                             "source": "str"  # Optional. Source from which QnA was
                               indexed e.g.
-                              https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs .
+                              https://learn.microsoft.com/azure/cognitive-services/QnAMaker/FAQs .
                         }
                     }
                 ]
@@ -2818,7 +2818,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                                     ],
                                     "source": "str"  # Optional. Source from
                                       which QnA was indexed e.g.
-                                      https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs
+                                      https://learn.microsoft.com/azure/cognitive-services/QnAMaker/FAQs
                                       .
                                 },
                                 "qnaId": 0  # Optional. ID of the QnA corresponding
@@ -2837,7 +2837,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "str"  # Optional. List of questions associated with the answer.
                     ],
                     "source": "str"  # Optional. Source from which QnA was indexed e.g.
-                      https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs .
+                      https://learn.microsoft.com/azure/cognitive-services/QnAMaker/FAQs .
                 }
         """
 
@@ -2935,7 +2935,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                                     ],
                                     "source": "str"  # Optional. Source from
                                       which QnA was indexed e.g.
-                                      https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs
+                                      https://learn.microsoft.com/azure/cognitive-services/QnAMaker/FAQs
                                       .
                                 },
                                 "qnaId": 0  # Optional. ID of the QnA corresponding
@@ -2954,7 +2954,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "str"  # Optional. List of questions associated with the answer.
                     ],
                     "source": "str"  # Optional. Source from which QnA was indexed e.g.
-                      https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs .
+                      https://learn.microsoft.com/azure/cognitive-services/QnAMaker/FAQs .
                 }
         """
 
@@ -3050,7 +3050,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                                     ],
                                     "source": "str"  # Optional. Source from
                                       which QnA was indexed e.g.
-                                      https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs
+                                      https://learn.microsoft.com/azure/cognitive-services/QnAMaker/FAQs
                                       .
                                 },
                                 "qnaId": 0  # Optional. ID of the QnA corresponding
@@ -3069,7 +3069,7 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
                         "str"  # Optional. List of questions associated with the answer.
                     ],
                     "source": "str"  # Optional. Source from which QnA was indexed e.g.
-                      https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/FAQs .
+                      https://learn.microsoft.com/azure/cognitive-services/QnAMaker/FAQs .
                 }
         """
 

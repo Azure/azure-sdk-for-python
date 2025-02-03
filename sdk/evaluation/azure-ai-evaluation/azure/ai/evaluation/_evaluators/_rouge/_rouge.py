@@ -3,9 +3,11 @@
 # ---------------------------------------------------------
 from enum import Enum
 
-from promptflow._utils.async_utils import async_run_allowing_running_loop
+from typing import Dict
+from typing_extensions import overload, override
 
 from azure.ai.evaluation._vendor.rouge_score import rouge_scorer
+from azure.ai.evaluation._evaluators._common import EvaluatorBase
 
 
 class RougeType(Enum):
@@ -32,21 +34,7 @@ class RougeType(Enum):
     """Overlap of L-grams (L consecutive words) between generated and reference text."""
 
 
-class _AsyncRougeScoreEvaluator:
-    def __init__(self, rouge_type: RougeType):
-        self._rouge_type = rouge_type
-
-    async def __call__(self, *, ground_truth: str, response: str, **kwargs):
-        scorer = rouge_scorer.RougeScorer(rouge_types=[self._rouge_type.value])
-        metrics = scorer.score(ground_truth, response)[self._rouge_type.value]
-        return {
-            "rouge_precision": metrics.precision,
-            "rouge_recall": metrics.recall,
-            "rouge_f1_score": metrics.fmeasure,
-        }
-
-
-class RougeScoreEvaluator:
+class RougeScoreEvaluator(EvaluatorBase):
     """
     Calculates the ROUGE score for a given response and ground truth.
 
@@ -76,10 +64,32 @@ class RougeScoreEvaluator:
     id = "azureml://registries/azureml/models/Rouge-Score-Evaluator/versions/3"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
+    @override
     def __init__(self, rouge_type: RougeType):
-        self._async_evaluator = _AsyncRougeScoreEvaluator(rouge_type)
+        self._rouge_type = rouge_type
+        super().__init__()
 
-    def __call__(self, *, ground_truth: str, response: str, **kwargs):
+    @override
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:
+        """Produce a rouge score evaluation result.
+
+        :param eval_input: The input to the evaluation function.
+        :type eval_input: Dict
+        :return: The evaluation result.
+        :rtype: Dict
+        """
+        ground_truth = eval_input["ground_truth"]
+        response = eval_input["response"]
+        scorer = rouge_scorer.RougeScorer(rouge_types=[self._rouge_type.value])
+        metrics = scorer.score(ground_truth, response)[self._rouge_type.value]
+        return {
+            "rouge_precision": metrics.precision,
+            "rouge_recall": metrics.recall,
+            "rouge_f1_score": metrics.fmeasure,
+        }
+
+    @overload  # type: ignore
+    def __call__(self, *, ground_truth: str, response: str) -> Dict[str, float]:
         """
         Evaluate the ROUGE score between the response and the ground truth.
 
@@ -90,9 +100,20 @@ class RougeScoreEvaluator:
         :return: The ROUGE score.
         :rtype: Dict[str, float]
         """
-        return async_run_allowing_running_loop(
-            self._async_evaluator, ground_truth=ground_truth, response=response, **kwargs
-        )
 
-    def _to_async(self):
-        return self._async_evaluator
+    @override
+    def __call__(  # pylint: disable=docstring-missing-param
+        self,
+        *args,
+        **kwargs,
+    ):
+        """
+        Evaluate route score.
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword ground_truth: The ground truth to be compared against.
+        :paramtype ground_truth: str
+        :return: The ROUGE score.
+        :rtype: Dict[str, float]
+        """
+        return super().__call__(*args, **kwargs)

@@ -33,7 +33,7 @@ class WorkspaceOutboundRuleOperations:
         credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._subscription_id = operation_scope.subscription_id
         self._resource_group_name = operation_scope.resource_group_name
         self._default_workspace_name = operation_scope.workspace_name

@@ -26,7 +26,7 @@ def main():
     span_processor = BatchSpanProcessor(
         AzureMonitorTraceExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
     )
-    trace.get_tracer_provider().add_span_processor(span_processor)
+    trace.get_tracer_provider().add_span_processor(span_processor)  # type: ignore
 
     try:
         from django.core.management import execute_from_command_line

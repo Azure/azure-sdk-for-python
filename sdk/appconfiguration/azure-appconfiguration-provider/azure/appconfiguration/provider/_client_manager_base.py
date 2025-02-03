@@ -3,12 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import time
 import random
 import hashlib
 import base64
 from dataclasses import dataclass
-from typing import Dict, List, Mapping, Any
+from typing import Dict, Mapping, Any, Optional
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     FeatureFlagConfigurationSetting,
 )
@@ -90,28 +89,20 @@ class ConfigurationClientManagerBase:  # pylint:disable=too-many-instance-attrib
         replica_discovery_enabled,
         min_backoff_sec,
         max_backoff_sec,
+        _load_balancing_enabled: bool,
         **kwargs,
     ):
-        self._replica_clients: List[_ConfigurationClientWrapperBase] = []
+        self._last_active_client_name = ""
         self._original_endpoint = endpoint
         self._user_agent = user_agent
         self._retry_total = retry_total
         self._retry_backoff_max = retry_backoff_max
         self._replica_discovery_enabled = replica_discovery_enabled
-        self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
+        self._next_update_time: Optional[float] = None
         self._args = dict(kwargs)
         self._min_backoff_sec = min_backoff_sec
         self._max_backoff_sec = max_backoff_sec
-
-    def get_active_clients(self):
-        active_clients = []
-        for client in self._replica_clients:
-            if client.is_active():
-                active_clients.append(client)
-        return active_clients
-
-    def get_client_count(self) -> int:
-        return len(self._replica_clients)
+        self._load_balancing_enabled = _load_balancing_enabled
 
     def _calculate_backoff(self, attempts: int) -> float:
         max_attempts = 63
@@ -131,11 +122,3 @@ class ConfigurationClientManagerBase:  # pylint:disable=too-many-instance-attrib
         return min_backoff_milliseconds + (
             random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)  # nosec
         )
-
-    def __eq__(self, other):
-        if len(self._replica_clients) != len(other._replica_clients):
-            return False
-        for i in range(len(self._replica_clients)):  # pylint:disable=consider-using-enumerate
-            if self._replica_clients[i] != other._replica_clients[i]:
-                return False
-        return True

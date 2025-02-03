@@ -10,10 +10,11 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 
 configure_azure_monitor(
     # Set logger_name to the name of the logger you want to capture logging telemetry with
+    # This is imperative so you do not collect logging telemetry from the SDK itself.
     logger_name="my_application_logger",
 )
 
-# Logging calls with this logger will be tracked
+# Logging telemetry will be collected from logging calls made with this logger and all of it's children loggers.
 logger = getLogger("my_application_logger")
 logger.setLevel(INFO)
 

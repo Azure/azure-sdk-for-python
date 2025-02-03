@@ -13,11 +13,10 @@ from azure.core.pipeline import policies
 from .._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class SchemaRegistryClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class SchemaRegistryClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for SchemaRegistryClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -28,13 +27,13 @@ class SchemaRegistryClientConfiguration:  # pylint: disable=too-many-instance-at
     :type fully_qualified_namespace: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2022-10".
+    :keyword api_version: The API version to use for this operation. Default value is "2023-07-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, fully_qualified_namespace: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2022-10")
+        api_version: str = kwargs.pop("api_version", "2023-07-01")
 
         if fully_qualified_namespace is None:
             raise ValueError("Parameter 'fully_qualified_namespace' must not be None.")

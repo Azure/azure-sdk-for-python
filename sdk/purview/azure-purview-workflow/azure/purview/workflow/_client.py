@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
@@ -28,11 +29,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class PurviewWorkflowClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class PurviewWorkflowClient:  # pylint: disable=too-many-instance-attributes
     """Workflows are automated, repeatable business processes which allow organizations to track
     changes, enforce policy compliance, and ensure quality data across their data
     landscape.Workflow service is a micro service within Microsoft Purview to validate and
@@ -102,7 +102,7 @@ class PurviewWorkflowClient:  # pylint: disable=client-accepts-api-version-keywo
         self.approval = ApprovalOperations(self._client, self._config, self._serialize, self._deserialize)
         self.task_status = TaskStatusOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -126,12 +126,12 @@ class PurviewWorkflowClient:  # pylint: disable=client-accepts-api-version-keywo
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "PurviewWorkflowClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

@@ -530,6 +530,9 @@ class FlowComponent(Component, AdditionalIncludesMixin):
 
     @contextlib.contextmanager
     def _try_build_local_code(self) -> Generator:
+        # false-positive by pylint, hence disable it
+        # (https://github.com/pylint-dev/pylint/blob/main/doc/data/messages
+        # /c/contextmanager-generator-missing-cleanup/details.rst)
         with super()._try_build_local_code() as code:  # pylint:disable=contextmanager-generator-missing-cleanup
             if not code or not code.path:
                 yield code

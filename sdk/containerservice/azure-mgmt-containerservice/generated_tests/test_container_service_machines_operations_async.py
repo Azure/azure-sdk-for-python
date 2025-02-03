@@ -21,7 +21,7 @@ class TestContainerServiceMachinesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_machines_list(self, resource_group):
         response = self.client.machines.list(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -34,7 +34,7 @@ class TestContainerServiceMachinesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_machines_get(self, resource_group):
         response = await self.client.machines.get(
             resource_group_name=resource_group.name,
             resource_name="str",

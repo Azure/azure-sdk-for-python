@@ -8,7 +8,7 @@ from azure.keyvault.administration import KeyVaultBackupResult
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. A managed HSM (https://docs.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli)
+# 1. A managed HSM (https://learn.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli)
 #
 # 2. azure-keyvault-administration and azure-identity libraries (pip install these)
 #
@@ -19,12 +19,12 @@ from azure.keyvault.administration import KeyVaultBackupResult
 #    https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview
 #    
 # 5. A storage account, that your managed identity has access to, containing a blob storage container
-#    (See https://docs.microsoft.com/azure/storage/blobs/storage-blobs-introduction)
+#    (See https://learn.microsoft.com/azure/storage/blobs/storage-blobs-introduction)
 #
 # 6. Set environment variables CONTAINER_URL and CLIENT_ID, corresponding to your blob container's URI and your
 #    user-assigned managed identity's client ID, respectively.
 #
-# For more details, see https://docs.microsoft.com/azure/key-vault/managed-hsm/backup-restore
+# For more details, see https://learn.microsoft.com/azure/key-vault/managed-hsm/backup-restore
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates full backup and restore operations for Managed HSM

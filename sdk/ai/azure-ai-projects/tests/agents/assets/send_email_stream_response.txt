@@ -1,0 +1,213 @@
+event: thread.run.step.completed
+data: {"id":"step_02","object":"thread.run.step","created_at":1735945052,"run_id":"run_01","assistant_id":"asst_01","thread_id":"thread_01","type":"tool_calls","status":"completed","cancelled_at":null,"completed_at":1735945059,"expires_at":1735945641,"failed_at":null,"last_error":null,"step_details":{"type":"tool_calls","tool_calls":[{"id":"call_03","type":"function","function":{"name":"send_email","arguments":"{\n  \"recipient\": \"user@example.com\",\n  \"subject\": \"Current New York Weather and DateTime Information\",\n  \"body\": \"Hello,\\n\\nHere are the details you requested:\\n\\n- Date and Time: 2025-01-03 14:57:24\\n- Weather in New York: Sunny, 25�C\\n\\nBest regards.\"\n}","output":"{\"message\": \"Email successfully sent to user@example.com.\"}"}}]},"usage":{"prompt_tokens":735,"completion_tokens":87,"total_tokens":822}}
+
+event: thread.run.queued
+data: {"id":"run_01","object":"thread.run","created_at":1735945041,"assistant_id":"asst_01","thread_id":"thread_01","status":"queued","started_at":1735945048,"expires_at":1735945641,"cancelled_at":null,"failed_at":null,"completed_at":null,"required_action":null,"last_error":null,"model":"gpt-4-1106-preview","instructions":"You are a helpful assistant","tools":[{"type":"function","function":{"name":"get_user_info","description":"Retrieves user information based on user ID.","parameters":{"type":"object","properties":{"user_id":{"type":"integer","description":"ID of the user."}},"required":["user_id"]},"strict":false}},{"type":"function","function":{"name":"convert_temperature","description":"Converts temperature from Celsius to Fahrenheit.","parameters":{"type":"object","properties":{"celsius":{"type":"number","description":"Temperature in Celsius."}},"required":["celsius"]},"strict":false}},{"type":"function","function":{"name":"longest_word_in_sentences","description":"Finds the longest word in each sentence.","parameters":{"type":"object","properties":{"sentences":{"type":"array","items":{"type":"string"},"description":"A list of sentences."}},"required":["sentences"]},"strict":false}},{"type":"function","function":{"name":"toggle_flag","description":"Toggles a boolean flag.","parameters":{"type":"object","properties":{"flag":{"type":"boolean","description":"The flag to toggle."}},"required":["flag"]},"strict":false}},{"type":"function","function":{"name":"send_email","description":"Sends an email with the specified subject and body to the recipient.","parameters":{"type":"object","properties":{"recipient":{"type":"string","description":"Email address of the recipient."},"subject":{"type":"string","description":"Subject of the email."},"body":{"type":"string","description":"Body content of the email."}},"required":["recipient","subject","body"]},"strict":false}},{"type":"function","function":{"name":"process_records","description":"Process a list of records, where each record is a dictionary with string keys and integer values.","parameters":{"type":"object","properties":{"records":{"type":"array","items":{"type":"object"},"description":"A list containing dictionaries that map strings to integers."}},"required":["records"]},"strict":false}},{"type":"function","function":{"name":"merge_dicts","description":"Merges two dictionaries.","parameters":{"type":"object","properties":{"dict1":{"type":"object","description":"First dictionary."},"dict2":{"type":"object","description":"Second dictionary."}},"required":["dict1","dict2"]},"strict":false}},{"type":"function","function":{"name":"calculate_sum","description":"Calculates the sum of two integers.","parameters":{"type":"object","properties":{"a":{"type":"integer","description":"First integer."},"b":{"type":"integer","description":"Second integer."}},"required":["a","b"]},"strict":false}},{"type":"function","function":{"name":"fetch_weather","description":"Fetches the weather information for the specified location.","parameters":{"type":"object","properties":{"location":{"type":"string","description":"The location to fetch weather for."}},"required":["location"]},"strict":false}},{"type":"function","function":{"name":"fetch_current_datetime","description":"Get the current time as a JSON string, optionally formatted.","parameters":{"type":"object","properties":{"format":{"type":["string","null"],"description":"The format in which to return the current time. Defaults to None, which uses a standard format."}},"required":[]},"strict":false}}],"tool_resources":{"code_interpreter":{"file_ids":[]}},"metadata":{},"temperature":1.0,"top_p":1.0,"max_completion_tokens":null,"max_prompt_tokens":null,"truncation_strategy":{"type":"auto","last_messages":null},"incomplete_details":null,"usage":null,"response_format":"auto","tool_choice":"auto","parallel_tool_calls":true}
+
+event: thread.run.in_progress
+data: {"id":"run_01","object":"thread.run","created_at":1735945041,"assistant_id":"asst_01","thread_id":"thread_01","status":"in_progress","started_at":1735945059,"expires_at":1735945641,"cancelled_at":null,"failed_at":null,"completed_at":null,"required_action":null,"last_error":null,"model":"gpt-4-1106-preview","instructions":"You are a helpful assistant","tools":[{"type":"function","function":{"name":"get_user_info","description":"Retrieves user information based on user ID.","parameters":{"type":"object","properties":{"user_id":{"type":"integer","description":"ID of the user."}},"required":["user_id"]},"strict":false}},{"type":"function","function":{"name":"convert_temperature","description":"Converts temperature from Celsius to Fahrenheit.","parameters":{"type":"object","properties":{"celsius":{"type":"number","description":"Temperature in Celsius."}},"required":["celsius"]},"strict":false}},{"type":"function","function":{"name":"longest_word_in_sentences","description":"Finds the longest word in each sentence.","parameters":{"type":"object","properties":{"sentences":{"type":"array","items":{"type":"string"},"description":"A list of sentences."}},"required":["sentences"]},"strict":false}},{"type":"function","function":{"name":"toggle_flag","description":"Toggles a boolean flag.","parameters":{"type":"object","properties":{"flag":{"type":"boolean","description":"The flag to toggle."}},"required":["flag"]},"strict":false}},{"type":"function","function":{"name":"send_email","description":"Sends an email with the specified subject and body to the recipient.","parameters":{"type":"object","properties":{"recipient":{"type":"string","description":"Email address of the recipient."},"subject":{"type":"string","description":"Subject of the email."},"body":{"type":"string","description":"Body content of the email."}},"required":["recipient","subject","body"]},"strict":false}},{"type":"function","function":{"name":"process_records","description":"Process a list of records, where each record is a dictionary with string keys and integer values.","parameters":{"type":"object","properties":{"records":{"type":"array","items":{"type":"object"},"description":"A list containing dictionaries that map strings to integers."}},"required":["records"]},"strict":false}},{"type":"function","function":{"name":"merge_dicts","description":"Merges two dictionaries.","parameters":{"type":"object","properties":{"dict1":{"type":"object","description":"First dictionary."},"dict2":{"type":"object","description":"Second dictionary."}},"required":["dict1","dict2"]},"strict":false}},{"type":"function","function":{"name":"calculate_sum","description":"Calculates the sum of two integers.","parameters":{"type":"object","properties":{"a":{"type":"integer","description":"First integer."},"b":{"type":"integer","description":"Second integer."}},"required":["a","b"]},"strict":false}},{"type":"function","function":{"name":"fetch_weather","description":"Fetches the weather information for the specified location.","parameters":{"type":"object","properties":{"location":{"type":"string","description":"The location to fetch weather for."}},"required":["location"]},"strict":false}},{"type":"function","function":{"name":"fetch_current_datetime","description":"Get the current time as a JSON string, optionally formatted.","parameters":{"type":"object","properties":{"format":{"type":["string","null"],"description":"The format in which to return the current time. Defaults to None, which uses a standard format."}},"required":[]},"strict":false}}],"tool_resources":{"code_interpreter":{"file_ids":[]}},"metadata":{},"temperature":1.0,"top_p":1.0,"max_completion_tokens":null,"max_prompt_tokens":null,"truncation_strategy":{"type":"auto","last_messages":null},"incomplete_details":null,"usage":null,"response_format":"auto","tool_choice":"auto","parallel_tool_calls":true}
+
+event: thread.run.step.created
+data: {"id":"step_03","object":"thread.run.step","created_at":1735945060,"run_id":"run_01","assistant_id":"asst_01","thread_id":"thread_01","type":"message_creation","status":"in_progress","cancelled_at":null,"completed_at":null,"expires_at":1735945641,"failed_at":null,"last_error":null,"step_details":{"type":"message_creation","message_creation":{"message_id":"msg_01"}},"usage":null}
+
+event: thread.run.step.in_progress
+data: {"id":"step_03","object":"thread.run.step","created_at":1735945060,"run_id":"run_01","assistant_id":"asst_01","thread_id":"thread_01","type":"message_creation","status":"in_progress","cancelled_at":null,"completed_at":null,"expires_at":1735945641,"failed_at":null,"last_error":null,"step_details":{"type":"message_creation","message_creation":{"message_id":"msg_01"}},"usage":null}
+
+event: thread.message.created
+data: {"id":"msg_01","object":"thread.message","created_at":1735945060,"assistant_id":"asst_01","thread_id":"thread_01","run_id":"run_01","status":"in_progress","incomplete_details":null,"incomplete_at":null,"completed_at":null,"role":"assistant","content":[],"attachments":[],"metadata":{}}
+
+event: thread.message.in_progress
+data: {"id":"msg_01","object":"thread.message","created_at":1735945060,"assistant_id":"asst_01","thread_id":"thread_01","run_id":"run_01","status":"in_progress","incomplete_details":null,"incomplete_at":null,"completed_at":null,"role":"assistant","content":[],"attachments":[],"metadata":{}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"The","annotations":[]}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" email"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" has"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" been"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" successfully"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" sent"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" to"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" the"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" recipient"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" with"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" the"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" following"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" details"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":":\n\n"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"-"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" Date"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" and"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" Time"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":":"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" "}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"202"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"5"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"-"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"01"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"-"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"03"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" "}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"14"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":":"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"57"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":":"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"24"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"-"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" Weather"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" in"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" New"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" York"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":":"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" Sunny"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":","}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" "}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"25"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"�C"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"\n\n"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"If"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" you"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" need"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" any"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" further"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" assistance"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" or"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" information"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":","}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" please"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" feel"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" free"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" to"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":" ask"}}]}}
+
+event: thread.message.delta
+data: {"id":"msg_01","object":"thread.message.delta","delta":{"content":[{"index":0,"type":"text","text":{"value":"."}}]}}
+
+event: thread.message.completed
+data: {"id":"msg_01","object":"thread.message","created_at":1735945060,"assistant_id":"asst_01","thread_id":"thread_01","run_id":"run_01","status":"completed","incomplete_details":null,"incomplete_at":null,"completed_at":1735945061,"role":"assistant","content":[{"type":"text","text":{"value":"The email has been successfully sent to the recipient with the following details:\n\n- Date and Time: 2025-01-03 14:57:24\n- Weather in New York: Sunny, 25�C\n\nIf you need any further assistance or information, please feel free to ask.","annotations":[]}}],"attachments":[],"metadata":{}}
+
+event: thread.run.step.completed
+data: {"id":"step_03","object":"thread.run.step","created_at":1735945060,"run_id":"run_01","assistant_id":"asst_01","thread_id":"thread_01","type":"message_creation","status":"completed","cancelled_at":null,"completed_at":1735945061,"expires_at":1735945641,"failed_at":null,"last_error":null,"step_details":{"type":"message_creation","message_creation":{"message_id":"msg_01"}},"usage":{"prompt_tokens":834,"completion_tokens":62,"total_tokens":896}}
+
+event: thread.run.completed
+data: {"id":"run_01","object":"thread.run","created_at":1735945041,"assistant_id":"asst_01","thread_id":"thread_01","status":"completed","started_at":1735945059,"expires_at":null,"cancelled_at":null,"failed_at":null,"completed_at":1735945061,"required_action":null,"last_error":null,"model":"gpt-4-1106-preview","instructions":"You are a helpful assistant","tools":[{"type":"function","function":{"name":"get_user_info","description":"Retrieves user information based on user ID.","parameters":{"type":"object","properties":{"user_id":{"type":"integer","description":"ID of the user."}},"required":["user_id"]},"strict":false}},{"type":"function","function":{"name":"convert_temperature","description":"Converts temperature from Celsius to Fahrenheit.","parameters":{"type":"object","properties":{"celsius":{"type":"number","description":"Temperature in Celsius."}},"required":["celsius"]},"strict":false}},{"type":"function","function":{"name":"longest_word_in_sentences","description":"Finds the longest word in each sentence.","parameters":{"type":"object","properties":{"sentences":{"type":"array","items":{"type":"string"},"description":"A list of sentences."}},"required":["sentences"]},"strict":false}},{"type":"function","function":{"name":"toggle_flag","description":"Toggles a boolean flag.","parameters":{"type":"object","properties":{"flag":{"type":"boolean","description":"The flag to toggle."}},"required":["flag"]},"strict":false}},{"type":"function","function":{"name":"send_email","description":"Sends an email with the specified subject and body to the recipient.","parameters":{"type":"object","properties":{"recipient":{"type":"string","description":"Email address of the recipient."},"subject":{"type":"string","description":"Subject of the email."},"body":{"type":"string","description":"Body content of the email."}},"required":["recipient","subject","body"]},"strict":false}},{"type":"function","function":{"name":"process_records","description":"Process a list of records, where each record is a dictionary with string keys and integer values.","parameters":{"type":"object","properties":{"records":{"type":"array","items":{"type":"object"},"description":"A list containing dictionaries that map strings to integers."}},"required":["records"]},"strict":false}},{"type":"function","function":{"name":"merge_dicts","description":"Merges two dictionaries.","parameters":{"type":"object","properties":{"dict1":{"type":"object","description":"First dictionary."},"dict2":{"type":"object","description":"Second dictionary."}},"required":["dict1","dict2"]},"strict":false}},{"type":"function","function":{"name":"calculate_sum","description":"Calculates the sum of two integers.","parameters":{"type":"object","properties":{"a":{"type":"integer","description":"First integer."},"b":{"type":"integer","description":"Second integer."}},"required":["a","b"]},"strict":false}},{"type":"function","function":{"name":"fetch_weather","description":"Fetches the weather information for the specified location.","parameters":{"type":"object","properties":{"location":{"type":"string","description":"The location to fetch weather for."}},"required":["location"]},"strict":false}},{"type":"function","function":{"name":"fetch_current_datetime","description":"Get the current time as a JSON string, optionally formatted.","parameters":{"type":"object","properties":{"format":{"type":["string","null"],"description":"The format in which to return the current time. Defaults to None, which uses a standard format."}},"required":[]},"strict":false}}],"tool_resources":{"code_interpreter":{"file_ids":[]}},"metadata":{},"temperature":1.0,"top_p":1.0,"max_completion_tokens":null,"max_prompt_tokens":null,"truncation_strategy":{"type":"auto","last_messages":null},"incomplete_details":null,"usage":{"prompt_tokens":2217,"completion_tokens":220,"total_tokens":2437},"response_format":"auto","tool_choice":"auto","parallel_tool_calls":true}
+
+event: done
+data: [DONE]
+

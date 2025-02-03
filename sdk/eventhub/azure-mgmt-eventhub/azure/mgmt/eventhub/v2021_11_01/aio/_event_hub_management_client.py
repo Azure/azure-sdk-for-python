@@ -32,11 +32,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class EventHubManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class EventHubManagementClient:  # pylint: disable=too-many-instance-attributes
     """Azure Event Hubs client for managing Event Hubs Cluster, IPFilter Rules and VirtualNetworkRules
     resources.
 

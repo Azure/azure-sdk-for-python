@@ -48,13 +48,12 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
 class PostgreSQLManagementClient(
     PostgreSQLManagementClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes
     """The Microsoft Azure management API provides create, read, update, and delete functionality for
     Azure PostgreSQL resources including servers, databases, firewall rules, VNET rules, security
     alert policies, log files and configurations with new business model.

@@ -70,9 +70,7 @@ async def analyze_custom_documents(custom_model_id):
 
     # Make sure your document's type is included in the list of document types the custom model can analyze
     with open(path_to_sample_documents, "rb") as f:
-        poller = await document_intelligence_client.begin_analyze_document(
-            model_id=model_id, analyze_request=f, content_type="application/octet-stream"
-        )
+        poller = await document_intelligence_client.begin_analyze_document(model_id=model_id, body=f)
     result: AnalyzeResult = await poller.result()
 
     if result.documents:

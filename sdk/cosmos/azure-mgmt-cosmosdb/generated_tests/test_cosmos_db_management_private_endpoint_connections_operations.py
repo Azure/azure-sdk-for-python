@@ -20,11 +20,11 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_database_account(self, resource_group):
+    def test_private_endpoint_connections_list_by_database_account(self, resource_group):
         response = self.client.private_endpoint_connections.list_by_database_account(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-11-15",
+            api_version="2024-12-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_private_endpoint_connections_get(self, resource_group):
         response = self.client.private_endpoint_connections.get(
             resource_group_name=resource_group.name,
             account_name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-11-15",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_private_endpoint_connections_begin_create_or_update(self, resource_group):
         response = self.client.private_endpoint_connections.begin_create_or_update(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -57,9 +57,17 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
                 "privateEndpoint": {"id": "str"},
                 "privateLinkServiceConnectionState": {"actionsRequired": "str", "description": "str", "status": "str"},
                 "provisioningState": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "type": "str",
             },
-            api_version="2024-11-15",
+            api_version="2024-12-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -67,12 +75,12 @@ class TestCosmosDBManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_private_endpoint_connections_begin_delete(self, resource_group):
         response = self.client.private_endpoint_connections.begin_delete(
             resource_group_name=resource_group.name,
             account_name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-11-15",
+            api_version="2024-12-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -70,7 +70,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
      and 1 for transport type AmqpOverWebsocket.
     """
 
-    def __init__(  # pylint:disable=too-many-locals,too-many-statements
+    def __init__( # pylint:disable=too-many-locals
         self,
         endpoint: str,
         *,

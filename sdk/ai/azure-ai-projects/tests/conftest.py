@@ -20,10 +20,14 @@ if not load_dotenv(find_dotenv(filename="azure_ai_projects_tests.env"), override
 
 
 def pytest_collection_modifyitems(items):
+    if os.environ.get("AZURE_TEST_RUN_LIVE") == "true":
+        return
     for item in items:
-        if "tests\\agents" in item.fspath.strpath or "tests/agents" in item.fspath.strpath:
+        if "tests\\evaluation" in item.fspath.strpath or "tests/evaluation" in item.fspath.strpath:
             item.add_marker(
-                pytest.mark.skip(reason="Skip running Agents tests in PR pipeline until test recordings are available")
+                pytest.mark.skip(
+                    reason="Skip running Evaluations tests in PR pipeline until we can sort out the failures related to AI Foundry project settings"
+                )
             )
 
 
@@ -114,4 +118,6 @@ def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name):
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3493: $..name
+    #  - AZSDK3430: $..id
     remove_batch_sanitizers(["AZSDK3493"])
+    remove_batch_sanitizers(["AZSDK3430"])

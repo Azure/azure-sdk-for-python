@@ -52,6 +52,7 @@ class ParsedSetup:
         keywords: List[str],
         ext_package: str,
         ext_modules: List[Extension],
+        metapackage: bool
     ):
         self.name: str = name
         self.version: str = version
@@ -66,6 +67,7 @@ class ParsedSetup:
         self.keywords: List[str] = keywords
         self.ext_package = ext_package
         self.ext_modules = ext_modules
+        self.is_metapackage = metapackage
 
         self.is_pyproject = self.setup_filename.endswith(".toml")
 
@@ -90,6 +92,7 @@ class ParsedSetup:
             keywords,
             ext_package,
             ext_modules,
+            metapackage,
         ) = parse_setup(parse_directory_or_file)
 
         return cls(
@@ -106,6 +109,7 @@ class ParsedSetup:
             keywords,
             ext_package,
             ext_modules,
+            metapackage
         )
 
     def get_build_config(self) -> Optional[Dict[str, Any]]:
@@ -226,7 +230,7 @@ def read_setup_py_content(setup_filename: str) -> str:
 
 def parse_setup_py(
     setup_filename: str,
-) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension]]:
+) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension], bool]:
     """
     Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
     (
@@ -242,7 +246,8 @@ def parse_setup_py(
         <classifiers>,
         <keywords>,
         <ext_packages>,
-        <ext_modules>
+        <ext_modules>,
+        <is_metapackage>
     )
     """
 
@@ -296,6 +301,11 @@ def parse_setup_py(
 
     if packages:
         name_space = packages[0]
+        metapackage = False
+    else:
+        metapackage = True
+
+
 
     requires = kwargs.get("install_requires", [])
     package_data = kwargs.get("package_data", None)
@@ -322,14 +332,15 @@ def parse_setup_py(
         classifiers,            # List[str],
         keywords,               # List[str] ADJUSTED
         ext_package,            # str
-        ext_modules,            # List[Extension]
+        ext_modules,            # List[Extension],
+        metapackage             # bool
     )
     # fmt: on
 
 
 def parse_pyproject(
     pyproject_filename: str,
-) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension]]:
+) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension], bool]:
     """
     Used to evaluate a pyproject (or a directory containing a pyproject.toml) with a [project] configuration within.
     Returns a tuple containing:
@@ -346,7 +357,8 @@ def parse_pyproject(
         <classifiers>,
         <keywords>,
         <ext_packages>,
-        <ext_modules>
+        <ext_modules>,
+        <is_metapackage>
     )
     """
     toml_dict = get_pyproject_dict(pyproject_filename)
@@ -383,6 +395,7 @@ def parse_pyproject(
     include_package_data = get_value_from_dict(toml_dict, "tool.setuptools.include-package-data", True)
     classifiers = project_config.get("classifiers", [])
     keywords = project_config.get("keywords", [])
+    metapackage = False
 
     # as of setuptools 74.1 ext_packages and ext_modules are now present in tool.setuptools config namespace
     ext_package = get_value_from_dict(toml_dict, "tool.setuptools.ext-package", None)
@@ -404,6 +417,7 @@ def parse_pyproject(
         keywords,               # List[str] ADJUSTED
         ext_package,            # str
         ext_modules,            # List[Extension]
+        metapackage             # bool
     )
     # fmt: on
 
@@ -468,7 +482,8 @@ def parse_setup(
         <classifiers>,
         <keywords>,
         <ext_packages>,
-        <ext_modules>
+        <ext_modules>,
+        <is_metapackage>
     )
 
     If a pyproject.toml (containing [project]) or a setup.py is NOT found, a ValueError will be raised.

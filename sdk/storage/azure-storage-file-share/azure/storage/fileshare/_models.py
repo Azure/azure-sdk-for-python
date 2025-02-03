@@ -917,6 +917,14 @@ class DirectoryProperties(DictMixin):
     """ParentId uniquely identifies the parent directory of the object."""
     is_directory: bool = True
     """Whether input is a directory."""
+    owner: Optional[str] = None
+    """NFS only. The owner of the directory."""
+    group: Optional[str] = None
+    """NFS only. The owning group of the directory."""
+    file_mode: Optional[str] = None
+    """NFS only. The file mode of the directory."""
+    nfs_file_type: Optional[Literal['Directory']] = None
+    """NFS only. The type of the directory."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = None  # type: ignore [assignment]
@@ -933,6 +941,10 @@ class DirectoryProperties(DictMixin):
         self.file_id = kwargs.get('x-ms-file-id')  # type: ignore [assignment]
         self.parent_id = kwargs.get('x-ms-file-parent-id')  # type: ignore [assignment]
         self.is_directory = True
+        self.owner = kwargs.get('x-ms-owner')
+        self.group = kwargs.get('x-ms-group')
+        self.file_mode = kwargs.get('x-ms-mode')
+        self.nfs_file_type = kwargs.get('x-ms-file-file-type')
 
     @classmethod
     def _from_generated(cls, generated):
@@ -1142,6 +1154,16 @@ class FileProperties(DictMixin):
     """ParentId uniquely identifies the parent directory of the object."""
     is_directory: bool = False
     """Whether input is a directory."""
+    owner: Optional[str] = None
+    """NFS only. The owner of the file."""
+    group: Optional[str] = None
+    """NFS only. The owning group of the file."""
+    file_mode: Optional[str] = None
+    """NFS only. The file mode of the file."""
+    link_count: Optional[int] = None
+    """NFS only. The number of hard links of the file."""
+    nfs_file_type: Optional[Literal['Regular']] = None
+    """NFS only. The type of the file."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = kwargs.get('name')  # type: ignore [assignment]
@@ -1168,6 +1190,11 @@ class FileProperties(DictMixin):
         self.file_id = kwargs.get('x-ms-file-id')  # type: ignore [assignment]
         self.parent_id = kwargs.get('x-ms-file-parent-id')
         self.is_directory = False
+        self.owner = kwargs.get('x-ms-owner')
+        self.group = kwargs.get('x-ms-group')
+        self.file_mode = kwargs.get('x-ms-mode')
+        self.link_count = kwargs.get('x-ms-link-count')
+        self.nfs_file_type = kwargs.get('x-ms-file-file-type')
 
     @classmethod
     def _from_generated(cls, generated):

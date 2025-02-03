@@ -4,8 +4,6 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_basics.py
-
 DESCRIPTION:
     This sample demonstrates how to use basic agent operations from
     the Azure Agents service using a synchronous client.
@@ -17,18 +15,17 @@ USAGE:
 
     pip install azure-ai-projects azure-identity
 
-    Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    Set these environment variables with your own values:
+    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
+       Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+       the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
 import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import MessageTextContent
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
 # [START create_project_client]
 project_client = AIProjectClient.from_connection_string(
@@ -41,7 +38,7 @@ with project_client:
 
     # [START create_agent]
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview",
+        model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are helpful assistant",
     )
@@ -61,9 +58,9 @@ with project_client:
     # [START create_run]
     run = project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
 
-    # poll the run as long as run status is queued or in progress
+    # Poll the run as long as run status is queued or in progress
     while run.status in ["queued", "in_progress", "requires_action"]:
-        # wait for a second
+        # Wait for a second
         time.sleep(1)
         run = project_client.agents.get_run(thread_id=thread.id, run_id=run.id)
         # [END create_run]

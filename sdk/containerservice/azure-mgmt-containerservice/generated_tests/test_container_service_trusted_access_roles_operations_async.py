@@ -21,7 +21,7 @@ class TestContainerServiceTrustedAccessRolesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_trusted_access_roles_list(self, resource_group):
         response = self.client.trusted_access_roles.list(
             location="str",
             api_version="2024-09-01",

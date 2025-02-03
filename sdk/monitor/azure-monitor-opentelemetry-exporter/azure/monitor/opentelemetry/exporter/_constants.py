@@ -31,7 +31,6 @@ _REDIRECT_STATUS_CODES = (
 )
 
 _RETRYABLE_STATUS_CODES = (
-    206,  # Partial success
     401,  # Unauthorized
     403,  # Forbidden
     408,  # Request Timeout
@@ -205,6 +204,6 @@ _SAMPLE_RATE_KEY = "_MS.sampleRate"
 
 # AAD Auth
 
-_APPLICATION_INSIGHTS_RESOURCE_SCOPE = "https://monitor.azure.com//.default"
+_DEFAULT_AAD_SCOPE = "https://monitor.azure.com//.default"
 
 # cSpell:disable

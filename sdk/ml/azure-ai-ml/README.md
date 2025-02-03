@@ -125,11 +125,11 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [ml_conda]: https://anaconda.org/microsoft/azure-ai-ml/
 [ml_ref_docs]: https://learn.microsoft.com/python/api/azure-ai-ml/?view=azure-python
 [ml_samples]: https://github.com/Azure/azureml-examples/tree/main/sdk/python
-[product_documentation]: https://docs.microsoft.com/azure/machine-learning/
+[product_documentation]: https://learn.microsoft.com/azure/machine-learning/
 [azure_subscription]: https://azure.microsoft.com/free/
-[workspace]: https://docs.microsoft.com/azure/machine-learning/concept-workspace
+[workspace]: https://learn.microsoft.com/azure/machine-learning/concept-workspace
 [python_logging]: https://docs.python.org/3/library/logging.html
-[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
+[sdk_logging_docs]: https://learn.microsoft.com/azure/developer/python/azure-sdk-logging
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [pip_link]: https://pypi.org/project/pip/
 [azure_core_ref_docs]: https://aka.ms/azsdk-python-core-policies

@@ -31,7 +31,7 @@ Each samples file is run during the azure-sdk-for-python Build CI to ensure that
 
 ## Prerequisites
 
-* Python 3.8, 3.9, 3.10, 3.11, or 3.12 is required to use this package
+* Python 3.9, 3.10, 3.11, or 3.12 is required to use this package
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) to run these samples.
 * You must have an Azure AI project and a model deployment.
 

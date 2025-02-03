@@ -33,7 +33,7 @@ from azure.storage.fileshare.aio import ShareFileClient, ShareServiceClient
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import FileSharePreparer
-from test_helpers_async import ProgressTracker
+from test_helpers_async import AsyncStream, MockStorageTransport, ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
@@ -3960,3 +3960,59 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         await new_file.delete_file()
         await file_client.delete_file()
+
+    @FileSharePreparer()
+    async def test_mock_transport_no_content_validation(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        transport = MockStorageTransport()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path="filemocktransport",
+            credential=storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        data = await file_client.download_file()
+        assert data is not None
+
+        props = await file_client.get_file_properties()
+        assert props is not None
+
+        data = b"Hello Async World!"
+        stream = AsyncStream(data)
+        resp = await file_client.upload_file(stream)
+        assert resp is not None
+
+        file_data = await (await file_client.download_file()).readall()
+        assert file_data == b"Hello Async World!"  # data is fixed by mock transport
+
+    @FileSharePreparer()
+    async def test_mock_transport_with_content_validation(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        transport = MockStorageTransport()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path="filemocktransport",
+            credential=storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        data = b"Hello Async World!"
+        stream = AsyncStream(data)
+        resp = await file_client.upload_file(stream, validate_content=True)
+        assert resp is not None
+
+        file_data = await (await file_client.download_file(validate_content=True)).readall()
+        assert file_data == b"Hello Async World!"  # data is fixed by mock transport

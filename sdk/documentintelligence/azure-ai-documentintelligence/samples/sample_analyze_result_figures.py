@@ -48,9 +48,8 @@ def analyze_result_figures():
     with open(path_to_sample_documents, "rb") as f:
         poller = document_intelligence_client.begin_analyze_document(
             "prebuilt-layout",
-            analyze_request=f,
+            body=f,
             output=[AnalyzeOutputOption.FIGURES],
-            content_type="application/octet-stream",
         )
     result: AnalyzeResult = poller.result()
     operation_id = poller.details["operation_id"]

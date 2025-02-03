@@ -122,8 +122,16 @@ jobs:
     - script: sudo ls /Applications/
       displayName: 'List All apps'
 
-    - script: sudo xcode-select --switch /Applications/Xcode_13.3.1.app
-      displayName: 'Select Xcode_13.3.1.app'
+    - script: sudo xcode-select --switch /Applications/Xcode_16.1.0.app
+      displayName: 'Select Xcode_16.1.0.app'
+
+    - script: |
+        mkdir -p $HOME/miniconda3
+        curl https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -o $HOME/miniconda3/miniconda.sh
+        bash $HOME/miniconda3/miniconda.sh -b -u -p $HOME/miniconda3
+        rm $HOME/miniconda3/miniconda.sh
+        echo '##vso[task.prependpath]/Users/runner/miniconda3/bin'
+      displayName: Install Conda
 
     - bash: |
           echo "##vso[task.setvariable variable=CFLAGS;]-mmacosx-version-min=$(MacOSXDeploymentTarget) -I$(OpenSSLDir)/include"

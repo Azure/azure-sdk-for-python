@@ -11,7 +11,7 @@ import zlib
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping
 
 
 _LOGGER = logging.getLogger(__name__)

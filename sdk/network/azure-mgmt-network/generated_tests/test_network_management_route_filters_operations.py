@@ -20,11 +20,11 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_route_filters_begin_delete(self, resource_group):
         response = self.client.route_filters.begin_delete(
             resource_group_name=resource_group.name,
             route_filter_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -32,11 +32,11 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_route_filters_get(self, resource_group):
         response = self.client.route_filters.get(
             resource_group_name=resource_group.name,
             route_filter_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -44,7 +44,7 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_route_filters_begin_create_or_update(self, resource_group):
         response = self.client.route_filters.begin_create_or_update(
             resource_group_name=resource_group.name,
             route_filter_name="str",
@@ -237,7 +237,7 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -245,12 +245,12 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update_tags(self, resource_group):
+    def test_route_filters_update_tags(self, resource_group):
         response = self.client.route_filters.update_tags(
             resource_group_name=resource_group.name,
             route_filter_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -258,10 +258,10 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_route_filters_list_by_resource_group(self, resource_group):
         response = self.client.route_filters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -269,9 +269,9 @@ class TestNetworkManagementRouteFiltersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_route_filters_list(self, resource_group):
         response = self.client.route_filters.list(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

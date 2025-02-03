@@ -1,0 +1,41 @@
+{
+    "id": "/subscriptions/sub-id/test_workspace/providers/Microsoft.Storage/storageAccounts/storage-account-name",
+    "name": "test_workspace",
+    "location": "test_location",
+    "kind": "test_kind",
+    "sku": {"name": "test_sku"},
+    "tags": {"test_tag": "test_value"},
+    "properties": {
+        "description": "test_description",
+        "friendlyName": "test_friendly_name",
+        "discoveryUrl": "test_discovery_url",
+        "hbiWorkspace": true,
+        "storageAccount": "test_storage_account",
+        "containerRegistry": "test_container_registry",
+        "keyVault": "test_key_vault",
+        "applicationInsights": "test_application_insights",
+        "imageBuildCompute": "test_image_build_compute",
+        "publicNetworkAccess": "Enabled",
+        "enableDataIsolation": true,
+        "allowPublicAccessWhenBehindVnet": true,
+        "primaryUserAssignedIdentity": "test_primary_user_assigned_identity",
+        "encryption": {
+            "status": "Enabled",
+            "keyVaultProperties": {
+                "keyIdentifier": "key_identifier",
+                "keyVaultArmId": "key_vault_arm_id"
+            }
+        },
+        "hubResourceId": "hub_resource_id",
+        "workspaceId": "workspace_id",
+        "mlFlowTrackingUri": "ml_flow_tracking_uri",
+        "allowRoleAssignmentOnRG": true,
+        "systemDatastoresAuthMode": "AccessKey",
+        "managedNetwork": {},
+        "provisionNetworkNow": true,
+        "featureStoreSettings": {},
+        "serverlessComputeSettings": {},
+        "networkAcls": {}
+    },
+    "identity": {"type": "ManagedServiceIdentityType"}
+}

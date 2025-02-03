@@ -8,8 +8,6 @@
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from azure.core.pipeline.transport import HttpRequest
-
 from ._configuration import CognitiveServicesManagementClientConfiguration
 
 if TYPE_CHECKING:
@@ -19,7 +17,7 @@ if TYPE_CHECKING:
     from .._serialization import Deserializer, Serializer
 
 
-class CognitiveServicesManagementClientMixinABC(ABC):
+class CognitiveServicesManagementClientMixinABC(ABC):  # pylint: disable=name-too-long
     """DO NOT use this class. It is for internal typing use only."""
 
     _client: "AsyncPipelineClient"

@@ -21,7 +21,7 @@ class TestDataFactoryManagementCredentialOperationsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_factory(self, resource_group):
+    async def test_credential_operations_list_by_factory(self, resource_group):
         response = self.client.credential_operations.list_by_factory(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -33,7 +33,7 @@ class TestDataFactoryManagementCredentialOperationsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_credential_operations_create_or_update(self, resource_group):
         response = await self.client.credential_operations.create_or_update(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -47,7 +47,7 @@ class TestDataFactoryManagementCredentialOperationsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_credential_operations_get(self, resource_group):
         response = await self.client.credential_operations.get(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -60,7 +60,7 @@ class TestDataFactoryManagementCredentialOperationsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_credential_operations_delete(self, resource_group):
         response = await self.client.credential_operations.delete(
             resource_group_name=resource_group.name,
             factory_name="str",

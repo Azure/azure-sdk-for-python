@@ -607,7 +607,7 @@ class Component(
         self._creation_context = None
         self._base_path = base_path
 
-    def _get_telemetry_values(self, *args: Any, **kwargs: Any) -> Dict:  # pylint: disable=unused-argument
+    def _get_telemetry_values(self, *args: Any, **kwargs: Any) -> Dict:
         # Note: the is_anonymous is not reliable here, create_or_update will log is_anonymous from parameter.
         is_anonymous = self.name is None or ANONYMOUS_COMPONENT_NAME in self.name
         return {"type": self.type, "source": self._source, "is_anonymous": is_anonymous}

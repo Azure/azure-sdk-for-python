@@ -129,6 +129,7 @@ def _prepare_multipart_body_helper(http_request: "HTTPRequestType", content_inde
     correct context (sync/async)
 
     Does nothing if "set_multipart_mixed" was never called.
+
     :param http_request: The http request whose multipart body we are trying
      to prepare
     :type http_request: any

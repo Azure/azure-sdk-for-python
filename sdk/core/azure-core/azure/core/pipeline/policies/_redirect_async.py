@@ -65,9 +65,9 @@ class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy[HTTPRequestType, A
 
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
-        :return: Returns the PipelineResponse or raises error if maximum redirects exceeded.
+        :return: the PipelineResponse.
         :rtype: ~azure.core.pipeline.PipelineResponse
-        :raises: ~azure.core.exceptions.TooManyRedirectsError if maximum redirects exceeded.
+        :raises ~azure.core.exceptions.TooManyRedirectsError: if maximum redirects exceeded.
         """
         redirects_remaining = True
         redirect_settings = self.configure_redirects(request.context.options)

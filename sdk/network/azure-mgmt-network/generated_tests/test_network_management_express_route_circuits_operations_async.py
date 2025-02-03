@@ -21,12 +21,12 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_express_route_circuits_begin_delete(self, resource_group):
         response = await (
             await self.client.express_route_circuits.begin_delete(
                 resource_group_name=resource_group.name,
                 circuit_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -35,11 +35,11 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_express_route_circuits_get(self, resource_group):
         response = await self.client.express_route_circuits.get(
             resource_group_name=resource_group.name,
             circuit_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_express_route_circuits_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.express_route_circuits.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -176,7 +176,7 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -185,12 +185,12 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update_tags(self, resource_group):
+    async def test_express_route_circuits_update_tags(self, resource_group):
         response = await self.client.express_route_circuits.update_tags(
             resource_group_name=resource_group.name,
             circuit_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -198,14 +198,14 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_list_arp_table(self, resource_group):
+    async def test_express_route_circuits_begin_list_arp_table(self, resource_group):
         response = await (
             await self.client.express_route_circuits.begin_list_arp_table(
                 resource_group_name=resource_group.name,
                 circuit_name="str",
                 peering_name="str",
                 device_path="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -214,14 +214,14 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_list_routes_table(self, resource_group):
+    async def test_express_route_circuits_begin_list_routes_table(self, resource_group):
         response = await (
             await self.client.express_route_circuits.begin_list_routes_table(
                 resource_group_name=resource_group.name,
                 circuit_name="str",
                 peering_name="str",
                 device_path="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -230,14 +230,14 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_list_routes_table_summary(self, resource_group):
+    async def test_express_route_circuits_begin_list_routes_table_summary(self, resource_group):
         response = await (
             await self.client.express_route_circuits.begin_list_routes_table_summary(
                 resource_group_name=resource_group.name,
                 circuit_name="str",
                 peering_name="str",
                 device_path="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -246,11 +246,11 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_stats(self, resource_group):
+    async def test_express_route_circuits_get_stats(self, resource_group):
         response = await self.client.express_route_circuits.get_stats(
             resource_group_name=resource_group.name,
             circuit_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -258,12 +258,12 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_peering_stats(self, resource_group):
+    async def test_express_route_circuits_get_peering_stats(self, resource_group):
         response = await self.client.express_route_circuits.get_peering_stats(
             resource_group_name=resource_group.name,
             circuit_name="str",
             peering_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -271,10 +271,10 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_express_route_circuits_list(self, resource_group):
         response = self.client.express_route_circuits.list(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -282,9 +282,9 @@ class TestNetworkManagementExpressRouteCircuitsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_all(self, resource_group):
+    async def test_express_route_circuits_list_all(self, resource_group):
         response = self.client.express_route_circuits.list_all(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -30,7 +30,7 @@ from .._serialization import Serializer
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -485,28 +485,22 @@ class WorkflowsOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "description": "str",  # Description of a workflow. Required.
-                    "id": "str",  # The id of workflow. Required.
-                    "isEnabled": bool,  # Whether the workflow is enabled or not. Required.
-                    "name": "str",  # The name of a workflow. Required.
+                    "description": "str",
+                    "id": "str",
+                    "isEnabled": bool,
+                    "name": "str",
                     "triggers": [
                         {
-                            "type": "str",  # Required. Known values are:
-                              "when_term_creation_is_requested", "when_term_deletion_is_requested",
-                              "when_term_update_is_requested", "when_terms_import_is_requested",
-                              "when_data_access_grant_is_requested", and
-                              "when_asset_update_is_requested".
-                            "underCollection": "str",  # Optional. The collection name.
-                            "underGlossary": "str",  # Optional. The glossary guid.
-                            "underGlossaryHierarchy": "str"  # Optional. Glossary term
-                              hierarchy path.
+                            "type": "str",
+                            "underCollection": "str",
+                            "underGlossary": "str",
+                            "underGlossaryHierarchy": "str"
                         }
                     ],
-                    "createdBy": "str",  # Optional. The person who created the workflow.
-                    "createdTime": "2020-02-20 00:00:00",  # Optional. The created time of
-                      workflow.
-                    "lastUpdateTime": "2020-02-20 00:00:00",  # Optional. The last update time.
-                    "updatedBy": "str"  # Optional. The person who updated the workflow.
+                    "createdBy": "str",
+                    "createdTime": "2020-02-20 00:00:00",
+                    "lastUpdateTime": "2020-02-20 00:00:00",
+                    "updatedBy": "str"
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -514,7 +508,7 @@ class WorkflowsOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -525,7 +519,7 @@ class WorkflowsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_workflows_list_request(
+                _request = build_workflows_list_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -535,7 +529,7 @@ class WorkflowsOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -547,7 +541,7 @@ class WorkflowsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -555,9 +549,9 @@ class WorkflowsOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -567,17 +561,15 @@ class WorkflowsOperations:
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -618,33 +610,26 @@ class WorkflowOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "actionDag": {},  # The action DAG(Directed Acyclic Graph), it defines steps
-                      to be executed in a workflow run and their order. Required.
-                    "description": "str",  # Description of a workflow. Required.
-                    "id": "str",  # The id of workflow. Required.
-                    "isEnabled": bool,  # Whether the workflow is enabled or not. Required.
-                    "name": "str",  # The name of a workflow. Required.
+                    "actionDag": {},
+                    "description": "str",
+                    "id": "str",
+                    "isEnabled": bool,
+                    "name": "str",
                     "triggers": [
                         {
-                            "type": "str",  # Required. Known values are:
-                              "when_term_creation_is_requested", "when_term_deletion_is_requested",
-                              "when_term_update_is_requested", "when_terms_import_is_requested",
-                              "when_data_access_grant_is_requested", and
-                              "when_asset_update_is_requested".
-                            "underCollection": "str",  # Optional. The collection name.
-                            "underGlossary": "str",  # Optional. The glossary guid.
-                            "underGlossaryHierarchy": "str"  # Optional. Glossary term
-                              hierarchy path.
+                            "type": "str",
+                            "underCollection": "str",
+                            "underGlossary": "str",
+                            "underGlossaryHierarchy": "str"
                         }
                     ],
-                    "createdBy": "str",  # Optional. The person who created the workflow.
-                    "createdTime": "2020-02-20 00:00:00",  # Optional. The created time of
-                      workflow.
-                    "lastUpdateTime": "2020-02-20 00:00:00",  # Optional. The last update time.
-                    "updatedBy": "str"  # Optional. The person who updated the workflow.
+                    "createdBy": "str",
+                    "createdTime": "2020-02-20 00:00:00",
+                    "lastUpdateTime": "2020-02-20 00:00:00",
+                    "updatedBy": "str"
                 }
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -657,7 +642,7 @@ class WorkflowOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_workflow_get_request(
+        _request = build_workflow_get_request(
             workflow_id=workflow_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -666,18 +651,16 @@ class WorkflowOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -687,9 +670,9 @@ class WorkflowOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
     def create_or_replace(
@@ -718,52 +701,39 @@ class WorkflowOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 workflow_create_or_update_command = {
-                    "description": "str",  # Description of a workflow. Required.
-                    "isEnabled": bool,  # Whether the workflow enabled or not. Required.
-                    "name": "str",  # The workflow name. Required.
+                    "description": "str",
+                    "isEnabled": bool,
+                    "name": "str",
                     "triggers": [
                         {
-                            "type": "str",  # Required. Known values are:
-                              "when_term_creation_is_requested", "when_term_deletion_is_requested",
-                              "when_term_update_is_requested", "when_terms_import_is_requested",
-                              "when_data_access_grant_is_requested", and
-                              "when_asset_update_is_requested".
-                            "underCollection": "str",  # Optional. The collection name.
-                            "underGlossary": "str",  # Optional. The glossary guid.
-                            "underGlossaryHierarchy": "str"  # Optional. Glossary term
-                              hierarchy path.
+                            "type": "str",
+                            "underCollection": "str",
+                            "underGlossary": "str",
+                            "underGlossaryHierarchy": "str"
                         }
                     ],
-                    "actionDag": {}  # Optional. The action DAG(Directed Acyclic Graph), it
-                      defines actual flow.
+                    "actionDag": {}
                 }
 
                 # response body for status code(s): 200
                 response == {
-                    "actionDag": {},  # The action DAG(Directed Acyclic Graph), it defines steps
-                      to be executed in a workflow run and their order. Required.
-                    "description": "str",  # Description of a workflow. Required.
-                    "id": "str",  # The id of workflow. Required.
-                    "isEnabled": bool,  # Whether the workflow is enabled or not. Required.
-                    "name": "str",  # The name of a workflow. Required.
+                    "actionDag": {},
+                    "description": "str",
+                    "id": "str",
+                    "isEnabled": bool,
+                    "name": "str",
                     "triggers": [
                         {
-                            "type": "str",  # Required. Known values are:
-                              "when_term_creation_is_requested", "when_term_deletion_is_requested",
-                              "when_term_update_is_requested", "when_terms_import_is_requested",
-                              "when_data_access_grant_is_requested", and
-                              "when_asset_update_is_requested".
-                            "underCollection": "str",  # Optional. The collection name.
-                            "underGlossary": "str",  # Optional. The glossary guid.
-                            "underGlossaryHierarchy": "str"  # Optional. Glossary term
-                              hierarchy path.
+                            "type": "str",
+                            "underCollection": "str",
+                            "underGlossary": "str",
+                            "underGlossaryHierarchy": "str"
                         }
                     ],
-                    "createdBy": "str",  # Optional. The person who created the workflow.
-                    "createdTime": "2020-02-20 00:00:00",  # Optional. The created time of
-                      workflow.
-                    "lastUpdateTime": "2020-02-20 00:00:00",  # Optional. The last update time.
-                    "updatedBy": "str"  # Optional. The person who updated the workflow.
+                    "createdBy": "str",
+                    "createdTime": "2020-02-20 00:00:00",
+                    "lastUpdateTime": "2020-02-20 00:00:00",
+                    "updatedBy": "str"
                 }
         """
 
@@ -771,7 +741,7 @@ class WorkflowOperations:
     def create_or_replace(
         self,
         workflow_id: str,
-        workflow_create_or_update_command: IO,
+        workflow_create_or_update_command: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -781,7 +751,7 @@ class WorkflowOperations:
         :param workflow_id: The workflow id. Required.
         :type workflow_id: str
         :param workflow_create_or_update_command: Create or update workflow payload. Required.
-        :type workflow_create_or_update_command: IO
+        :type workflow_create_or_update_command: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -794,47 +764,37 @@ class WorkflowOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "actionDag": {},  # The action DAG(Directed Acyclic Graph), it defines steps
-                      to be executed in a workflow run and their order. Required.
-                    "description": "str",  # Description of a workflow. Required.
-                    "id": "str",  # The id of workflow. Required.
-                    "isEnabled": bool,  # Whether the workflow is enabled or not. Required.
-                    "name": "str",  # The name of a workflow. Required.
+                    "actionDag": {},
+                    "description": "str",
+                    "id": "str",
+                    "isEnabled": bool,
+                    "name": "str",
                     "triggers": [
                         {
-                            "type": "str",  # Required. Known values are:
-                              "when_term_creation_is_requested", "when_term_deletion_is_requested",
-                              "when_term_update_is_requested", "when_terms_import_is_requested",
-                              "when_data_access_grant_is_requested", and
-                              "when_asset_update_is_requested".
-                            "underCollection": "str",  # Optional. The collection name.
-                            "underGlossary": "str",  # Optional. The glossary guid.
-                            "underGlossaryHierarchy": "str"  # Optional. Glossary term
-                              hierarchy path.
+                            "type": "str",
+                            "underCollection": "str",
+                            "underGlossary": "str",
+                            "underGlossaryHierarchy": "str"
                         }
                     ],
-                    "createdBy": "str",  # Optional. The person who created the workflow.
-                    "createdTime": "2020-02-20 00:00:00",  # Optional. The created time of
-                      workflow.
-                    "lastUpdateTime": "2020-02-20 00:00:00",  # Optional. The last update time.
-                    "updatedBy": "str"  # Optional. The person who updated the workflow.
+                    "createdBy": "str",
+                    "createdTime": "2020-02-20 00:00:00",
+                    "lastUpdateTime": "2020-02-20 00:00:00",
+                    "updatedBy": "str"
                 }
         """
 
     @distributed_trace
     def create_or_replace(
-        self, workflow_id: str, workflow_create_or_update_command: Union[JSON, IO], **kwargs: Any
+        self, workflow_id: str, workflow_create_or_update_command: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> JSON:
         """Create or replace a workflow.
 
         :param workflow_id: The workflow id. Required.
         :type workflow_id: str
         :param workflow_create_or_update_command: Create or update workflow payload. Is either a JSON
-         type or a IO type. Required.
-        :type workflow_create_or_update_command: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+         type or a IO[bytes] type. Required.
+        :type workflow_create_or_update_command: JSON or IO[bytes]
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -844,55 +804,42 @@ class WorkflowOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 workflow_create_or_update_command = {
-                    "description": "str",  # Description of a workflow. Required.
-                    "isEnabled": bool,  # Whether the workflow enabled or not. Required.
-                    "name": "str",  # The workflow name. Required.
+                    "description": "str",
+                    "isEnabled": bool,
+                    "name": "str",
                     "triggers": [
                         {
-                            "type": "str",  # Required. Known values are:
-                              "when_term_creation_is_requested", "when_term_deletion_is_requested",
-                              "when_term_update_is_requested", "when_terms_import_is_requested",
-                              "when_data_access_grant_is_requested", and
-                              "when_asset_update_is_requested".
-                            "underCollection": "str",  # Optional. The collection name.
-                            "underGlossary": "str",  # Optional. The glossary guid.
-                            "underGlossaryHierarchy": "str"  # Optional. Glossary term
-                              hierarchy path.
+                            "type": "str",
+                            "underCollection": "str",
+                            "underGlossary": "str",
+                            "underGlossaryHierarchy": "str"
                         }
                     ],
-                    "actionDag": {}  # Optional. The action DAG(Directed Acyclic Graph), it
-                      defines actual flow.
+                    "actionDag": {}
                 }
 
                 # response body for status code(s): 200
                 response == {
-                    "actionDag": {},  # The action DAG(Directed Acyclic Graph), it defines steps
-                      to be executed in a workflow run and their order. Required.
-                    "description": "str",  # Description of a workflow. Required.
-                    "id": "str",  # The id of workflow. Required.
-                    "isEnabled": bool,  # Whether the workflow is enabled or not. Required.
-                    "name": "str",  # The name of a workflow. Required.
+                    "actionDag": {},
+                    "description": "str",
+                    "id": "str",
+                    "isEnabled": bool,
+                    "name": "str",
                     "triggers": [
                         {
-                            "type": "str",  # Required. Known values are:
-                              "when_term_creation_is_requested", "when_term_deletion_is_requested",
-                              "when_term_update_is_requested", "when_terms_import_is_requested",
-                              "when_data_access_grant_is_requested", and
-                              "when_asset_update_is_requested".
-                            "underCollection": "str",  # Optional. The collection name.
-                            "underGlossary": "str",  # Optional. The glossary guid.
-                            "underGlossaryHierarchy": "str"  # Optional. Glossary term
-                              hierarchy path.
+                            "type": "str",
+                            "underCollection": "str",
+                            "underGlossary": "str",
+                            "underGlossaryHierarchy": "str"
                         }
                     ],
-                    "createdBy": "str",  # Optional. The person who created the workflow.
-                    "createdTime": "2020-02-20 00:00:00",  # Optional. The created time of
-                      workflow.
-                    "lastUpdateTime": "2020-02-20 00:00:00",  # Optional. The last update time.
-                    "updatedBy": "str"  # Optional. The person who updated the workflow.
+                    "createdBy": "str",
+                    "createdTime": "2020-02-20 00:00:00",
+                    "lastUpdateTime": "2020-02-20 00:00:00",
+                    "updatedBy": "str"
                 }
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -914,7 +861,7 @@ class WorkflowOperations:
         else:
             _json = workflow_create_or_update_command
 
-        request = build_workflow_create_or_replace_request(
+        _request = build_workflow_create_or_replace_request(
             workflow_id=workflow_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -926,18 +873,16 @@ class WorkflowOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -947,9 +892,9 @@ class WorkflowOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def delete(self, workflow_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -961,7 +906,7 @@ class WorkflowOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -974,7 +919,7 @@ class WorkflowOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_workflow_delete_request(
+        _request = build_workflow_delete_request(
             workflow_id=workflow_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -983,23 +928,21 @@ class WorkflowOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def validate(
@@ -1023,24 +966,18 @@ class WorkflowOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 workflow_validate_query = {
-                    "description": "str",  # Description of a workflow. Required.
-                    "isEnabled": bool,  # Whether the workflow enabled or not. Required.
-                    "name": "str",  # The workflow name. Required.
+                    "description": "str",
+                    "isEnabled": bool,
+                    "name": "str",
                     "triggers": [
                         {
-                            "type": "str",  # Required. Known values are:
-                              "when_term_creation_is_requested", "when_term_deletion_is_requested",
-                              "when_term_update_is_requested", "when_terms_import_is_requested",
-                              "when_data_access_grant_is_requested", and
-                              "when_asset_update_is_requested".
-                            "underCollection": "str",  # Optional. The collection name.
-                            "underGlossary": "str",  # Optional. The glossary guid.
-                            "underGlossaryHierarchy": "str"  # Optional. Glossary term
-                              hierarchy path.
+                            "type": "str",
+                            "underCollection": "str",
+                            "underGlossary": "str",
+                            "underGlossaryHierarchy": "str"
                         }
                     ],
-                    "actionDag": {}  # Optional. The action DAG(Directed Acyclic Graph), it
-                      defines actual flow.
+                    "actionDag": {}
                 }
 
                 # response body for status code(s): 200
@@ -1048,18 +985,12 @@ class WorkflowOperations:
                     "value": [
                         {
                             "location": {
-                                "type": "str",  # The validation violation location
-                                  type. Required. Known values are: "workflow", "action", and
-                                  "actionParameter".
-                                "actionName": "str",  # Optional. The name of the
-                                  action where the violation happens.
-                                "parameterKey": "str"  # Optional. The key of the
-                                  action parameter where the violation happens.
+                                "type": "str",
+                                "actionName": "str",
+                                "parameterKey": "str"
                             },
-                            "message": "str",  # The detail about how the validation rule
-                              is violated. Required.
-                            "severity": "str"  # The severity of the validation rule.
-                              Required. Known values are: "error" and "warning".
+                            "message": "str",
+                            "severity": "str"
                         }
                     ]
                 }
@@ -1067,14 +998,19 @@ class WorkflowOperations:
 
     @overload
     def validate(
-        self, workflow_id: str, workflow_validate_query: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        workflow_id: str,
+        workflow_validate_query: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> JSON:
         """Validate a workflow.
 
         :param workflow_id: The workflow id. Required.
         :type workflow_id: str
         :param workflow_validate_query: Check workflow payload. Required.
-        :type workflow_validate_query: IO
+        :type workflow_validate_query: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1090,35 +1026,26 @@ class WorkflowOperations:
                     "value": [
                         {
                             "location": {
-                                "type": "str",  # The validation violation location
-                                  type. Required. Known values are: "workflow", "action", and
-                                  "actionParameter".
-                                "actionName": "str",  # Optional. The name of the
-                                  action where the violation happens.
-                                "parameterKey": "str"  # Optional. The key of the
-                                  action parameter where the violation happens.
+                                "type": "str",
+                                "actionName": "str",
+                                "parameterKey": "str"
                             },
-                            "message": "str",  # The detail about how the validation rule
-                              is violated. Required.
-                            "severity": "str"  # The severity of the validation rule.
-                              Required. Known values are: "error" and "warning".
+                            "message": "str",
+                            "severity": "str"
                         }
                     ]
                 }
         """
 
     @distributed_trace
-    def validate(self, workflow_id: str, workflow_validate_query: Union[JSON, IO], **kwargs: Any) -> JSON:
+    def validate(self, workflow_id: str, workflow_validate_query: Union[JSON, IO[bytes]], **kwargs: Any) -> JSON:
         """Validate a workflow.
 
         :param workflow_id: The workflow id. Required.
         :type workflow_id: str
-        :param workflow_validate_query: Check workflow payload. Is either a JSON type or a IO type.
-         Required.
-        :type workflow_validate_query: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :param workflow_validate_query: Check workflow payload. Is either a JSON type or a IO[bytes]
+         type. Required.
+        :type workflow_validate_query: JSON or IO[bytes]
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1128,24 +1055,18 @@ class WorkflowOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 workflow_validate_query = {
-                    "description": "str",  # Description of a workflow. Required.
-                    "isEnabled": bool,  # Whether the workflow enabled or not. Required.
-                    "name": "str",  # The workflow name. Required.
+                    "description": "str",
+                    "isEnabled": bool,
+                    "name": "str",
                     "triggers": [
                         {
-                            "type": "str",  # Required. Known values are:
-                              "when_term_creation_is_requested", "when_term_deletion_is_requested",
-                              "when_term_update_is_requested", "when_terms_import_is_requested",
-                              "when_data_access_grant_is_requested", and
-                              "when_asset_update_is_requested".
-                            "underCollection": "str",  # Optional. The collection name.
-                            "underGlossary": "str",  # Optional. The glossary guid.
-                            "underGlossaryHierarchy": "str"  # Optional. Glossary term
-                              hierarchy path.
+                            "type": "str",
+                            "underCollection": "str",
+                            "underGlossary": "str",
+                            "underGlossaryHierarchy": "str"
                         }
                     ],
-                    "actionDag": {}  # Optional. The action DAG(Directed Acyclic Graph), it
-                      defines actual flow.
+                    "actionDag": {}
                 }
 
                 # response body for status code(s): 200
@@ -1153,23 +1074,17 @@ class WorkflowOperations:
                     "value": [
                         {
                             "location": {
-                                "type": "str",  # The validation violation location
-                                  type. Required. Known values are: "workflow", "action", and
-                                  "actionParameter".
-                                "actionName": "str",  # Optional. The name of the
-                                  action where the violation happens.
-                                "parameterKey": "str"  # Optional. The key of the
-                                  action parameter where the violation happens.
+                                "type": "str",
+                                "actionName": "str",
+                                "parameterKey": "str"
                             },
-                            "message": "str",  # The detail about how the validation rule
-                              is violated. Required.
-                            "severity": "str"  # The severity of the validation rule.
-                              Required. Known values are: "error" and "warning".
+                            "message": "str",
+                            "severity": "str"
                         }
                     ]
                 }
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1191,7 +1106,7 @@ class WorkflowOperations:
         else:
             _json = workflow_validate_query
 
-        request = build_workflow_validate_request(
+        _request = build_workflow_validate_request(
             workflow_id=workflow_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1203,18 +1118,16 @@ class WorkflowOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1224,9 +1137,9 @@ class WorkflowOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
 
 class UserRequestsOperations:
@@ -1268,49 +1181,41 @@ class UserRequestsOperations:
                 user_requests_payload = {
                     "operations": [
                         {
-                            "payload": {},  # The payload of each operation which user
-                              want to submit. Required.
-                            "type": "str"  # The operation type. Required. Known values
-                              are: "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms",
-                              "UpdateAsset", and "GrantDataAccess".
+                            "payload": {},
+                            "type": "str"
                         }
                     ],
-                    "comment": "str"  # Optional. The comment when submit a user request.
+                    "comment": "str"
                 }
 
                 # response body for status code(s): 200
                 response == {
                     "operations": [
                         {
-                            "payload": {},  # The payload of each operation which user
-                              want to submit. Required.
-                            "type": "str",  # The operation type. Required. Known values
-                              are: "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms",
-                              "UpdateAsset", and "GrantDataAccess".
+                            "payload": {},
+                            "type": "str",
                             "workflowRunIds": [
-                                "str"  # Optional. The list of operations user want
-                                  to submit, each operation matches one Purview API call and will do
-                                  the operation directly. Required.
+                                "str"
                             ]
                         }
                     ],
-                    "requestId": "str",  # The user request id. Required.
-                    "requestor": "str",  # The person who submitted the user request. Required.
-                    "status": "str",  # The status. Required. Known values are: "NotStarted",
-                      "InProgress", "Failed", "Completed", "Canceling", "CancellationFailed", and
-                      "Canceled".
-                    "comment": "str"  # Optional. The comment when submit a user request.
+                    "requestId": "str",
+                    "requestor": "str",
+                    "status": "str",
+                    "comment": "str"
                 }
         """
 
     @overload
-    def submit(self, user_requests_payload: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    def submit(
+        self, user_requests_payload: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Submit a user request for requestor, a user  request describes user ask to do operation(s) on
         Purview. If any workflow's trigger matches with an operation in request, a run of the workflow
         is created.
 
         :param user_requests_payload: The payload of submitting a user request. Required.
-        :type user_requests_payload: IO
+        :type user_requests_payload: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1325,39 +1230,29 @@ class UserRequestsOperations:
                 response == {
                     "operations": [
                         {
-                            "payload": {},  # The payload of each operation which user
-                              want to submit. Required.
-                            "type": "str",  # The operation type. Required. Known values
-                              are: "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms",
-                              "UpdateAsset", and "GrantDataAccess".
+                            "payload": {},
+                            "type": "str",
                             "workflowRunIds": [
-                                "str"  # Optional. The list of operations user want
-                                  to submit, each operation matches one Purview API call and will do
-                                  the operation directly. Required.
+                                "str"
                             ]
                         }
                     ],
-                    "requestId": "str",  # The user request id. Required.
-                    "requestor": "str",  # The person who submitted the user request. Required.
-                    "status": "str",  # The status. Required. Known values are: "NotStarted",
-                      "InProgress", "Failed", "Completed", "Canceling", "CancellationFailed", and
-                      "Canceled".
-                    "comment": "str"  # Optional. The comment when submit a user request.
+                    "requestId": "str",
+                    "requestor": "str",
+                    "status": "str",
+                    "comment": "str"
                 }
         """
 
     @distributed_trace
-    def submit(self, user_requests_payload: Union[JSON, IO], **kwargs: Any) -> JSON:
+    def submit(self, user_requests_payload: Union[JSON, IO[bytes]], **kwargs: Any) -> JSON:
         """Submit a user request for requestor, a user  request describes user ask to do operation(s) on
         Purview. If any workflow's trigger matches with an operation in request, a run of the workflow
         is created.
 
         :param user_requests_payload: The payload of submitting a user request. Is either a JSON type
-         or a IO type. Required.
-        :type user_requests_payload: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+         or a IO[bytes] type. Required.
+        :type user_requests_payload: JSON or IO[bytes]
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1369,41 +1264,31 @@ class UserRequestsOperations:
                 user_requests_payload = {
                     "operations": [
                         {
-                            "payload": {},  # The payload of each operation which user
-                              want to submit. Required.
-                            "type": "str"  # The operation type. Required. Known values
-                              are: "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms",
-                              "UpdateAsset", and "GrantDataAccess".
+                            "payload": {},
+                            "type": "str"
                         }
                     ],
-                    "comment": "str"  # Optional. The comment when submit a user request.
+                    "comment": "str"
                 }
 
                 # response body for status code(s): 200
                 response == {
                     "operations": [
                         {
-                            "payload": {},  # The payload of each operation which user
-                              want to submit. Required.
-                            "type": "str",  # The operation type. Required. Known values
-                              are: "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms",
-                              "UpdateAsset", and "GrantDataAccess".
+                            "payload": {},
+                            "type": "str",
                             "workflowRunIds": [
-                                "str"  # Optional. The list of operations user want
-                                  to submit, each operation matches one Purview API call and will do
-                                  the operation directly. Required.
+                                "str"
                             ]
                         }
                     ],
-                    "requestId": "str",  # The user request id. Required.
-                    "requestor": "str",  # The person who submitted the user request. Required.
-                    "status": "str",  # The status. Required. Known values are: "NotStarted",
-                      "InProgress", "Failed", "Completed", "Canceling", "CancellationFailed", and
-                      "Canceled".
-                    "comment": "str"  # Optional. The comment when submit a user request.
+                    "requestId": "str",
+                    "requestor": "str",
+                    "status": "str",
+                    "comment": "str"
                 }
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1425,7 +1310,7 @@ class UserRequestsOperations:
         else:
             _json = user_requests_payload
 
-        request = build_user_requests_submit_request(
+        _request = build_user_requests_submit_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -1436,18 +1321,16 @@ class UserRequestsOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1457,9 +1340,9 @@ class UserRequestsOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
 
 class WorkflowRunsOperations:
@@ -1517,26 +1400,19 @@ class WorkflowRunsOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "id": "str",  # The workflow run id. Required.
-                    "requestor": "str",  # The person who submitted the user request. Required.
+                    "id": "str",
+                    "requestor": "str",
                     "runPayload": {
-                        "targetValue": "str",  # The target value which need involve workflow
-                          to update. Required.
-                        "type": "str"  # The workflow run payload type. Required. Known
-                          values are: "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms",
-                          "UpdateAsset", and "GrantDataAccess".
+                        "targetValue": "str",
+                        "type": "str"
                     },
-                    "startTime": "2020-02-20 00:00:00",  # Workflow run start time. Required.
-                    "status": "str",  # The status. Required. Known values are: "NotStarted",
-                      "InProgress", "Failed", "Completed", "Canceling", "CancellationFailed", and
-                      "Canceled".
-                    "workflowId": "str",  # The workflow id. Required.
-                    "cancelComment": "str",  # Optional. The comment when cancel a workflow run.
-                    "cancelTime": "2020-02-20 00:00:00",  # Optional. The time of workflow run be
-                      canceled.
-                    "endTime": "2020-02-20 00:00:00",  # Optional. The time of workflow run
-                      completed.
-                    "userRequestId": "str"  # Optional. The user request id.
+                    "startTime": "2020-02-20 00:00:00",
+                    "status": "str",
+                    "workflowId": "str",
+                    "cancelComment": "str",
+                    "cancelTime": "2020-02-20 00:00:00",
+                    "endTime": "2020-02-20 00:00:00",
+                    "userRequestId": "str"
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -1545,7 +1421,7 @@ class WorkflowRunsOperations:
         maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1556,7 +1432,7 @@ class WorkflowRunsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_workflow_runs_list_request(
+                _request = build_workflow_runs_list_request(
                     view_mode=view_mode,
                     time_window=time_window,
                     orderby=orderby,
@@ -1573,7 +1449,7 @@ class WorkflowRunsOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1585,7 +1461,7 @@ class WorkflowRunsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -1593,9 +1469,9 @@ class WorkflowRunsOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -1605,17 +1481,15 @@ class WorkflowRunsOperations:
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -1656,38 +1530,28 @@ class WorkflowRunOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "actionDag": {},  # The action DAG(Directed Acyclic Graph), it defines actual
-                      flow. Required.
+                    "actionDag": {},
                     "detail": {
-                        "actions": {},  # Any object. Required.
-                        "runInput": {}  # Built-in variables starts with @runInput. Its
-                          properties are determined by trigger type at workflow run time. Required.
+                        "actions": {},
+                        "runInput": {}
                     },
-                    "cancelComment": "str",  # Optional. The comment when cancel a workflow run.
-                    "cancelTime": "2020-02-20 00:00:00",  # Optional. The time of workflow run be
-                      canceled.
-                    "endTime": "2020-02-20 00:00:00",  # Optional. The time of workflow run
-                      completed.
-                    "id": "str",  # Optional. The workflow run id.
-                    "requestor": "str",  # Optional. The person who submitted the user request.
+                    "cancelComment": "str",
+                    "cancelTime": "2020-02-20 00:00:00",
+                    "endTime": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "requestor": "str",
                     "runPayload": {
-                        "payload": {},  # The payload of each operation which user want to
-                          submit. Required.
-                        "targetValue": "str",  # The target value which need involve workflow
-                          to update. Required.
-                        "type": "str"  # The workflow run payload type. Required. Known
-                          values are: "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms",
-                          "UpdateAsset", and "GrantDataAccess".
+                        "payload": {},
+                        "targetValue": "str",
+                        "type": "str"
                     },
-                    "startTime": "2020-02-20 00:00:00",  # Optional. Workflow run start time.
-                    "status": "str",  # Optional. The status. Known values are: "NotStarted",
-                      "InProgress", "Failed", "Completed", "Canceling", "CancellationFailed", and
-                      "Canceled".
-                    "userRequestId": "str",  # Optional. The user request id.
-                    "workflowId": "str"  # Optional. The workflow id.
+                    "startTime": "2020-02-20 00:00:00",
+                    "status": "str",
+                    "userRequestId": "str",
+                    "workflowId": "str"
                 }
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1700,7 +1564,7 @@ class WorkflowRunOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_workflow_run_get_request(
+        _request = build_workflow_run_get_request(
             workflow_run_id=workflow_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1709,18 +1573,16 @@ class WorkflowRunOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1730,12 +1592,12 @@ class WorkflowRunOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
-    def cancel(  # pylint: disable=inconsistent-return-statements
+    def cancel(
         self, workflow_run_id: str, run_cancel_reply: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Cancel a workflow run.
@@ -1756,20 +1618,25 @@ class WorkflowRunOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 run_cancel_reply = {
-                    "comment": "str"  # Optional. The comment of canceling a workflow run.
+                    "comment": "str"
                 }
         """
 
     @overload
-    def cancel(  # pylint: disable=inconsistent-return-statements
-        self, workflow_run_id: str, run_cancel_reply: IO, *, content_type: str = "application/json", **kwargs: Any
+    def cancel(
+        self,
+        workflow_run_id: str,
+        run_cancel_reply: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Cancel a workflow run.
 
         :param workflow_run_id: The workflow run id. Required.
         :type workflow_run_id: str
         :param run_cancel_reply: Reply of canceling a workflow run. Required.
-        :type run_cancel_reply: IO
+        :type run_cancel_reply: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1780,18 +1647,15 @@ class WorkflowRunOperations:
 
     @distributed_trace
     def cancel(  # pylint: disable=inconsistent-return-statements
-        self, workflow_run_id: str, run_cancel_reply: Union[JSON, IO], **kwargs: Any
+        self, workflow_run_id: str, run_cancel_reply: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Cancel a workflow run.
 
         :param workflow_run_id: The workflow run id. Required.
         :type workflow_run_id: str
-        :param run_cancel_reply: Reply of canceling a workflow run. Is either a JSON type or a IO type.
-         Required.
-        :type run_cancel_reply: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+        :param run_cancel_reply: Reply of canceling a workflow run. Is either a JSON type or a
+         IO[bytes] type. Required.
+        :type run_cancel_reply: JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1801,10 +1665,10 @@ class WorkflowRunOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 run_cancel_reply = {
-                    "comment": "str"  # Optional. The comment of canceling a workflow run.
+                    "comment": "str"
                 }
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1826,7 +1690,7 @@ class WorkflowRunOperations:
         else:
             _json = run_cancel_reply
 
-        request = build_workflow_run_cancel_request(
+        _request = build_workflow_run_cancel_request(
             workflow_run_id=workflow_run_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1838,23 +1702,21 @@ class WorkflowRunOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class WorkflowTasksOperations:
@@ -1920,116 +1782,95 @@ class WorkflowTasksOperations:
 
         Example:
             .. code-block:: python
+
                 # The response is polymorphic. The following are possible polymorphic responses based
                   off discriminator "type":
 
                 # JSON input template for discriminator value "Approval":
                 workflow_task = {
-                    "createdTime": "2020-02-20 00:00:00",  # The created time. Required.
-                    "id": "str",  # The workflow task id. Required.
-                    "lastUpdateTime": "2020-02-20 00:00:00",  # The last update time. Required.
+                    "createdTime": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "lastUpdateTime": "2020-02-20 00:00:00",
                     "payload": {
-                        "targetValue": "str",  # The target value of entity which user want
-                          to involve workflow to update. Required.
-                        "type": "str",  # The task payload type. Required. Known values are:
-                          "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms", "UpdateAsset", and
-                          "GrantDataAccess".
-                        "payload": {}  # Optional. The payload of the task.
+                        "targetValue": "str",
+                        "type": "str",
+                        "payload": {}
                     },
-                    "requestor": "str",  # The person who submitted the user request. Required.
+                    "requestor": "str",
                     "type": "Approval",
-                    "workflowId": "str",  # The workflow id. Required.
-                    "workflowRunId": "str",  # The workflow run id. Required.
+                    "workflowId": "str",
+                    "workflowRunId": "str",
                     "approvalDetail": {
-                        "approvalType": "str",  # The approval type of an approval. Required.
-                          Known values are: "PendingOnAny" and "PendingOnAll".
+                        "approvalType": "str",
                         "approvers": {
                             "str": {
-                                "reply": "str",  # The response for an approval type
-                                  of workflow task. Required. Known values are: "Approved", "Rejected",
-                                  and "Pending".
-                                "comment": "str",  # Optional. The comment of
-                                  approving or rejecting an approval type of workflow task.
-                                "responseTime": "2020-02-20 00:00:00"  # Optional.
-                                  The reply time of approver to a workflow task.
+                                "reply": "str",
+                                "comment": "str",
+                                "responseTime": "2020-02-20 00:00:00"
                             }
                         },
-                        "status": "str"  # The status of an approval. Required. Known values
-                          are: "Pending", "Approved", "Rejected", and "Canceled".
+                        "status": "str"
                     },
                     "expiryInfo": {
                         "expirySettings": {
-                            "expireAfter": {},  # The time of expiry. Required.
+                            "expireAfter": {},
                             "notifyOnExpiration": [
-                                "str"  # Optional. Required.
+                                "str"
                             ]
                         },
-                        "expiryTime": "2020-02-20 00:00:00",  # The expiry time. Required.
-                        "nextExpiryNotificationTime": "2020-02-20 00:00:00",  # The next
-                          expiry notification time. Required.
-                        "lastExpiryNotificationTime": "2020-02-20 00:00:00"  # Optional. The
-                          last expiry notification time.
+                        "expiryTime": "2020-02-20 00:00:00",
+                        "nextExpiryNotificationTime": "2020-02-20 00:00:00",
+                        "lastExpiryNotificationTime": "2020-02-20 00:00:00"
                     },
                     "reminderInfo": {
-                        "nextRemindTime": "2020-02-20 00:00:00",  # The next remind time.
-                          Required.
-                        "reminderSettings": {},  # The reminder settings. Required.
-                        "lastRemindTime": "2020-02-20 00:00:00"  # Optional. The last update
-                          time.
+                        "nextRemindTime": "2020-02-20 00:00:00",
+                        "reminderSettings": {},
+                        "lastRemindTime": "2020-02-20 00:00:00"
                     },
-                    "title": "str"  # Optional. The workflow task title.
+                    "title": "str"
                 }
 
                 # JSON input template for discriminator value "SimpleTask":
                 workflow_task = {
-                    "createdTime": "2020-02-20 00:00:00",  # The created time. Required.
-                    "id": "str",  # The workflow task id. Required.
-                    "lastUpdateTime": "2020-02-20 00:00:00",  # The last update time. Required.
+                    "createdTime": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "lastUpdateTime": "2020-02-20 00:00:00",
                     "payload": {
-                        "targetValue": "str",  # The target value of entity which user want
-                          to involve workflow to update. Required.
-                        "type": "str",  # The task payload type. Required. Known values are:
-                          "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms", "UpdateAsset", and
-                          "GrantDataAccess".
-                        "payload": {}  # Optional. The payload of the task.
+                        "targetValue": "str",
+                        "type": "str",
+                        "payload": {}
                     },
-                    "requestor": "str",  # The person who submitted the user request. Required.
+                    "requestor": "str",
                     "type": "SimpleTask",
-                    "workflowId": "str",  # The workflow id. Required.
-                    "workflowRunId": "str",  # The workflow run id. Required.
+                    "workflowId": "str",
+                    "workflowRunId": "str",
                     "expiryInfo": {
                         "expirySettings": {
-                            "expireAfter": {},  # The time of expiry. Required.
+                            "expireAfter": {},
                             "notifyOnExpiration": [
-                                "str"  # Optional. Required.
+                                "str"
                             ]
                         },
-                        "expiryTime": "2020-02-20 00:00:00",  # The expiry time. Required.
-                        "nextExpiryNotificationTime": "2020-02-20 00:00:00",  # The next
-                          expiry notification time. Required.
-                        "lastExpiryNotificationTime": "2020-02-20 00:00:00"  # Optional. The
-                          last expiry notification time.
+                        "expiryTime": "2020-02-20 00:00:00",
+                        "nextExpiryNotificationTime": "2020-02-20 00:00:00",
+                        "lastExpiryNotificationTime": "2020-02-20 00:00:00"
                     },
                     "reminderInfo": {
-                        "nextRemindTime": "2020-02-20 00:00:00",  # The next remind time.
-                          Required.
-                        "reminderSettings": {},  # The reminder settings. Required.
-                        "lastRemindTime": "2020-02-20 00:00:00"  # Optional. The last update
-                          time.
+                        "nextRemindTime": "2020-02-20 00:00:00",
+                        "reminderSettings": {},
+                        "lastRemindTime": "2020-02-20 00:00:00"
                     },
                     "taskDetail": {
                         "assignedTo": [
-                            "str"  # The users or groups were assigned the simple task.
-                              Required.
+                            "str"
                         ],
                         "changeHistory": [
-                            {}  # Required.
+                            {}
                         ],
-                        "status": "str",  # Simple task status. Required. Known values are:
-                          "NotStarted", "InProgress", "Completed", and "Canceled".
-                        "taskBody": "str"  # The simple task body. Required.
+                        "status": "str",
+                        "taskBody": "str"
                     },
-                    "title": "str"  # Optional. The workflow task title.
+                    "title": "str"
                 }
 
                 # response body for status code(s): 200
@@ -2041,7 +1882,7 @@ class WorkflowTasksOperations:
         maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2052,7 +1893,7 @@ class WorkflowTasksOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_workflow_tasks_list_request(
+                _request = build_workflow_tasks_list_request(
                     view_mode=view_mode,
                     workflow_ids=workflow_ids,
                     time_window=time_window,
@@ -2072,7 +1913,7 @@ class WorkflowTasksOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -2084,7 +1925,7 @@ class WorkflowTasksOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -2092,9 +1933,9 @@ class WorkflowTasksOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -2104,17 +1945,15 @@ class WorkflowTasksOperations:
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                if _stream:
-                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -2152,122 +1991,101 @@ class WorkflowTaskOperations:
 
         Example:
             .. code-block:: python
+
                 # The response is polymorphic. The following are possible polymorphic responses based
                   off discriminator "type":
 
                 # JSON input template for discriminator value "Approval":
                 workflow_task = {
-                    "createdTime": "2020-02-20 00:00:00",  # The created time. Required.
-                    "id": "str",  # The workflow task id. Required.
-                    "lastUpdateTime": "2020-02-20 00:00:00",  # The last update time. Required.
+                    "createdTime": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "lastUpdateTime": "2020-02-20 00:00:00",
                     "payload": {
-                        "targetValue": "str",  # The target value of entity which user want
-                          to involve workflow to update. Required.
-                        "type": "str",  # The task payload type. Required. Known values are:
-                          "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms", "UpdateAsset", and
-                          "GrantDataAccess".
-                        "payload": {}  # Optional. The payload of the task.
+                        "targetValue": "str",
+                        "type": "str",
+                        "payload": {}
                     },
-                    "requestor": "str",  # The person who submitted the user request. Required.
+                    "requestor": "str",
                     "type": "Approval",
-                    "workflowId": "str",  # The workflow id. Required.
-                    "workflowRunId": "str",  # The workflow run id. Required.
+                    "workflowId": "str",
+                    "workflowRunId": "str",
                     "approvalDetail": {
-                        "approvalType": "str",  # The approval type of an approval. Required.
-                          Known values are: "PendingOnAny" and "PendingOnAll".
+                        "approvalType": "str",
                         "approvers": {
                             "str": {
-                                "reply": "str",  # The response for an approval type
-                                  of workflow task. Required. Known values are: "Approved", "Rejected",
-                                  and "Pending".
-                                "comment": "str",  # Optional. The comment of
-                                  approving or rejecting an approval type of workflow task.
-                                "responseTime": "2020-02-20 00:00:00"  # Optional.
-                                  The reply time of approver to a workflow task.
+                                "reply": "str",
+                                "comment": "str",
+                                "responseTime": "2020-02-20 00:00:00"
                             }
                         },
-                        "status": "str"  # The status of an approval. Required. Known values
-                          are: "Pending", "Approved", "Rejected", and "Canceled".
+                        "status": "str"
                     },
                     "expiryInfo": {
                         "expirySettings": {
-                            "expireAfter": {},  # The time of expiry. Required.
+                            "expireAfter": {},
                             "notifyOnExpiration": [
-                                "str"  # Optional. Required.
+                                "str"
                             ]
                         },
-                        "expiryTime": "2020-02-20 00:00:00",  # The expiry time. Required.
-                        "nextExpiryNotificationTime": "2020-02-20 00:00:00",  # The next
-                          expiry notification time. Required.
-                        "lastExpiryNotificationTime": "2020-02-20 00:00:00"  # Optional. The
-                          last expiry notification time.
+                        "expiryTime": "2020-02-20 00:00:00",
+                        "nextExpiryNotificationTime": "2020-02-20 00:00:00",
+                        "lastExpiryNotificationTime": "2020-02-20 00:00:00"
                     },
                     "reminderInfo": {
-                        "nextRemindTime": "2020-02-20 00:00:00",  # The next remind time.
-                          Required.
-                        "reminderSettings": {},  # The reminder settings. Required.
-                        "lastRemindTime": "2020-02-20 00:00:00"  # Optional. The last update
-                          time.
+                        "nextRemindTime": "2020-02-20 00:00:00",
+                        "reminderSettings": {},
+                        "lastRemindTime": "2020-02-20 00:00:00"
                     },
-                    "title": "str"  # Optional. The workflow task title.
+                    "title": "str"
                 }
 
                 # JSON input template for discriminator value "SimpleTask":
                 workflow_task = {
-                    "createdTime": "2020-02-20 00:00:00",  # The created time. Required.
-                    "id": "str",  # The workflow task id. Required.
-                    "lastUpdateTime": "2020-02-20 00:00:00",  # The last update time. Required.
+                    "createdTime": "2020-02-20 00:00:00",
+                    "id": "str",
+                    "lastUpdateTime": "2020-02-20 00:00:00",
                     "payload": {
-                        "targetValue": "str",  # The target value of entity which user want
-                          to involve workflow to update. Required.
-                        "type": "str",  # The task payload type. Required. Known values are:
-                          "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms", "UpdateAsset", and
-                          "GrantDataAccess".
-                        "payload": {}  # Optional. The payload of the task.
+                        "targetValue": "str",
+                        "type": "str",
+                        "payload": {}
                     },
-                    "requestor": "str",  # The person who submitted the user request. Required.
+                    "requestor": "str",
                     "type": "SimpleTask",
-                    "workflowId": "str",  # The workflow id. Required.
-                    "workflowRunId": "str",  # The workflow run id. Required.
+                    "workflowId": "str",
+                    "workflowRunId": "str",
                     "expiryInfo": {
                         "expirySettings": {
-                            "expireAfter": {},  # The time of expiry. Required.
+                            "expireAfter": {},
                             "notifyOnExpiration": [
-                                "str"  # Optional. Required.
+                                "str"
                             ]
                         },
-                        "expiryTime": "2020-02-20 00:00:00",  # The expiry time. Required.
-                        "nextExpiryNotificationTime": "2020-02-20 00:00:00",  # The next
-                          expiry notification time. Required.
-                        "lastExpiryNotificationTime": "2020-02-20 00:00:00"  # Optional. The
-                          last expiry notification time.
+                        "expiryTime": "2020-02-20 00:00:00",
+                        "nextExpiryNotificationTime": "2020-02-20 00:00:00",
+                        "lastExpiryNotificationTime": "2020-02-20 00:00:00"
                     },
                     "reminderInfo": {
-                        "nextRemindTime": "2020-02-20 00:00:00",  # The next remind time.
-                          Required.
-                        "reminderSettings": {},  # The reminder settings. Required.
-                        "lastRemindTime": "2020-02-20 00:00:00"  # Optional. The last update
-                          time.
+                        "nextRemindTime": "2020-02-20 00:00:00",
+                        "reminderSettings": {},
+                        "lastRemindTime": "2020-02-20 00:00:00"
                     },
                     "taskDetail": {
                         "assignedTo": [
-                            "str"  # The users or groups were assigned the simple task.
-                              Required.
+                            "str"
                         ],
                         "changeHistory": [
-                            {}  # Required.
+                            {}
                         ],
-                        "status": "str",  # Simple task status. Required. Known values are:
-                          "NotStarted", "InProgress", "Completed", and "Canceled".
-                        "taskBody": "str"  # The simple task body. Required.
+                        "status": "str",
+                        "taskBody": "str"
                     },
-                    "title": "str"  # Optional. The workflow task title.
+                    "title": "str"
                 }
 
                 # response body for status code(s): 200
                 response == workflow_task
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2280,7 +2098,7 @@ class WorkflowTaskOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_workflow_task_get_request(
+        _request = build_workflow_task_get_request(
             task_id=task_id,
             headers=_headers,
             params=_params,
@@ -2288,18 +2106,16 @@ class WorkflowTaskOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -2309,12 +2125,12 @@ class WorkflowTaskOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
-    def reassign(  # pylint: disable=inconsistent-return-statements
+    def reassign(
         self, task_id: str, reassign_command: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reassign a workflow task.
@@ -2337,25 +2153,23 @@ class WorkflowTaskOperations:
                 reassign_command = {
                     "reassignments": [
                         {
-                            "reassignFrom": "str",  # Reassign a workflow task from a
-                              user or a group. Required.
-                            "reassignTo": "str"  # Reassign a workflow task to a user or
-                              a group. Required.
+                            "reassignFrom": "str",
+                            "reassignTo": "str"
                         }
                     ]
                 }
         """
 
     @overload
-    def reassign(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, reassign_command: IO, *, content_type: str = "application/json", **kwargs: Any
+    def reassign(
+        self, task_id: str, reassign_command: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reassign a workflow task.
 
         :param task_id: The task id. Required.
         :type task_id: str
         :param reassign_command: The request body of reassigning a workflow task. Required.
-        :type reassign_command: IO
+        :type reassign_command: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2366,18 +2180,15 @@ class WorkflowTaskOperations:
 
     @distributed_trace
     def reassign(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, reassign_command: Union[JSON, IO], **kwargs: Any
+        self, task_id: str, reassign_command: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Reassign a workflow task.
 
         :param task_id: The task id. Required.
         :type task_id: str
         :param reassign_command: The request body of reassigning a workflow task. Is either a JSON type
-         or a IO type. Required.
-        :type reassign_command: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+         or a IO[bytes] type. Required.
+        :type reassign_command: JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2389,15 +2200,13 @@ class WorkflowTaskOperations:
                 reassign_command = {
                     "reassignments": [
                         {
-                            "reassignFrom": "str",  # Reassign a workflow task from a
-                              user or a group. Required.
-                            "reassignTo": "str"  # Reassign a workflow task to a user or
-                              a group. Required.
+                            "reassignFrom": "str",
+                            "reassignTo": "str"
                         }
                     ]
                 }
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2419,7 +2228,7 @@ class WorkflowTaskOperations:
         else:
             _json = reassign_command
 
-        request = build_workflow_task_reassign_request(
+        _request = build_workflow_task_reassign_request(
             task_id=task_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2431,23 +2240,21 @@ class WorkflowTaskOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class ApprovalOperations:
@@ -2468,7 +2275,7 @@ class ApprovalOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    def approve(  # pylint: disable=inconsistent-return-statements
+    def approve(
         self, task_id: str, approval_response_comment: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Approve an approval.
@@ -2490,14 +2297,18 @@ class ApprovalOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 approval_response_comment = {
-                    "comment": "str"  # Optional. The comment of approving or rejecting an
-                      approval type of workflow task.
+                    "comment": "str"
                 }
         """
 
     @overload
-    def approve(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, approval_response_comment: IO, *, content_type: str = "application/json", **kwargs: Any
+    def approve(
+        self,
+        task_id: str,
+        approval_response_comment: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Approve an approval.
 
@@ -2505,7 +2316,7 @@ class ApprovalOperations:
         :type task_id: str
         :param approval_response_comment: The request body of approving an approval type of workflow
          task. Required.
-        :type approval_response_comment: IO
+        :type approval_response_comment: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2516,18 +2327,15 @@ class ApprovalOperations:
 
     @distributed_trace
     def approve(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, approval_response_comment: Union[JSON, IO], **kwargs: Any
+        self, task_id: str, approval_response_comment: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Approve an approval.
 
         :param task_id: The task id. Required.
         :type task_id: str
         :param approval_response_comment: The request body of approving an approval type of workflow
-         task. Is either a JSON type or a IO type. Required.
-        :type approval_response_comment: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+         task. Is either a JSON type or a IO[bytes] type. Required.
+        :type approval_response_comment: JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2537,11 +2345,10 @@ class ApprovalOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 approval_response_comment = {
-                    "comment": "str"  # Optional. The comment of approving or rejecting an
-                      approval type of workflow task.
+                    "comment": "str"
                 }
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2563,7 +2370,7 @@ class ApprovalOperations:
         else:
             _json = approval_response_comment
 
-        request = build_approval_approve_request(
+        _request = build_approval_approve_request(
             task_id=task_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2575,26 +2382,24 @@ class ApprovalOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    def reject(  # pylint: disable=inconsistent-return-statements
+    def reject(
         self, task_id: str, approval_response_comment: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reject an approval.
@@ -2616,14 +2421,18 @@ class ApprovalOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 approval_response_comment = {
-                    "comment": "str"  # Optional. The comment of approving or rejecting an
-                      approval type of workflow task.
+                    "comment": "str"
                 }
         """
 
     @overload
-    def reject(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, approval_response_comment: IO, *, content_type: str = "application/json", **kwargs: Any
+    def reject(
+        self,
+        task_id: str,
+        approval_response_comment: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Reject an approval.
 
@@ -2631,7 +2440,7 @@ class ApprovalOperations:
         :type task_id: str
         :param approval_response_comment: The request body of rejecting an approval type of workflow
          task. Required.
-        :type approval_response_comment: IO
+        :type approval_response_comment: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2642,18 +2451,15 @@ class ApprovalOperations:
 
     @distributed_trace
     def reject(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, approval_response_comment: Union[JSON, IO], **kwargs: Any
+        self, task_id: str, approval_response_comment: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Reject an approval.
 
         :param task_id: The task id. Required.
         :type task_id: str
         :param approval_response_comment: The request body of rejecting an approval type of workflow
-         task. Is either a JSON type or a IO type. Required.
-        :type approval_response_comment: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+         task. Is either a JSON type or a IO[bytes] type. Required.
+        :type approval_response_comment: JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2663,11 +2469,10 @@ class ApprovalOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 approval_response_comment = {
-                    "comment": "str"  # Optional. The comment of approving or rejecting an
-                      approval type of workflow task.
+                    "comment": "str"
                 }
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2689,7 +2494,7 @@ class ApprovalOperations:
         else:
             _json = approval_response_comment
 
-        request = build_approval_reject_request(
+        _request = build_approval_reject_request(
             task_id=task_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2701,23 +2506,21 @@ class ApprovalOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class TaskStatusOperations:
@@ -2738,7 +2541,7 @@ class TaskStatusOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    def update(  # pylint: disable=inconsistent-return-statements
+    def update(
         self, task_id: str, task_update_command: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Update the status of a workflow task request.
@@ -2759,23 +2562,21 @@ class TaskStatusOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 task_update_command = {
-                    "newStatus": "str",  # The new status will be used to update the task.
-                      Required. Known values are: "NotStarted", "InProgress", "Completed", and
-                      "Canceled".
-                    "comment": "str"  # Optional. The comment when update a task.
+                    "newStatus": "str",
+                    "comment": "str"
                 }
         """
 
     @overload
-    def update(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, task_update_command: IO, *, content_type: str = "application/json", **kwargs: Any
+    def update(
+        self, task_id: str, task_update_command: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Update the status of a workflow task request.
 
         :param task_id: The task id. Required.
         :type task_id: str
         :param task_update_command: Request body of updating workflow task request. Required.
-        :type task_update_command: IO
+        :type task_update_command: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2786,18 +2587,15 @@ class TaskStatusOperations:
 
     @distributed_trace
     def update(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, task_update_command: Union[JSON, IO], **kwargs: Any
+        self, task_id: str, task_update_command: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Update the status of a workflow task request.
 
         :param task_id: The task id. Required.
         :type task_id: str
         :param task_update_command: Request body of updating workflow task request. Is either a JSON
-         type or a IO type. Required.
-        :type task_update_command: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
+         type or a IO[bytes] type. Required.
+        :type task_update_command: JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2807,13 +2605,11 @@ class TaskStatusOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 task_update_command = {
-                    "newStatus": "str",  # The new status will be used to update the task.
-                      Required. Known values are: "NotStarted", "InProgress", "Completed", and
-                      "Canceled".
-                    "comment": "str"  # Optional. The comment when update a task.
+                    "newStatus": "str",
+                    "comment": "str"
                 }
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2835,7 +2631,7 @@ class TaskStatusOperations:
         else:
             _json = task_update_command
 
-        request = build_task_status_update_request(
+        _request = build_task_status_update_request(
             task_id=task_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2847,20 +2643,18 @@ class TaskStatusOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore

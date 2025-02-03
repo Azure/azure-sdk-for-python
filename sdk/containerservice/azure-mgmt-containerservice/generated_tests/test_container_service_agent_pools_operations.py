@@ -20,7 +20,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_abort_latest_operation(self, resource_group):
+    def test_agent_pools_begin_abort_latest_operation(self, resource_group):
         response = self.client.agent_pools.begin_abort_latest_operation(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -33,7 +33,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_agent_pools_list(self, resource_group):
         response = self.client.agent_pools.list(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -45,7 +45,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_agent_pools_get(self, resource_group):
         response = self.client.agent_pools.get(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -58,7 +58,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_agent_pools_begin_create_or_update(self, resource_group):
         response = self.client.agent_pools.begin_create_or_update(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -171,7 +171,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_agent_pools_begin_delete(self, resource_group):
         response = self.client.agent_pools.begin_delete(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -184,7 +184,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_upgrade_profile(self, resource_group):
+    def test_agent_pools_get_upgrade_profile(self, resource_group):
         response = self.client.agent_pools.get_upgrade_profile(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -197,7 +197,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete_machines(self, resource_group):
+    def test_agent_pools_begin_delete_machines(self, resource_group):
         response = self.client.agent_pools.begin_delete_machines(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -211,7 +211,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_available_agent_pool_versions(self, resource_group):
+    def test_agent_pools_get_available_agent_pool_versions(self, resource_group):
         response = self.client.agent_pools.get_available_agent_pool_versions(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -223,7 +223,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_upgrade_node_image_version(self, resource_group):
+    def test_agent_pools_begin_upgrade_node_image_version(self, resource_group):
         response = self.client.agent_pools.begin_upgrade_node_image_version(
             resource_group_name=resource_group.name,
             resource_name="str",

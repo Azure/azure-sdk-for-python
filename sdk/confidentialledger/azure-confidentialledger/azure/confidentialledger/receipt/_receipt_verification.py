@@ -258,7 +258,7 @@ def _compute_root_node_hash(leaf_hash: bytes, proof: List[ProofElement]) -> byte
                     "Invalid proof element in receipt: element must contain either one left or right node hash."
                 )
 
-            parent_node_hash = bytes()
+            parent_node_hash = b""
 
             # If the current element contains a left hash, concatenate the left hash and the current node hash
             if element.left is not None:

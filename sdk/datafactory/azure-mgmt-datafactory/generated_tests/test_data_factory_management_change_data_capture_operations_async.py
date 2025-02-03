@@ -21,7 +21,7 @@ class TestDataFactoryManagementChangeDataCaptureOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_factory(self, resource_group):
+    async def test_change_data_capture_list_by_factory(self, resource_group):
         response = self.client.change_data_capture.list_by_factory(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -33,7 +33,7 @@ class TestDataFactoryManagementChangeDataCaptureOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_change_data_capture_create_or_update(self, resource_group):
         response = await self.client.change_data_capture.create_or_update(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -127,7 +127,7 @@ class TestDataFactoryManagementChangeDataCaptureOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_change_data_capture_get(self, resource_group):
         response = await self.client.change_data_capture.get(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -140,7 +140,7 @@ class TestDataFactoryManagementChangeDataCaptureOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_change_data_capture_delete(self, resource_group):
         response = await self.client.change_data_capture.delete(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -153,7 +153,7 @@ class TestDataFactoryManagementChangeDataCaptureOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_start(self, resource_group):
+    async def test_change_data_capture_start(self, resource_group):
         response = await self.client.change_data_capture.start(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -166,7 +166,7 @@ class TestDataFactoryManagementChangeDataCaptureOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_stop(self, resource_group):
+    async def test_change_data_capture_stop(self, resource_group):
         response = await self.client.change_data_capture.stop(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -179,7 +179,7 @@ class TestDataFactoryManagementChangeDataCaptureOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_status(self, resource_group):
+    async def test_change_data_capture_status(self, resource_group):
         response = await self.client.change_data_capture.status(
             resource_group_name=resource_group.name,
             factory_name="str",

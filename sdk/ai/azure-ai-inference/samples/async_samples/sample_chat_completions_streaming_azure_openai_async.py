@@ -21,7 +21,7 @@ USAGE:
             where `your-unique-resource-name` is your globally unique AOAI resource name,
             and `your-deployment-name` is your AI Model deployment name.
             For example: https://your-unique-host.openai.azure.com/openai/deployments/gpt-4o
-        * AZURE_OPENAI_CHAT_KEY - Your model key (a 32-character string). Keep it secret. This
+        * AZURE_OPENAI_CHAT_KEY - Your model key. Keep it secret. This
             is only required for key authentication.
     4. Run the sample:
        python sample_chat_completions_streaming_azure_openai_async.py
@@ -72,8 +72,8 @@ async def sample_chat_completions_streaming_azure_openai_async():
     response = await client.complete(
         stream=True,
         messages=[
-            SystemMessage(content="You are a helpful assistant."),
-            UserMessage(content="Give me 5 good reasons why I should exercise every day."),
+            SystemMessage("You are a helpful assistant."),
+            UserMessage("Give me 5 good reasons why I should exercise every day."),
         ],
     )
 

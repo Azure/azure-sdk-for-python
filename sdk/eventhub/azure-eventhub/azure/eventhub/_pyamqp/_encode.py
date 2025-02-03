@@ -489,8 +489,9 @@ def encode_map(
     count = len(cast(Sized, value)) * 2
     encoded_size = 0
     encoded_values = bytearray()
+    items: Iterable[Any]
     if isinstance(value, dict):
-        items: Iterable[Any] = value.items()
+        items = value.items()
     elif isinstance(value, Iterable):
         items = value
 

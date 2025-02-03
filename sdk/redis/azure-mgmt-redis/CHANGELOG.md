@@ -1,5 +1,18 @@
 # Release History
 
+## 14.5.0 (2025-01-20)
+
+### Features Added
+
+  - Model `RedisCommonProperties` added property `zonal_allocation_policy`
+  - Model `RedisCreateParameters` added property `zonal_allocation_policy`
+  - Model `RedisCreateProperties` added property `zonal_allocation_policy`
+  - Model `RedisProperties` added property `zonal_allocation_policy`
+  - Model `RedisResource` added property `zonal_allocation_policy`
+  - Model `RedisUpdateParameters` added property `zonal_allocation_policy`
+  - Model `RedisUpdateProperties` added property `zonal_allocation_policy`
+  - Added enum `ZonalAllocationPolicy`
+
 ## 14.4.0 (2024-07-21)
 
 ### Features Added

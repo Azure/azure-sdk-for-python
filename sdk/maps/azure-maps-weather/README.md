@@ -1,9 +1,9 @@
 # Azure Maps Weather Package client library for Python
 
 This package contains a Python SDK for Azure Maps Services for Weather.
-Read more about Azure Maps Services [here](https://docs.microsoft.com/azure/azure-maps/)
+Read more about Azure Maps Services [here](https://learn.microsoft.com/azure/azure-maps/)
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-weather) | [API reference documentation](https://docs.microsoft.com/rest/api/maps/weather) | [Product documentation](https://docs.microsoft.com/azure/azure-maps/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/maps/azure-maps-weather) | [API reference documentation](https://learn.microsoft.com/rest/api/maps/weather) | [Product documentation](https://learn.microsoft.com/azure/azure-maps/)
 
 ## _Disclaimer_
 
@@ -14,10 +14,10 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 ### Prerequisites
 
 - Python 3.8 or later is required to use this package.
-- An [Azure subscription][azure_subscription] and an [Azure Maps account](https://docs.microsoft.com/azure/azure-maps/how-to-manage-account-keys).
+- An [Azure subscription][azure_subscription] and an [Azure Maps account](https://learn.microsoft.com/azure/azure-maps/how-to-manage-account-keys).
 - A deployed Maps Services resource. You can create the resource via [Azure Portal][azure_portal] or [Azure CLI][azure_cli].
 
-If you use Azure CLI, replace `<resource-group-name>` and `<account-name>` of your choice, and select a proper [pricing tier](https://docs.microsoft.com/azure/azure-maps/choose-pricing-tier) based on your needs via the `<sku-name>` parameter. Please refer to [this page](https://docs.microsoft.com/cli/azure/maps/account?view=azure-cli-latest#az_maps_account_create) for more details.
+If you use Azure CLI, replace `<resource-group-name>` and `<account-name>` of your choice, and select a proper [pricing tier](https://learn.microsoft.com/azure/azure-maps/choose-pricing-tier) based on your needs via the `<sku-name>` parameter. Please refer to [this page](https://learn.microsoft.com/cli/azure/maps/account?view=azure-cli-latest#az_maps_account_create) for more details.
 
 ```bash
 az maps account create --resource-group <resource-group-name> --account-name <account-name> --sku <sku-name>
@@ -746,7 +746,7 @@ Further detail please refer to [Samples Introduction](https://github.com/Azure/a
 
 ### Additional documentation
 
-For more extensive documentation on Azure Maps Weather, see the [Azure Maps Weather documentation](https://docs.microsoft.com/rest/api/maps/weather) on docs.microsoft.com.
+For more extensive documentation on Azure Maps Weather, see the [Azure Maps Weather documentation](https://learn.microsoft.com/rest/api/maps/weather) on learn.microsoft.com.
 
 ## Contributing
 
@@ -760,11 +760,11 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [azure_subscription]: https://azure.microsoft.com/free/
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity
 [azure_portal]: https://portal.azure.com
-[azure_cli]: https://docs.microsoft.com/cli/azure
+[azure_cli]: https://learn.microsoft.com/cli/azure
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[register_ms_entra_id_app]: https://docs.microsoft.com/powershell/module/Az.Resources/New-AzADApplication?view=azps-8.0.0
-[maps_authentication_ms_entra_id]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication
+[register_ms_entra_id_app]: https://learn.microsoft.com/powershell/module/Az.Resources/New-AzADApplication?view=azps-8.0.0
+[maps_authentication_ms_entra_id]: https://learn.microsoft.com/azure/azure-maps/how-to-manage-authentication
 [create_new_application_registration]: https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/applicationsListBlade/quickStartType/AspNetWebAppQuickstartPage/sourceType/docs
-[manage_ms_entra_id_auth_page]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication
-[how_to_manage_authentication]: https://docs.microsoft.com/azure/azure-maps/how-to-manage-authentication#view-authentication-details
+[manage_ms_entra_id_auth_page]: https://learn.microsoft.com/azure/azure-maps/how-to-manage-authentication
+[how_to_manage_authentication]: https://learn.microsoft.com/azure/azure-maps/how-to-manage-authentication#view-authentication-details

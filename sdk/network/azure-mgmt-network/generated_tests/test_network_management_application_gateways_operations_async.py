@@ -21,12 +21,12 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_application_gateways_begin_delete(self, resource_group):
         response = await (
             await self.client.application_gateways.begin_delete(
                 resource_group_name=resource_group.name,
                 application_gateway_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -35,11 +35,11 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_application_gateways_get(self, resource_group):
         response = await self.client.application_gateways.get(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_application_gateways_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.application_gateways.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -217,6 +217,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                     }
                                                 ],
                                                 "ipConfigurations": [...],
+                                                "ipamPoolPrefixAllocations": [
+                                                    {
+                                                        "allocatedAddressPrefixes": ["str"],
+                                                        "id": "str",
+                                                        "numberOfIpAddresses": "str",
+                                                    }
+                                                ],
                                                 "name": "str",
                                                 "natGateway": {"id": "str"},
                                                 "networkSecurityGroup": {
@@ -310,6 +317,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                         {
                                                             "auxiliaryMode": "str",
                                                             "auxiliarySku": "str",
+                                                            "defaultOutboundConnectivityEnabled": bool,
                                                             "disableTcpStateTracking": bool,
                                                             "dnsSettings": {
                                                                 "appliedDnsServers": ["str"],
@@ -703,6 +711,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                             {
                                                                 "auxiliaryMode": "str",
                                                                 "auxiliarySku": "str",
+                                                                "defaultOutboundConnectivityEnabled": bool,
                                                                 "disableTcpStateTracking": bool,
                                                                 "dnsSettings": {
                                                                     "appliedDnsServers": ["str"],
@@ -1237,6 +1246,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                 "subnet": ...,
                                             }
                                         ],
+                                        "ipamPoolPrefixAllocations": [
+                                            {
+                                                "allocatedAddressPrefixes": ["str"],
+                                                "id": "str",
+                                                "numberOfIpAddresses": "str",
+                                            }
+                                        ],
                                         "name": "str",
                                         "natGateway": {"id": "str"},
                                         "networkSecurityGroup": {
@@ -1330,6 +1346,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                 {
                                                     "auxiliaryMode": "str",
                                                     "auxiliarySku": "str",
+                                                    "defaultOutboundConnectivityEnabled": bool,
                                                     "disableTcpStateTracking": bool,
                                                     "dnsSettings": {
                                                         "appliedDnsServers": ["str"],
@@ -1837,6 +1854,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                     {
                                                         "auxiliaryMode": "str",
                                                         "auxiliarySku": "str",
+                                                        "defaultOutboundConnectivityEnabled": bool,
                                                         "disableTcpStateTracking": bool,
                                                         "dnsSettings": {
                                                             "appliedDnsServers": ["str"],
@@ -2440,6 +2458,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                 }
                                                             ],
                                                             "ipConfigurations": [...],
+                                                            "ipamPoolPrefixAllocations": [
+                                                                {
+                                                                    "allocatedAddressPrefixes": ["str"],
+                                                                    "id": "str",
+                                                                    "numberOfIpAddresses": "str",
+                                                                }
+                                                            ],
                                                             "name": "str",
                                                             "natGateway": {"id": "str"},
                                                             "networkSecurityGroup": {
@@ -2539,6 +2564,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                     {
                                                                         "auxiliaryMode": "str",
                                                                         "auxiliarySku": "str",
+                                                                        "defaultOutboundConnectivityEnabled": bool,
                                                                         "disableTcpStateTracking": bool,
                                                                         "dnsSettings": {
                                                                             "appliedDnsServers": ["str"],
@@ -2897,6 +2923,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                         {
                                                                             "auxiliaryMode": "str",
                                                                             "auxiliarySku": "str",
+                                                                            "defaultOutboundConnectivityEnabled": bool,
                                                                             "disableTcpStateTracking": bool,
                                                                             "dnsSettings": {
                                                                                 "appliedDnsServers": ["str"],
@@ -3408,6 +3435,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                             "subnet": ...,
                                                         }
                                                     ],
+                                                    "ipamPoolPrefixAllocations": [
+                                                        {
+                                                            "allocatedAddressPrefixes": ["str"],
+                                                            "id": "str",
+                                                            "numberOfIpAddresses": "str",
+                                                        }
+                                                    ],
                                                     "name": "str",
                                                     "natGateway": {"id": "str"},
                                                     "networkSecurityGroup": {
@@ -3501,6 +3535,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                             {
                                                                 "auxiliaryMode": "str",
                                                                 "auxiliarySku": "str",
+                                                                "defaultOutboundConnectivityEnabled": bool,
                                                                 "disableTcpStateTracking": bool,
                                                                 "dnsSettings": {
                                                                     "appliedDnsServers": ["str"],
@@ -3848,6 +3883,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                 {
                                                                     "auxiliaryMode": "str",
                                                                     "auxiliarySku": "str",
+                                                                    "defaultOutboundConnectivityEnabled": bool,
                                                                     "disableTcpStateTracking": bool,
                                                                     "dnsSettings": {
                                                                         "appliedDnsServers": ["str"],
@@ -4437,6 +4473,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                     {
                                         "auxiliaryMode": "str",
                                         "auxiliarySku": "str",
+                                        "defaultOutboundConnectivityEnabled": bool,
                                         "disableTcpStateTracking": bool,
                                         "dnsSettings": {
                                             "appliedDnsServers": ["str"],
@@ -4620,6 +4657,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                 }
                                                             ],
                                                             "ipConfigurations": [...],
+                                                            "ipamPoolPrefixAllocations": [
+                                                                {
+                                                                    "allocatedAddressPrefixes": ["str"],
+                                                                    "id": "str",
+                                                                    "numberOfIpAddresses": "str",
+                                                                }
+                                                            ],
                                                             "name": "str",
                                                             "natGateway": {"id": "str"},
                                                             "networkSecurityGroup": {
@@ -4993,6 +5037,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                             "subnet": ...,
                                                         }
                                                     ],
+                                                    "ipamPoolPrefixAllocations": [
+                                                        {
+                                                            "allocatedAddressPrefixes": ["str"],
+                                                            "id": "str",
+                                                            "numberOfIpAddresses": "str",
+                                                        }
+                                                    ],
                                                     "name": "str",
                                                     "natGateway": {"id": "str"},
                                                     "networkSecurityGroup": {
@@ -5308,6 +5359,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                             }
                                                                         ],
                                                                         "ipConfigurations": [...],
+                                                                        "ipamPoolPrefixAllocations": [
+                                                                            {
+                                                                                "allocatedAddressPrefixes": ["str"],
+                                                                                "id": "str",
+                                                                                "numberOfIpAddresses": "str",
+                                                                            }
+                                                                        ],
                                                                         "name": "str",
                                                                         "natGateway": {"id": "str"},
                                                                         "networkSecurityGroup": {
@@ -5694,6 +5752,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                             "zones": ["str"],
                                                                         },
                                                                         "subnet": ...,
+                                                                    }
+                                                                ],
+                                                                "ipamPoolPrefixAllocations": [
+                                                                    {
+                                                                        "allocatedAddressPrefixes": ["str"],
+                                                                        "id": "str",
+                                                                        "numberOfIpAddresses": "str",
                                                                     }
                                                                 ],
                                                                 "name": "str",
@@ -6204,6 +6269,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                             "subnet": ...,
                                                         }
                                                     ],
+                                                    "ipamPoolPrefixAllocations": [
+                                                        {
+                                                            "allocatedAddressPrefixes": ["str"],
+                                                            "id": "str",
+                                                            "numberOfIpAddresses": "str",
+                                                        }
+                                                    ],
                                                     "name": "str",
                                                     "natGateway": {"id": "str"},
                                                     "networkSecurityGroup": ...,
@@ -6423,6 +6495,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                     "zones": ["str"],
                                                                 },
                                                                 "subnet": ...,
+                                                            }
+                                                        ],
+                                                        "ipamPoolPrefixAllocations": [
+                                                            {
+                                                                "allocatedAddressPrefixes": ["str"],
+                                                                "id": "str",
+                                                                "numberOfIpAddresses": "str",
                                                             }
                                                         ],
                                                         "name": "str",
@@ -6744,6 +6823,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                     }
                                                                 ],
                                                                 "ipConfigurations": [...],
+                                                                "ipamPoolPrefixAllocations": [
+                                                                    {
+                                                                        "allocatedAddressPrefixes": ["str"],
+                                                                        "id": "str",
+                                                                        "numberOfIpAddresses": "str",
+                                                                    }
+                                                                ],
                                                                 "name": "str",
                                                                 "natGateway": {"id": "str"},
                                                                 "networkSecurityGroup": {
@@ -7118,6 +7204,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                 "subnet": ...,
                                                             }
                                                         ],
+                                                        "ipamPoolPrefixAllocations": [
+                                                            {
+                                                                "allocatedAddressPrefixes": ["str"],
+                                                                "id": "str",
+                                                                "numberOfIpAddresses": "str",
+                                                            }
+                                                        ],
                                                         "name": "str",
                                                         "natGateway": {"id": "str"},
                                                         "networkSecurityGroup": {
@@ -7473,6 +7566,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                         }
                                                                     ],
                                                                     "ipConfigurations": [...],
+                                                                    "ipamPoolPrefixAllocations": [
+                                                                        {
+                                                                            "allocatedAddressPrefixes": ["str"],
+                                                                            "id": "str",
+                                                                            "numberOfIpAddresses": "str",
+                                                                        }
+                                                                    ],
                                                                     "name": "str",
                                                                     "natGateway": {"id": "str"},
                                                                     "networkSecurityGroup": {
@@ -7850,6 +7950,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                         "zones": ["str"],
                                                                     },
                                                                     "subnet": ...,
+                                                                }
+                                                            ],
+                                                            "ipamPoolPrefixAllocations": [
+                                                                {
+                                                                    "allocatedAddressPrefixes": ["str"],
+                                                                    "id": "str",
+                                                                    "numberOfIpAddresses": "str",
                                                                 }
                                                             ],
                                                             "name": "str",
@@ -8269,6 +8376,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                         }
                                                                     ],
                                                                     "ipConfigurations": [...],
+                                                                    "ipamPoolPrefixAllocations": [
+                                                                        {
+                                                                            "allocatedAddressPrefixes": ["str"],
+                                                                            "id": "str",
+                                                                            "numberOfIpAddresses": "str",
+                                                                        }
+                                                                    ],
                                                                     "name": "str",
                                                                     "natGateway": {"id": "str"},
                                                                     "networkSecurityGroup": {
@@ -8645,6 +8759,13 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                                                         "zones": ["str"],
                                                                     },
                                                                     "subnet": ...,
+                                                                }
+                                                            ],
+                                                            "ipamPoolPrefixAllocations": [
+                                                                {
+                                                                    "allocatedAddressPrefixes": ["str"],
+                                                                    "id": "str",
+                                                                    "numberOfIpAddresses": "str",
                                                                 }
                                                             ],
                                                             "name": "str",
@@ -9027,6 +9148,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                             "subnet": ...,
                                         }
                                     ],
+                                    "ipamPoolPrefixAllocations": [
+                                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                                    ],
                                     "name": "str",
                                     "natGateway": {"id": "str"},
                                     "networkSecurityGroup": {
@@ -9120,6 +9244,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                                             {
                                                 "auxiliaryMode": "str",
                                                 "auxiliarySku": "str",
+                                                "defaultOutboundConnectivityEnabled": bool,
                                                 "disableTcpStateTracking": bool,
                                                 "dnsSettings": {
                                                     "appliedDnsServers": ["str"],
@@ -10232,7 +10357,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                     },
                     "zones": ["str"],
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -10241,12 +10366,12 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update_tags(self, resource_group):
+    async def test_application_gateways_update_tags(self, resource_group):
         response = await self.client.application_gateways.update_tags(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -10254,10 +10379,10 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_application_gateways_list(self, resource_group):
         response = self.client.application_gateways.list(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -10265,9 +10390,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_all(self, resource_group):
+    async def test_application_gateways_list_all(self, resource_group):
         response = self.client.application_gateways.list_all(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -10275,12 +10400,12 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_start(self, resource_group):
+    async def test_application_gateways_begin_start(self, resource_group):
         response = await (
             await self.client.application_gateways.begin_start(
                 resource_group_name=resource_group.name,
                 application_gateway_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -10289,12 +10414,12 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_stop(self, resource_group):
+    async def test_application_gateways_begin_stop(self, resource_group):
         response = await (
             await self.client.application_gateways.begin_stop(
                 resource_group_name=resource_group.name,
                 application_gateway_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -10303,12 +10428,12 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_backend_health(self, resource_group):
+    async def test_application_gateways_begin_backend_health(self, resource_group):
         response = await (
             await self.client.application_gateways.begin_backend_health(
                 resource_group_name=resource_group.name,
                 application_gateway_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -10317,7 +10442,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_backend_health_on_demand(self, resource_group):
+    async def test_application_gateways_begin_backend_health_on_demand(self, resource_group):
         response = await (
             await self.client.application_gateways.begin_backend_health_on_demand(
                 resource_group_name=resource_group.name,
@@ -10332,7 +10457,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                     "protocol": "str",
                     "timeout": 0,
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -10341,9 +10466,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_available_server_variables(self, resource_group):
+    async def test_application_gateways_list_available_server_variables(self, resource_group):
         response = await self.client.application_gateways.list_available_server_variables(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -10351,9 +10476,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_available_request_headers(self, resource_group):
+    async def test_application_gateways_list_available_request_headers(self, resource_group):
         response = await self.client.application_gateways.list_available_request_headers(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -10361,9 +10486,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_available_response_headers(self, resource_group):
+    async def test_application_gateways_list_available_response_headers(self, resource_group):
         response = await self.client.application_gateways.list_available_response_headers(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -10371,9 +10496,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_available_waf_rule_sets(self, resource_group):
+    async def test_application_gateways_list_available_waf_rule_sets(self, resource_group):
         response = await self.client.application_gateways.list_available_waf_rule_sets(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -10381,9 +10506,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_available_ssl_options(self, resource_group):
+    async def test_application_gateways_list_available_ssl_options(self, resource_group):
         response = await self.client.application_gateways.list_available_ssl_options(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -10391,9 +10516,9 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_available_ssl_predefined_policies(self, resource_group):
+    async def test_application_gateways_list_available_ssl_predefined_policies(self, resource_group):
         response = self.client.application_gateways.list_available_ssl_predefined_policies(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -10401,10 +10526,10 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_ssl_predefined_policy(self, resource_group):
+    async def test_application_gateways_get_ssl_predefined_policy(self, resource_group):
         response = await self.client.application_gateways.get_ssl_predefined_policy(
             predefined_policy_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself

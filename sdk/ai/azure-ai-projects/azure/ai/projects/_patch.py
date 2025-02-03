@@ -136,7 +136,7 @@ class AIProjectClient(
             resource_group_name=resource_group_name,
             project_name=project_name,
             credential=credential,
-            api_version="2024-07-01-preview",  # TODO: Update me
+            api_version="2024-12-01-preview",
             credential_scopes=["https://ml.azure.com/.default"],
             **kwargs2,
         )
@@ -227,7 +227,7 @@ class AIProjectClient(
         """
         Create an AIProjectClient from a connection string.
 
-        :param str conn_str: The connection string, copied from your AI Studio project.
+        :param str conn_str: The connection string, copied from your AI Foundry project.
         :param TokenCredential credential: Credential used to authenticate requests to the service.
         :return: An AIProjectClient instance.
         :rtype: AIProjectClient
@@ -244,7 +244,7 @@ class AIProjectClient(
         return cls(endpoint, subscription_id, resource_group_name, project_name, credential, **kwargs)
 
     def upload_file(self, file_path: Union[Path, str, PathLike]) -> Tuple[str, str]:
-        """Upload a file to the Azure AI Studio project.
+        """Upload a file to the Azure AI Foundry project.
            This method required *azure-ai-ml* to be installed.
 
         :param file_path: The path to the file to upload.

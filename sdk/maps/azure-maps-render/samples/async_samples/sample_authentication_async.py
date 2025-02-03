@@ -11,7 +11,7 @@ FILE: sample_authentication_async.py
 DESCRIPTION:
     This sample demonstrates how to authenticate with the Azure Maps Render
     service with an Subscription key. See more details about authentication here:
-    https://docs.microsoft.com/azure/azure-maps/how-to-manage-account-keys
+    https://learn.microsoft.com/azure/azure-maps/how-to-manage-account-keys
 USAGE:
     python sample_authentication_async.py
     Set the environment variables with your own values before running the sample:

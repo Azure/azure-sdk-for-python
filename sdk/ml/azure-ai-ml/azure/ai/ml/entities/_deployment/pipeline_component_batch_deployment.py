@@ -12,7 +12,7 @@ from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     BatchPipelineComponentDeploymentConfiguration,
     IdAssetReference,
 )
-from azure.ai.ml._schema._deployment.batch.pipeline_component_batch_deployment_schema import (  # pylint: disable=line-too-long
+from azure.ai.ml._schema._deployment.batch.pipeline_component_batch_deployment_schema import (
     PipelineComponentBatchDeploymentSchema,
 )
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
@@ -58,7 +58,7 @@ class PipelineComponentBatchDeployment(Resource):
         job_definition: Optional[Dict[str, BaseNode]] = None,
         tags: Optional[Dict] = None,
         description: Optional[str] = None,
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ):
         self._type = kwargs.pop("type", None)
         super().__init__(name=name, tags=tags, description=description, **kwargs)
@@ -67,7 +67,7 @@ class PipelineComponentBatchDeployment(Resource):
         self.settings = settings
         self.job_definition = job_definition
 
-    def _to_rest_object(self, location: str) -> "RestBatchDeployment":  # pylint: disable=arguments-differ
+    def _to_rest_object(self, location: str) -> "RestBatchDeployment":
         if isinstance(self.component, PipelineComponent):
             id_asset_ref = IdAssetReference(asset_id=self.component.id)
 
@@ -120,9 +120,7 @@ class PipelineComponentBatchDeployment(Resource):
                 param["endpoint_name"] = endpoint_name.lower()
 
     @classmethod
-    def _from_rest_object(  # pylint: disable=arguments-renamed
-        cls, deployment: RestBatchDeployment
-    ) -> "PipelineComponentBatchDeployment":
+    def _from_rest_object(cls, deployment: RestBatchDeployment) -> "PipelineComponentBatchDeployment":
         return PipelineComponentBatchDeployment(
             name=deployment.name,
             tags=deployment.tags,
@@ -147,8 +145,6 @@ class PipelineComponentBatchDeployment(Resource):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:
-        res: dict = PipelineComponentBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
-            self
-        )  # pylint: disable=no-member
+        res: dict = PipelineComponentBatchDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
         return res

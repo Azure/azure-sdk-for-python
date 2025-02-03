@@ -20,11 +20,11 @@ class TestNetworkManagementVpnSitesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_vpn_sites_get(self, resource_group):
         response = self.client.vpn_sites.get(
             resource_group_name=resource_group.name,
             vpn_site_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -32,12 +32,17 @@ class TestNetworkManagementVpnSitesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_vpn_sites_begin_create_or_update(self, resource_group):
         response = self.client.vpn_sites.begin_create_or_update(
             resource_group_name=resource_group.name,
             vpn_site_name="str",
             vpn_site_parameters={
-                "addressSpace": {"addressPrefixes": ["str"]},
+                "addressSpace": {
+                    "addressPrefixes": ["str"],
+                    "ipamPoolPrefixAllocations": [
+                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                    ],
+                },
                 "bgpProperties": {
                     "asn": 0,
                     "bgpPeeringAddress": "str",
@@ -78,7 +83,7 @@ class TestNetworkManagementVpnSitesOperations(AzureMgmtRecordedTestCase):
                     }
                 ],
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -86,12 +91,12 @@ class TestNetworkManagementVpnSitesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update_tags(self, resource_group):
+    def test_vpn_sites_update_tags(self, resource_group):
         response = self.client.vpn_sites.update_tags(
             resource_group_name=resource_group.name,
             vpn_site_name="str",
             vpn_site_parameters={"tags": {"str": "str"}},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -99,11 +104,11 @@ class TestNetworkManagementVpnSitesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_vpn_sites_begin_delete(self, resource_group):
         response = self.client.vpn_sites.begin_delete(
             resource_group_name=resource_group.name,
             vpn_site_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -111,10 +116,10 @@ class TestNetworkManagementVpnSitesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_vpn_sites_list_by_resource_group(self, resource_group):
         response = self.client.vpn_sites.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -122,9 +127,9 @@ class TestNetworkManagementVpnSitesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_vpn_sites_list(self, resource_group):
         response = self.client.vpn_sites.list(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

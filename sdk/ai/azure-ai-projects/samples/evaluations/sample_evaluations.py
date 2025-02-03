@@ -18,18 +18,14 @@ USAGE:
     pip install azure-ai-evaluation
 
     Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
 """
 
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration, ConnectionType
-from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, HateUnfairnessEvaluator
-
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
-# Customer needs to login to Azure subscription via Azure CLI and set the environment variables
+from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, ViolenceEvaluator
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
@@ -51,12 +47,10 @@ evaluation = Evaluation(
     data=Dataset(id=data_id),
     evaluators={
         "f1_score": EvaluatorConfiguration(
-            # id=F1ScoreEvaluator.id,
-            id="azureml://registries/azureml-staging/models/F1Score-Evaluator/versions/3",
+            id=F1ScoreEvaluator.id,
         ),
         "relevance": EvaluatorConfiguration(
-            # id=RelevanceEvaluator.id,
-            id="azureml://registries/azureml-staging/models/Relevance-Evaluator/versions/3",
+            id=RelevanceEvaluator.id,
             init_params={
                 "model_config": default_connection.to_evaluator_model_config(
                     deployment_name=deployment_name, api_version=api_version
@@ -64,8 +58,7 @@ evaluation = Evaluation(
             },
         ),
         "violence": EvaluatorConfiguration(
-            # id=ViolenceEvaluator.id,
-            id="azureml://registries/azureml-staging/models/Violent-Content-Evaluator/versions/3",
+            id=ViolenceEvaluator.id,
             init_params={"azure_ai_project": project_client.scope},
         ),
     },
@@ -83,5 +76,5 @@ print("----------------------------------------------------------------")
 print("Created evaluation, evaluation ID: ", get_evaluation_response.id)
 print("Evaluation status: ", get_evaluation_response.status)
 if isinstance(get_evaluation_response.properties, dict):
-    print("AI Studio URI: ", get_evaluation_response.properties["AiStudioEvaluationUri"])
+    print("AI Foundry URI: ", get_evaluation_response.properties["AiStudioEvaluationUri"])
 print("----------------------------------------------------------------")

@@ -45,11 +45,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DataFactoryManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class DataFactoryManagementClient:  # pylint: disable=too-many-instance-attributes
     """The Azure Data Factory V2 management API provides a RESTful set of web services that interact
     with Azure Data Factory V2 services.
 

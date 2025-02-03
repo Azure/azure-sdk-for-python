@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.kusto import KustoManagementClient
 
 """
@@ -43,11 +44,7 @@ def main():
                 "enableStreamingIngest": True,
                 "languageExtensions": {
                     "value": [
-                        {
-                            "languageExtensionCustomImageName": "customImage8",
-                            "languageExtensionImageName": "Python_Custom_Image",
-                            "languageExtensionName": "PYTHON",
-                        },
+                        {"languageExtensionImageName": "Python3_10_8", "languageExtensionName": "PYTHON"},
                         {"languageExtensionImageName": "R", "languageExtensionName": "R"},
                     ]
                 },
@@ -60,6 +57,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2023-08-15/examples/KustoClustersCreateOrUpdate.json
+# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2024-04-13/examples/KustoClustersCreateOrUpdate.json
 if __name__ == "__main__":
     main()

@@ -12,13 +12,7 @@ extends:
     parameters:
       ServiceDirectory: appconfiguration
       Packages: ${{ parameters.Services }}
-      SupportedClouds: 'Public,UsGov,China'
       TestTimeoutInMinutes: 240
-      CloudConfig:
-        Public:
-        UsGov:
-        China:
-          Location: chinanorth3
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:

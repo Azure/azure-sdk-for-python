@@ -253,9 +253,9 @@ to opt into the black invocation.
 #### Running locally
 
 1. Go to package root directory.
-2. Execute command: `tox run -e black -c ../../../eng/tox/tox.ini -- .`
+2. Execute command: `tox run -e black -c ../../../eng/tox/tox.ini --root . -- .`
 
-**Tip**: You can provide any arguments that `black` accepts after the `--`. Example: `tox run -e black -c ../../../eng/tox/tox.ini -- path/to/file.py`
+**Tip**: You can provide any arguments that `black` accepts after the `--`. Example: `tox run -e black -c ../../../eng/tox/tox.ini --root . -- path/to/file.py`
 
 ### Change log verification
 

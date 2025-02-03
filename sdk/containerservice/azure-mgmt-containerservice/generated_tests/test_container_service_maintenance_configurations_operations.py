@@ -20,7 +20,7 @@ class TestContainerServiceMaintenanceConfigurationsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_managed_cluster(self, resource_group):
+    def test_maintenance_configurations_list_by_managed_cluster(self, resource_group):
         response = self.client.maintenance_configurations.list_by_managed_cluster(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -32,7 +32,7 @@ class TestContainerServiceMaintenanceConfigurationsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_maintenance_configurations_get(self, resource_group):
         response = self.client.maintenance_configurations.get(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -45,7 +45,7 @@ class TestContainerServiceMaintenanceConfigurationsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_maintenance_configurations_create_or_update(self, resource_group):
         response = self.client.maintenance_configurations.create_or_update(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -86,7 +86,7 @@ class TestContainerServiceMaintenanceConfigurationsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_maintenance_configurations_delete(self, resource_group):
         response = self.client.maintenance_configurations.delete(
             resource_group_name=resource_group.name,
             resource_name="str",

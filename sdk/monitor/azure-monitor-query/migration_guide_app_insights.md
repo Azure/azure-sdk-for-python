@@ -2,7 +2,7 @@
 
 This guide assists you in the migration from [azure-applicationinsights](https://pypi.org/project/azure-applicationinsights/) v0.1.0 to [azure-monitor-query](https://pypi.org/project/azure-monitor-query/) v1.0.x. Side-by-side comparisons are provided for similar operations between the two packages.
 
-Familiarity with the `azure-applicationinsights` v0.1.0 package is assumed. If you're new to the Azure Monitor Query client library for Python, see the [README for `azure-monitor-query`](https://docs.microsoft.com/python/api/overview/azure/monitor-query-readme?view=azure-python) instead of this guide.
+Familiarity with the `azure-applicationinsights` v0.1.0 package is assumed. If you're new to the Azure Monitor Query client library for Python, see the [README for `azure-monitor-query`](https://learn.microsoft.com/python/api/overview/azure/monitor-query-readme?view=azure-python) instead of this guide.
 
 ## Table of contents
 
@@ -28,7 +28,7 @@ To improve the development experience across Azure services, a set of uniform [d
 
 The Azure Monitor Query client library also takes advantage of the cross-service improvements made to the Azure development experience. Examples include:
 
-- Using the new [Azure Identity](https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python) library to share a single authentication approach between clients.
+- Using the new [Azure Identity](https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python) library to share a single authentication approach between clients.
 - A unified logging and diagnostics pipeline offering a common view of the activities across each of the client libraries.
 
 ### New features
@@ -37,7 +37,7 @@ There are various new features in version 1.0 of the Monitor Query library. Some
 
 - The ability to execute a batch of queries with the `LogsQueryClient.query_batch()` API.
 - The ability to configure the retry policy used by the operations on the client.
-- Authentication with Azure Active Directory (Azure AD) credentials using [azure-identity](https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python).
+- Authentication with Azure Active Directory (Azure AD) credentials using [azure-identity](https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python).
 
 For more new features, changes, and bug fixes, see the [change log](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/CHANGELOG.md).
 
@@ -45,14 +45,14 @@ For more new features, changes, and bug fixes, see the [change log](https://gith
 
 ### Resource mode support
 
-The Azure Monitor Query library doesn't support Application Insights resources using the [classic resource mode](https://docs.microsoft.com/azure/azure-monitor/app/create-new-resource). To use this library with a classic Application Insights resource, you must first [migrate to a workspace-based resource](https://docs.microsoft.com/azure/azure-monitor/app/convert-classic-resource).
+The Azure Monitor Query library doesn't support Application Insights resources using the [classic resource mode](https://learn.microsoft.com/azure/azure-monitor/app/create-new-resource). To use this library with a classic Application Insights resource, you must first [migrate to a workspace-based resource](https://learn.microsoft.com/azure/azure-monitor/app/convert-classic-resource).
 
 ### The client
 
-To provide a more intuitive experience, the top-level client to [ApplicationInsightsDataClient](https://docs.microsoft.com/python/api/azure-applicationinsights/azure.applicationinsights.applicationinsightsdataclient?view=azure-python) has been split into two different clients:
+To provide a more intuitive experience, the top-level client to [ApplicationInsightsDataClient](https://learn.microsoft.com/python/api/azure-applicationinsights/azure.applicationinsights.applicationinsightsdataclient?view=azure-python) has been split into two different clients:
 
-- [LogsQueryClient](https://docs.microsoft.com/python/api/azure-monitor-query/azure.monitor.query.logsqueryclient?view=azure-python) serves as a single point of entry to execute a single Kusto query or a batch of Kusto queries.
-- [MetricsQueryClient](https://docs.microsoft.com/python/api/azure-monitor-query/azure.monitor.query.metricsqueryclient?view=azure-python) is used to query metrics, list metric namespaces, and to list metric definitions.
+- [LogsQueryClient](https://learn.microsoft.com/python/api/azure-monitor-query/azure.monitor.query.logsqueryclient?view=azure-python) serves as a single point of entry to execute a single Kusto query or a batch of Kusto queries.
+- [MetricsQueryClient](https://learn.microsoft.com/python/api/azure-monitor-query/azure.monitor.query.metricsqueryclient?view=azure-python) is used to query metrics, list metric namespaces, and to list metric definitions.
 
 Both clients can be authenticated using Azure AD.
 

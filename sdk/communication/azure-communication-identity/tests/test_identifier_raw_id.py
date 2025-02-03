@@ -24,43 +24,29 @@ class IdentifierRawIdTest(unittest.TestCase):
             ),
             "8:gcch-acs:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130",
         )
+        _assert_raw_id(CommunicationUserIdentifier(id="someFutureFormat"), "someFutureFormat")
         _assert_raw_id(
-            CommunicationUserIdentifier(id="someFutureFormat"), "someFutureFormat"
-        )
-        _assert_raw_id(
-            MicrosoftTeamsUserIdentifier(
-                user_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
-            ),
+            MicrosoftTeamsUserIdentifier(user_id="45ab2481-1c1c-4005-be24-0ffb879b1130"),
             "8:orgid:45ab2481-1c1c-4005-be24-0ffb879b1130",
         )
         _assert_raw_id(
-            MicrosoftTeamsUserIdentifier(
-                user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC"
-            ),
+            MicrosoftTeamsUserIdentifier(user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC"),
             "8:orgid:45ab2481-1c1c-4005-be24-0ffb879b1130",
         )
         _assert_raw_id(
-            MicrosoftTeamsUserIdentifier(
-                user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="DOD"
-            ),
+            MicrosoftTeamsUserIdentifier(user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="DOD"),
             "8:dod:45ab2481-1c1c-4005-be24-0ffb879b1130",
         )
         _assert_raw_id(
-            MicrosoftTeamsUserIdentifier(
-                user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="GCCH"
-            ),
+            MicrosoftTeamsUserIdentifier(user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="GCCH"),
             "8:gcch:45ab2481-1c1c-4005-be24-0ffb879b1130",
         )
         _assert_raw_id(
-            MicrosoftTeamsUserIdentifier(
-                user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", is_anonymous=False
-            ),
+            MicrosoftTeamsUserIdentifier(user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", is_anonymous=False),
             "8:orgid:45ab2481-1c1c-4005-be24-0ffb879b1130",
         )
         _assert_raw_id(
-            MicrosoftTeamsUserIdentifier(
-                user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", is_anonymous=True
-            ),
+            MicrosoftTeamsUserIdentifier(user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", is_anonymous=True),
             "8:teamsvisitor:45ab2481-1c1c-4005-be24-0ffb879b1130",
         )
         _assert_raw_id(
@@ -71,27 +57,19 @@ class IdentifierRawIdTest(unittest.TestCase):
             "8:orgid:legacyFormat",
         )
         _assert_raw_id(
-            MicrosoftTeamsAppIdentifier(
-                app_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
-            ),
+            MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130"),
             "28:orgid:45ab2481-1c1c-4005-be24-0ffb879b1130",
         )
         _assert_raw_id(
-            MicrosoftTeamsAppIdentifier(
-                app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC"
-            ),
+            MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC"),
             "28:orgid:45ab2481-1c1c-4005-be24-0ffb879b1130",
         )
         _assert_raw_id(
-            MicrosoftTeamsAppIdentifier(
-                app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="DOD"
-            ),
+            MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="DOD"),
             "28:dod:45ab2481-1c1c-4005-be24-0ffb879b1130",
         )
         _assert_raw_id(
-            MicrosoftTeamsAppIdentifier(
-                app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="GCCH"
-            ),
+            MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="GCCH"),
             "28:gcch:45ab2481-1c1c-4005-be24-0ffb879b1130",
         )
         _assert_raw_id(PhoneNumberIdentifier(value="+112345556789"), "4:+112345556789")
@@ -101,9 +79,7 @@ class IdentifierRawIdTest(unittest.TestCase):
             "4:otherFormat",
         )
         _assert_raw_id(
-            PhoneNumberIdentifier(
-                value="otherFormat", raw_id="4:207ffef6-9444-41fb-92ab-20eacaae2768"
-            ),
+            PhoneNumberIdentifier(value="otherFormat", raw_id="4:207ffef6-9444-41fb-92ab-20eacaae2768"),
             "4:207ffef6-9444-41fb-92ab-20eacaae2768",
         )
         # cspell:disable
@@ -147,14 +123,10 @@ class IdentifierRawIdTest(unittest.TestCase):
                 id="8:gcch-acs:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130"
             ),
         )
-        _assert_communication_identifier(
-            "8:acs:something", CommunicationUserIdentifier(id="8:acs:something")
-        )
+        _assert_communication_identifier("8:acs:something", CommunicationUserIdentifier(id="8:acs:something"))
         _assert_communication_identifier(
             "8:orgid:45ab2481-1c1c-4005-be24-0ffb879b1130",
-            MicrosoftTeamsUserIdentifier(
-                user_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
-            ),
+            MicrosoftTeamsUserIdentifier(user_id="45ab2481-1c1c-4005-be24-0ffb879b1130"),
         )
         _assert_communication_identifier(
             "8:orgid:45ab2481-1c1c-4005-be24-0ffb879b1130",
@@ -182,52 +154,31 @@ class IdentifierRawIdTest(unittest.TestCase):
         )
         _assert_communication_identifier(
             "8:teamsvisitor:45ab2481-1c1c-4005-be24-0ffb879b1130",
-            MicrosoftTeamsUserIdentifier(
-                user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", is_anonymous=True
-            ),
+            MicrosoftTeamsUserIdentifier(user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", is_anonymous=True),
         )
         _assert_communication_identifier(
             "8:orgid:legacyFormat",
-            MicrosoftTeamsUserIdentifier(
-                user_id="legacyFormat", cloud="PUBLIC", is_anonymous=False
-            ),
+            MicrosoftTeamsUserIdentifier(user_id="legacyFormat", cloud="PUBLIC", is_anonymous=False),
         )
         _assert_communication_identifier(
             "28:orgid:45ab2481-1c1c-4005-be24-0ffb879b1130",
-            MicrosoftTeamsAppIdentifier(
-                app_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
-            ),
+            MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130"),
         )
         _assert_communication_identifier(
             "28:orgid:45ab2481-1c1c-4005-be24-0ffb879b1130",
-            MicrosoftTeamsAppIdentifier(
-                app_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-                cloud="PUBLIC"
-            ),
+            MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC"),
         )
         _assert_communication_identifier(
             "28:dod:45ab2481-1c1c-4005-be24-0ffb879b1130",
-            MicrosoftTeamsAppIdentifier(
-                app_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-                cloud="DOD"
-            ),
+            MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="DOD"),
         )
         _assert_communication_identifier(
             "28:gcch:45ab2481-1c1c-4005-be24-0ffb879b1130",
-            MicrosoftTeamsAppIdentifier(
-                app_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-                cloud="GCCH"
-            ),
+            MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="GCCH"),
         )
-        _assert_communication_identifier(
-            "4:+112345556789", PhoneNumberIdentifier(value="+112345556789")
-        )
-        _assert_communication_identifier(
-            "4:112345556789", PhoneNumberIdentifier(value="112345556789")
-        )
-        _assert_communication_identifier(
-            "4:otherFormat", PhoneNumberIdentifier(value="otherFormat")
-        )
+        _assert_communication_identifier("4:+112345556789", PhoneNumberIdentifier(value="+112345556789"))
+        _assert_communication_identifier("4:112345556789", PhoneNumberIdentifier(value="112345556789"))
+        _assert_communication_identifier("4:otherFormat", PhoneNumberIdentifier(value="otherFormat"))
         _assert_communication_identifier(
             "4:207ffef6-9444-41fb-92ab-20eacaae2768",
             PhoneNumberIdentifier(value="207ffef6-9444-41fb-92ab-20eacaae2768"),
@@ -235,40 +186,26 @@ class IdentifierRawIdTest(unittest.TestCase):
         # cspell:disable
         _assert_communication_identifier(
             "4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768",
-            PhoneNumberIdentifier(
-                value="207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768"
-            ),
+            PhoneNumberIdentifier(value="207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768"),
         )
         _assert_communication_identifier(
             "4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768",
-            PhoneNumberIdentifier(
-                value="+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768"
-            ),
+            PhoneNumberIdentifier(value="+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768"),
         )
         # cspell:enable
         _assert_communication_identifier(
             "28:ag08-global:01234567-89ab-cdef-0123-456789abcdef",
-            UnknownIdentifier(
-                identifier="28:ag08-global:01234567-89ab-cdef-0123-456789abcdef"
-            ),
+            UnknownIdentifier(identifier="28:ag08-global:01234567-89ab-cdef-0123-456789abcdef"),
         )
         _assert_communication_identifier("", UnknownIdentifier(identifier=""))
         with pytest.raises(Exception):
             identifier_from_raw_id(None)
 
     def test_roundtrip(self):
-        _assert_roundtrip(
-            "8:acs:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130"
-        )
-        _assert_roundtrip(
-            "8:spool:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130"
-        )
-        _assert_roundtrip(
-            "8:dod-acs:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130"
-        )
-        _assert_roundtrip(
-            "8:gcch-acs:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130"
-        )
+        _assert_roundtrip("8:acs:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130")
+        _assert_roundtrip("8:spool:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130")
+        _assert_roundtrip("8:dod-acs:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130")
+        _assert_roundtrip("8:gcch-acs:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130")
         _assert_roundtrip("8:acs:something")
         _assert_roundtrip("8:orgid:45ab2481-1c1c-4005-be24-0ffb879b1130")
         _assert_roundtrip("8:dod:45ab2481-1c1c-4005-be24-0ffb879b1130")
@@ -280,9 +217,7 @@ class IdentifierRawIdTest(unittest.TestCase):
         _assert_roundtrip("4:otherFormat")
         _assert_roundtrip("4:207ffef6-9444-41fb-92ab-20eacaae2768")
         # cspell:disable
-        _assert_roundtrip(
-            "4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768"
-        )
+        _assert_roundtrip("4:207ffef6-9444-41fb-92ab-20eacaae2768_207ffef6-9444-41fb-92ab-20eacaae2768")
         _assert_roundtrip("4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768")
         # cspell:enable
         _assert_roundtrip("28:45ab2481-1c1c-4005-be24-0ffb879b1130")
@@ -312,24 +247,16 @@ class IdentifierRawIdTest(unittest.TestCase):
         # MicrosoftTeamsUserIdentifiers are equal.
         assert MicrosoftTeamsUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
-        ) == MicrosoftTeamsUserIdentifier(
-            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
-        )
+        ) == MicrosoftTeamsUserIdentifier(user_id="45ab2481-1c1c-4005-be24-0ffb879b1130")
         assert MicrosoftTeamsUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC"
-        ) == MicrosoftTeamsUserIdentifier(
-            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC"
-        )
+        ) == MicrosoftTeamsUserIdentifier(user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC")
         assert MicrosoftTeamsUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="DOD"
-        ) == MicrosoftTeamsUserIdentifier(
-            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="DOD"
-        )
+        ) == MicrosoftTeamsUserIdentifier(user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="DOD")
         assert MicrosoftTeamsUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="GCCH"
-        ) == MicrosoftTeamsUserIdentifier(
-            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="GCCH"
-        )
+        ) == MicrosoftTeamsUserIdentifier(user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="GCCH")
         assert MicrosoftTeamsUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
             cloud="GCCH",
@@ -352,14 +279,10 @@ class IdentifierRawIdTest(unittest.TestCase):
         # MicrosoftTeamsUserIdentifiers are not equal.
         assert MicrosoftTeamsUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
-        ) != MicrosoftTeamsUserIdentifier(
-            user_id="55ab2481-1c1c-4005-be24-0ffb879b1130"
-        )
+        ) != MicrosoftTeamsUserIdentifier(user_id="55ab2481-1c1c-4005-be24-0ffb879b1130")
         assert MicrosoftTeamsUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="GCCH"
-        ) != MicrosoftTeamsUserIdentifier(
-            user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="DOD"
-        )
+        ) != MicrosoftTeamsUserIdentifier(user_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="DOD")
         assert MicrosoftTeamsUserIdentifier(
             user_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
             cloud="GCCH",
@@ -373,70 +296,47 @@ class IdentifierRawIdTest(unittest.TestCase):
         # MicrosoftTeamsAppIdentifiers are equal.
         assert MicrosoftTeamsAppIdentifier(
             app_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
-        ) == MicrosoftTeamsAppIdentifier(
-            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
-        )
+        ) == MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130")
         assert MicrosoftTeamsAppIdentifier(
             app_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
-        ) == MicrosoftTeamsAppIdentifier(
-            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC"
-        )
+        ) == MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC")
         assert MicrosoftTeamsAppIdentifier(
             app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC"
-        ) == MicrosoftTeamsAppIdentifier(
-            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
-        )
+        ) == MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130")
         assert MicrosoftTeamsAppIdentifier(
             app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC"
-        ) == MicrosoftTeamsAppIdentifier(
-            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC"
-        )
+        ) == MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC")
         assert MicrosoftTeamsAppIdentifier(
             app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="DOD"
-        ) == MicrosoftTeamsAppIdentifier(
-            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="DOD"
-        )
+        ) == MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="DOD")
         assert MicrosoftTeamsAppIdentifier(
             app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="GCCH"
-        ) == MicrosoftTeamsAppIdentifier(
-            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="GCCH"
-        )
+        ) == MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="GCCH")
 
         # MicrosoftTeamsAppIdentifiers are not equal.
         assert MicrosoftTeamsAppIdentifier(
             app_id="54ab2481-1c1c-4005-be24-0ffb879b1130"
-        ) != MicrosoftTeamsAppIdentifier(
-            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
-        )
+        ) != MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130")
         assert MicrosoftTeamsAppIdentifier(
             app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC"
-        ) != MicrosoftTeamsAppIdentifier(
-            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="DOD"
-        )
+        ) != MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="DOD")
 
         # PhoneNumberIdentifiers are equal.
-        assert PhoneNumberIdentifier(value="+112345556789") == PhoneNumberIdentifier(
-            value="+112345556789"
-        )
+        assert PhoneNumberIdentifier(value="+112345556789") == PhoneNumberIdentifier(value="+112345556789")
 
         # PhoneNumberIdentifiers are not equal.
-        assert PhoneNumberIdentifier(value="+112345556789") != PhoneNumberIdentifier(
-            value="+512345556789"
-        )
+        assert PhoneNumberIdentifier(value="+112345556789") != PhoneNumberIdentifier(value="+512345556789")
 
         # UnknownIdentifiers are equal.
-        assert UnknownIdentifier(
-            identifier="28:ag08-global:01234567-89ab-cdef-0123-456789abcdef"
-        ) == UnknownIdentifier(
+        assert UnknownIdentifier(identifier="28:ag08-global:01234567-89ab-cdef-0123-456789abcdef") == UnknownIdentifier(
             identifier="28:ag08-global:01234567-89ab-cdef-0123-456789abcdef"
         )
 
         # UnknownIdentifiers are not equal.
-        assert UnknownIdentifier(
-            identifier="48:8888-global:01234567-89ab-cdef-0123-456789abcdef"
-        ) != UnknownIdentifier(
+        assert UnknownIdentifier(identifier="48:8888-global:01234567-89ab-cdef-0123-456789abcdef") != UnknownIdentifier(
             identifier="48:ag08-global:01234567-89ab-cdef-0123-456789abcdef"
         )
+
 
 def _assert_raw_id(identifier, want):
     # type: (CommunicationIdentifier, str) -> None

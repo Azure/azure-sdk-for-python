@@ -42,6 +42,7 @@ async def test_stress_queue_send_and_receive(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_send_and_receive"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = await stress_test.run_async()
@@ -66,6 +67,7 @@ async def test_stress_queue_send_and_pull_receive(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_send_and_pull_receive"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = await stress_test.run_async()
@@ -90,6 +92,7 @@ async def test_stress_queue_batch_send_and_receive(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_batch_send_and_receive"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = await stress_test.run_async()
@@ -114,6 +117,7 @@ async def test_stress_queue_slow_send_and_receive(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_slow_send_and_receive"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = await stress_test.run_async()
@@ -144,6 +148,7 @@ async def test_stress_queue_receive_and_delete(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_slow_send_and_receive"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = await stress_test.run_async()
@@ -168,6 +173,7 @@ async def test_stress_queue_unsettled_messages(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_unsettled_messages"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = await stress_test.run_async()
@@ -194,6 +200,7 @@ async def test_stress_queue_receive_large_batch_size(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_receive_large_batch_size"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = await stress_test.run_async()
@@ -228,6 +235,7 @@ async def test_stress_queue_pull_receive_timeout(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_pull_receive_timeout"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = await stress_test.run_async()
@@ -260,6 +268,7 @@ async def test_stress_queue_long_renew_send_and_receive(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_long_renew_send_and_receive"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = await stress_test.run_async()
@@ -303,6 +312,7 @@ async def test_stress_queue_long_renew_session_send_and_receive(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_long_renew_session_send_and_receive"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = await stress_test.run_async()
@@ -334,6 +344,7 @@ async def test_stress_queue_peek_messages(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_peek_messages"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = await stress_test.run_async()
@@ -374,6 +385,7 @@ async def test_stress_queue_close_and_reopen(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_close_and_reopen"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = await stress_test.run_async()
@@ -429,6 +441,7 @@ async def test_stress_queue_check_for_dropped_messages(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_check_for_dropped_messages"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
+        rotating_logs=args.rotating_logs,
     )
 
     result = await stress_test.run_async()
@@ -512,7 +525,12 @@ if __name__ == "__main__":
         type=str,
         default="Error",
     )
+    # rotate logs by default, if you want to disable it, use --no-rotating-logs flag
+    parser.add_argument("--no-rotating-logs", action="store_true")
+
     args, _ = parser.parse_known_args()
+    # store rotating_logs in args for later use
+    args.rotating_logs = not args.no_rotating_logs
 
     if args.transport:
         TRANSPORT_TYPE = TransportType.AmqpOverWebsocket

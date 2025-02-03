@@ -132,7 +132,8 @@
       },
       "kind": "StorageV2",
       "properties": {
-        "accessTier": "Hot"
+        "accessTier": "Hot",
+        "allowSharedKeyAccess": false
       },
       "resources": [
         {

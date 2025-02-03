@@ -20,12 +20,12 @@ class TestComputeManagementCloudServiceRoleInstancesOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_cloud_service_role_instances_begin_delete(self, resource_group):
         response = self.client.cloud_service_role_instances.begin_delete(
             role_instance_name="str",
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestComputeManagementCloudServiceRoleInstancesOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_cloud_service_role_instances_get(self, resource_group):
         response = self.client.cloud_service_role_instances.get(
             role_instance_name="str",
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         )
 
         # please add some check logic here by yourself
@@ -46,12 +46,12 @@ class TestComputeManagementCloudServiceRoleInstancesOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_instance_view(self, resource_group):
+    def test_cloud_service_role_instances_get_instance_view(self, resource_group):
         response = self.client.cloud_service_role_instances.get_instance_view(
             role_instance_name="str",
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         )
 
         # please add some check logic here by yourself
@@ -59,11 +59,11 @@ class TestComputeManagementCloudServiceRoleInstancesOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_cloud_service_role_instances_list(self, resource_group):
         response = self.client.cloud_service_role_instances.list(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -71,12 +71,12 @@ class TestComputeManagementCloudServiceRoleInstancesOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_restart(self, resource_group):
+    def test_cloud_service_role_instances_begin_restart(self, resource_group):
         response = self.client.cloud_service_role_instances.begin_restart(
             role_instance_name="str",
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -84,12 +84,12 @@ class TestComputeManagementCloudServiceRoleInstancesOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_reimage(self, resource_group):
+    def test_cloud_service_role_instances_begin_reimage(self, resource_group):
         response = self.client.cloud_service_role_instances.begin_reimage(
             role_instance_name="str",
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -97,12 +97,12 @@ class TestComputeManagementCloudServiceRoleInstancesOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_rebuild(self, resource_group):
+    def test_cloud_service_role_instances_begin_rebuild(self, resource_group):
         response = self.client.cloud_service_role_instances.begin_rebuild(
             role_instance_name="str",
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -110,12 +110,12 @@ class TestComputeManagementCloudServiceRoleInstancesOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_remote_desktop_file(self, resource_group):
+    def test_cloud_service_role_instances_get_remote_desktop_file(self, resource_group):
         response = self.client.cloud_service_role_instances.get_remote_desktop_file(
             role_instance_name="str",
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         )
 
         # please add some check logic here by yourself

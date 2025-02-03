@@ -9,48 +9,11 @@ from hashlib import sha256
 from hmac import HMAC
 from urllib.parse import urlencode, quote_plus
 import time
-
+from datetime import timezone
 from .types import TYPE, VALUE, AMQPTypes
 from ._encode import encode_payload
 
-
-class UTC(datetime.tzinfo):
-    """Time Zone info for handling UTC"""
-
-    def utcoffset(self, dt):
-        """UTF offset for UTC is 0.
-
-        :param datetime.datetime dt: Ignored.
-        :return: The UTC offset of UTC
-        :rtype: datetime.timedelta
-        """
-        return datetime.timedelta(0)
-
-    def tzname(self, dt):
-        """Timestamp representation.
-
-        :param datetime.datetime dt: Ignored.
-        :return: The timestamp representation of UTC
-        :rtype: str
-        """
-        return "Z"
-
-    def dst(self, dt):
-        """No daylight saving for UTC.
-
-        :param datetime.datetime dt: Ignored.
-        :return: The daylight saving time of UTC
-        :rtype: datetime.timedelta
-        """
-        return datetime.timedelta(hours=1)
-
-
-try:
-    from datetime import timezone  # pylint: disable=ungrouped-imports
-
-    TZ_UTC = timezone.utc  # type: ignore
-except ImportError:
-    TZ_UTC = UTC()  # type: ignore
+TZ_UTC: timezone = timezone.utc
 
 
 def utc_from_timestamp(timestamp):

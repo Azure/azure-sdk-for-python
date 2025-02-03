@@ -45,9 +45,7 @@ def analyze_invoice():
 
     document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_intelligence_client.begin_analyze_document(
-            "prebuilt-invoice", analyze_request=f, locale="en-US", content_type="application/octet-stream"
-        )
+        poller = document_intelligence_client.begin_analyze_document("prebuilt-invoice", body=f, locale="en-US")
     invoices: AnalyzeResult = poller.result()
 
     if invoices.documents:

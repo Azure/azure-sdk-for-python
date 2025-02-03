@@ -474,7 +474,7 @@ class WebPubSubClient(
         **kwargs: Any,
     ) -> None:
         """Send custom event to server. For more info about event handler in web pubsub, please refer
-        to https://learn.microsoft.com/en-us/azure/azure-web-pubsub/howto-develop-eventhandler
+        to https://learn.microsoft.com/azure/azure-web-pubsub/howto-develop-eventhandler
 
         :param event_name: The event name. Required.
         :type event_name: str.
@@ -497,7 +497,7 @@ class WebPubSubClient(
         **kwargs: Any,
     ) -> None:
         """Send custom event to server. For more info about event handler in web pubsub, please refer
-        to https://learn.microsoft.com/en-us/azure/azure-web-pubsub/howto-develop-eventhandler
+        to https://learn.microsoft.com/azure/azure-web-pubsub/howto-develop-eventhandler
 
         :param event_name: The event name. Required.
         :type event_name: str.
@@ -521,7 +521,7 @@ class WebPubSubClient(
         **kwargs: Any,
     ) -> None:
         """Send custom event to server. For more info about event handler in web pubsub, please refer
-        to https://learn.microsoft.com/en-us/azure/azure-web-pubsub/howto-develop-eventhandler
+        to https://learn.microsoft.com/azure/azure-web-pubsub/howto-develop-eventhandler
 
         :param event_name: The event name. Required.
         :type event_name: str.
@@ -543,7 +543,7 @@ class WebPubSubClient(
         **kwargs: Any,
     ) -> None:
         """Send custom event to server. For more info about event handler in web pubsub, please refer
-        to https://learn.microsoft.com/en-us/azure/azure-web-pubsub/howto-develop-eventhandler
+        to https://learn.microsoft.com/azure/azure-web-pubsub/howto-develop-eventhandler
 
         :param event_name: The event name. Required.
         :type event_name: str.
@@ -910,7 +910,7 @@ class WebPubSubClient(
                 self._ack_map.clear()
 
                 if self._is_stopping:
-                    _LOGGER.warning("The client is stopping state. Stop recovery.")
+                    _LOGGER.info("The client is stopping state. Stop recovery.")
                     self._handle_connection_close_and_no_recovery(ws_instance.reconnect_tried_times)
                     return
 

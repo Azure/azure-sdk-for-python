@@ -328,7 +328,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
 
         tmp_code_dir: Path
         # origin code value of internal component will never be None. check _get_origin_code_value for details
-        with self._generate_additional_includes_obj().merge_local_code_and_additional_includes() as tmp_code_dir:  # pylint:disable=contextmanager-generator-missing-cleanup
+        with self._generate_additional_includes_obj().merge_local_code_and_additional_includes() as tmp_code_dir:
             # use absolute path in case temp folder & work dir are in different drive
             tmp_code_dir = tmp_code_dir.absolute()
 
@@ -366,5 +366,5 @@ class InternalComponent(Component, AdditionalIncludesMixin):
                 ignore_file=rebased_ignore_file,
             )
 
-    def __call__(self, *args, **kwargs) -> InternalBaseNode:  # pylint: disable=useless-super-delegation
+    def __call__(self, *args, **kwargs) -> InternalBaseNode:
         return super(InternalComponent, self).__call__(*args, **kwargs)

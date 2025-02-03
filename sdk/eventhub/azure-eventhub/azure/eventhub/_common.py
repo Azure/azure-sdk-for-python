@@ -59,7 +59,7 @@ from ._transport._pyamqp_transport import PyamqpTransport
 
 if TYPE_CHECKING:
     try:
-        from uamqp import (  # pylint: disable=unused-import
+        from uamqp import (
             Message,  # not importing as uamqp_Message, b/c type is exposed to user
             BatchMessage,
         )
@@ -143,7 +143,6 @@ class EventData:
         self.correlation_id = None
 
     def __repr__(self) -> str:
-        # pylint: disable=bare-except
         try:
             body_str = self.body_as_str()
         except Exception as e:  # pylint: disable=broad-except
@@ -230,7 +229,6 @@ class EventData:
         message: Union["Message", pyamqp_Message],
         raw_amqp_message: Optional[AmqpAnnotatedMessage] = None,
     ) -> EventData:
-        # pylint:disable=protected-access
         """Internal use only.
 
         Creates an EventData object from a raw uamqp message and, if provided, AmqpAnnotatedMessage.
@@ -242,13 +240,11 @@ class EventData:
         :rtype: ~azure.eventhub.EventData
         """
         event_data = cls(body="")
-        # pylint: disable=protected-access
         event_data._message = message
         event_data._raw_amqp_message = raw_amqp_message if raw_amqp_message else AmqpAnnotatedMessage(message=message)
         return event_data
 
     def _decode_non_data_body_as_str(self, encoding: str = "UTF-8") -> str:
-        # pylint: disable=protected-access
         body = self.raw_amqp_message.body
         if self.body_type == AmqpMessageBodyType.VALUE:
             if not body:

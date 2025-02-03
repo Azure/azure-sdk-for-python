@@ -10,8 +10,8 @@ additional_pr_triggers: Dict[str, List[str]] = {
     "azure-core":[
         os.path.join("/sdk", "servicebus", "azure-servicebus"),
         os.path.join("/sdk", "eventhub", "azure-eventhub"),
-        os.path.join("/sdk", "tables", "azure-data-table"),
-        os.path.join("/sdk", "appconfig", "azure-appconfig"),
+        os.path.join("/sdk", "tables", "azure-data-tables"),
+        os.path.join("/sdk", "appconfiguration", "azure-appconfiguration"),
         os.path.join("/sdk", "keyvault", "azure-keyvault-keys"),
         os.path.join("/sdk", "identity", "azure-identity"),
         os.path.join("/sdk", "core", "azure-mgmt-core"),
@@ -22,10 +22,10 @@ additional_pr_triggers: Dict[str, List[str]] = {
         # related to windows only + emulator
         # os.path.join("/sdk", "cosmos", "azure-cosmos"),
         os.path.join("/sdk", "ml", "azure-ai-ml"),
-        os.path.join("/sdk", "ai", "azure-ai-documentintelligence"),
+        os.path.join("/sdk", "documentintelligence", "azure-ai-documentintelligence"),
         os.path.join("/sdk", "ai", "azure-ai-inference"),
-        os.path.join("/sdk", "ai", "azure-ai-textanalytics"),
-        os.path.join("/sdk", "ai", "azure-ai-doctranslation"),
+        os.path.join("/sdk", "textanalytics", "azure-ai-textanalytics"),
+        os.path.join("/sdk", "translation", "azure-ai-translation-document"),
         os.path.join("/sdk", "compute", "azure-mgmt-compute"),
         os.path.join("/sdk", "communication", "azure-communication-chat"),
         os.path.join("/sdk", "communication", "azure-communication-identity"),
@@ -34,7 +34,7 @@ additional_pr_triggers: Dict[str, List[str]] = {
     "azure-mgmt-core": [
         os.path.join("/sdk", "compute", "azure-mgmt-compute"),
         os.path.join("/sdk", "network", "azure-mgmt-network"),
-        os.path.join("/sdk", "resource", "azure-mgmt-resource"),
+        os.path.join("/sdk", "resources", "azure-mgmt-resource"),
         os.path.join("/sdk", "keyvault", "azure-mgmt-keyvault")
     ]
 }

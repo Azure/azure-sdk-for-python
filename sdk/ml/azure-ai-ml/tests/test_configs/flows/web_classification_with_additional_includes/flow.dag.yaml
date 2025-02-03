@@ -2,7 +2,7 @@ $schema: https://azuremlschemas.azureedge.net/promptflow/latest/Flow.schema.json
 inputs:
   url:
     type: string
-    default: https://www.microsoft.com/en-us/d/xbox-wireless-controller-stellar-shift-special-edition/94fbjc7h0h6h
+    default: https://www.microsoft.com/d/xbox-wireless-controller-stellar-shift-special-edition/94fbjc7h0h6h
 outputs:
   category:
     type: string

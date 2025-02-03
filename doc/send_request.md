@@ -206,10 +206,10 @@ You can file issues [here][issues] in our repo.
 [bearer_token_credential_policy]: https://docs.microsoft.com/python/api/azure-core/azure.core.pipeline.policies.bearertokencredentialpolicy?view=azure-python
 [azure_key_credential_policy]: https://docs.microsoft.com/python/api/azure-core/azure.core.pipeline.policies.azurekeycredentialpolicy?view=azure-python
 [azure_core_exceptions]: https://docs.microsoft.com/python/api/azure-core/azure.core.exceptions?view=azure-python
-[azure_core_http_request]: https://docsupport.blob.core.windows.net/$web/azure-core/azure.core.html#azure.core.protocol.HttpRequest
-[azure_core_http_response]: https://docsupport.blob.core.windows.net/$web/azure-core/azure.core.html#azure.core.protocol.HttpResponse
-[azure_core_async_http_response]: https://docsupport.blob.core.windows.net/$web/azure-core/azure.core.html#azure.core.protocol.AsyncHttpResponse
-[azure_core_raise_for_status]: https://docsupport.blob.core.windows.net/$web/azure-core/azure.core.html#azure.core.protocol.HttpResponse.raise_for_status
+[azure_core_http_request]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.HttpRequest
+[azure_core_http_response]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.HttpResponse
+[azure_core_async_http_response]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.AsyncHttpResponse
+[azure_core_raise_for_status]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.AsyncHttpResponse.raise_for_status
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/

@@ -30,7 +30,6 @@ exclude = [
   "tests",
   "downloaded",
   "setup.py",
-  "samples",
   "azure/ai/ml/_utils",
   "azure/ai/ml/exceptions.py",
   "azure/ai/ml/_exception_helper.py",

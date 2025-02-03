@@ -23,7 +23,7 @@ pip install azure-health-deidentification
 
 ### Create a Deidentification Service
 If you wish to create a new storage account, you can use the
-[Azure Portal](https://docs.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal).
+[Azure Portal](https://learn.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal).
 
 ### Create the client
 In order to create a Deidentification client you must obtain the **Service URL** from your Azure Deidentification Service

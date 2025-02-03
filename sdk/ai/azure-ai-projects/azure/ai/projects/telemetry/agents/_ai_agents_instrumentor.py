@@ -1,7 +1,4 @@
 # pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
-# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -19,7 +16,7 @@ from urllib.parse import urlparse
 from azure.ai.projects import _types
 from azure.ai.projects.models import AgentRunStream, AsyncAgentRunStream, _models
 from azure.ai.projects.models._enums import AgentsApiResponseFormatMode, MessageRole, RunStepStatus
-from azure.ai.projects.models._models import (
+from azure.ai.projects.models import (
     MessageAttachment,
     MessageDeltaChunk,
     MessageIncompleteDetails,
@@ -443,6 +440,8 @@ class _AIAgentsInstrumentorPreview:
         if isinstance(response_format, AgentsApiResponseFormatMode):
             return response_format.value
         if isinstance(response_format, _models.AgentsApiResponseFormat):
+            return response_format.type
+        if isinstance(response_format, _models.ResponseFormatJsonSchemaType):
             return response_format.type
         raise ValueError(f"Unknown response format {type(response_format)}")
 

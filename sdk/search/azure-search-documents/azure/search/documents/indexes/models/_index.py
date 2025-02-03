@@ -294,6 +294,7 @@ class SearchField(_serialization.Model):
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
+
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
         :rtype: dict
@@ -307,7 +308,7 @@ class SearchField(_serialization.Model):
         :param str data: A str using RestAPI structure. JSON by default.
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchField instance
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         return cls._from_generated(_SearchField.deserialize(data, content_type=content_type))
 
@@ -346,7 +347,7 @@ class SearchField(_serialization.Model):
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchField instance
         :rtype: SearchField
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         return cls._from_generated(
             _SearchField.from_dict(data, content_type=content_type, key_extractors=key_extractors)
@@ -586,8 +587,7 @@ def ComplexField(
     fields: Optional[List[SearchField]] = None,
     **kw  # pylint:disable=unused-argument
 ) -> SearchField:
-    """Configure a Complex or Complex collection field for an Azure Search
-    Index
+    """Configure a Complex or Complex collection field for an Azure Search Index
 
     :keyword name: Required. The name of the field, which must be unique within the fields collection
         of the index or parent field.
@@ -781,6 +781,7 @@ class SearchIndex(_serialization.Model):
 
     def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
+
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
         :rtype: dict
@@ -795,7 +796,7 @@ class SearchIndex(_serialization.Model):
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndex instance
         :rtype: SearchIndex
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         return cls._from_generated(_SearchIndex.deserialize(data, content_type=content_type))
 
@@ -834,7 +835,7 @@ class SearchIndex(_serialization.Model):
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndex instance
         :rtype: SearchIndex
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         return cls._from_generated(
             _SearchIndex.from_dict(data, content_type=content_type, key_extractors=key_extractors)

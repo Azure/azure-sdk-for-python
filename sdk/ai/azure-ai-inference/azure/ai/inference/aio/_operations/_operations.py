@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-locals
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -41,7 +41,7 @@ from .._vendor import ChatCompletionsClientMixinABC, EmbeddingsClientMixinABC, I
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
 T = TypeVar("T")
@@ -63,7 +63,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
     async def _complete(
         self,
         *,
-        messages: List[_models.ChatRequestMessage],
+        messages: List[_models._models.ChatRequestMessage],
         extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
         content_type: str = "application/json",
         frequency_penalty: Optional[float] = None,
@@ -72,7 +72,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[_models._models.ChatCompletionsResponseFormat] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -97,7 +97,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        messages: List[_models.ChatRequestMessage] = _Unset,
+        messages: List[_models._models.ChatRequestMessage] = _Unset,
         extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
         frequency_penalty: Optional[float] = None,
         stream_parameter: Optional[bool] = None,
@@ -105,7 +105,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
+        response_format: Optional[_models._models.ChatCompletionsResponseFormat] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
@@ -115,7 +115,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         model: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ChatCompletions:
-        # pylint: disable=too-many-locals
         """Gets chat completions for the provided chat messages.
         Completions support a wide variety of tasks and generate text that continues from or
         "completes"
@@ -129,7 +128,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
          Typical usage begins with a chat message for the System role that provides instructions for
          the behavior of the assistant, followed by alternating messages between the User and
          Assistant roles. Required.
-        :paramtype messages: list[~azure.ai.inference.models.ChatRequestMessage]
+        :paramtype messages: list[~azure.ai.inference.models._models.ChatRequestMessage]
         :keyword extra_params: Controls what happens if extra parameters, undefined by the REST API,
          are passed in the JSON request payload.
          This sets the HTTP request header ``extra-parameters``. Known values are: "error", "drop", and
@@ -172,12 +171,21 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         :paramtype top_p: float
         :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
         :paramtype max_tokens: int
-        :keyword response_format: The format that the model must output. Use this to enable JSON mode
-         instead of the default text mode.
-         Note that to enable JSON mode, some AI models may also require you to instruct the model to
-         produce JSON
-         via a system or user message. Default value is None.
-        :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
+        :keyword response_format: An object specifying the format that the model must output.
+
+         Setting to ``{ "type": "json_schema", "json_schema": {...} }`` enables Structured Outputs
+         which ensures the model will match your supplied JSON schema.
+
+         Setting to ``{ "type": "json_object" }`` enables JSON mode, which ensures the message the
+         model generates is valid JSON.
+
+         **Important:** when using JSON mode, you **must** also instruct the model to produce JSON
+         yourself via a system or user message. Without this, the model may generate an unending stream
+         of whitespace until the generation reaches the token limit, resulting in a long-running and
+         seemingly "stuck" request. Also note that the message content may be partially cut off if
+         ``finish_reason="length"``\\ , which indicates the generation exceeded ``max_tokens`` or the
+         conversation exceeded the max context length. Default value is None.
+        :paramtype response_format: ~azure.ai.inference.models._models.ChatCompletionsResponseFormat
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
         :paramtype stop: list[str]
@@ -204,7 +212,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         :rtype: ~azure.ai.inference.models.ChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -294,7 +302,7 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -425,7 +433,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -507,7 +515,7 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -572,7 +580,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
     async def _embed(
         self,
         *,
-        input: List[_models.EmbeddingInput],
+        input: List[_models.ImageEmbeddingInput],
         extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
         content_type: str = "application/json",
         dimensions: Optional[int] = None,
@@ -596,7 +604,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        input: List[_models.EmbeddingInput] = _Unset,
+        input: List[_models.ImageEmbeddingInput] = _Unset,
         extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
         dimensions: Optional[int] = None,
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
@@ -612,7 +620,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         :keyword input: Input image to embed. To embed multiple inputs in a single request, pass an
          array.
          The input must not exceed the max input tokens for the model. Required.
-        :paramtype input: list[~azure.ai.inference.models.EmbeddingInput]
+        :paramtype input: list[~azure.ai.inference.models.ImageEmbeddingInput]
         :keyword extra_params: Controls what happens if extra parameters, undefined by the REST API,
          are passed in the JSON request payload.
          This sets the HTTP request header ``extra-parameters``. Known values are: "error", "drop", and
@@ -641,7 +649,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         :rtype: ~azure.ai.inference.models.EmbeddingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -723,7 +731,7 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         :rtype: ~azure.ai.inference.models.ModelInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

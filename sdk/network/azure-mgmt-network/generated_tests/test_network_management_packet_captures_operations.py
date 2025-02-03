@@ -20,7 +20,7 @@ class TestNetworkManagementPacketCapturesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create(self, resource_group):
+    def test_packet_captures_begin_create(self, resource_group):
         response = self.client.packet_captures.begin_create(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
@@ -45,7 +45,7 @@ class TestNetworkManagementPacketCapturesOperations(AzureMgmtRecordedTestCase):
                 "timeLimitInSeconds": 18000,
                 "totalBytesPerSession": 1073741824,
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -53,12 +53,12 @@ class TestNetworkManagementPacketCapturesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_packet_captures_get(self, resource_group):
         response = self.client.packet_captures.get(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             packet_capture_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -66,12 +66,12 @@ class TestNetworkManagementPacketCapturesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_packet_captures_begin_delete(self, resource_group):
         response = self.client.packet_captures.begin_delete(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             packet_capture_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -79,12 +79,12 @@ class TestNetworkManagementPacketCapturesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_stop(self, resource_group):
+    def test_packet_captures_begin_stop(self, resource_group):
         response = self.client.packet_captures.begin_stop(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             packet_capture_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -92,12 +92,12 @@ class TestNetworkManagementPacketCapturesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_get_status(self, resource_group):
+    def test_packet_captures_begin_get_status(self, resource_group):
         response = self.client.packet_captures.begin_get_status(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             packet_capture_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -105,11 +105,11 @@ class TestNetworkManagementPacketCapturesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_packet_captures_list(self, resource_group):
         response = self.client.packet_captures.list(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

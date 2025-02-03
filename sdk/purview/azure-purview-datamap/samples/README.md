@@ -39,4 +39,4 @@ pip install azure-purview-datamap
 
 [product_documentation]: https://azure.microsoft.com/services/purview/
 [azure_subscription]: https://azure.microsoft.com/free/
-[purview_resource]: https://docs.microsoft.com/azure/purview/create-catalog-portal
+[purview_resource]: https://learn.microsoft.com/azure/purview/create-catalog-portal

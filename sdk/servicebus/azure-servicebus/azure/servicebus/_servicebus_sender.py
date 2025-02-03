@@ -48,7 +48,6 @@ if TYPE_CHECKING:
     )
 
     try:
-        # pylint:disable=unused-import
         from uamqp import SendClient as uamqp_SendClientSync
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
     except ImportError:
@@ -204,7 +203,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return self
 
     @classmethod
-    def _from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusSender":
+    def _from_connection_string(cls, conn_str: str, **kwargs: Any # pylint: disable=docstring-keyword-should-match-keyword-only
+                                )-> "ServiceBusSender":
         """Create a ServiceBusSender from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
@@ -252,7 +252,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
 
     def _open(self):
-        # pylint: disable=protected-access
         if self._running:
             return
         if self._handler:
@@ -280,7 +279,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self,
         message: Union[ServiceBusMessage, ServiceBusMessageBatch],
         timeout: Optional[float] = None,
-        last_exception: Optional[Exception] = None,  # pylint: disable=unused-argument
+        last_exception: Optional[Exception] = None,
     ) -> None:
         self._amqp_transport.send_messages(self, message, _LOGGER, timeout=timeout, last_exception=last_exception)
 
@@ -316,7 +315,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         """
         if kwargs:
             warnings.warn(f"Unsupported keyword args: {kwargs}")
-        # pylint: disable=protected-access
 
         self._check_live()
         obj_messages = transform_outbound_messages(
@@ -430,7 +428,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             raise ValueError("The timeout must be greater than 0.")
 
         try:  # Short circuit noop if an empty list or batch is provided.
-            if len(cast(Union[List, ServiceBusMessageBatch], message)) == 0:  # pylint: disable=len-as-condition
+            if len(cast(Union[List, ServiceBusMessageBatch], message)) == 0:
                 return
         except TypeError:  # continue if ServiceBusMessage
             pass

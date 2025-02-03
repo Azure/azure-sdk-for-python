@@ -33,6 +33,7 @@ from ._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from ._evaluator_operations import EvaluatorOperations
 from ._serverless_endpoint_operations import ServerlessEndpointOperations
 from ._marketplace_subscription_operations import MarketplaceSubscriptionOperations
+from ._capability_hosts_operations import CapabilityHostsOperations
 
 __all__ = [
     "ComputeOperations",
@@ -60,4 +61,5 @@ __all__ = [
     "MarketplaceSubscriptionOperations",
     "IndexOperations",
     "AzureOpenAIDeploymentOperations",
+    "CapabilityHostsOperations",
 ]

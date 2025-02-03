@@ -20,19 +20,19 @@ USAGE:
 
 import asyncio
 import os
-from azure.communication.phonenumbers.aio import (
-    PhoneNumbersClient
-)
+from azure.communication.phonenumbers.aio import PhoneNumbersClient
 
-connection_str = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
-phone_number = os.getenv("AZURE_PHONE_NUMBER") # e.g. "+18001234567"
+connection_str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+phone_number = os.getenv("AZURE_PHONE_NUMBER")  # e.g. "+18001234567"
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
+
 
 async def get_purchased_phone_number_information():
     async with phone_numbers_client:
         purchased_phone_number_information = await phone_numbers_client.get_purchased_phone_number(phone_number)
-    print('Phone number: ' + purchased_phone_number_information.phone_number)
-    print('Country code: ' + purchased_phone_number_information.country_code)
+    print("Phone number: " + purchased_phone_number_information.phone_number)
+    print("Country code: " + purchased_phone_number_information.country_code)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(get_purchased_phone_number_information())

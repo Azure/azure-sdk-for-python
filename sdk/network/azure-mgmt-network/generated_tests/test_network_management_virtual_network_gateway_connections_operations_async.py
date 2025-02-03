@@ -21,7 +21,7 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_virtual_network_gateway_connections_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.virtual_network_gateway_connections.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -47,7 +47,12 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
                             ],
                             "peerWeight": 0,
                         },
-                        "customRoutes": {"addressPrefixes": ["str"]},
+                        "customRoutes": {
+                            "addressPrefixes": ["str"],
+                            "ipamPoolPrefixAllocations": [
+                                {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                            ],
+                        },
                         "disableIPSecReplayProtection": bool,
                         "enableBgp": bool,
                         "enableBgpRouteTranslationForNat": bool,
@@ -127,11 +132,25 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
                                     "name": "str",
                                     "provisioningState": "str",
                                     "virtualNetworkGatewayPolicyGroups": [{"id": "str"}],
-                                    "vpnClientAddressPool": {"addressPrefixes": ["str"]},
+                                    "vpnClientAddressPool": {
+                                        "addressPrefixes": ["str"],
+                                        "ipamPoolPrefixAllocations": [
+                                            {
+                                                "allocatedAddressPrefixes": ["str"],
+                                                "id": "str",
+                                                "numberOfIpAddresses": "str",
+                                            }
+                                        ],
+                                    },
                                 }
                             ],
                             "vpnAuthenticationTypes": ["str"],
-                            "vpnClientAddressPool": {"addressPrefixes": ["str"]},
+                            "vpnClientAddressPool": {
+                                "addressPrefixes": ["str"],
+                                "ipamPoolPrefixAllocations": [
+                                    {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                                ],
+                            },
                             "vpnClientIpsecPolicies": [
                                 {
                                     "dhGroup": "str",
@@ -212,7 +231,12 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
                         "fqdn": "str",
                         "gatewayIpAddress": "str",
                         "id": "str",
-                        "localNetworkAddressSpace": {"addressPrefixes": ["str"]},
+                        "localNetworkAddressSpace": {
+                            "addressPrefixes": ["str"],
+                            "ipamPoolPrefixAllocations": [
+                                {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                            ],
+                        },
                         "location": "str",
                         "name": "str",
                         "provisioningState": "str",
@@ -260,7 +284,12 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
                             ],
                             "peerWeight": 0,
                         },
-                        "customRoutes": {"addressPrefixes": ["str"]},
+                        "customRoutes": {
+                            "addressPrefixes": ["str"],
+                            "ipamPoolPrefixAllocations": [
+                                {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                            ],
+                        },
                         "disableIPSecReplayProtection": bool,
                         "enableBgp": bool,
                         "enableBgpRouteTranslationForNat": bool,
@@ -340,11 +369,25 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
                                     "name": "str",
                                     "provisioningState": "str",
                                     "virtualNetworkGatewayPolicyGroups": [{"id": "str"}],
-                                    "vpnClientAddressPool": {"addressPrefixes": ["str"]},
+                                    "vpnClientAddressPool": {
+                                        "addressPrefixes": ["str"],
+                                        "ipamPoolPrefixAllocations": [
+                                            {
+                                                "allocatedAddressPrefixes": ["str"],
+                                                "id": "str",
+                                                "numberOfIpAddresses": "str",
+                                            }
+                                        ],
+                                    },
                                 }
                             ],
                             "vpnAuthenticationTypes": ["str"],
-                            "vpnClientAddressPool": {"addressPrefixes": ["str"]},
+                            "vpnClientAddressPool": {
+                                "addressPrefixes": ["str"],
+                                "ipamPoolPrefixAllocations": [
+                                    {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                                ],
+                            },
                             "vpnClientIpsecPolicies": [
                                 {
                                     "dhGroup": "str",
@@ -381,7 +424,7 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
                         "vpnType": "str",
                     },
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -390,11 +433,11 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_virtual_network_gateway_connections_get(self, resource_group):
         response = await self.client.virtual_network_gateway_connections.get(
             resource_group_name=resource_group.name,
             virtual_network_gateway_connection_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -402,12 +445,12 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_virtual_network_gateway_connections_begin_delete(self, resource_group):
         response = await (
             await self.client.virtual_network_gateway_connections.begin_delete(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_connection_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -416,13 +459,13 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update_tags(self, resource_group):
+    async def test_virtual_network_gateway_connections_begin_update_tags(self, resource_group):
         response = await (
             await self.client.virtual_network_gateway_connections.begin_update_tags(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_connection_name="str",
                 parameters={"tags": {"str": "str"}},
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -431,13 +474,13 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_set_shared_key(self, resource_group):
+    async def test_virtual_network_gateway_connections_begin_set_shared_key(self, resource_group):
         response = await (
             await self.client.virtual_network_gateway_connections.begin_set_shared_key(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_connection_name="str",
                 parameters={"value": "str", "id": "str"},
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -446,11 +489,11 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_shared_key(self, resource_group):
+    async def test_virtual_network_gateway_connections_get_shared_key(self, resource_group):
         response = await self.client.virtual_network_gateway_connections.get_shared_key(
             resource_group_name=resource_group.name,
             virtual_network_gateway_connection_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -458,10 +501,10 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_virtual_network_gateway_connections_list(self, resource_group):
         response = self.client.virtual_network_gateway_connections.list(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -469,13 +512,13 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_reset_shared_key(self, resource_group):
+    async def test_virtual_network_gateway_connections_begin_reset_shared_key(self, resource_group):
         response = await (
             await self.client.virtual_network_gateway_connections.begin_reset_shared_key(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_connection_name="str",
                 parameters={"keyLength": 0},
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -484,12 +527,12 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_start_packet_capture(self, resource_group):
+    async def test_virtual_network_gateway_connections_begin_start_packet_capture(self, resource_group):
         response = await (
             await self.client.virtual_network_gateway_connections.begin_start_packet_capture(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_connection_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -498,13 +541,13 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_stop_packet_capture(self, resource_group):
+    async def test_virtual_network_gateway_connections_begin_stop_packet_capture(self, resource_group):
         response = await (
             await self.client.virtual_network_gateway_connections.begin_stop_packet_capture(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_connection_name="str",
                 parameters={"sasUrl": "str"},
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -513,12 +556,12 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_get_ike_sas(self, resource_group):
+    async def test_virtual_network_gateway_connections_begin_get_ike_sas(self, resource_group):
         response = await (
             await self.client.virtual_network_gateway_connections.begin_get_ike_sas(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_connection_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -527,12 +570,12 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_reset_connection(self, resource_group):
+    async def test_virtual_network_gateway_connections_begin_reset_connection(self, resource_group):
         response = await (
             await self.client.virtual_network_gateway_connections.begin_reset_connection(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_connection_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -168,7 +168,7 @@ def evaluate(
     :paramtype data_mapping: Optional[Dict[str, str]]
     :keyword output_path: The local folder path to save evaluation artifacts to if set
     :paramtype output_path: Optional[str]
-    :keyword tracking_uri: Tracking uri to log evaluation results to AI Studio
+    :keyword tracking_uri: Tracking uri to log evaluation results to AI Foundry
     :paramtype tracking_uri: Optional[str]
     :return: A EvaluationResult object.
     :rtype: ~azure.ai.generative.evaluate.EvaluationResult

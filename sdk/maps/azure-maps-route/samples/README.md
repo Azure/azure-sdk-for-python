@@ -11,7 +11,7 @@ products:
 
 These code samples show common scenario operations with the Azure Maps Route client library.
 
-Authenticate the client with a Azure Maps Route [API Key Credential](https://docs.microsoft.com/azure/azure-maps/how-to-manage-account-keys):
+Authenticate the client with a Azure Maps Route [API Key Credential](https://learn.microsoft.com/azure/azure-maps/how-to-manage-account-keys):
 
 [samples authentication](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/sample_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/maps/azure-maps-route/samples/async_samples/sample_authentication_async.py))
 
@@ -53,9 +53,9 @@ Then for common Azure Maps Route operations:
 
 ## Next steps
 
-Check out the [API reference documentation](https://docs.microsoft.com/rest/api/maps/route)
+Check out the [API reference documentation](https://learn.microsoft.com/rest/api/maps/route)
 to learn more about what you can do with the Azure Maps Route client library.
 
 <!-- LINKS -->
 [azure_portal]: https://portal.azure.com
-[azure_cli]: https://docs.microsoft.com/cli/azure
+[azure_cli]: https://learn.microsoft.com/cli/azure

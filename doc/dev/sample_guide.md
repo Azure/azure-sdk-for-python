@@ -51,7 +51,7 @@ The given `START`/`END` keywords can be used in a [sphinx literalinclude][sphinx
 
 [Literalinclude example][literalinclude]
 
-The rendered code snippets are sensitive to the indentation in the sample file. Adjust the `dedent` accordingly to ensure the sample is captured accurately and not accidentally trimmed.
+The rendered code snippets are sensitive to the indentation in the sample file. Sphinx will adjust the dedent accordingly to ensure the sample is captured accurately and not accidentally trimmed.
 You can preview how published reference documentation will look by running [tox][tox]: `tox run -e sphinx -c ../../../eng/tox/tox.ini --root <path to python package>`.
 
 ## Test run samples in CI live tests

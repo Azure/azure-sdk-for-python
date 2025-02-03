@@ -20,12 +20,12 @@ class TestNetworkManagementSubnetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_subnets_begin_delete(self, resource_group):
         response = self.client.subnets.begin_delete(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             subnet_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestNetworkManagementSubnetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_subnets_get(self, resource_group):
         response = self.client.subnets.get(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             subnet_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestNetworkManagementSubnetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_subnets_begin_create_or_update(self, resource_group):
         response = self.client.subnets.begin_create_or_update(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
@@ -147,6 +147,9 @@ class TestNetworkManagementSubnetsOperations(AzureMgmtRecordedTestCase):
                         "subnet": ...,
                     }
                 ],
+                "ipamPoolPrefixAllocations": [
+                    {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                ],
                 "name": "str",
                 "natGateway": {"id": "str"},
                 "networkSecurityGroup": {
@@ -238,6 +241,7 @@ class TestNetworkManagementSubnetsOperations(AzureMgmtRecordedTestCase):
                         {
                             "auxiliaryMode": "str",
                             "auxiliarySku": "str",
+                            "defaultOutboundConnectivityEnabled": bool,
                             "disableTcpStateTracking": bool,
                             "dnsSettings": {
                                 "appliedDnsServers": ["str"],
@@ -1159,6 +1163,7 @@ class TestNetworkManagementSubnetsOperations(AzureMgmtRecordedTestCase):
                             {
                                 "auxiliaryMode": "str",
                                 "auxiliarySku": "str",
+                                "defaultOutboundConnectivityEnabled": bool,
                                 "disableTcpStateTracking": bool,
                                 "dnsSettings": {
                                     "appliedDnsServers": ["str"],
@@ -2098,7 +2103,7 @@ class TestNetworkManagementSubnetsOperations(AzureMgmtRecordedTestCase):
                 "sharingScope": "str",
                 "type": "str",
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2106,7 +2111,7 @@ class TestNetworkManagementSubnetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_prepare_network_policies(self, resource_group):
+    def test_subnets_begin_prepare_network_policies(self, resource_group):
         response = self.client.subnets.begin_prepare_network_policies(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
@@ -2127,7 +2132,7 @@ class TestNetworkManagementSubnetsOperations(AzureMgmtRecordedTestCase):
                 ],
                 "serviceName": "str",
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2135,13 +2140,13 @@ class TestNetworkManagementSubnetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_unprepare_network_policies(self, resource_group):
+    def test_subnets_begin_unprepare_network_policies(self, resource_group):
         response = self.client.subnets.begin_unprepare_network_policies(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             subnet_name="str",
             unprepare_network_policies_request_parameters={"serviceName": "str"},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2149,11 +2154,11 @@ class TestNetworkManagementSubnetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_subnets_list(self, resource_group):
         response = self.client.subnets.list(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

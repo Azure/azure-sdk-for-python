@@ -17,7 +17,7 @@ from .._authentication import _HttpChallenge, AzureSasCredentialPolicy, SharedKe
 class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
     """Adds a bearer token Authorization header to requests, for the tenant provided in authentication challenges.
 
-    See https://docs.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on AAD
+    See https://learn.microsoft.com/azure/active-directory/develop/claims-challenge for documentation on AAD
     authentication challenges.
 
     :param credential: The credential.
@@ -65,9 +65,15 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
             return False
 
         if self._discover_tenant:
-            await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+            if isinstance(scope, str):
+                await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+            else:
+                await self.authorize_request(request, *scope, tenant_id=challenge.tenant_id)
         else:
-            await self.authorize_request(request, scope)
+            if isinstance(scope, str):
+                await self.authorize_request(request, scope)
+            else:
+                await self.authorize_request(request, *scope)
         return True
 
 

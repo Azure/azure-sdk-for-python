@@ -70,7 +70,7 @@ class ValidationCheckPoller(LoadTestingPollingMethod):
         self._initial_response = None
         self._polling_interval = interval
         self._status = None
-        self._termination_statuses = ["VALIDATION_SUCCESS", "VALIDATION_FAILED", "VALIDATION_NOT_REQUIRED"]
+        self._termination_statuses = ["VALIDATION_SUCCESS", "VALIDATION_FAILURE", "NOT_VALIDATED", "VALIDATION_NOT_REQUIRED"]
 
     def _update_status(self) -> None:
         self._status = self._resource["validationStatus"]

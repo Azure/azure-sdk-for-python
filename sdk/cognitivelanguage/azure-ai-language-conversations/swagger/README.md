@@ -140,7 +140,7 @@ directive:
 - from: swagger-document
   where: $.info
   transform: |
-    $["description"] = "The language service conversations API is a suite of natural language processing (NLP) skills that can be used to analyze structured conversations (textual or spoken). Further documentation can be found in https://docs.microsoft.com/azure/cognitive-services/language-service/overview.";
+    $["description"] = "The language service conversations API is a suite of natural language processing (NLP) skills that can be used to analyze structured conversations (textual or spoken). Further documentation can be found in https://learn.microsoft.com/azure/cognitive-services/language-service/overview.";
 
 # Fix Endpoint parameter description and format.
 - from: swagger-document

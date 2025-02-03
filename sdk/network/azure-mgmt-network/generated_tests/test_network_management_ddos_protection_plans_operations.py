@@ -20,11 +20,11 @@ class TestNetworkManagementDdosProtectionPlansOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_ddos_protection_plans_begin_delete(self, resource_group):
         response = self.client.ddos_protection_plans.begin_delete(
             resource_group_name=resource_group.name,
             ddos_protection_plan_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -32,11 +32,11 @@ class TestNetworkManagementDdosProtectionPlansOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_ddos_protection_plans_get(self, resource_group):
         response = self.client.ddos_protection_plans.get(
             resource_group_name=resource_group.name,
             ddos_protection_plan_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -44,7 +44,7 @@ class TestNetworkManagementDdosProtectionPlansOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_ddos_protection_plans_begin_create_or_update(self, resource_group):
         response = self.client.ddos_protection_plans.begin_create_or_update(
             resource_group_name=resource_group.name,
             ddos_protection_plan_name="str",
@@ -60,7 +60,7 @@ class TestNetworkManagementDdosProtectionPlansOperations(AzureMgmtRecordedTestCa
                 "type": "str",
                 "virtualNetworks": [{"id": "str"}],
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -68,12 +68,12 @@ class TestNetworkManagementDdosProtectionPlansOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update_tags(self, resource_group):
+    def test_ddos_protection_plans_update_tags(self, resource_group):
         response = self.client.ddos_protection_plans.update_tags(
             resource_group_name=resource_group.name,
             ddos_protection_plan_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -81,9 +81,9 @@ class TestNetworkManagementDdosProtectionPlansOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_ddos_protection_plans_list(self, resource_group):
         response = self.client.ddos_protection_plans.list(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -91,10 +91,10 @@ class TestNetworkManagementDdosProtectionPlansOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_ddos_protection_plans_list_by_resource_group(self, resource_group):
         response = self.client.ddos_protection_plans.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

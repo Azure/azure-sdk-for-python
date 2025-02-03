@@ -14,7 +14,7 @@ import mlflow
 import mlflow.sklearn
 
 # Based on example:
-# https://docs.microsoft.com/en-us/azure/machine-learning/how-to-train-cli
+# https://learn.microsoft.com/azure/machine-learning/how-to-train-cli
 # which references
 # https://github.com/Azure/azureml-examples/tree/main/cli/jobs/train/lightgbm/iris
 

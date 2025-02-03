@@ -20,12 +20,12 @@ class TestNetworkManagementPrivateDnsZoneGroupsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_private_dns_zone_groups_begin_delete(self, resource_group):
         response = self.client.private_dns_zone_groups.begin_delete(
             resource_group_name=resource_group.name,
             private_endpoint_name="str",
             private_dns_zone_group_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestNetworkManagementPrivateDnsZoneGroupsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_private_dns_zone_groups_get(self, resource_group):
         response = self.client.private_dns_zone_groups.get(
             resource_group_name=resource_group.name,
             private_endpoint_name="str",
             private_dns_zone_group_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestNetworkManagementPrivateDnsZoneGroupsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_private_dns_zone_groups_begin_create_or_update(self, resource_group):
         response = self.client.private_dns_zone_groups.begin_create_or_update(
             resource_group_name=resource_group.name,
             private_endpoint_name="str",
@@ -73,7 +73,7 @@ class TestNetworkManagementPrivateDnsZoneGroupsOperations(AzureMgmtRecordedTestC
                 ],
                 "provisioningState": "str",
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -81,11 +81,11 @@ class TestNetworkManagementPrivateDnsZoneGroupsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_private_dns_zone_groups_list(self, resource_group):
         response = self.client.private_dns_zone_groups.list(
             private_endpoint_name="str",
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

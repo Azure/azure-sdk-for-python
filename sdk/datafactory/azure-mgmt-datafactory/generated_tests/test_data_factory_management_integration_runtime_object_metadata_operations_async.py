@@ -21,7 +21,7 @@ class TestDataFactoryManagementIntegrationRuntimeObjectMetadataOperationsAsync(A
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_refresh(self, resource_group):
+    async def test_integration_runtime_object_metadata_begin_refresh(self, resource_group):
         response = await (
             await self.client.integration_runtime_object_metadata.begin_refresh(
                 resource_group_name=resource_group.name,
@@ -36,7 +36,7 @@ class TestDataFactoryManagementIntegrationRuntimeObjectMetadataOperationsAsync(A
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_integration_runtime_object_metadata_get(self, resource_group):
         response = await self.client.integration_runtime_object_metadata.get(
             resource_group_name=resource_group.name,
             factory_name="str",

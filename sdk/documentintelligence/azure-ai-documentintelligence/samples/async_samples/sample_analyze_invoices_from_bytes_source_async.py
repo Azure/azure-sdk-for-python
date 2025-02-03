@@ -48,7 +48,7 @@ async def analyze_invoice():
     async with document_intelligence_client:
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_intelligence_client.begin_analyze_document(
-                "prebuilt-invoice", analyze_request=AnalyzeDocumentRequest(bytes_source=f.read()), locale="en-US"
+                "prebuilt-invoice", body=AnalyzeDocumentRequest(bytes_source=f.read()), locale="en-US"
             )
         invoices: AnalyzeResult = await poller.result()
 

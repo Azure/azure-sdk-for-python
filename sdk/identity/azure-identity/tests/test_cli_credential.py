@@ -230,6 +230,18 @@ def test_unexpected_error(get_token_method):
                 getattr(AzureCliCredential(), get_token_method)("scope")
 
 
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_unexpected_error_no_stderr(get_token_method):
+    """When the CLI returns an unexpected error with no stderr captured, the credential should raise an error with a str output"""
+
+    stderr = None
+    default_message = "Failed to invoke Azure CLI"
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(CHECK_OUTPUT, raise_called_process_error(42, stderr=stderr)):
+            with pytest.raises(ClientAuthenticationError, match=stderr):
+                getattr(AzureCliCredential(), get_token_method)("scope")
+
+
 @pytest.mark.parametrize("output,get_token_method", product(TEST_ERROR_OUTPUTS, GET_TOKEN_METHODS))
 def test_parsing_error_does_not_expose_token(output, get_token_method):
     """Errors during CLI output parsing shouldn't expose access tokens in that output"""

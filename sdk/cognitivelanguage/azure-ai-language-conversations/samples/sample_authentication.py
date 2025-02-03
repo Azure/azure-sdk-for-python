@@ -15,7 +15,7 @@ DESCRIPTION:
     azure-identity client library.
 
     See more details about authentication here:
-    https://docs.microsoft.com/azure/cognitive-services/authentication
+    https://learn.microsoft.com/azure/cognitive-services/authentication
 
     Note: the endpoint must be formatted to use the custom domain name for your resource:
     https://<NAME-OF-YOUR-RESOURCE>.cognitiveservices.azure.com/

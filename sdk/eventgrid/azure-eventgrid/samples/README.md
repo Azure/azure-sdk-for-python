@@ -72,7 +72,7 @@ To publish events, dict representation of the models could also be used as follo
 
 [python-eg-sample-consume-custom-payload]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/basic/sync_samples/sample_consume_custom_payload.py
 
-[publisher-service-doc]: https://docs.microsoft.com/azure/event-grid/concepts
+[publisher-service-doc]: https://learn.microsoft.com/azure/event-grid/concepts
 
 
 [python-eg-namespace-authenticate]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/namespace/sync_samples/sample_namespace_authentication.py

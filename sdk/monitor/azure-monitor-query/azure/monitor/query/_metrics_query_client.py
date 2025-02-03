@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=anomalous-backslash-in-string
 from datetime import timedelta, datetime
 from typing import Any, cast, Optional, Tuple, Union, Sequence
 
@@ -240,8 +239,8 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         return self._client.close()
 
     def __enter__(self) -> "MetricsQueryClient":
-        self._client.__enter__()  # pylint:disable=no-member
+        self._client.__enter__()
         return self
 
     def __exit__(self, *args: Any) -> None:
-        self._client.__exit__(*args)  # pylint:disable=no-member
+        self._client.__exit__(*args)

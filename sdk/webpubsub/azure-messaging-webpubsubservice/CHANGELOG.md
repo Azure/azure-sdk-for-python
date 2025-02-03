@@ -3,6 +3,7 @@
 ## 1.2.2 (Unreleased)
 
 ### Features Added
+- Added support for SocketIO when generating client access token
 
 ### Breaking Changes
 

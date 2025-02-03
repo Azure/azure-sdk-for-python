@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0b4 (Unreleased)
+## 2.0.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,13 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 2.0.0 (2025-01-06)
+
+### Features Added
+
+* Added support for load balancing between replicas.
+* Added support for adding telemetry information to feature flags.
 
 ## 2.0.0b3 (2024-11-13)
 

@@ -3,14 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 from datetime import date
 
-from .parser import _str, _to_utc_datetime
+from .parser import _to_utc_datetime
 from .constants import X_MS_VERSION
 from . import sign_string, url_quote
 
-
+# cspell:ignoreRegExp rsc.
+# cspell:ignoreRegExp s..?id
 class QueryStringConstants(object):
     SIGNED_SIGNATURE = 'sig'
     SIGNED_PERMISSION = 'sp'
@@ -38,6 +40,7 @@ class QueryStringConstants(object):
     SIGNED_KEY_EXPIRY = 'ske'
     SIGNED_KEY_SERVICE = 'sks'
     SIGNED_KEY_VERSION = 'skv'
+    SIGNED_ENCRYPTION_SCOPE = 'ses'
 
     # for ADLS
     SIGNED_AUTHORIZED_OID = 'saoid'
@@ -74,6 +77,7 @@ class QueryStringConstants(object):
             QueryStringConstants.SIGNED_KEY_EXPIRY,
             QueryStringConstants.SIGNED_KEY_SERVICE,
             QueryStringConstants.SIGNED_KEY_VERSION,
+            QueryStringConstants.SIGNED_ENCRYPTION_SCOPE,
             # for ADLS
             QueryStringConstants.SIGNED_AUTHORIZED_OID,
             QueryStringConstants.SIGNED_UNAUTHORIZED_OID,
@@ -103,13 +107,23 @@ class SharedAccessSignature(object):
         self.account_key = account_key
         self.x_ms_version = x_ms_version
 
-    def generate_account(self, services, resource_types, permission, expiry, start=None,
-                         ip=None, protocol=None):
+    def generate_account(
+        self, services,
+        resource_types,
+        permission,
+        expiry,
+        start=None,
+        ip=None,
+        protocol=None,
+        sts_hook=None,
+        **kwargs
+    ) -> str:
         '''
         Generates a shared access signature for the account.
         Use the returned signature with the sas_token parameter of the service
         or to create a new account object.
 
+        :param Any services: The specified services associated with the shared access signature.
         :param ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account
             SAS. You can combine values to provide access to more than one
@@ -132,9 +146,8 @@ class SharedAccessSignature(object):
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
-            storage service receives the request. Azure will always convert values
-            to UTC. If a date is passed in without timezone info, it is assumed to
-            be UTC.
+            storage service receives the request. The provided datetime will always
+            be interpreted as UTC.
         :type start: datetime or str
         :param str ip:
             Specifies an IP address or a range of IP addresses from which to accept requests.
@@ -145,11 +158,24 @@ class SharedAccessSignature(object):
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value
             is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
+        :keyword str encryption_scope:
+            Optional. If specified, this is the encryption scope to use when sending requests
+            authorized with this SAS URI.
+        :param sts_hook:
+            For debugging purposes only. If provided, the hook is called with the string to sign
+            that was used to generate the SAS.
+        :type sts_hook: Optional[Callable[[str], None]]
+        :returns: The generated SAS token for the account.
+        :rtype: str
         '''
         sas = _SharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_account(services, resource_types)
+        sas.add_encryption_scope(**kwargs)
         sas.add_account_signature(self.account_name, self.account_key)
+
+        if sts_hook is not None:
+            sts_hook(sas.string_to_sign)
 
         return sas.get_token()
 
@@ -157,10 +183,14 @@ class SharedAccessSignature(object):
 class _SharedAccessHelper(object):
     def __init__(self):
         self.query_dict = {}
+        self.string_to_sign = ""
 
     def _add_query(self, name, val):
         if val:
-            self.query_dict[name] = _str(val) if val is not None else None
+            self.query_dict[name] = str(val) if val is not None else None
+
+    def add_encryption_scope(self, **kwargs):
+        self._add_query(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE, kwargs.pop('encryption_scope', None))
 
     def add_base(self, permission, expiry, start, ip, protocol, x_ms_version):
         if isinstance(start, date):
@@ -211,10 +241,12 @@ class _SharedAccessHelper(object):
              get_value_to_append(QueryStringConstants.SIGNED_EXPIRY) +
              get_value_to_append(QueryStringConstants.SIGNED_IP) +
              get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
-             get_value_to_append(QueryStringConstants.SIGNED_VERSION))
+             get_value_to_append(QueryStringConstants.SIGNED_VERSION) +
+             get_value_to_append(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE))
 
         self._add_query(QueryStringConstants.SIGNED_SIGNATURE,
                         sign_string(account_key, string_to_sign))
+        self.string_to_sign = string_to_sign
 
-    def get_token(self):
-        return '&'.join(['{0}={1}'.format(n, url_quote(v)) for n, v in self.query_dict.items() if v is not None])
+    def get_token(self) -> str:
+        return '&'.join([f'{n}={url_quote(v)}' for n, v in self.query_dict.items() if v is not None])

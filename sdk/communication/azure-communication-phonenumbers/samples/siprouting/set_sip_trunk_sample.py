@@ -26,9 +26,11 @@ fqdn = os.getenv("COMMUNICATION_SAMPLES_TRUNK_FQDN")
 signaling_port = os.getenv("COMMUNICATION_SAMPLES_SIGNALING_PORT")
 client = SipRoutingClient.from_connection_string(connection_string)
 new_trunk = SipTrunk(fqdn=fqdn, sip_signaling_port=signaling_port)
-        
+
+
 def set_sip_trunk_sample():
     client.set_trunk(new_trunk)
-        
+
+
 if __name__ == "__main__":
     set_sip_trunk_sample()

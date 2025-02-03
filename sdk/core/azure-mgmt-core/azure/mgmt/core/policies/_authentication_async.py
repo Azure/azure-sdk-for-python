@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import cast, Awaitable, Optional, List, Union, Any
+from typing import Awaitable, Optional, List, Union, Any
 import inspect
 
 from azure.core.pipeline.policies import (
@@ -40,7 +40,7 @@ from azure.core.credentials import AccessToken
 from azure.core.credentials_async import AsyncTokenCredential
 
 
-from ._authentication import _parse_claims_challenge, _AuxiliaryAuthenticationPolicyBase
+from ._authentication import _AuxiliaryAuthenticationPolicyBase
 
 
 HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
@@ -66,32 +66,7 @@ class AsyncARMChallengeAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
 
     This policy internally handles Continuous Access Evaluation (CAE) challenges. When it can't complete a challenge,
     it will return the 401 (unauthorized) response from ARM.
-
-    :param ~azure.core.credentials.TokenCredential credential: credential for authorizing requests
-    :param str scopes: required authentication scopes
     """
-
-    # pylint:disable=unused-argument
-    async def on_challenge(
-        self,
-        request: PipelineRequest[HTTPRequestType],
-        response: PipelineResponse[HTTPRequestType, AsyncHTTPResponseType],
-    ) -> bool:
-        """Authorize request according to an ARM authentication challenge
-
-        :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
-        :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
-        :returns: a bool indicating whether the policy should send the request
-        :rtype: bool
-        """
-        # Casting, as the code seems to be certain that on_challenge this header will be present
-        challenge: str = cast(str, response.http_response.headers.get("WWW-Authenticate"))
-        claims = _parse_claims_challenge(challenge)
-        if claims:
-            await self.authorize_request(request, *self._scopes, claims=claims)
-            return True
-
-        return False
 
 
 class AsyncAuxiliaryAuthenticationPolicy(

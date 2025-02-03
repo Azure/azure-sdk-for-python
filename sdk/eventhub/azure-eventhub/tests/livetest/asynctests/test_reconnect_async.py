@@ -169,18 +169,8 @@ async def test_send_connection_idle_timeout_and_reconnect_async(
             await asyncio.sleep(11)
             ed = transform_outbound_single_message(ed, EventData, amqp_transport.to_outgoing_amqp_message)
             sender._unsent_events = [ed._message]
-            await sender._send_event_data()
-
-    retry = 0
-    while retry < 3:
-        try:
-            messages = receivers[0].receive_message_batch(max_batch_size=10, timeout=10 * timeout_factor)
-            if messages:
-                received_ed1 = EventData._from_message(messages[0])
-                assert received_ed1.body_as_str() == "data"
-                break
-        except timeout_exc:
-            retry += 1
+            with pytest.raises(error.AMQPConnectionError):
+                await sender._send_event_data()
 
 
 @pytest.mark.liveTest

@@ -16,7 +16,7 @@ These are code samples that show common scenario operations with the Device Upda
 ## Prerequisites
 
 * Python 3.6 or later is required to use this package
-* You need an [Azure subscription][https://azure.microsoft.com/free/], and a [Device Update for IoT Hub][https://docs.microsoft.com/azure/iot-hub-device-update/understand-device-update] 
+* You need an [Azure subscription][https://azure.microsoft.com/free/], and a [Device Update for IoT Hub][https://learn.microsoft.com/azure/iot-hub-device-update/understand-device-update] 
 account and instance to use this package.
 
 ## Setup

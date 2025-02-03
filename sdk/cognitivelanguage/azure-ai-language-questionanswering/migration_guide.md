@@ -487,7 +487,7 @@ see additional samples [here][qna_samples].
 [design_guidelines]: https://azure.github.io/azure-sdk/python/guidelines/index.html
 [python_specific_guidelines]: https://azure.github.io/azure-sdk/python_design.html
 [identity_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md
-[azure_key_credential]: https://docs.microsoft.com/python/api/azure-core/azure.core.credentials.azurekeycredential?view=azure-python
+[azure_key_credential]: https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.azurekeycredential?view=azure-python
 [aiohttp]: https://pypi.org/project/aiohttp/
 [azure_core_transport]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport
 [qna_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples

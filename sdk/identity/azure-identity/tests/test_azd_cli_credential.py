@@ -147,6 +147,17 @@ def test_unexpected_error(get_token_method):
                 getattr(AzureDeveloperCliCredential(), get_token_method)("scope")
 
 
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_unexpected_error_no_strerr(get_token_method):
+    """When the CLI returns an unexpected error with no stderr captured, the credential should raise an error with a str output"""
+    stderr = None
+    default_message = "Failed to invoke Azure Developer CLI"
+    with mock.patch("shutil.which", return_value="azd"):
+        with mock.patch(CHECK_OUTPUT, raise_called_process_error(42, stderr=stderr)):
+            with pytest.raises(ClientAuthenticationError, match=default_message):
+                getattr(AzureDeveloperCliCredential(), get_token_method)("scope")
+
+
 @pytest.mark.parametrize("output", TEST_ERROR_OUTPUTS)
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 def test_parsing_error_does_not_expose_token(output, get_token_method):

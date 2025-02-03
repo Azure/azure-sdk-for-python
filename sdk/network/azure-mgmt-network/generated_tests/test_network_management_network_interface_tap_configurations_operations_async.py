@@ -21,13 +21,13 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_network_interface_tap_configurations_begin_delete(self, resource_group):
         response = await (
             await self.client.network_interface_tap_configurations.begin_delete(
                 resource_group_name=resource_group.name,
                 network_interface_name="str",
                 tap_configuration_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -36,12 +36,12 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_network_interface_tap_configurations_get(self, resource_group):
         response = await self.client.network_interface_tap_configurations.get(
             resource_group_name=resource_group.name,
             network_interface_name="str",
             tap_configuration_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_network_interface_tap_configurations_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.network_interface_tap_configurations.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -136,6 +136,13 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                             }
                                         ],
                                         "ipConfigurations": [...],
+                                        "ipamPoolPrefixAllocations": [
+                                            {
+                                                "allocatedAddressPrefixes": ["str"],
+                                                "id": "str",
+                                                "numberOfIpAddresses": "str",
+                                            }
+                                        ],
                                         "name": "str",
                                         "natGateway": {"id": "str"},
                                         "networkSecurityGroup": {
@@ -229,6 +236,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                 {
                                                     "auxiliaryMode": "str",
                                                     "auxiliarySku": "str",
+                                                    "defaultOutboundConnectivityEnabled": bool,
                                                     "disableTcpStateTracking": bool,
                                                     "dnsSettings": {
                                                         "appliedDnsServers": ["str"],
@@ -672,6 +680,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                     {
                                                         "auxiliaryMode": "str",
                                                         "auxiliarySku": "str",
+                                                        "defaultOutboundConnectivityEnabled": bool,
                                                         "disableTcpStateTracking": bool,
                                                         "dnsSettings": {
                                                             "appliedDnsServers": ["str"],
@@ -1259,6 +1268,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                         "subnet": ...,
                                     }
                                 ],
+                                "ipamPoolPrefixAllocations": [
+                                    {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                                ],
                                 "name": "str",
                                 "natGateway": {"id": "str"},
                                 "networkSecurityGroup": {
@@ -1352,6 +1364,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                         {
                                             "auxiliaryMode": "str",
                                             "auxiliarySku": "str",
+                                            "defaultOutboundConnectivityEnabled": bool,
                                             "disableTcpStateTracking": bool,
                                             "dnsSettings": {
                                                 "appliedDnsServers": ["str"],
@@ -1849,6 +1862,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                             {
                                                 "auxiliaryMode": "str",
                                                 "auxiliarySku": "str",
+                                                "defaultOutboundConnectivityEnabled": bool,
                                                 "disableTcpStateTracking": bool,
                                                 "dnsSettings": {
                                                     "appliedDnsServers": ["str"],
@@ -2516,6 +2530,13 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                             }
                                         ],
                                         "ipConfigurations": [...],
+                                        "ipamPoolPrefixAllocations": [
+                                            {
+                                                "allocatedAddressPrefixes": ["str"],
+                                                "id": "str",
+                                                "numberOfIpAddresses": "str",
+                                            }
+                                        ],
                                         "name": "str",
                                         "natGateway": {"id": "str"},
                                         "networkSecurityGroup": {
@@ -2609,6 +2630,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                 {
                                                     "auxiliaryMode": "str",
                                                     "auxiliarySku": "str",
+                                                    "defaultOutboundConnectivityEnabled": bool,
                                                     "disableTcpStateTracking": bool,
                                                     "dnsSettings": {
                                                         "appliedDnsServers": ["str"],
@@ -2957,6 +2979,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                     {
                                                         "auxiliaryMode": "str",
                                                         "auxiliarySku": "str",
+                                                        "defaultOutboundConnectivityEnabled": bool,
                                                         "disableTcpStateTracking": bool,
                                                         "dnsSettings": {
                                                             "appliedDnsServers": ["str"],
@@ -3448,6 +3471,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                         "subnet": ...,
                                     }
                                 ],
+                                "ipamPoolPrefixAllocations": [
+                                    {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                                ],
                                 "name": "str",
                                 "natGateway": {"id": "str"},
                                 "networkSecurityGroup": {
@@ -3541,6 +3567,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                         {
                                             "auxiliaryMode": "str",
                                             "auxiliarySku": "str",
+                                            "defaultOutboundConnectivityEnabled": bool,
                                             "disableTcpStateTracking": bool,
                                             "dnsSettings": {
                                                 "appliedDnsServers": ["str"],
@@ -3947,6 +3974,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                             {
                                                 "auxiliaryMode": "str",
                                                 "auxiliarySku": "str",
+                                                "defaultOutboundConnectivityEnabled": bool,
                                                 "disableTcpStateTracking": bool,
                                                 "dnsSettings": {
                                                     "appliedDnsServers": ["str"],
@@ -4376,7 +4404,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                         "type": "str",
                     },
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -4385,11 +4413,11 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_network_interface_tap_configurations_list(self, resource_group):
         response = self.client.network_interface_tap_configurations.list(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

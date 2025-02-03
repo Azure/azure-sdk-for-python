@@ -21,7 +21,7 @@ class TestDataFactoryManagementExposureControlOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_feature_value(self, resource_group):
+    async def test_exposure_control_get_feature_value(self, resource_group):
         response = await self.client.exposure_control.get_feature_value(
             location_id="str",
             exposure_control_request={"featureName": "str", "featureType": "str"},
@@ -33,7 +33,7 @@ class TestDataFactoryManagementExposureControlOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_feature_value_by_factory(self, resource_group):
+    async def test_exposure_control_get_feature_value_by_factory(self, resource_group):
         response = await self.client.exposure_control.get_feature_value_by_factory(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -46,7 +46,7 @@ class TestDataFactoryManagementExposureControlOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_query_feature_values_by_factory(self, resource_group):
+    async def test_exposure_control_query_feature_values_by_factory(self, resource_group):
         response = await self.client.exposure_control.query_feature_values_by_factory(
             resource_group_name=resource_group.name,
             factory_name="str",

@@ -46,6 +46,7 @@ class AsyncHttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
     def parts(self):
         """DEPRECATED: Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
         This is deprecated and will be removed in a later release.
+
         :rtype: AsyncIterator
         :return: The parts of the response
         :raises ValueError: If the content is not multipart/mixed
@@ -95,6 +96,7 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
 
     async def iter_raw(self, **kwargs: Any) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
+
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """
@@ -105,6 +107,7 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
 
     async def iter_bytes(self, **kwargs: Any) -> AsyncIterator[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
+
         :return: An async iterator of bytes from the response
         :rtype: AsyncIterator[bytes]
         """

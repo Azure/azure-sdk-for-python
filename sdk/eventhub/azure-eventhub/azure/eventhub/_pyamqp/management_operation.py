@@ -94,7 +94,7 @@ class ManagementOperation(object):
 
         if self._mgmt_error:
             self._responses.pop(operation_id)
-            raise self._mgmt_error  # pylint: disable=raising-bad-type
+            raise self._mgmt_error
 
         response = self._responses.pop(operation_id)
         return response
@@ -105,7 +105,7 @@ class ManagementOperation(object):
 
     def ready(self):
         try:
-            raise self._mgmt_error  # pylint: disable=raising-bad-type
+            raise self._mgmt_error
         except TypeError:
             pass
 

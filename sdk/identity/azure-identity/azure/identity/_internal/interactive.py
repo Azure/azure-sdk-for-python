@@ -224,7 +224,7 @@ class InteractiveCredential(MsalCredential, ABC):
 
             # this may be the first authentication, or the user may have authenticated a different identity
             self._auth_record = _build_auth_record(result)
-        except Exception as ex:  # pylint:disable=broad-except
+        except Exception as ex:
             _LOGGER.warning(
                 "%s.%s failed: %s",
                 self.__class__.__name__,

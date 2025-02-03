@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from ... import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -180,7 +179,7 @@ class SubResource(_serialization.Model):
         self.type = None
 
 
-class AgentPool(SubResource):  # pylint: disable=too-many-instance-attributes
+class AgentPool(SubResource):
     """Agent Pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1289,7 +1288,7 @@ class ContainerServiceLinuxProfile(_serialization.Model):
         self.ssh = ssh
 
 
-class ContainerServiceNetworkProfile(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ContainerServiceNetworkProfile(_serialization.Model):
     """Profile of network configuration.
 
     :ivar network_plugin: Network plugin used for building the Kubernetes network. Known values
@@ -2168,7 +2167,7 @@ class IstioServiceMesh(_serialization.Model):
         self.revisions = revisions
 
 
-class KubeletConfig(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class KubeletConfig(_serialization.Model):
     """See `AKS custom node configuration
     <https://docs.microsoft.com/azure/aks/custom-node-configuration>`_ for more details.
 
@@ -2896,7 +2895,7 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class ManagedCluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class ManagedCluster(TrackedResource):
     """Managed cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3609,7 +3608,7 @@ class ManagedClusterAddonProfileIdentity(UserAssignedIdentity):
     """
 
 
-class ManagedClusterAgentPoolProfileProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ManagedClusterAgentPoolProfileProperties(_serialization.Model):
     """Properties for the container service agent pool profile.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4090,9 +4089,7 @@ class ManagedClusterAgentPoolProfileProperties(_serialization.Model):  # pylint:
         self.security_profile = security_profile
 
 
-class ManagedClusterAgentPoolProfile(
-    ManagedClusterAgentPoolProfileProperties
-):  # pylint: disable=too-many-instance-attributes
+class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     """Profile for the container service agent pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5781,9 +5778,7 @@ class ManagedClusterPoolUpgradeProfileUpgradesItem(_serialization.Model):  # pyl
         self.is_preview = is_preview
 
 
-class ManagedClusterPropertiesAutoScalerProfile(
-    _serialization.Model
-):  # pylint: disable=too-many-instance-attributes,name-too-long
+class ManagedClusterPropertiesAutoScalerProfile(_serialization.Model):  # pylint: disable=name-too-long
     """Parameters to be applied to the cluster-autoscaler when enabled.
 
     :ivar balance_similar_node_groups: Valid values are 'true' and 'false'.
@@ -6421,20 +6416,20 @@ class ManagedClusterWindowsProfile(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar admin_username: Specifies the name of the administrator account. :code:`<br>`:code:`<br>`
-     **Restriction:** Cannot end in "." :code:`<br>`:code:`<br>` **Disallowed values:**
-     "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3", "admin1", "1",
-     "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david", "guest",
-     "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys", "test2",
-     "test3", "user4", "user5". :code:`<br>`:code:`<br>` **Minimum-length:** 1 character
-     :code:`<br>`:code:`<br>` **Max-length:** 20 characters. Required.
+    :ivar admin_username: Specifies the name of the administrator account. :code:`<br>`\\
+     :code:`<br>` **Restriction:** Cannot end in "." :code:`<br>`\\ :code:`<br>` **Disallowed
+     values:** "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3",
+     "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david",
+     "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys",
+     "test2", "test3", "user4", "user5". :code:`<br>`\\ :code:`<br>` **Minimum-length:** 1 character
+     :code:`<br>`\\ :code:`<br>` **Max-length:** 20 characters. Required.
     :vartype admin_username: str
-    :ivar admin_password: Specifies the password of the administrator account.
-     :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
-     **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
-     conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
-     characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
-     :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
+    :ivar admin_password: Specifies the password of the administrator account. :code:`<br>`\\
+     :code:`<br>` **Minimum-length:** 8 characters :code:`<br>`\\ :code:`<br>` **Max-length:** 123
+     characters :code:`<br>`\\ :code:`<br>` **Complexity requirements:** 3 out of 4 conditions below
+     need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters
+     :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
+     :code:`<br>`\\ :code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
      "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
     :vartype admin_password: str
     :ivar license_type: The license type to use for Windows VMs. See `Azure Hybrid User Benefits
@@ -6471,20 +6466,20 @@ class ManagedClusterWindowsProfile(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword admin_username: Specifies the name of the administrator account.
-         :code:`<br>`:code:`<br>` **Restriction:** Cannot end in "." :code:`<br>`:code:`<br>`
-         **Disallowed values:** "administrator", "admin", "user", "user1", "test", "user2", "test1",
-         "user3", "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console",
-         "david", "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0",
-         "sys", "test2", "test3", "user4", "user5". :code:`<br>`:code:`<br>` **Minimum-length:** 1
-         character :code:`<br>`:code:`<br>` **Max-length:** 20 characters. Required.
+        :keyword admin_username: Specifies the name of the administrator account. :code:`<br>`\\
+         :code:`<br>` **Restriction:** Cannot end in "." :code:`<br>`\\ :code:`<br>` **Disallowed
+         values:** "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3",
+         "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup", "console", "david",
+         "guest", "john", "owner", "root", "server", "sql", "support", "support_388945a0", "sys",
+         "test2", "test3", "user4", "user5". :code:`<br>`\\ :code:`<br>` **Minimum-length:** 1 character
+         :code:`<br>`\\ :code:`<br>` **Max-length:** 20 characters. Required.
         :paramtype admin_username: str
-        :keyword admin_password: Specifies the password of the administrator account.
-         :code:`<br>`:code:`<br>` **Minimum-length:** 8 characters :code:`<br>`:code:`<br>`
-         **Max-length:** 123 characters :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4
-         conditions below need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper
-         characters :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
-         :code:`<br>`:code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
+        :keyword admin_password: Specifies the password of the administrator account. :code:`<br>`\\
+         :code:`<br>` **Minimum-length:** 8 characters :code:`<br>`\\ :code:`<br>` **Max-length:** 123
+         characters :code:`<br>`\\ :code:`<br>` **Complexity requirements:** 3 out of 4 conditions below
+         need to be fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters
+         :code:`<br>` Has a digit :code:`<br>` Has a special character (Regex match [\\W_])
+         :code:`<br>`\\ :code:`<br>` **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
          "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22", "iloveyou!".
         :paramtype admin_password: str
         :keyword license_type: The license type to use for Windows VMs. See `Azure Hybrid User Benefits
@@ -7578,7 +7573,7 @@ class ServiceMeshProfile(_serialization.Model):
         self.istio = istio
 
 
-class Snapshot(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Snapshot(TrackedResource):
     """A node pool snapshot resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7715,7 +7710,7 @@ class SnapshotListResult(_serialization.Model):
         self.next_link = None
 
 
-class SysctlConfig(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class SysctlConfig(_serialization.Model):
     """Sysctl settings for Linux agent nodes.
 
     :ivar net_core_somaxconn: Sysctl setting net.core.somaxconn.
@@ -8370,13 +8365,13 @@ class WindowsGmsaProfile(_serialization.Model):
 
     :ivar enabled: Specifies whether to enable Windows gMSA in the managed cluster.
     :vartype enabled: bool
-    :ivar dns_server: Specifies the DNS server for Windows gMSA. :code:`<br>`:code:`<br>` Set it to
-     empty if you have configured the DNS server in the vnet which is used to create the managed
+    :ivar dns_server: Specifies the DNS server for Windows gMSA. :code:`<br>`\\ :code:`<br>` Set it
+     to empty if you have configured the DNS server in the vnet which is used to create the managed
      cluster.
     :vartype dns_server: str
-    :ivar root_domain_name: Specifies the root domain name for Windows gMSA.
-     :code:`<br>`:code:`<br>` Set it to empty if you have configured the DNS server in the vnet
-     which is used to create the managed cluster.
+    :ivar root_domain_name: Specifies the root domain name for Windows gMSA. :code:`<br>`\\
+     :code:`<br>` Set it to empty if you have configured the DNS server in the vnet which is used to
+     create the managed cluster.
     :vartype root_domain_name: str
     """
 
@@ -8397,13 +8392,13 @@ class WindowsGmsaProfile(_serialization.Model):
         """
         :keyword enabled: Specifies whether to enable Windows gMSA in the managed cluster.
         :paramtype enabled: bool
-        :keyword dns_server: Specifies the DNS server for Windows gMSA. :code:`<br>`:code:`<br>` Set it
-         to empty if you have configured the DNS server in the vnet which is used to create the managed
-         cluster.
+        :keyword dns_server: Specifies the DNS server for Windows gMSA. :code:`<br>`\\ :code:`<br>` Set
+         it to empty if you have configured the DNS server in the vnet which is used to create the
+         managed cluster.
         :paramtype dns_server: str
-        :keyword root_domain_name: Specifies the root domain name for Windows gMSA.
-         :code:`<br>`:code:`<br>` Set it to empty if you have configured the DNS server in the vnet
-         which is used to create the managed cluster.
+        :keyword root_domain_name: Specifies the root domain name for Windows gMSA. :code:`<br>`\\
+         :code:`<br>` Set it to empty if you have configured the DNS server in the vnet which is used to
+         create the managed cluster.
         :paramtype root_domain_name: str
         """
         super().__init__(**kwargs)

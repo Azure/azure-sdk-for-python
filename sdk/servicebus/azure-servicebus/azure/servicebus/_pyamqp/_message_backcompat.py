@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-# pylint: disable=too-many-lines
 from enum import Enum
 from typing import (
     Callable,

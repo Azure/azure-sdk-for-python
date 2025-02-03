@@ -32,21 +32,12 @@ logging.getLogger().setLevel(logging.INFO)
 
 from typing import List
 
-
 def path_excluded(path, additional_excludes):
     return (
         any([excl in path for excl in additional_excludes])
         or "tests" in os.path.normpath(path).split(os.sep)
-        or is_metapackage(path)
+        or ParsedSetup.from_path(path).is_metapackage
     )
-
-
-# Metapackages do not have an 'azure' folder within them
-def is_metapackage(package_path):
-    dir_path = package_path if path.isdir(package_path) else path.split(package_path)[0]
-
-    azure_path = path.join(dir_path, "azure")
-    return not path.exists(azure_path)
 
 
 def get_setup_py_paths(glob_string, base_path, additional_excludes):

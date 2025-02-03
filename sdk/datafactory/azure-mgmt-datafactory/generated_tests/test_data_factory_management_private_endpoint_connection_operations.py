@@ -20,7 +20,7 @@ class TestDataFactoryManagementPrivateEndpointConnectionOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_private_endpoint_connection_create_or_update(self, resource_group):
         response = self.client.private_endpoint_connection.create_or_update(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -47,7 +47,7 @@ class TestDataFactoryManagementPrivateEndpointConnectionOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_private_endpoint_connection_get(self, resource_group):
         response = self.client.private_endpoint_connection.get(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -60,7 +60,7 @@ class TestDataFactoryManagementPrivateEndpointConnectionOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_private_endpoint_connection_delete(self, resource_group):
         response = self.client.private_endpoint_connection.delete(
             resource_group_name=resource_group.name,
             factory_name="str",

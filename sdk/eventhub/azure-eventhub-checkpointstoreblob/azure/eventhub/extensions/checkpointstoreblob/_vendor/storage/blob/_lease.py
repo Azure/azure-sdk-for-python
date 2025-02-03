@@ -3,60 +3,55 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import uuid
 
-from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, TypeVar, TYPE_CHECKING
-)
+from typing import Any, Optional, Union, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
-from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._shared.response_handlers import process_storage_error, return_response_headers
 from ._serialize import get_modify_conditions
 
 if TYPE_CHECKING:
+    from azure.storage.blob import BlobClient, ContainerClient
     from datetime import datetime
 
-    BlobClient = TypeVar("BlobClient")
-    ContainerClient = TypeVar("ContainerClient")
 
-
-class BlobLeaseClient(object):
+class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
     """Creates a new BlobLeaseClient.
 
     This client provides lease operations on a BlobClient or ContainerClient.
-
-    :ivar str id:
-        The ID of the lease currently being maintained. This will be `None` if no
-        lease has yet been acquired.
-    :ivar str etag:
-        The ETag of the lease currently being maintained. This will be `None` if no
-        lease has yet been acquired or modified.
-    :ivar ~datetime.datetime last_modified:
-        The last modified timestamp of the lease currently being maintained.
-        This will be `None` if no lease has yet been acquired or modified.
-
-    :param client:
-        The client of the blob or container to lease.
-    :type client: ~azure.storage.blob.BlobClient or
-        ~azure.storage.blob.ContainerClient
-    :param str lease_id:
-        A string representing the lease ID of an existing lease. This value does not
-        need to be specified in order to acquire a new lease, or break one.
+    :param client: The client of the blob or container to lease.
+    :type client: Union[BlobClient, ContainerClient]
+    :param lease_id: A string representing the lease ID of an existing lease. This value does not need to be
+    specified in order to acquire a new lease, or break one.
+    :type lease_id: Optional[str]
     """
-    def __init__(
-            self, client, lease_id=None
-    ):  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
-        # type: (Union[BlobClient, ContainerClient], Optional[str]) -> None
+
+    id: str
+    """The ID of the lease currently being maintained. This will be `None` if no
+    lease has yet been acquired."""
+    etag: Optional[str]
+    """The ETag of the lease currently being maintained. This will be `None` if no
+    lease has yet been acquired or modified."""
+    last_modified: Optional["datetime"]
+    """The last modified timestamp of the lease currently being maintained.
+    This will be `None` if no lease has yet been acquired or modified."""
+
+    def __init__( # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
+        self, client: Union["BlobClient", "ContainerClient"],
+        lease_id: Optional[str] = None
+    ) -> None:
         self.id = lease_id or str(uuid.uuid4())
         self.last_modified = None
         self.etag = None
         if hasattr(client, 'blob_name'):
-            self._client = client._client.blob  # type: ignore # pylint: disable=protected-access
+            self._client = client._client.blob
         elif hasattr(client, 'container_name'):
-            self._client = client._client.container  # type: ignore # pylint: disable=protected-access
+            self._client = client._client.container
         else:
             raise TypeError("Lease must use either BlobClient or ContainerClient.")
 
@@ -67,8 +62,7 @@ class BlobLeaseClient(object):
         self.release()
 
     @distributed_trace
-    def acquire(self, lease_duration=-1, **kwargs):
-        # type: (int, **Any) -> None
+    def acquire(self, lease_duration: int = -1, **kwargs: Any) -> None:
         """Requests a new lease.
 
         If the container does not have an active lease, the Blob service creates a
@@ -103,12 +97,16 @@ class BlobLeaseClient(object):
             .. versionadded:: 12.4.0
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`__.
         :rtype: None
         """
         mod_conditions = get_modify_conditions(kwargs)
         try:
-            response = self._client.acquire_lease(
+            response: Any = self._client.acquire_lease(
                 timeout=kwargs.pop('timeout', None),
                 duration=lease_duration,
                 proposed_lease_id=self.id,
@@ -117,13 +115,12 @@ class BlobLeaseClient(object):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
-        self.etag = response.get('etag')  # type: str
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
+        self.etag = response.get('etag')
 
     @distributed_trace
-    def renew(self, **kwargs):
-        # type: (Any) -> None
+    def renew(self, **kwargs: Any) -> None:
         """Renews the lease.
 
         The lease can be renewed if the lease ID specified in the
@@ -156,12 +153,16 @@ class BlobLeaseClient(object):
             .. versionadded:: 12.4.0
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`__.
         :return: None
         """
         mod_conditions = get_modify_conditions(kwargs)
         try:
-            response = self._client.renew_lease(
+            response: Any = self._client.renew_lease(
                 lease_id=self.id,
                 timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
@@ -169,13 +170,12 @@ class BlobLeaseClient(object):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace
-    def release(self, **kwargs):
-        # type: (Any) -> None
+    def release(self, **kwargs: Any) -> None:
         """Release the lease.
 
         The lease may be released if the client lease id specified matches
@@ -206,12 +206,16 @@ class BlobLeaseClient(object):
             .. versionadded:: 12.4.0
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`__.
         :return: None
         """
         mod_conditions = get_modify_conditions(kwargs)
         try:
-            response = self._client.release_lease(
+            response: Any = self._client.release_lease(
                 lease_id=self.id,
                 timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
@@ -219,13 +223,12 @@ class BlobLeaseClient(object):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace
-    def change(self, proposed_lease_id, **kwargs):
-        # type: (str, Any) -> None
+    def change(self, proposed_lease_id: str, **kwargs: Any) -> None:
         """Change the lease ID of an active lease.
 
         :param str proposed_lease_id:
@@ -255,12 +258,16 @@ class BlobLeaseClient(object):
             .. versionadded:: 12.4.0
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`__.
         :return: None
         """
         mod_conditions = get_modify_conditions(kwargs)
         try:
-            response = self._client.change_lease(
+            response: Any = self._client.change_lease(
                 lease_id=self.id,
                 proposed_lease_id=proposed_lease_id,
                 timeout=kwargs.pop('timeout', None),
@@ -269,13 +276,12 @@ class BlobLeaseClient(object):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace
-    def break_lease(self, lease_break_period=None, **kwargs):
-        # type: (Optional[int], Any) -> int
+    def break_lease(self, lease_break_period: Optional[int] = None, **kwargs: Any) -> int:
         """Break the lease, if the container or blob has an active lease.
 
         Once a lease is broken, it cannot be renewed. Any authorized request can break the lease;
@@ -314,7 +320,11 @@ class BlobLeaseClient(object):
             .. versionadded:: 12.4.0
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`__.
         :return: Approximate time remaining in the lease period, in seconds.
         :rtype: int
         """

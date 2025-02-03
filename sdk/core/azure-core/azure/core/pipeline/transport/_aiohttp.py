@@ -85,7 +85,6 @@ class AioHttpTransport(AsyncHttpTransport):
     :keyword session: The client session.
     :paramtype session: ~aiohttp.ClientSession
     :keyword bool session_owner: Session owner. Defaults True.
-
     :keyword bool use_env_settings: Uses proxy settings from environment. Defaults to True.
 
     .. admonition:: Example:

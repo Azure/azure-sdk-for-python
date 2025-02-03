@@ -11,7 +11,6 @@ from typing import TYPE_CHECKING
 from ._configuration import SchemaRegistryClientConfiguration
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core import PipelineClient
 
     from ._serialization import Deserializer, Serializer
@@ -24,14 +23,3 @@ class SchemaRegistryClientMixinABC(ABC):
     _config: SchemaRegistryClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"
-
-
-def raise_if_not_implemented(cls, abstract_methods):
-    not_implemented = [f for f in abstract_methods if not callable(getattr(cls, f, None))]
-    if not_implemented:
-        raise NotImplementedError(
-            "The following methods on operation group '{}' are not implemented: '{}'."
-            " Please refer to https://aka.ms/azsdk/python/dpcodegen/python/customize to learn how to customize.".format(
-                cls.__name__, "', '".join(not_implemented)
-            )
-        )

@@ -19,7 +19,7 @@ from ..._models import LogsUploadError
 if sys.version_info >= (3, 9):
     from collections.abc import Mapping, MutableMapping
 else:
-    from typing import Mapping, MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import Mapping, MutableMapping
 
 
 _LOGGER = logging.getLogger(__name__)

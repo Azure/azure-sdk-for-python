@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=anomalous-backslash-in-string
 from datetime import timedelta, datetime
 from typing import Any, cast, Optional, Tuple, Union, Sequence
 

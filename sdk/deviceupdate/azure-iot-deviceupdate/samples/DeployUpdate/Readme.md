@@ -5,7 +5,7 @@ In this sample we will deploy an update to a group of devices in Device Update f
 ## Prerequisites
 
 * Python 3.6 or later is required to use this package
-* You need an [Azure subscription][https://azure.microsoft.com/free/], and a [Device Update for IoT Hub][https://docs.microsoft.com/azure/iot-hub-device-update/understand-device-update] 
+* You need an [Azure subscription][https://azure.microsoft.com/free/], and a [Device Update for IoT Hub][https://learn.microsoft.com/azure/iot-hub-device-update/understand-device-update] 
 account and instance to use this package.
 
 Set the following environment variables:

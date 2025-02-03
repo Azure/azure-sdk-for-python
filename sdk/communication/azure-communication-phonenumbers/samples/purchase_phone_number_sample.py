@@ -20,22 +20,18 @@ USAGE:
 """
 
 import os
-from azure.communication.phonenumbers import (
-    PhoneNumbersClient
-)
+from azure.communication.phonenumbers import PhoneNumbersClient
 
-connection_str = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
+connection_str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
 search_id = os.getenv("AZURE_COMMUNICATION_SERVICE_SEARCH_ID_TO_PURCHASE")
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
 
+
 def purchase_phone_number():
-    poller = phone_numbers_client.begin_purchase_phone_numbers(
-        search_id,
-        polling = True
-    )
+    poller = phone_numbers_client.begin_purchase_phone_numbers(search_id, polling=True)
     poller.result()
     print("Result from the purchase operation: " + poller.status())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     purchase_phone_number()

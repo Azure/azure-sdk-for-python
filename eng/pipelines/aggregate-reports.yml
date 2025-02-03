@@ -77,6 +77,18 @@ stages:
               scriptPath: 'scripts/repo_health_status_report/output_health_report.py'
             displayName: 'Generate Health Status Report'
 
+          - script: |
+              python -m pip install -r scripts/repo_type_completeness/dev_requirements.txt
+            displayName: 'Prep Environment'
+
+          - task: PythonScript@0
+            condition: succeededOrFailed()
+            env:
+              GH_TOKEN: $(azuresdk-github-pat)
+            inputs:
+              scriptPath: 'scripts/repo_type_completeness/generate_main_typescores.py'
+            displayName: 'Update Type Completeness Scores'
+
           - template: ../common/pipelines/templates/steps/verify-links.yml
             parameters:
               Directory: ""
