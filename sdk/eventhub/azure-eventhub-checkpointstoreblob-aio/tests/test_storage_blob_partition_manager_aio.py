@@ -105,7 +105,8 @@ async def _update_checkpoint(connection_str, container_name):
 
 @pytest.mark.parametrize("storage_account", STORAGE_ENV_KEYS)
 @pytest.mark.live_test_only
-def test_claim_and_list_ownership(storage_account):
+@pytest.mark.asyncio
+async def test_claim_and_list_ownership_async(storage_account):
     storage_account, container_name = get_live_storage_blob_client(storage_account)
     try:
         loop = asyncio.get_event_loop()
@@ -116,7 +117,8 @@ def test_claim_and_list_ownership(storage_account):
 
 @pytest.mark.parametrize("storage_account", STORAGE_ENV_KEYS)
 @pytest.mark.live_test_only
-def test_update_checkpoint(storage_account):
+@pytest.mark.asyncio
+async def test_update_checkpoint_async(storage_account):
     storage_account, container_name = get_live_storage_blob_client(storage_account)
     try:
         loop = asyncio.get_event_loop()
