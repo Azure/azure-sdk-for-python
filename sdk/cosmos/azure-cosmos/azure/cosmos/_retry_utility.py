@@ -201,14 +201,14 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
 
         except ServiceRequestError as e:
             if _has_database_account_header(request.headers):
-                if not database_account_retry_policy.ShouldRetry():
+                if not database_account_retry_policy.ShouldRetry(e):
                     raise e
             else:
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
             if _has_database_account_header(request.headers):
-                if not database_account_retry_policy.ShouldRetry():
+                if not database_account_retry_policy.ShouldRetry(e):
                     raise e
             else:
                 _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
