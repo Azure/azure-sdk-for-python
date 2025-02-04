@@ -62,6 +62,7 @@ class SanitizedValues:
     TENANT_ID = ZERO_GUID
     USER_OBJECT_ID = ZERO_GUID
     IMAGE_NAME = "00000000.png"
+    OPERATIONS_ID = ZERO_GUID
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -108,10 +109,19 @@ def add_sanitizers(
             group_for_replace="1",
         )
         add_general_regex_sanitizer(
-            regex=r"/workspaces/([-\w\._\(\)]+)", value=mock_project_scope["project_name"], group_for_replace="1"
+            regex=r"/workspaces/([-\w\._\(\)]+)", 
+            value=mock_project_scope["project_name"], 
+            group_for_replace="1"
         )
         add_general_regex_sanitizer(
-            regex=r"image_understanding/([-\w\._\(\)/]+)", value=mock_project_scope["image_name"], group_for_replace="1"
+            regex=r"operations/([-\w\._\(\)/]+)", 
+            value=mock_project_scope["operations_id"], 
+            group_for_replace="1"
+        )
+        add_general_regex_sanitizer(
+            regex=r"image_understanding/([-\w\._\(\)/]+)", 
+            value=mock_project_scope["image_name"], 
+            group_for_replace="1"
         )
 
     def openai_stainless_default_headers():
@@ -339,6 +349,7 @@ def mock_project_scope() -> Dict[str, str]:
         "resource_group_name": f"{SanitizedValues.RESOURCE_GROUP_NAME}",
         "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
         "image_name": f"{SanitizedValues.IMAGE_NAME}",
+        "operations_id": f"{SanitizedValues.OPERATIONS_ID}",
     }
 
 

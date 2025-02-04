@@ -77,7 +77,6 @@ class TestMassEvaluate:
     - Multi-modal inputs: This one has some parameters for the different types of multi-modal inputs.
     """
     
-    @pytest.mark.skipif(not is_live(), reason="Skip in playback due to inconsistency in evaluation results.")
     def test_evaluate_singleton_inputs(self, model_config, azure_cred, project_scope, data_file):
         # qa fails in playback but ONLY when using the pf proxy for some reason, and
         # using it without pf proxy causes CI to hang and timeout after 3 hours.
@@ -94,7 +93,7 @@ class TestMassEvaluate:
             "similarity": SimilarityEvaluator(model_config),
             "qa": QAEvaluator(model_config),
             "grounded_pro": GroundednessProEvaluator(azure_cred, project_scope),
-            # "protected_material": ProtectedMaterialEvaluator(azure_cred, project_scope),
+            "protected_material": ProtectedMaterialEvaluator(azure_cred, project_scope),
             "indirect_attack": IndirectAttackEvaluator(azure_cred, project_scope),
             "eci": ECIEvaluator(azure_cred, project_scope),
             "content_safety": ContentSafetyEvaluator(azure_cred, project_scope),
@@ -108,7 +107,7 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
-        assert len(row_result_df.keys()) == 61
+        assert len(row_result_df.keys()) == 63
         assert len(row_result_df["inputs.query"]) == 3
         assert len(row_result_df["inputs.context"]) == 3
         assert len(row_result_df["inputs.response"]) == 3
@@ -136,8 +135,8 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.similarity.gpt_similarity"]) == 3
         assert len(row_result_df["outputs.grounded_pro.groundedness_pro_label"]) == 3
         assert len(row_result_df["outputs.grounded_pro.groundedness_pro_reason"]) == 3
-        # assert len(row_result_df["outputs.protected_material.protected_material_label"]) == 3
-        # assert len(row_result_df["outputs.protected_material.protected_material_reason"]) == 3
+        assert len(row_result_df["outputs.protected_material.protected_material_label"]) == 3
+        assert len(row_result_df["outputs.protected_material.protected_material_reason"]) == 3
         assert len(row_result_df["outputs.indirect_attack.xpia_label"]) == 3
         assert len(row_result_df["outputs.indirect_attack.xpia_reason"]) == 3
         assert len(row_result_df["outputs.indirect_attack.xpia_manipulated_content"]) == 3
@@ -173,7 +172,7 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.qa.similarity"]) == 3
         assert len(row_result_df["outputs.qa.gpt_similarity"]) == 3
 
-        assert len(metrics.keys()) == 38
+        assert len(metrics.keys()) == 39
         assert metrics["f1_score.f1_score"] >= 0
         assert metrics["gleu.gleu_score"] >= 0
         assert metrics["bleu.bleu_score"] >= 0
@@ -199,7 +198,7 @@ class TestMassEvaluate:
         assert metrics["content_safety.hate_unfairness_defect_rate"] >= 0
         assert metrics["content_safety.violence_defect_rate"] >= 0
         assert metrics["grounded_pro.groundedness_pro_passing_rate"] >= 0
-        # assert metrics["protected_material.protected_material_defect_rate"] >= 0
+        assert metrics["protected_material.protected_material_defect_rate"] >= 0
         assert metrics["indirect_attack.xpia_defect_rate"] >= 0
         assert metrics["eci.eci_defect_rate"] >= 0
         assert metrics["qa.f1_score"] >= 0
@@ -221,7 +220,7 @@ class TestMassEvaluate:
             "fluency": FluencyEvaluator(model_config),
             "relevance": RelevanceEvaluator(model_config),
             "grounded_pro": GroundednessProEvaluator(azure_cred, project_scope),
-            # "protected_material": ProtectedMaterialEvaluator(azure_cred, project_scope),
+            "protected_material": ProtectedMaterialEvaluator(azure_cred, project_scope),
             "indirect_attack": IndirectAttackEvaluator(azure_cred, project_scope),
             "eci": ECIEvaluator(azure_cred, project_scope),
             "content_safety": ContentSafetyEvaluator(azure_cred, project_scope),
@@ -237,7 +236,7 @@ class TestMassEvaluate:
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
 
-        assert len(row_result_df.keys()) == 30
+        assert len(row_result_df.keys()) == 32
         assert len(row_result_df["inputs.conversation"]) == 2
         assert len(row_result_df["outputs.grounded.groundedness"]) == 2
         assert len(row_result_df["outputs.grounded.gpt_groundedness"]) == 2
@@ -253,8 +252,8 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.relevance.evaluation_per_turn"]) == 2
         assert len(row_result_df["outputs.grounded_pro.groundedness_pro_label"]) == 2
         assert len(row_result_df["outputs.grounded_pro.evaluation_per_turn"]) == 2
-        # assert len(row_result_df["outputs.protected_material.protected_material_label"]) == 2
-        # assert len(row_result_df["outputs.protected_material.evaluation_per_turn"]) == 2
+        assert len(row_result_df["outputs.protected_material.protected_material_label"]) == 2
+        assert len(row_result_df["outputs.protected_material.evaluation_per_turn"]) == 2
         assert len(row_result_df["outputs.indirect_attack.xpia_label"]) == 2
         assert len(row_result_df["outputs.indirect_attack.xpia_manipulated_content"]) == 2
         assert len(row_result_df["outputs.indirect_attack.xpia_intrusion"]) == 2
@@ -271,7 +270,7 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.retrieval.gpt_retrieval"]) == 2
         assert len(row_result_df["outputs.retrieval.evaluation_per_turn"]) == 2
 
-        assert len(metrics.keys()) == 20
+        assert len(metrics.keys()) == 21
         assert metrics["coherence.coherence"] >= 0
         assert metrics["coherence.gpt_coherence"] >= 0
         assert metrics["fluency.fluency"] >= 0
@@ -290,11 +289,10 @@ class TestMassEvaluate:
         assert metrics["content_safety.hate_unfairness_defect_rate"] >= 0
         assert metrics["content_safety.self_harm_defect_rate"] >= 0
         assert metrics["grounded_pro.groundedness_pro_passing_rate"] >= 0
-        # assert metrics["protected_material.protected_material_defect_rate"] >= 0
+        assert metrics["protected_material.protected_material_defect_rate"] >= 0
         assert metrics["indirect_attack.xpia_defect_rate"] >= 0
         assert metrics["eci.eci_defect_rate"] >= 0
 
-    # Image urls with target is disabled due to being unstable in CI
     @pytest.mark.parametrize(
         "multi_modal_input_type",
         [
@@ -311,9 +309,6 @@ class TestMassEvaluate:
         project_scope,
         run_from_temp_dir,
     ):
-        # ContentSafetyMultimodalEvaluator is excluded due 2 reasons:
-        # - It fails in playback mode for some reason
-        # - It's imminently being removed in favor of the ContentSafetyEvaluator.
         evaluators = {
             "protected_material_old": ProtectedMaterialMultimodalEvaluator(
                 credential=azure_cred, azure_ai_project=project_scope
@@ -340,7 +335,6 @@ class TestMassEvaluate:
             data=multimodal_input_selector(multi_modal_input_type),
             evaluators=evaluators,
             evaluator_config=evaluator_config,
-            azure_ai_project=project_scope,
             target=target,
         )
 
@@ -353,9 +347,9 @@ class TestMassEvaluate:
 
         if multi_modal_input_type == "imageurls_with_target":
             # imageurls_with_target has 1 extra column: outputs.conversation due to the target mapping
-            assert len(row_result_df.keys()) == 32
+            assert len(row_result_df.keys()) == 33
         else:
-            assert len(row_result_df.keys()) == 31
+            assert len(row_result_df.keys()) == 32
         assert "outputs.protected_material.artwork_label" in row_result_df.columns.to_list()
         assert "outputs.protected_material.artwork_reason" in row_result_df.columns.to_list()
         assert "outputs.protected_material.fictional_characters_label" in row_result_df.columns.to_list()
