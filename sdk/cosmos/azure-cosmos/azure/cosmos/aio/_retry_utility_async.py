@@ -28,7 +28,7 @@ import time
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
-from .. import _default_retry_policy
+from .. import _default_retry_policy, _database_account_retry_policy
 from .. import _endpoint_discovery_retry_policy
 from .. import _gone_retry_policy
 from .. import _resource_throttle_retry_policy
@@ -38,7 +38,8 @@ from .. import _timeout_failover_retry_policy
 from .. import exceptions
 from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 from .._retry_utility import (_configure_timeout, _has_read_retryable_headers,
-                              _handle_service_response_retries, _handle_service_request_retries)
+                              _handle_service_response_retries, _handle_service_request_retries,
+                              _has_database_account_header)
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
@@ -61,7 +62,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
         client.connection_policy, global_endpoint_manager, *args
     )
-
+    database_account_retry_policy = _database_account_retry_policy.DatabaseAccountRetryPolicy(
+        client.connection_policy
+    )
     resourceThrottle_retry_policy = _resource_throttle_retry_policy.ResourceThrottleRetryPolicy(
         client.connection_policy.RetryOptions.MaxRetryAttemptCount,
         client.connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds,
@@ -128,7 +131,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             return result
         except exceptions.CosmosHttpResponseError as e:
             retry_policy = None
-            if e.status_code == StatusCodes.FORBIDDEN and e.sub_status in \
+            if _has_database_account_header(request.headers):
+                retry_policy = database_account_retry_policy
+            elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in \
                     [SubStatusCodes.DATABASE_ACCOUNT_NOT_FOUND, SubStatusCodes.WRITE_FORBIDDEN]:
                 retry_policy = endpointDiscovery_retry_policy
             elif e.status_code == StatusCodes.TOO_MANY_REQUESTS:
@@ -195,19 +200,27 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError as e:
-            _handle_service_request_retries(client, service_request_retry_policy, e, *args)
+            if _has_database_account_header(request.headers):
+                if not database_account_retry_policy.ShouldRetry():
+                    raise e
+            else:
+                _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
-            try:
-                from aiohttp.client_exceptions import (
-                    ClientConnectionError)  # pylint: disable=networking-import-outside-azure-core-transport
-                if isinstance(e.inner_exception, ClientConnectionError):
-                    _handle_service_request_retries(client, service_request_retry_policy, e, *args)
-                else:
+            if _has_database_account_header(request.headers):
+                if not database_account_retry_policy.ShouldRetry():
+                    raise e
+            else:
+                try:
+                    from aiohttp.client_exceptions import (
+                        ClientConnectionError)  # pylint: disable=networking-import-outside-azure-core-transport
+                    if isinstance(e.inner_exception, ClientConnectionError):
+                        _handle_service_request_retries(client, service_request_retry_policy, e, *args)
+                    else:
+                        _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
+                # in case customer is not using aiohttp
+                except ImportError:
                     _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
-            # in case customer is not using aiohttp
-            except ImportError:
-                _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 
 async def ExecuteFunctionAsync(function, *args, **kwargs):
@@ -263,14 +276,17 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 retry_error = err
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
-                if retry_settings['connect'] > 0:
-                    retry_active = self.increment(retry_settings, response=request, error=err)
-                    if retry_active:
-                        await self.sleep(retry_settings, request.context.transport)
-                        continue
+                if not _has_database_account_header(request.http_request.headers):
+                    if retry_settings['connect'] > 0:
+                        retry_active = self.increment(retry_settings, response=request, error=err)
+                        if retry_active:
+                            self.sleep(retry_settings, request.context.transport)
+                            continue
                 raise err
             except ServiceResponseError as err:
                 retry_error = err
+                if _has_database_account_header(request.http_request.headers):
+                    raise err
                 # Since this is ClientConnectionError, it is safe to be retried on both read and write requests
                 try:
                     from aiohttp.client_exceptions import (
@@ -288,6 +304,8 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 raise err
             except AzureError as err:
                 retry_error = err
+                if _has_database_account_header(request.http_request.headers):
+                    raise err
                 if self._is_method_retryable(retry_settings, request.http_request):
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:

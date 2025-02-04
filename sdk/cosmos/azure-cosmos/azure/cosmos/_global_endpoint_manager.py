@@ -120,6 +120,8 @@ class _GlobalEndpointManager(object):
                 self.last_refresh_time = self.location_cache.current_time_millis()
                 database_account = self._GetDatabaseAccount(**kwargs)
                 self.location_cache.perform_on_database_account_read(database_account)
+                # this will perform getDatabaseAccount calls to check endpoint health
+                self._endpoints_health_check(**kwargs)
 
     def _GetDatabaseAccount(self, **kwargs):
         """Gets the database account.
@@ -150,6 +152,23 @@ class _GlobalEndpointManager(object):
                 except (exceptions.CosmosHttpResponseError, AzureError):
                     pass
             raise
+
+    def _endpoints_health_check(self, **kwargs):
+        """Gets the database account for each endpoint.
+
+        Validating if the endpoint is healthy else marking it as unavailable.
+        """
+        all_endpoints = set(self.location_cache.read_health_endpoints)
+        all_endpoints.update(self.location_cache.write_health_endpoints)
+        for endpoint in all_endpoints:
+            try:
+                self.Client._GetDatabaseAccountCheck(endpoint, **kwargs)
+            except (exceptions.CosmosHttpResponseError, AzureError):
+                if endpoint in self.location_cache.read_health_endpoints:
+                    self.mark_endpoint_unavailable_for_read(endpoint, False)
+                if endpoint in self.location_cache.write_health_endpoints:
+                    self.mark_endpoint_unavailable_for_write(endpoint, False)
+        self.location_cache.update_location_cache()
 
     def _GetDatabaseAccountStub(self, endpoint, **kwargs):
         """Stub for getting database account from the client.

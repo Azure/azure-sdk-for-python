@@ -2591,6 +2591,26 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             response_hook(last_response_headers, result)
         return database_account
 
+    def _GetDatabaseAccountCheck(
+            self,
+            url_connection: Optional[str] = None,
+            **kwargs: Any
+    ):
+        """Gets database account info.
+
+        :param str url_connection: the endpoint used to get the database account
+        :return: The Database Account.
+        :rtype: documents.DatabaseAccount
+        """
+        if url_connection is None:
+            url_connection = self.url_connection
+
+        headers = base.GetHeaders(self, self.default_headers, "get", "", "", "",
+                                  documents._OperationType.Read,{}, client_id=self.client_id)
+        request_params = RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
+        self.__Get("", request_params, headers, **kwargs)
+
+
     def Create(
         self,
         body: Dict[str, Any],

@@ -69,6 +69,9 @@ class RegionalEndpoint(object):
         self.current_endpoint = self.previous_endpoint
         self.previous_endpoint = temp
 
+    def unique_endpoints(self):
+        return {self.current_endpoint, self.previous_endpoint}
+
 def get_endpoints_by_location(new_locations,
                               old_endpoints_by_location,
                               default_regional_endpoint,
@@ -139,6 +142,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         self.enable_multiple_writable_locations = False
         self.write_regional_endpoints = [self.default_regional_endpoint]
         self.read_regional_endpoints = [self.default_regional_endpoint]
+        self.read_health_endpoints = self.default_regional_endpoint.unique_endpoints()
+        self.write_health_endpoints = self.default_regional_endpoint.unique_endpoints()
         self.location_unavailability_info_by_endpoint = {}
         self.refresh_time_interval_in_ms = refresh_time_interval_in_ms
         self.last_cache_update_time_stamp = 0
@@ -383,13 +388,13 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     self.use_multiple_write_locations,
                 )
 
-        self.write_regional_endpoints = self.get_preferred_available_regional_endpoints(
+        self.write_regional_endpoints, self.write_health_endpoints = self.get_preferred_available_regional_endpoints(
             self.available_write_regional_endpoints_by_location,
             self.available_write_locations,
             EndpointOperationType.WriteType,
             self.default_regional_endpoint,
         )
-        self.read_regional_endpoints = self.get_preferred_available_regional_endpoints(
+        self.read_regional_endpoints, self.read_health_endpoints = self.get_preferred_available_regional_endpoints(
             self.available_read_regional_endpoints_by_location,
             self.available_read_locations,
             EndpointOperationType.ReadType,
@@ -400,7 +405,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
     def get_preferred_available_regional_endpoints( # pylint: disable=name-too-long
         self, endpoints_by_location, orderedLocations, expected_available_operation, fallback_endpoint
     ):
-        endpoints = []
+        regional_endpoints = []
+        health_endpoints = set()
         # if enableEndpointDiscovery is false, we always use the defaultEndpoint that
         # user passed in during documentClient init
         if self.enable_endpoint_discovery and endpoints_by_location:  # pylint: disable=too-many-nested-blocks
@@ -421,22 +427,33 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                             if self.is_regional_endpoint_unavailable(regional_endpoint, expected_available_operation):
                                 unavailable_endpoints.append(regional_endpoint)
                             else:
-                                endpoints.append(regional_endpoint)
+                                regional_endpoints.append(regional_endpoint)
+                                self.update_health_endpoints(health_endpoints, regional_endpoint.unique_endpoints())
 
-                if not endpoints:
-                    endpoints.append(fallback_endpoint)
+                if not regional_endpoints:
+                    regional_endpoints.append(fallback_endpoint)
+                    self.update_health_endpoints(health_endpoints, fallback_endpoint.unique_endpoints())
 
-                endpoints.extend(unavailable_endpoints)
+                regional_endpoints.extend(unavailable_endpoints)
             else:
                 for location in orderedLocations:
                     if location and location in endpoints_by_location:
                         # location is empty during manual failover
-                        endpoints.append(endpoints_by_location[location])
+                        regional_endpoint = endpoints_by_location[location]
+                        regional_endpoints.append(regional_endpoint)
+                        self.update_health_endpoints(health_endpoints, regional_endpoint.unique_endpoints())
 
-        if not endpoints:
-            endpoints.append(fallback_endpoint)
+        if not regional_endpoints:
+            regional_endpoints.append(fallback_endpoint)
+            self.update_health_endpoints(health_endpoints, fallback_endpoint.unique_endpoints())
 
-        return endpoints
+        return regional_endpoints, health_endpoints
+
+    def update_health_endpoints(self, endpoints, endpoints_to_add):
+        if self.default_regional_endpoint.get_current() in endpoints_to_add:
+            endpoints_to_add.remove(self.default_regional_endpoint.get_current())
+        if len(endpoints) < 2:
+            endpoints.update(endpoints_to_add)
 
     def can_use_multiple_write_locations(self):
         return self.use_multiple_write_locations and self.enable_multiple_writable_locations

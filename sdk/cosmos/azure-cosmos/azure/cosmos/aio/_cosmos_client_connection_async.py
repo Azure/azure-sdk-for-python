@@ -446,6 +446,28 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         )
         return database_account
 
+    async def _GetDatabaseAccountCheck(
+            self,
+            url_connection: Optional[str] = None,
+            **kwargs: Any
+    ):
+        """Gets database account info.
+
+        :param str url_connection: the endpoint used to get the database account
+        :return: The Database Account.
+        :rtype: documents.DatabaseAccount
+        """
+        if url_connection is None:
+            url_connection = self.url_connection
+
+        initial_headers = dict(self.default_headers)
+        headers = base.GetHeaders(self, initial_headers, "get", "", "", "",
+                                  documents._OperationType.Read, {},
+                                  client_id=self.client_id)  # path  # id  # type
+
+        request_params = _request_object.RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
+        await self.__Get("", request_params, headers, **kwargs)
+
     async def CreateDatabase(
         self,
         database: Dict[str, Any],
