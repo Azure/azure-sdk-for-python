@@ -54,7 +54,7 @@ class OnlineScaleSettings(RestTranslatableMixin):
         if settings.scale_type == "TargetUtilization":
             return TargetUtilizationScaleSettings._from_rest_object(settings)
 
-        msg = f"Unsupported online scale setting type {settings.type}."
+        msg = f"Unsupported online scale setting type {settings.scale_type}."
         raise DeploymentException(
             message=msg,
             target=ErrorTarget.ONLINE_DEPLOYMENT,
