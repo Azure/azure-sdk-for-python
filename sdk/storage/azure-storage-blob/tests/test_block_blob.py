@@ -84,7 +84,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
     ) -> str:
         return prefix + f"{self.get_credential(BlobServiceClient).get_token(url).token}"
 
-    def _create_file_share(
+    def _create_file_share_oauth(
         self, storage_account_name: str,
         data: bytes
     ) -> Tuple[ShareServiceClient, ShareClient, ShareFileClient]:
@@ -139,7 +139,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Set up source file share with random data
         source_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        share_service_client, share_client, source_file_client = self._create_file_share(
+        share_service_client, share_client, source_file_client = self._create_file_share_oauth(
             storage_account_name,
             source_data
         )
