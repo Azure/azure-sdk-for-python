@@ -609,6 +609,7 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
     requires_sync = kwargs.pop('requires_sync', None)
     encryption_scope_str = kwargs.pop('encryption_scope', None)
     source_authorization = kwargs.pop('source_authorization', None)
+    source_token_intent = kwargs.pop('source_token_intent', None)
     # If tags is a str, interpret that as copy_source_tags
     copy_source_tags = isinstance(tags, str)
 
@@ -628,6 +629,8 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
             headers['x-ms-encryption-scope'] = encryption_scope_str
         if source_authorization:
             headers['x-ms-copy-source-authorization'] = source_authorization
+        if source_token_intent:
+            headers['x-ms-file-request-intent'] = source_token_intent
         if copy_source_tags:
             headers['x-ms-copy-source-tag-option'] = tags
     else:
@@ -637,6 +640,9 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
         if source_authorization:
             raise ValueError(
                 "Source authorization tokens are only supported for sync copy, please specify requires_sync=True")
+        if source_token_intent:
+            raise ValueError(
+                "Source token intent is only supported for sync copy, please specify requires_sync=True")
         if copy_source_tags:
             raise ValueError(
                 "Copying source tags is only supported for sync copy, please specify requires_sync=True")

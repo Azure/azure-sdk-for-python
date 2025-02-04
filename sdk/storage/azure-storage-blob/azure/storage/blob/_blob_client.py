@@ -1756,6 +1756,15 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
             .. versionadded:: 12.9.0
 
+        :keyword source_token_intent:
+            Required when source is Azure Storage Files and using `TokenCredential` for authentication.
+            This is ignored for other forms of authentication.
+            Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
+
+            backup - Specifies requests are intended for backup/admin type operations, meaning that all file/directory
+                 ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
+
+        :paramtype source_token_intent: Literal['backup']
         :keyword str encryption_scope:
             A predefined encryption scope used to encrypt the data on the sync copied blob. An encryption
             scope can be created using the Management API and referenced here by name. If a default
@@ -1780,7 +1789,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             source_url=source_url,
             metadata=metadata,
             incremental_copy=incremental_copy,
-            **kwargs)
+            **kwargs
+        )
         try:
             if incremental_copy:
                 return cast(Dict[str, Union[str, datetime]], self._client.page_blob.copy_incremental(**options))
