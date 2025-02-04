@@ -347,9 +347,9 @@ class TestMassEvaluate:
 
         if multi_modal_input_type == "imageurls_with_target":
             # imageurls_with_target has 1 extra column: outputs.conversation due to the target mapping
-            assert len(row_result_df.keys()) == 33
-        else:
             assert len(row_result_df.keys()) == 32
+        else:
+            assert len(row_result_df.keys()) == 31
         assert "outputs.protected_material.artwork_label" in row_result_df.columns.to_list()
         assert "outputs.protected_material.artwork_reason" in row_result_df.columns.to_list()
         assert "outputs.protected_material.fictional_characters_label" in row_result_df.columns.to_list()

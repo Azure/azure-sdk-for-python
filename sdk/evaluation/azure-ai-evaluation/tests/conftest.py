@@ -63,6 +63,8 @@ class SanitizedValues:
     USER_OBJECT_ID = ZERO_GUID
     IMAGE_NAME = "00000000.png"
     OPERATIONS_ID = ZERO_GUID
+    RUNS_ID = ZERO_GUID
+    EXPERIMENTS_ID = ZERO_GUID
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -121,6 +123,16 @@ def add_sanitizers(
         add_general_regex_sanitizer(
             regex=r"image_understanding/([-\w\._\(\)/]+)", 
             value=mock_project_scope["image_name"], 
+            group_for_replace="1"
+        )
+        add_general_regex_sanitizer(
+            regex=r"runs/([-\w\._\(\)/]+)", 
+            value=mock_project_scope["runs_id"], 
+            group_for_replace="1"
+        )
+        add_general_regex_sanitizer(
+            regex=r"experimentids/([-\w\._\(\)/]+)", 
+            value=mock_project_scope["experiments_id"], 
             group_for_replace="1"
         )
 
@@ -350,6 +362,8 @@ def mock_project_scope() -> Dict[str, str]:
         "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
         "image_name": f"{SanitizedValues.IMAGE_NAME}",
         "operations_id": f"{SanitizedValues.OPERATIONS_ID}",
+        "runs_id": f"{SanitizedValues.RUNS_ID}",
+        "experiments_id": f"{SanitizedValues.EXPERIMENTS_ID}",
     }
 
 
