@@ -2453,7 +2453,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
 
     @overload
-    async def upload_file_and_poll(self, *, body: JSON, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
+    async def upload_file_and_poll(self, body: JSON, *, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :param body: Required.

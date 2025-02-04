@@ -829,7 +829,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         :raises ValueError: If a definition with the same name exists.
         """
         # Check if a definition with the same name exists.
-        if any(defn.openapi.name == name for defn in self._definitions):
+        if any(definition.openapi.name == name for definition in self._definitions):
             raise ValueError(f"Definition '{name}' already exists and cannot be added again.")
         
         # Use provided auth if specified, otherwise use default
