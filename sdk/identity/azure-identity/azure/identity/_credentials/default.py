@@ -287,7 +287,10 @@ def parse_azure_dac(az_dac, avail_credentials):
 
     for cred in creds:
         if cred not in VALID_CREDENTIALS:
-            raise ValueError(f"Invalid credential '{cred}' in AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST")
+            raise ValueError(
+                f"Invalid credential '{cred}' in AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST. "
+                f"Valid credentials are {', '.join(VALID_CREDENTIALS)}."
+            )
         credentials.append(avail_credentials.get(cred))
 
     return credentials
