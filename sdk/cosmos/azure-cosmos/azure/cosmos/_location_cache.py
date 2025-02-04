@@ -82,40 +82,38 @@ def get_endpoints_by_location(new_locations,
     for new_location in new_locations: # pylint: disable=too-many-nested-blocks
         # if name in new_location and same for database account endpoint
         if "name" in new_location and "databaseAccountEndpoint" in new_location:
-            if len(old_endpoints_by_location) == 0 or new_location["name"] in old_endpoints_by_location:
-                if not new_location["name"]:
-                    # during fail-over the location name is empty
-                    continue
-                try:
-                    region_uri = new_location["databaseAccountEndpoint"]
-                    parsed_locations.append(new_location["name"])
-                    if new_location["name"] in old_endpoints_by_location:
-                        regional_object = old_endpoints_by_location[new_location["name"]]
-                        current = regional_object.get_current()
-                        # swap the previous with current and current with new region_uri received from the gateway
-                        if current != region_uri:
-                            regional_object.set_previous(current)
-                            regional_object.set_current(region_uri)
-                    # This is the bootstrapping condition
-                    else:
-                        regional_object = RegionalEndpoint(region_uri, region_uri)
-                        # if it is for writes, then we update the previous to default_endpoint
-                        if writes and not use_multiple_write_locations:
-                            # if region_uri is different than global endpoint set global endpoint
-                            # as fallback
-                            # else construct regional uri
-                            if region_uri != default_regional_endpoint.get_current():
-                                regional_object.set_previous(default_regional_endpoint.get_current())
-                            else:
-                                constructed_region_uri =  LocationCache.GetLocationalEndpoint(
-                                    default_regional_endpoint.get_current(),
-                                    new_location["name"])
-                                regional_object.set_previous(constructed_region_uri)
-
-                    # pass in object with region uri , last known good, curr etc
-                    endpoints_by_location.update({new_location["name"]: regional_object})
-                except Exception as e:
-                    raise e
+            if not new_location["name"]:
+                # during fail-over the location name is empty
+                continue
+            try:
+                region_uri = new_location["databaseAccountEndpoint"]
+                parsed_locations.append(new_location["name"])
+                if new_location["name"] in old_endpoints_by_location:
+                    regional_object = old_endpoints_by_location[new_location["name"]]
+                    current = regional_object.get_current()
+                    # swap the previous with current and current with new region_uri received from the gateway
+                    if current != region_uri:
+                        regional_object.set_previous(current)
+                        regional_object.set_current(region_uri)
+                # This is the bootstrapping condition
+                else:
+                    regional_object = RegionalEndpoint(region_uri, region_uri)
+                    # if it is for writes, then we update the previous to default_endpoint
+                    if writes and not use_multiple_write_locations:
+                        # if region_uri is different than global endpoint set global endpoint
+                        # as fallback
+                        # else construct regional uri
+                        if region_uri != default_regional_endpoint.get_current():
+                            regional_object.set_previous(default_regional_endpoint.get_current())
+                        else:
+                            constructed_region_uri =  LocationCache.GetLocationalEndpoint(
+                                default_regional_endpoint.get_current(),
+                                new_location["name"])
+                            regional_object.set_previous(constructed_region_uri)
+                # pass in object with region uri , last known good, curr etc
+                endpoints_by_location.update({new_location["name"]: regional_object})
+            except Exception as e:
+                raise e
 
     return endpoints_by_location, parsed_locations
 
