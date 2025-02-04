@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+# cSpell:disable
+
 import unittest
 from unittest.mock import Mock
 
@@ -18,7 +20,6 @@ from azure.monitor.opentelemetry.exporter._quickpulse._types import (
     _DependencyData,
     _ExceptionData,
     _RequestData,
-    _TraceData,
 )
 from azure.monitor.opentelemetry.exporter.export.trace import _utils as trace_utils
 
@@ -218,3 +219,5 @@ class TestExceptionData(unittest.TestCase):
         self.assertEqual(result.message, "")
         self.assertEqual(result.stack_trace, "")
         self.assertEqual(result.custom_dimensions, self.span_event.attributes)
+
+# cSpell:enable
