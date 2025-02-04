@@ -152,7 +152,7 @@ async def simulate_conversation(
                 turn_number=current_turn,
                 session_state=session_state,
             )
-            if "session_state" in full_response:
+            if "session_state" in full_response and full_response["session_state"] is not None:
                 session_state.update(full_response["session_state"])
 
             # check if conversation id is null, which means conversation starter was used. use id from next turn
