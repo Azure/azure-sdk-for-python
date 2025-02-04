@@ -101,6 +101,7 @@ async def simulate_conversation(
     :rtype: Tuple[Optional[str], List[ConversationTurn]]
     """
 
+    session_state = {}
     # Read the first prompt.
     (first_response, request, _, full_response) = await bots[0].generate_response(
         session=session,
@@ -149,7 +150,10 @@ async def simulate_conversation(
                 conversation_history=conversation_history,
                 max_history=history_limit,
                 turn_number=current_turn,
+                session_state=session_state,
             )
+            if "session_state" in full_response:
+                session_state.update(full_response["session_state"])
 
             # check if conversation id is null, which means conversation starter was used. use id from next turn
             if conversation_id is None and "id" in response:

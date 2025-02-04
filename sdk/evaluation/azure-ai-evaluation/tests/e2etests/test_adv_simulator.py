@@ -213,8 +213,7 @@ class TestAdvSimulator:
             ]
         )
 
-    @pytest.mark.skipif(
-            not is_live(), reason="Getting ServiceResponseTimeoutError in playback mode. WI: 3819148")
+    @pytest.mark.skip(reason="Getting ServiceResponseTimeoutError. WI: 3819148")
     def test_adv_conversation_image_gen_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
