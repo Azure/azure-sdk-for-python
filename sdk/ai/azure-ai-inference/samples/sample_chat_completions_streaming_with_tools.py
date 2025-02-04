@@ -22,14 +22,14 @@ USAGE:
         where `your-unique-resource-name` is your globally unique AOAI resource name,
         and `your-deployment-name` is your AI Model deployment name.
         For example: https://your-unique-host.openai.azure.com/openai/deployments/gpt-4o
-    2) AZURE_OPENAI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
+    2) AZURE_OPENAI_CHAT_KEY - Your model key. Keep it secret.
 
     For use_azure_openai_endpoint = False, set these two environment variables before running the sample:
     1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form 
         https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
-    2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
+    2) AZURE_AI_CHAT_KEY - Your model key. Keep it secret.
 """
 import sys
 

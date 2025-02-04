@@ -15,7 +15,7 @@ from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service, e
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._common.utils import validate_conversation
-from azure.ai.evaluation._constants import AggregationType
+from azure.ai.evaluation._constants import _AggregationType
 from azure.core.credentials import TokenCredential
 
 from . import EvaluatorBase
@@ -38,8 +38,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
     :type eval_last_turn: bool
     :param conversation_aggregation_type: The type of aggregation to perform on the per-turn results of a conversation
         to produce a single result.
-        Default is ~azure.ai.evaluation.AggregationType.MEAN.
-    :type conversation_aggregation_type: ~azure.ai.evaluation.AggregationType
+        Default is ~azure.ai.evaluation._AggregationType.MEAN.
+    :type conversation_aggregation_type: ~azure.ai.evaluation._AggregationType
     """
 
     @override
@@ -49,7 +49,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         azure_ai_project: dict,
         credential: TokenCredential,
         eval_last_turn: bool = False,
-        conversation_aggregation_type: AggregationType = AggregationType.MEAN,
+        conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,
     ):
         super().__init__(eval_last_turn=eval_last_turn, conversation_aggregation_type=conversation_aggregation_type)
         self._eval_metric = eval_metric

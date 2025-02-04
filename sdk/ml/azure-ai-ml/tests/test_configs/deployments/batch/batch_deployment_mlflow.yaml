@@ -14,3 +14,6 @@ max_concurrency_per_instance: 5
 compute: "azureml:testCompute"
 resources:
   instance_count: 2
+tags:
+  tag1: value1
+  tag2: value2
