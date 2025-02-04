@@ -131,7 +131,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             return result
         except exceptions.CosmosHttpResponseError as e:
             retry_policy = None
-            if _has_database_account_header(request.headers):
+            if request and _has_database_account_header(request.headers):
                 retry_policy = database_account_retry_policy
             elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in \
                     [SubStatusCodes.DATABASE_ACCOUNT_NOT_FOUND, SubStatusCodes.WRITE_FORBIDDEN]:
@@ -200,14 +200,14 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError as e:
-            if _has_database_account_header(request.headers):
+            if request and _has_database_account_header(request.headers):
                 if not database_account_retry_policy.ShouldRetry(e):
                     raise e
             else:
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
-            if _has_database_account_header(request.headers):
+            if request and _has_database_account_header(request.headers):
                 if not database_account_retry_policy.ShouldRetry(e):
                     raise e
             else:

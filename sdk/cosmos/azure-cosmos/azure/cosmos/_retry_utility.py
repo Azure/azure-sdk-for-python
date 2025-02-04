@@ -132,7 +132,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             return result
         except exceptions.CosmosHttpResponseError as e:
             retry_policy = defaultRetry_policy
-            if _has_database_account_header(request.headers):
+            if request and _has_database_account_header(request.headers):
                 retry_policy = database_account_retry_policy
             # Re-assign retry policy based on error code
             elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in\
@@ -200,14 +200,14 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError as e:
-            if _has_database_account_header(request.headers):
+            if request and _has_database_account_header(request.headers):
                 if not database_account_retry_policy.ShouldRetry(e):
                     raise e
             else:
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
-            if _has_database_account_header(request.headers):
+            if request and _has_database_account_header(request.headers):
                 if not database_account_retry_policy.ShouldRetry(e):
                     raise e
             else:
@@ -242,7 +242,7 @@ def _handle_service_request_retries(client, request_retry_policy, exception, *ar
         raise exception
 
 def _handle_service_response_retries(request, client, response_retry_policy, exception, *args):
-    if _has_read_retryable_headers(request.headers):
+    if request and _has_read_retryable_headers(request.headers):
         # we resolve the request endpoint to the next preferred region
         # once we are out of preferred regions we stop retrying
         retry_policy = response_retry_policy
