@@ -25,7 +25,7 @@ from azure.storage.blob import (
     StandardBlobTier,
 )
 from azure.storage.blob._shared.policies import StorageContentValidation
-from azure.storage.fileshare import ShareClient, ShareServiceClient, ShareFileClient
+from azure.storage.fileshare import ShareClient, ShareFileClient, ShareServiceClient
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
@@ -88,16 +88,13 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         self, storage_account_name: str,
         data: bytes
     ) -> Tuple[ShareServiceClient, ShareClient, ShareFileClient]:
-        share_name = self.get_resource_name('utshare')
-        file_name = self.get_resource_name('file')
-        share_token = self.get_credential(ShareServiceClient)
         share_service_client = ShareServiceClient(
             account_url=self.account_url(storage_account_name, "file"),
-            credential=share_token,
+            credential=self.get_credential(ShareServiceClient),
             token_intent='backup'
         )
-        share_client = share_service_client.create_share(share_name)
-        file_client = share_client.get_file_client(file_name)
+        share_client = share_service_client.create_share(self.get_resource_name('utshare'))
+        file_client = share_client.get_file_client(self.get_resource_name('file'))
         file_client.upload_file(data)
         return share_service_client, share_client, file_client
 
