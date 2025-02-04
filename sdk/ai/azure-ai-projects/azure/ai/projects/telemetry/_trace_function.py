@@ -37,11 +37,6 @@ if _tracing_library_available:
         :type span_name: Optional[str]
         :return: The decorated function with tracing enabled.
         :rtype: Callable
-
-        Example usage:
-        @trace_function("example_span")
-        def example_function(a, b, c):
-            return a + b + c
         """
 
         def decorator(func: Callable) -> Callable:
@@ -67,7 +62,7 @@ if _tracing_library_available:
                             if isinstance(sanitized_result, (list, dict, tuple, set)):
                                 if any(isinstance(i, (list, dict, tuple, set)) for i in sanitized_result):
                                     sanitized_result = str(sanitized_result)
-                            span.set_attributes({"code.function.return.value": sanitized_result})
+                            span.set_attribute("code.function.return.value", sanitized_result) # type: ignore
                         return result
                     except Exception as e:
                         span.record_exception(e)
@@ -95,7 +90,7 @@ if _tracing_library_available:
                             if isinstance(sanitized_result, (list, dict, tuple, set)):
                                 if any(isinstance(i, (list, dict, tuple, set)) for i in sanitized_result):
                                     sanitized_result = str(sanitized_result)
-                            span.set_attributes({"code.function.return.value": sanitized_result})
+                            span.set_attribute("code.function.return.value", sanitized_result) # type: ignore
                         return result
                     except Exception as e:
                         span.record_exception(e)
