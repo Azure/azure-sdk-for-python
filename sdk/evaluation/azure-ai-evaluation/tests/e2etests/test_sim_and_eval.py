@@ -216,6 +216,14 @@ class TestSimAndEval:
         assert eval_output["rows"][0]["outputs.protected_material.artwork_label"] is not None
         assert eval_output["rows"][0]["outputs.protected_material.logos_and_brands_label"] is not None
 
+        assert "protected_material.fictional_characters_defect_rate" in metrics.keys()
+        assert "protected_material.logos_and_brands_defect_rate" in metrics.keys()
+        assert "protected_material.artwork_defect_rate" in metrics.keys()
+
+        assert 0 <= metrics.get("protected_material.fictional_characters_defect_rate") <= 1
+        assert 0 <= metrics.get("protected_material.logos_and_brands_defect_rate") <= 1
+        assert 0 <= metrics.get("protected_material.artwork_defect_rate") <= 1
+
         # Cleanup file
         os.remove(file_name)
 
