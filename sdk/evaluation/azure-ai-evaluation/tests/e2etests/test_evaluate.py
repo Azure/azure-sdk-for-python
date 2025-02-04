@@ -34,6 +34,7 @@ def questions_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, "questions.jsonl")
 
+
 def answer_evaluator(response):
     return {"length": len(response)}
 
