@@ -268,25 +268,26 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
         http_target = ""
         if url_attributes.URL_PATH in attributes:
             http_target = attributes.get(url_attributes.URL_PATH, "")
-        if url_attributes.URL_QUERY in attributes:
-            http_target = "{}?{}".format(
-                http_target,
-                attributes.get(url_attributes.URL_QUERY, "")
-            )
-        if not http_target:
-            http_target = attributes.get(SpanAttributes.HTTP_TARGET)
+            if url_attributes.URL_QUERY in attributes:
+                http_target = "{}?{}".format(
+                    http_target,
+                    attributes.get(url_attributes.URL_QUERY, "")
+                )
+        elif SpanAttributes.HTTP_TARGET in attributes:
+            http_target = attributes.get(SpanAttributes.HTTP_TARGET, "")
         if scheme and http_target:
             # Host
             http_host = ""
             if server_attributes.SERVER_ADDRESS in attributes:
                 http_host = attributes.get(server_attributes.SERVER_ADDRESS, "")
-            if server_attributes.SERVER_PORT in attributes:
-                http_host = "{}:{}".format(
-                    http_host,
-                    attributes.get(server_attributes.SERVER_PORT, "")
-                )
-            if not http_host:
+                if server_attributes.SERVER_PORT in attributes:
+                    http_host = "{}:{}".format(
+                        http_host,
+                        attributes.get(server_attributes.SERVER_PORT, "")
+                    )
+            elif SpanAttributes.HTTP_HOST in attributes:
                 http_host = attributes.get(SpanAttributes.HTTP_HOST, "")
+            # Url
             if http_host:
                 url = "{}://{}{}".format(
                     scheme,
