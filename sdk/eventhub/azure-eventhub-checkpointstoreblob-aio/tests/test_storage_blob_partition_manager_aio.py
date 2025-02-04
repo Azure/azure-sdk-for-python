@@ -98,8 +98,7 @@ async def _update_checkpoint(connection_str, container_name):
 @pytest.mark.asyncio
 async def test_claim_and_list_ownership_async(storage_account):
     storage_account, container_name = get_live_storage_blob_client(storage_account)
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(_claim_and_list_ownership(storage_account, container_name))
+    await _claim_and_list_ownership(storage_account, container_name)
 
 
 @pytest.mark.parametrize("storage_account", STORAGE_ENV_KEYS)
@@ -107,5 +106,4 @@ async def test_claim_and_list_ownership_async(storage_account):
 @pytest.mark.asyncio
 async def test_update_checkpoint_async(storage_account):
     storage_account, container_name = get_live_storage_blob_client(storage_account)
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(_update_checkpoint(storage_account, container_name))
+    await _update_checkpoint(storage_account, container_name)
