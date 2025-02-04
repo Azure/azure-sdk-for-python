@@ -113,7 +113,7 @@ elif connection.connection_type == ConnectionType.AZURE_AI_SERVICES:
         raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
     inference_response = inference_client.complete(
-        model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+        model=model_deployment_name, messages=[UserMessage("How many feet are in a mile?")]
     )
     inference_client.close()
     print(inference_response.choices[0].message.content)

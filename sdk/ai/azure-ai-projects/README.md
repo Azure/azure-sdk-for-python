@@ -206,7 +206,7 @@ inference_client = project_client.inference.get_chat_completions_client()
 
 response = inference_client.complete(
     model="gpt-4o", # Model deployment name
-    messages=[UserMessage(content="How many feet are in a mile?")]
+    messages=[UserMessage("How many feet are in a mile?")]
 )
 
 print(response.choices[0].message.content)

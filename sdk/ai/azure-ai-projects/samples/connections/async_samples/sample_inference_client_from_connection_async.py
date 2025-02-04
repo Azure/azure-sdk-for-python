@@ -119,7 +119,7 @@ async def sample_inference_client_from_connection() -> None:
                     raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
                 inference_response = await inference_client.complete(
-                    model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+                    model=model_deployment_name, messages=[UserMessage("How many feet are in a mile?")]
                 )
                 await inference_client.close()
                 print(inference_response.choices[0].message.content)
