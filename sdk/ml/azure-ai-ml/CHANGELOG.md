@@ -9,6 +9,10 @@
   - #39187 - Submitting a Command job created using the __call__ method on another Command is missing outputs.
   - #37738 - documentation fix for deployment entities.
 
+### Other Changes
+
+- Adding support for Python 3.13. Ensuring that azureml-dataprep-rslex is only installed for Python versions below 3.13. This change may break if `Annotated` used directly without parameters.
+
 ## 1.24.0 (2025-01-07)
 
 ### Bugs Fixed
