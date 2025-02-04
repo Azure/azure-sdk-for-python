@@ -4,7 +4,7 @@
 # ------------------------------------
 import functools
 import asyncio
-from typing import Any, Callable, Tuple, Optional, Dict, List
+from typing import Any, Callable, Optional, Dict
 
 try:
     # pylint: disable = no-name-in-module
@@ -33,11 +33,10 @@ if _tracing_library_available:
 
         Object types are omitted, and the corresponding parameter is not traced.
 
-        Parameters:
-        - span_name (Optional[str]): The name of the span. If not provided, the function name is used.
-
-        Returns:
-        - Callable: The decorated function with tracing enabled.
+        :param span_name: The name of the span. If not provided, the function name is used.
+        :type span_name: Optional[str]
+        :return: The decorated function with tracing enabled.
+        :rtype: Callable
 
         Example usage:
         @trace_function("example_span")
@@ -111,15 +110,14 @@ if _tracing_library_available:
 
 else:
     # Define a no-op decorator if OpenTelemetry is not available
-    def trace_function(span_name: Optional[str] = None):
+    def trace_function(_span_name: Optional[str] = None):
         """
         A no-op decorator for tracing function calls when OpenTelemetry is not available.
 
-        Parameters:
-        - span_name (Optional[str]): The name of the span. If not provided, the function name is used.
-
-        Returns:
-        - Callable: The original function without tracing.
+        :param _span_name: Not used in this version.
+        :type _span_name: Optional[str]
+        :return: The original function.
+        :rtype: Callable
         """
 
         def decorator(func: Callable) -> Callable:
@@ -133,9 +131,11 @@ def sanitize_parameters(func, *args, **kwargs) -> Dict[str, Any]:
     Sanitize function parameters to include only built-in data types.
 
     :param func: The function being decorated.
+    :type func: Callable
     :param args: Positional arguments passed to the function.
-    :param kwargs: Keyword arguments passed to the function.
+    :type args: Tuple[Any]
     :return: A dictionary of sanitized parameters.
+    :rtype: Dict[str, Any]
     """
     import inspect
 
@@ -159,22 +159,27 @@ def sanitize_parameters(func, *args, **kwargs) -> Dict[str, Any]:
     return sanitized_params
 
 
+# pylint: disable=R0911
 def sanitize_for_attributes(value: Any, is_recursive: bool = False) -> Any:
     """
     Sanitize a value to be used as an attribute.
 
     :param value: The value to sanitize.
+    :type value: Any
+    :param is_recursive: Indicates if the function is being called recursively. Default is False.
+    :type is_recursive: bool
     :return: The sanitized value or None if the value is not a supported type.
+    :rtype: Any
     """
     if isinstance(value, (str, int, float, bool)):
         return value
-    elif isinstance(value, list):
+    if isinstance(value, list):
         return [
             sanitize_for_attributes(item, True)
             for item in value
             if isinstance(item, (str, int, float, bool, list, dict, tuple, set))
         ]
-    elif isinstance(value, dict):
+    if isinstance(value, dict):
         retval = {
             k: sanitize_for_attributes(v, True)
             for k, v in value.items()
@@ -183,15 +188,14 @@ def sanitize_for_attributes(value: Any, is_recursive: bool = False) -> Any:
         # dict to compatible with span attribute, so return it as a string
         if is_recursive:
             return retval
-        else:
-            return str(retval)
-    elif isinstance(value, tuple):
+        return str(retval)
+    if isinstance(value, tuple):
         return tuple(
             sanitize_for_attributes(item, True)
             for item in value
             if isinstance(item, (str, int, float, bool, list, dict, tuple, set))
         )
-    elif isinstance(value, set):
+    if isinstance(value, set):
         retval = {
             sanitize_for_attributes(item, True)
             for item in value
@@ -199,6 +203,5 @@ def sanitize_for_attributes(value: Any, is_recursive: bool = False) -> Any:
         }
         if is_recursive:
             return retval
-        else:
-            return str(retval)
+        return str(retval)
     return None
