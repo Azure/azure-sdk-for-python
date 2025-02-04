@@ -1,5 +1,17 @@
 # Release History
 
+## 1.3.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+Fixed interrupt_call_media_operation flag in play to all api.
+
+### Other Changes
+
 ## 1.3.0 (2024-11-22)
 
 ### Features Added
