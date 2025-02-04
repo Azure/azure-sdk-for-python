@@ -23,13 +23,13 @@ async def main(client):
         await client.receive(on_event)
 
 if __name__ == '__main__':
-    checkpoint_store = BlobCheckpointStore.from_connection_string(
+    checkpoint_store = BlobCheckpointStore(
         STORAGE_ACCOUNT,
         container_name=BLOB_CONTAINER_NAME,
         api_version=STORAGE_SERVICE_API_VERSION,
         credential=DefaultAzureCredential()
     )
-    client = EventHubConsumerClient.from_connection_string(
+    client = EventHubConsumerClient(
         FULLY_QUALIFIED_NAMESPACE,
         credential=DefaultAzureCredential(),
         consumer_group='$Default',

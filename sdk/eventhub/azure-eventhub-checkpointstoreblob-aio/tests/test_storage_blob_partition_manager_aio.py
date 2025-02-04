@@ -25,13 +25,13 @@ def get_live_storage_blob_client(storage_account):
     return storage_account, container_name
 
 
-async def _claim_and_list_ownership(connection_str, container_name):
+async def _claim_and_list_ownership(storage_account, container_name):
     fully_qualified_namespace = 'test_namespace'
     eventhub_name = 'eventhub'
     consumer_group = '$default'
     ownership_cnt = 8
 
-    checkpoint_store = BlobCheckpointStore.from_connection_string(connection_str, container_name)
+    checkpoint_store = BlobCheckpointStore(storage_account, container_name, credential=DefaultAzureCredential())
     async with checkpoint_store:
         ownership_list = await checkpoint_store.list_ownership(
             fully_qualified_namespace=fully_qualified_namespace,
@@ -64,13 +64,13 @@ async def _claim_and_list_ownership(connection_str, container_name):
         assert len(ownership_list) == ownership_cnt
 
 
-async def _update_checkpoint(connection_str, container_name):
+async def _update_checkpoint(storage_account, container_name):
     fully_qualified_namespace = 'test_namespace'
     eventhub_name = 'eventhub'
     consumer_group = '$default'
     partition_cnt = 8
 
-    checkpoint_store = BlobCheckpointStore.from_connection_string(connection_str, container_name)
+    checkpoint_store = BlobCheckpointStore(storage_account, container_name, credential=DefaultAzureCredential())
     async with checkpoint_store:
         for i in range(partition_cnt):
             checkpoint = {
