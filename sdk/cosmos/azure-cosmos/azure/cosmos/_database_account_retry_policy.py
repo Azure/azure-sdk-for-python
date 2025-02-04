@@ -32,7 +32,7 @@ class DatabaseAccountRetryPolicy(object):
         self.max_retry_attempt_count = 1
         self.connection_policy = connection_policy
 
-    def ShouldRetry(self):  # pylint: disable=unused-argument
+    def ShouldRetry(self, exception):  # pylint: disable=unused-argument
         """Returns true if the request should retry based on the passed-in exception.
 
         :param exceptions.CosmosHttpResponseError exception:
