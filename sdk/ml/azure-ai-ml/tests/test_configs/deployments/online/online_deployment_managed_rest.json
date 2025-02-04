@@ -1,0 +1,71 @@
+{
+    "id": "/subscriptions/sub-id/resourceGroups/some-rg/providers/Microsoft.MachineLearningServices/workspaces/some-ws/onlineEndpoints/some-endpoint/deployments/blue",
+    "name": "blue",
+    "type": "Microsoft.MachineLearningServices/workspaces/onlineEndpoints/deployments",
+    "properties": {
+        "description": "some-description",
+        "properties": {
+            "AzureAsyncOperationUri": "azure-operation"
+        },
+        "codeConfiguration": {
+            "codeId": "code-id",
+            "scoringScript": "score.py"
+        },
+        "environmentId": "azureml://registries/azureml/environments/designer-r/versions/99",
+        "environmentVariables": {
+            "AZUREML_MODEL_DIR": "/var/azureml-app/azureml-models/blue/1",
+            "AZUREML_ENTRY_SCRIPT": "score.py",
+            "AML_APP_ROOT": "/var/azureml-app/root-id"
+        },
+        "scaleSettings": {
+            "scaleType": "Default"
+        },
+        "requestSettings": {
+            "maxQueueWait": "PT0S",
+            "requestTimeout": "PT1M",
+            "maxConcurrentRequestsPerInstance": 1
+        },
+        "modelMountPath": null,
+        "appInsightsEnabled": false,
+        "livenessProbe": {
+            "failureThreshold": 30,
+            "successThreshold": 1,
+            "timeout": "PT2S",
+            "period": "PT10S",
+            "initialDelay": "PT10S"
+        },
+        "readinessProbe": {
+            "failureThreshold": 30,
+            "successThreshold": 1,
+            "timeout": "PT2S",
+            "period": "PT10S",
+            "initialDelay": "PT10S"
+        },
+        "provisioningState": "Creating",
+        "instanceType": "Standard_DS3_v2",
+        "model": "model-id",
+        "egressPublicNetworkAccess": "Enabled",
+        "dataCollector": {
+            "collections": {
+                "some-collection": {
+                    "clientId": "some-id"
+                }
+            }
+        },
+        "endpointComputeType": "Managed"
+    },
+    "tags": {
+        "tagName": "tagValue"
+    },
+    "location": "eastus",
+    "kind": "Managed",
+    "sku": {
+        "name": "Default",
+        "tier": "Standard",
+        "capacity": 3
+    },
+    "systemData": {
+        "createdAt": "2025-01-23T09:45:13.2712504+00:00",
+        "lastModifiedAt": "2025-01-23T09:45:13.2712569+00:00"
+    }
+}
