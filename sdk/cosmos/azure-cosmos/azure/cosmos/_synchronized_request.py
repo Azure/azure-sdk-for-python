@@ -84,14 +84,14 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
 
     connection_timeout = connection_policy.RequestTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
+    read_timeout = connection_policy.ReadTimeout
+    read_timeout = kwargs.pop("read_timeout", read_timeout)
 
     # Every request tries to perform a refresh
     client_timeout = kwargs.get('timeout')
     start_time = time.time()
     if request_params.resource_type != http_constants.ResourceType.DatabaseAccount:
         global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
-    else:
-        connection_timeout = connection_policy.GlobalDatabaseAccountRequestTimeout
     if client_timeout is not None:
         kwargs['timeout'] = client_timeout - (time.time() - start_time)
         if kwargs['timeout'] <= 0:
@@ -125,6 +125,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
             pipeline_client,
             request,
             connection_timeout=connection_timeout,
+            read_timeout=read_timeout,
             connection_verify=kwargs.pop("connection_verify", ca_certs),
             connection_cert=kwargs.pop("connection_cert", cert_files),
             **kwargs
@@ -134,6 +135,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
             pipeline_client,
             request,
             connection_timeout=connection_timeout,
+            read_timeout=read_timeout,
             # If SSL is disabled, verify = false
             connection_verify=kwargs.pop("connection_verify", is_ssl_enabled),
             **kwargs
