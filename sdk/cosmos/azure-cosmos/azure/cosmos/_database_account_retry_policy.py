@@ -29,13 +29,13 @@ class DatabaseAccountRetryPolicy(object):
 
     def __init__(self, connection_policy):
         self.retry_count = 0
+        self.retry_after_in_milliseconds = 0
         self.max_retry_attempt_count = 1
         self.connection_policy = connection_policy
 
     def ShouldRetry(self, exception):  # pylint: disable=unused-argument
         """Returns true if the request should retry based on the passed-in exception.
 
-        :param exceptions.CosmosHttpResponseError exception:
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """
