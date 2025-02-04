@@ -778,11 +778,23 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
 
 class OpenApiTool(Tool[OpenApiToolDefinition]):
     """
-    A tool that retrieves information using an OpenAPI spec.
+    A tool that retrieves information using OpenAPI specs.
+    Initialized with an initial API definition (name, description, spec, auth),
+    this class also supports adding and removing additional API definitions dynamically.
     """
 
     def __init__(self, name: str, description: str, spec: Any, auth: OpenApiAuthDetails):
-        self._definitions = [
+        """
+        Constructor initializes the tool with a primary API definition.
+
+        :param name: The name of the API.
+        :param description: The API description.
+        :param spec: The API specification.
+        :param auth: Authentication details for the API.
+        :type auth: OpenApiAuthDetails
+        """
+        self._default_auth = auth
+        self._definitions: List[OpenApiToolDefinition] = [
             OpenApiToolDefinition(
                 openapi=OpenApiFunctionDefinition(name=name, description=description, spec=spec, auth=auth)
             )
@@ -791,12 +803,61 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     @property
     def definitions(self) -> List[OpenApiToolDefinition]:
         """
-        Get the OpenApi tool definitions.
+        Get the list of all API definitions for the tool.
 
-        :return: A list of tool definitions.
+        :return: A list of OpenAPI tool definitions.
         :rtype: List[ToolDefinition]
         """
         return self._definitions
+
+    def add_definition(
+        self, 
+        name: str, 
+        description: str, 
+        spec: Any, 
+        auth: Optional[OpenApiAuthDetails] = None
+    ) -> None:
+        """
+        Adds a new API definition dynamically.
+        Raises a ValueError if a definition with the same name already exists.
+
+        :param name: The name of the API.
+        :param description: The description of the API.
+        :param spec: The API specification.
+        :param auth: Optional authentication details for this particular API definition.
+                     If not provided, the tool's default authentication details will be used.
+        :raises ValueError: If a definition with the same name exists.
+        """
+        # Check if a definition with the same name exists.
+        if any(defn.openapi.name == name for defn in self._definitions):
+            raise ValueError(f"Definition '{name}' already exists and cannot be added again.")
+        
+        # Use provided auth if specified, otherwise use default
+        auth_to_use = auth if auth is not None else self._default_auth
+        
+        new_definition = OpenApiToolDefinition(
+            openapi=OpenApiFunctionDefinition(
+                name=name, 
+                description=description, 
+                spec=spec, 
+                auth=auth_to_use
+            )
+        )
+        self._definitions.append(new_definition)
+
+    def remove_definition(self, name: str) -> None:
+        """
+        Removes an API definition based on its name.
+
+        :param name: The name of the API definition to remove.
+        :raises ValueError: If the definition with the specified name does not exist.
+        """
+        for definition in self._definitions:
+            if definition.openapi.name == name:
+                self._definitions.remove(definition)
+                logging.info(f"Definition '{name}' removed. Total definitions: {len(self._definitions)}.")
+                return
+        raise ValueError(f"Definition with the name '{name}' does not exist.")
 
     @property
     def resources(self) -> ToolResources:
@@ -814,6 +875,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
 
         :param Any tool_call: The tool call to execute.
         """
+        pass
 
 
 class AzureFunctionTool(Tool[AzureFunctionToolDefinition]):
