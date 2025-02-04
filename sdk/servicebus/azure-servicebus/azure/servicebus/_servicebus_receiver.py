@@ -599,7 +599,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
         *,
         last_updated_time: datetime.datetime = datetime.datetime.max,
         skip_num_sessions: int = 0,
-        max_num_sessions: Optional[int] = None,
+        max_num_sessions: int = 1,
         timeout: Optional[float] = None,
         **kwargs
     ):
@@ -627,7 +627,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
         }
 
         self._populate_message_properties(message)
-        handler = functools.partial(mgmt_handlers.list_sessions_op, receiver=self, amqp_transport=self._amqp_transport)
+        handler = functools.partial(mgmt_handlers.list_sessions_op, amqp_transport=self._amqp_transport)
         start_time = time.time_ns()
         messages = self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION, message, handler, timeout=timeout
