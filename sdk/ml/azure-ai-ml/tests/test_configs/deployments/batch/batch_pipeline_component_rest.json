@@ -1,5 +1,5 @@
 {
-    "id": "/subscriptions/2d385bf4-0756-4a76-aa95-28bf9ed3b625/resourceGroups/sdkv2-20240925-rg/providers/Microsoft.MachineLearningServices/workspaces/sdkv2-20240925-ws/batchEndpoints/achauhan-endpoint-name/deployments/hello-world-1",
+    "id": "/subscriptions/sub-id/resourceGroups/some-res-group/providers/Microsoft.MachineLearningServices/workspaces/some-ws/batchEndpoints/achauhan-endpoint-name/deployments/hello-world-1",
     "name":"hello-batch",
     "description":"A batch pipeline component",
     "properties":{
