@@ -1954,6 +1954,15 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
+        :keyword source_token_intent:
+            Required when source is Azure Storage Files and using `TokenCredential` for authentication.
+            This is ignored for other forms of authentication.
+            Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
+
+            backup - Specifies requests are intended for backup/admin type operations, meaning that all file/directory
+                 ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
+
+        :paramtype source_token_intent: Literal['backup']
         :returns: Blob property dict.
         :rtype: Dict[str, Any]
         """

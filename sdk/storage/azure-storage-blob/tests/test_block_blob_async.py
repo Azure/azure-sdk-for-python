@@ -148,7 +148,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_file_to_blob_upload_with_oauth(self, **kwargs):
+    async def test_upload_from_file_to_blob_with_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -185,6 +185,51 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
 
             # Assert
             assert destination_blob_data == source_data
+        finally:
+            await share_service_client.delete_share(share_client.share_name)
+            await blob_service_client.delete_container(self.source_container_name)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_stage_from_file_to_blob_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+
+        # Set up source file share with random data
+        source_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        share_service_client, share_client, source_file_client = await self._create_file_share_oauth(
+            storage_account_name,
+            source_data
+        )
+
+        # Set up destination blob without data
+        blob_service_client = BlobServiceClient(
+            account_url=self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key
+        )
+        destination_blob_client = blob_service_client.get_blob_client(
+            container=self.source_container_name,
+            blob=self.get_resource_name(TEST_BLOB_PREFIX + "1")
+        )
+
+        try:
+            # Act
+            token = await self._get_bearer_token_string()
+            block_id = '1'
+            await destination_blob_client.stage_block_from_url(
+                block_id=block_id,
+                source_url=source_file_client.url,
+                source_authorization=token,
+                source_token_intent='backup'
+            )
+            block_list = [BlobBlock(block_id=block_id)]
+            resp = await destination_blob_client.commit_block_list(block_list)
+
+            # Assert
+            assert resp is not None
         finally:
             await share_service_client.delete_share(share_client.share_name)
             await blob_service_client.delete_container(self.source_container_name)

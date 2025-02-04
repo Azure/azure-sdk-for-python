@@ -2056,6 +2056,15 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :keyword str source_authorization:
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
+        :keyword source_token_intent:
+            Required when source is Azure Storage Files and using `TokenCredential` for authentication.
+            This is ignored for other forms of authentication.
+            Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
+
+            backup - Specifies requests are intended for backup/admin type operations, meaning that all file/directory
+                 ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
+
+        :paramtype source_token_intent: Literal['backup']
         :returns: Blob property dict.
         :rtype: dict[str, Any]
         """
@@ -2067,7 +2076,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             source_offset=source_offset,
             source_length=source_length,
             source_content_md5=source_content_md5,
-            **kwargs)
+            **kwargs
+        )
         try:
             return cast(Dict[str, Any], self._client.block_blob.stage_block_from_url(**options))
         except HttpResponseError as error:

@@ -731,6 +731,7 @@ def _stage_block_from_url_options(
 ) -> Dict[str, Any]:
     source_url = _encode_source_url(source_url=source_url)
     source_authorization = kwargs.pop('source_authorization', None)
+    source_token_intent = kwargs.pop('source_token_intent', None)
     if source_length is not None and source_offset is None:
         raise ValueError("Source offset value must not be None if length is set.")
     if source_length is not None and source_offset is not None:
@@ -749,6 +750,7 @@ def _stage_block_from_url_options(
                             encryption_algorithm=cpk.algorithm)
     options = {
         'copy_source_authorization': source_authorization,
+        'file_request_intent': source_token_intent,
         'block_id': block_id,
         'content_length': 0,
         'source_url': source_url,
