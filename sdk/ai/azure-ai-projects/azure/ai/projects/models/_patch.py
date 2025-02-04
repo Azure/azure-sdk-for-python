@@ -811,10 +811,10 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         return self._definitions
 
     def add_definition(
-        self, 
-        name: str, 
-        description: str, 
-        spec: Any, 
+        self,
+        name: str,
+        description: str,
+        spec: Any,
         auth: Optional[OpenApiAuthDetails] = None
     ) -> None:
         """
@@ -822,24 +822,28 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         Raises a ValueError if a definition with the same name already exists.
 
         :param name: The name of the API.
+        :type name: str
         :param description: The description of the API.
+        :type description: str
         :param spec: The API specification.
+        :type spec: Any
         :param auth: Optional authentication details for this particular API definition.
                      If not provided, the tool's default authentication details will be used.
+        :type auth: Optional[OpenApiAuthDetails]
         :raises ValueError: If a definition with the same name exists.
         """
         # Check if a definition with the same name exists.
         if any(definition.openapi.name == name for definition in self._definitions):
             raise ValueError(f"Definition '{name}' already exists and cannot be added again.")
-        
+
         # Use provided auth if specified, otherwise use default
         auth_to_use = auth if auth is not None else self._default_auth
         
         new_definition = OpenApiToolDefinition(
             openapi=OpenApiFunctionDefinition(
-                name=name, 
-                description=description, 
-                spec=spec, 
+                name=name,
+                description=description,
+                spec=spec,
                 auth=auth_to_use
             )
         )
@@ -850,12 +854,13 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         Removes an API definition based on its name.
 
         :param name: The name of the API definition to remove.
+        :type name: str
         :raises ValueError: If the definition with the specified name does not exist.
         """
         for definition in self._definitions:
             if definition.openapi.name == name:
                 self._definitions.remove(definition)
-                logging.info(f"Definition '{name}' removed. Total definitions: {len(self._definitions)}.")
+                logging.info("Definition '%s' removed. Total definitions: %d.", name, len(self._definitions))
                 return
         raise ValueError(f"Definition with the name '{name}' does not exist.")
 
@@ -869,13 +874,13 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         """
         return ToolResources()
 
-    def execute(self, tool_call: Any):
+    def execute(self, tool_call: Any) -> None:
         """
         OpenApiTool does not execute client-side.
 
         :param Any tool_call: The tool call to execute.
+        :type tool_call: Any
         """
-        pass
 
 
 class AzureFunctionTool(Tool[AzureFunctionToolDefinition]):
