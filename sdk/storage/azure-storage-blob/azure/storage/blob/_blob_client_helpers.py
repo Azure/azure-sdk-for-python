@@ -197,6 +197,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
     overwrite = kwargs.pop('overwrite', False)
     content_settings = kwargs.pop('content_settings', None)
     source_authorization = kwargs.pop('source_authorization', None)
+    source_token_intent = kwargs.pop('source_token_intent', None)
     if content_settings:
         kwargs['blob_http_headers'] = BlobHTTPHeaders(
             blob_cache_control=content_settings.cache_control,
@@ -214,6 +215,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
 
     options = {
         'copy_source_authorization': source_authorization,
+        'file_request_intent': source_token_intent,
         'content_length': 0,
         'copy_source_blob_properties': kwargs.pop('include_source_blob_properties', True),
         'source_content_md5': kwargs.pop('source_content_md5', None),
