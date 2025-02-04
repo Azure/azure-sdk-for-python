@@ -5,101 +5,123 @@
 import functools
 import asyncio
 from typing import Any, Callable, Tuple, Optional, Dict, List
-from opentelemetry import trace as opentelemetry_trace
 
-tracer = opentelemetry_trace.get_tracer(__name__)
+try:
+    # pylint: disable = no-name-in-module
+    from opentelemetry import trace as opentelemetry_trace
+    tracer = opentelemetry_trace.get_tracer(__name__)
+    _tracing_library_available = True
+except ModuleNotFoundError:
+    _tracing_library_available = False
 
+if _tracing_library_available:
+    def trace_function(span_name: Optional[str] = None):
+        """
+        A decorator for tracing function calls using OpenTelemetry.
 
-def trace_function(span_name: Optional[str] = None):
-    """
-    A decorator for tracing function calls using OpenTelemetry.
+        This decorator handles various data types for function parameters and return values, 
+        and records them as attributes in the trace span. The supported data types include:
+        - Basic data types: str, int, float, bool
+        - Collections: list, dict, tuple, set
 
-    This decorator handles various data types for function parameters and return values, 
-    and records them as attributes in the trace span. The supported data types include:
-    - Basic data types: str, int, float, bool
-    - Collections: list, dict, tuple, set
+        Special handling for collections:
+        - If a collection (list, dict, tuple, set) contains nested collections, the entire collection 
+        is converted to a string before being recorded as an attribute.
+        - Sets and dictionaries are always converted to strings to ensure compatibility with span attributes.
 
-    Special handling for collections:
-    - If a collection (list, dict, tuple, set) contains nested collections, the entire collection 
-      is converted to a string before being recorded as an attribute.
-    - Sets and dictionaries are always converted to strings to ensure compatibility with span attributes.
+        Object types are omitted, and the corresponding parameter is not traced.
 
-    Object types are omitted, and the corresponding parameter is not traced.
+        Parameters:
+        - span_name (Optional[str]): The name of the span. If not provided, the function name is used.
 
-    Parameters:
-    - span_name (Optional[str]): The name of the span. If not provided, the function name is used.
+        Returns:
+        - Callable: The decorated function with tracing enabled.
 
-    Returns:
-    - Callable: The decorated function with tracing enabled.
+        Example usage:
+        @trace_function("example_span")
+        def example_function(a, b, c):
+            return a + b + c
+        """
+        def decorator(func: Callable) -> Callable:
+            @functools.wraps(func)
+            async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
+                """
+                Wrapper function for asynchronous functions.
 
-    Example usage:
-    @trace_function("example_span")
-    def example_function(a, b, c):
-        return a + b + c
-    """
-    def decorator(func: Callable) -> Callable:
-        @functools.wraps(func)
-        async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
-            """
-            Wrapper function for asynchronous functions.
+                :param args: Positional arguments passed to the function.
+                :type args: Tuple[Any]
+                :return: The result of the decorated asynchronous function.
+                :rtype: Any
+                """
+                name = span_name if span_name else func.__name__
+                with tracer.start_as_current_span(name) as span:
+                    try:
+                        # Sanitize parameters and set them as attributes
+                        sanitized_params = sanitize_parameters(func, *args, **kwargs)
+                        span.set_attributes(sanitized_params)
+                        result = await func(*args, **kwargs)
+                        sanitized_result = sanitize_for_attributes(result)
+                        if sanitized_result is not None:
+                            if isinstance(sanitized_result, (list, dict, tuple, set)):
+                                if any(isinstance(i, (list, dict, tuple, set)) for i in sanitized_result):
+                                    sanitized_result = str(sanitized_result)  
+                            span.set_attributes({"code.function.return.value": sanitized_result})
+                        return result
+                    except Exception as e:
+                        span.record_exception(e)
+                        raise
 
-            :param args: Positional arguments passed to the function.
-            :type args: Tuple[Any]
-            :return: The result of the decorated asynchronous function.
-            :rtype: Any
-            """
-            name = span_name if span_name else func.__name__
-            with tracer.start_as_current_span(name) as span:
-                try:
-                    # Sanitize parameters and set them as attributes
-                    sanitized_params = sanitize_parameters(func, *args, **kwargs)
-                    span.set_attributes(sanitized_params)
-                    result = await func(*args, **kwargs)
-                    sanitized_result = sanitize_for_attributes(result)
-                    if sanitized_result is not None:
-                        if isinstance(sanitized_result, (list, dict, tuple, set)):
-                            if any(isinstance(i, (list, dict, tuple, set)) for i in sanitized_result):
-                                sanitized_result = str(sanitized_result)  
-                        span.set_attributes({"code.function.return.value": sanitized_result})
-                    return result
-                except Exception as e:
-                    span.record_exception(e)
-                    raise
+            @functools.wraps(func)
+            def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
+                """
+                Wrapper function for synchronous functions.
 
-        @functools.wraps(func)
-        def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
-            """
-            Wrapper function for synchronous functions.
+                :param args: Positional arguments passed to the function.
+                :type args: Tuple[Any]
+                :return: The result of the decorated synchronous function.
+                :rtype: Any
+                """
+                name = span_name if span_name else func.__name__
+                with tracer.start_as_current_span(name) as span:
+                    try:
+                        # Sanitize parameters and set them as attributes
+                        sanitized_params = sanitize_parameters(func, *args, **kwargs)
+                        span.set_attributes(sanitized_params)
+                        result = func(*args, **kwargs)
+                        sanitized_result = sanitize_for_attributes(result)
+                        if sanitized_result is not None:
+                            if isinstance(sanitized_result, (list, dict, tuple, set)):
+                                if any(isinstance(i, (list, dict, tuple, set)) for i in sanitized_result):
+                                    sanitized_result = str(sanitized_result)  
+                            span.set_attributes({"code.function.return.value": sanitized_result})
+                        return result
+                    except Exception as e:
+                        span.record_exception(e)
+                        raise
 
-            :param args: Positional arguments passed to the function.
-            :type args: Tuple[Any]
-            :return: The result of the decorated synchronous function.
-            :rtype: Any
-            """
-            name = span_name if span_name else func.__name__
-            with tracer.start_as_current_span(name) as span:
-                try:
-                    # Sanitize parameters and set them as attributes
-                    sanitized_params = sanitize_parameters(func, *args, **kwargs)
-                    span.set_attributes(sanitized_params)
-                    result = func(*args, **kwargs)
-                    sanitized_result = sanitize_for_attributes(result)
-                    if sanitized_result is not None:
-                        if isinstance(sanitized_result, (list, dict, tuple, set)):
-                            if any(isinstance(i, (list, dict, tuple, set)) for i in sanitized_result):
-                                sanitized_result = str(sanitized_result)  
-                        span.set_attributes({"code.function.return.value": sanitized_result})
-                    return result
-                except Exception as e:
-                    span.record_exception(e)
-                    raise
+            # Determine if the function is async
+            if asyncio.iscoroutinefunction(func):
+                return async_wrapper
+            return sync_wrapper
 
-        # Determine if the function is async
-        if asyncio.iscoroutinefunction(func):
-            return async_wrapper
-        return sync_wrapper
+        return decorator
+else:
+    # Define a no-op decorator if OpenTelemetry is not available
+    def trace_function(span_name: Optional[str] = None):
+        """
+        A no-op decorator for tracing function calls when OpenTelemetry is not available.
 
-    return decorator
+        Parameters:
+        - span_name (Optional[str]): The name of the span. If not provided, the function name is used.
+
+        Returns:
+        - Callable: The original function without tracing.
+        """
+        def decorator(func: Callable) -> Callable:
+            return func
+
+        return decorator
+
 
 def sanitize_parameters(func, *args, **kwargs) -> Dict[str, Any]:
     """
