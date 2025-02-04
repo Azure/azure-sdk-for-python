@@ -88,7 +88,6 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         self, storage_account_name: str,
         data: bytes
     ) -> Tuple[ShareServiceClient, ShareClient, ShareFileClient]:
-
         share_name = self.get_resource_name('utshare')
         file_name = self.get_resource_name('file')
         share_token = self.get_credential(ShareServiceClient)
