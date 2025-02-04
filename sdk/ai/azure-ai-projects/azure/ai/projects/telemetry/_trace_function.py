@@ -110,12 +110,12 @@ if _tracing_library_available:
 
 else:
     # Define a no-op decorator if OpenTelemetry is not available
-    def trace_function(_span_name: Optional[str] = None):
+    def trace_function(span_name: Optional[str] = None): # pylint: disable=unused-argument
         """
         A no-op decorator for tracing function calls when OpenTelemetry is not available.
 
-        :param _span_name: Not used in this version.
-        :type _span_name: Optional[str]
+        :param span_name: Not used in this version.
+        :type span_name: Optional[str]
         :return: The original function.
         :rtype: Callable
         """
@@ -196,12 +196,12 @@ def sanitize_for_attributes(value: Any, is_recursive: bool = False) -> Any:
             if isinstance(item, (str, int, float, bool, list, dict, tuple, set))
         )
     if isinstance(value, set):
-        retval = {
+        retval_set = {
             sanitize_for_attributes(item, True)
             for item in value
             if isinstance(item, (str, int, float, bool, list, dict, tuple, set))
         }
         if is_recursive:
-            return retval
-        return str(retval)
+            return retval_set
+        return str(retval_set)
     return None
