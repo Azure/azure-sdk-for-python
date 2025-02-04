@@ -81,6 +81,7 @@
     "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccount'))]",
     "tablesMgmtApiVersion": "2019-04-01",
     "tablesAuthorizationApiVersion": "2018-09-01-preview",
+    "storageAuthorizationApiVersion": "2019-06-01",
     "tableDataContributorRoleId": "0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3"
   },
   "resources": [
@@ -179,7 +180,7 @@
     },
     {
       "type": "Microsoft.Authorization/roleAssignments",
-      "apiVersion": "[variables('tablesAuthorizationApiVersion')]",
+      "apiVersion": "[variables('storageAuthorizationApiVersion')]",
       "name": "[guid(concat('storageBlobDataOwnerRoleId', resourceGroup().id))]",
       "properties": {
           "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('storageBlobDataOwnerRoleId'))]",
@@ -188,7 +189,7 @@
     },
     {
       "type": "Microsoft.Authorization/roleAssignments",
-      "apiVersion": "[variables('tablesAuthorizationApiVersion')]",
+      "apiVersion": "[variables('storageAuthorizationApiVersion')]",
       "name": "[guid(concat('storageBlobDataReaderRoleId', resourceGroup().id))]",
       "properties": {
           "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('storageBlobDataReaderRoleId'))]",
@@ -197,10 +198,10 @@
     },
     {
       "type": "Microsoft.Authorization/roleAssignments",
-      "apiVersion": "[variables('tablesAuthorizationApiVersion')]",
+      "apiVersion": "[variables('storageAuthorizationApiVersion')]",
       "name": "[guid(concat('storageBlobDataContributorRoleId', resourceGroup().id))]",
       "properties": {
-          "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('storageBlobDataContributorRoleId))]",
+          "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', variables('storageBlobDataContributorRoleId'))]",
           "principalId": "[parameters('testApplicationOid')]"
       }
     }
