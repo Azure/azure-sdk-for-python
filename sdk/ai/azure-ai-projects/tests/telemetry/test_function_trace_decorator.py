@@ -11,92 +11,111 @@ from gen_ai_trace_verifier import GenAiTraceVerifier
 from azure.ai.projects.telemetry import trace_function
 from pytest import raises as pytest_raises
 
+
 class EmptyClass:
     pass
+
 
 # Dummy helper functions with decorators
 @trace_function("basic_datatypes_positional")
 def basic_datatypes_positional(a: int, b: str, c: bool) -> str:
     return f"{a} - {b} - {c}"
 
+
 @trace_function("basic_datatypes_named")
 def basic_datatypes_named(a: int, b: str, c: bool) -> str:
     return f"{a} - {b} - {c}"
+
 
 @trace_function("no_arguments_no_return")
 def no_arguments_no_return() -> None:
     pass
 
+
 @trace_function("complex_datatypes_positional")
 def complex_datatypes_positional(a: List[int], b: Dict[str, int], c: Tuple[int, int]) -> str:
-    print(f"Type of b: {type(b)}")  # Print the type of the second argument    
+    print(f"Type of b: {type(b)}")  # Print the type of the second argument
     return f"{a} - {b} - {c}"
+
 
 @trace_function("complex_datatypes_named")
 def complex_datatypes_named(a: List[int], b: Dict[str, int], c: Tuple[int, int]) -> str:
     return f"{a} - {b} - {c}"
 
+
 @trace_function("none_argument")
 def none_argument(a: Optional[int]) -> str:
     return f"{a}"
+
 
 @trace_function("none_return_value")
 def none_return_value() -> None:
     return None
 
+
 @trace_function("list_argument_return_value")
 def list_argument_return_value(a: List[int]) -> List[int]:
     return a
+
 
 @trace_function("dict_argument_return_value")
 def dict_argument_return_value(a: Dict[str, int]) -> Dict[str, int]:
     return a
 
+
 @trace_function("tuple_argument_return_value")
 def tuple_argument_return_value(a: Tuple[int, int]) -> Tuple[int, int]:
     return a
+
 
 @trace_function("set_argument_return_value")
 def set_argument_return_value(a: Set[int]) -> Set[int]:
     return a
 
+
 @trace_function("exception")
 def exception() -> None:
     raise ValueError("Test exception")
+
 
 @trace_function()
 def empty_class_argument(a: EmptyClass) -> EmptyClass:
     return a
 
+
 @trace_function()
 def empty_class_return_value() -> EmptyClass:
     return EmptyClass()
+
 
 @trace_function()
 def list_with_empty_class(a: list) -> list:
     return a
 
+
 @trace_function()
 def dict_with_empty_class(a: dict) -> dict:
     return a
+
 
 @trace_function()
 def tuple_with_empty_class(a: tuple) -> tuple:
     return a
 
+
 @trace_function()
 def set_with_empty_class(a: set) -> set:
     return a
+
 
 @trace_function()
 def nested_collections(a: list) -> list:
     return a
 
+
 # Pytest unit tests
 class TestFunctionTraceDecorator:
     def setup_memory_trace_exporter(self) -> MemoryTraceExporter:
-        # Setup Azure Core settings to use OpenTelemetry tracing
-        #settings.tracing_implementation = "OpenTelemetry"
         trace.set_tracer_provider(TracerProvider())
         tracer = trace.get_tracer(__name__)
         memoryExporter = MemoryTraceExporter()
@@ -113,12 +132,15 @@ class TestFunctionTraceDecorator:
         assert len(spans) == 1
         span = spans[0]
 
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [
-            ("code.function.parameter.a", 1),
-            ("code.function.parameter.b", "test"),
-            ("code.function.parameter.c", True),
-            ("code.function.return.value", "1 - test - True")
-        ])
+        assert GenAiTraceVerifier().check_decorator_span_attributes(
+            span,
+            [
+                ("code.function.parameter.a", 1),
+                ("code.function.parameter.b", "test"),
+                ("code.function.parameter.c", True),
+                ("code.function.return.value", "1 - test - True"),
+            ],
+        )
 
     def test_basic_datatypes_named_arguments(self):
         processor, exporter = self.setup_memory_trace_exporter()
@@ -128,12 +150,15 @@ class TestFunctionTraceDecorator:
         spans = exporter.get_spans_by_name("basic_datatypes_named")
         assert len(spans) == 1
         span = spans[0]
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [
-            ("code.function.parameter.a", 1),
-            ("code.function.parameter.b", "test"),
-            ("code.function.parameter.c", True),
-            ("code.function.return.value", "1 - test - True")
-        ])
+        assert GenAiTraceVerifier().check_decorator_span_attributes(
+            span,
+            [
+                ("code.function.parameter.a", 1),
+                ("code.function.parameter.b", "test"),
+                ("code.function.parameter.c", True),
+                ("code.function.return.value", "1 - test - True"),
+            ],
+        )
 
     def test_no_arguments_no_return_value(self):
         processor, exporter = self.setup_memory_trace_exporter()
@@ -153,12 +178,15 @@ class TestFunctionTraceDecorator:
         spans = exporter.get_spans_by_name("complex_datatypes_positional")
         assert len(spans) == 1
         span = spans[0]
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [
-            ("code.function.parameter.a", [1, 2]),
-            ("code.function.parameter.b", "{'key': 3}"),
-            ("code.function.parameter.c", (4, 5)),
-            ("code.function.return.value", "[1, 2] - {'key': 3} - (4, 5)")
-        ])
+        assert GenAiTraceVerifier().check_decorator_span_attributes(
+            span,
+            [
+                ("code.function.parameter.a", [1, 2]),
+                ("code.function.parameter.b", "{'key': 3}"),
+                ("code.function.parameter.c", (4, 5)),
+                ("code.function.return.value", "[1, 2] - {'key': 3} - (4, 5)"),
+            ],
+        )
 
     def test_complex_datatypes_named_arguments(self):
         processor, exporter = self.setup_memory_trace_exporter()
@@ -168,12 +196,15 @@ class TestFunctionTraceDecorator:
         spans = exporter.get_spans_by_name("complex_datatypes_named")
         assert len(spans) == 1
         span = spans[0]
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [
-            ("code.function.parameter.a", [1, 2]),
-            ("code.function.parameter.b", "{'key': 3}"),
-            ("code.function.parameter.c", (4, 5)),
-            ("code.function.return.value", "[1, 2] - {'key': 3} - (4, 5)")
-        ])
+        assert GenAiTraceVerifier().check_decorator_span_attributes(
+            span,
+            [
+                ("code.function.parameter.a", [1, 2]),
+                ("code.function.parameter.b", "{'key': 3}"),
+                ("code.function.parameter.c", (4, 5)),
+                ("code.function.return.value", "[1, 2] - {'key': 3} - (4, 5)"),
+            ],
+        )
 
     def test_none_argument(self):
         processor, exporter = self.setup_memory_trace_exporter()
@@ -183,9 +214,7 @@ class TestFunctionTraceDecorator:
         spans = exporter.get_spans_by_name("none_argument")
         assert len(spans) == 1
         span = spans[0]
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [
-            ("code.function.return.value", "None")
-        ])
+        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [("code.function.return.value", "None")])
 
     def test_none_return_value(self):
         processor, exporter = self.setup_memory_trace_exporter()
@@ -205,10 +234,9 @@ class TestFunctionTraceDecorator:
         spans = exporter.get_spans_by_name("list_argument_return_value")
         assert len(spans) == 1
         span = spans[0]
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [
-            ("code.function.parameter.a", [1, 2, 3]),
-            ("code.function.return.value", [1, 2, 3])
-        ])
+        assert GenAiTraceVerifier().check_decorator_span_attributes(
+            span, [("code.function.parameter.a", [1, 2, 3]), ("code.function.return.value", [1, 2, 3])]
+        )
 
     def test_dict_argument_return_value(self):
         processor, exporter = self.setup_memory_trace_exporter()
@@ -218,10 +246,9 @@ class TestFunctionTraceDecorator:
         spans = exporter.get_spans_by_name("dict_argument_return_value")
         assert len(spans) == 1
         span = spans[0]
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [
-            ("code.function.parameter.a", "{'key': 1}"),
-            ("code.function.return.value", "{'key': 1}")
-        ])
+        assert GenAiTraceVerifier().check_decorator_span_attributes(
+            span, [("code.function.parameter.a", "{'key': 1}"), ("code.function.return.value", "{'key': 1}")]
+        )
 
     def test_tuple_argument_return_value(self):
         processor, exporter = self.setup_memory_trace_exporter()
@@ -231,10 +258,9 @@ class TestFunctionTraceDecorator:
         spans = exporter.get_spans_by_name("tuple_argument_return_value")
         assert len(spans) == 1
         span = spans[0]
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [
-            ("code.function.parameter.a", (1, 2)),
-            ("code.function.return.value", (1, 2))
-        ])
+        assert GenAiTraceVerifier().check_decorator_span_attributes(
+            span, [("code.function.parameter.a", (1, 2)), ("code.function.return.value", (1, 2))]
+        )
 
     def test_set_argument_return_value(self):
         processor, exporter = self.setup_memory_trace_exporter()
@@ -244,13 +270,13 @@ class TestFunctionTraceDecorator:
         spans = exporter.get_spans_by_name("set_argument_return_value")
         assert len(spans) == 1
         span = spans[0]
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [
-            ("code.function.parameter.a", "{1, 2, 3}"),
-            ("code.function.return.value", "{1, 2, 3}")
-        ])
+        assert GenAiTraceVerifier().check_decorator_span_attributes(
+            span, [("code.function.parameter.a", "{1, 2, 3}"), ("code.function.return.value", "{1, 2, 3}")]
+        )
 
     def test_exception(self):
         processor, exporter = self.setup_memory_trace_exporter()
+
         @trace_function("exception")
         def dummy_function() -> None:
             raise ValueError("Test exception")
@@ -275,8 +301,7 @@ class TestFunctionTraceDecorator:
         spans = exporter.get_spans_by_name("empty_class_argument")
         assert len(spans) == 1
         span = spans[0]
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [
-        ])
+        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [])
 
     def test_list_with_object(self):
         processor, exporter = self.setup_memory_trace_exporter()
@@ -287,10 +312,9 @@ class TestFunctionTraceDecorator:
         spans = exporter.get_spans_by_name("list_with_empty_class")
         assert len(spans) == 1
         span = spans[0]
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [
-            ("code.function.parameter.a", [1, 2, 3]),
-            ("code.function.return.value", [1, 2, 3])
-        ])
+        assert GenAiTraceVerifier().check_decorator_span_attributes(
+            span, [("code.function.parameter.a", [1, 2, 3]), ("code.function.return.value", [1, 2, 3])]
+        )
 
     def test_dict_with_object(self):
         processor, exporter = self.setup_memory_trace_exporter()
@@ -301,10 +325,9 @@ class TestFunctionTraceDecorator:
         spans = exporter.get_spans_by_name("dict_with_empty_class")
         assert len(spans) == 1
         span = spans[0]
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [
-            ("code.function.parameter.a", "{'key2': 1}"),
-            ("code.function.return.value", "{'key2': 1}")
-        ])
+        assert GenAiTraceVerifier().check_decorator_span_attributes(
+            span, [("code.function.parameter.a", "{'key2': 1}"), ("code.function.return.value", "{'key2': 1}")]
+        )
 
     def test_tuple_with_object(self):
         processor, exporter = self.setup_memory_trace_exporter()
@@ -315,10 +338,9 @@ class TestFunctionTraceDecorator:
         spans = exporter.get_spans_by_name("tuple_with_empty_class")
         assert len(spans) == 1
         span = spans[0]
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [
-            ("code.function.parameter.a", (1, 2, 3)),
-            ("code.function.return.value", (1, 2, 3))
-        ])
+        assert GenAiTraceVerifier().check_decorator_span_attributes(
+            span, [("code.function.parameter.a", (1, 2, 3)), ("code.function.return.value", (1, 2, 3))]
+        )
 
     def test_set_with_object(self):
         processor, exporter = self.setup_memory_trace_exporter()
@@ -329,10 +351,9 @@ class TestFunctionTraceDecorator:
         spans = exporter.get_spans_by_name("set_with_empty_class")
         assert len(spans) == 1
         span = spans[0]
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [
-            ("code.function.parameter.a", "{1, 2, 3}"),
-            ("code.function.return.value", "{1, 2, 3}")
-        ])
+        assert GenAiTraceVerifier().check_decorator_span_attributes(
+            span, [("code.function.parameter.a", "{1, 2, 3}"), ("code.function.return.value", "{1, 2, 3}")]
+        )
 
     def test_nested_collections(self):
         processor, exporter = self.setup_memory_trace_exporter()
@@ -343,7 +364,7 @@ class TestFunctionTraceDecorator:
         spans = exporter.get_spans_by_name("nested_collections")
         assert len(spans) == 1
         span = spans[0]
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [
-            ("code.function.parameter.a", str(nested_instance)),
-            ("code.function.return.value", str(nested_instance))
-        ])
+        assert GenAiTraceVerifier().check_decorator_span_attributes(
+            span,
+            [("code.function.parameter.a", str(nested_instance)), ("code.function.return.value", str(nested_instance))],
+        )

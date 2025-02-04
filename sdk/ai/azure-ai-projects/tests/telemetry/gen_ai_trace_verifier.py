@@ -52,7 +52,10 @@ class GenAiTraceVerifier:
                         return False
                 elif attribute_value != "" and span.attributes[attribute_name] != attribute_value:
                     print(
-                        "Attribute value " + str(span.attributes[attribute_name]) + " does not match with " + str(attribute_value)
+                        "Attribute value "
+                        + str(span.attributes[attribute_name])
+                        + " does not match with "
+                        + str(attribute_value)
                     )
                     return False
                 # Check if the attribute value in the span is not empty when the provided value is ""
@@ -70,7 +73,7 @@ class GenAiTraceVerifier:
         for attribute_name in attribute_dict.keys():
             if attribute_name not in span.attributes:
                 print("Required attribute name " + attribute_name + " not found in span attributes")
-                return False        
+                return False
 
         for attribute_name in span.attributes.keys():
             # Check if the attribute name exists in the input attributes
@@ -85,21 +88,13 @@ class GenAiTraceVerifier:
                 # Convert both to lists for comparison
                 if list(span_value) != list(attribute_value):
                     print(
-                        "Attribute value list/tuple "
-                        + str(span_value)
-                        + " does not match with "
-                        + str(attribute_value)
+                        "Attribute value list/tuple " + str(span_value) + " does not match with " + str(attribute_value)
                     )
                     return False
             elif isinstance(attribute_value, dict):
                 # Check if both are dictionaries and compare them
                 if not isinstance(span_value, dict) or span_value != attribute_value:
-                    print(
-                        "Attribute value dict "
-                        + str(span_value)
-                        + " does not match with "
-                        + str(attribute_value)
-                    )
+                    print("Attribute value dict " + str(span_value) + " does not match with " + str(attribute_value))
                     return False
             else:
                 # Check if the attribute value matches the provided value
@@ -111,9 +106,7 @@ class GenAiTraceVerifier:
                         print("Attribute value " + str(span_value) + " is negative")
                         return False
                 elif attribute_value != "" and span_value != attribute_value:
-                    print(
-                        "Attribute value " + str(span_value) + " does not match with " + str(attribute_value)
-                    )
+                    print("Attribute value " + str(span_value) + " does not match with " + str(attribute_value))
                     return False
                 # Check if the attribute value in the span is not empty when the provided value is ""
                 elif attribute_value == "" and not span_value:

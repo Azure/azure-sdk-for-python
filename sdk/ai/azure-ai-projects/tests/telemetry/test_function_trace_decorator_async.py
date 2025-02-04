@@ -11,17 +11,17 @@ from gen_ai_trace_verifier import GenAiTraceVerifier
 from azure.ai.projects.telemetry import trace_function
 import pytest
 
+
 # Dummy helper functions with decorators
 @trace_function("basic_datatypes_positional")
 async def basic_datatypes_positional(a: int, b: str, c: bool) -> str:
     await asyncio.sleep(1)
     return f"{a} - {b} - {c}"
 
+
 # Pytest unit tests
 class TestFunctionTraceDecoratorAsync:
     def setup_memory_trace_exporter(self) -> MemoryTraceExporter:
-        # Setup Azure Core settings to use OpenTelemetry tracing
-        #settings.tracing_implementation = "OpenTelemetry"
         trace.set_tracer_provider(TracerProvider())
         tracer = trace.get_tracer(__name__)
         memoryExporter = MemoryTraceExporter()
@@ -39,9 +39,12 @@ class TestFunctionTraceDecoratorAsync:
         assert len(spans) == 1
         span = spans[0]
 
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [
-            ("code.function.parameter.a", 1),
-            ("code.function.parameter.b", "test"),
-            ("code.function.parameter.c", True),
-            ("code.function.return.value", "1 - test - True")
-        ])
+        assert GenAiTraceVerifier().check_decorator_span_attributes(
+            span,
+            [
+                ("code.function.parameter.a", 1),
+                ("code.function.parameter.b", "test"),
+                ("code.function.parameter.c", True),
+                ("code.function.return.value", "1 - test - True"),
+            ],
+        )
