@@ -158,16 +158,21 @@ class _GlobalEndpointManager(object):
 
         Validating if the endpoint is healthy else marking it as unavailable.
         """
-        all_endpoints = set(self.location_cache.read_health_endpoints)
-        all_endpoints.update(self.location_cache.write_health_endpoints)
+        all_endpoints = [self.location_cache.read_regional_endpoints[0]]
+        all_endpoints.extend(self.location_cache.write_regional_endpoints)
+        count = 0
         for endpoint in all_endpoints:
+            count += 1
+            if count > 3:
+                break
             try:
-                self.Client._GetDatabaseAccountCheck(endpoint, **kwargs)
+                self.Client._GetDatabaseAccountCheck(endpoint.get_current(), **kwargs)
             except (exceptions.CosmosHttpResponseError, AzureError):
-                if endpoint in self.location_cache.read_health_endpoints:
-                    self.mark_endpoint_unavailable_for_read(endpoint, False)
-                if endpoint in self.location_cache.write_health_endpoints:
-                    self.mark_endpoint_unavailable_for_write(endpoint, False)
+                if endpoint in self.location_cache.read_regional_endpoints:
+                    self.mark_endpoint_unavailable_for_read(endpoint.get_current(), False)
+                if endpoint in self.location_cache.write_regional_endpoints:
+                    self.mark_endpoint_unavailable_for_write(endpoint.get_current(), False)
+                    endpoint.swap()
         self.location_cache.update_location_cache()
 
     def _GetDatabaseAccountStub(self, endpoint, **kwargs):
