@@ -42,7 +42,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
         self.client = CosmosClient(self.host, self.masterKey)
         self.databaseForTest = await self.client.create_database_if_not_exists(self.configs.TEST_DATABASE_ID)
 
-    async def tearDown(self):
+    async def asyncTearDown(self):
         await self.client.close()
 
     async def test_container_properties_cache_async(self):

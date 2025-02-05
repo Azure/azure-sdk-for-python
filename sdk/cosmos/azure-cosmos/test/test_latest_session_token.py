@@ -66,7 +66,7 @@ class TestLatestSessionToken(unittest.TestCase):
         assert session_token == target_session_token
         feed_ranges_and_session_tokens.append((target_feed_range, session_token))
 
-        self.trigger_split(container, 11000)
+        test_config.TestConfig.trigger_split(container, 11000)
 
         target_session_token, _ = self.create_items_logical_pk(container, target_feed_range, session_token,
                                                                feed_ranges_and_session_tokens)
@@ -90,7 +90,7 @@ class TestLatestSessionToken(unittest.TestCase):
         session_token = container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
         assert session_token == target_session_token
 
-        self.trigger_split(container, 11000)
+        test_config.TestConfig.trigger_split(container, 11000)
 
         _, target_feed_range, previous_session_token = self.create_items_physical_pk(container, pk_feed_range,
                                                                                 session_token,
@@ -144,28 +144,6 @@ class TestLatestSessionToken(unittest.TestCase):
 
         assert session_token == target_session_token
         self.database.delete_container(container.id)
-
-
-    @staticmethod
-    def trigger_split(container, throughput):
-        print("Triggering a split in session token helpers")
-        container.replace_throughput(throughput)
-        print("changed offer to 11k")
-        print("--------------------------------")
-        print("Waiting for split to complete")
-        start_time = time.time()
-
-        while True:
-            offer = container.get_throughput()
-            if offer.properties['content'].get('isOfferReplacePending', False):
-                if time.time() - start_time > 60 * 25:  # timeout test at 25 minutes
-                    unittest.skip("Partition split didn't complete in time.")
-                else:
-                    print("Waiting for split to complete")
-                    time.sleep(60)
-            else:
-                break
-        print("Split in session token helpers has completed")
 
     @staticmethod
     def create_items_logical_pk(container, target_pk_range, previous_session_token, feed_ranges_and_session_tokens, hpk=False):
