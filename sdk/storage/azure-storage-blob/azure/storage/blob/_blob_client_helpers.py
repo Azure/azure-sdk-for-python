@@ -1162,6 +1162,7 @@ def _append_block_from_url_options(
             append_position=appendpos_condition
         )
     source_authorization = kwargs.pop('source_authorization', None)
+    source_token_intent = kwargs.pop('source_token_intent', None)
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
     source_mod_conditions = get_source_conditions(kwargs)
@@ -1174,6 +1175,7 @@ def _append_block_from_url_options(
 
     options = {
         'copy_source_authorization': source_authorization,
+        'file_request_intent': source_token_intent,
         'source_url': copy_source_url,
         'content_length': 0,
         'source_range': source_range,
