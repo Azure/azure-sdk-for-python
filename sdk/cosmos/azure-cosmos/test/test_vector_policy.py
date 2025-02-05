@@ -11,6 +11,7 @@ import test_config
 from azure.cosmos import CosmosClient, PartitionKey
 
 
+@pytest.mark.cosmosQuery
 class TestVectorPolicy(unittest.TestCase):
     client: CosmosClient = None
     host = test_config.TestConfig.host
@@ -29,6 +30,10 @@ class TestVectorPolicy(unittest.TestCase):
         cls.client = CosmosClient(cls.host, cls.masterKey)
         cls.created_database = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
         cls.test_db = cls.client.create_database(str(uuid.uuid4()))
+
+    @classmethod
+    def tearDownClass(cls):
+        test_config.TestConfig.try_delete_database_with_id(cls.client, cls.test_db.id)
 
     def test_create_vector_embedding_container(self):
         indexing_policy = {
@@ -135,7 +140,7 @@ class TestVectorPolicy(unittest.TestCase):
         # Pass a vector indexing policy with wrong quantizationByteSize value
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector2", "type": "quantizedFlat", "quantizationByteSize": 0}]
+                {"path": "/vector1", "type": "quantizedFlat", "quantizationByteSize": 0}]
         }
         try:
             self.test_db.create_container(
@@ -153,7 +158,7 @@ class TestVectorPolicy(unittest.TestCase):
         # Pass a vector indexing policy with wrong indexingSearchListSize value
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector2", "type": "diskANN", "indexingSearchListSize": 5}]
+                {"path": "/vector1", "type": "diskANN", "indexingSearchListSize": 5}]
         }
         try:
             self.test_db.create_container(
@@ -200,8 +205,8 @@ class TestVectorPolicy(unittest.TestCase):
             pytest.fail("Container replace should have failed for indexing policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Paths in existing vector indexing policy cannot be modified in Collection Replace." \
-                   " They can only be added or removed." in e.http_error_message
+            assert ("The Vector Indexing Policy's path::/vector1 not matching in Embedding's path."
+                    in e.http_error_message)
         self.test_db.delete_container(container_id)
 
     def test_fail_create_vector_embedding_policy(self):

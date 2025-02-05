@@ -27,6 +27,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core import MatchConditions
+from azure.core.pipeline.policies import RetryMode
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
@@ -100,7 +101,7 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
     retry_options._max_retry_attempt_count = total_retries or retry_options._max_retry_attempt_count
     retry_options._fixed_retry_interval_in_milliseconds = \
         kwargs.pop('retry_fixed_interval', retry_options._fixed_retry_interval_in_milliseconds)
-    max_backoff = kwargs.pop('retry_backoff_max', None)
+    max_backoff = kwargs.pop('retry_backoff_max', policy.MaxBackoff)
     retry_options._max_wait_time_in_seconds = max_backoff or retry_options._max_wait_time_in_seconds
     policy.RetryOptions = retry_options
     connection_retry = policy.ConnectionRetryConfiguration
@@ -111,8 +112,9 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
             retry_read=kwargs.pop('retry_read', None),
             retry_status=kwargs.pop('retry_status', None),
             retry_backoff_max=max_backoff,
+            retry_mode=kwargs.pop('retry_mode', RetryMode.Fixed),
             retry_on_status_codes=kwargs.pop('retry_on_status_codes', []),
-            retry_backoff_factor=kwargs.pop('retry_backoff_factor', 0.8),
+            retry_backoff_factor=kwargs.pop('retry_backoff_factor', 1),
         )
     policy.ConnectionRetryConfiguration = connection_retry
     policy.ResponsePayloadOnWriteDisabled = kwargs.pop('no_response_on_write', False)

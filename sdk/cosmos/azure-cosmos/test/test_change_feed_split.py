@@ -5,11 +5,14 @@ import time
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import DatabaseProxy, PartitionKey
 
 
+@pytest.mark.cosmosSplit
 class TestPartitionSplitChangeFeed(unittest.TestCase):
     database: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None

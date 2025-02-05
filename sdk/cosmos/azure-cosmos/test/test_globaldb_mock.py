@@ -80,7 +80,7 @@ class MockGlobalEndpointManager:
         return
 
     def can_use_multiple_write_locations(self, request):
-        return True
+        return False
 
     def GetDatabaseAccount1(self):
         database_account = documents.DatabaseAccount()

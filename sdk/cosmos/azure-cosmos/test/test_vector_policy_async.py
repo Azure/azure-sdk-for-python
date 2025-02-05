@@ -11,7 +11,7 @@ import test_config
 from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
-
+@pytest.mark.cosmosQuery
 class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
@@ -44,7 +44,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         indexing_policy = {
             "vectorIndexes": [
                 {"path": "/vector1", "type": "flat"},
-                {"path": "/vector2", "type": "quantizedFlat", "quantizationByteSize": 8},
+                {"path": "/vector2", "type": "quantizedFlat", "quantizationByteSize": 64},
                 {"path": "/vector3", "type": "diskANN", "quantizationByteSize": 8, "indexingSearchListSize": 50}
             ]
         }
@@ -145,7 +145,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         # Pass a vector indexing policy with wrong quantizationByteSize value
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector2", "type": "quantizedFlat", "quantizationByteSize": 0}]
+                {"path": "/vector1", "type": "quantizedFlat", "quantizationByteSize": 0}]
         }
         try:
             await self.test_db.create_container(
@@ -163,7 +163,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         # Pass a vector indexing policy with wrong indexingSearchListSize value
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector2", "type": "diskANN", "indexingSearchListSize": 5}]
+                {"path": "/vector1", "type": "diskANN", "indexingSearchListSize": 5}]
         }
         try:
             await self.test_db.create_container(
@@ -210,8 +210,8 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Container replace should have failed for indexing policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Paths in existing vector indexing policy cannot be modified in Collection Replace." \
-                   " They can only be added or removed." in e.http_error_message
+            assert ("The Vector Indexing Policy's path::/vector1 not matching in Embedding's path."
+                    in e.http_error_message)
         await self.test_db.delete_container(container_id)
 
     async def test_fail_create_vector_embedding_policy_async(self):

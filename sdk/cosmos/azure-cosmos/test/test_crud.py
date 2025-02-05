@@ -6,7 +6,6 @@
 """
 
 import json
-import logging
 import os.path
 import time
 import unittest
@@ -49,7 +48,7 @@ class TimeoutTransport(RequestsTransport):
         return response
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestCRUDOperations(unittest.TestCase):
     """Python CRUD Tests.
     """
@@ -108,13 +107,13 @@ class TestCRUDOperations(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            read_db.read)
 
-        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=10000)
+        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(10000, database_proxy.read_offer().offer_throughput)
+        self.assertEqual(5000, database_proxy.read_offer().offer_throughput)
 
-        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=9000)
+        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(10000, database_proxy.read_offer().offer_throughput)
+        self.assertEqual(5000, database_proxy.read_offer().offer_throughput)
 
         self.client.delete_database(database_id)
 
@@ -1813,10 +1812,16 @@ class TestCRUDOperations(unittest.TestCase):
             # making timeout 0 ms to make sure it will throw
             connection_policy.RequestTimeout = 0.000000000001
 
+            # client does a getDatabaseAccount on initialization, which will not time out because
+            # there is a forced timeout for those calls
+            client = cosmos_client.CosmosClient(TestCRUDOperations.host, TestCRUDOperations.masterKey, "Session",
+                                                connection_policy=connection_policy)
             with self.assertRaises(Exception):
-                # client does a getDatabaseAccount on initialization, which will time out
-                cosmos_client.CosmosClient(TestCRUDOperations.host, TestCRUDOperations.masterKey, "Session",
-                                           connection_policy=connection_policy)
+                databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
+                container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+                container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
+
+
 
     def test_client_request_timeout_when_connection_retry_configuration_specified(self):
         connection_policy = documents.ConnectionPolicy()
@@ -1829,10 +1834,14 @@ class TestCRUDOperations(unittest.TestCase):
             backoff_factor=0.3,
             status_forcelist=(500, 502, 504)
         )
-        with self.assertRaises(AzureError):
-            # client does a getDatabaseAccount on initialization, which will time out
-            cosmos_client.CosmosClient(TestCRUDOperations.host, TestCRUDOperations.masterKey, "Session",
-                                       connection_policy=connection_policy)
+        # client does a getDatabaseAccount on initialization, which will not time out because
+        # there is a forced timeout for those calls
+        with cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as client:
+            with self.assertRaises(AzureError):
+                databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
+                container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+                container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
+                print('Async initialization')
 
     # TODO: Skipping this test to debug later
     @unittest.skip
@@ -2574,7 +2583,7 @@ class TestCRUDOperations(unittest.TestCase):
     #     created_recorder = RecordDiagnostics()
     #     created_collection = created_db.create_container(id=collection_id,
     #                                                      indexing_policy=collection_indexing_policy,
-    #                                                      partition_key=PartitionKey(path="/pk", kind="Hash"), 
+    #                                                      partition_key=PartitionKey(path="/pk", kind="Hash"),
     #                                                      response_hook=created_recorder)
     #     properties = created_collection.read()
     #     ttl_key = "analyticalStorageTtl"
@@ -2592,7 +2601,7 @@ class TestCRUDOperations(unittest.TestCase):
     #     created_collection = created_db.create_container(id=collection_id,
     #                                                      analytical_storage_ttl=-1,
     #                                                      indexing_policy=collection_indexing_policy,
-    #                                                      partition_key=PartitionKey(path="/pk", kind="Hash"), 
+    #                                                      partition_key=PartitionKey(path="/pk", kind="Hash"),
     #                                                      response_hook=created_recorder)
     #     properties = created_collection.read()
     #     ttl_key = "analyticalStorageTtl"

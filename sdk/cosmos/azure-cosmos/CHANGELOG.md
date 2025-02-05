@@ -1,5 +1,22 @@
 ## Release History
 
+### 4.9.1b3 (2025-02-04)
+
+#### Features Added
+* Improved retry logic by retrying alternative endpoint for writes within a region before performing a cross region retry. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* Added endpoint health check logic during database account calls. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+
+#### Bugs Fixed
+* Fixed unnecessary retries on the wrong region for timout retry policy. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* All client connection errors from aiohttp will be retried. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+
+#### Other Changes
+* Changed defaults for retry delays. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* Changed default connection timeout to be 5 seconds. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* Changed default read timeout to be 65 seconds. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* On database account calls send a client id header for load balancing. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* Removed aiohttp dependency. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+
 ### 4.9.1b2 (2025-01-24)
 
 #### Features Added
