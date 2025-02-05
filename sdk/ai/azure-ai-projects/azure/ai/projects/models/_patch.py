@@ -838,7 +838,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
 
         # Use provided auth if specified, otherwise use default
         auth_to_use = auth if auth is not None else self._default_auth
-        
+
         new_definition = OpenApiToolDefinition(
             openapi=OpenApiFunctionDefinition(
                 name=name,
