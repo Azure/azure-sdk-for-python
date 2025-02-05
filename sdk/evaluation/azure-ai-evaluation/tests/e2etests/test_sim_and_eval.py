@@ -13,9 +13,7 @@ from devtools_testutils import is_live
 
 from azure.ai.evaluation import (
     ViolenceEvaluator,
-    ContentSafetyMultimodalEvaluator,
     ContentSafetyEvaluator,
-    ProtectedMaterialMultimodalEvaluator,
     ProtectedMaterialEvaluator,
     evaluate,
 )
@@ -139,7 +137,6 @@ class TestSimAndEval:
     @pytest.mark.parametrize(
         "evaluator_class",
         [
-            (ProtectedMaterialMultimodalEvaluator),
             (ProtectedMaterialEvaluator),
         ],
     )
@@ -231,7 +228,6 @@ class TestSimAndEval:
     @pytest.mark.parametrize(
         "evaluator_class",
         [
-            (ProtectedMaterialMultimodalEvaluator),
             (ProtectedMaterialEvaluator),
         ],
     )
@@ -318,7 +314,6 @@ class TestSimAndEval:
     @pytest.mark.parametrize(
         "evaluator_class",
         [
-            (ContentSafetyMultimodalEvaluator),
             (ContentSafetyEvaluator),
         ],
     )
