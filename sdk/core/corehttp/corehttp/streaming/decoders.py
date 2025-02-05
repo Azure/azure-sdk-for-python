@@ -29,7 +29,7 @@ from typing import Iterator, AsyncIterator, Tuple, Protocol
 
 from typing_extensions import runtime_checkable
 
-from ._events import JSONLEvent, EventType
+from .events import JSONLEvent, EventType
 
 
 @runtime_checkable

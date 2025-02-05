@@ -29,9 +29,8 @@ from typing import Iterator, AsyncIterator, TypeVar, Callable, Any, Optional, Ty
 
 from typing_extensions import Self
 
-from ..rest import HttpRequest, HttpResponse, AsyncHttpResponse
-from ..runtime.pipeline import PipelineResponse
-from ._decoders import JSONLDecoder, AsyncJSONLDecoder, StreamDecoder, AsyncStreamDecoder
+from ..rest import HttpResponse, AsyncHttpResponse
+from .decoders import JSONLDecoder, AsyncJSONLDecoder, StreamDecoder, AsyncStreamDecoder
 
 
 ReturnType = TypeVar("ReturnType")
@@ -40,14 +39,13 @@ ReturnType = TypeVar("ReturnType")
 class Stream(Iterator[ReturnType]):
     """Stream class for streaming JSONL or Server-Sent Events (SSE).
 
-    :keyword response: The pipeline response object.
-    :paramtype response: ~corehttp.runtime.pipeline.PipelineResponse
-    :keyword deserialization_callback: A callback that takes HttpResponse and JSON and
-        returns a deserialized object
-    :paramtype deserialization_callback: Callable[[Any, Any], ReturnType]
+    :keyword response: The response object.
+    :paramtype response: ~corehttp.rest.HttpResponse
+    :keyword deserialization_callback: A callback that takes JSON and returns a deserialized object.
+    :paramtype deserialization_callback: Callable[[Any], ReturnType]
     :keyword decoder: An optional decoder to use for the stream. If not provided, the content-type
         of the response will be used to determine the decoder.
-    :paramtype decoder: Optional[StreamDecoder]
+    :paramtype decoder: Optional[~corehttp.streaming.decoders.StreamDecoder]
     :paramtype terminal_event: Optional[str]
     :keyword terminal_event: A terminal event that indicates the end of the SSE stream.
     :paramtype terminal_event: Optional[str]
@@ -56,13 +54,12 @@ class Stream(Iterator[ReturnType]):
     def __init__(
         self,
         *,
-        response: PipelineResponse[HttpRequest, HttpResponse],
-        deserialization_callback: Callable[[Any, Any], ReturnType],
+        response: HttpResponse,
+        deserialization_callback: Callable[[Any], ReturnType],
         decoder: Optional[StreamDecoder] = None,
         terminal_event: Optional[str] = None,
     ) -> None:
-        self._pipeline_response = response
-        self._response = response.http_response
+        self._response = response
         self._deserialization_callback = deserialization_callback
         self._terminal_event = terminal_event
         self._iterator = self._iter_results()
@@ -89,7 +86,7 @@ class Stream(Iterator[ReturnType]):
             if event.data == self._terminal_event:
                 break
 
-            result = self._deserialization_callback(self._pipeline_response, event.json())
+            result = self._deserialization_callback(event.json())
             yield result
 
     def __exit__(
@@ -110,14 +107,13 @@ class Stream(Iterator[ReturnType]):
 class AsyncStream(AsyncIterator[ReturnType]):
     """AsyncStream class for asynchronously streaming JSONL or Server-Sent Events (SSE).
 
-    :keyword response: The pipeline response object.
-    :paramtype response: ~corehttp.runtime.pipeline.PipelineResponse
-    :keyword deserialization_callback: A callback that takes AsyncHttpResponse and JSON and
-        returns a deserialized object
-    :paramtype deserialization_callback: Callable[[Any, Any], ReturnType]
+    :keyword response: The response object.
+    :paramtype response: ~corehttp.rest.AsyncHttpResponse
+    :keyword deserialization_callback: A callback that takes JSON and returns a deserialized object.
+    :paramtype deserialization_callback: Callable[[Any], ReturnType]
     :keyword decoder: An optional decoder to use for the stream. If not provided, the content-type
         of the response will be used to determine the decoder.
-    :paramtype decoder: Optional[AsyncStreamDecoder]
+    :paramtype decoder: Optional[~corehttp.streaming.decoders.AsyncStreamDecoder]
     :paramtype terminal_event: Optional[str]
     :keyword terminal_event: A terminal event that indicates the end of the SSE stream.
     :paramtype terminal_event: Optional[str]
@@ -126,13 +122,12 @@ class AsyncStream(AsyncIterator[ReturnType]):
     def __init__(
         self,
         *,
-        response: PipelineResponse[HttpRequest, AsyncHttpResponse],
-        deserialization_callback: Callable[[Any, Any], ReturnType],
+        response: AsyncHttpResponse,
+        deserialization_callback: Callable[[Any], ReturnType],
         decoder: Optional[AsyncStreamDecoder] = None,
         terminal_event: Optional[str] = None,
     ) -> None:
-        self._pipeline_response = response
-        self._response = response.http_response
+        self._response = response
         self._deserialization_callback = deserialization_callback
         self._terminal_event = terminal_event
         self._iterator = self._iter_results()
@@ -160,7 +155,7 @@ class AsyncStream(AsyncIterator[ReturnType]):
             if event.data == self._terminal_event:
                 break
 
-            result = self._deserialization_callback(self._pipeline_response, event.json())
+            result = self._deserialization_callback(event.json())
             yield result
 
     async def __aexit__(

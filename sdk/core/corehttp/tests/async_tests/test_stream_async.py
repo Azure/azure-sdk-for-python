@@ -30,13 +30,12 @@ import pytest
 
 from corehttp.rest import HttpRequest
 from corehttp.streaming import AsyncStream
-from corehttp.runtime.pipeline import PipelineResponse
 
 
 @pytest.fixture
 def deserialization_callback():
-    def _callback(_, json):
-        return json
+    def _callback(model_json):
+        return model_json
 
     return _callback
 
@@ -45,12 +44,7 @@ def deserialization_callback():
 def stream(client, deserialization_callback):
     async def _callback(request, **kwargs):
         http_response = await client.send_request(request=request, stream=True)
-        return AsyncStream(
-            deserialization_callback=deserialization_callback,
-            response=PipelineResponse(  # corehttp doesn't have _return_pipeline_response
-                http_request=request, http_response=http_response, context={}
-            ),
-        )
+        return AsyncStream(deserialization_callback=deserialization_callback, response=http_response)
 
     return _callback
 
