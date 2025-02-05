@@ -286,8 +286,6 @@ class TestAdvSimulator:
             ]
         )
 
-    @pytest.mark.skipif(
-            not is_live(), reason="Getting ServiceResponseTimeoutError in playback mode. WI: 3819148")
     def test_adv_summarization_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
@@ -419,7 +417,6 @@ class TestAdvSimulator:
         )
         assert len(outputs) == 1
 
-    @pytest.mark.skipif(is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT.")
     def test_adv_protected_matierial_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
@@ -463,7 +460,6 @@ class TestAdvSimulator:
         )
         assert len(outputs) == 1
 
-    @pytest.mark.skipif(is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT.")
     def test_adv_eci_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialSimulator
