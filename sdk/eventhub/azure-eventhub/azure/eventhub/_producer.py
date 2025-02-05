@@ -29,7 +29,7 @@ from ._tracing import (
     is_tracing_enabled,
     TraceAttributes,
 )
-from ._constants import TIMEOUT_SYMBOL
+from ._constants import TIMEOUT_SYMBOL, GEOREPLICATION_SYMBOL
 from .amqp import AmqpAnnotatedMessage
 
 _LOGGER = logging.getLogger(__name__)
