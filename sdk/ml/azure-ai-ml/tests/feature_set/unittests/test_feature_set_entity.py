@@ -14,12 +14,13 @@ from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturesetVersionProperties,
 )
 
+
 @pytest.mark.unittest
 class TestFeatureSetEntity:
     FEATURE_SET = "./tests/test_configs/feature_set/feature_set_full.yaml"
     FEATURE_SET_REST = "./tests/test_configs/feature_set/feature_set_full_rest.json"
     FEATURE_SET_CONTAINER_REST = "./tests/test_configs/feature_set/feature_set_container_rest.json"
-    
+
     def test_to_rest_object(self) -> None:
         feature_set = load_feature_set(self.FEATURE_SET)
 
@@ -29,14 +30,34 @@ class TestFeatureSetEntity:
         assert feature_set_rest.properties.entities == feature_set.entities
         assert feature_set_rest.properties.specification.path == feature_set.specification.path
         assert feature_set_rest.properties.stage == feature_set.stage
-        assert str(feature_set_rest.properties.materialization_settings.store_type) == 'MaterializationStoreType.OFFLINE'
-        assert feature_set_rest.properties.materialization_settings.schedule.frequency == feature_set.materialization_settings.schedule.frequency
-        assert feature_set_rest.properties.materialization_settings.schedule.interval == feature_set.materialization_settings.schedule.interval
-        assert feature_set_rest.properties.materialization_settings.spark_configuration == feature_set.materialization_settings.spark_configuration
-        assert feature_set_rest.properties.materialization_settings.resource.instance_type == feature_set.materialization_settings.resource.instance_type
-        assert feature_set_rest.properties.materialization_settings.notification.email_on == feature_set.materialization_settings.notification.email_on
-        assert feature_set_rest.properties.materialization_settings.notification.emails == feature_set.materialization_settings.notification.emails
-    
+        assert (
+            str(feature_set_rest.properties.materialization_settings.store_type) == "MaterializationStoreType.OFFLINE"
+        )
+        assert (
+            feature_set_rest.properties.materialization_settings.schedule.frequency
+            == feature_set.materialization_settings.schedule.frequency
+        )
+        assert (
+            feature_set_rest.properties.materialization_settings.schedule.interval
+            == feature_set.materialization_settings.schedule.interval
+        )
+        assert (
+            feature_set_rest.properties.materialization_settings.spark_configuration
+            == feature_set.materialization_settings.spark_configuration
+        )
+        assert (
+            feature_set_rest.properties.materialization_settings.resource.instance_type
+            == feature_set.materialization_settings.resource.instance_type
+        )
+        assert (
+            feature_set_rest.properties.materialization_settings.notification.email_on
+            == feature_set.materialization_settings.notification.email_on
+        )
+        assert (
+            feature_set_rest.properties.materialization_settings.notification.emails
+            == feature_set.materialization_settings.notification.emails
+        )
+
     def test_from_rest_object(self) -> None:
         with open(self.FEATURE_SET_REST, "r") as f:
             feature_set_rest = FeaturesetVersion.deserialize(json.load(f))
@@ -47,14 +68,32 @@ class TestFeatureSetEntity:
             assert feature_set.entities == feature_set_rest.properties.entities
             assert feature_set.specification.path == feature_set_rest.properties.specification.path
             assert feature_set.stage == feature_set_rest.properties.stage
-            assert feature_set.materialization_settings.schedule.frequency == feature_set_rest.properties.materialization_settings.schedule.frequency.lower()
-            assert feature_set.materialization_settings.schedule.interval == feature_set_rest.properties.materialization_settings.schedule.interval
-            assert feature_set.materialization_settings.spark_configuration == feature_set_rest.properties.materialization_settings.spark_configuration
-            assert feature_set.materialization_settings.resource.instance_type == feature_set_rest.properties.materialization_settings.resource.instance_type
-            assert feature_set.materialization_settings.notification.email_on == feature_set_rest.properties.materialization_settings.notification.email_on
-            assert feature_set.materialization_settings.notification.emails == feature_set_rest.properties.materialization_settings.notification.emails
-     
-    def test_from_container_rest_object(self)->None:
+            assert (
+                feature_set.materialization_settings.schedule.frequency
+                == feature_set_rest.properties.materialization_settings.schedule.frequency.lower()
+            )
+            assert (
+                feature_set.materialization_settings.schedule.interval
+                == feature_set_rest.properties.materialization_settings.schedule.interval
+            )
+            assert (
+                feature_set.materialization_settings.spark_configuration
+                == feature_set_rest.properties.materialization_settings.spark_configuration
+            )
+            assert (
+                feature_set.materialization_settings.resource.instance_type
+                == feature_set_rest.properties.materialization_settings.resource.instance_type
+            )
+            assert (
+                feature_set.materialization_settings.notification.email_on
+                == feature_set_rest.properties.materialization_settings.notification.email_on
+            )
+            assert (
+                feature_set.materialization_settings.notification.emails
+                == feature_set_rest.properties.materialization_settings.notification.emails
+            )
+
+    def test_from_container_rest_object(self) -> None:
         with open(self.FEATURE_SET_CONTAINER_REST, "r") as f:
             featureset_container_rest = FeaturesetContainer.deserialize(json.load(f))
             feature_set = FeatureSet._from_container_rest_object(featureset_container_rest)
