@@ -4,7 +4,6 @@
 ## 1.25.0 (2025-02-11)
 
 ### Features Added
- - Test
 
 ### Bugs Fixed
   - #39187 - Submitting a Command job created using the __call__ method on another Command is missing outputs.
