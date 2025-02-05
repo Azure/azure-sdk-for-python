@@ -68,8 +68,8 @@ class RegionalEndpoint(object):
         temp = self.current_endpoint
         self.current_endpoint = self.previous_endpoint
         self.previous_endpoint = temp
-        logger.warning("Swapped regional endpoint values: ",
-                       " - Current: " + self.current_endpoint + " ,Previous: " + self.previous_endpoint)
+        logger.warning("Swapped regional endpoint values: Current: " + self.current_endpoint +
+                       " ,Previous: " + self.previous_endpoint)
 
 
 def get_endpoints_by_location(new_locations,
