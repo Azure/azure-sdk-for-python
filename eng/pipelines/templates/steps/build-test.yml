@@ -83,11 +83,18 @@ steps:
           }
           Write-Host (Get-Command python).Source
 
+          if ($env:TESTMARKARGUMENT) {
+            $markArg = $env:TESTMARKARGUMENT
+          }
+          else {
+            $markArg = "${{ parameters.TestMarkArgument }}"
+          }
+
           python scripts/devops_tasks/dispatch_tox.py
           "$(TargetingString)"
           ${{ parameters.AdditionalTestArgs }}
           ${{ parameters.CoverageArg }}
-          --mark_arg="${{ parameters.TestMarkArgument }}"
+          --mark_arg="$markArg"
           --service="${{ parameters.ServiceDirectory }}"
           --toxenv="${{ parameters.ToxTestEnv }}"
           --injected-packages="${{ parameters.InjectedPackages }}"
@@ -104,10 +111,18 @@ steps:
           . $(VENV_LOCATION)/bin/activate.ps1
         }
         Write-Host (Get-Command python).Source
+
+        if ($env:TESTMARKARGUMENT) {
+          $markArg = $env:TESTMARKARGUMENT
+        }
+        else {
+          $markArg = "${{ parameters.TestMarkArgument }}"
+        }
+
         python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `
           ${{ parameters.AdditionalTestArgs }} `
           ${{ parameters.CoverageArg }} `
-          --mark_arg="${{ parameters.TestMarkArgument }}" `
+          --mark_arg="$markArg" `
           --service="${{ parameters.ServiceDirectory }}" `
           --toxenv="${{ parameters.ToxTestEnv }}" `
           --injected-packages="${{ parameters.InjectedPackages }}" `

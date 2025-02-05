@@ -256,6 +256,9 @@ class HttpHeaders:
     ThinClientProxyOperationType = "x-ms-thinclient-proxy-operation-type"
     ThinClientProxyResourceType = "x-ms-thinclient-proxy-resource-type"
 
+    # ClientId header for load balancing
+    ClientId = "x-ms-client-id"
+
 class HttpHeaderPreferenceTokens:
     """Constants of http header preference tokens.
     """
@@ -432,6 +435,7 @@ class SubStatusCodes:
     # 404: LSN in session token is higher
     READ_SESSION_NOTAVAILABLE = 1002
     OWNER_RESOURCE_NOT_FOUND = 1003
+    CONTAINER_CREATE_IN_PROGRESS = 1013
 
     # 409: Conflict exception
     CONFLICT_WITH_CONTROL_PLANE = 1006
