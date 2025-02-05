@@ -16,6 +16,19 @@ from azure.ai.ml.exceptions import UserErrorException
 from .._util import _DSL_TIMEOUT_SECOND
 
 
+def remove_extra_character(stdout_IO_value: str) -> str:
+    stdout_value = stdout_IO_value.replace(" ", "")
+    placeholder = "__DOUBLE_NEWLINE__"
+    stdout_value = stdout_value.replace("\n\n", placeholder)
+
+    # Replace all single instances of \n with an empty string
+    stdout_value = stdout_value.replace("\n", "")
+
+    # Restore double instances of \n\n from the placeholder
+    stdout_value = stdout_value.replace(placeholder, "\n\n")
+    return stdout_value
+
+
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features", "enable_private_preview_schema_features")
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
@@ -78,7 +91,8 @@ class TestDSLGroup:
         help(MixedGroup.__init__)
         assert (
             "__init__(self,*,int_param:int=None,str_param:str=None,enum_param:str=None,"
-            "str_default_param:str='test',optional_int_param:int=5)->None" in stdout_str_IO.getvalue().replace(" ", "")
+            "str_default_param:str='test',optional_int_param:int=5)->None"
+            in remove_extra_character(stdout_str_IO.getvalue())
         )
         sys.stdout = original_out
 
@@ -420,10 +434,9 @@ class TestDSLGroup:
             "input_folder:{'type':'uri_folder'}=None,"
             "optional_int_param:int=5,"
             "output_folder:{'type':'uri_folder'}=None)"
-            "->None" in stdout_str_IO.getvalue().replace(" ", "")
+            "->None" in remove_extra_character(stdout_str_IO.getvalue())
         )
         sys.stdout = original_out
-
         # __repr__ func test
         var = MixedGroup(
             int_param=1, str_param="test-str", input_folder=Input(path="input"), output_folder=Output(path="output")
