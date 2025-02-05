@@ -1,3 +1,7 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
 import pytest
 import json
 from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import (
