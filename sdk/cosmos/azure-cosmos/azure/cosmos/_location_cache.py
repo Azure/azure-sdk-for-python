@@ -448,9 +448,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return regional_endpoints, health_endpoints
 
     def update_health_endpoints(self, endpoints, endpoints_to_add):
-        if self.default_regional_endpoint.get_current() in endpoints_to_add:
-            endpoints_to_add.remove(self.default_regional_endpoint.get_current())
-        if len(endpoints) < 2:
+        if len(endpoints) < 3:
             endpoints.update(endpoints_to_add)
 
     def can_use_multiple_write_locations(self):
