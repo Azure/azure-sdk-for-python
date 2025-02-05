@@ -686,7 +686,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return component
 
     @experimental
-    def prepare_for_sign(self, component: Component):
+    def prepare_for_sign(self, component: Component) -> None:
         ignore_file = IgnoreFile()
 
         if isinstance(component, ComponentCodeMixin):
