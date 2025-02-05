@@ -4,6 +4,7 @@
 
 ### Features Added
 
+
 - Support AAD for sovereign clouds
   ([#39379](https://github.com/Azure/azure-sdk-for-python/pull/39379))
 - Support stable http semantic conventions for breeze exporter - REQUESTS
