@@ -3681,7 +3681,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 peek_message = receiver.peek_messages(max_message_count=2)
                 assert len(peek_message) == 2
                 assert peek_message[0].application_properties[b"index"] == 0
-                assert peek_message[1].sequence_number == 1
+                assert peek_message[0].sequence_number == 1
                 assert peek_message[1].application_properties[b"index"] == 1
                 assert peek_message[1].sequence_number == 2
                 peek_message = receiver.peek_messages(max_message_count=2)
@@ -3718,8 +3718,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
             with receiver:
                 receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
-                with receiver:
-                    peeked_messages = receiver.peek_messages(max_message_count=2)
+                peeked_messages = receiver.peek_messages(max_message_count=2)
 
                 messages = receiver.receive_messages(max_message_count=3)
                 last_received_sequnece_number = messages[-1].sequence_number
