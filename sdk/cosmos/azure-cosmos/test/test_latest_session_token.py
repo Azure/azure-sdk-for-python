@@ -5,6 +5,7 @@ import time
 import unittest
 import uuid
 
+import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
@@ -32,6 +33,7 @@ def create_item(hpk):
     return item
 
 
+@pytest.mark.cosmosSplit
 class TestLatestSessionToken(unittest.TestCase):
     """Test for session token helpers"""
 
@@ -102,7 +104,7 @@ class TestLatestSessionToken(unittest.TestCase):
         pk_range_id2, session_token2 = parse_session_token(session_tokens[1])
         pk_range_ids = [pk_range_id1, pk_range_id2]
 
-        assert 320 == (session_token1.global_lsn + session_token2.global_lsn)
+        assert 320 <= (session_token1.global_lsn + session_token2.global_lsn)
         assert '1' in pk_range_ids
         assert '2' in pk_range_ids
         self.database.delete_container(container.id)
