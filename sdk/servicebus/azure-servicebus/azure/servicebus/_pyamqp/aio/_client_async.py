@@ -137,6 +137,8 @@ class AMQPClientAsync(AMQPClientSync):
 
     def __init__(self, hostname, **kwargs):
         self._mgmt_link_lock_async = asyncio.Lock()
+        self._lock = asyncio.Lock()
+
         super().__init__(hostname, **kwargs)
 
     async def _keep_alive_async(self):
@@ -561,7 +563,8 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
 
     async def _send_message_impl_async(self, message, *, timeout: float = 0):
         expire_time = (time.time() + timeout) if timeout else None
-        await self.open_async()
+        async with self._lock:
+            await self.open_async()
         message_delivery = _MessageDelivery(message, MessageDeliveryState.WaitingToBeSent, expire_time)
 
         while not await self.client_ready_async():
@@ -570,8 +573,9 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         await self._transfer_message_async(message_delivery, timeout)
 
         running = True
-        while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            running = await self.do_work_async()
+        async with self._lock:
+            while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+                running = await self.do_work_async()
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(
                 condition=ErrorCondition.ClientError, description="Send failed - connection not running."
@@ -587,7 +591,6 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
             except TypeError:
                 # This is a default handler
                 raise MessageException(condition=ErrorCondition.UnknownError, description="Send failed.") from None
-
     async def send_message_async(self, message, *, timeout: float = 0, **kwargs):
         """
         :param ~pyamqp.message.Message message: The message to send.
