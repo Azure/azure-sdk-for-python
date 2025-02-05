@@ -93,8 +93,11 @@ class TestEnvironmentOperations:
 
     def test_create_or_update(self, mock_environment_operation: EnvironmentOperations) -> None:
         env = load_environment(source="./tests/test_configs/environment/environment_conda.yml")
-        with patch("azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None):
+        with patch(
+            "azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None
+        ), patch("azure.ai.ml.operations._environment_operations._check_and_upload_env_build_context") as check_upload:
             _ = mock_environment_operation.create_or_update(env)
+            check_upload.assert_called_once()
         mock_environment_operation._version_operations.create_or_update.assert_called_once()
 
     def test_create_autoincrement(

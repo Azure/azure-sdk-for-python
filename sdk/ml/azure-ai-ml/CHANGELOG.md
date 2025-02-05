@@ -1,6 +1,9 @@
 # Release History
 ## 1.26.0 (unreleased)
 
+### Bugs Fixed
+  - #37464 - Allowing to update a component in register with anonymousEnvironment environment.
+
 ## 1.25.0 (2025-02-11)
 
 ### Features Added
