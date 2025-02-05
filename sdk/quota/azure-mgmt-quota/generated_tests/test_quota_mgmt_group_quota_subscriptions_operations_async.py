@@ -26,7 +26,7 @@ class TestQuotaMgmtGroupQuotaSubscriptionsOperationsAsync(AzureMgmtRecordedTestC
             await self.client.group_quota_subscriptions.begin_create_or_update(
                 management_group_id="str",
                 group_quota_name="str",
-                api_version="2024-12-18-preview",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -40,7 +40,7 @@ class TestQuotaMgmtGroupQuotaSubscriptionsOperationsAsync(AzureMgmtRecordedTestC
             await self.client.group_quota_subscriptions.begin_update(
                 management_group_id="str",
                 group_quota_name="str",
-                api_version="2024-12-18-preview",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -54,7 +54,7 @@ class TestQuotaMgmtGroupQuotaSubscriptionsOperationsAsync(AzureMgmtRecordedTestC
             await self.client.group_quota_subscriptions.begin_delete(
                 management_group_id="str",
                 group_quota_name="str",
-                api_version="2024-12-18-preview",
+                api_version="2025-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -67,7 +67,7 @@ class TestQuotaMgmtGroupQuotaSubscriptionsOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.group_quota_subscriptions.get(
             management_group_id="str",
             group_quota_name="str",
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestQuotaMgmtGroupQuotaSubscriptionsOperationsAsync(AzureMgmtRecordedTestC
         response = self.client.group_quota_subscriptions.list(
             management_group_id="str",
             group_quota_name="str",
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

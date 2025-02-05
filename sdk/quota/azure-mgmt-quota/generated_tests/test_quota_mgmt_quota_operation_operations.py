@@ -22,7 +22,7 @@ class TestQuotaMgmtQuotaOperationOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_quota_operation_list(self, resource_group):
         response = self.client.quota_operation.list(
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
