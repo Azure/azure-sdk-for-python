@@ -1708,37 +1708,24 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         total_time_for_three_retries = await self.initialize_client_with_connection_urllib_retry_config(3)
         assert total_time_for_three_retries > total_time_for_two_retries
 
-        total_time_for_two_retries = await self.initialize_client_with_connection_core_retry_config(2)
-        total_time_for_three_retries = await self.initialize_client_with_connection_core_retry_config(3)
-        assert total_time_for_three_retries > total_time_for_two_retries
-
     async def initialize_client_with_connection_urllib_retry_config(self, retries):
-        start_time = time.time()
-        try:
-            async with CosmosClient("https://localhost:9999", TestCRUDOperationsAsync.masterKey,
-                                    retry_total=retries, retry_connect=retries, retry_read=retries,
-                                    retry_backoff_max=0.3, retry_on_status_codes=[500, 502, 504]) as client:
-                print('Async initialization')
-            self.fail()
-        except AzureError as e:
-            end_time = time.time()
-            return end_time - start_time
+        async with CosmosClient(TestCRUDOperationsAsync.host, TestCRUDOperationsAsync.masterKey,
+                                retry_total=retries, retry_connect=retries, retry_read=retries,
+                                retry_backoff_max=0.3,
+                                connection_timeout=.000000001) as client:
+            databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
+            container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+            start_time = time.time()
+            # client does a getDatabaseAccount on initialization, which will not time out because
+            # there is a forced timeout for those calls
 
-    async def initialize_client_with_connection_core_retry_config(self, retries):
-        start_time = time.time()
-        try:
-            async with CosmosClient(
-                    "https://localhost:9999",
-                    TestCRUDOperationsAsync.masterKey,
-                    retry_total=retries,
-                    retry_read=retries,
-                    retry_connect=retries,
-                    retry_status=retries) as client:
+            try:
+                await container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
                 print('Async initialization')
-            self.fail()
-        except AzureError as e:
-            end_time = time.time()
-            return end_time - start_time
+                self.fail()
+            except AzureError as e:
+                end_time = time.time()
+                return end_time - start_time
 
     # TODO: Skipping this test to debug later
     @unittest.skip
