@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from ... import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -40,7 +39,7 @@ class AgentProperties(_serialization.Model):
 class Argument(_serialization.Model):
     """The properties of a run argument.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the argument. Required.
     :vartype name: str
@@ -81,7 +80,7 @@ class Argument(_serialization.Model):
 class AuthInfo(_serialization.Model):
     """The authorization properties for accessing the source code repository.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar token_type: The type of Auth token. Required. Known values are: "PAT" and "OAuth".
     :vartype token_type: str or ~azure.mgmt.containerregistry.v2019_04_01.models.TokenType
@@ -249,7 +248,7 @@ class BaseImageDependency(_serialization.Model):
 class BaseImageTrigger(_serialization.Model):
     """The trigger based on base image dependency.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar base_image_trigger_type: The type of the auto trigger for base image dependency updates.
      Required. Known values are: "All" and "Runtime".
@@ -299,7 +298,7 @@ class BaseImageTrigger(_serialization.Model):
 class BaseImageTriggerUpdateParameters(_serialization.Model):
     """The properties for updating base image dependency trigger.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar base_image_trigger_type: The type of the auto trigger for base image dependency updates.
      Known values are: "All" and "Runtime".
@@ -447,7 +446,7 @@ class RunRequest(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     DockerBuildRequest, EncodedTaskRunRequest, FileTaskRunRequest, TaskRunRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the run request. Required.
     :vartype type: str
@@ -485,10 +484,10 @@ class RunRequest(_serialization.Model):
         self.is_archive_enabled = is_archive_enabled
 
 
-class DockerBuildRequest(RunRequest):  # pylint: disable=too-many-instance-attributes
+class DockerBuildRequest(RunRequest):
     """The parameters for a docker quick build.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the run request. Required.
     :vartype type: str
@@ -621,7 +620,7 @@ class TaskStepProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the step. Required. Known values are: "Docker", "FileTask", and
      "EncodedTask".
@@ -672,7 +671,7 @@ class DockerBuildStep(TaskStepProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the step. Required. Known values are: "Docker", "FileTask", and
      "EncodedTask".
@@ -771,7 +770,7 @@ class TaskStepUpdateParameters(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     DockerBuildStepUpdateParameters, EncodedTaskStepUpdateParameters, FileTaskStepUpdateParameters
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the step. Required. Known values are: "Docker", "FileTask", and
      "EncodedTask".
@@ -820,7 +819,7 @@ class TaskStepUpdateParameters(_serialization.Model):
 class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
     """The properties for updating a docker build step.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the step. Required. Known values are: "Docker", "FileTask", and
      "EncodedTask".
@@ -910,7 +909,7 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
 class EncodedTaskRunRequest(RunRequest):
     """The parameters for a quick task run request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the run request. Required.
     :vartype type: str
@@ -1018,7 +1017,7 @@ class EncodedTaskStep(TaskStepProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the step. Required. Known values are: "Docker", "FileTask", and
      "EncodedTask".
@@ -1090,7 +1089,7 @@ class EncodedTaskStep(TaskStepProperties):
 class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
     """The properties for updating encoded task step.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the step. Required. Known values are: "Docker", "FileTask", and
      "EncodedTask".
@@ -1154,7 +1153,7 @@ class EncodedTaskStepUpdateParameters(TaskStepUpdateParameters):
 class FileTaskRunRequest(RunRequest):
     """The request parameters for a scheduling run against a task file.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the run request. Required.
     :vartype type: str
@@ -1260,7 +1259,7 @@ class FileTaskStep(TaskStepProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the step. Required. Known values are: "Docker", "FileTask", and
      "EncodedTask".
@@ -1332,7 +1331,7 @@ class FileTaskStep(TaskStepProperties):
 class FileTaskStepUpdateParameters(TaskStepUpdateParameters):
     """The properties of updating a task step.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the step. Required. Known values are: "Docker", "FileTask", and
      "EncodedTask".
@@ -1539,7 +1538,7 @@ class ImageUpdateTrigger(_serialization.Model):
 class PlatformProperties(_serialization.Model):
     """The platform properties against which the run has to happen.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar os: The operating system type required for the run. Required. Known values are: "Windows"
      and "Linux".
@@ -1663,7 +1662,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource ID.
     :vartype id: str
@@ -1709,7 +1708,7 @@ class Resource(_serialization.Model):
         self.tags = tags
 
 
-class Run(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class Run(ProxyResource):
     """Run resource properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2090,7 +2089,7 @@ class SecretObject(_serialization.Model):
 class SetValue(_serialization.Model):
     """The properties of a overridable value that can be passed to a task template.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the overridable value. Required.
     :vartype name: str
@@ -2129,7 +2128,7 @@ class SetValue(_serialization.Model):
 class SourceProperties(_serialization.Model):
     """The properties of the source code repository.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_control_type: The type of source control service. Required. Known values are:
      "Github" and "VisualStudioTeamService".
@@ -2222,7 +2221,7 @@ class SourceRegistryCredentials(_serialization.Model):
 class SourceTrigger(_serialization.Model):
     """The properties of a source based trigger.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_repository: The properties that describes the source(code) for the task. Required.
     :vartype source_repository: ~azure.mgmt.containerregistry.v2019_04_01.models.SourceProperties
@@ -2346,7 +2345,7 @@ class SourceTriggerDescriptor(_serialization.Model):
 class SourceTriggerUpdateParameters(_serialization.Model):
     """The properties for updating a source based trigger.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_repository: The properties that describes the source(code) for the task.
     :vartype source_repository:
@@ -2483,13 +2482,13 @@ class SourceUploadDefinition(_serialization.Model):
         self.relative_path = relative_path
 
 
-class Task(Resource):  # pylint: disable=too-many-instance-attributes
+class Task(Resource):
     """The task that has the ARM resource and task properties.
     The task will have all information to schedule a run against it.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource ID.
     :vartype id: str
@@ -2639,7 +2638,7 @@ class TaskListResult(_serialization.Model):
 class TaskRunRequest(RunRequest):
     """The parameters for a task run request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of the run request. Required.
     :vartype type: str
@@ -2774,7 +2773,7 @@ class TaskUpdateParameters(_serialization.Model):
 class TimerTrigger(_serialization.Model):
     """The properties of a timer trigger.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar schedule: The CRON expression for the task schedule. Required.
     :vartype schedule: str
@@ -2843,7 +2842,7 @@ class TimerTriggerDescriptor(_serialization.Model):
 class TimerTriggerUpdateParameters(_serialization.Model):
     """The properties for updating a timer trigger.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar schedule: The CRON expression for the task schedule.
     :vartype schedule: str
