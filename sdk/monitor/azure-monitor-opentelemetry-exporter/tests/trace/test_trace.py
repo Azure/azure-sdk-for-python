@@ -998,192 +998,192 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.source, "Test_name//testdest")
 
-    # def test_span_envelope_server_http(self):
-    #     exporter = self._exporter
-    #     start_time = 1575494316027613500
-    #     end_time = start_time + 1001000000
+    def test_span_envelope_server_http(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
 
-    #     # SpanKind.SERVER HTTP
-    #     span = trace._Span(
-    #         name="test",
-    #         context=SpanContext(
-    #             trace_id=36873507687745823477771305566750195431,
-    #             span_id=12030755672171557337,
-    #             is_remote=False,
-    #         ),
-    #         attributes={
-    #             "http.method": "GET",
-    #             "http.path": "/wiki/Rabbit",
-    #             "http.route": "/wiki/Rabbit",
-    #             "http.url": "https://www.wikipedia.org/wiki/Rabbit",
-    #             "http.status_code": 200,
-    #             "http.user_agent": "agent",
-    #             "http.client_ip": "client_ip",
-    #         },
-    #         kind=SpanKind.SERVER,
-    #     )
-    #     span._status = Status(status_code=StatusCode.OK)
-    #     span.start(start_time=start_time)
-    #     span.end(end_time=end_time)
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Request")
-    #     self.assertEqual(envelope.data.base_type, "RequestData")
-    #     self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit")
-    #     self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
-    #     self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
-    #     self.assertEqual(envelope.data.base_data.response_code, "200")
-    #     self.assertTrue(envelope.data.base_data.success)
+        # SpanKind.SERVER HTTP
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "http.method": "GET",
+                "http.path": "/wiki/Rabbit",
+                "http.route": "/wiki/Rabbit",
+                "http.url": "https://www.wikipedia.org/wiki/Rabbit",
+                "http.status_code": 200,
+                "http.user_agent": "agent",
+                "http.client_ip": "client_ip",
+            },
+            kind=SpanKind.SERVER,
+        )
+        span._status = Status(status_code=StatusCode.OK)
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Request")
+        self.assertEqual(envelope.data.base_type, "RequestData")
+        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit")
+        self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
+        self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
+        self.assertEqual(envelope.data.base_data.response_code, "200")
+        self.assertTrue(envelope.data.base_data.success)
 
-    #     self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit")
-    #     self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
-    #     self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "client_ip")
-    #     self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
-    #     self.assertEqual(len(envelope.data.base_data.properties), 0)
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit")
+        self.assertEqual(envelope.tags["ai.user.userAgent"], "agent")
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "client_ip")
+        self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
+        self.assertEqual(len(envelope.data.base_data.properties), 0)
 
-    #     # success
-    #     span._attributes = {
-    #         "http.method": "GET",
-    #         "net.peer.ip": "peer_ip",
-    #         "http.status_code": 400,
-    #     }
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertFalse(envelope.data.base_data.success)
-    #     self.assertEqual(envelope.data.base_data.response_code, "400")
+        # success
+        span._attributes = {
+            "http.method": "GET",
+            "net.peer.ip": "peer_ip",
+            "http.status_code": 400,
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertFalse(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.response_code, "400")
 
-    #     ## Stable http semconv
-    #     span._attributes = {
-    #         "http.request.method": "GET",
-    #         "http.response.status_code": 200,
-    #     }
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertTrue(envelope.data.base_data.success)
-    #     self.assertEqual(envelope.data.base_data.response_code, "200")
+        # ## Stable http semconv
+        # span._attributes = {
+        #     "http.request.method": "GET",
+        #     "http.response.status_code": 200,
+        # }
+        # envelope = exporter._span_to_envelope(span)
+        # self.assertTrue(envelope.data.base_data.success)
+        # self.assertEqual(envelope.data.base_data.response_code, "200")
 
-    #     span._attributes = {
-    #         "http.request.method": "GET",
-    #         "http.response.status_code": 400,
-    #     }
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertFalse(envelope.data.base_data.success)
-    #     self.assertEqual(envelope.data.base_data.response_code, "400")
+        # span._attributes = {
+        #     "http.request.method": "GET",
+        #     "http.response.status_code": 400,
+        # }
+        # envelope = exporter._span_to_envelope(span)
+        # self.assertFalse(envelope.data.base_data.success)
+        # self.assertEqual(envelope.data.base_data.response_code, "400")
 
-    #     span._attributes = {
-    #         "http.method": "GET",
-    #         "net.peer.ip": "peer_ip",
-    #     }
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertFalse(envelope.data.base_data.success)
-    #     self.assertEqual(envelope.data.base_data.response_code, "0")
+        # span._attributes = {
+        #     "http.method": "GET",
+        #     "net.peer.ip": "peer_ip",
+        # }
+        # envelope = exporter._span_to_envelope(span)
+        # self.assertFalse(envelope.data.base_data.success)
+        # self.assertEqual(envelope.data.base_data.response_code, "0")
 
-    #     span._attributes = {
-    #         "http.method": "GET",
-    #         "net.peer.ip": "peer_ip",
-    #         "http.status_code": "",
-    #     }
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertFalse(envelope.data.base_data.success)
-    #     self.assertEqual(envelope.data.base_data.response_code, "0")
+        # span._attributes = {
+        #     "http.method": "GET",
+        #     "net.peer.ip": "peer_ip",
+        #     "http.status_code": "",
+        # }
+        # envelope = exporter._span_to_envelope(span)
+        # self.assertFalse(envelope.data.base_data.success)
+        # self.assertEqual(envelope.data.base_data.response_code, "0")
 
-    #     # location
-    #     span._attributes = {"http.method": "GET", "net.peer.ip": "peer_ip"}
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "peer_ip")
+        # location
+        span._attributes = {"http.method": "GET", "net.peer.ip": "peer_ip"}
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "peer_ip")
 
-    #     ## Stable http semconv
-    #     span._attributes = {"http.request.method": "GET", "client.address": "client_address"}
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "client_address")
+        ## Stable http semconv
+        span._attributes = {"http.request.method": "GET", "client.address": "client_address"}
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "client_address")
 
-    #     # url
-    #     span._attributes = {
-    #         "http.method": "GET",
-    #         "http.scheme": "https",
-    #         "http.target": "/path",
-    #         "http.host": "www.example.org",
-    #     }
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertEqual(envelope.data.base_data.url, "https://www.example.org/path")
+        # url
+        span._attributes = {
+            "http.method": "GET",
+            "http.scheme": "https",
+            "http.target": "/path",
+            "http.host": "www.example.org",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.url, "https://www.example.org/path")
 
-    #     ## Stable http semconv
-    #     span._attributes = {
-    #         "http.request.method": "GET",
-    #         "url.full": "https://www.example.org:80/path?query",
-    #     }
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertEqual(envelope.data.base_data.url, "https://www.example.org:80/path?query")
+        ## Stable http semconv
+        span._attributes = {
+            "http.request.method": "GET",
+            "url.full": "https://www.example.org:80/path?query",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.url, "https://www.example.org:80/path?query")
 
-    #     span._attributes = {
-    #         "http.request.method": "GET",
-    #         "url.scheme": "https",
-    #         "url.path": "/path",
-    #         "url.query": "query",
-    #         "server.address": "www.example.org",
-    #         "server.port": "80"
-    #     }
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertEqual(envelope.data.base_data.url, "https://www.example.org:80/path?query")
+        span._attributes = {
+            "http.request.method": "GET",
+            "url.scheme": "https",
+            "url.path": "/path",
+            "url.query": "query",
+            "server.address": "www.example.org",
+            "server.port": "80"
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.url, "https://www.example.org:80/path?query")
 
-    #     span._attributes = {
-    #         "http.method": "GET",
-    #         "http.scheme": "https",
-    #         "http.target": "/path",
-    #         "net.host.port": "35555",
-    #         "http.server_name": "example.com",
-    #     }
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertEqual(envelope.data.base_data.url, "https://example.com:35555/path")
+        span._attributes = {
+            "http.method": "GET",
+            "http.scheme": "https",
+            "http.target": "/path",
+            "net.host.port": "35555",
+            "http.server_name": "example.com",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.url, "https://example.com:35555/path")
 
-    #     span._attributes = {
-    #         "http.method": "GET",
-    #         "http.scheme": "https",
-    #         "http.target": "/path",
-    #         "net.host.port": "35555",
-    #         "net.host.name": "localhost",
-    #     }
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertEqual(envelope.data.base_data.url, "https://localhost:35555/path")
+        span._attributes = {
+            "http.method": "GET",
+            "http.scheme": "https",
+            "http.target": "/path",
+            "net.host.port": "35555",
+            "net.host.name": "localhost",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.url, "https://localhost:35555/path")
 
-    #     # ai.operation.name
-    #     span._attributes = {
-    #         "http.method": "GET",
-    #         "http.route": "/wiki/Rabbit/test",
-    #     }
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
-    #     self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
+        # ai.operation.name
+        span._attributes = {
+            "http.method": "GET",
+            "http.route": "/wiki/Rabbit/test",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
+        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
 
-    #     ## Stable http semconv
-    #     span._attributes = {
-    #         "http.request.method": "GET",
-    #         "http.route": "/wiki/Rabbit/test",
-    #     }
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
-    #     self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
+        ## Stable http semconv
+        span._attributes = {
+            "http.request.method": "GET",
+            "http.route": "/wiki/Rabbit/test",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
+        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
 
-    #     span._attributes = {
-    #         "http.method": "GET",
-    #         "http.url": "https://www.wikipedia.org/wiki/Rabbit/test",
-    #     }
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
-    #     self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
+        span._attributes = {
+            "http.method": "GET",
+            "http.url": "https://www.wikipedia.org/wiki/Rabbit/test",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
+        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
 
-    #     span._attributes = {
-    #         "http.request.method": "GET",
-    #         "url.full": "https://www.wikipedia.org/wiki/Rabbit/test",
-    #     }
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
-    #     self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
+        span._attributes = {
+            "http.request.method": "GET",
+            "url.full": "https://www.wikipedia.org/wiki/Rabbit/test",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
+        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
 
-    #     # Default is span name
-    #     span._attributes = {
-    #         "http.method": "GET",
-    #     }
-    #     envelope = exporter._span_to_envelope(span)
-    #     self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
-    #     self.assertEqual(envelope.data.base_data.name, "test")
+        # Default is span name
+        span._attributes = {
+            "http.method": "GET",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
+        self.assertEqual(envelope.data.base_data.name, "test")
 
     def test_span_envelope_server_messaging(self):
         exporter = self._exporter
