@@ -1,5 +1,11 @@
 # Release History
 
+## 5.13.2b1 (2025-05-12)
+
+### Features Added
+
+- Added support for georeplication and disaster recovery-enabled Event Hubs.
+
 ## 5.13.1 (2025-02-11)
 
 ### Bugs Fixed
