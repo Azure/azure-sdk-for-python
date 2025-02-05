@@ -1812,10 +1812,16 @@ class TestCRUDOperations(unittest.TestCase):
             # making timeout 0 ms to make sure it will throw
             connection_policy.RequestTimeout = 0.000000000001
 
+            # client does a getDatabaseAccount on initialization, which will not time out because
+            # there is a forced timeout for those calls
+            client = cosmos_client.CosmosClient(TestCRUDOperations.host, TestCRUDOperations.masterKey, "Session",
+                                                connection_policy=connection_policy)
             with self.assertRaises(Exception):
-                # client does a getDatabaseAccount on initialization, which will time out
-                cosmos_client.CosmosClient(TestCRUDOperations.host, TestCRUDOperations.masterKey, "Session",
-                                           connection_policy=connection_policy)
+                databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
+                container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+                container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
+
+
 
     def test_client_request_timeout_when_connection_retry_configuration_specified(self):
         connection_policy = documents.ConnectionPolicy()
@@ -1828,10 +1834,14 @@ class TestCRUDOperations(unittest.TestCase):
             backoff_factor=0.3,
             status_forcelist=(500, 502, 504)
         )
-        with self.assertRaises(AzureError):
-            # client does a getDatabaseAccount on initialization, which will time out
-            cosmos_client.CosmosClient(TestCRUDOperations.host, TestCRUDOperations.masterKey, "Session",
-                                       connection_policy=connection_policy)
+        # client does a getDatabaseAccount on initialization, which will not time out because
+        # there is a forced timeout for those calls
+        with cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as client:
+            with self.assertRaises(AzureError):
+                databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
+                container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+                container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
+                print('Async initialization')
 
     # TODO: Skipping this test to debug later
     @unittest.skip
