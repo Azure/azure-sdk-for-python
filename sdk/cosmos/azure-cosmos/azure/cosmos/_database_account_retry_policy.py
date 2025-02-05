@@ -36,6 +36,7 @@ class DatabaseAccountRetryPolicy(object):
     def ShouldRetry(self, exception):  # pylint: disable=unused-argument
         """Returns true if the request should retry based on the passed-in exception.
 
+        :param exceptions.CosmosHttpResponseError exception:
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """

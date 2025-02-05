@@ -41,7 +41,6 @@ class ServiceResponseRetryPolicy(object):
                 return False
 
             self.location_endpoint = self.resolve_next_region_service_endpoint()
-            print("Service response retry policy - Location endpoint is: {}".format(self.location_endpoint))
             self.request.route_to_location(self.location_endpoint)
         return True
 
@@ -49,8 +48,6 @@ class ServiceResponseRetryPolicy(object):
     def resolve_next_region_service_endpoint(self):
         # This acts as an index for next location in the list of available locations
         self.failover_retry_count += 1
-        print("Service Response retry policy - Resolving next region endpoint - failover retry count: {}"
-              .format(self.failover_retry_count))
         # clear previous location-based routing directive
         self.request.clear_route_to_location()
         # clear the last routed endpoint within same region since we are going to a new region now
