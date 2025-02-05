@@ -479,11 +479,12 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 # global_database_account_name will return 'contoso'
                 global_database_account_name = hostname_parts[0]
 
-                # Prepare the locational_database_account_name as contoso-EastUS for location_name 'East US'
+                # Prepare the locational_database_account_name as contoso-eastus for location_name 'east us'
                 locational_database_account_name = global_database_account_name + "-" + location_name.replace(" ", "")
+                locational_database_account_name = locational_database_account_name.lower()
 
-                # Replace 'contoso' with 'contoso-EastUS' and return locational_endpoint
-                # as https://contoso-EastUS.documents.azure.com:443/
+                # Replace 'contoso' with 'contoso-eastus' and return locational_endpoint
+                # as https://contoso-eastus.documents.azure.com:443/
                 locational_endpoint = default_endpoint.lower().replace(
                     global_database_account_name, locational_database_account_name, 1
                 )
