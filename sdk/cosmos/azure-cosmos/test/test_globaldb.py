@@ -405,14 +405,14 @@ class TestGlobalDB(unittest.TestCase):
 
         # Creating a locational endpoint from the location name using the parser method
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(url_endpoint, location_name)
-        self.assertEqual(locational_endpoint, 'https://contoso-EastUS.documents.azure.com:443/')
+        self.assertEqual(locational_endpoint, 'https://contoso-eastus.documents.azure.com:443/')
 
         url_endpoint = 'https://Contoso.documents.azure.com:443/'
         location_name = 'East US'
 
         # Note that the host name gets lowercased as the urlparser in Python doesn't retains the casing
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(url_endpoint, location_name)
-        self.assertEqual(locational_endpoint, 'https://contoso-EastUS.documents.azure.com:443/')
+        self.assertEqual(locational_endpoint, 'https://contoso-eastus.documents.azure.com:443/')
 
     def test_global_db_service_request_errors(self):
         mock_retry_policy = test_config.MockConnectionRetryPolicy(
