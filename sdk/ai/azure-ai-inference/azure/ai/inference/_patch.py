@@ -20,7 +20,7 @@ Why do we patch auto-generated code? Below is a summary of the changes made in a
    JsonSchemaFormat object, instead of using auto-generated base/derived classes named
    ChatCompletionsResponseFormatXxxInternal.
 10. Allow UserMessage("my message") in addition to UserMessage(content="my message"). Same applies to 
-AssistantMessage, SystemMessage and ToolMessage.
+AssistantMessage, SystemMessage, DeveloperMessage and ToolMessage.
 
 """
 import json

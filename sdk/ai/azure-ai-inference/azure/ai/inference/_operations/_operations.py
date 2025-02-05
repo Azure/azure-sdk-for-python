@@ -1,4 +1,3 @@
-# pylint: disable=too-many-locals
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -184,15 +183,6 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
     @overload
     def _complete(
         self,
-        body: JSON,
-        *,
-        extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ChatCompletions: ...
-    @overload
-    def _complete(
-        self,
         *,
         messages: List[_models._models.ChatRequestMessage],
         extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
@@ -211,6 +201,15 @@ class ChatCompletionsClientOperationsMixin(ChatCompletionsClientMixinABC):
         ] = None,
         seed: Optional[int] = None,
         model: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.ChatCompletions: ...
+    @overload
+    def _complete(
+        self,
+        body: JSON,
+        *,
+        extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
+        content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ChatCompletions: ...
     @overload
@@ -488,15 +487,6 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
     @overload
     def _embed(
         self,
-        body: JSON,
-        *,
-        extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.EmbeddingsResult: ...
-    @overload
-    def _embed(
-        self,
         *,
         input: List[str],
         extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
@@ -505,6 +495,15 @@ class EmbeddingsClientOperationsMixin(EmbeddingsClientMixinABC):
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         model: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.EmbeddingsResult: ...
+    @overload
+    def _embed(
+        self,
+        body: JSON,
+        *,
+        extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
+        content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
     @overload
@@ -701,15 +700,6 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
     @overload
     def _embed(
         self,
-        body: JSON,
-        *,
-        extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.EmbeddingsResult: ...
-    @overload
-    def _embed(
-        self,
         *,
         input: List[_models.ImageEmbeddingInput],
         extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
@@ -718,6 +708,15 @@ class ImageEmbeddingsClientOperationsMixin(ImageEmbeddingsClientMixinABC):
         encoding_format: Optional[Union[str, _models.EmbeddingEncodingFormat]] = None,
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         model: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.EmbeddingsResult: ...
+    @overload
+    def _embed(
+        self,
+        body: JSON,
+        *,
+        extra_params: Optional[Union[str, _models._enums.ExtraParameters]] = None,
+        content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EmbeddingsResult: ...
     @overload
