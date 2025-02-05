@@ -17,7 +17,7 @@ from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
         """
