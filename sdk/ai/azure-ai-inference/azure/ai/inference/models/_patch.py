@@ -76,11 +76,10 @@ class UserMessage(ChatRequestMessage, discriminator="user"):
 
 class SystemMessage(ChatRequestMessage, discriminator="system"):
     """A request chat message containing system instructions that influence how the model will
-    generate a chat completions
-    response.
+    generate a chat completions response.
 
     :ivar role: The chat role associated with this message, which is always 'system' for system
-     messages. Required. The role that instructs or sets the behavior of the assistant.
+     messages. Required.
     :vartype role: str or ~azure.ai.inference.models.SYSTEM
     :ivar content: The contents of the system message. Required.
     :vartype content: str
@@ -88,7 +87,7 @@ class SystemMessage(ChatRequestMessage, discriminator="system"):
 
     role: Literal[ChatRole.SYSTEM] = rest_discriminator(name="role")  # type: ignore
     """The chat role associated with this message, which is always 'system' for system messages.
-     Required. The role that instructs or sets the behavior of the assistant."""
+     Required."""
     content: str = rest_field()
     """The contents of the system message. Required."""
 
@@ -112,6 +111,46 @@ class SystemMessage(ChatRequestMessage, discriminator="system"):
             kwargs["content"] = args[0]
             args = tuple()
         super().__init__(*args, role=ChatRole.SYSTEM, **kwargs)
+
+
+class DeveloperMessage(ChatRequestMessage, discriminator="developer"):
+    """A request chat message containing developer instructions that influence how the model will
+    generate a chat completions response. Some AI models support developer messages instead
+    of system messages.
+
+    :ivar role: The chat role associated with this message, which is always 'developer' for developer
+     messages. Required.
+    :vartype role: str or ~azure.ai.inference.models.DEVELOPER
+    :ivar content: The contents of the developer message. Required.
+    :vartype content: str
+    """
+
+    role: Literal[ChatRole.DEVELOPER] = rest_discriminator(name="role")  # type: ignore
+    """The chat role associated with this message, which is always 'developer' for developer messages.
+     Required."""
+    content: str = rest_field()
+    """The contents of the developer message. Required."""
+
+    @overload
+    def __init__(
+        self,
+        content: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        if len(args) == 1 and isinstance(args[0], str):
+            if kwargs.get("content") is not None:
+                raise ValueError("content cannot be provided as positional and keyword arguments")
+            kwargs["content"] = args[0]
+            args = tuple()
+        super().__init__(*args, role=ChatRole.DEVELOPER, **kwargs)
 
 
 class AssistantMessage(ChatRequestMessage, discriminator="assistant"):
@@ -511,6 +550,7 @@ __all__: List[str] = [
     "SystemMessage",
     "ToolMessage",
     "UserMessage",
+    "DeveloperMessage",
 ]  # Add all objects you want publicly available to users at this package level
 
 

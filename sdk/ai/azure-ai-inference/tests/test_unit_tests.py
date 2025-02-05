@@ -90,6 +90,25 @@ class TestUnitTests(ModelClientTestBase):
         except ValueError as e:
             assert str(e) == "content cannot be provided as positional and keyword arguments"
 
+    # Test custom class DeveloperMessage(), which allow specifying "content" as a positional argument
+    def test_developer_message(self, **kwargs):
+
+        # Verify that all these objects get serialized into the same dictionary
+        messages = [
+            sdk.models.DeveloperMessage(content="some content"),
+            sdk.models.DeveloperMessage("some content"),
+            sdk.models.DeveloperMessage({"role": "developer", "content": "some content"}),
+        ]
+        for message in messages:
+            assert message.as_dict() == {"role": "developer", "content": "some content"}
+
+        # Test invalid input arguments
+        try:
+            _ = (sdk.models.DeveloperMessage("some content", content="some content"),)
+            assert False
+        except ValueError as e:
+            assert str(e) == "content cannot be provided as positional and keyword arguments"
+
     # Test custom class AssistantMessage(), which allow specifying "content" as a positional argument
     def test_assistant_message(self, **kwargs):
 
