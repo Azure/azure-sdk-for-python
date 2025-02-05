@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b9 (Unreleased)
+
+### Features Added
+
+* Added support for chat completion messages with `developer` role.
+
 ## 1.0.0b8 (2025-01-29)
 
 ### Features Added
