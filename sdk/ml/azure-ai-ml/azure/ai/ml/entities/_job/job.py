@@ -76,8 +76,6 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     :type services: Optional[dict[str, ~azure.ai.ml.entities.JobService]]
     :param compute: Information about the compute resources associated with the job.
     :type compute: Optional[str]
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
     """
 
     def __init__(
