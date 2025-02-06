@@ -266,11 +266,11 @@
     },
     "CONTAINER_NAME": {
       "type": "string",
-      "value": "[parameters('containerName')]"
+      "value": "[variables('containerName')]"
     },
     "CONTAINER_NAME_TWO": {
       "type": "string",
-      "value": "[parameters('containerNameTwo')]"
+      "value": "[variables('containerNameTwo')]"
     }
   }
 }
