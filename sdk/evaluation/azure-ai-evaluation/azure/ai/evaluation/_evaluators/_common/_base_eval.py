@@ -176,6 +176,10 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         include_query = "query" in self._singleton_inputs
         include_response = "response" in self._singleton_inputs
         include_ground_truth = "ground_truth" in self._singleton_inputs
+        include_tool_calls = "tool_calls" in self._singleton_inputs
+        if include_tool_calls:
+            include_query = True
+            include_response = True
 
         def converter(conversation: Dict) -> List[DerivedEvalInput]:
             messages = cast(List[Dict[str, Any]], conversation["messages"])
@@ -183,6 +187,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             # Extract queries, responses from conversation
             queries: List[Dict[str, Any]] = []
             responses: List[Dict[str, Any]] = []
+            tool_calls: List[Dict[str, Any]] = []
 
             # Convert conversation slice into queries and responses.
             # Assume that 'user' role is asking queries and 'assistant' role is responding.
@@ -195,9 +200,13 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     queries.append(each_turn)
                 elif role == "assistant":
                     responses.append(each_turn)
+                    if "tool_calls" in each_turn:
+                        tool_calls.append(each_turn["tool_calls"])
+                    else:
+                        tool_calls.append({})
             # TODO complain if len(queries) != len(responses)?
             eval_inputs = []
-            for query, response in zip(queries, responses):
+            for query, response, tool_calls in zip(queries, responses, tool_calls):
                 context = {}
                 if include_context:
                     query_context = query.get("context", None)
@@ -218,6 +227,10 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     eval_input["context"] = str(context)
                 if include_ground_truth:
                     eval_input["ground_truth"] = response.get("ground_truth", "")
+                # Need better way to determine when to add
+                if include_tool_calls:
+                    eval_input["tool_calls"] = tool_calls
+                    eval_input["tool_definitions"] = self._tool_defintions
                 eval_inputs.append(eval_input)
             return eval_inputs
 
@@ -464,7 +477,7 @@ class AsyncEvaluatorBase:
     # Since we want this to be relatively call-agnostic, we just account for every input that any children
     # are known to throw at this, mash them into kwargs, and then pass them into the real call.
     async def __call__(
-        self, *, query=None, response=None, context=None, conversation=None, ground_truth=None, **kwargs
+        self, *, query=None, response=None, context=None, conversation=None, ground_truth=None, tool_calls=None, **kwargs
     ):
         if conversation is not None:
             kwargs["conversation"] = conversation
@@ -476,4 +489,6 @@ class AsyncEvaluatorBase:
             kwargs["context"] = context
         if ground_truth is not None:
             kwargs["ground_truth"] = ground_truth
+        if tool_calls is not None:
+            kwargs["tool_calls"] = tool_calls
         return await self._real_call(**kwargs)

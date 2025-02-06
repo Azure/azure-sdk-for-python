@@ -1,0 +1,60 @@
+---
+name: Function Call Accuracy Evaluation
+description: Evaluates the accuracy of a function call based on the provided function name, arguments, and a list of OpenAPI specifications for different tools.
+model:
+  api: chat
+  parameters:
+    temperature: 0.0
+    top_p: 1.0
+    presence_penalty: 0
+    frequency_penalty: 0
+    response_format:
+      type: text
+
+inputs:
+  query:
+    type: string
+  tool_calls:
+    type: list
+  tool_definitions:
+    type: list
+
+---
+system:
+You are an evaluation assistant evaluating questions and tool calls to determine
+whether the tool called would answer the question. The tool calls have been generated
+by a separate agent, and chosen from the list of tool provided below. It is your job to
+decide whether that agent chose the right tool to call.
+
+    [BEGIN DATA]
+    ************
+    [Query]: {{query}}
+    ************
+    [Tool Called]: {{tool_calls}}
+    [END DATA]
+
+Your response must be single word, either "0" or "1",
+and should not contain any text or characters.
+"0" means that the chosen tool would not answer the question,
+the tool includes information that is not presented in the question,
+or that the tool signature includes parameter values that don't match
+the formats specified in the tool signatures below or tools other than the ones specified below are used.
+
+"correct" means the correct tool call was chosen, the correct parameters
+were extracted from the question, the tool call generated is runnable and correct,
+and that no outside information not present in the question was used in the generated
+question.
+
+[Tool Definitions]: {{tool_definitions}}
+
+Please read the query, reference text and answer carefully, then write out
+in a step by step manner an EXPLANATION to show how to determine if the
+answer is "correct" or "incorrect". Avoid simply stating the correct answer
+at the outset. Your response SCORE must be either 0
+or 1, and should not contain any text or characters. "1" means that the question is correctly and fully answered
+by the answer. "0" means that the question is not correctly or only
+partially answered by the answer.
+
+## Please provide your answers between the tags: <S0>your chain of thoughts</S0>, <S1>your explanation</S1>, <S2>your Score</S2>.
+# Output
+"""
