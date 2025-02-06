@@ -10,7 +10,7 @@ from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOpt
 from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsTokenInfo
 from ..._constants import EnvironmentVariables
 from ..._internal import get_default_authority, normalize_authority, within_dac
-from ..._credentials.default import parse_azure_dac
+from ..._credentials.default import parse_azure_dac, resolve_credentials
 from .azure_cli import AzureCliCredential
 from .azd_cli import AzureDeveloperCliCredential
 from .azure_powershell import AzurePowerShellCredential
@@ -49,9 +49,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword str authority: Authority of a Microsoft Entra endpoint, for example 'login.microsoftonline.com',
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
-    :keyword str default_credential_allow_list: A semicolon-separated list of credential names.
+    :keyword str[] default_credential_allow_list: A list of credential names.
         The default is to try all available credentials. If this is set, only the credentials in the list are tried.
-        e.g. "ENVIRONMENT;CLI;MANAGED_IDENTITY" will only try EnvironmentCredential, AzureCliCredential, and
+        e.g. ["ENVIRONMENT","CLI","MANAGED_IDENTITY"] will only try EnvironmentCredential, AzureCliCredential, and
         ManagedIdentityCredential. All valid credential names are "DEVELOPER_CLI", "WORKLOAD_IDENTITY", "CLI",
         "ENVIRONMENT", "MANAGED_IDENTITY", "POWERSHELL" and "SHARED_CACHE".
     :keyword str managed_identity_client_id: The client ID of a user-assigned managed identity. Defaults to the value
@@ -179,12 +179,14 @@ class DefaultAzureCredential(ChainedTokenCredential):
             dev_cli_cred = AzureDeveloperCliCredential(process_timeout=process_timeout)
             avail_credentials["DEVELOPER_CLI"] = dev_cli_cred
             credentials.append(dev_cli_cred)
-        default_credential_allow_list = kwargs.pop(
-            "default_credential_allow_list", os.environ.get("AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST")
-        )
-        if default_credential_allow_list:
-            default_credential_allow_list = default_credential_allow_list.upper()
-            credentials = parse_azure_dac(default_credential_allow_list, avail_credentials)
+        cred_types = kwargs.pop("default_credential_allow_list", None)  # type: ignore
+        if cred_types is None:
+            default_credential_allow_list = os.environ.get("AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST")
+            if default_credential_allow_list:
+                default_credential_allow_list = default_credential_allow_list.upper()
+                cred_types = parse_azure_dac(default_credential_allow_list)
+        if cred_types:
+            credentials = resolve_credentials(cred_types, avail_credentials)
         within_dac.set(False)
         super().__init__(*credentials)
 

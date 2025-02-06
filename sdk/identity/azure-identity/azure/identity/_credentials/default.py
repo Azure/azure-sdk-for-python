@@ -48,9 +48,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword str authority: Authority of a Microsoft Entra endpoint, for example 'login.microsoftonline.com',
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
-    :keyword str default_credential_allow_list: A semicolon-separated list of credential names.
+    :keyword str[] default_credential_allow_list: A list of credential names.
         The default is to try all available credentials. If this is set, only the credentials in the list are tried.
-        e.g. "ENVIRONMENT;CLI;MANAGED_IDENTITY" will only try EnvironmentCredential, AzureCliCredential, and
+        e.g. ["ENVIRONMENT","CLI","MANAGED_IDENTITY"] will only try EnvironmentCredential, AzureCliCredential, and
         ManagedIdentityCredential. All valid credential names are "DEVELOPER_CLI", "WORKLOAD_IDENTITY", "CLI",
         "ENVIRONMENT", "MANAGED_IDENTITY", "POWERSHELL" and "SHARED_CACHE".
     :keyword str interactive_browser_tenant_id: Tenant ID to use when authenticating a user through
@@ -195,12 +195,14 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 )
             else:
                 credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
-        default_credential_allow_list = kwargs.pop(
-            "default_credential_allow_list", os.environ.get("AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST")
-        )
-        if default_credential_allow_list:
-            default_credential_allow_list = default_credential_allow_list.upper()
-            credentials = parse_azure_dac(default_credential_allow_list, avail_credentials)
+        cred_types = kwargs.pop("default_credential_allow_list", None)  # type: ignore
+        if cred_types is None:
+            default_credential_allow_list = os.environ.get("AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST")
+            if default_credential_allow_list:
+                default_credential_allow_list = default_credential_allow_list.upper()
+                cred_types = parse_azure_dac(default_credential_allow_list)
+        if cred_types:
+            credentials = resolve_credentials(cred_types, avail_credentials)
         within_dac.set(False)
         super(DefaultAzureCredential, self).__init__(*credentials)
 
@@ -267,11 +269,15 @@ class DefaultAzureCredential(ChainedTokenCredential):
         return token_info
 
 
-def parse_azure_dac(az_dac, avail_credentials):
+def parse_azure_dac(az_dac):
     striped_az_dac = az_dac.strip()
     if striped_az_dac.endswith(";"):
         striped_az_dac = striped_az_dac[:-1]
     creds = [cred.strip() for cred in striped_az_dac.split(";")]
+    return creds
+
+
+def resolve_credentials(creds, avail_credentials):
     credentials = []
 
     for cred in creds:

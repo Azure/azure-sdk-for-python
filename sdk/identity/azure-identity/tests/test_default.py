@@ -19,7 +19,7 @@ from azure.identity import (
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.azure_cli import AzureCliCredential
 from azure.identity._credentials.azd_cli import AzureDeveloperCliCredential
-from azure.identity._credentials.default import parse_azure_dac
+from azure.identity._credentials.default import parse_azure_dac, resolve_credentials
 from azure.identity._credentials.managed_identity import ManagedIdentityCredential
 import pytest
 from urllib.parse import urlparse
@@ -445,7 +445,8 @@ def test_valid_allow_list():
         "DEVELOPER_CLI": "MockAzureDeveloperCliCredential",
     }
     az_dac = "ENVIRONMENT;CLI;MANAGED_IDENTITY"
-    credentials = parse_azure_dac(az_dac, avail_credentials)
+    cred_types = parse_azure_dac(az_dac)
+    credentials = resolve_credentials(cred_types, avail_credentials)
     expected_credentials = [
         "MockEnvironmentCredential",
         "MockAzureCliCredential",
@@ -459,8 +460,9 @@ def test_invalid_credential_in_allow_list():
         "ENVIRONMENT": "MockEnvironmentCredential",
     }
     az_dac = "ENVIRONMENT;INVALID_CREDENTIAL"
+    cred_types = parse_azure_dac(az_dac)
     with pytest.raises(ValueError):
-        parse_azure_dac(az_dac, avail_credentials)
+        credentials = resolve_credentials(cred_types, avail_credentials)
 
 
 def test_allow_list_with_trailing_semicolon():
@@ -470,7 +472,8 @@ def test_allow_list_with_trailing_semicolon():
         "CLI": "MockAzureCliCredential",
     }
     az_dac = "CLI;MANAGED_IDENTITY;"
-    credentials = parse_azure_dac(az_dac, avail_credentials)
+    cred_types = parse_azure_dac(az_dac)
+    credentials = resolve_credentials(cred_types, avail_credentials)
     expected_credentials = [
         "MockAzureCliCredential",
         "MockManagedIdentityCredential",
@@ -485,7 +488,8 @@ def test_allow_list_with_extra_spaces():
         "CLI": "MockAzureCliCredential",
     }
     az_dac = "  ENVIRONMENT  ;  CLI  ; MANAGED_IDENTITY  "
-    credentials = parse_azure_dac(az_dac, avail_credentials)
+    cred_types = parse_azure_dac(az_dac)
+    credentials = resolve_credentials(cred_types, avail_credentials)
     expected_credentials = [
         "MockEnvironmentCredential",
         "MockAzureCliCredential",
@@ -511,7 +515,7 @@ def test_default_azure_credential_constructor_env_var_lowercases():
 
 
 def test_default_azure_credential_constructor_with_param():
-    credential = DefaultAzureCredential(default_credential_allow_list="ENVIRONMENT;CLI")
+    credential = DefaultAzureCredential(default_credential_allow_list=["ENVIRONMENT","CLI"])
     assert len(credential.credentials) == 2
     assert isinstance(credential.credentials[0], EnvironmentCredential)
     assert isinstance(credential.credentials[1], AzureCliCredential)
