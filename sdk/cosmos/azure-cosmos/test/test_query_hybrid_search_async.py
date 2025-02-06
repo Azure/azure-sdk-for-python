@@ -7,23 +7,24 @@ import uuid
 
 import pytest
 
-from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
-import test_config
 import hybrid_search_data
-from azure.cosmos import http_constants, DatabaseProxy
+import test_config
+from azure.cosmos import http_constants, CosmosClient as CosmosSyncClient
+from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 
-@pytest.mark.cosmosQuery
+
+@pytest.mark.cosmosSearchQuery
 class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to check full text search and hybrid search queries behavior."""
 
     client: CosmosClient = None
+    sync_client: CosmosSyncClient = None
     config = test_config.TestConfig
     host = config.host
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
-    TEST_DATABASE_ID = config.TEST_DATABASE_ID
     TEST_CONTAINER_ID = "Full Text Container " + str(uuid.uuid4())
 
     @classmethod
@@ -34,12 +35,10 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-
-    async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
-        self.test_db = await self.client.create_database(str(uuid.uuid4()))
-        self.test_container = await self.test_db.create_container(
-            id="FTS" + self.TEST_CONTAINER_ID,
+        cls.sync_client = CosmosSyncClient(cls.host, cls.masterKey)
+        cls.test_db = cls.sync_client.create_database(str(uuid.uuid4()))
+        cls.test_container = cls.test_db.create_container(
+            id="FTS" + cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/id"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_1_PARTITION,
             indexing_policy=test_config.get_full_text_indexing_policy(path="/text"),
@@ -47,16 +46,23 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
         data = hybrid_search_data.get_full_text_items()
         for index, item in enumerate(data.get("items")):
             item['id'] = str(index)
-            await self.test_container.create_item(item)
+            cls.test_container.create_item(item)
         # Need to give the container time to index all the recently added items - 10 minutes seems to work
         time.sleep(10 * 60)
 
-    async def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         try:
-            await self.test_db.delete_container(self.test_container.id)
-            await self.client.delete_database(self.test_db.id)
+            cls.sync_client.delete_database(cls.test_db.id)
         except exceptions.CosmosHttpResponseError:
             pass
+
+    async def asyncSetUp(self):
+        self.client = CosmosClient(self.host, self.masterKey)
+        self.test_db = self.client.get_database_client(self.test_db.id)
+        self.test_container = self.test_db.get_container_client(self.test_container.id)
+
+    async def asyncTearDown(self):
         await self.client.close()
 
     async def test_wrong_hybrid_search_queries_async(self):
