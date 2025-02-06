@@ -4,6 +4,7 @@
 import collections
 import os
 import time
+import unittest
 import uuid
 
 from azure.cosmos.cosmos_client import CosmosClient
@@ -172,6 +173,48 @@ class TestConfig(object):
     async def _validate_offset_limit(cls, created_collection, query, results):
         query_iterable = created_collection.query_items(query=query)
         assert list(map(lambda doc: doc['pk'], [item async for item in query_iterable])) == results
+
+    @staticmethod
+    def trigger_split(container, throughput):
+        print("Triggering a split in session token helpers")
+        container.replace_throughput(throughput)
+        print("changed offer to 11k")
+        print("--------------------------------")
+        print("Waiting for split to complete")
+        start_time = time.time()
+
+        while True:
+            offer = container.get_throughput()
+            if offer.properties['content'].get('isOfferReplacePending', False):
+                if time.time() - start_time > 60 * 25:  # timeout test at 25 minutes
+                    unittest.skip("Partition split didn't complete in time.")
+                else:
+                    print("Waiting for split to complete")
+                    time.sleep(60)
+            else:
+                break
+        print("Split in session token helpers has completed")
+
+    @staticmethod
+    async def trigger_split_async(container, throughput):
+        print("Triggering a split in session token helpers")
+        await container.replace_throughput(throughput)
+        print("changed offer to 11k")
+        print("--------------------------------")
+        print("Waiting for split to complete")
+        start_time = time.time()
+
+        while True:
+            offer = await container.get_throughput()
+            if offer.properties['content'].get('isOfferReplacePending', False):
+                if time.time() - start_time > 60 * 25:  # timeout test at 25 minutes
+                    unittest.skip("Partition split didn't complete in time.")
+                else:
+                    print("Waiting for split to complete")
+                    time.sleep(60)
+            else:
+                break
+        print("Split in session token helpers has completed")
 
 
 def get_vector_indexing_policy(embedding_type):
