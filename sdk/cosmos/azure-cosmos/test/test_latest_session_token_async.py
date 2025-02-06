@@ -61,9 +61,9 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         previous_session_token = ""
         target_pk = 'A1'
         target_feed_range = await container.feed_range_from_partition_key(target_pk)
-        target_session_token, previous_session_token = await self.create_items_logical_pk(container, target_feed_range,
-                                                                                    previous_session_token,
-                                                                                    feed_ranges_and_session_tokens)
+        target_session_token, previous_session_token = await self.create_items_logical_pk_async(container, target_feed_range,
+                                                                                                previous_session_token,
+                                                                                                feed_ranges_and_session_tokens)
         session_token = await container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
         assert session_token == target_session_token
 
@@ -71,9 +71,9 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         phys_feed_ranges_and_session_tokens = []
         phys_previous_session_token = ""
         pk_feed_range = await container.feed_range_from_partition_key('A1')
-        phys_target_session_token, phys_target_feed_range, phys_previous_session_token = await self.create_items_physical_pk(container, pk_feed_range,
-                                                                                                                       phys_previous_session_token,
-                                                                                                                       phys_feed_ranges_and_session_tokens)
+        phys_target_session_token, phys_target_feed_range, phys_previous_session_token = await self.create_items_physical_pk_async(container, pk_feed_range,
+                                                                                                                                   phys_previous_session_token,
+                                                                                                                                   phys_feed_ranges_and_session_tokens)
 
         phys_session_token = await container.get_latest_session_token(phys_feed_ranges_and_session_tokens, phys_target_feed_range)
         assert phys_session_token == phys_target_session_token
@@ -83,17 +83,17 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         await test_config.TestConfig.trigger_split_async(container, 11000)
 
         # testing with storing session tokens by feed range that maps to logical pk post split
-        target_session_token, _ = await self.create_items_logical_pk(container, target_feed_range, session_token,
-                                                               feed_ranges_and_session_tokens)
+        target_session_token, _ = await self.create_items_logical_pk_async(container, target_feed_range, session_token,
+                                                                           feed_ranges_and_session_tokens)
         target_feed_range = await container.feed_range_from_partition_key(target_pk)
         session_token = await container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
 
         assert session_token == target_session_token
 
         # testing with storing session tokens by feed range that maps to physical pk post split
-        _, phys_target_feed_range, phys_previous_session_token = await self.create_items_physical_pk(container, pk_feed_range,
-                                                                                               phys_session_token,
-                                                                                               phys_feed_ranges_and_session_tokens)
+        _, phys_target_feed_range, phys_previous_session_token = await self.create_items_physical_pk_async(container, pk_feed_range,
+                                                                                                           phys_session_token,
+                                                                                                           phys_feed_ranges_and_session_tokens)
 
         phys_session_token = await container.get_latest_session_token(phys_feed_ranges_and_session_tokens, phys_target_feed_range)
         assert is_compound_session_token(phys_session_token)
@@ -116,11 +116,11 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         previous_session_token = ""
         pk = ['CA', 'LA1', '90001']
         pk_feed_range = await container.feed_range_from_partition_key(pk)
-        target_session_token, target_feed_range, previous_session_token = await self.create_items_physical_pk(container,
-                                                                                                        pk_feed_range,
-                                                                                                        previous_session_token,
-                                                                                                        feed_ranges_and_session_tokens,
-                                                                                                        True)
+        target_session_token, target_feed_range, previous_session_token = await self.create_items_physical_pk_async(container,
+                                                                                                                    pk_feed_range,
+                                                                                                                    previous_session_token,
+                                                                                                                    feed_ranges_and_session_tokens,
+                                                                                                                    True)
 
         session_token = await container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
         assert session_token == target_session_token
@@ -135,17 +135,17 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         previous_session_token = ""
         target_pk = ['CA', 'LA1', '90001']
         target_feed_range = await container.feed_range_from_partition_key(target_pk)
-        target_session_token, previous_session_token = await self.create_items_logical_pk(container, target_feed_range,
-                                                                                    previous_session_token,
-                                                                                    feed_ranges_and_session_tokens,
-                                                                                    True)
+        target_session_token, previous_session_token = await self.create_items_logical_pk_async(container, target_feed_range,
+                                                                                                previous_session_token,
+                                                                                                feed_ranges_and_session_tokens,
+                                                                                                True)
         session_token = await container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
 
         assert session_token == target_session_token
         await self.database.delete_container(container.id)
 
     @staticmethod
-    async def create_items_logical_pk(container, target_pk_range, previous_session_token, feed_ranges_and_session_tokens, hpk=False):
+    async def create_items_logical_pk_async(container, target_pk_range, previous_session_token, feed_ranges_and_session_tokens, hpk=False):
         target_session_token = ""
         for i in range(100):
             item = create_item(hpk)
@@ -164,7 +164,7 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         return target_session_token, previous_session_token
 
     @staticmethod
-    async def create_items_physical_pk(container, pk_feed_range, previous_session_token, feed_ranges_and_session_tokens, hpk=False):
+    async def create_items_physical_pk_async(container, pk_feed_range, previous_session_token, feed_ranges_and_session_tokens, hpk=False):
         target_session_token = ""
         container_feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
         target_feed_range = None
