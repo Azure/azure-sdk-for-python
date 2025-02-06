@@ -7,6 +7,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     OnlineEndpointData,
     EndpointAuthKeys as RestEndpointAuthKeys,
 )
+from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpoint as BatchEndpointData
 from azure.ai.ml import load_batch_endpoint, load_online_endpoint
 from azure.ai.ml.entities import (
     BatchEndpoint,
@@ -86,6 +87,7 @@ class TestOnlineEndpointYAML:
 @pytest.mark.unittest
 class TestBatchEndpointYAML:
     BATCH_ENDPOINT_WITH_BLUE = "tests/test_configs/endpoints/batch/batch_endpoint.yaml"
+    BATCH_ENDPOINT_REST = "tests/test_configs/endpoints/batch/batch_endpoint_rest.json"
 
     def test_generic_endpoint_load_and_dump_2(self) -> None:
         with open(TestBatchEndpointYAML.BATCH_ENDPOINT_WITH_BLUE, "r") as f:
@@ -113,6 +115,32 @@ class TestBatchEndpointYAML:
         assert rest_batch_endpoint.tags
         assert len(rest_batch_endpoint.tags)
         assert rest_batch_endpoint.tags == target["tags"]
+
+    def test_to_dict(self) -> None:
+        endpoint = load_batch_endpoint(TestBatchEndpointYAML.BATCH_ENDPOINT_WITH_BLUE)
+        endpoint_dict = endpoint._to_dict()
+
+        assert endpoint_dict["name"] == endpoint.name
+        assert endpoint_dict["description"] == endpoint.description
+        assert endpoint_dict["auth_mode"] == endpoint.auth_mode
+        assert endpoint_dict["tags"] == endpoint.tags
+        assert endpoint_dict["auth_mode"] == "aad_token"
+        assert endpoint_dict["properties"] == endpoint.properties
+
+    def test_from_rest(self) -> None:
+        with open(TestBatchEndpointYAML.BATCH_ENDPOINT_REST, "r") as f:
+            batch_endpoint_rest = BatchEndpointData.deserialize(json.load(f))
+            batch_endpoint = BatchEndpoint._from_rest_object(batch_endpoint_rest)
+            assert batch_endpoint.name == batch_endpoint_rest.name
+            assert batch_endpoint.id == batch_endpoint_rest.id
+            assert batch_endpoint.tags == batch_endpoint_rest.tags
+            assert batch_endpoint.properties == batch_endpoint_rest.properties.properties
+            assert batch_endpoint.auth_mode == "aad_token"
+            assert batch_endpoint.description == batch_endpoint_rest.properties.description
+            assert batch_endpoint.location == batch_endpoint_rest.location
+            assert batch_endpoint.provisioning_state == batch_endpoint_rest.properties.provisioning_state
+            assert batch_endpoint.scoring_uri == batch_endpoint_rest.properties.scoring_uri
+            assert batch_endpoint.openapi_uri == batch_endpoint_rest.properties.swagger_uri
 
     def test_batch_endpoint_with_deployment_name_promoted_param_only(self) -> None:
         endpoint = BatchEndpoint(
