@@ -239,7 +239,8 @@ In the following sections you will find simple examples of:
 
 * [Chat completions](#chat-completions-example)
 * [Streaming chat completions](#streaming-chat-completions-example)
-* [Chat completions with additional model-specific parameters](#chat-completions-with-additional-model-specific-parameters)
+* [Adding model-specific parameters](#adding-model-specific-parameters)
+* [Adding HTTP request headers](#adding-http-request-headers)
 * [Text Embeddings](#text-embeddings-example)
 * [Image Embeddings](#image-embeddings-example)
 
