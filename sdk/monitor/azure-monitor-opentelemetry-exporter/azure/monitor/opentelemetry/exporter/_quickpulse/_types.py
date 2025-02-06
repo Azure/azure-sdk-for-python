@@ -112,7 +112,6 @@ class _DependencyData(_TelemetryData):
                     url = trace_utils._get_url_for_http_dependency(attributes)
                     target, _ = trace_utils._get_target_and_path_for_http_dependency(
                         attributes,
-                        target,
                         url,
                     )
                     data = url
