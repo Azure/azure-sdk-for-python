@@ -95,3 +95,14 @@ class TestCallRecordingClient(unittest.TestCase):
             "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send)
         )
         callautomation_client.get_recording_properties(recording_id=self.recording_id)
+
+    def test_get_recording_responce(self):
+        def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
+            if kwargs:
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
+            return mock_response(status_code=200)
+        callautomation_client = CallAutomationClient(
+            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send)
+        )
+        callautomation_client.get_recording_response(recording_id=self.recording_id)
