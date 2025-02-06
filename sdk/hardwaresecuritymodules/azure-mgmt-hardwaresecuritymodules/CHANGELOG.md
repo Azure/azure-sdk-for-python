@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (2024-11-18)
+## 1.0.0b2 (2025-02-06)
 
 ### Features Added
 
@@ -38,7 +38,6 @@
 
 ### Breaking Changes
 
-  - Method `CloudHsmClusterPrivateLinkResourcesOperations.list_by_cloud_hsm_cluster` changed from `asynchronous` to `synchronous`
   - Model `ApiEntityReference` deleted or renamed its instance variable `id`
   - Model `CloudHsmClusterPatchParameters` deleted or renamed its instance variable `sku`
   - Model `CloudHsmClusterPatchParameters` deleted or renamed its instance variable `properties`
