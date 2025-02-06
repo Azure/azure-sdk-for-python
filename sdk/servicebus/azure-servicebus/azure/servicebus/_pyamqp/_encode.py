@@ -314,6 +314,8 @@ def encode_decimal128(output: bytearray, value: Decimal, with_constructor: bool 
     :param decimal value: The decimal to encode.
     :param bool with_constructor: Whether to include the constructor byte.
     """
+    # only dealing with decimal128 for now as those are the only ones supported for our current use case
+    # they can be added as needed
     output.extend(_construct(ConstructorBytes.decimal128, with_constructor))
     sign, digits, exponent = value.as_tuple()
     significand = int("".join(map(str, digits)))
