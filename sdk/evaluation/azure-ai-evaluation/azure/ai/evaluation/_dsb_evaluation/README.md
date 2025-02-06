@@ -9,7 +9,7 @@
 - Identify the relevant evaluation metric for their use-case
 - Run the evaluation
 
-To simplify this process, we will support a new interface, `evaluate_dsb`, which will reduce the user requirements to:
+To simplify this process, we will support a new interface, `DSBEvaluation`, which will reduce the user requirements to:
 
 - Identify the relevant `AdversarialScenario` for their use-case
 - Identify the relevant evaluation metric for their use-case
@@ -31,14 +31,14 @@ The following is an example of usage and output:
 
     credential = DefaultAzureCredential()
 
-    evaluate_dsb_outputs = evaluate_dsb(
+    
+    dsb_evaluation = DSBEvaluation(model_config=model_config, azure_ai_project=azure_ai_project, credential=credential)
+
+    dsb_evaluation_outputs = dsb_evaluation(
         adversarial_scenario=AdversarialScenario.ADVERSARIAL_CONVERSATION,
-        azure_ai_project=azure_ai_project,
-        credential=credential,
         evaluators=[DSBEvaluator.CONTENT_SAFETY, DSBEvaluator.GROUNDEDNESS, DSBEvaluator.PROTECTED_MATERIAL],
         target=call_to_your_endpoint_here,
         source_text=source_text,
-        model_config=model_config,
         max_conversation_turns=1,
         max_simulation_results=3,
         output_path="evaluation_outputs.jsonl",
@@ -70,7 +70,7 @@ result = evaluate(
 Instead, we will have:
 
 ```python
-evaluate_dsb(
+dsb_evaluation(
     ...,
     evaluators=[DSBEvaluator.CONTENT_SAFETY, DSBEvaluator.GROUNDEDNESS]
 )

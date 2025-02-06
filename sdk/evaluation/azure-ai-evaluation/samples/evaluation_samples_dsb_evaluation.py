@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import os
 from azure.ai.evaluation.simulator import AdversarialScenario
 from azure.identity import DefaultAzureCredential
-from azure.ai.evaluation import evaluate_dsb, DSBEvaluator
+from azure.ai.evaluation import DSBEvaluation, DSBEvaluator
 from typing import Optional
 
 def test_target_context(query: str) -> tuple:
@@ -29,14 +29,14 @@ if __name__ == "__main__":
     source_text = "Mock source text"
 
     credential = DefaultAzureCredential()
-    asyncio.run(evaluate_dsb(
+
+    dsb_evaluation = DSBEvaluation(model_config=model_config, azure_ai_project=azure_ai_project, credential=credential)
+
+    asyncio.run(dsb_evaluation(
         adversarial_scenario=AdversarialScenario.ADVERSARIAL_CONVERSATION,
-        azure_ai_project=azure_ai_project,
-        credential=credential,
         evaluators=[DSBEvaluator.CONTENT_SAFETY, DSBEvaluator.GROUNDEDNESS, DSBEvaluator.PROTECTED_MATERIAL],
         target=test_target,
         source_text=source_text,
-        model_config=model_config,
         max_conversation_turns=1,
         max_simulation_results=3,
         output_path="evaluation_outputs.jsonl",

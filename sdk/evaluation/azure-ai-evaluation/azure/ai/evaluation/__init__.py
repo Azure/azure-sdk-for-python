@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from ._dsb_evaluation._dsb_evaluation import DSBEvaluator, DSBEvaluation
 from ._evaluate._evaluate import evaluate
-from ._evaluate_dsb._evaluate_dsb import DSBEvaluator, evaluate_dsb
 from ._evaluators._bleu import BleuScoreEvaluator
 from ._evaluators._coherence import CoherenceEvaluator
 from ._evaluators._content_safety import (
@@ -47,8 +47,8 @@ from ._constants import AggregationType
 
 __all__ = [
     "evaluate",
-    "evaluate_dsb",
     "DSBEvaluator",
+    "DSBEvaluation",
     "CoherenceEvaluator",
     "F1ScoreEvaluator",
     "FluencyEvaluator",
