@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import logging
 
 from typing import no_type_check, Optional, Tuple
 from urllib.parse import urlparse
@@ -12,6 +13,9 @@ from opentelemetry.semconv.attributes import (
 )
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
 from opentelemetry.util.types import Attributes
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 
 # pylint:disable=too-many-return-statements
@@ -256,13 +260,14 @@ def _get_user_agent(attributes: Attributes) -> Optional[str]:
 @no_type_check
 def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
     url = ""
-    print("her2e")
+    logger.debug("here")
     if attributes:
         # Url
         if url_attributes.URL_FULL in attributes:
+            logger.debug("here2")
             return attributes[url_attributes.URL_FULL]
         if SpanAttributes.HTTP_URL in attributes:
-            print("here")
+            logger.debug("here3")
             return attributes[SpanAttributes.HTTP_URL]
         # Scheme
         scheme = _get_http_scheme(attributes)
@@ -275,10 +280,10 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
                     http_target,
                     attributes.get(url_attributes.URL_QUERY, "")
                 )
-            print("here3")    
+            logger.debug("here4")
         elif SpanAttributes.HTTP_TARGET in attributes:
             http_target = attributes.get(SpanAttributes.HTTP_TARGET, "")
-            print("here4")
+            logger.debug("here5")
         if scheme and http_target:
             # Host
             http_host = ""
@@ -289,10 +294,10 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
                         http_host,
                         attributes.get(server_attributes.SERVER_PORT, "")
                     )
-                print("here5")    
+                logger.debug("here6")  
             elif SpanAttributes.HTTP_HOST in attributes:
                 http_host = attributes.get(SpanAttributes.HTTP_HOST, "")
-                print("here6")
+                logger.debug("here7")  
             # Url
             if http_host:
                 url = "{}://{}{}".format(
@@ -300,7 +305,7 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
                     http_host,
                     http_target,
                 )
-                print("here7")
+                logger.debug("here8")  
             elif SpanAttributes.HTTP_SERVER_NAME in attributes:
                 server_name = attributes[SpanAttributes.HTTP_SERVER_NAME]
                 host_port = attributes.get(SpanAttributes.NET_HOST_PORT, "")
@@ -310,7 +315,7 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
                     host_port,
                     http_target,
                 )
-                print("here8")
+                logger.debug("here9")  
             elif SpanAttributes.NET_HOST_NAME in attributes:
                 host_name = attributes[SpanAttributes.NET_HOST_NAME]
                 host_port = attributes.get(SpanAttributes.NET_HOST_PORT, "")
@@ -320,6 +325,6 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
                     host_port,
                     http_target,
                 )
-                print("here9")
-        print(url)
+                logger.debug("here10")
+        logger.debug(url)  
     return url
