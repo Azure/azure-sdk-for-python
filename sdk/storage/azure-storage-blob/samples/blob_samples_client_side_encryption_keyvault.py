@@ -89,13 +89,9 @@ class KeyWrapper:
 storage_url = get_env_var(STORAGE_URL)
 keyvault_url = get_env_var(KEYVAULT_URL)
 
-key = os.urandom(32)
-encoded_key = base64.urlsafe_b64encode(key).decode('utf-8')
-
 # Construct a token credential for use by Storage and KeyVault clients.
 credential = DefaultAzureCredential()
 secret_client = SecretClient(keyvault_url, credential=credential)
-secret_client.set_secret(name="symmetric-key", value=encoded_key)
 
 # The secret is url-safe base64 encoded bytes, content type 'application/octet-stream'
 secret = secret_client.get_secret('symmetric-key')

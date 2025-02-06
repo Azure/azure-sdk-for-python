@@ -15,7 +15,7 @@ DESCRIPTION:
 
 USAGE: python blob_samples_proxy_configuration.py
     Set the environment variables with your own values before running the sample:
-    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
 
 EXAMPLE OUTPUT:
 X containers.
@@ -25,13 +25,13 @@ import logging
 
 import os
 import sys
-from azure.core.exceptions import ServiceRequestError
+
 from azure.storage.blob import BlobServiceClient
 
 # Retrieve connection string from environment variables
-connection_string = os.environ.get('STORAGE_CONNECTION_STRING', None)
+connection_string = os.environ.get('AZURE_STORAGE_CONNECTION_STRING', None)
 if not connection_string:
-    print('STORAGE_CONNECTION_STRING required.')
+    print('AZURE_STORAGE_CONNECTION_STRING required.')
     sys.exit(1)
 
 # configure logging
@@ -47,20 +47,17 @@ proxies = {
     'http': http_proxy,
     'https': https_proxy
 }
-try:
-    # Construct the BlobServiceClient, including the customized configuation.
-    service_client = BlobServiceClient.from_connection_string(connection_string, proxies=proxies)
-    containers = list(service_client.list_containers(logging_enable=True))
-    print("{} containers.".format(len(containers)))
+# Construct the BlobServiceClient, including the customized configuation.
+service_client = BlobServiceClient.from_connection_string(connection_string, proxies=proxies)
+containers = list(service_client.list_containers(logging_enable=True))
+print("{} containers.".format(len(containers)))
 
-    # Alternatively, proxy settings can be set using environment variables, with no
-    # custom configuration necessary.
-    HTTP_PROXY_ENV_VAR = 'HTTP_PROXY'
-    HTTPS_PROXY_ENV_VAR = 'HTTPS_PROXY'
-    os.environ[HTTPS_PROXY_ENV_VAR] = https_proxy
+# Alternatively, proxy settings can be set using environment variables, with no
+# custom configuration necessary.
+HTTP_PROXY_ENV_VAR = 'HTTP_PROXY'
+HTTPS_PROXY_ENV_VAR = 'HTTPS_PROXY'
+os.environ[HTTPS_PROXY_ENV_VAR] = https_proxy
 
-    service_client = BlobServiceClient.from_connection_string(connection_string)
-    containers = list(service_client.list_containers(logging_enable=True))
-    print("{} containers.".format(len(containers)))
-except ServiceRequestError:
-    print("Timeout")
+service_client = BlobServiceClient.from_connection_string(connection_string)
+containers = list(service_client.list_containers(logging_enable=True))
+print("{} containers.".format(len(containers)))

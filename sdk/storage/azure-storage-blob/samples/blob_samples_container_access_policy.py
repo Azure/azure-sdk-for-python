@@ -44,17 +44,14 @@ except KeyError:
 def get_and_set_container_access_policy():
     service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
     container_client = service_client.get_container_client("mynewconwertainer")
-    print("test_tc1")
 
     print("\n..Creating container")
     container_client.create_container()
-    print("test_tc2")
 
     # Create access policy
     access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True, write=True),
                                     expiry=datetime.utcnow() + timedelta(hours=1),
                                     start=datetime.utcnow() - timedelta(minutes=1))
-    print("test_tc3")
     identifiers = {'read': access_policy}
 
     # Specifies full public read access for container and blob data.

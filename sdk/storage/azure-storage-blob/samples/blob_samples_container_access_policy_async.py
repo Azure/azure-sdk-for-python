@@ -45,16 +45,13 @@ except KeyError:
 async def get_and_set_container_access_policy():
     service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
     container_client = service_client.get_container_client("mynewcontainer")
-    print("test_tc1")
 
     async with service_client:
         print("\n..Creating container")
         try:
             await container_client.create_container()
-            print("test_tc2")
         except ResourceExistsError:
             pass
-        print("test_tc3")
         # Create access policy
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True, write=True),
                                         expiry=datetime.utcnow() + timedelta(hours=1),

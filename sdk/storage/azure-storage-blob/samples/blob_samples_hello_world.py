@@ -18,7 +18,7 @@ USAGE: python blob_samples_hello_world.py
 
 import os
 import sys
-from azure.core.exceptions import ResourceExistsError
+
 
 # set up
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -43,16 +43,15 @@ class BlobSamples(object):
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a new ContainerClient
-        container_client = blob_service_client.get_container_client("mycontainer1")
+        container_client = blob_service_client.get_container_client("mycontainer11")
 
         try:
             # Create new container in the service
             container_client.create_container()
             # List containers in the storage account
-        except ResourceExistsError:
-            print('exists')
-        finally:
             list_response = blob_service_client.list_containers()
+
+        finally:
             # Delete the container
             container_client.delete_container()
 

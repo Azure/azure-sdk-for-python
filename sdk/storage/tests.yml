@@ -32,3 +32,4 @@ extends:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_SUBSCRIPTION_ID: $(STORAGE_SUBSCRIPTION_ID)
+        TEST_MODE: 'RunLiveNoRecord'

@@ -19,7 +19,6 @@ USAGE: python blob_samples_hello_world_async.py
 import os
 import sys
 import asyncio
-from azure.core.exceptions import ResourceExistsError
 
 # set up
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -45,7 +44,7 @@ class BlobSamplesAsync(object):
 
         async with blob_service_client:
             # Instantiate a new ContainerClient
-            container_client = blob_service_client.get_container_client("mycontainerasync1")
+            container_client = blob_service_client.get_container_client("mycontainerasync11")
 
             try:
                 # Create new container in the service
@@ -55,8 +54,6 @@ class BlobSamplesAsync(object):
                 my_containers = []
                 async for container in blob_service_client.list_containers():
                     my_containers.append(container)
-            except ResourceExistsError:
-                print('exists')
             finally:
                 # Delete the container
                 await container_client.delete_container()

@@ -102,6 +102,14 @@
             },
             "kind": "StorageV2",
             "properties": {
+                "deleteRetentionPolicy": {
+                    "enabled": true,
+                    "days": 1
+                },
+               "containerDeleteRetentionPolicy": {
+                    "enabled": true,
+                    "days": 1
+                },
                 "networkAcls": {
                     "bypass": "AzureServices",
                     "virtualNetworkRules": [],
@@ -128,14 +136,14 @@
             "apiVersion": "[variables('storageApiVersion')]",
             "name": "[concat(variables('primaryAccountName'), '/default')]",
             "properties": {
-              "deleteRetentionPolicy": {
-                "enabled": true,
-                "days": 7
-              },
             "containerDeleteRetentionPolicy": {
                 "enabled": true,
                 "days": 1
-              }
+              },
+              "deleteRetentionPolicy": {
+                    "enabled": true,
+                    "days": 1
+                }
         },
         "dependsOn": [
           "[variables('primaryAccountName')]"

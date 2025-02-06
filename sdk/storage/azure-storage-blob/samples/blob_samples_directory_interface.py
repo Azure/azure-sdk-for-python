@@ -169,12 +169,7 @@ except KeyError:
   print('STORAGE_CONNECTION_STRING must be set')
   sys.exit(1)
 
-try:
-  CONTAINER_NAME = "mycontainerdirectory2"
-except IndexError:
-  print('usage: directory_interface.py CONTAINER_NAME')
-  print('error: the following arguments are required: CONTAINER_NAME')
-  sys.exit(1)
+CONTAINER_NAME = "mycontainerdirectory2"
 
 SAMPLE_DIRS = [
   'cats/calico',
