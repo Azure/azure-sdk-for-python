@@ -5,8 +5,8 @@ import copy
 from test_utilities.utils import verify_entity_load_and_dump
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     OnlineEndpointData,
-    EndpointAuthKeys as RestEndpointAuthKeys
-    )
+    EndpointAuthKeys as RestEndpointAuthKeys,
+)
 from azure.ai.ml import load_batch_endpoint, load_online_endpoint
 from azure.ai.ml.entities import (
     BatchEndpoint,
@@ -51,8 +51,8 @@ class TestOnlineEndpointYAML:
     def test_online_endpoint_to_rest_object_with_no_issue(self) -> None:
         endpoint = load_online_endpoint(TestOnlineEndpointYAML.MINIMAL_ENDPOINT)
         endpoint._to_rest_online_endpoint("westus2")
-    
-    def test_from_rest_object_kubenetes(self)->None:
+
+    def test_from_rest_object_kubenetes(self) -> None:
         with open(TestOnlineEndpointYAML.ONLINE_ENDPOINT_REST, "r") as f:
             online_deployment_rest = OnlineEndpointData.deserialize(json.load(f))
             online_endpoint = OnlineEndpoint._from_rest_object(online_deployment_rest)
@@ -63,11 +63,11 @@ class TestOnlineEndpointYAML:
             assert online_endpoint.traffic == online_deployment_rest.properties.traffic
             assert online_endpoint.description == online_deployment_rest.properties.description
             assert online_endpoint.provisioning_state == online_deployment_rest.properties.provisioning_state
-            assert online_endpoint.identity.type == 'system_assigned'
+            assert online_endpoint.identity.type == "system_assigned"
             assert online_endpoint.identity.principal_id == online_deployment_rest.identity.principal_id
-            assert online_endpoint.properties['createdBy'] == online_deployment_rest.system_data.created_by
-        
-    def test_from_rest_object_managed(self)->None:
+            assert online_endpoint.properties["createdBy"] == online_deployment_rest.system_data.created_by
+
+    def test_from_rest_object_managed(self) -> None:
         with open(TestOnlineEndpointYAML.ONLINE_ENDPOINT_REST, "r") as f:
             online_deployment_rest = OnlineEndpointData.deserialize(json.load(f))
             online_deployment_rest.properties.compute = None
@@ -78,9 +78,9 @@ class TestOnlineEndpointYAML:
             assert online_endpoint.traffic == online_deployment_rest.properties.traffic
             assert online_endpoint.description == online_deployment_rest.properties.description
             assert online_endpoint.provisioning_state == online_deployment_rest.properties.provisioning_state
-            assert online_endpoint.identity.type == 'system_assigned'
+            assert online_endpoint.identity.type == "system_assigned"
             assert online_endpoint.identity.principal_id == online_deployment_rest.identity.principal_id
-            assert online_endpoint.properties['createdBy'] == online_deployment_rest.system_data.created_by
+            assert online_endpoint.properties["createdBy"] == online_deployment_rest.system_data.created_by
 
 
 @pytest.mark.unittest
@@ -273,6 +273,7 @@ class TestManagedOnlineEndpoint:
         assert online_endpoint_dict["tags"] == online_endpoint.tags
         assert online_endpoint_dict["identity"]["type"] == online_endpoint.identity.type
         assert online_endpoint_dict["traffic"] == online_endpoint.traffic
+
 
 class TestEndpointAuthKeys:
     def test_to_rest_object(self) -> None:
