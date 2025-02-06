@@ -5,18 +5,17 @@
 Cosmos database service.
 """
 from azure.cosmos.documents import _OperationType
-from . import http_constants
 
 
 class _TimeoutFailoverRetryPolicy(object):
 
     def __init__(self, connection_policy, global_endpoint_manager, *args):
-        self._max_retry_attempt_count = 120
-        self._max_service_unavailable_retry_count = 1
-        self.retry_after_in_milliseconds = 0
+        self.retry_after_in_milliseconds = 500
         self.args = args
 
         self.global_endpoint_manager = global_endpoint_manager
+        # If an account only has 1 region, then we still want to retry once on the same region
+        self._max_retry_attempt_count = len(self.global_endpoint_manager.location_cache.read_regional_endpoints) + 1
         self.retry_count = 0
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
@@ -28,17 +27,13 @@ class _TimeoutFailoverRetryPolicy(object):
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """
-        # we don't retry on write operations for timeouts or service unavailable
+        # we don't retry on write operations for timeouts or any internal server errors
         if self.request and (not _OperationType.IsReadOnlyOperation(self.request.operation_type)):
             return False
 
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
 
-        # Check if the next retry about to be done is safe
-        if _exception.status_code == http_constants.StatusCodes.SERVICE_UNAVAILABLE and \
-                self.retry_count >= self._max_service_unavailable_retry_count:
-            return False
         self.retry_count += 1
         # Check if the next retry about to be done is safe
         if self.retry_count >= self._max_retry_attempt_count:
