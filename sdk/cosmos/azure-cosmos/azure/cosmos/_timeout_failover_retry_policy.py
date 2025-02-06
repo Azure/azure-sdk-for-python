@@ -30,7 +30,7 @@ class _TimeoutFailoverRetryPolicy(object):
         :rtype: bool
         """
         if self.request:
-            if _OperationType.IsReadOnlyOperation(self.request.operation_type):
+            if not _OperationType.IsReadOnlyOperation(self.request.operation_type):
                 return False
 
         if not self.connection_policy.EnableEndpointDiscovery:
