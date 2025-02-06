@@ -8,17 +8,19 @@ import pytest
 
 import azure.cosmos.exceptions as exceptions
 import test_config
+from azure.cosmos import CosmosClient as CosmosSyncClient
 from azure.cosmos import PartitionKey
-from azure.cosmos.aio import CosmosClient, DatabaseProxy
+from azure.cosmos.aio import CosmosClient
 
 
+@pytest.mark.cosmosSearchQuery
 class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
 
     client: CosmosClient = None
-    created_database: DatabaseProxy = None
+    cosmos_sync_client: CosmosSyncClient = None
 
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
 
@@ -30,21 +32,25 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
+        cls.cosmos_sync_client = CosmosSyncClient(cls.host, cls.masterKey)
+        cls.test_db = cls.cosmos_sync_client.create_database(str(uuid.uuid4()))
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.cosmos_sync_client.delete_database(cls.test_db.id)
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
-        self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
-        self.test_db = await self.client.create_database(str(uuid.uuid4()))
+        self.test_db = self.client.get_database_client(self.test_db.id)
 
-    async def tearDown(self):
-        await self.client.delete_database(self.test_db.id)
+    async def asyncTearDown(self):
         await self.client.close()
 
     async def test_create_vector_embedding_container_async(self):
         indexing_policy = {
             "vectorIndexes": [
                 {"path": "/vector1", "type": "flat"},
-                {"path": "/vector2", "type": "quantizedFlat", "quantizationByteSize": 8},
+                {"path": "/vector2", "type": "quantizedFlat", "quantizationByteSize": 64},
                 {"path": "/vector3", "type": "diskANN", "quantizationByteSize": 8, "indexingSearchListSize": 50}
             ]
         }
@@ -145,7 +151,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         # Pass a vector indexing policy with wrong quantizationByteSize value
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector2", "type": "quantizedFlat", "quantizationByteSize": 0}]
+                {"path": "/vector1", "type": "quantizedFlat", "quantizationByteSize": 0}]
         }
         try:
             await self.test_db.create_container(
@@ -163,7 +169,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         # Pass a vector indexing policy with wrong indexingSearchListSize value
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector2", "type": "diskANN", "indexingSearchListSize": 5}]
+                {"path": "/vector1", "type": "diskANN", "indexingSearchListSize": 5}]
         }
         try:
             await self.test_db.create_container(
@@ -210,8 +216,8 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Container replace should have failed for indexing policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Paths in existing vector indexing policy cannot be modified in Collection Replace." \
-                   " They can only be added or removed." in e.http_error_message
+            assert ("The Vector Indexing Policy's path::/vector1 not matching in Embedding's path."
+                    in e.http_error_message)
         await self.test_db.delete_container(container_id)
 
     async def test_fail_create_vector_embedding_policy_async(self):

@@ -18,7 +18,6 @@ from azure.cosmos.documents import _DistinctType
 from azure.cosmos.partition_key import PartitionKey
 
 
-@pytest.mark.cosmosEmulator
 class TestQuery(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
@@ -508,7 +507,7 @@ class TestQuery(unittest.TestCase):
         # verify a second time
         self.assertLessEqual(len(token.encode('utf-8')), 1024)
 
-    @pytest.mark.cosmosLiveTest
+    @pytest.mark.cosmosQuery
     @pytest.mark.skip
     def test_computed_properties_query(self):
         computed_properties = [{'name': "cp_lower", 'query': "SELECT VALUE LOWER(c.db_group) FROM c"},

@@ -376,4 +376,4 @@ contact opencode@microsoft.com with any additional questions or comments.
 [secret_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-secrets/samples
 [soft_delete]: https://learn.microsoft.com/azure/key-vault/general/soft-delete-overview
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-secrets%2FREADME.png)
+
