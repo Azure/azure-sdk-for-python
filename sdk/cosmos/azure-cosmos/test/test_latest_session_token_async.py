@@ -50,7 +50,6 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         self.database = self.client.get_database_client(self.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
-        await self.client.delete_database(self.database.id)
         await self.client.close()
 
     async def test_latest_session_token_from_logical_pk(self):

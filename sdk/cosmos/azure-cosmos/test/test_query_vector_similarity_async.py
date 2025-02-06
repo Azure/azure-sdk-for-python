@@ -35,7 +35,6 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
     host = config.host
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
-    TEST_DATABASE_ID = config.TEST_DATABASE_ID
     TEST_CONTAINER_ID = "Vector Similarity Container " + str(uuid.uuid4())
 
     @classmethod
@@ -94,7 +93,7 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
-        self.test_db = self.client.get_database_client(str(uuid.uuid4()))
+        self.test_db = self.client.get_database_client(self.test_db.id)
         self.created_flat_euclidean_container = self.test_db.get_container_client(self.created_flat_euclidean_container.id)
         self.created_quantized_cosine_container = self.test_db.get_container_client(self.created_quantized_cosine_container.id)
         self.created_large_container = self.test_db.get_container_client(self.created_large_container.id)

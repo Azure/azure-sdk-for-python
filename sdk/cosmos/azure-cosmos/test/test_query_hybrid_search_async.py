@@ -25,7 +25,6 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
     host = config.host
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
-    TEST_DATABASE_ID = config.TEST_DATABASE_ID
     TEST_CONTAINER_ID = "Full Text Container " + str(uuid.uuid4())
 
     @classmethod
