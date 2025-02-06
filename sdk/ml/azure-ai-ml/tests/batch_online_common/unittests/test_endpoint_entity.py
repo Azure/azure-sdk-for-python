@@ -6,6 +6,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     OnlineEndpointData,
     EndpointAuthKeys as RestEndpointAuthKeys,
+    EndpointAuthToken as RestEndpointAuthToken,
 )
 from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpoint as BatchEndpointData
 from azure.ai.ml import load_batch_endpoint, load_online_endpoint
@@ -15,6 +16,7 @@ from azure.ai.ml.entities import (
     KubernetesOnlineEndpoint,
     OnlineEndpoint,
     EndpointAuthKeys,
+    EndpointAuthToken,
 )
 from azure.ai.ml.exceptions import ValidationException
 
@@ -322,3 +324,33 @@ class TestEndpointAuthKeys:
         auth_keys = EndpointAuthKeys._from_rest_object(rest_auth_keys)
         assert auth_keys.primary_key == "primary_key"
         assert auth_keys.secondary_key == "secondary_key"
+
+
+class TestEndpointAuthToken:
+    def test_to_rest_object(self) -> None:
+        auth_token = (
+            EndpointAuthToken(
+                access_token="token",
+                expiry_time_utc="2021-10-01T00:00:00Z",
+                refresh_after_time_utc="2021-10-01T00:00:00Z",
+                token_type="Bearer",
+            ),
+        )
+        auth_token_rest = auth_token[0]._to_rest_object()
+        assert auth_token_rest.access_token == "token"
+        assert auth_token_rest.expiry_time_utc == "2021-10-01T00:00:00Z"
+        assert auth_token_rest.refresh_after_time_utc == "2021-10-01T00:00:00Z"
+        assert auth_token_rest.token_type == "Bearer"
+
+    def test_from_rest_object(self) -> None:
+        rest_auth_token = RestEndpointAuthToken(
+            access_token="token",
+            expiry_time_utc="2021-10-01T00:00:00Z",
+            refresh_after_time_utc="2021-10-01T00:00:00Z",
+            token_type="Bearer",
+        )
+        auth_token = EndpointAuthToken._from_rest_object(rest_auth_token)
+        assert auth_token.access_token == "token"
+        assert auth_token.expiry_time_utc == "2021-10-01T00:00:00Z"
+        assert auth_token.refresh_after_time_utc == "2021-10-01T00:00:00Z"
+        assert auth_token.token_type == "Bearer"
