@@ -10,6 +10,7 @@ import os
 import uuid
 import warnings
 import asyncio
+from functools import partial
 from devtools_testutils import get_credential
 from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore
 from azure.eventhub.extensions.checkpointstoreblobaio._vendor.storage.blob import BlobServiceClient
@@ -32,7 +33,7 @@ async def _claim_and_list_ownership( storage_account, container_name):
     consumer_group = '$default'
     ownership_cnt = 8
 
-    credential = get_credential(BlobCheckpointStore, is_async=True)
+    credential = partial(get_credential, is_async=True)
 
     checkpoint_store = BlobCheckpointStore(storage_account, container_name, credential=credential)
     async with checkpoint_store:
@@ -73,7 +74,7 @@ async def _update_checkpoint( storage_account, container_name):
     consumer_group = '$default'
     partition_cnt = 8
 
-    credential = get_credential(BlobCheckpointStore, is_async=True)
+    credential = partial(get_credential, is_async=True)
 
     checkpoint_store = BlobCheckpointStore(storage_account, container_name, credential=credential)
     async with checkpoint_store:

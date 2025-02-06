@@ -9,6 +9,7 @@ import time
 import os
 import uuid
 import warnings
+from functools import partial
 from devtools_testutils import get_credential
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 from azure.eventhub.extensions.checkpointstoreblob._vendor.storage.blob import BlobServiceClient
@@ -32,7 +33,7 @@ def _claim_and_list_ownership(storage_account, container_name):
     consumer_group = '$default'
     ownership_cnt = 8
 
-    credential = get_credential(BlobCheckpointStore)
+    credential = get_credential
 
     checkpoint_store = BlobCheckpointStore(
         storage_account, container_name, credential=credential)
@@ -77,7 +78,7 @@ def _update_checkpoint(storage_account, container_name):
     consumer_group = '$default'
     partition_cnt = 8
 
-    credential = get_credential(BlobCheckpointStore)
+    credential = get_credential
 
     checkpoint_store = BlobCheckpointStore(
         storage_account, container_name, credential=credential)
