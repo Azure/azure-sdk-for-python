@@ -256,11 +256,13 @@ def _get_user_agent(attributes: Attributes) -> Optional[str]:
 @no_type_check
 def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
     url = ""
+    print("her2e")
     if attributes:
         # Url
         if url_attributes.URL_FULL in attributes:
             return attributes[url_attributes.URL_FULL]
         if SpanAttributes.HTTP_URL in attributes:
+            print("here")
             return attributes[SpanAttributes.HTTP_URL]
         # Scheme
         scheme = _get_http_scheme(attributes)
@@ -273,8 +275,10 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
                     http_target,
                     attributes.get(url_attributes.URL_QUERY, "")
                 )
+            print("here3")    
         elif SpanAttributes.HTTP_TARGET in attributes:
             http_target = attributes.get(SpanAttributes.HTTP_TARGET, "")
+            print("here4")
         if scheme and http_target:
             # Host
             http_host = ""
@@ -285,8 +289,10 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
                         http_host,
                         attributes.get(server_attributes.SERVER_PORT, "")
                     )
+                print("here5")    
             elif SpanAttributes.HTTP_HOST in attributes:
                 http_host = attributes.get(SpanAttributes.HTTP_HOST, "")
+                print("here6")
             # Url
             if http_host:
                 url = "{}://{}{}".format(
@@ -294,6 +300,7 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
                     http_host,
                     http_target,
                 )
+                print("here7")
             elif SpanAttributes.HTTP_SERVER_NAME in attributes:
                 server_name = attributes[SpanAttributes.HTTP_SERVER_NAME]
                 host_port = attributes.get(SpanAttributes.NET_HOST_PORT, "")
@@ -303,6 +310,7 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
                     host_port,
                     http_target,
                 )
+                print("here8")
             elif SpanAttributes.NET_HOST_NAME in attributes:
                 host_name = attributes[SpanAttributes.NET_HOST_NAME]
                 host_port = attributes.get(SpanAttributes.NET_HOST_PORT, "")
@@ -312,4 +320,6 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
                     host_port,
                     http_target,
                 )
+                print("here9")
+        print(url)
     return url
