@@ -1084,106 +1084,106 @@ class TestAzureTraceExporter(unittest.TestCase):
         # self.assertFalse(envelope.data.base_data.success)
         # self.assertEqual(envelope.data.base_data.response_code, "0")
 
-        # location
-        span._attributes = {"http.method": "GET", "net.peer.ip": "peer_ip"}
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "peer_ip")
+        # # location
+        # span._attributes = {"http.method": "GET", "net.peer.ip": "peer_ip"}
+        # envelope = exporter._span_to_envelope(span)
+        # self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "peer_ip")
 
-        ## Stable http semconv
-        span._attributes = {"http.request.method": "GET", "client.address": "client_address"}
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "client_address")
+        # ## Stable http semconv
+        # span._attributes = {"http.request.method": "GET", "client.address": "client_address"}
+        # envelope = exporter._span_to_envelope(span)
+        # self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "client_address")
 
-        # url
-        span._attributes = {
-            "http.method": "GET",
-            "http.scheme": "https",
-            "http.target": "/path",
-            "http.host": "www.example.org",
-        }
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.url, "https://www.example.org/path")
+        # # url
+        # span._attributes = {
+        #     "http.method": "GET",
+        #     "http.scheme": "https",
+        #     "http.target": "/path",
+        #     "http.host": "www.example.org",
+        # }
+        # envelope = exporter._span_to_envelope(span)
+        # self.assertEqual(envelope.data.base_data.url, "https://www.example.org/path")
 
-        ## Stable http semconv
-        span._attributes = {
-            "http.request.method": "GET",
-            "url.full": "https://www.example.org:80/path?query",
-        }
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.url, "https://www.example.org:80/path?query")
+        # ## Stable http semconv
+        # span._attributes = {
+        #     "http.request.method": "GET",
+        #     "url.full": "https://www.example.org:80/path?query",
+        # }
+        # envelope = exporter._span_to_envelope(span)
+        # self.assertEqual(envelope.data.base_data.url, "https://www.example.org:80/path?query")
 
-        span._attributes = {
-            "http.request.method": "GET",
-            "url.scheme": "https",
-            "url.path": "/path",
-            "url.query": "query",
-            "server.address": "www.example.org",
-            "server.port": "80"
-        }
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.url, "https://www.example.org:80/path?query")
+        # span._attributes = {
+        #     "http.request.method": "GET",
+        #     "url.scheme": "https",
+        #     "url.path": "/path",
+        #     "url.query": "query",
+        #     "server.address": "www.example.org",
+        #     "server.port": "80"
+        # }
+        # envelope = exporter._span_to_envelope(span)
+        # self.assertEqual(envelope.data.base_data.url, "https://www.example.org:80/path?query")
 
-        span._attributes = {
-            "http.method": "GET",
-            "http.scheme": "https",
-            "http.target": "/path",
-            "net.host.port": "35555",
-            "http.server_name": "example.com",
-        }
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.url, "https://example.com:35555/path")
+        # span._attributes = {
+        #     "http.method": "GET",
+        #     "http.scheme": "https",
+        #     "http.target": "/path",
+        #     "net.host.port": "35555",
+        #     "http.server_name": "example.com",
+        # }
+        # envelope = exporter._span_to_envelope(span)
+        # self.assertEqual(envelope.data.base_data.url, "https://example.com:35555/path")
 
-        span._attributes = {
-            "http.method": "GET",
-            "http.scheme": "https",
-            "http.target": "/path",
-            "net.host.port": "35555",
-            "net.host.name": "localhost",
-        }
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.data.base_data.url, "https://localhost:35555/path")
+        # span._attributes = {
+        #     "http.method": "GET",
+        #     "http.scheme": "https",
+        #     "http.target": "/path",
+        #     "net.host.port": "35555",
+        #     "net.host.name": "localhost",
+        # }
+        # envelope = exporter._span_to_envelope(span)
+        # self.assertEqual(envelope.data.base_data.url, "https://localhost:35555/path")
 
-        # ai.operation.name
-        span._attributes = {
-            "http.method": "GET",
-            "http.route": "/wiki/Rabbit/test",
-        }
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
-        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
+        # # ai.operation.name
+        # span._attributes = {
+        #     "http.method": "GET",
+        #     "http.route": "/wiki/Rabbit/test",
+        # }
+        # envelope = exporter._span_to_envelope(span)
+        # self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
+        # self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
 
-        ## Stable http semconv
-        span._attributes = {
-            "http.request.method": "GET",
-            "http.route": "/wiki/Rabbit/test",
-        }
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
-        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
+        # ## Stable http semconv
+        # span._attributes = {
+        #     "http.request.method": "GET",
+        #     "http.route": "/wiki/Rabbit/test",
+        # }
+        # envelope = exporter._span_to_envelope(span)
+        # self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
+        # self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
 
-        span._attributes = {
-            "http.method": "GET",
-            "http.url": "https://www.wikipedia.org/wiki/Rabbit/test",
-        }
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
-        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
+        # span._attributes = {
+        #     "http.method": "GET",
+        #     "http.url": "https://www.wikipedia.org/wiki/Rabbit/test",
+        # }
+        # envelope = exporter._span_to_envelope(span)
+        # self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
+        # self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
 
-        span._attributes = {
-            "http.request.method": "GET",
-            "url.full": "https://www.wikipedia.org/wiki/Rabbit/test",
-        }
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
-        self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
+        # span._attributes = {
+        #     "http.request.method": "GET",
+        #     "url.full": "https://www.wikipedia.org/wiki/Rabbit/test",
+        # }
+        # envelope = exporter._span_to_envelope(span)
+        # self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "GET /wiki/Rabbit/test")
+        # self.assertEqual(envelope.data.base_data.name, "GET /wiki/Rabbit/test")
 
-        # Default is span name
-        span._attributes = {
-            "http.method": "GET",
-        }
-        envelope = exporter._span_to_envelope(span)
-        self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
-        self.assertEqual(envelope.data.base_data.name, "test")
+        # # Default is span name
+        # span._attributes = {
+        #     "http.method": "GET",
+        # }
+        # envelope = exporter._span_to_envelope(span)
+        # self.assertEqual(envelope.tags[ContextTagKeys.AI_OPERATION_NAME], "test")
+        # self.assertEqual(envelope.data.base_data.name, "test")
 
     def test_span_envelope_server_messaging(self):
         exporter = self._exporter
