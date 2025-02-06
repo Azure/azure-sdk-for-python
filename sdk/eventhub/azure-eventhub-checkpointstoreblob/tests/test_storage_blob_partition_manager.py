@@ -23,8 +23,9 @@ STORAGE_ENV_KEYS = [
 def get_live_storage_blob_client(storage_account):
     storage_account = "https://{}.blob.core.windows.net".format(
         os.environ[storage_account])
-    container_name = "your-blob-container-name"
-    return storage_account, container_name
+    container_name = os.environ.get("CONTAINER_NAME")
+    container_name_two = os.environ.get("CONTAINER_NAME_TWO")
+    return storage_account, container_name, container_name_two
 
 
 def _claim_and_list_ownership(storage_account, container_name):
@@ -107,12 +108,12 @@ def _update_checkpoint(storage_account, container_name):
 @pytest.mark.parametrize("storage_account", STORAGE_ENV_KEYS)
 @pytest.mark.live_test_only
 def test_claim_and_list_ownership(storage_account):
-    storage_account, container_name = get_live_storage_blob_client(storage_account)
+    storage_account, container_name, container_name_two = get_live_storage_blob_client(storage_account)
     _claim_and_list_ownership(storage_account, container_name)
 
 
 @pytest.mark.parametrize("storage_account", STORAGE_ENV_KEYS)
 @pytest.mark.live_test_only
 def test_update_checkpoint(storage_account):
-    storage_account, container_name = get_live_storage_blob_client(storage_account)
-    _update_checkpoint(storage_account, container_name)
+    storage_account, container_name, container_name_two = get_live_storage_blob_client(storage_account)
+    _update_checkpoint(storage_account, container_name_two)
