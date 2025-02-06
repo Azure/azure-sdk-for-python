@@ -240,6 +240,13 @@ class TestKubernetesOnlineEndopint:
         assert online_endpoint_rest.location == "westus2"
         assert online_endpoint_rest.identity.type == "SystemAssigned"
 
+    def test_to_rest_online_endpoint_raise_exception_identity_type_none(self) -> None:
+        online_endpoint = load_online_endpoint(TestKubernetesOnlineEndopint.K8S_ONLINE_ENDPOINT)
+        online_endpoint.identity.type = None
+        with pytest.raises(ValidationException) as ex:
+            online_endpoint._to_rest_online_endpoint("westus2")
+        assert str(ex.value) == "Identity type not found in provided yaml file."
+
     def test_to_rest_online_endpoint_traffic_update(self) -> None:
         online_endpoint = load_online_endpoint(TestKubernetesOnlineEndopint.K8S_ONLINE_ENDPOINT)
         online_endpoint_rest = online_endpoint._to_rest_online_endpoint_traffic_update("westus2")
