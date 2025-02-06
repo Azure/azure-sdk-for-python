@@ -36,7 +36,7 @@ def _claim_and_list_ownership(storage_account, container_name):
     credential = get_credential
 
     checkpoint_store = BlobCheckpointStore(
-        storage_account, container_name, credential=credential)
+        storage_account, container_name, credential=credential())
     with checkpoint_store:
         ownership_list = checkpoint_store.list_ownership(
             fully_qualified_namespace=fully_qualified_namespace,
@@ -81,7 +81,7 @@ def _update_checkpoint(storage_account, container_name):
     credential = get_credential
 
     checkpoint_store = BlobCheckpointStore(
-        storage_account, container_name, credential=credential)
+        storage_account, container_name, credential=credential())
     with checkpoint_store:
         for i in range(partition_cnt):
             checkpoint = {
