@@ -10,7 +10,7 @@ import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
 import vector_test_data
-from azure.cosmos import http_constants, DatabaseProxy
+from azure.cosmos import http_constants
 from azure.cosmos.partition_key import PartitionKey
 
 
@@ -24,11 +24,10 @@ def verify_ordering(item_list, distance_function):
         for i in range(len(item_list) - 1):
             assert item_list[i]["SimilarityScore"] >= item_list[i + 1]["SimilarityScore"]
 
-@pytest.mark.cosmosQuery
+@pytest.mark.cosmosSearchQuery
 class TestVectorSimilarityQuery(unittest.TestCase):
     """Test to check vector similarity queries behavior."""
 
-    created_db: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
     config = test_config.TestConfig
     host = config.host
@@ -47,36 +46,33 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                 "tests.")
 
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
-
-    def setUp(self):
-        self.test_db = self.client.create_database(str(uuid.uuid4()))
-        self.created_quantized_cosine_container = self.test_db.create_container(
-            id="quantized" + self.TEST_CONTAINER_ID,
+        cls.test_db = cls.client.create_database(str(uuid.uuid4()))
+        cls.created_quantized_cosine_container = cls.test_db.create_container(
+            id="quantized" + cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
             indexing_policy=test_config.get_vector_indexing_policy(embedding_type="quantizedFlat"),
             vector_embedding_policy=test_config.get_vector_embedding_policy(data_type="float32",
                                                                             distance_function="cosine",
                                                                             dimensions=128))
-        self.created_flat_euclidean_container = self.test_db.create_container(
-            id="flat" + self.TEST_CONTAINER_ID,
+        cls.created_flat_euclidean_container = cls.test_db.create_container(
+            id="flat" + cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
             indexing_policy=test_config.get_vector_indexing_policy(embedding_type="flat"),
             vector_embedding_policy=test_config.get_vector_embedding_policy(data_type="float32",
                                                                             distance_function="euclidean",
                                                                             dimensions=128))
-        # self.created_diskANN_dotproduct_container = self.test_db.create_container(
-        #     id="diskANN" + self.TEST_CONTAINER_ID,
+        # cls.created_diskANN_dotproduct_container = cls.test_db.create_container(
+        #     id="diskANN" + cls.TEST_CONTAINER_ID,
         #     partition_key=PartitionKey(path="/pk"),
         #     offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
         #     indexing_policy=test_config.get_vector_indexing_policy(embedding_type="diskANN"),
         #     vector_embedding_policy=test_config.get_vector_embedding_policy(data_type="float32",
         #                                                                     distance_function="dotproduct",
         #                                                                     dimensions=128))
-        self.created_large_container = self.test_db.create_container(
-            id="large_container" + self.TEST_CONTAINER_ID,
+        cls.created_large_container = cls.test_db.create_container(
+            id="large_container" + cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
             indexing_policy=test_config.get_vector_indexing_policy(embedding_type="quantizedFlat"),
@@ -84,17 +80,18 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                                                                             distance_function="cosine",
                                                                             dimensions=2))
         for item in vector_test_data.get_vector_items():
-            self.created_quantized_cosine_container.create_item(item)
-            self.created_flat_euclidean_container.create_item(item)
-            # self.created_diskANN_dotproduct_container.create_item(item)
+            cls.created_quantized_cosine_container.create_item(item)
+            cls.created_flat_euclidean_container.create_item(item)
+            # cls.created_diskANN_dotproduct_container.create_item(item)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         try:
-            self.test_db.delete_container("quantized" + self.TEST_CONTAINER_ID)
-            self.test_db.delete_container("flat" + self.TEST_CONTAINER_ID)
-            # self.test_db.delete_container("diskANN" + self.TEST_CONTAINER_ID)
-            self.test_db.delete_container("large_container" + self.TEST_CONTAINER_ID)
-            self.client.delete_database(self.test_db.id)
+            cls.test_db.delete_container("quantized" + cls.TEST_CONTAINER_ID)
+            cls.test_db.delete_container("flat" + cls.TEST_CONTAINER_ID)
+            # cls.test_db.delete_container("diskANN" + cls.TEST_CONTAINER_ID)
+            cls.test_db.delete_container("large_container" + cls.TEST_CONTAINER_ID)
+            cls.client.delete_database(cls.test_db.id)
         except exceptions.CosmosHttpResponseError:
             pass
 

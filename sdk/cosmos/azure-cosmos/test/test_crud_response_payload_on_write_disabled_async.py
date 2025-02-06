@@ -94,7 +94,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         self.logger = logging.getLogger("TestCRUDOperationsAsyncResponsePayloadOnWriteDisabledLogger")
         self.logger.setLevel(logging.DEBUG)
 
-    async def tearDown(self):
+    async def asyncTearDown(self):
         await self.client.close()
 
     async def test_database_crud_async(self):
@@ -2513,7 +2513,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         # Negative Test: Verify that if we send a value other than High or Low that it will not set the header value
         # and result in bad request
         try:
-            item2_read = created_container.read_item("item2", "pk2", priority="Medium")
+            item2_read = await created_container.read_item("item2", "pk2", priority="Medium")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction

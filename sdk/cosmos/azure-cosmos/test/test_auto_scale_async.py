@@ -11,7 +11,7 @@ import test_config
 from azure.cosmos import ThroughputProperties, PartitionKey
 from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
-@pytest.mark.cosmosSplit
+@pytest.mark.cosmosLong
 class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
@@ -35,7 +35,7 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
         self.client = CosmosClient(self.host, self.masterKey)
         self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
 
-    async def tearDown(self):
+    async def asyncTearDown(self):
         await self.client.close()
 
     async def test_autoscale_create_container_async(self):

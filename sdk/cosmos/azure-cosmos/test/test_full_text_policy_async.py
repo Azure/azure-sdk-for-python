@@ -8,18 +8,19 @@ import pytest
 
 import azure.cosmos.exceptions as exceptions
 import test_config
+from azure.cosmos import CosmosClient as CosmosSyncClient
 from azure.cosmos import PartitionKey
-from azure.cosmos.aio import CosmosClient, DatabaseProxy
+from azure.cosmos.aio import CosmosClient
 
 
-@pytest.mark.cosmosQuery
+@pytest.mark.cosmosSearchQuery
 class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
 
     client: CosmosClient = None
-    created_database: DatabaseProxy = None
+    sync_client: CosmosSyncClient = None
 
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
 
@@ -31,14 +32,18 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
+        cls.cosmos_sync_client = CosmosSyncClient(cls.host, cls.masterKey)
+        cls.test_db = cls.cosmos_sync_client.create_database(str(uuid.uuid4()))
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.cosmos_sync_client.delete_database(cls.test_db.id)
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
-        self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
-        self.test_db = await self.client.create_database(str(uuid.uuid4()))
+        self.test_db = self.client.get_database_client(self.test_db.id)
 
     async def tearDown(self):
-        await self.client.delete_database(self.test_db.id)
         await self.client.close()
 
     async def test_create_full_text_container_async(self):
@@ -205,7 +210,7 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Container creation should have failed for wrong supported language.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The Full Text Policy contains an unsupported language spa-SPA. Supported languages are:"\
+            assert "The Full Text Policy contains an unsupported language spa-SPA. Supported languages are:" \
                    in e.http_error_message
 
         # Pass a full text policy with an unsupported path language
@@ -227,7 +232,7 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Container creation should have failed for wrong supported language.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The Full Text Policy contains an unsupported language spa-SPA. Supported languages are:"\
+            assert "The Full Text Policy contains an unsupported language spa-SPA. Supported languages are:" \
                    in e.http_error_message
 
     async def test_fail_create_full_text_indexing_policy_async(self):
@@ -257,7 +262,7 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
             # pytest.fail("Container creation should have failed for lack of embedding policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The path of the Full Text Index /path does not match the path specified in the Full Text Policy"\
+            assert "The path of the Full Text Index /path does not match the path specified in the Full Text Policy" \
                    in e.http_error_message
 
         # Pass a full text indexing policy with a wrongly formatted path
