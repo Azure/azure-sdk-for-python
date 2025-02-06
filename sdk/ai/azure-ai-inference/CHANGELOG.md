@@ -5,6 +5,8 @@
 ### Features Added
 
 * Added support for chat completion messages with `developer` role.
+* Updated package document with an example of how to set custom HTTP request headers,
+and an example of providing chat completion "messages" as an array of Python `dicts`.
 
 ## 1.0.0b8 (2025-01-29)
 
