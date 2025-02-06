@@ -332,12 +332,14 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
     __defaultRequestTimeout: int = 5  # seconds
     __defaultDBAConnectionTimeout: int = 3  # seconds
     __defaultReadTimeout: int = 65  # seconds
+    __defaultDBAReadTimeout: int = 3 # seconds
     __defaultMaxBackoff: int = 1 # seconds
 
     def __init__(self) -> None:
         self.RequestTimeout: int = self.__defaultRequestTimeout
         self.DBAConnectionTimeout: int = self.__defaultDBAConnectionTimeout
         self.ReadTimeout: int = self.__defaultReadTimeout
+        self.DBAReadTimeout: int = self.__defaultDBAReadTimeout
         self.MaxBackoff: int = self.__defaultMaxBackoff
         self.ConnectionMode: int = ConnectionMode.Gateway
         self.SSLConfiguration: Optional[SSLConfiguration] = None

@@ -1689,6 +1689,15 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                     await container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
                     print('Async initialization')
 
+    async def test_read_timeout_async(self):
+        connection_policy = documents.ConnectionPolicy()
+        # making timeout 0 ms to make sure it will throw
+        connection_policy.DBAReadTimeout = 0.000000000001
+        with self.assertRaises(ServiceResponseError):
+            # this will make a get database account call
+            async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy):
+                print('Async initialization')
+
     async def test_client_request_timeout_when_connection_retry_configuration_specified_async(self):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw

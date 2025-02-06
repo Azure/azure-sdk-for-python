@@ -130,7 +130,6 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
 
             return result
         except exceptions.CosmosHttpResponseError as e:
-            retry_policy = None
             if request and _has_database_account_header(request.headers):
                 retry_policy = database_account_retry_policy
             elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in \
@@ -171,7 +170,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
 
                     retry_policy.container_rid = cached_container["_rid"]
                     request.headers[retry_policy._intended_headers] = retry_policy.container_rid
-            elif e.status_code in [StatusCodes.REQUEST_TIMEOUT, StatusCodes.SERVICE_UNAVAILABLE]:
+            elif e.status_code == StatusCodes.REQUEST_TIMEOUT:
+                retry_policy = timeout_failover_retry_policy
+            elif e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
                 retry_policy = timeout_failover_retry_policy
             else:
                 retry_policy = defaultRetry_policy
