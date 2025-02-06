@@ -3,13 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
+from typing import Any, Dict
+
 from azure.core.exceptions import HttpResponseError
-from .._deserialize import (
-    process_storage_error)
+
+from .._deserialize import process_storage_error
 from .._shared.response_handlers import return_response_headers
 from .._shared.uploads_async import (
+    DataLakeFileChunkUploader,
     upload_data_chunks,
-    DataLakeFileChunkUploader, upload_substream_blocks)
+    upload_substream_blocks
+)
 
 
 def _any_conditions(modified_access_conditions=None, **kwargs):  # pylint: disable=unused-argument
@@ -58,7 +63,8 @@ async def upload_datalake_file(
                 permissions=permissions,
                 encryption_context=encryption_context,
                 cls=return_response_headers,
-                **kwargs)
+                **kwargs
+            )
 
             # this modified_access_conditions will be applied to flush_data to make sure
             # no other flush between create and the current flush
@@ -81,7 +87,8 @@ async def upload_datalake_file(
                 stream=stream,
                 max_concurrency=max_concurrency,
                 validate_content=validate_content,
-                **kwargs)
+                **kwargs
+            )
         else:
             await upload_substream_blocks(
                 service=client,
@@ -94,11 +101,13 @@ async def upload_datalake_file(
                 **kwargs
             )
 
-        return await client.flush_data(position=length,
-                                       path_http_headers=path_http_headers,
-                                       modified_access_conditions=modified_access_conditions,
-                                       close=True,
-                                       cls=return_response_headers,
-                                       **kwargs)
+        return await client.flush_data(
+            position=length,
+            path_http_headers=path_http_headers,
+            modified_access_conditions=modified_access_conditions,
+            close=True,
+            cls=return_response_headers,
+            **kwargs
+        )
     except HttpResponseError as error:
         process_storage_error(error)
