@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added support for georeplication and disaster recovery-enabled Event Hubs.
+- Added support for geo-replication and disaster recovery-enabled Event Hubs. To enable geo-replication, refer to [this guide](https://learn.microsoft.com/en-us/azure/event-hubs/use-geo-replication).
 
 ## 5.13.1 (2025-02-11)
 
