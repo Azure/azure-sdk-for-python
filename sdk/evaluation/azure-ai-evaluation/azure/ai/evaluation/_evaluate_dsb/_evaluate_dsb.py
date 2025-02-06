@@ -181,17 +181,11 @@ def check_target_returns_context(target: Callable) -> bool:
     return False
 
 def validate_args(
-        azure_ai_project: AzureAIProject,
-        credential: TokenCredential,
         evaluators: List[DSBEvaluator],
         target: Callable,
-        adversarial_scenario: Optional[AdversarialScenario] = None,
-        max_conversation_turns: int = 1,
-        max_simulation_results: int = 3,
         source_text: Optional[str] = None,
         data_path: Optional[Union[str, os.PathLike]] = None,
         model_config: Optional[dict] = None,
-        output_path: Optional[Union[str, os.PathLike]] = None,
 ):
     if DSBEvaluator.GROUNDEDNESS in evaluators and not model_config:
         msg = "`model_config`parameter is required for GroundednessEvaluator"
@@ -239,17 +233,11 @@ async def evaluate_dsb(
     
     ## Validate arguments
     validate_args(
-        azure_ai_project,
-        credential, 
-        evaluators, 
-        target, 
-        adversarial_scenario, 
-        max_conversation_turns, 
-        max_simulation_results, 
-        source_text,
-        data_path, 
-        model_config, 
-        output_path
+        evaluators=evaluators, 
+        target=target, 
+        source_text=source_text,
+        data_path=data_path, 
+        model_config=model_config, 
     )
     
     ## If `data_path` is not provided, run simulator

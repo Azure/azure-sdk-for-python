@@ -1,6 +1,6 @@
 # End-to-End Safety Evaluation for Deployment Safety Board (DSB) Reviews
 
-1P teams need to run Safety Evaluations for DSB review readiness. Currently, onboarding to Azure Safety Evaluations has proven difficult for customers due to the process's complexities**NOTE TO SELF - ADD MORE HERE**. Currently, users need to:
+1P teams need to run Safety Evaluations for DSB review readiness. Currently, onboarding to Azure Safety Evaluations has proven difficult for customers due to the process's complexities. Currently, users need to:
 
 - Identify the relevant `AdversarialScenario` for their use-case
 - Construct an appropriate callback method to manage the interactions between their endpoint and the simulator
@@ -35,8 +35,9 @@ The following is an example of usage and output:
         adversarial_scenario=AdversarialScenario.ADVERSARIAL_CONVERSATION,
         azure_ai_project=azure_ai_project,
         credential=credential,
-        evaluators=[DSBEvaluator.CONTENT_SAFETY],
+        evaluators=[DSBEvaluator.CONTENT_SAFETY, DSBEvaluator.GROUNDEDNESS, DSBEvaluator.PROTECTED_MATERIAL],
         target=call_to_your_endpoint_here,
+        source_text=source_text,
         model_config=model_config,
         max_conversation_turns=1,
         max_simulation_results=3,
