@@ -4,7 +4,8 @@ import copy
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_batch_endpoint, load_online_endpoint
-from azure.ai.ml.entities import BatchEndpoint, Endpoint, ManagedOnlineDeployment, KubernetesOnlineEndpoint, OnlineEndpoint
+from azure.ai.ml.entities import BatchEndpoint, Endpoint, ManagedOnlineEndpoint, KubernetesOnlineEndpoint, OnlineEndpoint
+from azure.ai.ml.exceptions import ValidationException
 
 
 @pytest.mark.production_experiences_test
@@ -108,7 +109,7 @@ class TestBatchEndpointYAML:
 class TestKubernetesOnlineEndopint:
     K8S_ONLINE_ENDPOINT = "tests/test_configs/endpoints/online/online_endpoint_create_k8s.yml"
 
-    def test_kubenetes_endpoint_load_and_dump(self) -> None:
+    def test_merge_with(self) -> None:
         online_endpoint = load_online_endpoint(TestKubernetesOnlineEndopint.K8S_ONLINE_ENDPOINT)
         other_online_endpoint = copy.deepcopy(online_endpoint)
         other_online_endpoint.compute = 'k8ecompute'
@@ -127,6 +128,15 @@ class TestKubernetesOnlineEndopint:
         assert online_endpoint.traffic == {"blue":90,"green":10}
         assert online_endpoint.mirror_traffic == {"blue":30}
         assert online_endpoint.auth_mode == "aml_token"
+    
+    def test_merge_with_throws_exception_when_name_masmatch(self) -> None:
+        online_endpoint = load_online_endpoint(TestKubernetesOnlineEndopint.K8S_ONLINE_ENDPOINT)
+        other_online_endpoint = copy.deepcopy(online_endpoint)
+        other_online_endpoint.name = 'new_name'
+
+        with pytest.raises(ValidationException) as ex:
+            online_endpoint._merge_with(other_online_endpoint)
+        assert ex.value.exc_msg == 'The endpoint name: k8se2etest and new_name are not matched when merging., NoneType: None'
 
     def test_to_rest_online_endpoint(self) -> None:
         online_endpoint = load_online_endpoint(TestKubernetesOnlineEndopint.K8S_ONLINE_ENDPOINT)
@@ -172,3 +182,41 @@ class TestKubernetesOnlineEndopint:
         assert online_endpoint_dict['identity']['type'] == online_endpoint.identity.type
         assert online_endpoint_dict['traffic'] == online_endpoint.traffic
         assert online_endpoint_dict['compute'] == "azureml:inferencecompute"
+
+class TestManagedOnlineEndpoint:
+    ONLINE_ENDPOINT = "tests/test_configs/endpoints/online/online_endpoint_create_mir_private.yml"
+
+    def test_merge_with(self) -> None:
+        online_endpoint = load_online_endpoint(TestManagedOnlineEndpoint.ONLINE_ENDPOINT)
+        other_online_endpoint = copy.deepcopy(online_endpoint)
+        other_online_endpoint.tags = {"tag3": "value3"}
+        other_online_endpoint.traffic = {"blue":90,"green":10}
+        other_online_endpoint.description = "new description"
+        other_online_endpoint.mirror_traffic = {"blue":30}
+        other_online_endpoint.auth_mode ="aml_token"
+
+        online_endpoint._merge_with(other_online_endpoint)
+
+        assert isinstance(online_endpoint, ManagedOnlineEndpoint)
+        assert online_endpoint.tags == {"dummy": "dummy", "endpointkey1": "newval1", "tag3": "value3"}
+        assert online_endpoint.description == "new description"
+        assert online_endpoint.traffic == {"blue":90,"green":10}
+        assert online_endpoint.mirror_traffic == {"blue":30}
+        assert online_endpoint.auth_mode == "aml_token"
+    
+    def test_merge_with_throws_exception_when_name_masmatch(self) -> None:
+        online_endpoint = load_online_endpoint(TestManagedOnlineEndpoint.ONLINE_ENDPOINT)
+        other_online_endpoint = copy.deepcopy(online_endpoint)
+        other_online_endpoint.name = 'new_name'
+
+        with pytest.raises(ValidationException) as ex:
+            online_endpoint._merge_with(other_online_endpoint)
+        assert ex.value.exc_msg == 'The endpoint name: mire2etest and new_name are not matched when merging., NoneType: None'
+
+    def test_to_dict(self) -> None:
+        online_endpoint = load_online_endpoint(TestManagedOnlineEndpoint.ONLINE_ENDPOINT)
+        online_endpoint_dict = online_endpoint._to_dict()
+        assert online_endpoint_dict["name"] == online_endpoint.name
+        assert online_endpoint_dict['tags'] == online_endpoint.tags
+        assert online_endpoint_dict['identity']['type'] == online_endpoint.identity.type
+        assert online_endpoint_dict['traffic'] == online_endpoint.traffic
