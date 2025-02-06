@@ -42,7 +42,7 @@ sharepoint = SharepointTool(connection_id="sharepoint_connection_name")
 # Create agent with Sharepoint tool and process assistant run
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4o",
+        model=os.environ["MODEL_NAME"],
         name="my-assistant",
         instructions="You are a helpful assistant",
         tools=sharepoint.definitions,
