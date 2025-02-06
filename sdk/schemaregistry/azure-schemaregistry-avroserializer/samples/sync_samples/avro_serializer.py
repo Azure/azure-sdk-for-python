@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import os
 
-from azure.identity import ClientSecretCredential
+from azure.identity import ClientSecretCredential, DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.serializer.avroserializer import AvroSerializer
 
@@ -47,11 +47,7 @@ SCHEMA_STRING = """
 }"""
 
 
-token_credential = ClientSecretCredential(
-    tenant_id=TENANT_ID,
-    client_id=CLIENT_ID,
-    client_secret=CLIENT_SECRET
-)
+token_credential = DefaultAzureCredential()
 
 
 def serialize(serializer):

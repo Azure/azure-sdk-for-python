@@ -26,7 +26,7 @@
 import os
 import asyncio
 
-from azure.identity.aio import ClientSecretCredential
+from azure.identity.aio import ClientSecretCredential, DefaultAzureCredential
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry.serializer.avroserializer.aio import AvroSerializer
 
@@ -48,11 +48,7 @@ SCHEMA_STRING = """
 }"""
 
 
-token_credential = ClientSecretCredential(
-    tenant_id=TENANT_ID,
-    client_id=CLIENT_ID,
-    client_secret=CLIENT_SECRET
-)
+token_credential = DefaultAzureCredential()
 
 
 async def serialize(serializer):

@@ -48,7 +48,7 @@ For more information on ClientSecretCredential, see:
 """
 import os
 
-from azure.identity import ClientSecretCredential
+from azure.identity import ClientSecretCredential, DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.encoder.avroencoder import AvroEncoder
 from azure.eventhub import EventData
@@ -73,9 +73,7 @@ SCHEMA_STRING = """
 }"""
 
 
-token_credential = ClientSecretCredential(
-    tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET
-)
+token_credential = DefaultAzureCredential()
 
 
 def encode_to_event_data_message(encoder):
