@@ -1,9 +1,10 @@
 import pytest
 import yaml
+import copy
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_batch_endpoint, load_online_endpoint
-from azure.ai.ml.entities import BatchEndpoint, Endpoint, ManagedOnlineDeployment, OnlineEndpoint
+from azure.ai.ml.entities import BatchEndpoint, Endpoint, ManagedOnlineDeployment, KubernetesOnlineEndpoint, OnlineEndpoint
 
 
 @pytest.mark.production_experiences_test
@@ -103,3 +104,71 @@ class TestBatchEndpointYAML:
         )
 
         assert endpoint.defaults is None
+
+class TestKubernetesOnlineEndopint:
+    K8S_ONLINE_ENDPOINT = "tests/test_configs/endpoints/online/online_endpoint_create_k8s.yml"
+
+    def test_kubenetes_endpoint_load_and_dump(self) -> None:
+        online_endpoint = load_online_endpoint(TestKubernetesOnlineEndopint.K8S_ONLINE_ENDPOINT)
+        other_online_endpoint = copy.deepcopy(online_endpoint)
+        other_online_endpoint.compute = 'k8ecompute'
+        other_online_endpoint.tags = {"tag3": "value3"}
+        other_online_endpoint.traffic = {"blue":90,"green":10}
+        other_online_endpoint.description = "new description"
+        other_online_endpoint.mirror_traffic = {"blue":30}
+        other_online_endpoint.auth_mode ="aml_token"
+
+        online_endpoint._merge_with(other_online_endpoint)
+
+        assert isinstance(online_endpoint, KubernetesOnlineEndpoint)
+        assert online_endpoint.compute == 'k8ecompute'
+        assert online_endpoint.tags == {"tag1": "value1", "tag2": "value2", "tag3": "value3"}
+        assert online_endpoint.description == "new description"
+        assert online_endpoint.traffic == {"blue":90,"green":10}
+        assert online_endpoint.mirror_traffic == {"blue":30}
+        assert online_endpoint.auth_mode == "aml_token"
+
+    def test_to_rest_online_endpoint(self) -> None:
+        online_endpoint = load_online_endpoint(TestKubernetesOnlineEndopint.K8S_ONLINE_ENDPOINT)
+        online_endpoint_rest = online_endpoint._to_rest_online_endpoint("westus2")
+        assert online_endpoint_rest.tags == online_endpoint.tags
+        assert online_endpoint_rest.properties.compute == online_endpoint.compute
+        assert online_endpoint_rest.properties.traffic == online_endpoint.traffic
+        assert online_endpoint_rest.properties.description == online_endpoint.description
+        assert online_endpoint_rest.properties.mirror_traffic == online_endpoint.mirror_traffic
+        assert online_endpoint_rest.properties.auth_mode.lower() == online_endpoint.auth_mode
+        assert online_endpoint_rest.location == "westus2"
+        assert online_endpoint_rest.identity.type == "SystemAssigned"
+
+    def test_to_rest_online_endpoint_when_identity_none(self) -> None:
+        online_endpoint = load_online_endpoint(TestKubernetesOnlineEndopint.K8S_ONLINE_ENDPOINT)
+        online_endpoint.identity = None
+        online_endpoint_rest = online_endpoint._to_rest_online_endpoint("westus2")
+        assert online_endpoint_rest.tags == online_endpoint.tags
+        assert online_endpoint_rest.properties.compute == online_endpoint.compute
+        assert online_endpoint_rest.properties.traffic == online_endpoint.traffic
+        assert online_endpoint_rest.properties.description == online_endpoint.description
+        assert online_endpoint_rest.properties.mirror_traffic == online_endpoint.mirror_traffic
+        assert online_endpoint_rest.properties.auth_mode.lower() == online_endpoint.auth_mode
+        assert online_endpoint_rest.location == "westus2"
+        assert online_endpoint_rest.identity.type == "SystemAssigned"
+
+    def test_to_rest_online_endpoint_traffic_update(self) -> None:
+        online_endpoint = load_online_endpoint(TestKubernetesOnlineEndopint.K8S_ONLINE_ENDPOINT)
+        online_endpoint_rest = online_endpoint._to_rest_online_endpoint_traffic_update("westus2")
+        assert online_endpoint_rest.location == "westus2"
+        assert online_endpoint_rest.tags == online_endpoint.tags
+        assert online_endpoint_rest.identity.type == "system_assigned"
+        assert online_endpoint_rest.properties.compute == online_endpoint.compute
+        assert online_endpoint_rest.properties.description == online_endpoint.description
+        assert online_endpoint_rest.properties.auth_mode.lower() == online_endpoint.auth_mode
+        assert online_endpoint_rest.properties.traffic == online_endpoint.traffic
+
+    def test_to_dict(self) -> None:
+        online_endpoint = load_online_endpoint(TestKubernetesOnlineEndopint.K8S_ONLINE_ENDPOINT)
+        online_endpoint_dict = online_endpoint._to_dict()
+        assert online_endpoint_dict["name"] == online_endpoint.name
+        assert online_endpoint_dict['tags'] == online_endpoint.tags
+        assert online_endpoint_dict['identity']['type'] == online_endpoint.identity.type
+        assert online_endpoint_dict['traffic'] == online_endpoint.traffic
+        assert online_endpoint_dict['compute'] == "azureml:inferencecompute"
