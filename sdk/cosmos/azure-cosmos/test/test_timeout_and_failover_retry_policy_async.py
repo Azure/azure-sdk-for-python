@@ -121,9 +121,9 @@ class TestTimeoutRetryPolicyAsync:
             self.num_exceptions = num_exceptions
             self.status_code = status_code
 
-        def __call__(self, func, global_endpoint_manager, *args, **kwargs):
+        async def __call__(self, func, global_endpoint_manager, *args, **kwargs):
             if self.counter != 0 and self.counter >= self.num_exceptions:
-                return self.org_func(func, global_endpoint_manager, *args, **kwargs)
+                return await self.org_func(func, global_endpoint_manager, *args, **kwargs)
             else:
                 self.counter += 1
                 raise exceptions.CosmosHttpResponseError(
