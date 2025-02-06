@@ -1,14 +1,11 @@
 ## Release History
 
-### 4.9.1b4 (Unreleased)
-
-#### Features Added
-
-#### Breaking Changes
+### 4.9.1b4 (2025-02-06)
 
 #### Bugs Fixed
-
-#### Other Changes
+* Improved retry logic for read requests to failover on other regions in case of timeouts and any error codes >= 500. See [PR 39596](https://github.com/Azure/azure-sdk-for-python/pull/39596)
+* Fixed a regression where read operations were not retrying on timeouts. See [PR 39596](https://github.com/Azure/azure-sdk-for-python/pull/39596)
+* Updated default read timeout for `getDatabaseAccount` calls to 3 seconds. See [PR 39596](https://github.com/Azure/azure-sdk-for-python/pull/39596)
 
 ### 4.9.1b3 (2025-02-04)
 
