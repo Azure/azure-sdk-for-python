@@ -413,9 +413,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
-        :keyword interrupt_call_media_operation: If set play can barge into other existing
-         queued-up/currently-processing requests. This is applicable only when play_to set to all.
-        :paramtype interrupt_call_media_operation: bool
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -569,7 +566,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             play_sources=[play_source_single._to_generated()] if play_source_single else # pylint:disable=protected-access
             [source._to_generated() for source in play_sources] if play_sources else None, # pylint:disable=protected-access
             play_to=audience,
-            play_options=PlayOptions(loop=loop, interrupt_call_media_operation=interrupt_call_media_operation, interrupt_hold_audio=interrupt_hold_audio),
+            play_options=PlayOptions(loop=loop, interrupt_call_media_operation=interrupt_call_media_operation,
+                                     interrupt_hold_audio=interrupt_hold_audio),
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
             **kwargs,
@@ -655,6 +653,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword initial_silence_timeout: Time to wait for first input after prompt in seconds (if any).
         :paramtype initial_silence_timeout: int
+        :keyword play_prompt: The source of the audio to be played for recognition.
         :type play_prompt: ~azure.communication.callautomation.FileSource or
          ~azure.communication.callautomation.TextSource or
          ~azure.communication.callautomation.SsmlSource or         
