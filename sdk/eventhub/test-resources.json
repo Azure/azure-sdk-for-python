@@ -147,14 +147,6 @@
           "dependsOn": [
             "[variables('storageAccount')]"
           ]
-        },
-        {
-          "type": "blobServices/containers",
-          "apiVersion": "2019-06-01",
-          "name": "[concat('default/', variables('containerNameTwo'))]",
-          "dependsOn": [
-            "[variables('storageAccount')]"
-          ]
         }
       ]
     },
@@ -263,14 +255,6 @@
     "EVENT_HUB_ENDPOINT_SUFFIX": {
       "type": "string",
       "value": "[parameters('serviceBusEndpointSuffix')]"
-    },
-    "CONTAINER_NAME": {
-      "type": "string",
-      "value": "[variables('containerName')]"
-    },
-    "CONTAINER_NAME_TWO": {
-      "type": "string",
-      "value": "[variables('containerNameTwo')]"
     }
   }
 }

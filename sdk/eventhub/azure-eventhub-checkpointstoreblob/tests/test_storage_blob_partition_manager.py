@@ -9,6 +9,7 @@ import time
 import os
 import uuid
 import warnings
+import uuid
 from functools import partial
 from devtools_testutils import get_credential
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
@@ -23,9 +24,10 @@ STORAGE_ENV_KEYS = [
 def get_live_storage_blob_client(storage_account):
     storage_account = "https://{}.blob.core.windows.net".format(
         os.environ[storage_account])
-    container_name = os.environ.get("CONTAINER_NAME")
-    container_name_two = os.environ.get("CONTAINER_NAME_TWO")
-    return storage_account, container_name, container_name_two
+    container_name = str(uuid.uuid4())
+    blob_service_client = BlobServiceClient(storage_account, get_credential())
+    blob_service_client.create_container(container_name)
+    return storage_account, container_name
 
 
 def _claim_and_list_ownership(storage_account, container_name):
@@ -108,12 +110,16 @@ def _update_checkpoint(storage_account, container_name):
 @pytest.mark.parametrize("storage_account", STORAGE_ENV_KEYS)
 @pytest.mark.live_test_only
 def test_claim_and_list_ownership(storage_account):
-    storage_account, container_name, container_name_two = get_live_storage_blob_client(storage_account)
+    storage_account, container_name = get_live_storage_blob_client(storage_account)
     _claim_and_list_ownership(storage_account, container_name)
+    blob_service_client = BlobServiceClient(storage_account, credential=get_credential())
+    blob_service_client.delete_container(container_name)
 
 
 @pytest.mark.parametrize("storage_account", STORAGE_ENV_KEYS)
 @pytest.mark.live_test_only
 def test_update_checkpoint(storage_account):
-    storage_account, container_name, container_name_two = get_live_storage_blob_client(storage_account)
-    _update_checkpoint(storage_account, container_name_two)
+    storage_account, container_name = get_live_storage_blob_client(storage_account)
+    _update_checkpoint(storage_account, container_name)
+    blob_service_client = BlobServiceClient(storage_account, credential=get_credential())
+    blob_service_client.delete_container(container_name)
