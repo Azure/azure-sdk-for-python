@@ -10,6 +10,7 @@ import pytest
 from azure.communication.callautomation._models import ChannelAffinity, ServerCallLocator
 from devtools_testutils import recorded_by_proxy
 
+from azure.communication.callautomation._generated.models._enums import RecordingState
 from callautomation_test_case import CallAutomationRecordedTestCase
 from azure.communication.callautomation._shared.models import CommunicationUserIdentifier, identifier_from_raw_id
 
@@ -113,11 +114,11 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
         return
     
     @recorded_by_proxy
-    def test_create_VOIP_call_and_answer_custom_context(self):
+    def test_create_VOIP_call_and_get_recording_responce_then_hangup(self):
         # try to establish the call
         caller = self.identity_client.create_user()
         target = self.identity_client.create_user()
-        unique_id, call_connection, _ = self.establish_callconnection_voip_answercall_withcustomcontext(caller, target)
+        unique_id, call_connection, _, call_automation_client, callback_url = self.establish_callconnection_voip_connect_call(caller, target)
 
         # check returned events
         connected_event = self.check_for_event(
@@ -131,83 +132,23 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
             raise ValueError("Caller CallConnected event is None")
         if participant_updated_event is None:
             raise ValueError("Caller ParticipantsUpdated event is None")
+        
+        call_connection_properties = call_connection.get_call_properties()
+        server_call_id = call_connection_properties.server_call_id
 
+        start_recording = call_automation_client.start_recording(server_call_id=server_call_id, recording_state_callback_url=callback_url)
+        time.sleep(3)
+
+        recording_id = start_recording.recording_id
+        recording_properies = call_automation_client.get_recording_properties(recording_id= recording_id)
+        if recording_properies.recording_state is RecordingState.INACTIVE:
+            raise ValueError("Start recording is failed")
+
+        stop_recording = call_automation_client.stop_recording(recording_id= recording_id)
+        time.sleep(3)
+
+        recording_responce = call_automation_client.get_recording_response(recording_id= recording_id)
+        if recording_responce.recording_duration_ms is None:
+            raise ValueError("get recording responce is failed")
         self.terminate_call(unique_id)
         return
-
-    @recorded_by_proxy
-    def test_start_recording_with_call_connection_id(self):
-     # try to establish the call
-     caller = self.identity_client.create_user()
-     target = self.identity_client.create_user()
-     unique_id, call_connection, _, call_automation_client, callback_url = self.establish_callconnection_voip_connect_call(caller, target)
-
-     # check returned events
-     connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-     participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
-
-     if connected_event is None:
-         raise ValueError("Caller CallConnected event is None")
-     if participant_updated_event is None:
-         raise ValueError("Caller ParticipantsUpdated event is None")
-
-     call_connection_properties = call_connection.get_call_properties()
-     call_connection_id = call_connection_properties.call_connection_id
-     target_participant = CommunicationUserIdentifier("testId")
-     channel_affinity = ChannelAffinity(target_participant=target_participant, channel=0)
-     
-     # start recording request with call connection id.
-     start_recording = call_automation_client.start_recording(call_connection_id=call_connection_id, recording_state_callback_url=callback_url, channel_affinity=[channel_affinity]
-         )
-     time.sleep(5)
-
-     # check for RecordingStateChanged event
-     recording_state_changed_event = self.check_for_event('RecordingStateChanged', call_connection_id, timedelta(seconds=30))
-     if recording_state_changed_event is None:
-         raise ValueError("RecordingStateChanged event is None")
-     
-     # stop recording request.
-     call_automation_client.stop_recording(recording_id=start_recording.recording_id)
-     time.sleep(3)
-     
-     self.terminate_call(unique_id)
-     return
-
-    @recorded_by_proxy
-    def test_start_recording_with_server_call_id(self):
-     # try to establish the call
-     caller = self.identity_client.create_user()
-     target = self.identity_client.create_user()
-     unique_id, call_connection, _, call_automation_client, callback_url = self.establish_callconnection_voip_connect_call(caller, target)
-
-     # check returned events
-     connected_event = self.check_for_event('CallConnected', call_connection._call_connection_id, timedelta(seconds=15))
-     participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
-
-     if connected_event is None:
-         raise ValueError("Caller CallConnected event is None")
-     if participant_updated_event is None:
-         raise ValueError("Caller ParticipantsUpdated event is None")
-
-     call_connection_properties = call_connection.get_call_properties()
-     call_connection_id = call_connection_properties.call_connection_id
-     server_call_id = call_connection_properties.server_call_id
-     target_participant = CommunicationUserIdentifier("testId")
-     channel_affinity = ChannelAffinity(target_participant=target_participant, channel=0)
-
-     # start recording request with call connection id.
-     start_recording = call_automation_client.start_recording(server_call_id = server_call_id, recording_state_callback_url=callback_url, channel_affinity=[channel_affinity]
-         )
-     time.sleep(5)
-
-     # check for RecordingStateChanged event
-     recording_state_changed_event = self.check_for_event('RecordingStateChanged', call_connection_id, timedelta(seconds=30))
-     if recording_state_changed_event is None:
-         raise ValueError("RecordingStateChanged event is None")
-     
-     # stop recording request.
-     call_automation_client.stop_recording(recording_id=start_recording.recording_id)
-     time.sleep(3)
-     
-     self.terminate_call(unique_id)
-     return

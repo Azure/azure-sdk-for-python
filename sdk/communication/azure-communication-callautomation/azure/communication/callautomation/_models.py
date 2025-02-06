@@ -792,7 +792,7 @@ class RecordingResult:
     """recording expiration time."""
 
     def __init__(
-        self, *, recording_id: Optional[str] = None, 
+        self, *, recording_id: Optional[str] = None,
         recording_storage_info: Optional[RecordingStorageInfo] = None,
         session_end_reason: Optional[Union[str,  'CallSessionEndReason']] = None,
         recording_start_time: Optional[datetime] = None,
@@ -811,7 +811,7 @@ class RecordingResult:
     @classmethod
     def _from_generated(cls, recording_result: "RecordingResultRest"):
         return cls(
-            recording_id=recording_result.recording_id, 
+            recording_id=recording_result.recording_id,
             recording_storage_info=recording_result.recording_storage_info,
             session_end_reason=recording_result.session_end_reason,
             recording_start_time=recording_result.recording_start_time,
@@ -819,7 +819,7 @@ class RecordingResult:
             recording_expiration_time=recording_result.recording_expiration_time,
             errors=recording_result.errors
         )
-    
+
 class CallParticipant:
     """Details of an Azure Communication Service call participant.
 
