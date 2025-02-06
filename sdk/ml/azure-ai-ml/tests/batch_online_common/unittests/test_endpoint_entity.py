@@ -268,10 +268,21 @@ class TestKubernetesOnlineEndopint:
         assert online_endpoint_dict["identity"]["type"] == online_endpoint.identity.type
         assert online_endpoint_dict["traffic"] == online_endpoint.traffic
         assert online_endpoint_dict["compute"] == "azureml:inferencecompute"
+        assert online_endpoint_rest.properties.traffic == online_endpoint.traffic
+
+    def test_dump(self) -> None:
+        online_endpoint = load_online_endpoint(TestKubernetesOnlineEndopint.K8S_ONLINE_ENDPOINT)
+        online_endpoint_dict = online_endpoint.dump()
+        assert online_endpoint_dict["name"] == online_endpoint.name
+        assert online_endpoint_dict["tags"] == online_endpoint.tags
+        assert online_endpoint_dict["identity"]["type"] == online_endpoint.identity.type
+        assert online_endpoint_dict["traffic"] == online_endpoint.traffic
+        assert online_endpoint_dict["compute"] == "azureml:inferencecompute"
 
 
 class TestManagedOnlineEndpoint:
     ONLINE_ENDPOINT = "tests/test_configs/endpoints/online/online_endpoint_create_mir_private.yml"
+    BATCH_ENDPOINT_WITH_BLUE = "tests/test_configs/endpoints/batch/batch_endpoint.yaml"
 
     def test_merge_with(self) -> None:
         online_endpoint = load_online_endpoint(TestManagedOnlineEndpoint.ONLINE_ENDPOINT)
@@ -310,6 +321,39 @@ class TestManagedOnlineEndpoint:
         assert online_endpoint_dict["tags"] == online_endpoint.tags
         assert online_endpoint_dict["identity"]["type"] == online_endpoint.identity.type
         assert online_endpoint_dict["traffic"] == online_endpoint.traffic
+
+    def test_dump(self) -> None:
+        online_endpoint = load_online_endpoint(TestManagedOnlineEndpoint.ONLINE_ENDPOINT)
+        online_endpoint_dict = online_endpoint.dump()
+        assert online_endpoint_dict["name"] == online_endpoint.name
+        assert online_endpoint_dict["tags"] == online_endpoint.tags
+        assert online_endpoint_dict["identity"]["type"] == online_endpoint.identity.type
+        assert online_endpoint_dict["traffic"] == online_endpoint.traffic
+
+    def test_equality(self) -> None:
+        online_endpoint = load_online_endpoint(TestManagedOnlineEndpoint.ONLINE_ENDPOINT)
+        batch_online_endpoint = load_batch_endpoint(TestManagedOnlineEndpoint.BATCH_ENDPOINT_WITH_BLUE)
+
+        assert online_endpoint.__eq__(None)
+        assert online_endpoint.__eq__(batch_online_endpoint)
+
+        other_online_endpoint = copy.deepcopy(online_endpoint)
+        assert online_endpoint == other_online_endpoint
+        assert not online_endpoint != other_online_endpoint
+
+        other_online_endpoint.auth_mode = None
+        assert not online_endpoint == other_online_endpoint
+        assert online_endpoint != other_online_endpoint
+
+        other_online_endpoint.auth_mode = online_endpoint.auth_mode
+        other_online_endpoint.name = "new_name"
+        assert not online_endpoint == other_online_endpoint
+
+        online_endpoint.name = None
+        assert not online_endpoint == other_online_endpoint
+
+        other_online_endpoint.name = None
+        assert online_endpoint == other_online_endpoint
 
 
 class TestEndpointAuthKeys:
