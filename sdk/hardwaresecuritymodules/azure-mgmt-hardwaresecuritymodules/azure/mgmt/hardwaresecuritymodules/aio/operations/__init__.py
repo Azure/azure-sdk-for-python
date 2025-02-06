@@ -12,8 +12,10 @@ from ._cloud_hsm_cluster_private_endpoint_connections_operations import (
     CloudHsmClusterPrivateEndpointConnectionsOperations,
 )
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
-from ._operations import Operations
+from ._cloud_hsm_cluster_backup_status_operations import CloudHsmClusterBackupStatusOperations
+from ._cloud_hsm_cluster_restore_status_operations import CloudHsmClusterRestoreStatusOperations
 from ._dedicated_hsm_operations import DedicatedHsmOperations
+from ._operations import Operations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -24,8 +26,10 @@ __all__ = [
     "CloudHsmClusterPrivateLinkResourcesOperations",
     "CloudHsmClusterPrivateEndpointConnectionsOperations",
     "PrivateEndpointConnectionsOperations",
-    "Operations",
+    "CloudHsmClusterBackupStatusOperations",
+    "CloudHsmClusterRestoreStatusOperations",
     "DedicatedHsmOperations",
+    "Operations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
