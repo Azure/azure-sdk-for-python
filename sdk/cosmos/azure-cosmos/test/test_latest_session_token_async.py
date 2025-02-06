@@ -52,7 +52,7 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.client.close()
 
-    async def test_latest_session_token_from_pk(self):
+    async def test_latest_session_token_from_pk_async(self):
         container = await self.database.create_container("test_updated_session_token_from_logical_pk" + str(uuid.uuid4()),
                                                        PartitionKey(path="/pk"),
                                                        offer_throughput=400)
