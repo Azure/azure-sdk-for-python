@@ -20,7 +20,7 @@ from ._shared.uploads import (
 )
 
 if TYPE_CHECKING:
-    from _generated.operations import PathOperations
+    from ._generated.operations import PathOperations
     from ._shared.models import StorageConfiguration
 
 
