@@ -30,7 +30,6 @@ async def sample_realtime_deidentification_async():
     )
 
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
-    endpoint = endpoint.replace("https://", "")
 
     credential = DefaultAzureCredential()
 
