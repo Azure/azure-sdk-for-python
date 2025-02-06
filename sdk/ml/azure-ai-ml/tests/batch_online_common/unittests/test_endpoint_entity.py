@@ -6,10 +6,10 @@ from test_utilities.utils import verify_entity_load_and_dump
 from azure.ai.ml import load_batch_endpoint, load_online_endpoint
 from azure.ai.ml.entities import (
     BatchEndpoint,
-    Endpoint,
     ManagedOnlineEndpoint,
     KubernetesOnlineEndpoint,
     OnlineEndpoint,
+    EndpointAuthKeys,
 )
 from azure.ai.ml.exceptions import ValidationException
 
@@ -125,6 +125,7 @@ class TestKubernetesOnlineEndopint:
         other_online_endpoint.description = "new description"
         other_online_endpoint.mirror_traffic = {"blue": 30}
         other_online_endpoint.auth_mode = "aml_token"
+        other_online_endpoint.properties = {"some-prop": "value"}
 
         online_endpoint._merge_with(other_online_endpoint)
 
@@ -135,6 +136,7 @@ class TestKubernetesOnlineEndopint:
         assert online_endpoint.traffic == {"blue": 90, "green": 10}
         assert online_endpoint.mirror_traffic == {"blue": 30}
         assert online_endpoint.auth_mode == "aml_token"
+        assert online_endpoint.properties == {"some-prop": "value"}
 
     def test_merge_with_throws_exception_when_name_masmatch(self) -> None:
         online_endpoint = load_online_endpoint(TestKubernetesOnlineEndopint.K8S_ONLINE_ENDPOINT)
@@ -150,6 +152,7 @@ class TestKubernetesOnlineEndopint:
 
     def test_to_rest_online_endpoint(self) -> None:
         online_endpoint = load_online_endpoint(TestKubernetesOnlineEndopint.K8S_ONLINE_ENDPOINT)
+        online_endpoint.public_network_access = "Enabled"
         online_endpoint_rest = online_endpoint._to_rest_online_endpoint("westus2")
         assert online_endpoint_rest.tags == online_endpoint.tags
         assert online_endpoint_rest.properties.compute == online_endpoint.compute
@@ -159,6 +162,7 @@ class TestKubernetesOnlineEndopint:
         assert online_endpoint_rest.properties.auth_mode.lower() == online_endpoint.auth_mode
         assert online_endpoint_rest.location == "westus2"
         assert online_endpoint_rest.identity.type == "SystemAssigned"
+        assert online_endpoint_rest.properties.public_network_access == online_endpoint.public_network_access
 
     def test_to_rest_online_endpoint_when_identity_none(self) -> None:
         online_endpoint = load_online_endpoint(TestKubernetesOnlineEndopint.K8S_ONLINE_ENDPOINT)
@@ -234,3 +238,20 @@ class TestManagedOnlineEndpoint:
         assert online_endpoint_dict["tags"] == online_endpoint.tags
         assert online_endpoint_dict["identity"]["type"] == online_endpoint.identity.type
         assert online_endpoint_dict["traffic"] == online_endpoint.traffic
+
+
+from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthKeys as RestEndpointAuthKeys
+
+
+class TestEndpointAuthKeys:
+    def test_to_rest_object(self) -> None:
+        auth_keys = EndpointAuthKeys(primary_key="primary_key", secondary_key="secondary_key")
+        auth_keys_rest = auth_keys._to_rest_object()
+        assert auth_keys_rest.primary_key == "primary_key"
+        assert auth_keys_rest.secondary_key == "secondary_key"
+
+    def test_from_rest_object(self) -> None:
+        rest_auth_keys = RestEndpointAuthKeys(primary_key="primary_key", secondary_key="secondary_key")
+        auth_keys = EndpointAuthKeys._from_rest_object(rest_auth_keys)
+        assert auth_keys.primary_key == "primary_key"
+        assert auth_keys.secondary_key == "secondary_key"
