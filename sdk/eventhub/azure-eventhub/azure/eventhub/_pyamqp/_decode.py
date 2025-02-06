@@ -154,13 +154,18 @@ def _decode_binary_large(buffer: memoryview) -> Tuple[memoryview, bytes]:
     return buffer[length_index:], buffer[4:length_index].tobytes()
 
 def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]:
-    '''
+    """
+    Decode a Decimal128 value from the buffer.
+
     The Decimal128 encoding is a 16-byte encoding that represents a 34-digit decimal number.
-    The encoding uses the IEEE 754-2008 decimal128 format
-    https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-decimal128
-    param buffer: memoryview
-    return: Tuple[memoryview, decimal.Decimal]
-    '''
+    The encoding uses the IEEE 754-2008 decimal128 format.
+    See: https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-decimal128
+
+    :param buffer: The buffer containing the Decimal128 encoded value.
+    :type buffer: memoryview
+    :return: A tuple containing the remaining buffer and the decoded decimal.Decimal value.
+    :rtype: Tuple[memoryview, decimal.Decimal]
+    """
 
     # per the spec decimal128 has a width of 16 bytes
     dec_value = bytearray(buffer[:16])
@@ -290,7 +295,7 @@ def decode_payload(buffer: memoryview) -> Message:
         # described type then ulong.
         descriptor = buffer[2]
         buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[3]](buffer[4:])
-            
+
         if descriptor == 112:
             message["header"] = Header(*value)
         elif descriptor == 113:

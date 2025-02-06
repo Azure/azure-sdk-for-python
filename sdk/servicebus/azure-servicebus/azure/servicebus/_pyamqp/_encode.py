@@ -26,14 +26,15 @@ from typing import (
     Sequence,
     Collection,
 )
-from decimal import Decimal
 
 try:
     from typing import TypeAlias  # type: ignore
 except ImportError:
     from typing_extensions import TypeAlias
 
+from decimal import Decimal
 from typing_extensions import Buffer
+
 
 
 from .types import (
