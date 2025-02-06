@@ -23,17 +23,6 @@ from .workload_identity import WorkloadIdentityCredential
 _LOGGER = logging.getLogger(__name__)
 
 
-VALID_CREDENTIALS = [
-    "DEVELOPER_CLI",
-    "WORKLOAD_IDENTITY",
-    "CLI",
-    "ENVIRONMENT",
-    "MANAGED_IDENTITY",
-    "POWERSHELL",
-    "SHARED_CACHE",
-]
-
-
 class DefaultAzureCredential(ChainedTokenCredential):
     """A credential capable of handling most Azure SDK authentication scenarios. For more information, See
     `Usage guidance for DefaultAzureCredential
@@ -286,10 +275,10 @@ def parse_azure_dac(az_dac, avail_credentials):
     credentials = []
 
     for cred in creds:
-        if cred not in VALID_CREDENTIALS:
+        if cred not in avail_credentials:
             raise ValueError(
-                f"Invalid credential '{cred}' in AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST. "
-                f"Valid credentials are {', '.join(VALID_CREDENTIALS)}."
+                f"The credential '{cred}' in AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST is invalid or excluded. "
+                f"Available credentials are {', '.join(avail_credentials)}."
             )
         credential = avail_credentials.get(cred)
         if credential:
