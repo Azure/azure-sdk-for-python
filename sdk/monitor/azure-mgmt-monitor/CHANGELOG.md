@@ -1,6 +1,6 @@
 # Release History
 
-## 7.0.0b1 (2025-02-06)
+## 7.0.0b1 (2025-02-07)
 
 ### Features Added
 
@@ -234,7 +234,7 @@
 ### Breaking Changes
 
   - Deleted or renamed client operation group `MonitorManagementClient.tenant_action_groups`
-  - Method `MonitorManagementClient.__init__` inserted a `positional_or_keyword` parameter `subscription_id`
+  - Parameter `subscription_id` of client `MonitorManagementClient` is now required
   - Deleted or renamed model `TenantActionGroupList`
   - Deleted or renamed model `TenantActionGroupResource`
   - Deleted or renamed model `TenantActionGroupsOperations`
