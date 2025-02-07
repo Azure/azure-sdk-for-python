@@ -17,7 +17,7 @@ trigger:
 create_monitor:
   compute:  # clusterless spark compute to run monitoring job
     instance_type: standard_e8s_v3
-    runtime_version: "3.3"
+    runtime_version: "3.4"
   monitoring_target:
     ml_task: questionanswering #question_answering
     endpoint_deployment_id: azureml:va-endpoint:va-deployment
