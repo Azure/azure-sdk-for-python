@@ -76,7 +76,6 @@
     "eventHubAuthRuleName": "[concat('eh-', parameters('baseName'), '-hub-auth-rule')]",
     "storageAccount": "[concat('storage', parameters('baseName'))]",
     "containerName": "your-blob-container-name",
-    "containerNameTwo": "your-second-blob-container-name",
     "defaultSASKeyName": "RootManageSharedAccessKey",
     "eventHubsAuthRuleResourceId": "[resourceId('Microsoft.EventHub/namespaces/authorizationRules', variables('eventHubsNamespace'), variables('defaultSASKeyName'))]",
     "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccount'))]",
