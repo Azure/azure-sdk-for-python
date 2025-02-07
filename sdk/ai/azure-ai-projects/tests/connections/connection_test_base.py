@@ -180,7 +180,7 @@ class ConnectionsTestBase(AzureRecordedTestCase):
                 raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
             inference_response = inference_client.complete(
-                model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+                model=model_deployment_name, messages=[UserMessage("How many feet are in a mile?")]
             )
             print("\nChatCompletionsClient response:")
             pprint.pprint(inference_response)
@@ -264,7 +264,7 @@ class ConnectionsTestBase(AzureRecordedTestCase):
                 raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
             inference_response = await inference_client.complete(
-                model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+                model=model_deployment_name, messages=[UserMessage("How many feet are in a mile?")]
             )
             print("\nChatCompletionsClient response:")
             pprint.pprint(inference_response)
