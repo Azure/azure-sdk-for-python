@@ -452,8 +452,8 @@ def test_valid_allow_list():
         "DEVELOPER_CLI": "MockAzureDeveloperCliCredential",
     }
     az_dac = "ENVIRONMENT;CLI;MANAGED_IDENTITY"
-    cred_types = parse_azure_dac(az_dac, valid_credentials)
-    credentials = resolve_credentials(cred_types, avail_credentials)
+    cred_types = parse_azure_dac(az_dac)
+    credentials = resolve_credentials(cred_types, valid_credentials, avail_credentials)
     expected_credentials = [
         "MockEnvironmentCredential",
         "MockAzureCliCredential",
@@ -464,9 +464,13 @@ def test_valid_allow_list():
 
 def test_invalid_credential_in_allow_list():
     valid_credentials = ["ENVIRONMENT"]
+    avail_credentials = {
+        "ENVIRONMENT": "MockEnvironmentCredential",
+    }
     az_dac = "ENVIRONMENT;INVALID_CREDENTIAL"
+    cred_types = parse_azure_dac(az_dac)
     with pytest.raises(ValueError):
-        cred_types = parse_azure_dac(az_dac, valid_credentials)
+        credentials = resolve_credentials(cred_types, valid_credentials, avail_credentials)
 
 
 def test_allow_list_with_trailing_semicolon():
@@ -483,8 +487,8 @@ def test_allow_list_with_trailing_semicolon():
         "CLI": "MockAzureCliCredential",
     }
     az_dac = "CLI;MANAGED_IDENTITY;"
-    cred_types = parse_azure_dac(az_dac, valid_credentials)
-    credentials = resolve_credentials(cred_types, avail_credentials)
+    cred_types = parse_azure_dac(az_dac)
+    credentials = resolve_credentials(cred_types, valid_credentials, avail_credentials)
     expected_credentials = [
         "MockAzureCliCredential",
         "MockManagedIdentityCredential",
@@ -506,8 +510,8 @@ def test_allow_list_with_extra_spaces():
         "CLI": "MockAzureCliCredential",
     }
     az_dac = "  ENVIRONMENT  ;  CLI  ; MANAGED_IDENTITY  "
-    cred_types = parse_azure_dac(az_dac, valid_credentials)
-    credentials = resolve_credentials(cred_types, avail_credentials)
+    cred_types = parse_azure_dac(az_dac)
+    credentials = resolve_credentials(cred_types, valid_credentials, avail_credentials)
     expected_credentials = [
         "MockEnvironmentCredential",
         "MockAzureCliCredential",

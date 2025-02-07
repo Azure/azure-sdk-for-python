@@ -209,9 +209,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
             default_credential_allow_list = os.environ.get("AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST")
             if default_credential_allow_list:
                 default_credential_allow_list = default_credential_allow_list.upper()
-                cred_types = parse_azure_dac(default_credential_allow_list, valid_credentials)
+                cred_types = parse_azure_dac(default_credential_allow_list)
         if cred_types:
-            credentials = resolve_credentials(cred_types, avail_credentials)
+            credentials = resolve_credentials(cred_types, valid_credentials, avail_credentials)
         within_dac.set(False)
         super(DefaultAzureCredential, self).__init__(*credentials)
 
@@ -278,20 +278,25 @@ class DefaultAzureCredential(ChainedTokenCredential):
         return token_info
 
 
-def parse_azure_dac(az_dac, valid_credentials):
+def parse_azure_dac(az_dac):
     striped_az_dac = az_dac.strip()
     if striped_az_dac.endswith(";"):
         striped_az_dac = striped_az_dac[:-1]
     creds = [cred.strip() for cred in striped_az_dac.split(";")]
+    return creds
+
+
+def resolve_credentials(creds, valid_credentials, avail_credentials):
+    credentials = []
+
     for cred in creds:
         if cred not in valid_credentials:
             raise ValueError(
                 f"The credential '{cred}' in AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST is invalid or excluded. "
                 f"Available credentials are {', '.join(valid_credentials)}."
             )
-    return creds
+        credential = avail_credentials.get(cred)
+        if credential:
+            credentials.append(credential)
 
-
-def resolve_credentials(creds, avail_credentials):
-    credentials = [avail_credentials[cred] for cred in creds if cred in avail_credentials]
     return credentials

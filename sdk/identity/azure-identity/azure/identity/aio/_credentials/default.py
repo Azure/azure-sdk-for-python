@@ -193,9 +193,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
             default_credential_allow_list = os.environ.get("AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST")
             if default_credential_allow_list:
                 default_credential_allow_list = default_credential_allow_list.upper()
-                cred_types = parse_azure_dac(default_credential_allow_list, valid_credentials)
+                cred_types = parse_azure_dac(default_credential_allow_list)
         if cred_types:
-            credentials = resolve_credentials(cred_types, avail_credentials)
+            credentials = resolve_credentials(cred_types, valid_credentials, avail_credentials)
         within_dac.set(False)
         super().__init__(*credentials)
 
