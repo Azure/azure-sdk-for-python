@@ -30,7 +30,7 @@ from typing import Iterator, AsyncIterator, TypeVar, Callable, Any, Optional, Ty
 from typing_extensions import Self
 
 from ..rest import HttpResponse, AsyncHttpResponse
-from .decoders import JSONLDecoder, AsyncJSONLDecoder, StreamDecoder, AsyncStreamDecoder
+from .decoders import StreamDecoder, AsyncStreamDecoder
 
 
 ReturnType = TypeVar("ReturnType")
@@ -41,11 +41,10 @@ class Stream(Iterator[ReturnType]):
 
     :keyword response: The response object.
     :paramtype response: ~corehttp.rest.HttpResponse
+    :keyword decoder: A decoder to use for the stream.
+    :paramtype decoder: ~corehttp.streaming.decoders.StreamDecoder
     :keyword deserialization_callback: A callback that takes JSON and returns a deserialized object.
     :paramtype deserialization_callback: Callable[[Any], ReturnType]
-    :keyword decoder: An optional decoder to use for the stream. If not provided, the content-type
-        of the response will be used to determine the decoder.
-    :paramtype decoder: Optional[~corehttp.streaming.decoders.StreamDecoder]
     :paramtype terminal_event: Optional[str]
     :keyword terminal_event: A terminal event that indicates the end of the SSE stream.
     :paramtype terminal_event: Optional[str]
@@ -55,25 +54,15 @@ class Stream(Iterator[ReturnType]):
         self,
         *,
         response: HttpResponse,
+        decoder: StreamDecoder,
         deserialization_callback: Callable[[Any], ReturnType],
-        decoder: Optional[StreamDecoder] = None,
         terminal_event: Optional[str] = None,
     ) -> None:
         self._response = response
+        self._decoder = decoder
         self._deserialization_callback = deserialization_callback
         self._terminal_event = terminal_event
         self._iterator = self._iter_results()
-
-        if decoder is not None:
-            self._decoder = decoder
-        elif self._response.headers.get("Content-Type", "").lower() == "application/jsonl":
-            self._decoder = JSONLDecoder()
-        else:
-            raise ValueError(
-                f"Unsupported content-type "
-                f"'{self._response.headers.get('Content-Type', '')}' "
-                "for streaming. Provide a custom decoder."
-            )
 
     def __next__(self) -> ReturnType:
         return self._iterator.__next__()
@@ -109,11 +98,10 @@ class AsyncStream(AsyncIterator[ReturnType]):
 
     :keyword response: The response object.
     :paramtype response: ~corehttp.rest.AsyncHttpResponse
+    :keyword decoder: A decoder to use for the stream.
+    :paramtype decoder: ~corehttp.streaming.decoders.AsyncStreamDecoder
     :keyword deserialization_callback: A callback that takes JSON and returns a deserialized object.
     :paramtype deserialization_callback: Callable[[Any], ReturnType]
-    :keyword decoder: An optional decoder to use for the stream. If not provided, the content-type
-        of the response will be used to determine the decoder.
-    :paramtype decoder: Optional[~corehttp.streaming.decoders.AsyncStreamDecoder]
     :paramtype terminal_event: Optional[str]
     :keyword terminal_event: A terminal event that indicates the end of the SSE stream.
     :paramtype terminal_event: Optional[str]
@@ -123,25 +111,15 @@ class AsyncStream(AsyncIterator[ReturnType]):
         self,
         *,
         response: AsyncHttpResponse,
+        decoder: AsyncStreamDecoder,
         deserialization_callback: Callable[[Any], ReturnType],
-        decoder: Optional[AsyncStreamDecoder] = None,
         terminal_event: Optional[str] = None,
     ) -> None:
         self._response = response
+        self._decoder = decoder
         self._deserialization_callback = deserialization_callback
         self._terminal_event = terminal_event
         self._iterator = self._iter_results()
-
-        if decoder is not None:
-            self._decoder = decoder
-        elif self._response.headers.get("Content-Type", "").lower() == "application/jsonl":
-            self._decoder = AsyncJSONLDecoder()
-        else:
-            raise ValueError(
-                f"Unsupported content-type "
-                f"'{self._response.headers.get('Content-Type', '')}' "
-                "for streaming. Provide a custom decoder."
-            )
 
     async def __anext__(self) -> ReturnType:
         return await self._iterator.__anext__()

@@ -30,6 +30,7 @@ import pytest
 
 from corehttp.rest import HttpRequest
 from corehttp.streaming import AsyncStream
+from corehttp.streaming.decoders import AsyncJSONLDecoder
 
 
 @pytest.fixture
@@ -44,7 +45,9 @@ def deserialization_callback():
 def stream(client, deserialization_callback):
     async def _callback(request, **kwargs):
         http_response = await client.send_request(request=request, stream=True)
-        return AsyncStream(deserialization_callback=deserialization_callback, response=http_response)
+        return AsyncStream(
+            deserialization_callback=deserialization_callback, response=http_response, decoder=AsyncJSONLDecoder()
+        )
 
     return _callback
 
@@ -158,13 +161,6 @@ async def test_stream_jsonl_escaped_broken_newline_data(stream):
         {"msg": "this is a first message"},
         {"msg": "\nthis is a second message"},
     ]
-
-
-@pytest.mark.asyncio
-async def test_stream_jsonl_unsupported_content_type(stream):
-    with pytest.raises(ValueError) as e:
-        await stream(HttpRequest("GET", "/streams/jsonl_invalid_content_type"))
-    assert e.value.args[0] == "Unsupported content-type 'application/json' for streaming. Provide a custom decoder."
 
 
 @pytest.mark.asyncio
