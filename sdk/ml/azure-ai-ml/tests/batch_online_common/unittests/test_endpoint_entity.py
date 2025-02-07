@@ -291,6 +291,7 @@ class TestManagedOnlineEndpoint:
         other_online_endpoint.description = "new description"
         other_online_endpoint.mirror_traffic = {"blue": 30}
         other_online_endpoint.auth_mode = "aml_token"
+        other_online_endpoint.defaults = {"deployment_name": "blue"}
 
         online_endpoint._merge_with(other_online_endpoint)
 
@@ -300,6 +301,7 @@ class TestManagedOnlineEndpoint:
         assert online_endpoint.traffic == {"blue": 90, "green": 10}
         assert online_endpoint.mirror_traffic == {"blue": 30}
         assert online_endpoint.auth_mode == "aml_token"
+        assert online_endpoint.defaults == {"deployment_name": "blue"}
 
     def test_merge_with_throws_exception_when_name_masmatch(self) -> None:
         online_endpoint = load_online_endpoint(TestManagedOnlineEndpoint.ONLINE_ENDPOINT)
