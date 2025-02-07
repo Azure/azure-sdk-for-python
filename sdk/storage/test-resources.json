@@ -103,14 +103,6 @@
             "kind": "StorageV2",
             "properties": {
               "allowBlobPublicAccess": true,
-                "deleteRetentionPolicy": {
-                    "enabled": true,
-                    "days": 1
-                },
-               "containerDeleteRetentionPolicy": {
-                    "enabled": true,
-                    "days": 1
-                },
                 "networkAcls": {
                     "bypass": "AzureServices",
                     "virtualNetworkRules": [],
@@ -140,11 +132,7 @@
             "containerDeleteRetentionPolicy": {
                 "enabled": true,
                 "days": 1
-              },
-              "deleteRetentionPolicy": {
-                    "enabled": true,
-                    "days": 1
-                }
+              }
         },
         "dependsOn": [
           "[variables('primaryAccountName')]"

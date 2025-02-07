@@ -29,7 +29,7 @@ SOURCE_FILE = os.path.join(current_dir, 'SampleSource.txt')
 
 class CommonBlobSamples(object):
 
-    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING_SOFT")
 
     #--Begin Blob Samples-----------------------------------------------------------------
 
