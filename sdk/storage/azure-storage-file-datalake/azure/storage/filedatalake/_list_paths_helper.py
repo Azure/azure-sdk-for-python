@@ -63,15 +63,15 @@ class DeletedPathPropertiesPaged(PageIterator):
     """The maximum number of results retrieved per API call."""
     continuation_token: Optional[str]
     """The continuation token to retrieve the next page of results."""
-    location_mode: Optional[str]
-    """The location mode being used to list results. The available
-        options include "primary" and "secondary"."""
-    current_page: Optional[List[DeletedPathProperties]]
-    """The current page of listed results."""
     container: Optional[str]
     """The container that the paths are listed from."""
     delimiter: Optional[str]
     """A delimiting character used for hierarchy listing."""
+    current_page: Optional[List[DeletedPathProperties]]
+    """The current page of listed results."""
+    location_mode: Optional[str]
+    """The location mode being used to list results. The available
+        options include "primary" and "secondary"."""
 
     def __init__(
         self, command: Callable,
