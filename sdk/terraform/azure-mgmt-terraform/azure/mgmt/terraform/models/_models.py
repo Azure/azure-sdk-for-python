@@ -172,6 +172,12 @@ class ExportQuery(BaseExportModel, discriminator="ExportQuery"):
     :vartype recursive: bool
     :ivar type: The parameter type. Required.
     :vartype type: str or ~azure.mgmt.terraform.models.EXPORT_QUERY
+    :ivar table: The ARG table name.
+    :vartype table: str
+    :ivar authorization_scope_filter: The ARG Scope Filter parameter. Known values are:
+     "AtScopeAndBelow", "AtScopeAndAbove", "AtScopeAboveAndBelow", and "AtScopeExact".
+    :vartype authorization_scope_filter: str or
+     ~azure.mgmt.terraform.models.AuthorizationScopeFilter
     """
 
     query: str = rest_field()
@@ -184,6 +190,13 @@ class ExportQuery(BaseExportModel, discriminator="ExportQuery"):
     """Whether to recursively list child resources of the query result."""
     type: Literal[Type.EXPORT_QUERY] = rest_discriminator(name="type")  # type: ignore
     """The parameter type. Required."""
+    table: Optional[str] = rest_field()
+    """The ARG table name."""
+    authorization_scope_filter: Optional[Union[str, "_models.AuthorizationScopeFilter"]] = rest_field(
+        name="authorizationScopeFilter"
+    )
+    """The ARG Scope Filter parameter. Known values are: \"AtScopeAndBelow\", \"AtScopeAndAbove\",
+     \"AtScopeAboveAndBelow\", and \"AtScopeExact\"."""
 
     @overload
     def __init__(
@@ -195,6 +208,8 @@ class ExportQuery(BaseExportModel, discriminator="ExportQuery"):
         mask_sensitive: Optional[bool] = None,
         name_pattern: Optional[str] = None,
         recursive: Optional[bool] = None,
+        table: Optional[str] = None,
+        authorization_scope_filter: Optional[Union[str, "_models.AuthorizationScopeFilter"]] = None,
     ) -> None: ...
 
     @overload
@@ -325,6 +340,9 @@ class ExportResult(_model_base.Model):
 
     :ivar configuration: The Terraform configuration content.
     :vartype configuration: str
+    :ivar import_property: The Terraform import blocks for the current export, which users can use
+     to run "terraform plan" with to import the resources.
+    :vartype import_property: str
     :ivar skipped_resources: A list of Azure resources which are not exported to Terraform due to
      there is no corresponding resources in Terraform.
     :vartype skipped_resources: list[str]
@@ -334,6 +352,9 @@ class ExportResult(_model_base.Model):
 
     configuration: Optional[str] = rest_field()
     """The Terraform configuration content."""
+    import_property: Optional[str] = rest_field(name="import")
+    """The Terraform import blocks for the current export, which users can use to run \"terraform
+     plan\" with to import the resources."""
     skipped_resources: Optional[List[str]] = rest_field(name="skippedResources")
     """A list of Azure resources which are not exported to Terraform due to there is no corresponding
      resources in Terraform."""
@@ -345,6 +366,7 @@ class ExportResult(_model_base.Model):
         self,
         *,
         configuration: Optional[str] = None,
+        import_property: Optional[str] = None,
         skipped_resources: Optional[List[str]] = None,
         errors: Optional[List["_models.ErrorDetail"]] = None,
     ) -> None: ...
@@ -389,13 +411,13 @@ class Operation(_model_base.Model):
     is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
     """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
      \"false\" for Azure Resource Manager/control-plane operations."""
-    display: Optional["_models.OperationDisplay"] = rest_field(visibility=["read"])
+    display: Optional["_models.OperationDisplay"] = rest_field()
     """Localized display information for this particular operation."""
     origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
      logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
      \"user,system\"."""
-    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType")
+    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType", visibility=["read"])
     """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
      internal only APIs. \"Internal\""""
 
@@ -403,7 +425,7 @@ class Operation(_model_base.Model):
     def __init__(
         self,
         *,
-        action_type: Optional[Union[str, "_models.ActionType"]] = None,
+        display: Optional["_models.OperationDisplay"] = None,
     ) -> None: ...
 
     @overload

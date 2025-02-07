@@ -1,6 +1,6 @@
 additionalDirectories: []
 repo: Azure/azure-rest-api-specs
 directory: specification/ai/ImageAnalysis
-commit: 3bcdb0ee47bfa6bcc79036b4c9e5fe287701f796
+commit: a59f51a4e5b212d17ee90bc797b0bc477a7eecfa
 
 

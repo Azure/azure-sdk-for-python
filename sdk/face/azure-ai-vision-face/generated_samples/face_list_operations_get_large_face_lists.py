@@ -26,6 +26,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: v1.2-preview.1/FaceListOperations_GetLargeFaceLists.json
+# x-ms-original-file: v1.2/FaceListOperations_GetLargeFaceLists.json
 if __name__ == "__main__":
     main()

@@ -25,10 +25,12 @@ class TestTerraformMgmtTerraformOperations(AzureMgmtRecordedTestCase):
             body={
                 "query": "str",
                 "type": "ExportQuery",
+                "authorizationScopeFilter": "str",
                 "fullProperties": bool,
                 "maskSensitive": bool,
                 "namePattern": "str",
                 "recursive": bool,
+                "table": "str",
                 "targetProvider": "str",
             },
         ).result()  # call '.result()' to poll until service return final result

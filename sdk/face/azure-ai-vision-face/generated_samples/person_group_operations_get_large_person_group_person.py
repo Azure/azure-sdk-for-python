@@ -29,6 +29,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: v1.2-preview.1/PersonGroupOperations_GetLargePersonGroupPerson.json
+# x-ms-original-file: v1.2/PersonGroupOperations_GetLargePersonGroupPerson.json
 if __name__ == "__main__":
     main()

@@ -466,13 +466,13 @@ class Operation(_model_base.Model):
     is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
     """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
      \"false\" for Azure Resource Manager/control-plane operations."""
-    display: Optional["_models.OperationDisplay"] = rest_field(visibility=["read"])
+    display: Optional["_models.OperationDisplay"] = rest_field()
     """Localized display information for this particular operation."""
     origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
      logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
      \"user,system\"."""
-    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType")
+    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType", visibility=["read"])
     """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
      internal only APIs. \"Internal\""""
 
@@ -480,7 +480,7 @@ class Operation(_model_base.Model):
     def __init__(
         self,
         *,
-        action_type: Optional[Union[str, "_models.ActionType"]] = None,
+        display: Optional["_models.OperationDisplay"] = None,
     ) -> None: ...
 
     @overload

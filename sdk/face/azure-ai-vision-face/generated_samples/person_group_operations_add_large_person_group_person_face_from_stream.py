@@ -30,6 +30,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: v1.2-preview.1/PersonGroupOperations_AddLargePersonGroupPersonFaceFromStream.json
+# x-ms-original-file: v1.2/PersonGroupOperations_AddLargePersonGroupPersonFaceFromStream.json
 if __name__ == "__main__":
     main()
