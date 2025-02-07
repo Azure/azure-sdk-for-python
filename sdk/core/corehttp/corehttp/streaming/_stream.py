@@ -45,7 +45,6 @@ class Stream(Iterator[ReturnType]):
     :paramtype decoder: ~corehttp.streaming.decoders.StreamDecoder
     :keyword deserialization_callback: A callback that takes JSON and returns a deserialized object.
     :paramtype deserialization_callback: Callable[[Any], ReturnType]
-    :paramtype terminal_event: Optional[str]
     :keyword terminal_event: A terminal event that indicates the end of the SSE stream.
     :paramtype terminal_event: Optional[str]
     """
@@ -102,7 +101,6 @@ class AsyncStream(AsyncIterator[ReturnType]):
     :paramtype decoder: ~corehttp.streaming.decoders.AsyncStreamDecoder
     :keyword deserialization_callback: A callback that takes JSON and returns a deserialized object.
     :paramtype deserialization_callback: Callable[[Any], ReturnType]
-    :paramtype terminal_event: Optional[str]
     :keyword terminal_event: A terminal event that indicates the end of the SSE stream.
     :paramtype terminal_event: Optional[str]
     """
