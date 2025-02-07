@@ -3,7 +3,7 @@
 
 from collections.abc import MutableMapping
 import logging
-from typing import Any
+from typing import Any, Callable
 import unittest
 import uuid
 
@@ -125,11 +125,29 @@ class TestDummyAsync:
     class FaulInjectionTransport(AioHttpTransport):
         def __init__(self, logger: logging.Logger, *, session: aiohttp.ClientSession | None = None, loop=None, session_owner: bool = True, **config):
             self.logger = logger
+            self.faults = []
+            self.requestTransformationOverrides = []
+            self.responseTransformationOverrides = []
             super().__init__(session=session, loop=loop, session_owner=session_owner, **config)
 
+        def addFault(self, predicate: Callable[[HttpRequest], bool], faultFactory: Callable[[], Exception | None]):
+            self.fault.append({"predicate": predicate, "faultFactory": faultFactory})
+
+        def addRequestTransformation(self, predicate: Callable[[HttpRequest], bool], faultFactory: Callable[[], Exception | None]):
+            self.fault.append({"predicate": predicate, "faultFactory": faultFactory})
+
+        def addResponseTransformation(self, predicate: Callable[[HttpRequest], bool], faultFactory: Callable[[], Exception | None]):
+            self.fault.append({"predicate": predicate, "faultFactory": faultFactory})    
+
         async def send(self, request: HttpRequest, *, stream: bool = False, proxies: MutableMapping[str, str] | None = None, **config):
+            # find the first fault Factory with matching predicate if any
+            firstFaultFactory = next(lambda f: f["predicate"](f["predicate"]), self.faults, None)
+           
+
             # Add custom logic before sending the request
-            self.logger.error(f"Sending request to {request.url}")
+
+
+            self.logger.info(f"Sending request to {request.url}")
 
             # Call the base class's send method to actually send the request
             try:
