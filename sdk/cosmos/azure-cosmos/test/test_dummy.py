@@ -46,6 +46,19 @@ def setup():
 class TestDummyAsync:
     logger = logger
 
+    async def cleanup(self, initializedObjects: dict[str, Any]):
+        created_database: DatabaseProxy = initializedObjects["db"]
+        try:
+            await created_database.delete_container(initializedObjects["col"])
+        except Exception as containerDeleteError:    
+            self.logger.warn("Exception trying to delete database {}. {}".format(created_database.id, containerDeleteError))
+        finally:    
+            client: CosmosClient = initializedObjects["client"]
+            try:
+                await client.close()
+            except Exception as closeError:    
+                self.logger.warn("Exception trying to delete database {}. {}".format(created_database.id, closeError))
+
     async def setup(self, custom_transport: AioHttpTransport):
 
         host = test_config.TestConfig.host
@@ -77,19 +90,18 @@ class TestDummyAsync:
                                'key': 'value'}
 
         initializedObjects = await self.setup(custom_transport)
-        container: ContainerProxy = initializedObjects["col"]
-        
-        created_document = await container.create_item(body=document_definition)
-        start = time.perf_counter()
-        
-        while ((time.perf_counter() - start) < 7):
-            await container.read_item(idValue, partition_key=idValue)
-            await asyncio.sleep(2)
+        try:
+            container: ContainerProxy = initializedObjects["col"]
+            
+            created_document = await container.create_item(body=document_definition)
+            start = time.perf_counter()
+            
+            while ((time.perf_counter() - start) < 7):
+                await container.read_item(idValue, partition_key=idValue)
+                await asyncio.sleep(2)
 
-        created_database: DatabaseProxy = initializedObjects["db"]
-        await created_database.delete_container(TestDummyAsync.TEST_CONTAINER_SINGLE_PARTITION_ID)
-        client: CosmosClient = initializedObjects["client"]
-        await client.close()
+        finally:
+            self.cleanup(initializedObjects)
 
 
 class FaulInjectionTransport(AioHttpTransport):
