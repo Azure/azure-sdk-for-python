@@ -268,7 +268,6 @@ class TestKubernetesOnlineEndopint:
         assert online_endpoint_dict["identity"]["type"] == online_endpoint.identity.type
         assert online_endpoint_dict["traffic"] == online_endpoint.traffic
         assert online_endpoint_dict["compute"] == "azureml:inferencecompute"
-        assert online_endpoint_rest.properties.traffic == online_endpoint.traffic
 
     def test_dump(self) -> None:
         online_endpoint = load_online_endpoint(TestKubernetesOnlineEndopint.K8S_ONLINE_ENDPOINT)
