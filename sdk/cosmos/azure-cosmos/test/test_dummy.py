@@ -3,6 +3,8 @@
 
 from collections.abc import MutableMapping
 import logging
+import time
+from tokenize import String
 from typing import Any, Callable
 import unittest
 import uuid
@@ -10,6 +12,8 @@ import uuid
 import pytest
 import pytest_asyncio
 
+from azure.cosmos.aio._container import ContainerProxy
+from azure.cosmos.aio._database import DatabaseProxy
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import PartitionKey
@@ -21,162 +25,126 @@ import sys
 from azure.core.pipeline.transport import AioHttpTransport
 
 COLLECTION = "created_collection"
-@pytest_asyncio.fixture()
-async def setup():
-    if (TestDummyAsync.masterKey == '[YOUR_KEY_HERE]' or
-            TestDummyAsync.host == '[YOUR_ENDPOINT_HERE]'):
-        raise Exception(
-            "You must specify your Azure Cosmos account values for "
-            "'masterKey' and 'host' at the top of this class to run the "
-            "tests.")
+logger = logging.getLogger('azure.cosmos')
+logger.setLevel("INFO")
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler(sys.stdout))
 
-    logger = logging.getLogger('azure.cosmos')
-    logger.setLevel("INFO")
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(logging.StreamHandler(sys.stdout))
-    custom_transport = TestDummyAsync.FaulInjectionTransport(logger)
-    client = CosmosClient(TestDummyAsync.host, TestDummyAsync.masterKey, consistency_level="Session",
-                        connection_policy=TestDummyAsync.connectionPolicy, transport=custom_transport)
-    created_database = client.get_database_client(TestDummyAsync.TEST_DATABASE_ID)
-    created_collection = await created_database.create_container(TestDummyAsync.TEST_CONTAINER_SINGLE_PARTITION_ID,
-                                                                partition_key=PartitionKey("/pk"))
-    yield {
-        COLLECTION: created_collection
-    }
+host = test_config.TestConfig.host
+masterKey = test_config.TestConfig.masterKey
+connectionPolicy = test_config.TestConfig.connectionPolicy
+TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
 
-    await created_database.delete_container(TestDummyAsync.TEST_CONTAINER_SINGLE_PARTITION_ID)
-    await client.close()
-
-
-def error_codes():
-    return [408, 500, 502, 503]
+@pytest.fixture()
+def setup():
+    return 
 
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestDummyAsync:
-    host = test_config.TestConfig.host
-    masterKey = test_config.TestConfig.masterKey
-    connectionPolicy = test_config.TestConfig.connectionPolicy
-    TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
-    TEST_CONTAINER_SINGLE_PARTITION_ID = "test-timeout-retry-policy-container-" + str(uuid.uuid4())
+    logger = logger
 
-    @pytest.mark.parametrize("error_code", error_codes())
-    async def test_timeout_failover_retry_policy_for_read_success_async(self, setup, error_code):
-        document_definition = {'id': 'failoverDoc-' + str(uuid.uuid4()),
-                               'pk': 'pk',
+    async def setup(self, custom_transport: AioHttpTransport):
+
+        host = test_config.TestConfig.host
+        masterKey = test_config.TestConfig.masterKey
+        connectionPolicy = test_config.TestConfig.connectionPolicy
+        TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
+        TEST_CONTAINER_SINGLE_PARTITION_ID = "test-timeout-retry-policy-container-" + str(uuid.uuid4())
+
+        if (masterKey == '[YOUR_KEY_HERE]' or
+                host == '[YOUR_ENDPOINT_HERE]'):
+            raise Exception(
+                "You must specify your Azure Cosmos account values for "
+                "'masterKey' and 'host' at the top of this class to run the "
+                "tests.")
+
+        client = CosmosClient(host, masterKey, consistency_level="Session",
+                            connection_policy=connectionPolicy, transport=custom_transport)
+        created_database: DatabaseProxy = client.get_database_client(TEST_DATABASE_ID)
+        created_collection = await created_database.create_container(TEST_CONTAINER_SINGLE_PARTITION_ID,
+                                                                    partition_key=PartitionKey("/pk"))
+        return {"client": client, "db": created_database, "col": created_collection}
+
+    async def test_throws_injected_error(self, setup):
+        custom_transport = FaulInjectionTransport(logger)
+        idValue: str = 'failoverDoc-' + str(uuid.uuid4())
+        document_definition = {'id': idValue,
+                               'pk': idValue,
                                'name': 'sample document',
                                'key': 'value'}
 
-        created_document = await setup[COLLECTION].create_item(body=document_definition)
-        self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
-        try:
-            # should retry once and then succeed
-            mf = self.MockExecuteFunction(self.original_execute_function, 1, error_code)
-            _retry_utility_async.ExecuteFunctionAsync = mf
-            doc = await setup[COLLECTION].read_item(item=created_document['id'],
-                                                    partition_key=created_document['pk'])
-            assert doc == created_document
-        finally:
-            _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+        initializedObjects = await self.setup(custom_transport)
+        container: ContainerProxy = initializedObjects["col"]
+        
+        created_document = await container.create_item(body=document_definition)
+        start = time.perf_counter()
+        
+        while ((time.perf_counter() - start) < 7):
+            await container.read_item(idValue, partition_key=idValue)
+            await asyncio.sleep(2)
 
-    @pytest.mark.parametrize("error_code", error_codes())
-    async def test_timeout_failover_retry_policy_for_read_failure_async(self, setup, error_code):
-        document_definition = {'id': 'failoverDoc-' + str(uuid.uuid4()),
-                               'pk': 'pk',
-                               'name': 'sample document',
-                               'key': 'value'}
-
-        created_document = await setup[COLLECTION].create_item(body=document_definition)
-        self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
-        try:
-            # should retry once and then succeed
-            mf = self.MockExecuteFunction(self.original_execute_function, 5, error_code)
-            _retry_utility_async.ExecuteFunctionAsync = mf
-            await setup[COLLECTION].read_item(item=created_document['id'],
-                                              partition_key=created_document['pk'])
-            pytest.fail("Exception was not raised.")
-        except exceptions.CosmosHttpResponseError as err:
-            assert err.status_code == error_code
-        finally:
-            _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
-
-    @pytest.mark.parametrize("error_code", error_codes())
-    async def test_timeout_failover_retry_policy_for_write_failure_async(self, setup, error_code):
-        document_definition = {'id': 'failoverDoc' + str(uuid.uuid4()),
-                               'pk': 'pk',
-                               'name': 'sample document',
-                               'key': 'value'}
-
-        self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
-        try:
-            # timeouts should fail immediately for writes
-            mf = self.MockExecuteFunction(self.original_execute_function,0, error_code)
-            _retry_utility_async.ExecuteFunctionAsync = mf
-            try:
-                await setup[COLLECTION].create_item(body=document_definition)
-                pytest.fail("Exception was not raised.")
-            except exceptions.CosmosHttpResponseError as err:
-                assert err.status_code == error_code
-        finally:
-            _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
-
-    class FaulInjectionTransport(AioHttpTransport):
-        def __init__(self, logger: logging.Logger, *, session: aiohttp.ClientSession | None = None, loop=None, session_owner: bool = True, **config):
-            self.logger = logger
-            self.faults = []
-            self.requestTransformationOverrides = []
-            self.responseTransformationOverrides = []
-            super().__init__(session=session, loop=loop, session_owner=session_owner, **config)
-
-        def addFault(self, predicate: Callable[[HttpRequest], bool], faultFactory: Callable[[], Exception | None]):
-            self.fault.append({"predicate": predicate, "faultFactory": faultFactory})
-
-        def addRequestTransformation(self, predicate: Callable[[HttpRequest], bool], faultFactory: Callable[[], Exception | None]):
-            self.fault.append({"predicate": predicate, "faultFactory": faultFactory})
-
-        def addResponseTransformation(self, predicate: Callable[[HttpRequest], bool], faultFactory: Callable[[], Exception | None]):
-            self.fault.append({"predicate": predicate, "faultFactory": faultFactory})    
-
-        async def send(self, request: HttpRequest, *, stream: bool = False, proxies: MutableMapping[str, str] | None = None, **config):
-            # find the first fault Factory with matching predicate if any
-            firstFaultFactory = next(lambda f: f["predicate"](f["predicate"]), self.faults, None)
-           
-
-            # Add custom logic before sending the request
+        created_database: DatabaseProxy = initializedObjects["db"]
+        await created_database.delete_container(TestDummyAsync.TEST_CONTAINER_SINGLE_PARTITION_ID)
+        client: CosmosClient = initializedObjects["client"]
+        await client.close()
 
 
-            self.logger.info(f"Sending request to {request.url}")
+class FaulInjectionTransport(AioHttpTransport):
+    def __init__(self, logger: logging.Logger, *, session: aiohttp.ClientSession | None = None, loop=None, session_owner: bool = True, **config):
+        self.logger = logger
+        self.faults = []
+        self.requestTransformations = []
+        self.responseTransformations = []
+        super().__init__(session=session, loop=loop, session_owner=session_owner, **config)
 
-            # Call the base class's send method to actually send the request
-            try:
-                response = await super().send(request, stream=stream, proxies=proxies, **config)
-            except Exception as e:   
-                self.logger.error(f"Error: {e}")
-                raise
+    def addFault(self, predicate: Callable[[HttpRequest], bool], faultFactory: Callable[[HttpRequest], asyncio.Task[Exception]]):
+        self.faults.append({"predicate": predicate, "apply": faultFactory})
 
-            # Add custom logic after receiving the response
-            self.logger.info(f"Received response with status code {response.status_code}")
+    def addRequestTransformation(self, predicate: Callable[[HttpRequest], bool], requestTransformation: Callable[[HttpRequest], asyncio.Task[HttpRequest]]):
+        self.requestTransformations.append({"predicate": predicate, "apply": requestTransformation})
 
+    def addResponseTransformation(self, predicate: Callable[[HttpRequest], bool], responseTransformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], AsyncHttpResponse]):
+        self.responseTransformations.append({
+            "predicate": predicate, 
+            "apply": responseTransformation})    
+
+    def firstItem(self, iterable, condition=lambda x: True):
+        """
+        Returns the first item in the `iterable` that satisfies the `condition`.
+        
+        If no item satisfies the condition, it returns None.
+        """
+        return next((x for x in iterable if condition(x)), None)
+
+    async def send(self, request: HttpRequest, *, stream: bool = False, proxies: MutableMapping[str, str] | None = None, **config):
+        # find the first fault Factory with matching predicate if any
+        firstFaultFactory = self.firstItem(iter(self.faults), lambda f: f["predicate"](request))
+        if (firstFaultFactory != None):
+            self.logger.info("")
+            return await firstFaultFactory["apply"]()
+
+        # apply the chain of request transformations with matching predicates if any
+        matchingRequestTransformations = filter(lambda f: f["predicate"](f["predicate"]), iter(self.requestTransformations))
+        for currentTransformation in matchingRequestTransformations:
+            request = await currentTransformation["apply"](request)
+
+        firstResonseTransformation = self.firstItem(iter(self.responseTransformations), lambda f: f["predicate"](request))
+        
+        getResponseTask = super().send(request, stream=stream, proxies=proxies, **config)
+        
+        if (firstResonseTransformation != None):
+            self.logger.info(f"Invoking response transformation")
+            response = await firstResonseTransformation["apply"](request, lambda: getResponseTask)        
+            self.logger.info(f"Received response transformation result with status code {response.status_code}")
             return response
-
-    class MockExecuteFunction(object):
-            def __init__(self, org_func, num_exceptions, status_code):
-                self.org_func = org_func
-                self.counter = 0
-                self.num_exceptions = num_exceptions
-                self.status_code = status_code
-
-            def __call__(self, func, global_endpoint_manager, *args, **kwargs):
-                if self.counter != 0 and self.counter >= self.num_exceptions:
-                    return self.org_func(func, global_endpoint_manager, *args, **kwargs)
-                else:
-                    self.counter += 1
-                    raise exceptions.CosmosHttpResponseError(
-                        status_code=self.status_code,
-                        message="Some Exception",
-                        response=test_config.FakeResponse({}))
+        else:
+            self.logger.info(f"Sending request to {request.url}")
+            response = await getResponseTask
+            self.logger.info(f"Received response with status code {response.status_code}")
+            return response
 
 if __name__ == '__main__':
     unittest.main()
