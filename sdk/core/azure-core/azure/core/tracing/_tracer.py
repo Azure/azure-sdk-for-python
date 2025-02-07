@@ -24,11 +24,13 @@ def _get_tracer_impl():
 
 
 class TracerProvider:
-    """A manager for a tracer instance.
+    """A provider for a tracer instance.
 
-    :keyword library_name: The name of the library to use in the tracer.
+    Various metadata can be set on the provider to be used in the tracer.
+
+    :keyword library_name: The name of the library to use in the provided tracer.
     :paramtype library_name: str
-    :keyword library_version: The version of the library to use in the tracer.
+    :keyword library_version: The version of the library to use in the provided tracer.
     :paramtype library_version: str
     :keyword schema_url: Specifies the Schema URL of the emitted spans.
     :paramtype schema_url: str
@@ -53,8 +55,11 @@ class TracerProvider:
     def get_tracer(self) -> Optional["OpenTelemetryTracer"]:
         """Get the OpenTelemetry tracer instance if available.
 
+        If OpenTelemetry is not available, this method will return None. If the tracer instance has not been created
+        yet, it will be created and returned. Otherwise, the existing tracer instance will be returned.
+
         :return: The OpenTelemetry tracer instance if available.
-        :rtype: Optional[OpenTelemetryTracer]
+        :rtype: Optional[~azure.core.tracing.opentelemetry_tracer.OpenTelemetryTracer]
         """
         if self._tracer is None:
             tracer_impl = _get_tracer_impl()
@@ -69,3 +74,7 @@ class TracerProvider:
 
 
 default_tracer_provider = TracerProvider()
+"""The global tracer provider that is used by default.
+
+:type default_tracer_provider: TracerProvider
+"""

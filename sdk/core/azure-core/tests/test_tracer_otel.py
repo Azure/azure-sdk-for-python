@@ -9,7 +9,7 @@ import threading
 from unittest.mock import patch
 
 from azure.core.tracing._tracer import TracerProvider, default_tracer_provider
-from azure.core.tracing._models import SpanKind, Link, TracingOptions
+from azure.core.tracing._models import SpanKind, Link, StatusCode
 from azure.core.tracing.opentelemetry_span import OpenTelemetrySpan
 from azure.core.tracing.opentelemetry_tracer import OpenTelemetryTracer
 from azure.core.tracing.common import with_current_context
@@ -21,6 +21,7 @@ from opentelemetry.trace import (
     Tracer as OtelTracer,
     Span as OtelSpan,
     SpanKind as OtelSpanKind,
+    StatusCode as OtelStatusCode,
     NonRecordingSpan,
     format_span_id,
     format_trace_id,
@@ -50,6 +51,7 @@ def test_tracer_provider(tracing_helper):
     assert len(finished_spans) == 1
     assert finished_spans[0].name == "test_span"
     assert finished_spans[0].attributes["foo"] == "bar"
+    assert finished_spans[0].status.status_code == OtelStatusCode.UNSET
     assert finished_spans[0].instrumentation_scope.schema_url == "https://test.schema"
     assert finished_spans[0].instrumentation_scope.name == "my-library"
     assert finished_spans[0].instrumentation_scope.version == "1.0.0"
@@ -284,7 +286,6 @@ def test_span_unsuppressed_unentered_context():
         # This span is not nested in span1, so should not be suppressed.
         assert not isinstance(span2.span_instance, NonRecordingSpan)
         assert isinstance(span2.span_instance, OtelSpan)
-        span2.add_event
     span1.end()
 
 
@@ -401,3 +402,36 @@ def test_nest_span_with_thread_pool_executor(tracing_helper):
         assert span.instrumentation_scope.name == "my-library"
         assert span.instrumentation_scope.version == "1.0.0"
         assert span.instrumentation_scope.attributes.get("namespace") == "Sample.Namespace"
+
+
+def test_set_span_status(tracing_helper):
+    tracer = default_tracer_provider.get_tracer()
+    assert tracer
+
+    with tracer.start_span(name="foo-span") as span:
+        span.set_status(StatusCode.OK)
+
+    with tracer.start_span(name="bar-span") as span:
+        span.set_status(StatusCode.ERROR, "This is an error")
+
+    finished_spans = tracing_helper.exporter.get_finished_spans()
+    assert len(finished_spans) == 2
+    assert finished_spans[0].status.status_code == OtelStatusCode.OK
+    assert finished_spans[0].status.description is None
+
+    assert finished_spans[1].status.status_code == OtelStatusCode.ERROR
+    assert finished_spans[1].status.description == "This is an error"
+
+
+def test_add_event(tracing_helper):
+    tracer = default_tracer_provider.get_tracer()
+    assert tracer
+
+    with tracer.start_span(name="foo-span") as span:
+        span.add_event("test-event", attributes={"foo": "bar"})
+
+    finished_spans = tracing_helper.exporter.get_finished_spans()
+    assert len(finished_spans) == 1
+    assert len(finished_spans[0].events) == 1
+    assert finished_spans[0].events[0].name == "test-event"
+    assert finished_spans[0].events[0].attributes["foo"] == "bar"

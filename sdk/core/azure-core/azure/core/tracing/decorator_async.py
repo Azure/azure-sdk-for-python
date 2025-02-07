@@ -108,7 +108,7 @@ def distributed_trace_async(  # pylint: disable=unused-argument
             merge_span = kwargs.pop("merge_span", False)
             passed_in_parent = kwargs.pop("parent_span", None)
 
-            # Assume this will be popped in DistributedTracingPolicy.
+            # This will be popped in the pipeline or transport runner.
             tracing_options: TracingOptions = kwargs.get("tracing_options", {})
             tracing_enabled = settings.tracing_enabled()
 
