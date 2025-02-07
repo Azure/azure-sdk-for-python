@@ -221,6 +221,8 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
     envelope.tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(span.context.trace_id)
     if SpanAttributes.ENDUSER_ID in span.attributes:
         envelope.tags[ContextTagKeys.AI_USER_ID] = span.attributes[SpanAttributes.ENDUSER_ID]
+    if SpanAttributes.SESSION_ID in span.attributes:
+        envelope.tags[ContextTagKeys.AI_SESSION_ID] = span.attributes[SpanAttributes.SESSION_ID]
     if span.parent and span.parent.span_id:
         envelope.tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(span.parent.span_id)
     if span.kind in (SpanKind.CONSUMER, SpanKind.SERVER):
