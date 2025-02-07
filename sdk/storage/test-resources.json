@@ -102,6 +102,7 @@
             },
             "kind": "StorageV2",
             "properties": {
+              "allowBlobPublicAccess": true,
                 "deleteRetentionPolicy": {
                     "enabled": true,
                     "days": 1
@@ -592,6 +593,10 @@
         "STORAGE_CONNECTION_STRING": {
           "type": "string",
           "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('primaryAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('primaryAccountName')), '2023-01-01').keys[0].value, ';EndpointSuffix=', parameters('endpointSuffix'))]"
+        },
+        "STORAGE_CONNECTION_STRING_SOFT": {
+          "type": "string",
+          "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('softDeleteAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('softDeleteAccountName')), '2023-01-01').keys[0].value, ';EndpointSuffix=', parameters('endpointSuffix'))]"
         },
         "OAUTH_STORAGE_ACCOUNT_NAME": {
             "type": "string",
