@@ -14,7 +14,7 @@ import pytest_asyncio
 
 from azure.cosmos.aio._container import ContainerProxy
 from azure.cosmos.aio._database import DatabaseProxy
-import azure.cosmos.exceptions as exceptions
+from azure.cosmos.exceptions import CosmosHttpResponseError
 import test_config
 from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient, _retry_utility_async
@@ -44,20 +44,19 @@ def setup():
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestDummyAsync:
-    logger = logger
 
     async def cleanup(self, initializedObjects: dict[str, Any]):
         created_database: DatabaseProxy = initializedObjects["db"]
         try:
             await created_database.delete_container(initializedObjects["col"])
         except Exception as containerDeleteError:    
-            self.logger.warn("Exception trying to delete database {}. {}".format(created_database.id, containerDeleteError))
+            logger.warn("Exception trying to delete database {}. {}".format(created_database.id, containerDeleteError))
         finally:    
             client: CosmosClient = initializedObjects["client"]
             try:
                 await client.close()
             except Exception as closeError:    
-                self.logger.warn("Exception trying to delete database {}. {}".format(created_database.id, closeError))
+                logger.warn("Exception trying to delete database {}. {}".format(created_database.id, closeError))
 
     async def setup(self, custom_transport: AioHttpTransport):
 
@@ -75,15 +74,62 @@ class TestDummyAsync:
                 "tests.")
 
         client = CosmosClient(host, masterKey, consistency_level="Session",
-                            connection_policy=connectionPolicy, transport=custom_transport)
+                            connection_policy=connectionPolicy, transport=custom_transport,
+                            logger=logger)
         created_database: DatabaseProxy = client.get_database_client(TEST_DATABASE_ID)
         created_collection = await created_database.create_container(TEST_CONTAINER_SINGLE_PARTITION_ID,
                                                                     partition_key=PartitionKey("/pk"))
         return {"client": client, "db": created_database, "col": created_collection}
 
+    def predicate_url_contains_id(self, r: HttpRequest, id: str):
+        logger.info("FaultPredicate for request {} {}".format(r.method, r.url));
+        return  id in r.url;   
+
+    def predicate_req_payload_contains_id(self, r: HttpRequest, id: str):
+        logger.info("FaultPredicate for request {} {} - request payload {}".format(
+            r.method, 
+            r.url,
+            "NONE" if r.body is None else r.body));
+        
+        if (r.body == None):
+            return False
+        
+        
+        return  '"id":"{}"'.format(id) in r.body;       
+
+    async def throw_after_delay(self, delayInMs: int, error: Exception):
+        await asyncio.sleep(delayInMs/1000.0)
+        raise error
+
     async def test_throws_injected_error(self, setup):
+        idValue: str = str(uuid.uuid4())
+        document_definition = {'id': idValue,
+                               'pk': idValue,
+                               'name': 'sample document',
+                               'key': 'value'}
+
         custom_transport = FaulInjectionTransport(logger)
-        idValue: str = 'failoverDoc-' + str(uuid.uuid4())
+        predicate : Callable[[HttpRequest], bool] = lambda r: self.predicate_req_payload_contains_id(r, idValue) 
+        custom_transport.addFault(predicate, lambda: self.throw_after_delay(
+            500,
+            CosmosHttpResponseError(
+                status_code=502,
+                message="Some random reverse proxy error.")))
+
+        initializedObjects = await self.setup(custom_transport)
+        try:
+            container: ContainerProxy = initializedObjects["col"]
+            await container.create_item(body=document_definition)
+            pytest.fail("Expected exception not thrown")      
+        except CosmosHttpResponseError as cosmosError:
+            if (cosmosError.status_code != 502):
+                raise cosmosError
+        finally:
+            await self.cleanup(initializedObjects)
+
+    async def test_succeeds_with_multiple_endpoints(self, setup):
+        custom_transport = FaulInjectionTransport(logger)
+        idValue: str = str(uuid.uuid4())
         document_definition = {'id': idValue,
                                'pk': idValue,
                                'name': 'sample document',
@@ -96,12 +142,12 @@ class TestDummyAsync:
             created_document = await container.create_item(body=document_definition)
             start = time.perf_counter()
             
-            while ((time.perf_counter() - start) < 7):
+            while ((time.perf_counter() - start) < 2):
                 await container.read_item(idValue, partition_key=idValue)
-                await asyncio.sleep(2)
+                await asyncio.sleep(0.2)
 
         finally:
-            self.cleanup(initializedObjects)
+            await self.cleanup(initializedObjects)        
 
 
 class FaulInjectionTransport(AioHttpTransport):
@@ -135,8 +181,9 @@ class FaulInjectionTransport(AioHttpTransport):
         # find the first fault Factory with matching predicate if any
         firstFaultFactory = self.firstItem(iter(self.faults), lambda f: f["predicate"](request))
         if (firstFaultFactory != None):
-            self.logger.info("")
-            return await firstFaultFactory["apply"]()
+            injectedError = await firstFaultFactory["apply"]()
+            self.logger.info("Found to-be-injected error {}".format(injectedError))
+            raise injectedError
 
         # apply the chain of request transformations with matching predicates if any
         matchingRequestTransformations = filter(lambda f: f["predicate"](f["predicate"]), iter(self.requestTransformations))
