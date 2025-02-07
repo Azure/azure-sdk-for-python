@@ -515,7 +515,7 @@ def test_default_azure_credential_constructor_env_var_lowercases():
 
 
 def test_default_azure_credential_constructor_with_param():
-    credential = DefaultAzureCredential(default_credential_allow_list=["ENVIRONMENT","CLI"])
+    credential = DefaultAzureCredential(default_credential_allow_list=["ENVIRONMENT", "CLI"])
     assert len(credential.credentials) == 2
     assert isinstance(credential.credentials[0], EnvironmentCredential)
     assert isinstance(credential.credentials[1], AzureCliCredential)
