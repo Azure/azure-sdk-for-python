@@ -1,5 +1,787 @@
 # Release History
 
+## 1.0.0 (2025-02-24)
+
+### Features Added
+
+  - Model `Asset` added parameter `kwargs` in method `as_dict`
+  - Model `Asset` added method `deserialize`
+  - Model `Asset` added method `enable_additional_properties_sending`
+  - Model `Asset` added method `from_dict`
+  - Model `Asset` added method `is_xml_model`
+  - Model `Asset` added method `serialize`
+  - Model `Asset` added property `additional_properties`
+  - Model `AssetEndpointProfile` added parameter `kwargs` in method `as_dict`
+  - Model `AssetEndpointProfile` added method `deserialize`
+  - Model `AssetEndpointProfile` added method `enable_additional_properties_sending`
+  - Model `AssetEndpointProfile` added method `from_dict`
+  - Model `AssetEndpointProfile` added method `is_xml_model`
+  - Model `AssetEndpointProfile` added method `serialize`
+  - Model `AssetEndpointProfile` added property `additional_properties`
+  - Model `AssetEndpointProfileProperties` added parameter `kwargs` in method `as_dict`
+  - Model `AssetEndpointProfileProperties` added method `deserialize`
+  - Model `AssetEndpointProfileProperties` added method `enable_additional_properties_sending`
+  - Model `AssetEndpointProfileProperties` added method `from_dict`
+  - Model `AssetEndpointProfileProperties` added method `is_xml_model`
+  - Model `AssetEndpointProfileProperties` added method `serialize`
+  - Model `AssetEndpointProfileProperties` added property `additional_properties`
+  - Model `AssetEndpointProfileStatus` added parameter `kwargs` in method `as_dict`
+  - Model `AssetEndpointProfileStatus` added method `deserialize`
+  - Model `AssetEndpointProfileStatus` added method `enable_additional_properties_sending`
+  - Model `AssetEndpointProfileStatus` added method `from_dict`
+  - Model `AssetEndpointProfileStatus` added method `is_xml_model`
+  - Model `AssetEndpointProfileStatus` added method `serialize`
+  - Model `AssetEndpointProfileStatus` added property `additional_properties`
+  - Model `AssetEndpointProfileStatusError` added parameter `kwargs` in method `as_dict`
+  - Model `AssetEndpointProfileStatusError` added method `deserialize`
+  - Model `AssetEndpointProfileStatusError` added method `enable_additional_properties_sending`
+  - Model `AssetEndpointProfileStatusError` added method `from_dict`
+  - Model `AssetEndpointProfileStatusError` added method `is_xml_model`
+  - Model `AssetEndpointProfileStatusError` added method `serialize`
+  - Model `AssetEndpointProfileStatusError` added property `additional_properties`
+  - Model `AssetEndpointProfileUpdate` added parameter `kwargs` in method `as_dict`
+  - Model `AssetEndpointProfileUpdate` added method `deserialize`
+  - Model `AssetEndpointProfileUpdate` added method `enable_additional_properties_sending`
+  - Model `AssetEndpointProfileUpdate` added method `from_dict`
+  - Model `AssetEndpointProfileUpdate` added method `is_xml_model`
+  - Model `AssetEndpointProfileUpdate` added method `serialize`
+  - Model `AssetEndpointProfileUpdate` added property `additional_properties`
+  - Model `AssetEndpointProfileUpdateProperties` added parameter `kwargs` in method `as_dict`
+  - Model `AssetEndpointProfileUpdateProperties` added method `deserialize`
+  - Model `AssetEndpointProfileUpdateProperties` added method `enable_additional_properties_sending`
+  - Model `AssetEndpointProfileUpdateProperties` added method `from_dict`
+  - Model `AssetEndpointProfileUpdateProperties` added method `is_xml_model`
+  - Model `AssetEndpointProfileUpdateProperties` added method `serialize`
+  - Model `AssetEndpointProfileUpdateProperties` added property `additional_properties`
+  - Model `AssetProperties` added parameter `kwargs` in method `as_dict`
+  - Model `AssetProperties` added method `deserialize`
+  - Model `AssetProperties` added method `enable_additional_properties_sending`
+  - Model `AssetProperties` added method `from_dict`
+  - Model `AssetProperties` added method `is_xml_model`
+  - Model `AssetProperties` added method `serialize`
+  - Model `AssetProperties` added property `additional_properties`
+  - Model `AssetStatus` added parameter `kwargs` in method `as_dict`
+  - Model `AssetStatus` added method `deserialize`
+  - Model `AssetStatus` added method `enable_additional_properties_sending`
+  - Model `AssetStatus` added method `from_dict`
+  - Model `AssetStatus` added method `is_xml_model`
+  - Model `AssetStatus` added method `serialize`
+  - Model `AssetStatus` added property `additional_properties`
+  - Model `AssetStatusDataset` added parameter `kwargs` in method `as_dict`
+  - Model `AssetStatusDataset` added method `deserialize`
+  - Model `AssetStatusDataset` added method `enable_additional_properties_sending`
+  - Model `AssetStatusDataset` added method `from_dict`
+  - Model `AssetStatusDataset` added method `is_xml_model`
+  - Model `AssetStatusDataset` added method `serialize`
+  - Model `AssetStatusDataset` added property `additional_properties`
+  - Model `AssetStatusError` added parameter `kwargs` in method `as_dict`
+  - Model `AssetStatusError` added method `deserialize`
+  - Model `AssetStatusError` added method `enable_additional_properties_sending`
+  - Model `AssetStatusError` added method `from_dict`
+  - Model `AssetStatusError` added method `is_xml_model`
+  - Model `AssetStatusError` added method `serialize`
+  - Model `AssetStatusError` added property `additional_properties`
+  - Model `AssetStatusEvent` added parameter `kwargs` in method `as_dict`
+  - Model `AssetStatusEvent` added method `deserialize`
+  - Model `AssetStatusEvent` added method `enable_additional_properties_sending`
+  - Model `AssetStatusEvent` added method `from_dict`
+  - Model `AssetStatusEvent` added method `is_xml_model`
+  - Model `AssetStatusEvent` added method `serialize`
+  - Model `AssetStatusEvent` added property `additional_properties`
+  - Model `AssetUpdate` added parameter `kwargs` in method `as_dict`
+  - Model `AssetUpdate` added method `deserialize`
+  - Model `AssetUpdate` added method `enable_additional_properties_sending`
+  - Model `AssetUpdate` added method `from_dict`
+  - Model `AssetUpdate` added method `is_xml_model`
+  - Model `AssetUpdate` added method `serialize`
+  - Model `AssetUpdate` added property `additional_properties`
+  - Model `AssetUpdateProperties` added parameter `kwargs` in method `as_dict`
+  - Model `AssetUpdateProperties` added method `deserialize`
+  - Model `AssetUpdateProperties` added method `enable_additional_properties_sending`
+  - Model `AssetUpdateProperties` added method `from_dict`
+  - Model `AssetUpdateProperties` added method `is_xml_model`
+  - Model `AssetUpdateProperties` added method `serialize`
+  - Model `AssetUpdateProperties` added property `additional_properties`
+  - Model `Authentication` added parameter `kwargs` in method `as_dict`
+  - Model `Authentication` added method `deserialize`
+  - Model `Authentication` added method `enable_additional_properties_sending`
+  - Model `Authentication` added method `from_dict`
+  - Model `Authentication` added method `is_xml_model`
+  - Model `Authentication` added method `serialize`
+  - Model `Authentication` added property `additional_properties`
+  - Model `BillingContainer` added parameter `kwargs` in method `as_dict`
+  - Model `BillingContainer` added method `deserialize`
+  - Model `BillingContainer` added method `enable_additional_properties_sending`
+  - Model `BillingContainer` added method `from_dict`
+  - Model `BillingContainer` added method `is_xml_model`
+  - Model `BillingContainer` added method `serialize`
+  - Model `BillingContainer` added property `additional_properties`
+  - Model `BillingContainerProperties` added parameter `kwargs` in method `as_dict`
+  - Model `BillingContainerProperties` added method `deserialize`
+  - Model `BillingContainerProperties` added method `enable_additional_properties_sending`
+  - Model `BillingContainerProperties` added method `from_dict`
+  - Model `BillingContainerProperties` added method `is_xml_model`
+  - Model `BillingContainerProperties` added method `serialize`
+  - Model `BillingContainerProperties` added property `additional_properties`
+  - Model `DataPoint` added parameter `kwargs` in method `as_dict`
+  - Model `DataPoint` added method `deserialize`
+  - Model `DataPoint` added method `enable_additional_properties_sending`
+  - Model `DataPoint` added method `from_dict`
+  - Model `DataPoint` added method `is_xml_model`
+  - Model `DataPoint` added method `serialize`
+  - Model `DataPoint` added property `additional_properties`
+  - Model `DataPointBase` added parameter `kwargs` in method `as_dict`
+  - Model `DataPointBase` added method `deserialize`
+  - Model `DataPointBase` added method `enable_additional_properties_sending`
+  - Model `DataPointBase` added method `from_dict`
+  - Model `DataPointBase` added method `is_xml_model`
+  - Model `DataPointBase` added method `serialize`
+  - Model `DataPointBase` added property `additional_properties`
+  - Model `Dataset` added parameter `kwargs` in method `as_dict`
+  - Model `Dataset` added method `deserialize`
+  - Model `Dataset` added method `enable_additional_properties_sending`
+  - Model `Dataset` added method `from_dict`
+  - Model `Dataset` added method `is_xml_model`
+  - Model `Dataset` added method `serialize`
+  - Model `Dataset` added property `additional_properties`
+  - Model `ErrorAdditionalInfo` added parameter `kwargs` in method `as_dict`
+  - Model `ErrorAdditionalInfo` added method `deserialize`
+  - Model `ErrorAdditionalInfo` added method `enable_additional_properties_sending`
+  - Model `ErrorAdditionalInfo` added method `from_dict`
+  - Model `ErrorAdditionalInfo` added method `is_xml_model`
+  - Model `ErrorAdditionalInfo` added method `serialize`
+  - Model `ErrorAdditionalInfo` added property `additional_properties`
+  - Model `ErrorDetail` added parameter `kwargs` in method `as_dict`
+  - Model `ErrorDetail` added method `deserialize`
+  - Model `ErrorDetail` added method `enable_additional_properties_sending`
+  - Model `ErrorDetail` added method `from_dict`
+  - Model `ErrorDetail` added method `is_xml_model`
+  - Model `ErrorDetail` added method `serialize`
+  - Model `ErrorDetail` added property `additional_properties`
+  - Model `ErrorResponse` added parameter `kwargs` in method `as_dict`
+  - Model `ErrorResponse` added method `deserialize`
+  - Model `ErrorResponse` added method `enable_additional_properties_sending`
+  - Model `ErrorResponse` added method `from_dict`
+  - Model `ErrorResponse` added method `is_xml_model`
+  - Model `ErrorResponse` added method `serialize`
+  - Model `ErrorResponse` added property `additional_properties`
+  - Model `Event` added parameter `kwargs` in method `as_dict`
+  - Model `Event` added method `deserialize`
+  - Model `Event` added method `enable_additional_properties_sending`
+  - Model `Event` added method `from_dict`
+  - Model `Event` added method `is_xml_model`
+  - Model `Event` added method `serialize`
+  - Model `Event` added property `additional_properties`
+  - Model `EventBase` added parameter `kwargs` in method `as_dict`
+  - Model `EventBase` added method `deserialize`
+  - Model `EventBase` added method `enable_additional_properties_sending`
+  - Model `EventBase` added method `from_dict`
+  - Model `EventBase` added method `is_xml_model`
+  - Model `EventBase` added method `serialize`
+  - Model `EventBase` added property `additional_properties`
+  - Model `ExtendedLocation` added parameter `kwargs` in method `as_dict`
+  - Model `ExtendedLocation` added method `deserialize`
+  - Model `ExtendedLocation` added method `enable_additional_properties_sending`
+  - Model `ExtendedLocation` added method `from_dict`
+  - Model `ExtendedLocation` added method `is_xml_model`
+  - Model `ExtendedLocation` added method `serialize`
+  - Model `ExtendedLocation` added property `additional_properties`
+  - Model `MessageSchemaReference` added parameter `kwargs` in method `as_dict`
+  - Model `MessageSchemaReference` added method `deserialize`
+  - Model `MessageSchemaReference` added method `enable_additional_properties_sending`
+  - Model `MessageSchemaReference` added method `from_dict`
+  - Model `MessageSchemaReference` added method `is_xml_model`
+  - Model `MessageSchemaReference` added method `serialize`
+  - Model `MessageSchemaReference` added property `additional_properties`
+  - Model `Operation` added parameter `kwargs` in method `as_dict`
+  - Model `Operation` added method `deserialize`
+  - Model `Operation` added method `enable_additional_properties_sending`
+  - Model `Operation` added method `from_dict`
+  - Model `Operation` added method `is_xml_model`
+  - Model `Operation` added method `serialize`
+  - Model `Operation` added property `additional_properties`
+  - Model `OperationDisplay` added parameter `kwargs` in method `as_dict`
+  - Model `OperationDisplay` added method `deserialize`
+  - Model `OperationDisplay` added method `enable_additional_properties_sending`
+  - Model `OperationDisplay` added method `from_dict`
+  - Model `OperationDisplay` added method `is_xml_model`
+  - Model `OperationDisplay` added method `serialize`
+  - Model `OperationDisplay` added property `additional_properties`
+  - Model `OperationStatusResult` added parameter `kwargs` in method `as_dict`
+  - Model `OperationStatusResult` added method `deserialize`
+  - Model `OperationStatusResult` added method `enable_additional_properties_sending`
+  - Model `OperationStatusResult` added method `from_dict`
+  - Model `OperationStatusResult` added method `is_xml_model`
+  - Model `OperationStatusResult` added method `serialize`
+  - Model `OperationStatusResult` added property `resource_id`
+  - Model `OperationStatusResult` added property `additional_properties`
+  - Model `ProxyResource` added parameter `kwargs` in method `as_dict`
+  - Model `ProxyResource` added method `deserialize`
+  - Model `ProxyResource` added method `enable_additional_properties_sending`
+  - Model `ProxyResource` added method `from_dict`
+  - Model `ProxyResource` added method `is_xml_model`
+  - Model `ProxyResource` added method `serialize`
+  - Model `ProxyResource` added property `additional_properties`
+  - Model `Resource` added parameter `kwargs` in method `as_dict`
+  - Model `Resource` added method `deserialize`
+  - Model `Resource` added method `enable_additional_properties_sending`
+  - Model `Resource` added method `from_dict`
+  - Model `Resource` added method `is_xml_model`
+  - Model `Resource` added method `serialize`
+  - Model `Resource` added property `additional_properties`
+  - Model `SystemData` added parameter `kwargs` in method `as_dict`
+  - Model `SystemData` added method `deserialize`
+  - Model `SystemData` added method `enable_additional_properties_sending`
+  - Model `SystemData` added method `from_dict`
+  - Model `SystemData` added method `is_xml_model`
+  - Model `SystemData` added method `serialize`
+  - Model `SystemData` added property `additional_properties`
+  - Model `Topic` added parameter `kwargs` in method `as_dict`
+  - Model `Topic` added method `deserialize`
+  - Model `Topic` added method `enable_additional_properties_sending`
+  - Model `Topic` added method `from_dict`
+  - Model `Topic` added method `is_xml_model`
+  - Model `Topic` added method `serialize`
+  - Model `Topic` added property `additional_properties`
+  - Model `TrackedResource` added parameter `kwargs` in method `as_dict`
+  - Model `TrackedResource` added method `deserialize`
+  - Model `TrackedResource` added method `enable_additional_properties_sending`
+  - Model `TrackedResource` added method `from_dict`
+  - Model `TrackedResource` added method `is_xml_model`
+  - Model `TrackedResource` added method `serialize`
+  - Model `TrackedResource` added property `additional_properties`
+  - Model `UsernamePasswordCredentials` added parameter `kwargs` in method `as_dict`
+  - Model `UsernamePasswordCredentials` added method `deserialize`
+  - Model `UsernamePasswordCredentials` added method `enable_additional_properties_sending`
+  - Model `UsernamePasswordCredentials` added method `from_dict`
+  - Model `UsernamePasswordCredentials` added method `is_xml_model`
+  - Model `UsernamePasswordCredentials` added method `serialize`
+  - Model `UsernamePasswordCredentials` added property `additional_properties`
+  - Model `X509Credentials` added parameter `kwargs` in method `as_dict`
+  - Model `X509Credentials` added method `deserialize`
+  - Model `X509Credentials` added method `enable_additional_properties_sending`
+  - Model `X509Credentials` added method `from_dict`
+  - Model `X509Credentials` added method `is_xml_model`
+  - Model `X509Credentials` added method `serialize`
+  - Model `X509Credentials` added property `additional_properties`
+  - Added model `AssetEndpointProfileListResult`
+  - Added model `AssetListResult`
+  - Added model `AuthenticationUpdate`
+  - Added model `BillingContainerListResult`
+  - Added model `OperationListResult`
+  - Added model `TopicUpdate`
+  - Added model `UsernamePasswordCredentialsUpdate`
+  - Added model `X509CredentialsUpdate`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `DeviceRegistryMgmtClient.discovered_assets`
+  - Deleted or renamed client operation group `DeviceRegistryMgmtClient.discovered_asset_endpoint_profiles`
+  - Deleted or renamed client operation group `DeviceRegistryMgmtClient.schema_registries`
+  - Deleted or renamed client operation group `DeviceRegistryMgmtClient.schemas`
+  - Deleted or renamed client operation group `DeviceRegistryMgmtClient.schema_versions`
+  - Deleted or renamed client method `DeviceRegistryMgmtClient.send_request`
+  - Method `Asset.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `Asset.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `Asset.clear`
+  - Deleted or renamed method `Asset.copy`
+  - Deleted or renamed method `Asset.get`
+  - Deleted or renamed method `Asset.items`
+  - Deleted or renamed method `Asset.keys`
+  - Deleted or renamed method `Asset.pop`
+  - Deleted or renamed method `Asset.popitem`
+  - Deleted or renamed method `Asset.setdefault`
+  - Deleted or renamed method `Asset.update`
+  - Deleted or renamed method `Asset.values`
+  - Method `AssetEndpointProfile.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AssetEndpointProfile.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AssetEndpointProfile.clear`
+  - Deleted or renamed method `AssetEndpointProfile.copy`
+  - Deleted or renamed method `AssetEndpointProfile.get`
+  - Deleted or renamed method `AssetEndpointProfile.items`
+  - Deleted or renamed method `AssetEndpointProfile.keys`
+  - Deleted or renamed method `AssetEndpointProfile.pop`
+  - Deleted or renamed method `AssetEndpointProfile.popitem`
+  - Deleted or renamed method `AssetEndpointProfile.setdefault`
+  - Deleted or renamed method `AssetEndpointProfile.update`
+  - Deleted or renamed method `AssetEndpointProfile.values`
+  - Method `AssetEndpointProfileProperties.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AssetEndpointProfileProperties.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AssetEndpointProfileProperties.clear`
+  - Deleted or renamed method `AssetEndpointProfileProperties.copy`
+  - Deleted or renamed method `AssetEndpointProfileProperties.get`
+  - Deleted or renamed method `AssetEndpointProfileProperties.items`
+  - Deleted or renamed method `AssetEndpointProfileProperties.keys`
+  - Deleted or renamed method `AssetEndpointProfileProperties.pop`
+  - Deleted or renamed method `AssetEndpointProfileProperties.popitem`
+  - Deleted or renamed method `AssetEndpointProfileProperties.setdefault`
+  - Deleted or renamed method `AssetEndpointProfileProperties.update`
+  - Deleted or renamed method `AssetEndpointProfileProperties.values`
+  - Method `AssetEndpointProfileStatus.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AssetEndpointProfileStatus.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AssetEndpointProfileStatus.clear`
+  - Deleted or renamed method `AssetEndpointProfileStatus.copy`
+  - Deleted or renamed method `AssetEndpointProfileStatus.get`
+  - Deleted or renamed method `AssetEndpointProfileStatus.items`
+  - Deleted or renamed method `AssetEndpointProfileStatus.keys`
+  - Deleted or renamed method `AssetEndpointProfileStatus.pop`
+  - Deleted or renamed method `AssetEndpointProfileStatus.popitem`
+  - Deleted or renamed method `AssetEndpointProfileStatus.setdefault`
+  - Deleted or renamed method `AssetEndpointProfileStatus.update`
+  - Deleted or renamed method `AssetEndpointProfileStatus.values`
+  - Method `AssetEndpointProfileStatusError.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AssetEndpointProfileStatusError.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AssetEndpointProfileStatusError.clear`
+  - Deleted or renamed method `AssetEndpointProfileStatusError.copy`
+  - Deleted or renamed method `AssetEndpointProfileStatusError.get`
+  - Deleted or renamed method `AssetEndpointProfileStatusError.items`
+  - Deleted or renamed method `AssetEndpointProfileStatusError.keys`
+  - Deleted or renamed method `AssetEndpointProfileStatusError.pop`
+  - Deleted or renamed method `AssetEndpointProfileStatusError.popitem`
+  - Deleted or renamed method `AssetEndpointProfileStatusError.setdefault`
+  - Deleted or renamed method `AssetEndpointProfileStatusError.update`
+  - Deleted or renamed method `AssetEndpointProfileStatusError.values`
+  - Method `AssetEndpointProfileUpdate.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AssetEndpointProfileUpdate.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AssetEndpointProfileUpdate.clear`
+  - Deleted or renamed method `AssetEndpointProfileUpdate.copy`
+  - Deleted or renamed method `AssetEndpointProfileUpdate.get`
+  - Deleted or renamed method `AssetEndpointProfileUpdate.items`
+  - Deleted or renamed method `AssetEndpointProfileUpdate.keys`
+  - Deleted or renamed method `AssetEndpointProfileUpdate.pop`
+  - Deleted or renamed method `AssetEndpointProfileUpdate.popitem`
+  - Deleted or renamed method `AssetEndpointProfileUpdate.setdefault`
+  - Deleted or renamed method `AssetEndpointProfileUpdate.update`
+  - Deleted or renamed method `AssetEndpointProfileUpdate.values`
+  - Method `AssetEndpointProfileUpdateProperties.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AssetEndpointProfileUpdateProperties.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AssetEndpointProfileUpdateProperties.clear`
+  - Deleted or renamed method `AssetEndpointProfileUpdateProperties.copy`
+  - Deleted or renamed method `AssetEndpointProfileUpdateProperties.get`
+  - Deleted or renamed method `AssetEndpointProfileUpdateProperties.items`
+  - Deleted or renamed method `AssetEndpointProfileUpdateProperties.keys`
+  - Deleted or renamed method `AssetEndpointProfileUpdateProperties.pop`
+  - Deleted or renamed method `AssetEndpointProfileUpdateProperties.popitem`
+  - Deleted or renamed method `AssetEndpointProfileUpdateProperties.setdefault`
+  - Deleted or renamed method `AssetEndpointProfileUpdateProperties.update`
+  - Deleted or renamed method `AssetEndpointProfileUpdateProperties.values`
+  - Method `AssetProperties.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AssetProperties.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AssetProperties.clear`
+  - Deleted or renamed method `AssetProperties.copy`
+  - Deleted or renamed method `AssetProperties.get`
+  - Deleted or renamed method `AssetProperties.items`
+  - Deleted or renamed method `AssetProperties.keys`
+  - Deleted or renamed method `AssetProperties.pop`
+  - Deleted or renamed method `AssetProperties.popitem`
+  - Deleted or renamed method `AssetProperties.setdefault`
+  - Deleted or renamed method `AssetProperties.update`
+  - Deleted or renamed method `AssetProperties.values`
+  - Method `AssetStatus.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AssetStatus.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AssetStatus.clear`
+  - Deleted or renamed method `AssetStatus.copy`
+  - Deleted or renamed method `AssetStatus.get`
+  - Deleted or renamed method `AssetStatus.items`
+  - Deleted or renamed method `AssetStatus.keys`
+  - Deleted or renamed method `AssetStatus.pop`
+  - Deleted or renamed method `AssetStatus.popitem`
+  - Deleted or renamed method `AssetStatus.setdefault`
+  - Deleted or renamed method `AssetStatus.update`
+  - Deleted or renamed method `AssetStatus.values`
+  - Method `AssetStatusDataset.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AssetStatusDataset.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AssetStatusDataset.clear`
+  - Deleted or renamed method `AssetStatusDataset.copy`
+  - Deleted or renamed method `AssetStatusDataset.get`
+  - Deleted or renamed method `AssetStatusDataset.items`
+  - Deleted or renamed method `AssetStatusDataset.keys`
+  - Deleted or renamed method `AssetStatusDataset.pop`
+  - Deleted or renamed method `AssetStatusDataset.popitem`
+  - Deleted or renamed method `AssetStatusDataset.setdefault`
+  - Deleted or renamed method `AssetStatusDataset.update`
+  - Deleted or renamed method `AssetStatusDataset.values`
+  - Method `AssetStatusError.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AssetStatusError.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AssetStatusError.clear`
+  - Deleted or renamed method `AssetStatusError.copy`
+  - Deleted or renamed method `AssetStatusError.get`
+  - Deleted or renamed method `AssetStatusError.items`
+  - Deleted or renamed method `AssetStatusError.keys`
+  - Deleted or renamed method `AssetStatusError.pop`
+  - Deleted or renamed method `AssetStatusError.popitem`
+  - Deleted or renamed method `AssetStatusError.setdefault`
+  - Deleted or renamed method `AssetStatusError.update`
+  - Deleted or renamed method `AssetStatusError.values`
+  - Method `AssetStatusEvent.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AssetStatusEvent.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AssetStatusEvent.clear`
+  - Deleted or renamed method `AssetStatusEvent.copy`
+  - Deleted or renamed method `AssetStatusEvent.get`
+  - Deleted or renamed method `AssetStatusEvent.items`
+  - Deleted or renamed method `AssetStatusEvent.keys`
+  - Deleted or renamed method `AssetStatusEvent.pop`
+  - Deleted or renamed method `AssetStatusEvent.popitem`
+  - Deleted or renamed method `AssetStatusEvent.setdefault`
+  - Deleted or renamed method `AssetStatusEvent.update`
+  - Deleted or renamed method `AssetStatusEvent.values`
+  - Method `AssetUpdate.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AssetUpdate.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AssetUpdate.clear`
+  - Deleted or renamed method `AssetUpdate.copy`
+  - Deleted or renamed method `AssetUpdate.get`
+  - Deleted or renamed method `AssetUpdate.items`
+  - Deleted or renamed method `AssetUpdate.keys`
+  - Deleted or renamed method `AssetUpdate.pop`
+  - Deleted or renamed method `AssetUpdate.popitem`
+  - Deleted or renamed method `AssetUpdate.setdefault`
+  - Deleted or renamed method `AssetUpdate.update`
+  - Deleted or renamed method `AssetUpdate.values`
+  - Method `AssetUpdateProperties.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `AssetUpdateProperties.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `AssetUpdateProperties.clear`
+  - Deleted or renamed method `AssetUpdateProperties.copy`
+  - Deleted or renamed method `AssetUpdateProperties.get`
+  - Deleted or renamed method `AssetUpdateProperties.items`
+  - Deleted or renamed method `AssetUpdateProperties.keys`
+  - Deleted or renamed method `AssetUpdateProperties.pop`
+  - Deleted or renamed method `AssetUpdateProperties.popitem`
+  - Deleted or renamed method `AssetUpdateProperties.setdefault`
+  - Deleted or renamed method `AssetUpdateProperties.update`
+  - Deleted or renamed method `AssetUpdateProperties.values`
+  - Method `Authentication.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `Authentication.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `Authentication.clear`
+  - Deleted or renamed method `Authentication.copy`
+  - Deleted or renamed method `Authentication.get`
+  - Deleted or renamed method `Authentication.items`
+  - Deleted or renamed method `Authentication.keys`
+  - Deleted or renamed method `Authentication.pop`
+  - Deleted or renamed method `Authentication.popitem`
+  - Deleted or renamed method `Authentication.setdefault`
+  - Deleted or renamed method `Authentication.update`
+  - Deleted or renamed method `Authentication.values`
+  - Method `BillingContainer.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `BillingContainer.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `BillingContainer.clear`
+  - Deleted or renamed method `BillingContainer.copy`
+  - Deleted or renamed method `BillingContainer.get`
+  - Deleted or renamed method `BillingContainer.items`
+  - Deleted or renamed method `BillingContainer.keys`
+  - Deleted or renamed method `BillingContainer.pop`
+  - Deleted or renamed method `BillingContainer.popitem`
+  - Deleted or renamed method `BillingContainer.setdefault`
+  - Deleted or renamed method `BillingContainer.update`
+  - Deleted or renamed method `BillingContainer.values`
+  - Method `BillingContainerProperties.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `BillingContainerProperties.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `BillingContainerProperties.clear`
+  - Deleted or renamed method `BillingContainerProperties.copy`
+  - Deleted or renamed method `BillingContainerProperties.get`
+  - Deleted or renamed method `BillingContainerProperties.items`
+  - Deleted or renamed method `BillingContainerProperties.keys`
+  - Deleted or renamed method `BillingContainerProperties.pop`
+  - Deleted or renamed method `BillingContainerProperties.popitem`
+  - Deleted or renamed method `BillingContainerProperties.setdefault`
+  - Deleted or renamed method `BillingContainerProperties.update`
+  - Deleted or renamed method `BillingContainerProperties.values`
+  - Method `DataPoint.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `DataPoint.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `DataPoint.clear`
+  - Deleted or renamed method `DataPoint.copy`
+  - Deleted or renamed method `DataPoint.get`
+  - Deleted or renamed method `DataPoint.items`
+  - Deleted or renamed method `DataPoint.keys`
+  - Deleted or renamed method `DataPoint.pop`
+  - Deleted or renamed method `DataPoint.popitem`
+  - Deleted or renamed method `DataPoint.setdefault`
+  - Deleted or renamed method `DataPoint.update`
+  - Deleted or renamed method `DataPoint.values`
+  - Method `DataPointBase.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `DataPointBase.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `DataPointBase.clear`
+  - Deleted or renamed method `DataPointBase.copy`
+  - Deleted or renamed method `DataPointBase.get`
+  - Deleted or renamed method `DataPointBase.items`
+  - Deleted or renamed method `DataPointBase.keys`
+  - Deleted or renamed method `DataPointBase.pop`
+  - Deleted or renamed method `DataPointBase.popitem`
+  - Deleted or renamed method `DataPointBase.setdefault`
+  - Deleted or renamed method `DataPointBase.update`
+  - Deleted or renamed method `DataPointBase.values`
+  - Method `Dataset.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `Dataset.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `Dataset.clear`
+  - Deleted or renamed method `Dataset.copy`
+  - Deleted or renamed method `Dataset.get`
+  - Deleted or renamed method `Dataset.items`
+  - Deleted or renamed method `Dataset.keys`
+  - Deleted or renamed method `Dataset.pop`
+  - Deleted or renamed method `Dataset.popitem`
+  - Deleted or renamed method `Dataset.setdefault`
+  - Deleted or renamed method `Dataset.update`
+  - Deleted or renamed method `Dataset.values`
+  - Method `ErrorAdditionalInfo.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ErrorAdditionalInfo.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ErrorAdditionalInfo.clear`
+  - Deleted or renamed method `ErrorAdditionalInfo.copy`
+  - Deleted or renamed method `ErrorAdditionalInfo.get`
+  - Deleted or renamed method `ErrorAdditionalInfo.items`
+  - Deleted or renamed method `ErrorAdditionalInfo.keys`
+  - Deleted or renamed method `ErrorAdditionalInfo.pop`
+  - Deleted or renamed method `ErrorAdditionalInfo.popitem`
+  - Deleted or renamed method `ErrorAdditionalInfo.setdefault`
+  - Deleted or renamed method `ErrorAdditionalInfo.update`
+  - Deleted or renamed method `ErrorAdditionalInfo.values`
+  - Method `ErrorDetail.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ErrorDetail.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ErrorDetail.clear`
+  - Deleted or renamed method `ErrorDetail.copy`
+  - Deleted or renamed method `ErrorDetail.get`
+  - Deleted or renamed method `ErrorDetail.items`
+  - Deleted or renamed method `ErrorDetail.keys`
+  - Deleted or renamed method `ErrorDetail.pop`
+  - Deleted or renamed method `ErrorDetail.popitem`
+  - Deleted or renamed method `ErrorDetail.setdefault`
+  - Deleted or renamed method `ErrorDetail.update`
+  - Deleted or renamed method `ErrorDetail.values`
+  - Method `ErrorResponse.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ErrorResponse.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ErrorResponse.clear`
+  - Deleted or renamed method `ErrorResponse.copy`
+  - Deleted or renamed method `ErrorResponse.get`
+  - Deleted or renamed method `ErrorResponse.items`
+  - Deleted or renamed method `ErrorResponse.keys`
+  - Deleted or renamed method `ErrorResponse.pop`
+  - Deleted or renamed method `ErrorResponse.popitem`
+  - Deleted or renamed method `ErrorResponse.setdefault`
+  - Deleted or renamed method `ErrorResponse.update`
+  - Deleted or renamed method `ErrorResponse.values`
+  - Method `Event.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `Event.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `Event.clear`
+  - Deleted or renamed method `Event.copy`
+  - Deleted or renamed method `Event.get`
+  - Deleted or renamed method `Event.items`
+  - Deleted or renamed method `Event.keys`
+  - Deleted or renamed method `Event.pop`
+  - Deleted or renamed method `Event.popitem`
+  - Deleted or renamed method `Event.setdefault`
+  - Deleted or renamed method `Event.update`
+  - Deleted or renamed method `Event.values`
+  - Method `EventBase.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `EventBase.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `EventBase.clear`
+  - Deleted or renamed method `EventBase.copy`
+  - Deleted or renamed method `EventBase.get`
+  - Deleted or renamed method `EventBase.items`
+  - Deleted or renamed method `EventBase.keys`
+  - Deleted or renamed method `EventBase.pop`
+  - Deleted or renamed method `EventBase.popitem`
+  - Deleted or renamed method `EventBase.setdefault`
+  - Deleted or renamed method `EventBase.update`
+  - Deleted or renamed method `EventBase.values`
+  - Method `ExtendedLocation.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ExtendedLocation.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ExtendedLocation.clear`
+  - Deleted or renamed method `ExtendedLocation.copy`
+  - Deleted or renamed method `ExtendedLocation.get`
+  - Deleted or renamed method `ExtendedLocation.items`
+  - Deleted or renamed method `ExtendedLocation.keys`
+  - Deleted or renamed method `ExtendedLocation.pop`
+  - Deleted or renamed method `ExtendedLocation.popitem`
+  - Deleted or renamed method `ExtendedLocation.setdefault`
+  - Deleted or renamed method `ExtendedLocation.update`
+  - Deleted or renamed method `ExtendedLocation.values`
+  - Method `MessageSchemaReference.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `MessageSchemaReference.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `MessageSchemaReference.clear`
+  - Deleted or renamed method `MessageSchemaReference.copy`
+  - Deleted or renamed method `MessageSchemaReference.get`
+  - Deleted or renamed method `MessageSchemaReference.items`
+  - Deleted or renamed method `MessageSchemaReference.keys`
+  - Deleted or renamed method `MessageSchemaReference.pop`
+  - Deleted or renamed method `MessageSchemaReference.popitem`
+  - Deleted or renamed method `MessageSchemaReference.setdefault`
+  - Deleted or renamed method `MessageSchemaReference.update`
+  - Deleted or renamed method `MessageSchemaReference.values`
+  - Method `Operation.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `Operation.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `Operation.clear`
+  - Deleted or renamed method `Operation.copy`
+  - Deleted or renamed method `Operation.get`
+  - Deleted or renamed method `Operation.items`
+  - Deleted or renamed method `Operation.keys`
+  - Deleted or renamed method `Operation.pop`
+  - Deleted or renamed method `Operation.popitem`
+  - Deleted or renamed method `Operation.setdefault`
+  - Deleted or renamed method `Operation.update`
+  - Deleted or renamed method `Operation.values`
+  - Method `OperationDisplay.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `OperationDisplay.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `OperationDisplay.clear`
+  - Deleted or renamed method `OperationDisplay.copy`
+  - Deleted or renamed method `OperationDisplay.get`
+  - Deleted or renamed method `OperationDisplay.items`
+  - Deleted or renamed method `OperationDisplay.keys`
+  - Deleted or renamed method `OperationDisplay.pop`
+  - Deleted or renamed method `OperationDisplay.popitem`
+  - Deleted or renamed method `OperationDisplay.setdefault`
+  - Deleted or renamed method `OperationDisplay.update`
+  - Deleted or renamed method `OperationDisplay.values`
+  - Method `OperationStatusResult.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `OperationStatusResult.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `OperationStatusResult.clear`
+  - Deleted or renamed method `OperationStatusResult.copy`
+  - Deleted or renamed method `OperationStatusResult.get`
+  - Deleted or renamed method `OperationStatusResult.items`
+  - Deleted or renamed method `OperationStatusResult.keys`
+  - Deleted or renamed method `OperationStatusResult.pop`
+  - Deleted or renamed method `OperationStatusResult.popitem`
+  - Deleted or renamed method `OperationStatusResult.setdefault`
+  - Deleted or renamed method `OperationStatusResult.update`
+  - Deleted or renamed method `OperationStatusResult.values`
+  - Method `ProxyResource.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `ProxyResource.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `ProxyResource.clear`
+  - Deleted or renamed method `ProxyResource.copy`
+  - Deleted or renamed method `ProxyResource.get`
+  - Deleted or renamed method `ProxyResource.items`
+  - Deleted or renamed method `ProxyResource.keys`
+  - Deleted or renamed method `ProxyResource.pop`
+  - Deleted or renamed method `ProxyResource.popitem`
+  - Deleted or renamed method `ProxyResource.setdefault`
+  - Deleted or renamed method `ProxyResource.update`
+  - Deleted or renamed method `ProxyResource.values`
+  - Method `Resource.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `Resource.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `Resource.clear`
+  - Deleted or renamed method `Resource.copy`
+  - Deleted or renamed method `Resource.get`
+  - Deleted or renamed method `Resource.items`
+  - Deleted or renamed method `Resource.keys`
+  - Deleted or renamed method `Resource.pop`
+  - Deleted or renamed method `Resource.popitem`
+  - Deleted or renamed method `Resource.setdefault`
+  - Deleted or renamed method `Resource.update`
+  - Deleted or renamed method `Resource.values`
+  - Method `SystemData.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `SystemData.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `SystemData.clear`
+  - Deleted or renamed method `SystemData.copy`
+  - Deleted or renamed method `SystemData.get`
+  - Deleted or renamed method `SystemData.items`
+  - Deleted or renamed method `SystemData.keys`
+  - Deleted or renamed method `SystemData.pop`
+  - Deleted or renamed method `SystemData.popitem`
+  - Deleted or renamed method `SystemData.setdefault`
+  - Deleted or renamed method `SystemData.update`
+  - Deleted or renamed method `SystemData.values`
+  - Method `Topic.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `Topic.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `Topic.clear`
+  - Deleted or renamed method `Topic.copy`
+  - Deleted or renamed method `Topic.get`
+  - Deleted or renamed method `Topic.items`
+  - Deleted or renamed method `Topic.keys`
+  - Deleted or renamed method `Topic.pop`
+  - Deleted or renamed method `Topic.popitem`
+  - Deleted or renamed method `Topic.setdefault`
+  - Deleted or renamed method `Topic.update`
+  - Deleted or renamed method `Topic.values`
+  - Method `TrackedResource.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `TrackedResource.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `TrackedResource.clear`
+  - Deleted or renamed method `TrackedResource.copy`
+  - Deleted or renamed method `TrackedResource.get`
+  - Deleted or renamed method `TrackedResource.items`
+  - Deleted or renamed method `TrackedResource.keys`
+  - Deleted or renamed method `TrackedResource.pop`
+  - Deleted or renamed method `TrackedResource.popitem`
+  - Deleted or renamed method `TrackedResource.setdefault`
+  - Deleted or renamed method `TrackedResource.update`
+  - Deleted or renamed method `TrackedResource.values`
+  - Method `UsernamePasswordCredentials.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `UsernamePasswordCredentials.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `UsernamePasswordCredentials.clear`
+  - Deleted or renamed method `UsernamePasswordCredentials.copy`
+  - Deleted or renamed method `UsernamePasswordCredentials.get`
+  - Deleted or renamed method `UsernamePasswordCredentials.items`
+  - Deleted or renamed method `UsernamePasswordCredentials.keys`
+  - Deleted or renamed method `UsernamePasswordCredentials.pop`
+  - Deleted or renamed method `UsernamePasswordCredentials.popitem`
+  - Deleted or renamed method `UsernamePasswordCredentials.setdefault`
+  - Deleted or renamed method `UsernamePasswordCredentials.update`
+  - Deleted or renamed method `UsernamePasswordCredentials.values`
+  - Method `X509Credentials.as_dict` inserted a `positional_or_keyword` parameter `keep_readonly`
+  - Method `X509Credentials.as_dict` inserted a `positional_or_keyword` parameter `key_transformer`
+  - Deleted or renamed method `X509Credentials.clear`
+  - Deleted or renamed method `X509Credentials.copy`
+  - Deleted or renamed method `X509Credentials.get`
+  - Deleted or renamed method `X509Credentials.items`
+  - Deleted or renamed method `X509Credentials.keys`
+  - Deleted or renamed method `X509Credentials.pop`
+  - Deleted or renamed method `X509Credentials.popitem`
+  - Deleted or renamed method `X509Credentials.setdefault`
+  - Deleted or renamed method `X509Credentials.update`
+  - Deleted or renamed method `X509Credentials.values`
+  - Deleted or renamed model `DiscoveredAsset`
+  - Deleted or renamed model `DiscoveredAssetEndpointProfile`
+  - Deleted or renamed model `DiscoveredAssetEndpointProfileProperties`
+  - Deleted or renamed model `DiscoveredAssetEndpointProfileUpdate`
+  - Deleted or renamed model `DiscoveredAssetEndpointProfileUpdateProperties`
+  - Deleted or renamed model `DiscoveredAssetProperties`
+  - Deleted or renamed model `DiscoveredAssetUpdate`
+  - Deleted or renamed model `DiscoveredAssetUpdateProperties`
+  - Deleted or renamed model `DiscoveredDataPoint`
+  - Deleted or renamed model `DiscoveredDataset`
+  - Deleted or renamed model `DiscoveredEvent`
+  - Deleted or renamed model `Format`
+  - Deleted or renamed model `Schema`
+  - Deleted or renamed model `SchemaProperties`
+  - Deleted or renamed model `SchemaRegistry`
+  - Deleted or renamed model `SchemaRegistryProperties`
+  - Deleted or renamed model `SchemaRegistryUpdate`
+  - Deleted or renamed model `SchemaRegistryUpdateProperties`
+  - Deleted or renamed model `SchemaType`
+  - Deleted or renamed model `SchemaVersion`
+  - Deleted or renamed model `SchemaVersionProperties`
+  - Deleted or renamed model `SystemAssignedServiceIdentity`
+  - Deleted or renamed model `SystemAssignedServiceIdentityType`
+  - Deleted or renamed model `DiscoveredAssetEndpointProfilesOperations`
+  - Deleted or renamed model `DiscoveredAssetsOperations`
+  - Deleted or renamed model `SchemaRegistriesOperations`
+  - Deleted or renamed model `SchemaVersionsOperations`
+  - Deleted or renamed model `SchemasOperations`
+  - `Asset.__init__` had all overloads removed
+  - `AssetEndpointProfile.__init__` had all overloads removed
+  - `AssetEndpointProfileProperties.__init__` had all overloads removed
+  - `AssetEndpointProfileUpdate.__init__` had all overloads removed
+  - `AssetEndpointProfileUpdateProperties.__init__` had all overloads removed
+  - `AssetProperties.__init__` had all overloads removed
+  - `AssetUpdate.__init__` had all overloads removed
+  - `AssetUpdateProperties.__init__` had all overloads removed
+  - `Authentication.__init__` had all overloads removed
+  - `BillingContainer.__init__` had all overloads removed
+  - `DataPoint.__init__` had all overloads removed
+  - `DataPointBase.__init__` had all overloads removed
+  - `Dataset.__init__` had all overloads removed
+  - `ErrorResponse.__init__` had all overloads removed
+  - `Event.__init__` had all overloads removed
+  - `EventBase.__init__` had all overloads removed
+  - `ExtendedLocation.__init__` had all overloads removed
+  - `Operation.__init__` had all overloads removed
+  - `OperationStatusResult.__init__` had all overloads removed
+  - `SystemData.__init__` had all overloads removed
+  - `Topic.__init__` had all overloads removed
+  - `TrackedResource.__init__` had all overloads removed
+  - `UsernamePasswordCredentials.__init__` had all overloads removed
+  - `X509Credentials.__init__` had all overloads removed
+  - `AssetEndpointProfilesOperations.begin_create_or_replace` had an overload `def begin_create_or_replace(self: None, resource_group_name: str, asset_endpoint_profile_name: str, resource: JSON, content_type: str)` removed
+  - `AssetEndpointProfilesOperations.begin_update` had an overload `def begin_update(self: None, resource_group_name: str, asset_endpoint_profile_name: str, properties: JSON, content_type: str)` removed
+  - `AssetsOperations.begin_create_or_replace` had an overload `def begin_create_or_replace(self: None, resource_group_name: str, asset_name: str, resource: JSON, content_type: str)` removed
+  - `AssetsOperations.begin_update` had an overload `def begin_update(self: None, resource_group_name: str, asset_name: str, properties: JSON, content_type: str)` removed
+
 ## 1.0.0b2 (2024-12-16)
 
 ### Features Added
