@@ -13,7 +13,7 @@ from model_inference_test_base import (
 )
 
 from devtools_testutils import recorded_by_proxy
-from azure.core.exceptions import AzureError, ServiceRequestError
+from azure.core.exceptions import AzureError, ServiceRequestError, ResourceNotFoundError
 from azure.core.credentials import AzureKeyCredential
 
 
@@ -628,3 +628,33 @@ class TestChatCompletionsClient(ModelClientTestBase):
             assert "not found" in e.message.lower() or "not allowed" in e.message.lower()
         client.close()
         assert exception_caught
+
+    @ServicePreparerAOAIChatCompletions()
+    @recorded_by_proxy
+    def test_load_client_on_aoai_endpoint(self, **kwargs):
+
+        exception_caught = False
+        try:
+            _ = self._load_chat_client_on_aoai_endpoint(**kwargs)
+        except ResourceNotFoundError as e:
+            exception_caught = True
+            print(e)
+            assert "`load_client` function does not work on this endpoint" in e.message.lower()
+        assert exception_caught
+
+    @ServicePreparerAOAIChatCompletions()
+    @recorded_by_proxy
+    def test_get_model_info_on_aoai_endpoint(self, **kwargs):
+
+        with self._create_aoai_chat_client(**kwargs) as client:
+
+            exception_caught = False
+            try:
+                _ = client.get_model_info()
+            except ResourceNotFoundError as e:
+                exception_caught = True
+                print(e)
+                assert "model information is not available on this endpoint" in e.message.lower()
+
+            assert exception_caught
+

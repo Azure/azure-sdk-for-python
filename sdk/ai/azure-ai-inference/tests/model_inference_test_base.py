@@ -279,6 +279,11 @@ class ModelClientTestBase(AzureRecordedTestCase):
         endpoint, credential = self._load_chat_credentials_api_key(bad_key=bad_key, **kwargs)
         return sdk.load_client(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 
+    def _load_chat_client_on_aoai_endpoint(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
+        endpoint, credential, credential_scopes, api_version = self._load_aoai_chat_credentials(key_auth=True, bad_key=False, **kwargs)
+        return sdk.load_client(endpoint=endpoint, credential=credential, credential_scopes=credential_scopes,
+            api_version=api_version, logging_enable=LOGGING_ENABLED)
+
     async def _load_async_embeddings_client(self, *, bad_key: bool = False, **kwargs) -> async_sdk.EmbeddingsClient:
         endpoint, credential = self._load_embeddings_credentials_api_key(bad_key=bad_key, **kwargs)
         return await async_sdk.load_client(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
