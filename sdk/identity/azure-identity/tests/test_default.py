@@ -437,6 +437,13 @@ def test_validate_cloud_shell_credential_in_dac():
 
 
 def test_valid_allow_list():
+    valid_credentials = [
+        "ENVIRONMENT",
+        "MANAGED_IDENTITY",
+        "CLI",
+        "WORKLOAD_IDENTITY",
+        "DEVELOPER_CLI",
+    ]
     avail_credentials = {
         "ENVIRONMENT": "MockEnvironmentCredential",
         "MANAGED_IDENTITY": "MockManagedIdentityCredential",
@@ -445,7 +452,7 @@ def test_valid_allow_list():
         "DEVELOPER_CLI": "MockAzureDeveloperCliCredential",
     }
     az_dac = "ENVIRONMENT;CLI;MANAGED_IDENTITY"
-    cred_types = parse_azure_dac(az_dac)
+    cred_types = parse_azure_dac(az_dac, valid_credentials)
     credentials = resolve_credentials(cred_types, avail_credentials)
     expected_credentials = [
         "MockEnvironmentCredential",
@@ -456,23 +463,27 @@ def test_valid_allow_list():
 
 
 def test_invalid_credential_in_allow_list():
-    avail_credentials = {
-        "ENVIRONMENT": "MockEnvironmentCredential",
-    }
+    valid_credentials = ["ENVIRONMENT"]
     az_dac = "ENVIRONMENT;INVALID_CREDENTIAL"
-    cred_types = parse_azure_dac(az_dac)
     with pytest.raises(ValueError):
-        credentials = resolve_credentials(cred_types, avail_credentials)
+        cred_types = parse_azure_dac(az_dac, valid_credentials)
 
 
 def test_allow_list_with_trailing_semicolon():
+    valid_credentials = [
+        "ENVIRONMENT",
+        "MANAGED_IDENTITY",
+        "CLI",
+        "WORKLOAD_IDENTITY",
+        "DEVELOPER_CLI",
+    ]
     avail_credentials = {
         "ENVIRONMENT": "MockEnvironmentCredential",
         "MANAGED_IDENTITY": "MockManagedIdentityCredential",
         "CLI": "MockAzureCliCredential",
     }
     az_dac = "CLI;MANAGED_IDENTITY;"
-    cred_types = parse_azure_dac(az_dac)
+    cred_types = parse_azure_dac(az_dac, valid_credentials)
     credentials = resolve_credentials(cred_types, avail_credentials)
     expected_credentials = [
         "MockAzureCliCredential",
@@ -482,13 +493,20 @@ def test_allow_list_with_trailing_semicolon():
 
 
 def test_allow_list_with_extra_spaces():
+    valid_credentials = [
+        "ENVIRONMENT",
+        "MANAGED_IDENTITY",
+        "CLI",
+        "WORKLOAD_IDENTITY",
+        "DEVELOPER_CLI",
+    ]
     avail_credentials = {
         "ENVIRONMENT": "MockEnvironmentCredential",
         "MANAGED_IDENTITY": "MockManagedIdentityCredential",
         "CLI": "MockAzureCliCredential",
     }
     az_dac = "  ENVIRONMENT  ;  CLI  ; MANAGED_IDENTITY  "
-    cred_types = parse_azure_dac(az_dac)
+    cred_types = parse_azure_dac(az_dac, valid_credentials)
     credentials = resolve_credentials(cred_types, avail_credentials)
     expected_credentials = [
         "MockEnvironmentCredential",

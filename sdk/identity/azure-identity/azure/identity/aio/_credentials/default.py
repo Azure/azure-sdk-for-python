@@ -128,13 +128,16 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
         credentials: List[AsyncSupportsTokenInfo] = []
+        valid_credentials: List[str] = []
         avail_credentials: Dict[str, Any] = {}
         within_dac.set(True)
         if not exclude_environment_credential:
+            valid_credentials.append("ENVIRONMENT")
             env_cred = EnvironmentCredential(authority=authority, _within_dac=True, **kwargs)
             avail_credentials["ENVIRONMENT"] = env_cred
             credentials.append(env_cred)
         if not exclude_workload_identity_credential:
+            valid_credentials.append("WORKLOAD_IDENTITY")
             if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
                 client_id = workload_identity_client_id
                 workload_cred = WorkloadIdentityCredential(
@@ -146,6 +149,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 avail_credentials["WORKLOAD_IDENTITY"] = workload_cred
                 credentials.append(workload_cred)
         if not exclude_managed_identity_credential:
+            valid_credentials.append("MANAGED_IDENTITY")
             mi_cred = ManagedIdentityCredential(
                 client_id=managed_identity_client_id,
                 _exclude_workload_identity_credential=exclude_workload_identity_credential,
@@ -153,29 +157,34 @@ class DefaultAzureCredential(ChainedTokenCredential):
             )
             avail_credentials["MANAGED_IDENTITY"] = mi_cred
             credentials.append(mi_cred)
-        if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
-            try:
-                # username and/or tenant_id are only required when the cache contains tokens for multiple identities
-                shared_cache = SharedTokenCacheCredential(
-                    username=shared_cache_username, tenant_id=shared_cache_tenant_id, authority=authority, **kwargs
-                )
-                avail_credentials["SHARED_CACHE"] = shared_cache
-                credentials.append(shared_cache)
-            except Exception as ex:  # pylint:disable=broad-except
-                _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
+        if not exclude_shared_token_cache_credential:
+            valid_credentials.append("SHARED_CACHE")
+            if SharedTokenCacheCredential.supported():
+                try:
+                    # username and/or tenant_id are only required when the cache contains tokens for multiple identities
+                    shared_cache = SharedTokenCacheCredential(
+                        username=shared_cache_username, tenant_id=shared_cache_tenant_id, authority=authority, **kwargs
+                    )
+                    avail_credentials["SHARED_CACHE"] = shared_cache
+                    credentials.append(shared_cache)
+                except Exception as ex:  # pylint:disable=broad-except
+                    _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
             vscode_cred = VisualStudioCodeCredential(**vscode_args)
             avail_credentials["VISUAL_STUDIO_CODE"] = vscode_cred
             credentials.append(vscode_cred)
         if not exclude_cli_credential:
+            valid_credentials.append("CLI")
             cli_cred = AzureCliCredential(process_timeout=process_timeout)
             avail_credentials["CLI"] = cli_cred
             credentials.append(cli_cred)
         if not exclude_powershell_credential:
+            valid_credentials.append("POWERSHELL")
             ps_cred = AzurePowerShellCredential(process_timeout=process_timeout)
             avail_credentials["POWERSHELL"] = ps_cred
             credentials.append(ps_cred)
         if not exclude_developer_cli_credential:
+            valid_credentials.append("DEVELOPER_CLI")
             dev_cli_cred = AzureDeveloperCliCredential(process_timeout=process_timeout)
             avail_credentials["DEVELOPER_CLI"] = dev_cli_cred
             credentials.append(dev_cli_cred)
@@ -184,7 +193,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             default_credential_allow_list = os.environ.get("AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST")
             if default_credential_allow_list:
                 default_credential_allow_list = default_credential_allow_list.upper()
-                cred_types = parse_azure_dac(default_credential_allow_list)
+                cred_types = parse_azure_dac(default_credential_allow_list, valid_credentials)
         if cred_types:
             credentials = resolve_credentials(cred_types, avail_credentials)
         within_dac.set(False)
