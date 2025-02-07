@@ -4,7 +4,7 @@
 # cSpell:disable
 
 import unittest
-from unittest.mock import Mock
+from unittest.mock import patch, Mock
 
 from opentelemetry.sdk._logs import LogRecord
 from opentelemetry.sdk.trace import Event, ReadableSpan
@@ -21,12 +21,12 @@ from azure.monitor.opentelemetry.exporter._quickpulse._types import (
     _ExceptionData,
     _RequestData,
 )
-from azure.monitor.opentelemetry.exporter.export.trace import _utils as trace_utils
 
 
 class TestRequestData(unittest.TestCase):
 
-    def test_from_span_with_valid_data(self):
+    @patch("azure.monitor.opentelemetry.exporter.export.trace._utils._get_url_for_http_request")
+    def test_from_span_with_valid_data(self, utils_mock):
         span = Mock(spec=ReadableSpan)
         span.end_time = 2000000000
         span.start_time = 1000000000
@@ -36,7 +36,7 @@ class TestRequestData(unittest.TestCase):
             SpanAttributes.HTTP_STATUS_CODE: 200,
             "custom_attribute": "value"
         }
-        trace_utils._get_url_for_http_request = Mock(return_value="http://example.com")
+        utils_mock.return_value = "http://example.com"
 
         result = _RequestData._from_span(span)
 
@@ -47,7 +47,8 @@ class TestRequestData(unittest.TestCase):
         self.assertEqual(result.url, "http://example.com")
         self.assertEqual(result.custom_dimensions, span.attributes)
 
-    def test_from_span_with_error_status_code(self):
+    @patch("azure.monitor.opentelemetry.exporter.export.trace._utils._get_url_for_http_request")
+    def test_from_span_with_error_status_code(self, utils_mock):
         span = Mock(spec=ReadableSpan)
         span.end_time = 2000000000
         span.start_time = 1000000000
@@ -57,7 +58,7 @@ class TestRequestData(unittest.TestCase):
             SpanAttributes.HTTP_STATUS_CODE: 404,
             "custom_attribute": "value"
         }
-        trace_utils._get_url_for_http_request = Mock(return_value="http://example.com")
+        utils_mock.return_value = "http://example.com"
 
         result = _RequestData._from_span(span)
 
@@ -68,7 +69,8 @@ class TestRequestData(unittest.TestCase):
         self.assertEqual(result.url, "http://example.com")
         self.assertEqual(result.custom_dimensions, span.attributes)
 
-    def test_from_span_http_stable_semconv(self):
+    @patch("azure.monitor.opentelemetry.exporter.export.trace._utils._get_url_for_http_request")
+    def test_from_span_http_stable_semconv(self, utils_mock):
         span = Mock(spec=ReadableSpan)
         span.end_time = 2000000000
         span.start_time = 1000000000
@@ -78,7 +80,7 @@ class TestRequestData(unittest.TestCase):
             HTTP_RESPONSE_STATUS_CODE: 200,
             "custom_attribute": "value"
         }
-        trace_utils._get_url_for_http_request = Mock(return_value="http://example.com")
+        utils_mock.return_value = "http://example.com"
 
         result = _RequestData._from_span(span)
 

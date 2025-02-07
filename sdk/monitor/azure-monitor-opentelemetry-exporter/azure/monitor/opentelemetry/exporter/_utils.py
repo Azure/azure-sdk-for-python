@@ -73,7 +73,7 @@ def _is_attach_enabled():
     if _is_on_app_service():
         return isdir("/agents/python/")
     if _is_on_functions():
-        return environ.get(PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY) == "true"
+        return environ.get(_PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY) == "true"
     return False
 
 
