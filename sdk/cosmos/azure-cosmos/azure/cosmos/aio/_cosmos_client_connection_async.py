@@ -300,7 +300,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 **self._setup_kwargs
             )
             self._setup_kwargs['database_account'] = database_account
-            await self._global_endpoint_manager.force_refresh(self._setup_kwargs['database_account'])
+            await self._global_endpoint_manager.force_refresh_on_startup(self._setup_kwargs['database_account'])
         else:
             database_account = self._setup_kwargs['database_account']
 

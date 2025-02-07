@@ -53,6 +53,7 @@ class _GlobalEndpointManager(object):
             client.connection_policy.UseMultipleWriteLocations,
             self.refresh_time_interval_in_ms,
         )
+        self.health_check = True
         self.refresh_needed = False
         self.refresh_lock = asyncio.Lock()
         self.last_refresh_time = 0
@@ -85,12 +86,17 @@ class _GlobalEndpointManager(object):
     def can_use_multiple_write_locations(self, request):
         return self.location_cache.can_use_multiple_write_locations_for_request(request)
 
-    async def force_refresh(self, database_account):
+    async def force_refresh_on_startup(self, database_account):
         self.refresh_needed = True
+        self.health_check = False
         await self.refresh_endpoint_list(database_account)
 
     def update_location_cache(self):
         self.location_cache.update_location_cache()
+
+    async def endpoint_health_check(self, database_account, **kwargs):
+        self.health_check = True
+        await self.refresh_endpoint_list(database_account, **kwargs)
 
     async def refresh_endpoint_list(self, database_account, **kwargs):
         if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
@@ -114,16 +120,21 @@ class _GlobalEndpointManager(object):
             if self.location_cache.should_refresh_endpoints() or self.refresh_needed:
                 self.refresh_needed = False
                 self.last_refresh_time = self.location_cache.current_time_millis()
-                database_account = await self._GetDatabaseAccount(**kwargs)
-                self.location_cache.perform_on_database_account_read(database_account)
+                if self.health_check:
                 # this will perform getDatabaseAccount calls to check endpoint health
-                await self._endpoints_health_check(**kwargs)
+                # in background
+                    asyncio.ensure_future(self._endpoints_health_check(**kwargs))
+                else:
+                    database_account = await self._GetDatabaseAccount(**kwargs)
+                    self.location_cache.perform_on_database_account_read(database_account)
 
     async def _endpoints_health_check(self, **kwargs):
         """Gets the database account for each endpoint.
 
         Validating if the endpoint is healthy else marking it as unavailable.
         """
+        database_account = await self._GetDatabaseAccount(**kwargs)
+        self.location_cache.perform_on_database_account_read(database_account)
         all_endpoints = [self.location_cache.read_regional_endpoints[0]]
         all_endpoints.extend(self.location_cache.write_regional_endpoints)
         count = 0
