@@ -1057,9 +1057,8 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             try:
                 self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
             except ResourceNotFoundError as error:
-                raise ResourceNotFoundError(
-                    message="Model information is not available on this endpoint (`/info` route not supported)."
-                ) from error
+                error.message="Model information is not available on this endpoint (`/info` route not supported)."
+                raise error
 
         return self._model_info
 
@@ -1359,9 +1358,8 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             try:
                 self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
             except ResourceNotFoundError as error:
-                raise ResourceNotFoundError(
-                    message="Model information is not available on this endpoint (`/info` route not supported)."
-                ) from error
+                error.message="Model information is not available on this endpoint (`/info` route not supported)."
+                raise error
 
         return self._model_info
 
