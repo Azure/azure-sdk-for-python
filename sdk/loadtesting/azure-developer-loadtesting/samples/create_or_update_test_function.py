@@ -48,37 +48,25 @@ result = client.create_or_update_test(
         },
         "passFailCriteria": {
             "passFailMetrics": {
-                "condition1": {
-                    "clientmetric": "response_time_ms",
-                    "aggregate": "avg",
-                    "condition": ">",
-                    "value": 300
-                },
-                "condition2": {
-                    "clientmetric": "error",
-                    "aggregate": "percentage",
-                    "condition": ">",
-                    "value": 50
-                },
+                "condition1": {"clientmetric": "response_time_ms", "aggregate": "avg", "condition": ">", "value": 300},
+                "condition2": {"clientmetric": "error", "aggregate": "percentage", "condition": ">", "value": 50},
                 "condition3": {
                     "clientmetric": "latency",
                     "aggregate": "avg",
                     "condition": ">",
                     "value": 200,
-                    "requestName": "GetCustomerDetails"
-                }
+                    "requestName": "GetCustomerDetails",
+                },
             }
         },
         "secrets": {
             "secret1": {
                 "value": "https://sdk-testing-keyvault.vault.azure.net/secrets/sdk-secret",
-                "type": "AKV_SECRET_URI"
+                "type": "AKV_SECRET_URI",
             }
         },
-        "environmentVariables": {
-            "my-varaible": "value"
-        }
-    }
+        "environmentVariables": {"my-varaible": "value"},
+    },
 )
 
 print(result)
