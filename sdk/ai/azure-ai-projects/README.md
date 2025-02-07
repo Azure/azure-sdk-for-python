@@ -595,7 +595,7 @@ app = func.FunctionApp()
     connection="AzureWebJobsStorage")
 def foo(arguments: func.QueueMessage) -> None:
     """
-    The function, ansering question.
+    The function, answering question.
 
     :param arguments: The arguments, containing json serialized request.
     """
@@ -630,7 +630,7 @@ az functionapp create --resource-group your-resource-group --consumption-plan-lo
 ```
 
 This function writes data to the output queue and hence needs to be authenticated to Azure, so we will need to assign the function system identity and provide it `Storage Queue Data Contributor`. To do that in Azure portal select the function, located in `your-resource-group` resource group and in Settings>Identity, switch it on and click Save. After that assign the `Storage Queue Data Contributor` permission on storage account used by our function (`storage_account_already_present_in_resource_group` in the script above) for just assigned System Managed identity.
-**Note:** in python we need to provide the explicit queue connection. It is defined in the line `connection="AzureWebJobsStorage".`. `AzureWebJobsStorage` is a setting, which can be viewed in `function_name` Settings>Environment variables>AzureWebJobsStorage and will look like DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=storage_account_already_present_in_resource_group;AccountKey=xxxxx. Another option is to provide the Managed identity. In this case we will need to set `connection` to prefix, present in three environment variables. For example, `connection=STORAGE_CONNECTION` and the variables will be: `STORAGE_CONNECTION__clientId` (managed entity UUID), `STORAGE_CONNECTION__credebtial` ("managedidentity") and `STORAGE_CONNECTION__queueServiceUri` (the URI of storade account, for example https://storage_account_already_present_in_resource_group.queue.core.windows.net).
+**Note:** in python we need to provide the explicit queue connection. It is defined in the line `connection="AzureWebJobsStorage".`. `AzureWebJobsStorage` is a setting, which can be viewed in `function_name` Settings>Environment variables>AzureWebJobsStorage and will look like DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=storage_account_already_present_in_resource_group;AccountKey=xxxxx. Another option is to provide the Managed identity. In this case we will need to set `connection` to prefix, present in three environment variables. For example, `connection=STORAGE_CONNECTION` and the variables will be: `STORAGE_CONNECTION__clientId` (managed entity UUID), `STORAGE_CONNECTION__credential` ("managedidentity") and `STORAGE_CONNECTION__queueServiceUri` (the URI of storage account, for example https://storage_account_already_present_in_resource_group.queue.core.windows.net).
 
 Now we will create the function itself. Install [.NET](https://dotnet.microsoft.com/download) and [Core Tools](https://go.microsoft.com/fwlink/?linkid=2174087) and create the function project using next commands. 
 ```
@@ -651,7 +651,7 @@ Rename function_app.py to foo.py and replace the content with the code above. To
 func azure functionapp publish function_name
 ```
 
-In the `storage_account_already_present_in_resource_group` select the `Queue service` and create two queues: `azure-function-foo-input` and `azure-function-tool-output`. Note that the same queues are used in our sample. To check that the function is working, place the next message into the `azure-function-foo-input` and replace `storage_account_already_present_in_resource_group` by the actual resource group name, or just copy the output queue address. Note in python `outputqueueuri` is written in all lower case latters.
+In the `storage_account_already_present_in_resource_group` select the `Queue service` and create two queues: `azure-function-foo-input` and `azure-function-tool-output`. Note that the same queues are used in our sample. To check that the function is working, place the next message into the `azure-function-foo-input` and replace `storage_account_already_present_in_resource_group` by the actual resource group name, or just copy the output queue address. Note in python `outputqueueuri` is written in all lower case letters.
 ```json
 {
   "outputqueueuri": "https://storage_account_already_present_in_resource_group.queue.core.windows.net/azure-function-tool-output",
