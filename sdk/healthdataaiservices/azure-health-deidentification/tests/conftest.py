@@ -23,8 +23,7 @@ uniquifier_file = os.path.join(os.path.dirname(__file__), "uniquifier.conf")
 @pytest.fixture(scope="session", autouse=True)
 def create_session_uniquifier():
     if (
-        os.environ.get("AZURE_TEST_RUN_LIVE", "false").lower()
-        == "true"  # Don't override uniquifier by default
+        os.environ.get("AZURE_TEST_RUN_LIVE", "false").lower() == "true"  # Don't override uniquifier by default
         and os.environ.get("AZURE_SKIP_LIVE_RECORDING", "false").lower() != "true"
     ):
         uniquifier = uuid.uuid4().hex[:6]
@@ -43,12 +42,8 @@ def add_sanitizers(test_proxy):
     # $..id
     # uri sanitization in favor of substitution
     remove_batch_sanitizers(["AZSDK3493", "AZSDK3430", "AZSDK4001"])
-    account_name = os.environ.get(
-        "HEALTHDATAAISERVICES_STORAGE_ACCOUNT_NAME", "Not Found."
-    )
-    container_name = os.environ.get(
-        "HEALTHDATAAISERVICES_STORAGE_CONTAINER_NAME", "Not Found."
-    )
+    account_name = os.environ.get("HEALTHDATAAISERVICES_STORAGE_ACCOUNT_NAME", "Not Found.")
+    container_name = os.environ.get("HEALTHDATAAISERVICES_STORAGE_CONTAINER_NAME", "Not Found.")
     add_body_key_sanitizer(
         json_path="..location",
         value=f"https://{account_name}.blob.core.windows.net:443/{container_name}",

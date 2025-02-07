@@ -29,7 +29,7 @@ class DevOpsInfrastructureMgmtClientConfiguration:  # pylint: disable=too-many-i
     :type subscription_id: str
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is "2024-10-19".
+    :keyword api_version: The API version to use for this operation. Default value is "2025-01-21".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -41,7 +41,7 @@ class DevOpsInfrastructureMgmtClientConfiguration:  # pylint: disable=too-many-i
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-10-19")
+        api_version: str = kwargs.pop("api_version", "2025-01-21")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

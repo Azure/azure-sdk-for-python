@@ -18,6 +18,34 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class BatchOptions(_model_base.Model):
+    """Translation batch request options.
+
+    :ivar translate_text_within_image: Translation text within an image option.
+    :vartype translate_text_within_image: bool
+    """
+
+    translate_text_within_image: Optional[bool] = rest_field(name="translateTextWithinImage")
+    """Translation text within an image option."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        translate_text_within_image: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class DocumentBatch(_model_base.Model):
     """Definition for the input batch translation request.
 
@@ -129,6 +157,10 @@ class DocumentStatus(_model_base.Model):
     :vartype id: str
     :ivar characters_charged: Character charged by the API.
     :vartype characters_charged: int
+    :ivar total_image_scans_succeeded: Total image scans charged by the API.
+    :vartype total_image_scans_succeeded: int
+    :ivar total_image_scans_failed: Total image scans failed.
+    :vartype total_image_scans_failed: int
     """
 
     translated_document_url: Optional[str] = rest_field(name="path")
@@ -154,6 +186,10 @@ class DocumentStatus(_model_base.Model):
     """Document Id. Required."""
     characters_charged: Optional[int] = rest_field(name="characterCharged")
     """Character charged by the API."""
+    total_image_scans_succeeded: Optional[int] = rest_field(name="totalImageScansSucceeded")
+    """Total image scans charged by the API."""
+    total_image_scans_failed: Optional[int] = rest_field(name="totalImageScansFailed")
+    """Total image scans failed."""
 
     @overload
     def __init__(
@@ -169,6 +205,8 @@ class DocumentStatus(_model_base.Model):
         translated_document_url: Optional[str] = None,
         error: Optional["_models.DocumentTranslationError"] = None,
         characters_charged: Optional[int] = None,
+        total_image_scans_succeeded: Optional[int] = None,
+        total_image_scans_failed: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -236,7 +274,7 @@ class DocumentTranslationError(_model_base.Model):
     :vartype target: str
     :ivar inner_error: New Inner Error format which conforms to Cognitive Services API Guidelines
      which is available at
-     https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
+     https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.  # pylint: disable=line-too-long
      This
      contains required properties ErrorCode, message and optional properties target,
      details(key value pair), inner error(this can be nested).
@@ -356,7 +394,7 @@ class InnerTranslationError(_model_base.Model):
     :vartype target: str
     :ivar inner_error: New Inner Error format which conforms to Cognitive Services API Guidelines
      which is available at
-     https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
+     https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.  # pylint: disable=line-too-long
      This
      contains required properties ErrorCode, message and optional properties target,
      details(key value pair), inner error(this can be nested).
@@ -454,16 +492,21 @@ class StartTranslationDetails(_model_base.Model):
 
     :ivar inputs: The input list of documents or folders containing documents. Required.
     :vartype inputs: list[~azure.ai.translation.document.models.DocumentBatch]
+    :ivar options: The batch operation options.
+    :vartype options: ~azure.ai.translation.document.models.BatchOptions
     """
 
     inputs: List["_models.DocumentBatch"] = rest_field()
     """The input list of documents or folders containing documents. Required."""
+    options: Optional["_models.BatchOptions"] = rest_field()
+    """The batch operation options."""
 
     @overload
     def __init__(
         self,
         *,
         inputs: List["_models.DocumentBatch"],
+        options: Optional["_models.BatchOptions"] = None,
     ) -> None: ...
 
     @overload
@@ -487,6 +530,23 @@ class SupportedFileFormats(_model_base.Model):
 
     value: List["_models.DocumentTranslationFileFormat"] = rest_field()
     """list of objects. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: List["_models.DocumentTranslationFileFormat"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class TranslationErrorResponse(_model_base.Model):
@@ -657,6 +717,10 @@ class TranslationStatusSummary(_model_base.Model):
     :vartype canceled: int
     :ivar total_characters_charged: Total characters charged by the API. Required.
     :vartype total_characters_charged: int
+    :ivar total_image_scans_succeeded: Total image scans charged by the API.
+    :vartype total_image_scans_succeeded: int
+    :ivar total_image_scans_failed: Total image scans failed.
+    :vartype total_image_scans_failed: int
     """
 
     total: int = rest_field()
@@ -673,6 +737,10 @@ class TranslationStatusSummary(_model_base.Model):
     """Number of cancelled. Required."""
     total_characters_charged: int = rest_field(name="totalCharacterCharged")
     """Total characters charged by the API. Required."""
+    total_image_scans_succeeded: Optional[int] = rest_field(name="totalImageScansSucceeded")
+    """Total image scans charged by the API."""
+    total_image_scans_failed: Optional[int] = rest_field(name="totalImageScansFailed")
+    """Total image scans failed."""
 
     @overload
     def __init__(
@@ -685,6 +753,8 @@ class TranslationStatusSummary(_model_base.Model):
         not_yet_started: int,
         canceled: int,
         total_characters_charged: int,
+        total_image_scans_succeeded: Optional[int] = None,
+        total_image_scans_failed: Optional[int] = None,
     ) -> None: ...
 
     @overload

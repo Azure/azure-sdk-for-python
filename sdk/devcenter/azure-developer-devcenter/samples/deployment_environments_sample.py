@@ -40,6 +40,7 @@ USAGE:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
 
+
 def environment_create_and_delete():
     # [START environment_create_and_delete]
     import os

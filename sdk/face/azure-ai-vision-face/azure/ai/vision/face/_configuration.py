@@ -26,17 +26,17 @@ class FaceAdministrationClientConfiguration:  # pylint: disable=too-many-instanc
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://{resource-name}.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: API Version. Known values are "v1.2-preview.1" and None. Default value is
-     "v1.2-preview.1". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: API Version. Known values are "v1.2" and None. Default value is "v1.2".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str or ~azure.ai.vision.face.models.Versions
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "v1.2-preview.1")
+        api_version: str = kwargs.pop("api_version", "v1.2")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -81,17 +81,17 @@ class FaceClientConfiguration:  # pylint: disable=too-many-instance-attributes
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://{resource-name}.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: API Version. Known values are "v1.2-preview.1" and None. Default value is
-     "v1.2-preview.1". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: API Version. Known values are "v1.2" and None. Default value is "v1.2".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str or ~azure.ai.vision.face.models.Versions
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "v1.2-preview.1")
+        api_version: str = kwargs.pop("api_version", "v1.2")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -136,17 +136,17 @@ class FaceSessionClientConfiguration:  # pylint: disable=too-many-instance-attri
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://{resource-name}.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: API Version. Known values are "v1.2-preview.1" and None. Default value is
-     "v1.2-preview.1". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: API Version. Known values are "v1.2" and None. Default value is "v1.2".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str or ~azure.ai.vision.face.models.Versions
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "v1.2-preview.1")
+        api_version: str = kwargs.pop("api_version", "v1.2")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
