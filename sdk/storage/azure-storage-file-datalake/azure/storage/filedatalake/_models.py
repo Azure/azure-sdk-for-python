@@ -1234,12 +1234,15 @@ class DeletedPathProperties(DictMixin):
     """The number of days that the path will be retained before being permanently deleted by the service."""
     deletion_id: Optional[str]
     """The id associated with the deleted path."""
+    file_system: Optional[str]
+    """The filesystem associated with the deleted path."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = kwargs.get('name')  # type: ignore [assignment]
         self.deleted_time = None
         self.remaining_retention_days = None
         self.deletion_id = None
+        self.file_system = None
 
 
 class AnalyticsLogging(GenLogging):

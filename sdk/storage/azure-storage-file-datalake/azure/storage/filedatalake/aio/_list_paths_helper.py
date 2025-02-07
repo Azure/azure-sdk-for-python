@@ -3,18 +3,23 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-few-public-methods
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.async_paging import AsyncPageIterator
 
-from .._deserialize import process_storage_error, get_deleted_path_properties_from_generated_code, \
+from .._deserialize import (
+    get_deleted_path_properties_from_generated_code,
+    process_storage_error,
     return_headers_and_deserialized_path_list
-from .._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix
-
+)
+from .._generated.models import (
+    BlobItemInternal,
+    BlobPrefix as GenBlobPrefix,
+    Path
+)
+from .._models import PathProperties
 from .._shared.models import DictMixin
 from .._shared.response_handlers import return_context_and_deserialized
-from .._generated.models import Path
-from .._models import PathProperties
 
 
 class DeletedPathPropertiesPaged(AsyncPageIterator):
