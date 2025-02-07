@@ -26,14 +26,7 @@ OptExcInfo = Union[ExcInfo, Tuple[None, None, None]]
 _LOGGER = logging.getLogger(__name__)
 
 
-def _get_span_name(http_request: HttpRequest) -> str:
-    path = urllib.parse.urlparse(http_request.url).path
-    if not path:
-        path = "/"
-    return f"{http_request.method} {path}"
-
-
-class DistributedTracingPolicy(SansIOHTTPPolicy[HttpRequest, SansIOHttpResponse]):
+class DistributedHttpTracingPolicy(SansIOHTTPPolicy[HttpRequest, SansIOHttpResponse]):
     """The policy to create tracing spans for API calls.
 
     :keyword tracer_provider: The tracer provider to use. If not provided, a default tracer provider will be used.
@@ -44,7 +37,6 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HttpRequest, SansIOHttpResponse]
 
     # Attribute names
     _HTTP_RESEND_COUNT = "http.request.resend_count"
-
     _USER_AGENT_ORIGINAL = "user_agent.original"
     _HTTP_REQUEST_METHOD = "http.request.method"
     _URL_FULL = "url.full"
@@ -81,7 +73,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HttpRequest, SansIOHttpResponse]
             if not tracer:
                 return
 
-            span_name = _get_span_name(request.http_request)
+            span_name = request.http_request.method
             span = tracer.start_span(
                 name=span_name,
                 kind=SpanKind.CLIENT,

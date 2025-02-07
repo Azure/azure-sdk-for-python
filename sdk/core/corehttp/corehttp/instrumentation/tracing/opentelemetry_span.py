@@ -130,18 +130,21 @@ class OpenTelemetrySpan:
             self._current_ctxt_manager.__exit__(exception_type, exception_value, traceback)
             self._current_ctxt_manager = None
         else:
-            self.end()
+            if self._record_exception and exception_value:
+                self.span_instance.record_exception(exception_value)
+            self.span_instance.end()
 
-        for token in self._context_tokens:
+        while self._context_tokens:
+            token = self._context_tokens.pop()
             otel_context_module.detach(token)
-            self._context_tokens.remove(token)
 
     def end(self) -> None:
         """Set the end time for a span."""
         self.span_instance.end()
-        for token in self._context_tokens:
+
+        while self._context_tokens:
+            token = self._context_tokens.pop()
             otel_context_module.detach(token)
-            self._context_tokens.remove(token)
 
     def set_attribute(self, key: str, value: AttributeValue) -> None:
         """Set an attribute (key-value pair) to the current span.

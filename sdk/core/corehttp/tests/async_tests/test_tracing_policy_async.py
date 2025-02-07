@@ -8,7 +8,7 @@ import pytest
 
 from corehttp.rest import HttpRequest
 from corehttp.runtime.policies import (
-    DistributedTracingPolicy,
+    DistributedHttpTracingPolicy,
     AsyncRetryPolicy,
 )
 from corehttp.settings import settings
@@ -45,7 +45,7 @@ async def test_span_retry_attributes(tracing_helper, http_response):
 
     http_request = HttpRequest("GET", "http://localhost/")
     retry_policy = AsyncRetryPolicy(retry_total=2)
-    distributed_tracing_policy = DistributedTracingPolicy()
+    distributed_tracing_policy = DistributedHttpTracingPolicy()
     transport = MockTransport()
 
     with tracing_helper.tracer.start_as_current_span("Root") as root_span:

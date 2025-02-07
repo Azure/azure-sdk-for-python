@@ -26,7 +26,7 @@ from corehttp.runtime.policies import (
     HeadersPolicy,
     UserAgentPolicy,
     RetryPolicy,
-    DistributedTracingPolicy,
+    DistributedHttpTracingPolicy,
 )
 from corehttp.settings import settings
 from corehttp.instrumentation.tracing import TracerProvider as SDKTracerProvider
@@ -63,7 +63,7 @@ class SampleClient:
             HeadersPolicy(),
             UserAgentPolicy("myuseragent"),
             RetryPolicy(),
-            DistributedTracingPolicy(tracer_provider=sdk_tracer_provider),
+            DistributedHttpTracingPolicy(tracer_provider=sdk_tracer_provider),
         ]
 
         self._client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(endpoint, policies=policies)

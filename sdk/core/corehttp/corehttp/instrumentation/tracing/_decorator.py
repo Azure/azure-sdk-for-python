@@ -56,7 +56,7 @@ def distributed_trace(
 
         @functools.wraps(func)
         def wrapper_use_tracer(*args: Any, **kwargs: Any) -> T:
-            # Assume this will be popped in DistributedTracingPolicy.
+            # This will be popped in the pipeline or transport runner.
             tracing_options: TracingOptions = kwargs.get("tracing_options", {})
 
             # User can explicitly disable tracing for this call
@@ -126,7 +126,7 @@ def distributed_trace_async(  # pylint: disable=unused-argument
 
         @functools.wraps(func)
         async def wrapper_use_tracer(*args: Any, **kwargs: Any) -> T:
-            # Assume this will be popped in DistributedTracingPolicy.
+            # This will be popped in the pipeline or transport runner.
             tracing_options: TracingOptions = kwargs.get("tracing_options", {})
 
             # User can explicitly disable tracing for this call

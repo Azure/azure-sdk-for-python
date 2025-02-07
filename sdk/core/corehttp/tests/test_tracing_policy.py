@@ -9,7 +9,7 @@ import pytest
 
 from corehttp.rest import HttpRequest
 from corehttp.runtime.policies import (
-    DistributedTracingPolicy,
+    DistributedHttpTracingPolicy,
     UserAgentPolicy,
     RetryPolicy,
 )
@@ -26,7 +26,7 @@ def test_distributed_tracing_policy(tracing_helper, http_response):
     """Test policy when the HTTP response corresponds to a success."""
     settings.tracing_enabled = True
     with tracing_helper.tracer.start_as_current_span("Root") as root_span:
-        policy = DistributedTracingPolicy()
+        policy = DistributedHttpTracingPolicy()
 
         request = HttpRequest("GET", "http://localhost/temp?query=query")
         pipeline_request = PipelineRequest(request, PipelineContext(None))
@@ -42,7 +42,7 @@ def test_distributed_tracing_policy(tracing_helper, http_response):
 
     finished_spans = tracing_helper.exporter.get_finished_spans()
     assert len(finished_spans) == 2
-    assert finished_spans[0].name == "GET /temp"
+    assert finished_spans[0].name == "GET"
     assert finished_spans[0].parent is root_span.get_span_context()
 
     assert finished_spans[0].attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
@@ -58,7 +58,7 @@ def test_distributed_tracing_policy_error_response(tracing_helper, http_response
     """Test policy when the HTTP response corresponds to an error."""
     settings.tracing_enabled = True
     with tracing_helper.tracer.start_as_current_span("Root"):
-        policy = DistributedTracingPolicy()
+        policy = DistributedHttpTracingPolicy()
 
         request = HttpRequest("GET", "http://localhost/temp?query=query")
         pipeline_request = PipelineRequest(request, PipelineContext(None))
@@ -69,7 +69,7 @@ def test_distributed_tracing_policy_error_response(tracing_helper, http_response
         policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
 
     finished_spans = tracing_helper.exporter.get_finished_spans()
-    assert finished_spans[0].name == "GET /temp"
+    assert finished_spans[0].name == "GET"
     assert finished_spans[0].attributes.get("error.type") == "403"
 
 
@@ -84,7 +84,7 @@ def test_distributed_tracing_policy_custom_tracer_provider(tracing_helper, http_
         attributes={"namespace": "Sample.Namespace"},
     )
     with tracing_helper.tracer.start_as_current_span("Root"):
-        policy = DistributedTracingPolicy(tracer_provider=custom_tracer_provider)
+        policy = DistributedHttpTracingPolicy(tracer_provider=custom_tracer_provider)
 
         request = HttpRequest("GET", "http://localhost/temp?query=query")
         pipeline_request = PipelineRequest(request, PipelineContext(None))
@@ -95,7 +95,7 @@ def test_distributed_tracing_policy_custom_tracer_provider(tracing_helper, http_
         policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
 
     finished_spans = tracing_helper.exporter.get_finished_spans()
-    assert finished_spans[0].name == "GET /temp"
+    assert finished_spans[0].name == "GET"
     assert finished_spans[0].attributes.get(policy._ERROR_TYPE) == "403"
     assert finished_spans[0].instrumentation_scope.schema_url == "https://test.schema"
     assert finished_spans[0].instrumentation_scope.name == "mylibrary"
@@ -104,33 +104,12 @@ def test_distributed_tracing_policy_custom_tracer_provider(tracing_helper, http_
 
 
 @pytest.mark.parametrize("http_response", HTTP_RESPONSES)
-def test_distributed_tracing_policy_bad_url(tracing_helper, http_response):
-    """Test policy with a bad url that will throw, and be sure policy ignores it"""
-    settings.tracing_enabled = True
-    with tracing_helper.tracer.start_as_current_span("Root"):
-        policy = DistributedTracingPolicy()
-
-        request = HttpRequest("GET", "http://[[[")
-        pipeline_request = PipelineRequest(request, PipelineContext(None))
-        policy.on_request(pipeline_request)
-
-        response = create_http_response(http_response, request, None, headers=request.headers, status_code=403)
-
-        policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
-
-    # A span for the request should not have been created.
-    finished_spans = tracing_helper.exporter.get_finished_spans()
-    assert len(finished_spans) == 1
-    assert finished_spans[0].name == "Root"
-
-
-@pytest.mark.parametrize("http_response", HTTP_RESPONSES)
 def test_distributed_tracing_policy_with_user_agent_policy(tracing_helper, http_response):
     """Test policy when used with the UserAgentPolicy."""
     settings.tracing_enabled = True
     with mock.patch.dict("os.environ", {"CORE_HTTP_USER_AGENT": "test-user-agent"}):
         with tracing_helper.tracer.start_as_current_span("Root") as root_span:
-            policy = DistributedTracingPolicy()
+            policy = DistributedHttpTracingPolicy()
             user_agent_policy = UserAgentPolicy()
 
             request = HttpRequest("GET", "http://localhost/temp?query=query")
@@ -151,7 +130,7 @@ def test_distributed_tracing_policy_with_user_agent_policy(tracing_helper, http_
 
     finished_spans = tracing_helper.exporter.get_finished_spans()
     assert len(finished_spans) == 2
-    assert finished_spans[0].name == "GET /temp"
+    assert finished_spans[0].name == "GET"
     assert finished_spans[0].parent is root_span.get_span_context()
 
     assert finished_spans[0].attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
@@ -189,7 +168,7 @@ def test_span_retry_attributes(tracing_helper, http_response):
 
     http_request = HttpRequest("GET", "http://localhost/")
     retry_policy = RetryPolicy(retry_total=2)
-    distributed_tracing_policy = DistributedTracingPolicy()
+    distributed_tracing_policy = DistributedHttpTracingPolicy()
     transport = MockTransport()
 
     with tracing_helper.tracer.start_as_current_span("Root") as root_span:
@@ -220,7 +199,7 @@ def test_distributed_tracing_policy_with_tracing_options(tracing_helper, http_re
     """Test policy when tracing options are provided."""
     settings.tracing_enabled = False
     with tracing_helper.tracer.start_as_current_span("Root") as root_span:
-        policy = DistributedTracingPolicy()
+        policy = DistributedHttpTracingPolicy()
 
         request = HttpRequest("GET", "http://localhost/temp?query=query")
         pipeline_request = PipelineRequest(request, PipelineContext(None))
@@ -236,7 +215,7 @@ def test_distributed_tracing_policy_with_tracing_options(tracing_helper, http_re
     finished_spans = tracing_helper.exporter.get_finished_spans()
     assert len(finished_spans) == 2
 
-    assert finished_spans[0].name == "GET /temp"
+    assert finished_spans[0].name == "GET"
     assert finished_spans[0].parent is root_span.get_span_context()
 
     assert finished_spans[0].attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
@@ -252,7 +231,7 @@ def test_distributed_tracing_policy_disabled(tracing_helper, http_response):
     """Test policy when tracing is enabled globally but disabled on the operation."""
     settings.tracing_enabled = True
     with tracing_helper.tracer.start_as_current_span("Root"):
-        policy = DistributedTracingPolicy()
+        policy = DistributedHttpTracingPolicy()
 
         request = HttpRequest("GET", "http://localhost/temp?query=query")
         pipeline_request = PipelineRequest(request, PipelineContext(None))
