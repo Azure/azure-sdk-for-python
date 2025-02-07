@@ -3081,7 +3081,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
             # Get messages from the thread
             messages = client.agents.list_messages(thread_id=thread.id)
-            assert len(messages.text_messages) > 1, "No messages were received from assistant."
+            assert len(messages.text_messages) > 1, "No messages were received from agent."
 
             # Check that we have function response in at least one message.
             assert any("bar" in msg.text.value.lower() for msg in messages.text_messages)

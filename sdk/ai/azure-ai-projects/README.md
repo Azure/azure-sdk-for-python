@@ -571,7 +571,7 @@ print(f"Created agent, agent ID: {agent.id}")
 
 <!-- END SNIPPET -->
 
-To make a function call we need to create and deploy the Azure function. In the code snippet below, we have an example of function on C# which can be used by the code above.
+To make a function call we need to create and deploy the Azure function. In the code snippet below, we have an example of function on python which can be used by the code above.
 
 ```python
 import azure.functions as func
@@ -621,7 +621,7 @@ def foo(arguments: func.QueueMessage) -> None:
 In this code we define function input and output class: `Arguments` and `Response` respectively. These two data classes will be serialized in JSON. It is important that these both contain field `CorrelationId`, which is the same between input and output.
 
 In our example the function will be stored in the storage account, created with the AI hub. For that we need to allow key access to that storage. In Azure portal go to Storage account > Settings > Configuration and set "Allow storage account key access" to Enabled. If it is not done, the error will be displayed "The remote server returned an error: (403) Forbidden." 
-Before creation of the function we will need to get the python version using command `python --version`. We recommend to use python version 3.11. We will need only two major digits in the next command, which deploys function and installs azure-cli:
+Before creation of the function we will need to get the python version using command `python --version`. We recommend to use python version 3.11 or above. We will need only two major digits in the next command, which deploys function and installs azure-cli:
 
 ```shell
 pip install -U azure-cli
