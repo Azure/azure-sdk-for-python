@@ -75,7 +75,7 @@ class DeletedPathPropertiesPaged(PageIterator):
 
     def __init__(
         self, command: Callable,
-        container: str,
+        container: Optional[str] = None,
         prefix: Optional[str] = None,
         results_per_page: Optional[int] = None,
         continuation_token: Optional[str] = None,
