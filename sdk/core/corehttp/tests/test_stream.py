@@ -85,8 +85,19 @@ def test_stream_jsonl_broken_up_data(stream):
     for s in jsonl_stream:
         messages.append(s)
     assert messages == [
-        {"msg": "this is a third message"},
-        {"msg": "this is a fourth message"},
+        {"msg": "this is a first message"},
+        {"msg": "this is a second message"},
+    ]
+
+
+def test_stream_jsonl_broken_up_data_cr(stream):
+    jsonl_stream = stream(HttpRequest("GET", "/streams/jsonl_broken_up_data_cr"))
+    messages = []
+    for s in jsonl_stream:
+        messages.append(s)
+    assert messages == [
+        {"msg": "this is a first message"},
+        {"msg": "this is a second message"},
     ]
 
 
@@ -134,8 +145,8 @@ def test_stream_jsonl_escaped_broken_newline_data(stream):
     for s in jsonl_stream:
         messages.append(s)
     assert messages == [
-        {"msg": "this is a third message"},
-        {"msg": "\nthis is a fourth message"},
+        {"msg": "this is a first message"},
+        {"msg": "\nthis is a second message"},
     ]
 
 
@@ -143,3 +154,15 @@ def test_stream_jsonl_unsupported_content_type(stream):
     with pytest.raises(ValueError) as e:
         stream(HttpRequest("GET", "/streams/jsonl_invalid_content_type"))
     assert e.value.args[0] == "Unsupported content-type 'application/json' for streaming. Provide a custom decoder."
+
+
+def test_stream_jsonl_incomplete_char(stream):
+    jsonl_stream = stream(HttpRequest("GET", "/streams/jsonl_broken_incomplete_char"))
+    messages = []
+    for s in jsonl_stream:
+        messages.append(s)
+    assert messages == [
+        {"msg": "this is a first message"},
+        {"msg": "𝜋this is a second message𝜋"},
+        {"msg": "this is a third message"},
+    ]

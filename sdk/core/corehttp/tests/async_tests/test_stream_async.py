@@ -89,8 +89,20 @@ async def test_stream_jsonl_broken_up_data(stream):
     async for s in jsonl_stream:
         messages.append(s)
     assert messages == [
-        {"msg": "this is a third message"},
-        {"msg": "this is a fourth message"},
+        {"msg": "this is a first message"},
+        {"msg": "this is a second message"},
+    ]
+
+
+@pytest.mark.asyncio
+async def test_stream_jsonl_broken_up_data_cr(stream):
+    jsonl_stream = await stream(HttpRequest("GET", "/streams/jsonl_broken_up_data_cr"))
+    messages = []
+    async for s in jsonl_stream:
+        messages.append(s)
+    assert messages == [
+        {"msg": "this is a first message"},
+        {"msg": "this is a second message"},
     ]
 
 
@@ -143,8 +155,8 @@ async def test_stream_jsonl_escaped_broken_newline_data(stream):
     async for s in jsonl_stream:
         messages.append(s)
     assert messages == [
-        {"msg": "this is a third message"},
-        {"msg": "\nthis is a fourth message"},
+        {"msg": "this is a first message"},
+        {"msg": "\nthis is a second message"},
     ]
 
 
@@ -153,3 +165,16 @@ async def test_stream_jsonl_unsupported_content_type(stream):
     with pytest.raises(ValueError) as e:
         await stream(HttpRequest("GET", "/streams/jsonl_invalid_content_type"))
     assert e.value.args[0] == "Unsupported content-type 'application/json' for streaming. Provide a custom decoder."
+
+
+@pytest.mark.asyncio
+async def test_stream_jsonl_incomplete_char(stream):
+    jsonl_stream = await stream(HttpRequest("GET", "/streams/jsonl_broken_incomplete_char"))
+    messages = []
+    async for s in jsonl_stream:
+        messages.append(s)
+    assert messages == [
+        {"msg": "this is a first message"},
+        {"msg": "𝜋this is a second message𝜋"},
+        {"msg": "this is a third message"},
+    ]

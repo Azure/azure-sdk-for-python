@@ -62,7 +62,12 @@ def stream_jsonl_no_final_line_separator():
 
 
 def stream_jsonl_broken_up_data():
-    data = [b'{"msg": "this is a third message"}\n{"msg": ', b'"this is a fourth message"}\n']
+    data = [b'{"msg": "this is a first message"}\n{"msg": ', b'"this is a second message"}\n']
+    yield from data
+
+
+def stream_jsonl_broken_up_data_cr():
+    data = [b'{"msg": "this is a first message"}\r\n{"msg": ', b'"this is a second message"}\r\n']
     yield from data
 
 
@@ -77,7 +82,17 @@ def stream_jsonl_escaped_newline_data():
 
 
 def stream_jsonl_escaped_broken_newline_data():
-    data = [b'{"msg": "this is a third message"}\n{"msg": "\\n', b'this is a fourth message"}\n']
+    data = [b'{"msg": "this is a first message"}\n{"msg": "\\n', b'this is a second message"}\n']
+    yield from data
+
+
+def stream_jsonl_broken_incomplete_char():
+    data = [
+        b'{"msg": "this is a first message"}\n{"msg": "\xf0\x9d',
+        b"\x9c\x8bthis is a second message\xf0\x9d",
+        b'\x9c\x8b"}',
+        b'\n{"msg": "this is a third message"}',
+    ]
     yield from data
 
 
@@ -168,6 +183,11 @@ def jsonl_broken_up_data():
     return Response(stream_jsonl_broken_up_data(), status=200, headers={"Content-Type": "application/jsonl"})
 
 
+@streams_api.route("/jsonl_broken_up_data_cr", methods=["GET"])
+def jsonl_broken_up_data_cr():
+    return Response(stream_jsonl_broken_up_data_cr(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
 @streams_api.route("/jsonl_invalid_data", methods=["GET"])
 def jsonl_invalid_data():
     return Response(stream_jsonl_invalid_data(), status=200, headers={"Content-Type": "application/jsonl"})
@@ -188,3 +208,8 @@ def jsonl_escaped_broken_newline_data():
 @streams_api.route("/jsonl_invalid_content_type", methods=["GET"])
 def jsonl_invalid_content_type():
     return Response(stream_jsonl_basic(), status=200, headers={"content-type": "application/json"})
+
+
+@streams_api.route("/jsonl_broken_incomplete_char", methods=["GET"])
+def jsonl_broken_incomplete_char():
+    return Response(stream_jsonl_broken_incomplete_char(), status=200, headers={"Content-Type": "application/jsonl"})

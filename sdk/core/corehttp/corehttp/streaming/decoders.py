@@ -24,8 +24,9 @@
 #
 # --------------------------------------------------------------------------
 
-
-from typing import Iterator, AsyncIterator, Tuple, Protocol
+import re
+import codecs
+from typing import Iterator, AsyncIterator, Protocol
 
 from typing_extensions import runtime_checkable
 
@@ -53,13 +54,6 @@ class StreamDecoder(Protocol):
         """
         ...
 
-    def decode(self, line: bytes) -> None:
-        """Decode a line of bytes.
-
-        :param bytes line: A line of bytes to decode.
-        """
-        ...
-
 
 @runtime_checkable
 class AsyncStreamDecoder(Protocol):
@@ -82,28 +76,14 @@ class AsyncStreamDecoder(Protocol):
         """
         ...
 
-    def decode(self, line: bytes) -> None:
-        """Decode a line of bytes.
-
-        :param bytes line: A line of bytes to decode.
-        """
-        ...
-
 
 class JSONLDecoder:
     """Decoder for JSON Lines (JSONL) format. https://jsonlines.org/"""
 
     def __init__(self) -> None:
         self._data: str = ""
-        self._line_separators: Tuple[bytes, ...] = (b"\n", b"\r\n")
-
-    def decode(self, line: bytes) -> None:
-        """Decode a line of bytes into a string.
-
-        :param bytes line: A line of bytes to decode.
-        :rtype: None
-        """
-        self._data = line.decode("utf-8")
+        self._decoder = codecs.getincrementaldecoder("utf-8")()
+        self._line_separators = re.compile(r"\r\n|\n")
 
     def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[JSONLEvent]:
         """Iterate over JSONL events from a byte iterator.
@@ -113,22 +93,24 @@ class JSONLDecoder:
         :rtype: Iterator[JSONLEvent]
         :return: An iterator of JSONLEvent objects.
         """
-        data = b""
+        buffer = ""
         for chunk in iter_bytes:
-            for line in chunk.splitlines(keepends=True):
-                data += line
-                if data.endswith(self._line_separators):
-                    self.decode(data.splitlines()[0])
-                    event = self.event()
-                    yield event
-                    data = b""
+            buffer += self._decoder.decode(chunk)
+            while True:
+                match = self._line_separators.search(buffer)
+                if match:
+                    self._data = buffer[: match.start()]
+                    yield self.event()
+                    buffer = buffer[match.end() :]
+                else:
+                    break
 
-        if data:
+        buffer += self._decoder.decode(b"", final=True)
+        if buffer:
             # the last line did not end with a line separator
             # ok per JSONL spec
-            self.decode(data)
-            event = self.event()
-            yield event
+            self._data = buffer
+            yield self.event()
 
     def event(self) -> JSONLEvent:
         """Get the current event.
@@ -146,15 +128,8 @@ class AsyncJSONLDecoder:
 
     def __init__(self) -> None:
         self._data: str = ""
-        self._line_separators: Tuple[bytes, ...] = (b"\n", b"\r\n")
-
-    def decode(self, line: bytes) -> None:
-        """Decode a line of bytes into a string.
-
-        :param bytes line: A line of bytes to decode.
-        :rtype: None
-        """
-        self._data = line.decode("utf-8")
+        self._decoder = codecs.getincrementaldecoder("utf-8")()
+        self._line_separators = re.compile(r"\r\n|\n")
 
     async def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[JSONLEvent]:
         """Asynchronously iterate over JSONL events from a byte iterator.
@@ -164,22 +139,24 @@ class AsyncJSONLDecoder:
         :rtype: AsyncIterator[JSONLEvent]
         :return: An asynchronous iterator of JSONLEvent objects.
         """
-        data = b""
+        buffer = ""
         async for chunk in iter_bytes:
-            for line in chunk.splitlines(keepends=True):
-                data += line
-                if data.endswith(self._line_separators):
-                    self.decode(data.splitlines()[0])
-                    event = self.event()
-                    yield event
-                    data = b""
+            buffer += self._decoder.decode(chunk)
+            while True:
+                match = self._line_separators.search(buffer)
+                if match:
+                    self._data = buffer[: match.start()]
+                    yield self.event()
+                    buffer = buffer[match.end() :]
+                else:
+                    break
 
-        if data:
+        buffer += self._decoder.decode(b"", final=True)
+        if buffer:
             # the last line did not end with a line separator
             # ok per JSONL spec
-            self.decode(data)
-            event = self.event()
-            yield event
+            self._data = buffer
+            yield self.event()
 
     def event(self) -> JSONLEvent:
         """Get the current event.
