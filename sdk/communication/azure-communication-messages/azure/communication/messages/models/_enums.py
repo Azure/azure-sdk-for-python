@@ -28,19 +28,55 @@ class CommunicationMessageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Audio message type."""
     TEMPLATE = "template"
     """Template message type."""
+    STICKER = "sticker"
+    """Sticker message type."""
+    REACTION = "reaction"
+    """Reaction message type."""
+    INTERACTIVE = "interactive"
+    """Interactive Actionable message type."""
 
 
 class CommunicationMessagesChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the communication messages channel."""
 
-    WHATSAPP = "whatsApp"
+    WHATS_APP = "whatsApp"
     """The WhatsApp communication messages channel type."""
+
+
+class MessageActionBindingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Kind of interactive message channel action binding like WhatsAppListAction."""
+
+    WHATS_APP_LIST_ACTION = "whatsAppListAction"
+    """The WhatsApp List action binding kind."""
+    WHATS_APP_BUTTON_ACTION = "whatsAppButtonAction"
+    """The WhatsApp Button action binding kind."""
+    WHATS_APP_URL_ACTION = "whatsAppUrlAction"
+    """The WhatsApp Url action binding kind."""
+
+
+class MessageContentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of Interactive message content."""
+
+    TEXT = "text"
+    """The text content type."""
+    IMAGE = "image"
+    """The image content type."""
+    VIDEO = "video"
+    """The video content type."""
+    DOCUMENT = "document"
+    """The document content type."""
+    GROUP = "group"
+    """The ActionSet content type."""
+    BUTTON_SET = "buttonSet"
+    """The ButtonSet content type."""
+    URL = "url"
+    """The Url content type."""
 
 
 class MessageTemplateBindingsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the message template."""
 
-    WHATSAPP = "whatsApp"
+    WHATS_APP = "whatsApp"
     """The WhatsApp template type."""
 
 

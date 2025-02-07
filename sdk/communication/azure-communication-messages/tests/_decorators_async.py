@@ -17,13 +17,13 @@ class MessagesPreparersAsync(object):
     def messages_test_decorator_async(func: Callable[[], object], **kwargs: Any):
         async def wrapper(self, *args, **kwargs):
             if is_live() or is_live_and_not_recording():
-                self.connection_string = os.getenv("COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING")
+                self.connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
                 endpoint, _ = parse_connection_str(self.connection_string)
                 self.resource_name = endpoint.split(".")[0]
 
             else:
                 self.connection_string = (
-                    "endpoint=https://sanitized.unitedstates.communication.azure.com/;accesskey=fake==="
+                    "endpoint=https://sanitized.unitedstates.ppe.communication.azure.net/;accesskey=fake==="
                 )
                 self.resource_name = "sanitized"
 
@@ -36,7 +36,7 @@ class MessagesPreparersAsync(object):
         async def wrapper(self, *args, **kwargs):
             breakpoint
             if is_live() or is_live_and_not_recording():
-                self.endpoint_str = os.getenv("COMMUNICATION_LIVETEST_DYNAMIC_ENDPOINT")
+                self.endpoint_str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
             else:
                 self.endpoint = "sanitized.unitedstates.communication.azure.com"
 
