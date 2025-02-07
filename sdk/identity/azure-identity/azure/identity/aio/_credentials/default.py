@@ -49,7 +49,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword str authority: Authority of a Microsoft Entra endpoint, for example 'login.microsoftonline.com',
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
-    :keyword str[] default_credential_allow_list: A list of credential names.
+    :keyword list[str] default_credential_allow_list: A list of credential names.
         The default is to try all available credentials. If this is set, only the credentials in the list are tried.
         e.g. ["ENVIRONMENT","CLI","MANAGED_IDENTITY"] will only try EnvironmentCredential, AzureCliCredential, and
         ManagedIdentityCredential. All valid credential names are "DEVELOPER_CLI", "WORKLOAD_IDENTITY", "CLI",
