@@ -204,7 +204,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 )
             else:
                 credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
-        cred_types: Optional[list[str]] = kwargs.pop("default_credential_allow_list", None)
+        cred_types: Optional[List[str]] = kwargs.pop("default_credential_allow_list", None)
         if cred_types is None:
             default_credential_allow_list = os.environ.get("AZURE_DEFAULT_CREDENTIAL_ALLOW_LIST")
             if default_credential_allow_list:
