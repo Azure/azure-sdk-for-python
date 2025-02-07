@@ -10,6 +10,7 @@ import pytest_asyncio
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import PartitionKey
+from azure.cosmos._location_cache import RegionalEndpoint
 from azure.cosmos.aio import CosmosClient, _retry_utility_async
 
 COLLECTION = "created_collection"
@@ -22,8 +23,7 @@ async def setup():
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
 
-    client = CosmosClient(TestTimeoutRetryPolicyAsync.host, TestTimeoutRetryPolicyAsync.masterKey, consistency_level="Session",
-                          connection_policy=TestTimeoutRetryPolicyAsync.connectionPolicy)
+    client = CosmosClient(TestTimeoutRetryPolicyAsync.host, TestTimeoutRetryPolicyAsync.masterKey, consistency_level="Session")
     created_database = client.get_database_client(TestTimeoutRetryPolicyAsync.TEST_DATABASE_ID)
     created_collection = await created_database.create_container(TestTimeoutRetryPolicyAsync.TEST_CONTAINER_SINGLE_PARTITION_ID,
                                                                  partition_key=PartitionKey("/pk"))
@@ -92,6 +92,37 @@ class TestTimeoutRetryPolicyAsync:
             _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
     @pytest.mark.parametrize("error_code", error_codes())
+    async def test_cross_region_retry_async(self, setup, error_code):
+        mock_client = CosmosClient(self.host, self.masterKey)
+        db = mock_client.get_database_client(self.TEST_DATABASE_ID)
+        container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
+        document_definition = {'id': 'failoverDoc' + str(uuid.uuid4()),
+                               'pk': 'pk',
+                               'name': 'sample document',
+                               'key': 'value'}
+
+        created_document = await container.create_item(body=document_definition)
+        self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
+        original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
+        fake_endpoint = "other-region"
+        regional_endpoint = RegionalEndpoint(self.host, self.host)
+        regional_endpoint_2 = RegionalEndpoint(fake_endpoint, fake_endpoint)
+        region_1 = "East US"
+        region_2 = "West US"
+        original_location_cache.available_read_locations = [region_1, region_2]
+        original_location_cache.available_read_regional_endpoints_by_locations = {region_1: regional_endpoint,
+                                                                                  region_2: regional_endpoint_2
+                                                                                  }
+        original_location_cache.read_regional_endpoints = [regional_endpoint, regional_endpoint_2]
+        try:
+            # should retry once and then succeed
+            mf = self.MockExecuteFunctionCrossRegion(self.original_execute_function, error_code, fake_endpoint)
+            _retry_utility_async.ExecuteFunctionAsync = mf
+            await container.read_item(item=created_document['id'], partition_key=created_document['pk'])
+        finally:
+            _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+
+    @pytest.mark.parametrize("error_code", error_codes())
     async def test_timeout_failover_retry_policy_for_write_failure_async(self, setup, error_code):
         document_definition = {'id': 'failoverDoc' + str(uuid.uuid4()),
                                'pk': 'pk',
@@ -121,9 +152,28 @@ class TestTimeoutRetryPolicyAsync:
             self.num_exceptions = num_exceptions
             self.status_code = status_code
 
-        def __call__(self, func, global_endpoint_manager, *args, **kwargs):
+        async def __call__(self, func, global_endpoint_manager, *args, **kwargs):
             if self.counter != 0 and self.counter >= self.num_exceptions:
-                return self.org_func(func, global_endpoint_manager, *args, **kwargs)
+                return await self.org_func(func, global_endpoint_manager, *args, **kwargs)
+            else:
+                self.counter += 1
+                raise exceptions.CosmosHttpResponseError(
+                    status_code=self.status_code,
+                    message="Some Exception",
+                    response=test_config.FakeResponse({}))
+
+    class MockExecuteFunctionCrossRegion(object):
+        def __init__(self, org_func, status_code, location_endpoint_to_route):
+            self.org_func = org_func
+            self.counter = 0
+            self.status_code = status_code
+            self.location_endpoint_to_route = location_endpoint_to_route
+
+        async def __call__(self, func, *args, **kwargs):
+            if self.counter == 1:
+                assert args[1].location_endpoint_to_route == self.location_endpoint_to_route
+                args[1].location_endpoint_to_route = test_config.TestConfig.host
+                return await self.org_func(func, *args, **kwargs)
             else:
                 self.counter += 1
                 raise exceptions.CosmosHttpResponseError(
