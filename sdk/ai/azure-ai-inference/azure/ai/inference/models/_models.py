@@ -23,7 +23,7 @@ class ContentItem(_model_base.Model):
     """An abstract representation of a structured content item within a chat message.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ImageContentItem, AudioContentItem, TextContentItem
+    AudioUrlContentItem, ImageContentItem, ChatMessageAudioDataContentItem, TextContentItem
 
     :ivar type: The discriminated object type. Required. Default value is None.
     :vartype type: str
@@ -51,27 +51,27 @@ class ContentItem(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AudioContentItem(ContentItem, discriminator="input_audio"):
-    """A structured chat content item containing an audio content.
+class AudioUrlContentItem(ContentItem, discriminator="audio_url"):
+    """A structured chat content item for audio content passed as a url pointer.
 
-    :ivar type: The discriminated object type: always 'input_audio' for this type. Required.
-     Default value is "input_audio".
+    :ivar type: The discriminated object type: always 'audio_url' for this type. Required. Default
+     value is "audio_url".
     :vartype type: str
-    :ivar input_audio: The details of the input audio. Required.
-    :vartype input_audio: ~azure.ai.inference.models.InputAudio
+    :ivar audio_url: The details of the audio url pointer. Required.
+    :vartype audio_url: ~azure.ai.inference.models.ChatMessageInputAudioUrl
     """
 
-    type: Literal["input_audio"] = rest_discriminator(name="type")  # type: ignore
-    """The discriminated object type: always 'input_audio' for this type. Required. Default value is
-     \"input_audio\"."""
-    input_audio: "_models.InputAudio" = rest_field()
-    """The details of the input audio. Required."""
+    type: Literal["audio_url"] = rest_discriminator(name="type")  # type: ignore
+    """The discriminated object type: always 'audio_url' for this type. Required. Default value is
+     \"audio_url\"."""
+    audio_url: "_models.ChatMessageInputAudioUrl" = rest_field()
+    """The details of the audio url pointer. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        input_audio: "_models.InputAudio",
+        audio_url: "_models.ChatMessageInputAudioUrl",
     ) -> None: ...
 
     @overload
@@ -82,7 +82,7 @@ class AudioContentItem(ContentItem, discriminator="input_audio"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="input_audio", **kwargs)
+        super().__init__(*args, type="audio_url", **kwargs)
 
 
 class ChatChoice(_model_base.Model):
@@ -193,6 +193,8 @@ class ChatCompletions(_model_base.Model):
 class ChatCompletionsNamedToolChoice(_model_base.Model):
     """A tool selection of a specific, named function tool that will limit chat completions to using
     the named function.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar type: The type of the tool. Currently, only ``function`` is supported. Required. Default
      value is "function".
@@ -392,6 +394,9 @@ class ChatCompletionsResponseFormatText(ChatCompletionsResponseFormat, discrimin
 class ChatCompletionsToolCall(_model_base.Model):
     """A function tool call requested by the AI model.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
     :ivar id: The ID of the tool call. Required.
     :vartype id: str
     :ivar type: The type of tool call. Currently, only ``function`` is supported. Required. Default
@@ -432,6 +437,8 @@ class ChatCompletionsToolCall(_model_base.Model):
 class ChatCompletionsToolDefinition(_model_base.Model):
     """The definition of a chat completions tool that can call a function.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar type: The type of the tool. Currently, only ``function`` is supported. Required. Default
      value is "function".
     :vartype type: str
@@ -462,6 +469,68 @@ class ChatCompletionsToolDefinition(_model_base.Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type: Literal["function"] = "function"
+
+
+class ChatMessageAudioDataContentItem(ContentItem, discriminator="input_audio"):
+    """A structured chat content item for audio content passed as base64 encoded data.
+
+    :ivar type: The discriminated object type: always 'input_audio' for this type. Required.
+     Default value is "input_audio".
+    :vartype type: str
+    :ivar input_audio: The details of the input audio data. Required.
+    :vartype input_audio: ~azure.ai.inference.models.InputAudio
+    """
+
+    type: Literal["input_audio"] = rest_discriminator(name="type")  # type: ignore
+    """The discriminated object type: always 'input_audio' for this type. Required. Default value is
+     \"input_audio\"."""
+    input_audio: "_models.InputAudio" = rest_field()
+    """The details of the input audio data. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        input_audio: "_models.InputAudio",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="input_audio", **kwargs)
+
+
+class ChatMessageInputAudioUrl(_model_base.Model):
+    """The details of the audio url pointer.
+
+    :ivar url: The URL of the audio content. Required.
+    :vartype url: str
+    """
+
+    url: str = rest_field()
+    """The URL of the audio content. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ChatRequestMessage(_model_base.Model):
@@ -544,7 +613,7 @@ class ChatRequestAssistantMessage(ChatRequestMessage, discriminator="assistant")
 
 
 class ChatRequestDeveloperMessage(ChatRequestMessage, discriminator="developer"):
-    """A request chat message containing system instructions that influence how the model will
+    """A request chat message containing developer instructions that influence how the model will
     generate a chat completions
     response. Some AI models support a developer message instead of a system message.
 
@@ -957,7 +1026,7 @@ class FunctionDefinition(_model_base.Model):
      interpreting its parameters.
     :vartype description: str
     :ivar parameters: The parameters the function accepts, described as a JSON Schema object.
-    :vartype parameters: any
+    :vartype parameters: dict[str, any]
     """
 
     name: str = rest_field()
@@ -966,7 +1035,7 @@ class FunctionDefinition(_model_base.Model):
     """A description of what the function does. The model will use this description when selecting the
      function and
      interpreting its parameters."""
-    parameters: Optional[Any] = rest_field()
+    parameters: Optional[Dict[str, Any]] = rest_field()
     """The parameters the function accepts, described as a JSON Schema object."""
 
     @overload
@@ -975,7 +1044,7 @@ class FunctionDefinition(_model_base.Model):
         *,
         name: str,
         description: Optional[str] = None,
-        parameters: Optional[Any] = None,
+        parameters: Optional[Dict[str, Any]] = None,
     ) -> None: ...
 
     @overload
@@ -1100,7 +1169,7 @@ class ImageUrl(_model_base.Model):
 
 
 class InputAudio(_model_base.Model):
-    """The details of an audio chat message content part.
+    """The details of the input audio data.
 
     :ivar data: Base64 encoded audio data. Required.
     :vartype data: str
