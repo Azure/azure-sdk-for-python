@@ -202,8 +202,8 @@ def execute_tox_serial(tox_command_tuples):
         tox_dir = os.path.abspath(os.path.join(cmd_tuple[1], "./.tox/"))
         clone_dir = os.path.abspath(os.path.join(cmd_tuple[1], "..", "..", "..", "l"))
 
-        print(
-            "##[group]Tox for {}. {} of {}.".format(os.path.basename(cmd_tuple[1]), index + 1, len(tox_command_tuples))
+        logging.info(
+            "Running tox for {}. {} of {}.".format(os.path.basename(cmd_tuple[1]), index + 1, len(tox_command_tuples))
         )
         logging.info("tox_dir: {}".format(tox_dir))
 
@@ -216,8 +216,6 @@ def execute_tox_serial(tox_command_tuples):
             collect_log_files(cmd_tuple[1])
 
             cleanup_tox_environments(tox_dir, cmd_tuple[0])
-
-            print("##[endgroup]")
 
             if os.path.exists(clone_dir):
                 try:
@@ -302,10 +300,12 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
                 file.write("\n")
 
         if in_ci():
+            print("##[group]Prebuilding and replacing relative dev requirements.")
             replace_dev_reqs(destination_dev_req, package_dir, parsed_args.wheel_dir)
             replace_dev_reqs(test_tools_path, package_dir, parsed_args.wheel_dir)
             replace_dev_reqs(dependency_tools_path, package_dir, parsed_args.wheel_dir)
             os.environ["TOX_PARALLEL_NO_SPINNER"] = "1"
+            print("##[endgroup]")
 
         inject_custom_reqs(destination_dev_req, parsed_args.injected_packages, package_dir)
 
