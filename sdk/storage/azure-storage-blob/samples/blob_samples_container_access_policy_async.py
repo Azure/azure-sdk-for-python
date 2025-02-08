@@ -44,7 +44,7 @@ except KeyError:
 
 async def get_and_set_container_access_policy():
     service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
-    container_client = service_client.get_container_client("mynewcontainer")
+    container_client = service_client.get_container_client("mynewcontaineraccessasync")
 
     async with service_client:
         print("\n..Creating container")

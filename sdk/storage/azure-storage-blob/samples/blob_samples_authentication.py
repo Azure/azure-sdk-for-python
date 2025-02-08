@@ -128,7 +128,7 @@ class AuthSamples(object):
         from azure.storage.blob import BlobServiceClient
         blob_service_client = BlobServiceClient(
             account_url=self.oauth_url,
-            credential=default_credential
+            credential=self.shared_access_key
         )
         # [END create_blob_service_client_oauth]
 

@@ -43,7 +43,7 @@ except KeyError:
 
 def get_and_set_container_access_policy():
     service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
-    container_client = service_client.get_container_client("mynewconwertainer")
+    container_client = service_client.get_container_client("mynewcontaineraccess")
 
     print("\n..Creating container")
     container_client.create_container()
