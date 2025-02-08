@@ -389,16 +389,15 @@ class TestChatCompletionsClient(ModelClientTestBase):
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
     def test_chat_completions_streaming(self, **kwargs):
-        client = self._create_chat_client(**kwargs)
-        response = client.complete(
-            stream=True,
-            messages=[
-                sdk.models.SystemMessage("You are a helpful assistant."),
-                sdk.models.UserMessage("Give me 3 good reasons why I should exercise every day."),
-            ],
-        )
-        self._validate_chat_completions_streaming_result(response)
-        client.close()
+        with self._create_chat_client(**kwargs) as client:
+            with client.complete(
+                stream=True,
+                messages=[
+                    sdk.models.SystemMessage("You are a helpful assistant."),
+                    sdk.models.UserMessage("Give me 3 good reasons why I should exercise every day."),
+                ],
+            ) as response:
+                self._validate_chat_completions_streaming_result(response)
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
