@@ -38,10 +38,9 @@ tracer_provider = TracerProvider()
 exporter = ConsoleSpanExporter()
 span_processor = SimpleSpanProcessor(exporter)
 
+tracer_provider.add_span_processor(span_processor)
 trace.set_tracer_provider(tracer_provider)
-tracer_provider.add_span_processor(SimpleSpanProcessor(exporter))
-tracer = trace.get_tracer(__name__)
-
+tracer = tracer_provider.get_tracer("my-application")
 
 sdk_tracer_provider = SDKTracerProvider(
     library_name="my-library",
