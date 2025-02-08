@@ -14,6 +14,8 @@ from subprocess import run
 
 from code_cov_report import create_coverage_report
 from common_tasks import run_check_call
+from ci_tools.parsing import ParsedSetup
+from ci_tools.functions import discover_targeted_packages
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -75,12 +77,32 @@ def fix_coverage_xml(coverage_file):
         with open(coverage_file, 'w') as cov_file:
             cov_file.write(out)
 
+def verify_coverage_percentages():
+    for file in os.listdir(coverage_dir):
+        pkg_name = file.split("_")[1]
+        breakpoint()
+        pkg_details = discover_targeted_packages(root_dir, pkg_name)
+
+        breakpoint()
+        if pkg_details and len(pkg_details) == 1:
+            pkg_details = pkg_details[0]
+
+            breakpoint()
+
+
+
+        else:
+            logging.error(f"Could not find package details for {pkg_name}. Additional packages identified {pkg_details}")
+
+
+
 if __name__ == "__main__":
     coverage_xml = os.path.join(root_dir, 'coverage.xml')
 
-    collect_tox_coverage_files()
-    generate_coverage_xml()
-    create_coverage_report()
+    verify_coverage_percentages()
+    # collect_tox_coverage_files()
+    # # generate_coverage_xml()
+    # # create_coverage_report()
 
-    if os.path.exists(coverage_xml):
-        fix_coverage_xml(coverage_xml)
+    # if os.path.exists(coverage_xml):
+    #     fix_coverage_xml(coverage_xml)
