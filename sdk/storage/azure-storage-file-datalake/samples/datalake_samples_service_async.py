@@ -54,8 +54,8 @@ async def main():
         # [START get_user_delegation_key]
         from datetime import datetime, timedelta
         # 
-        user_delegation_key = await datalake_service_client.get_user_delegation_key(datetime.utcnow(),
-                                                                              datetime.utcnow() + timedelta(hours=1))
+        # user_delegation_key = await datalake_service_client.get_user_delegation_key(datetime.utcnow(),
+        #                                                                       datetime.utcnow() + timedelta(hours=1))
         # [END get_user_delegation_key]
 
         # Create file systems
