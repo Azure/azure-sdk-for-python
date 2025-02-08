@@ -201,11 +201,11 @@ def execute_tox_serial(tox_command_tuples):
     for index, cmd_tuple in enumerate(tox_command_tuples):
         tox_dir = os.path.abspath(os.path.join(cmd_tuple[1], "./.tox/"))
         clone_dir = os.path.abspath(os.path.join(cmd_tuple[1], "..", "..", "..", "l"))
-        logging.info("tox_dir: {}".format(tox_dir))
 
-        logging.info(
-            "Running tox for {}. {} of {}.".format(os.path.basename(cmd_tuple[1]), index + 1, len(tox_command_tuples))
+        print(
+            "##[group]Tox for {}. {} of {}.".format(os.path.basename(cmd_tuple[1]), index + 1, len(tox_command_tuples))
         )
+        logging.info("tox_dir: {}".format(tox_dir))
 
         result = run_check_call(cmd_tuple[0], cmd_tuple[1], always_exit=False)
 
@@ -216,6 +216,8 @@ def execute_tox_serial(tox_command_tuples):
             collect_log_files(cmd_tuple[1])
 
             cleanup_tox_environments(tox_dir, cmd_tuple[0])
+
+            print("##[endgroup]")
 
             if os.path.exists(clone_dir):
                 try:
