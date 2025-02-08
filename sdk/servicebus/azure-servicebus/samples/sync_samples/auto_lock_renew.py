@@ -33,7 +33,7 @@ def renew_lock_on_message_received_from_non_sessionful_entity():
 
     with servicebus_client:
         with servicebus_client.get_queue_sender(queue_name=QUEUE_NAME) as sender:
-            msgs_to_send = [ServiceBusMessage("message: {}".format(i)) for i in range(10)]
+            msgs_to_send = [ServiceBusMessage("message: {}".format(i)) for i in range(10000)]
             sender.send_messages(msgs_to_send)
             print("Send messages to non-sessionful queue.")
 
@@ -41,14 +41,14 @@ def renew_lock_on_message_received_from_non_sessionful_entity():
         renewer = AutoLockRenewer()
 
         with servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, prefetch_count=10) as receiver:
-            received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
+            received_msgs = receiver.receive_messages(max_message_count=200, max_wait_time=5)
 
             for msg in received_msgs:
                 # automatically renew the lock on each message for 100 seconds
-                renewer.register(receiver, msg, max_lock_renewal_duration=100)
+                renewer.register(receiver, msg, max_lock_renewal_duration=120)
             print("Register messages into AutoLockRenewer done.")
 
-            time.sleep(100)  # message handling for long period (E.g. application logic)
+            time.sleep(120)  # message handling for long period (E.g. application logic)
 
             for msg in received_msgs:
                 receiver.complete_message(msg)  # Settling the message deregisters it from the AutoLockRenewer
@@ -137,5 +137,5 @@ def renew_lock_with_lock_renewal_failure_callback():
 
 
 renew_lock_on_message_received_from_non_sessionful_entity()
-renew_lock_on_session_of_the_sessionful_entity()
-renew_lock_with_lock_renewal_failure_callback()
+#renew_lock_on_session_of_the_sessionful_entity()
+#renew_lock_with_lock_renewal_failure_callback()
