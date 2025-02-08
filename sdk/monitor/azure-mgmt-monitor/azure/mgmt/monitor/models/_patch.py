@@ -11,7 +11,8 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-# the enum is already deprecated, but we keep it for CLI compatibility
+# the enum is already deprecated in https://github.com/Azure/azure-rest-api-specs/pull/30787,
+# but we keep it for CLI compatibility
 class ConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operators allowed in the rule condition."""
 
@@ -21,7 +22,8 @@ class ConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
 
 
-# the enum is already deprecated, but we keep it for CLI compatibility
+# the enum is already deprecated in https://github.com/Azure/azure-rest-api-specs/pull/30787,
+# but we keep it for CLI compatibility
 class TimeAggregationOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Aggregation operators allowed in a rule."""
 
