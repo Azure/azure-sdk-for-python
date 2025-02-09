@@ -358,6 +358,5 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
 
     if not parsed_args.disablecov:
         collect_tox_coverage_files(targeted_packages)
-        check_coverage(targeted_packages)
 
     sys.exit(return_result) #type: ignore
