@@ -137,8 +137,9 @@ class _GlobalEndpointManager(object):
         database_account, endpoint = await self._GetDatabaseAccount(**kwargs)
         endpoints_attempted.add(endpoint)
         self.location_cache.perform_on_database_account_read(database_account)
-        all_endpoints = [self.location_cache.read_regional_endpoints[0]]
-        all_endpoints.extend(self.location_cache.write_regional_endpoints)
+        # should use the regions in the order returned from gateway
+        all_endpoints = [self.location_cache.available_read_regional_endpoints_by_location.values()[0]]
+        all_endpoints.extend(self.location_cache.available_write_regional_endpoints_by_location.values())
         count = 0
         for endpoint in all_endpoints:
             if endpoint not in endpoints_attempted:
@@ -147,13 +148,13 @@ class _GlobalEndpointManager(object):
                 if count > 3:
                     break
                 try:
-                    await self.client._GetDatabaseAccountCheck(endpoint.get_current(), **kwargs)
+                    await self.client._GetDatabaseAccountCheck(endpoint.get_primary(), **kwargs)
+                    self.location_cache.mark_endpoint_available(endpoint.get_primary())
                 except (exceptions.CosmosHttpResponseError, AzureError):
                     if endpoint in self.location_cache.read_regional_endpoints:
-                        self.mark_endpoint_unavailable_for_read(endpoint.get_current(), False)
+                        self.mark_endpoint_unavailable_for_read(endpoint.get_primary(), False)
                     if endpoint in self.location_cache.write_regional_endpoints:
-                        self.mark_endpoint_unavailable_for_write(endpoint.get_current(), False)
-                        endpoint.swap()
+                        self.mark_endpoint_unavailable_for_write(endpoint.get_primary(), False)
         self.location_cache.update_location_cache()
 
     async def _GetDatabaseAccount(self, **kwargs):

@@ -103,7 +103,7 @@ class TestLocationCache(unittest.TestCase):
         # check read endpoints without preferred locations
         read_regions = lc.get_read_regional_endpoints()
         assert len(read_regions) == 1
-        assert read_regions[0].get_current() == location1_endpoint
+        assert read_regions[0].get_primary() == location1_endpoint
 
         # check read endpoints with preferred locations
         lc = refresh_location_cache([location1_name, location2_name, location4_name], False)
@@ -114,7 +114,7 @@ class TestLocationCache(unittest.TestCase):
             found_endpoint = False
             endpoint = read_region['databaseAccountEndpoint']
             for region in read_regions:
-                if endpoint in (region.get_current(), region.get_previous()):
+                if endpoint in (region.get_primary(), region.get_alternate()):
                     found_endpoint = True
             assert found_endpoint
 
@@ -125,7 +125,7 @@ class TestLocationCache(unittest.TestCase):
             found_endpoint = False
             endpoint = write_region['databaseAccountEndpoint']
             for region in write_regions:
-                if endpoint in (region.get_current(), region.get_previous()):
+                if endpoint in (region.get_primary(), region.get_alternate()):
                     found_endpoint = True
             assert found_endpoint
 

@@ -9,6 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+* Moved health check to the background.  
 
 ### 4.9.1b4 (2025-02-06)
 

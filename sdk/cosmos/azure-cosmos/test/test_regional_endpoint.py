@@ -51,7 +51,7 @@ class TestRegionalEndpoints(unittest.TestCase):
                              mocked_client.client_connection._global_endpoint_manager
                              .location_cache.get_read_regional_endpoint())
             # return it
-            self.assertEqual(self.REGIONAL_ENDPOINT.get_current(),
+            self.assertEqual(self.REGIONAL_ENDPOINT.get_primary(),
                              mocked_client.client_connection._global_endpoint_manager
                              .location_cache.get_write_regional_endpoint())
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = original_get_database_account_stub

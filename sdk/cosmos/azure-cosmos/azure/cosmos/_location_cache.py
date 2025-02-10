@@ -42,35 +42,27 @@ class EndpointOperationType(object):
 
 class RegionalEndpoint(object):
     def __init__(self, c_endpoint: str, p_endpoint: str):
-        self.current_endpoint = c_endpoint
-        self.previous_endpoint = p_endpoint
+        self.primary_endpoint = c_endpoint
+        self.alternate_endpoint = p_endpoint
 
-    def set_current(self, endpoint: str):
-        self.current_endpoint = endpoint
+    def set_primary(self, endpoint: str):
+        self.primary_endpoint = endpoint
 
-    def set_previous(self, endpoint: str):
-        self.previous_endpoint = endpoint
+    def set_alternate(self, endpoint: str):
+        self.alternate_endpoint = endpoint
 
-    def get_current(self):
-        return self.current_endpoint
+    def get_primary(self):
+        return self.primary_endpoint
 
-    def get_previous(self):
-        return self.previous_endpoint
+    def get_alternate(self):
+        return self.alternate_endpoint
 
     def __eq__(self, other):
-        return (self.current_endpoint == other.current_endpoint
-                and self.previous_endpoint == other.previous_endpoint)
+        return (self.primary_endpoint == other.primary_endpoint
+                and self.alternate_endpoint == other.alternate_endpoint)
 
     def __str__(self):
-        return "Current: " + self.current_endpoint + " ,Previous: " + self.previous_endpoint
-
-    def swap(self):
-        temp = self.current_endpoint
-        self.current_endpoint = self.previous_endpoint
-        self.previous_endpoint = temp
-        logger.warning("Swapped regional endpoint values: Current: " + self.current_endpoint +
-                       " ,Previous: " + self.previous_endpoint)
-
+        return "Current: " + self.primary_endpoint + " ,Previous: " + self.alternate_endpoint
 
 def get_endpoints_by_location(new_locations,
                               old_endpoints_by_location,
@@ -93,11 +85,11 @@ def get_endpoints_by_location(new_locations,
                 parsed_locations.append(new_location["name"])
                 if new_location["name"] in old_endpoints_by_location:
                     regional_object = old_endpoints_by_location[new_location["name"]]
-                    current = regional_object.get_current()
+                    current = regional_object.get_primary()
                     # swap the previous with current and current with new region_uri received from the gateway
                     if current != region_uri:
-                        regional_object.set_previous(current)
-                        regional_object.set_current(region_uri)
+                        regional_object.set_alternate(current)
+                        regional_object.set_primary(region_uri)
                 # This is the bootstrapping condition
                 else:
                     regional_object = RegionalEndpoint(region_uri, region_uri)
@@ -106,13 +98,13 @@ def get_endpoints_by_location(new_locations,
                         # if region_uri is different than global endpoint set global endpoint
                         # as fallback
                         # else construct regional uri
-                        if region_uri != default_regional_endpoint.get_current():
-                            regional_object.set_previous(default_regional_endpoint.get_current())
+                        if region_uri != default_regional_endpoint.get_primary():
+                            regional_object.set_alternate(default_regional_endpoint.get_primary())
                         else:
                             constructed_region_uri =  LocationCache.GetLocationalEndpoint(
-                                default_regional_endpoint.get_current(),
+                                default_regional_endpoint.get_primary(),
                                 new_location["name"])
-                            regional_object.set_previous(constructed_region_uri)
+                            regional_object.set_alternate(constructed_region_uri)
                 # pass in object with region uri , last known good, curr etc
                 endpoints_by_location.update({new_location["name"]: regional_object})
             except Exception as e:
@@ -164,10 +156,10 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return self.read_regional_endpoints
 
     def get_write_regional_endpoint(self):
-        return self.get_write_regional_endpoints()[0].get_current()
+        return self.get_write_regional_endpoints()[0].get_primary()
 
     def get_read_regional_endpoint(self):
-        return self.get_read_regional_endpoints()[0].get_current()
+        return self.get_read_regional_endpoints()[0].get_primary()
 
     def mark_endpoint_unavailable_for_read(self, endpoint, refresh_cache):
         self.mark_endpoint_unavailable(endpoint, EndpointOperationType.ReadType, refresh_cache)
@@ -187,22 +179,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
     def get_ordered_read_locations(self):
         return self.available_read_locations
-
-    # This updates the current and previous of the regional endpoint
-    # to keep it up to date with the success and failure cases
-    # This is only called on write operation failures as of now.
-    def swap_regional_endpoint_values(self, request):
-        location_index = int(request.location_index_to_route) if request.location_index_to_route else 0
-        regional_endpoints = (
-            self.get_write_regional_endpoints()
-            if documents._OperationType.IsWriteOperation(request.operation_type)
-            else self.get_read_regional_endpoints()
-        )
-        regional_endpoint = regional_endpoints[location_index % len(regional_endpoints)]
-        if request.location_endpoint_to_route == regional_endpoint.get_current():
-            logger.warning("Swapping regional endpoint values: %s",
-                           str(regional_endpoint))
-            regional_endpoint.swap()
 
     def resolve_service_endpoint(self, request):
         if request.location_endpoint_to_route:
@@ -226,12 +202,11 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 if (self.available_write_locations
                         and write_location in self.available_write_regional_endpoints_by_location):
                     write_regional_endpoint = self.available_write_regional_endpoints_by_location[write_location]
-                    if (request.last_routed_location_endpoint_within_region is not None
-                            and request.last_routed_location_endpoint_within_region
-                            == write_regional_endpoint.get_current()):
-                        return write_regional_endpoint.get_previous()
-                    return write_regional_endpoint.get_current()
-                return self.default_regional_endpoint.get_current()
+                    if self.is_endpoint_unavailable_internal(write_regional_endpoint.get_primary(),
+                                                             request.operation_type):
+                        return write_regional_endpoint.get_alternate()
+                    return write_regional_endpoint.get_primary()
+                return self.default_regional_endpoint.get_primary()
 
         regional_endpoints = (
             self.get_write_regional_endpoints()
@@ -239,10 +214,10 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             else self.get_read_regional_endpoints()
         )
         regional_endpoint = regional_endpoints[location_index % len(regional_endpoints)]
-        if (request.last_routed_location_endpoint_within_region is not None
-                and request.last_routed_location_endpoint_within_region == regional_endpoint.get_current()):
-            return regional_endpoint.get_previous()
-        return regional_endpoint.get_current()
+        if self.is_endpoint_unavailable_internal(regional_endpoint.get_primary(),
+                                                 request.operation_type):
+            return regional_endpoint.get_alternate()
+        return regional_endpoint.get_primary()
 
     def should_refresh_endpoints(self):  # pylint: disable=too-many-return-statements
         most_preferred_location = self.preferred_locations[0] if self.preferred_locations else None
@@ -284,31 +259,15 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             return should_refresh
         return False
 
-    def clear_stale_endpoint_unavailability_info(self):
-        new_location_unavailability_info = {}
-        if self.location_unavailability_info_by_endpoint:
-            for unavailable_endpoint in self.location_unavailability_info_by_endpoint:  #pylint: disable=consider-using-dict-items
-                unavailability_info = self.location_unavailability_info_by_endpoint[unavailable_endpoint]
-                if not (
-                    unavailability_info
-                    and self.current_time_millis() - unavailability_info["lastUnavailabilityCheckTimeStamp"]
-                    > self.refresh_time_interval_in_ms
-                ):
-                    new_location_unavailability_info[
-                        unavailable_endpoint
-                    ] = self.location_unavailability_info_by_endpoint[unavailable_endpoint]
-
-        self.location_unavailability_info_by_endpoint = new_location_unavailability_info
-
     def is_regional_endpoint_unavailable(self, endpoint: RegionalEndpoint, operation_type: str):
         # For writes only mark it unavailable if both are down
         if not _OperationType.IsReadOnlyOperation(operation_type):
-            return (self.is_endpoint_unavailable_internal(endpoint.get_current(), operation_type)
-                    and self.is_endpoint_unavailable_internal(endpoint.get_previous(), operation_type))
+            return (self.is_endpoint_unavailable_internal(endpoint.get_primary(), operation_type)
+                    and self.is_endpoint_unavailable_internal(endpoint.get_alternate(), operation_type))
 
         # For reads mark the region as down if either of the endpoints are unavailable
-        return (self.is_endpoint_unavailable_internal(endpoint.get_current(), operation_type)
-                or self.is_endpoint_unavailable_internal(endpoint.get_previous(), operation_type))
+        return (self.is_endpoint_unavailable_internal(endpoint.get_primary(), operation_type)
+                or self.is_endpoint_unavailable_internal(endpoint.get_alternate(), operation_type))
 
     def is_endpoint_unavailable_internal(self, endpoint: str, expected_available_operation: str):
         unavailability_info = (
@@ -324,12 +283,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         ):
             return False
 
-        if (
-            self.current_time_millis() - unavailability_info["lastUnavailabilityCheckTimeStamp"]
-            > self.refresh_time_interval_in_ms
-        ):
-            return False
-        # Unexpired entry present. Endpoint is unavailable
         return True
 
     def mark_endpoint_unavailable(self, unavailable_endpoint: str, unavailable_operation_type, refresh_cache: bool):
@@ -341,21 +294,21 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             if unavailable_endpoint in self.location_unavailability_info_by_endpoint
             else None
         )
-        current_time = self.current_time_millis()
         if not unavailability_info:
             self.location_unavailability_info_by_endpoint[unavailable_endpoint] = {
-                "lastUnavailabilityCheckTimeStamp": current_time,
-                "operationType": set([unavailable_operation_type]),
+                "operationType": set([unavailable_operation_type])
             }
         else:
             unavailable_operations = set([unavailable_operation_type]).union(unavailability_info["operationType"])
             self.location_unavailability_info_by_endpoint[unavailable_endpoint] = {
-                "lastUnavailabilityCheckTimeStamp": current_time,
-                "operationType": unavailable_operations,
+                "operationType": unavailable_operations
             }
 
         if refresh_cache:
             self.update_location_cache()
+
+    def mark_endpoint_available(self, available_endpoint: str):
+        self.location_unavailability_info_by_endpoint.pop(available_endpoint, "")
 
     def get_preferred_locations(self):
         return self.preferred_locations
@@ -363,8 +316,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
     def update_location_cache(self, write_locations=None, read_locations=None, enable_multiple_writable_locations=None):
         if enable_multiple_writable_locations:
             self.enable_multiple_writable_locations = enable_multiple_writable_locations
-
-        self.clear_stale_endpoint_unavailability_info()
 
         if self.enable_endpoint_discovery:
             if read_locations:
