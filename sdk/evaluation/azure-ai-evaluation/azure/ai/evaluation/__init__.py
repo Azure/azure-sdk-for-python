@@ -47,8 +47,6 @@ from ._constants import AggregationType
 
 __all__ = [
     "evaluate",
-    "_DSBEvaluator",
-    "_DSBEvaluation",
     "CoherenceEvaluator",
     "F1ScoreEvaluator",
     "FluencyEvaluator",
