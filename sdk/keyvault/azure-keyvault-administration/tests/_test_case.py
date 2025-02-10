@@ -19,7 +19,8 @@ class BaseClientPreparer(AzureRecordedTestCase):
         playback_sas_token = "fake-sas"
 
         if self.is_live:
-            self.managed_hsm_url = os.environ.get("AZURE_MANAGEDHSM_URL")
+            hsm = os.environ.get("AZURE_MANAGEDHSM_URL")
+            self.managed_hsm_url = hsm if hsm else None
             storage_url = os.environ.get("BLOB_STORAGE_URL")
             container_name = os.environ.get("BLOB_CONTAINER_NAME")
             self.container_uri = f"{storage_url}/{container_name}"

@@ -67,7 +67,8 @@ class KeysClientPreparer(AzureRecordedTestCase):
         if self.is_live:
             self.vault_url = os.environ["AZURE_KEYVAULT_URL"]
             self.vault_url = self.vault_url.rstrip("/")
-            self.managed_hsm_url = os.environ.get("AZURE_MANAGEDHSM_URL", None)
+            hsm = os.environ.get("AZURE_MANAGEDHSM_URL")
+            self.managed_hsm_url = hsm if hsm else None
             if self.managed_hsm_url:
                 self.managed_hsm_url = self.managed_hsm_url.rstrip("/")
         else:
