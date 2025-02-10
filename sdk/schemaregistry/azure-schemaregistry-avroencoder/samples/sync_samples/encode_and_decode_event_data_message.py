@@ -48,14 +48,10 @@ For more information on ClientSecretCredential, see:
 """
 import os
 
-from azure.identity import ClientSecretCredential, DefaultAzureCredential
+from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.encoder.avroencoder import AvroEncoder
 from azure.eventhub import EventData
-
-TENANT_ID = os.environ["AZURE_TENANT_ID"]
-CLIENT_ID = os.environ["AZURE_CLIENT_ID"]
-CLIENT_SECRET = os.environ["AZURE_CLIENT_SECRET"]
 
 SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ[
     "SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE"
