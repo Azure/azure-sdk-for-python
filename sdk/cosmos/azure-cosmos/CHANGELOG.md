@@ -9,7 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
-* Moved health check to the background.  
+* Moved endpoint health check to the background. See [PR 39647](https://github.com/Azure/azure-sdk-for-python/pull/39647) 
 
 ### 4.9.1b4 (2025-02-06)
 
