@@ -13,17 +13,35 @@ import os
 from azure.servicebus import ServiceBusClient, NEXT_AVAILABLE_SESSION
 from azure.identity import DefaultAzureCredential
 
+import logging
+import sys
+
+logger = logging.getLogger("azure.servicebus")
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
+
 FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 QUEUE_NAME = os.environ["SERVICEBUS_SESSION_QUEUE_NAME"]
 
 credential = DefaultAzureCredential()
-servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
+servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential, logging_enable=True)
 
 with servicebus_client:
-    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, session_id=NEXT_AVAILABLE_SESSION)
+    receiver = servicebus_client.get_management_operation_client(entity_name=QUEUE_NAME)
     with receiver:
         sessions = receiver.get_sessions(max_num_sessions=2)
         for session in sessions:
             print(str(session))
 
-print("Receive is done.")
+# print("Receive is done.")
+
+
+# with servicebus_client:
+#     receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, session_id=NEXT_AVAILABLE_SESSION)
+#     with receiver:
+#         sessions = receiver.get_sessions(max_num_sessions=2)
+#         for session in sessions:
+#             print(str(session))
+
+# print("Receive is done.")

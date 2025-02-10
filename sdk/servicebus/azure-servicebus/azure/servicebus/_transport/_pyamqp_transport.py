@@ -472,6 +472,37 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
             use_tls=config.use_tls,
             **kwargs,
         )
+    
+    @staticmethod
+    def create_amqp_client(config: "Configuration", **kwargs: Any) -> "SendClient": # pylint: disable=docstring-keyword-should-match-keyword-only
+        """
+        Creates and returns the pyamqp SendClient.
+        :param ~azure.servicebus._configuration.Configuration config: The configuration. Required.
+
+        :keyword str target: Required. The target.
+        :keyword ~pyamqp.authentication.JWTTokenAuth auth: Required.
+        :keyword retry_policy: Required.
+        :keyword str client_name: Required.
+        :keyword dict properties: Required.
+        :return: SendClient
+        :rtype: ~pyamqp.SendClient
+        """
+        from .._pyamqp import AMQPClient
+        target = kwargs.pop("target")
+        return AMQPClient(
+            config.hostname,
+            target=target,
+            network_trace=config.logging_enable,
+            keep_alive_interval=config.keep_alive,
+            custom_endpoint_address=config.custom_endpoint_address,
+            connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
+            transport_type=config.transport_type,
+            http_proxy=config.http_proxy,
+            socket_timeout=config.socket_timeout,
+            use_tls=config.use_tls,
+            **kwargs,
+        )
 
     @staticmethod
     def send_messages(

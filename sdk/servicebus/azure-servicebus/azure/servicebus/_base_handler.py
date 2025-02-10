@@ -489,13 +489,13 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         application_properties = {}
 
         # Some mgmt calls do not support an associated link name (such as list_sessions).  Most do, so on by default.
-        if keep_alive_associated_link:
-            try:
-                application_properties = {
-                    ASSOCIATEDLINKPROPERTYNAME: self._amqp_transport.get_handler_link_name(self._handler)
-                }
-            except AttributeError:
-                pass
+        # if keep_alive_associated_link:
+        #     try:
+        #         application_properties = {
+        #             ASSOCIATEDLINKPROPERTYNAME: self._amqp_transport.get_handler_link_name(self._handler)
+        #         }
+        #     except AttributeError:
+        #         pass
 
         mgmt_msg = self._amqp_transport.create_mgmt_msg(
             message=message,

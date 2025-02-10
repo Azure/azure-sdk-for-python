@@ -626,7 +626,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
             MGMT_REQUEST_TOP: self._amqp_transport.AMQP_UINT_VALUE(max_num_sessions),
         }
 
-        self._populate_message_properties(message)
+        # self._populate_message_properties(message)
         handler = functools.partial(mgmt_handlers.list_sessions_op, amqp_transport=self._amqp_transport)
         start_time = time.time_ns()
         messages = self._mgmt_request_response_with_retry(
