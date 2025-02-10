@@ -1,0 +1,149 @@
+# --------------------------------------------------------------------------
+#
+# Copyright (c) Microsoft Corporation. All rights reserved.
+#
+# The MIT License (MIT)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the ""Software""), to
+# deal in the Software without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+# sell copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+# IN THE SOFTWARE.
+#
+# --------------------------------------------------------------------------
+
+from types import TracebackType
+from typing import Iterator, AsyncIterator, TypeVar, Callable, Any, Optional, Type
+
+from typing_extensions import Self
+
+from ..rest import HttpResponse, AsyncHttpResponse
+from .decoders import StreamDecoder, AsyncStreamDecoder
+
+
+ReturnType = TypeVar("ReturnType")
+
+
+class Stream(Iterator[ReturnType]):
+    """Stream class for streaming JSONL or Server-Sent Events (SSE).
+
+    :keyword response: The response object.
+    :paramtype response: ~corehttp.rest.HttpResponse
+    :keyword decoder: A decoder to use for the stream.
+    :paramtype decoder: ~corehttp.streaming.decoders.StreamDecoder
+    :keyword deserialization_callback: A callback that takes JSON and returns a deserialized object.
+    :paramtype deserialization_callback: Callable[[Any], ReturnType]
+    :keyword terminal_event: A terminal event that indicates the end of the SSE stream.
+    :paramtype terminal_event: Optional[str]
+    """
+
+    def __init__(
+        self,
+        *,
+        response: HttpResponse,
+        decoder: StreamDecoder,
+        deserialization_callback: Callable[[Any], ReturnType],
+        terminal_event: Optional[str] = None,
+    ) -> None:
+        self._response = response
+        self._decoder = decoder
+        self._deserialization_callback = deserialization_callback
+        self._terminal_event = terminal_event
+        self._iterator = self._iter_results()
+
+    def __next__(self) -> ReturnType:
+        return self._iterator.__next__()
+
+    def __iter__(self) -> Iterator[ReturnType]:
+        yield from self._iterator
+
+    def _iter_results(self) -> Iterator[ReturnType]:
+        for event in self._decoder.iter_events(self._response.iter_bytes()):
+            if event.data == self._terminal_event:
+                break
+
+            result = self._deserialization_callback(event.json())
+            yield result
+
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
+        self.close()
+
+    def __enter__(self) -> Self:
+        return self
+
+    def close(self) -> None:
+        self._response.close()
+
+
+class AsyncStream(AsyncIterator[ReturnType]):
+    """AsyncStream class for asynchronously streaming JSONL or Server-Sent Events (SSE).
+
+    :keyword response: The response object.
+    :paramtype response: ~corehttp.rest.AsyncHttpResponse
+    :keyword decoder: A decoder to use for the stream.
+    :paramtype decoder: ~corehttp.streaming.decoders.AsyncStreamDecoder
+    :keyword deserialization_callback: A callback that takes JSON and returns a deserialized object.
+    :paramtype deserialization_callback: Callable[[Any], ReturnType]
+    :keyword terminal_event: A terminal event that indicates the end of the SSE stream.
+    :paramtype terminal_event: Optional[str]
+    """
+
+    def __init__(
+        self,
+        *,
+        response: AsyncHttpResponse,
+        decoder: AsyncStreamDecoder,
+        deserialization_callback: Callable[[Any], ReturnType],
+        terminal_event: Optional[str] = None,
+    ) -> None:
+        self._response = response
+        self._decoder = decoder
+        self._deserialization_callback = deserialization_callback
+        self._terminal_event = terminal_event
+        self._iterator = self._iter_results()
+
+    async def __anext__(self) -> ReturnType:
+        return await self._iterator.__anext__()
+
+    async def __aiter__(self) -> AsyncIterator[ReturnType]:  # pylint: disable=invalid-overridden-method
+        async for item in self._iterator:
+            yield item
+
+    async def _iter_results(self) -> AsyncIterator[ReturnType]:
+        async for event in self._decoder.aiter_events(self._response.iter_bytes()):
+            if event.data == self._terminal_event:
+                break
+
+            result = self._deserialization_callback(event.json())
+            yield result
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
+        await self.close()
+
+    async def __aenter__(self) -> Self:
+        return self
+
+    async def close(self) -> None:
+        await self._response.close()
