@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from ._dsb_evaluation._dsb_evaluation import _DSBEvaluator, _DSBEvaluation
 from ._evaluate._evaluate import evaluate
 from ._evaluators._bleu import BleuScoreEvaluator
 from ._evaluators._coherence import CoherenceEvaluator
