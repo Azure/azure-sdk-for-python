@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.0b6 (Unreleased)
+
+### Features added
+
+* Added trace_function decorator which can be used to trace functions
+
+### Bugs Fixed
+
+### Breaking Changes
+
 ## 1.0.0b5 (2025-01-17)
 
 ### Features added
