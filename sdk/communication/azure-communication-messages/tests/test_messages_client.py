@@ -41,7 +41,7 @@ class TestNotificationMessageClientForText(MessagesRecordedTestCase):
             content="Thanks for your feedback Hello.",
         )
 
-        message_response: MessageReceipt 
+        message_response: MessageReceipt
         message_client: NotificationMessagesClient = self.create_notification_message_client()
 
         try:
