@@ -125,7 +125,7 @@ class _GlobalEndpointManager(object):
                 # in background
                     asyncio.ensure_future(self._endpoints_health_check(**kwargs))
                 else:
-                    database_account = await self._GetDatabaseAccount(**kwargs)
+                    database_account, _ = await self._GetDatabaseAccount(**kwargs)
                     self.location_cache.perform_on_database_account_read(database_account)
 
     async def _endpoints_health_check(self, **kwargs):
@@ -133,23 +133,27 @@ class _GlobalEndpointManager(object):
 
         Validating if the endpoint is healthy else marking it as unavailable.
         """
-        database_account = await self._GetDatabaseAccount(**kwargs)
+        endpoints_attempted = set()
+        database_account, endpoint = await self._GetDatabaseAccount(**kwargs)
+        endpoints_attempted.add(endpoint)
         self.location_cache.perform_on_database_account_read(database_account)
         all_endpoints = [self.location_cache.read_regional_endpoints[0]]
         all_endpoints.extend(self.location_cache.write_regional_endpoints)
         count = 0
         for endpoint in all_endpoints:
-            count += 1
-            if count > 3:
-                break
-            try:
-                await self.client._GetDatabaseAccountCheck(endpoint.get_current(), **kwargs)
-            except (exceptions.CosmosHttpResponseError, AzureError):
-                if endpoint in self.location_cache.read_regional_endpoints:
-                    self.mark_endpoint_unavailable_for_read(endpoint.get_current(), False)
-                if endpoint in self.location_cache.write_regional_endpoints:
-                    self.mark_endpoint_unavailable_for_write(endpoint.get_current(), False)
-                    endpoint.swap()
+            if endpoint not in endpoints_attempted:
+                endpoints_attempted.add(endpoint)
+                count += 1
+                if count > 3:
+                    break
+                try:
+                    await self.client._GetDatabaseAccountCheck(endpoint.get_current(), **kwargs)
+                except (exceptions.CosmosHttpResponseError, AzureError):
+                    if endpoint in self.location_cache.read_regional_endpoints:
+                        self.mark_endpoint_unavailable_for_read(endpoint.get_current(), False)
+                    if endpoint in self.location_cache.write_regional_endpoints:
+                        self.mark_endpoint_unavailable_for_write(endpoint.get_current(), False)
+                        endpoint.swap()
         self.location_cache.update_location_cache()
 
     async def _GetDatabaseAccount(self, **kwargs):
@@ -164,7 +168,7 @@ class _GlobalEndpointManager(object):
         try:
             database_account = await self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
             self._database_account_cache = database_account
-            return database_account
+            return database_account, self.DefaultEndpoint
         # If for any reason(non-globaldb related), we are not able to get the database
         # account from the above call to GetDatabaseAccount, we would try to get this
         # information from any of the preferred locations that the user might have
@@ -177,7 +181,7 @@ class _GlobalEndpointManager(object):
                 try:
                     database_account = await self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
                     self._database_account_cache = database_account
-                    return database_account
+                    return database_account, locational_endpoint
                 except (exceptions.CosmosHttpResponseError, AzureError):
                     pass
             raise
