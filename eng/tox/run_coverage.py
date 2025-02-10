@@ -1,9 +1,10 @@
 import coverage
 import argparse
 import os
+import json
 
 from ci_tools.parsing import ParsedSetup
-from ci_tools.functions import discover_targeted_packages
+from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import is_check_enabled
 
 def get_total_coverage(coverage_file: str) -> float:
@@ -30,11 +31,19 @@ if __name__ == "__main__":
     args = parser.parse_args()
     pkg_details = ParsedSetup.from_path(args.target_package)
 
-    coverage_files = [os.path.join(args.target_package, f) for f in os.listdir(args.target_package) if f.startswith('.coverage')]
+    possible_coverage_file = os.path.join(args.target_package, ".coverage")
 
-    for coverage_file in coverage_files:
-        total_coverage = get_total_coverage(coverage_file)
+    if os.path.exists(possible_coverage_file):
+        total_coverage = get_total_coverage(possible_coverage_file)
         print(f"Total coverage for {pkg_details.name} is {total_coverage:.2f}%")
+
+        if in_ci():
+            metric_obj = {}
+            metric_obj["coverage"] = total_coverage
+            metric_obj["name"] = "coverage_percentage"
+            metric_obj["labels"] = { "package": pkg_details.name }
+
+            print(f'logmetric: {json.dumps(metric_obj)}')
 
     if is_check_enabled(args.target_package, "cov_enforcement", False):
         print("Coverage enforcement is enabled for this package.")
