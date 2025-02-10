@@ -23,12 +23,13 @@
 """
 import warnings
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, Type, cast, overload, Iterable
+from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, Type, cast, overload, Iterable, Callable
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, validate_kwargs
 
 from ._base import (
@@ -273,6 +274,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         initial_headers: Optional[Dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        response_hook: Optional[Callable[[CaseInsensitiveDict,
+                                          Union[Dict[str, Any], ItemPaged[Dict[str, Any]]]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List all the items in the container.
@@ -280,7 +283,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook:
+            Callable[[CaseInsensitiveDict, Union[Dict[str, Any], ItemPaged[Dict[str, Any]]]],None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
@@ -297,7 +302,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if priority is not None:
             kwargs['priority'] = priority
         feed_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if populate_query_metrics is not None:
@@ -310,7 +314,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
-        if hasattr(response_hook, "clear"):
+        if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
 
         if self.container_link in self.__get_client_container_caches():
@@ -331,6 +335,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             partition_key: PartitionKeyType,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+            response_hook: Optional[Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -355,7 +360,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :type response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
+        :type response_hook:
+            Callable[[CaseInsensitiveDict, Union[Dict[str, Any], ItemPaged[Dict[str, Any]]]], None]
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -370,6 +376,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+            response_hook: Optional[Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
 
@@ -393,7 +400,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
+        :paramtype response_hook: Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -406,6 +413,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             continuation: str,
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
+            response_hook: Optional[Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -418,7 +426,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :paramtype priority: Literal["High", "Low"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
+        :paramtype response_hook: Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -432,6 +440,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+            response_hook: Optional[Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed in the entire container,
@@ -454,7 +463,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
+        :paramtype response_hook: Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -466,7 +475,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             *args: Any,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
-
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
@@ -490,7 +498,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
+        :paramtype response_hook: Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]
         :param Any args: args
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
@@ -551,6 +559,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         initial_headers: Optional[Dict[str, str]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        response_hook: Optional[Callable[[CaseInsensitiveDict,
+                                          Union[Dict[str, Any], ItemPaged[Dict[str, Any]]]], None]] = None,
         continuation_token_limit: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
@@ -577,7 +587,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook:
+            Callable[[CaseInsensitiveDict, Union[Dict[str, Any], ItemPaged[Dict[str, Any]]]], None]
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
             response. Valid values are positive integers.
             A value of 0 is the same as not passing a value (default no limit).
@@ -616,7 +628,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if priority is not None:
             kwargs['priority'] = priority
         feed_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if enable_cross_partition_query is not None:
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if max_item_count is not None:
@@ -643,7 +654,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         feed_options["correlatedActivityId"] = correlated_activity_id
         if continuation_token_limit is not None:
             feed_options["responseContinuationTokenLimitInKb"] = continuation_token_limit
-        if hasattr(response_hook, "clear"):
+        if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
         if self.container_link in self.__get_client_container_caches():
             feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
@@ -1113,18 +1124,22 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return self.get_throughput(**kwargs)
 
     @distributed_trace
-    def get_throughput(self, **kwargs: Any) -> ThroughputProperties:
+    def get_throughput(
+            self,
+            *,
+            response_hook: Optional[Callable[[CaseInsensitiveDict, List[Dict[str, Any]]], None]] = None,
+            **kwargs: Any) -> ThroughputProperties:
         """Get the ThroughputProperties object for this container.
 
         If no ThroughputProperties already exist for the container, an exception is raised.
 
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[CaseInsensitiveDict, List[Dict[str, Any]]], None]
         :returns: Throughput for the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
             the throughput properties could not be retrieved.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        response_hook = kwargs.pop('response_hook', None)
         throughput_properties: List[Dict[str, Any]]
         properties = self._get_properties()
         link = properties["_self"]
@@ -1152,7 +1167,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         :param throughput: The throughput to be set.
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: ThroughputProperties for the container, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
@@ -1178,17 +1192,19 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def list_conflicts(
         self,
         max_item_count: Optional[int] = None,
+        *,
+        response_hook: Optional[Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List all the conflicts in the container.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of conflicts (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if self.container_link in self.__get_client_container_caches():
@@ -1209,6 +1225,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         enable_cross_partition_query: Optional[bool] = None,
         partition_key: Optional[PartitionKeyType] = None,
         max_item_count: Optional[int] = None,
+        *,
+        response_hook: Optional[Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Return all conflicts matching a given `query`.
@@ -1222,12 +1240,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param partition_key: Specifies the partition key value for the item.
         :type partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]]]
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Dict[str, str], ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of conflicts (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
         feed_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if enable_cross_partition_query is not None:

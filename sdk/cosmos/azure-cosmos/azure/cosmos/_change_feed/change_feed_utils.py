@@ -81,7 +81,7 @@ def validate_kwargs(
     The values of keyword arguments must match the expect type and conditions. If the conditions do not match,
     errors will be raised with the error messages and possible ways to correct the errors.
 
-    :param kwargs: Keyword arguments to verify for query_items_change_feed API
+    :param dict[str, Any] kwargs: Keyword arguments to verify for query_items_change_feed API
     :keyword mode: Must be one of the values in the Enum, 'ChangeFeedMode'.
         If the value is 'ALL_VERSIONS_AND_DELETES', the following keywords must be in the right condition:
             - 'partition_key_range_id': Cannot be used at any time
