@@ -87,8 +87,8 @@ To learn more about Azure Monitor, see the [Azure Monitor service documentation]
 <!-- External links -->
 [azure_identity]: https://pypi.org/project/azure-identity/
 [azure_identity_default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[azure_monitor_create_using_portal]: https://docs.microsoft.com/azure/azure-monitor/logs/quick-create-workspace
-[azure_monitor_docs]: https://docs.microsoft.com/azure/azure-monitor/
+[azure_monitor_create_using_portal]: https://learn.microsoft.com/azure/azure-monitor/logs/quick-create-workspace
+[azure_monitor_docs]: https://learn.microsoft.com/azure/azure-monitor/
 [azure_monitor_logs_ingestion_overview]: https://learn.microsoft.com/azure/azure-monitor/logs/logs-ingestion-api-overview
 [azure_subscription]: https://azure.microsoft.com/free/
 [data_collection_endpoint]: https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-endpoint-overview

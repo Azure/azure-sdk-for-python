@@ -46,7 +46,7 @@ def classification(
     :keyword primary_metric: The metric that Automated Machine Learning will optimize for model selection.
             Automated Machine Learning collects more metrics than it can optimize.
             For more information on how metrics are calculated, see
-            https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
+            https://learn.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
 
             Acceptable values: accuracy, AUC_weighted, norm_macro_recall, average_precision_score_weighted,
             and precision_score_weighted
@@ -56,7 +56,7 @@ def classification(
             training iterations.
             The default is None. For more information, see
             `Interpretability: model explanations in automated machine learning
-            <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
+            <https://learn.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
     :paramtype enable_model_explainability: bool
     :keyword weight_column_name: The name of the sample weight column. Automated ML supports a weighted column
             as an input, causing rows in the data to be weighted up or down.
@@ -78,7 +78,7 @@ def classification(
             For custom cross validation fold, use ``cv_split_column_names``.
 
             For more information, see
-            `Configure data splits and cross-validation in automated machine learning <https://docs.microsoft.com
+            `Configure data splits and cross-validation in automated machine learning <https://learn.microsoft.com
             /azure/machine-learning/how-to-configure-cross-validation-data-splits>`__.
 
             Defaults to None
@@ -90,7 +90,7 @@ def classification(
             For custom cross validation fold, use ``cv_split_column_names``.
 
             For more information, see
-            `Configure data splits and cross-validation in automated machine learning <https://docs.microsoft.com
+            `Configure data splits and cross-validation in automated machine learning <https://learn.microsoft.com
             /azure/machine-learning/how-to-configure-cross-validation-data-splits>`__.
 
             Defaults to None
@@ -188,7 +188,7 @@ def regression(
     :keyword primary_metric: The metric that Automated Machine Learning will optimize for model selection.
             Automated Machine Learning collects more metrics than it can optimize.
             For more information on how metrics are calculated, see
-            https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
+            https://learn.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
 
             Acceptable values: spearman_correlation, r2_score, normalized_mean_absolute_error,
             normalized_root_mean_squared_error.
@@ -198,7 +198,7 @@ def regression(
             training iterations.
             The default is None. For more information, see
             `Interpretability: model explanations in automated machine learning
-            <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
+            <https://learn.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
     :paramtype enable_model_explainability: bool
     :keyword weight_column_name: The name of the sample weight column. Automated ML supports a weighted column
             as an input, causing rows in the data to be weighted up or down.
@@ -220,7 +220,7 @@ def regression(
             For custom cross validation fold, use ``cv_split_column_names``.
 
             For more information, see
-            `Configure data splits and cross-validation in automated machine learning <https://docs.microsoft.com
+            `Configure data splits and cross-validation in automated machine learning <https://learn.microsoft.com
             /azure/machine-learning/how-to-configure-cross-validation-data-splits>`__.
 
             Defaults to None
@@ -232,7 +232,7 @@ def regression(
             For custom cross validation fold, use ``cv_split_column_names``.
 
             For more information, see
-            `Configure data splits and cross-validation in automated machine learning <https://docs.microsoft.com
+            `Configure data splits and cross-validation in automated machine learning <https://learn.microsoft.com
             /azure/machine-learning/how-to-configure-cross-validation-data-splits>`__.
 
             Defaults to None
@@ -330,7 +330,7 @@ def forecasting(
     :keyword primary_metric: The metric that Automated Machine Learning will optimize for model selection.
             Automated Machine Learning collects more metrics than it can optimize.
             For more information on how metrics are calculated, see
-            https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
+            https://learn.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
 
             Acceptable values: r2_score, normalized_mean_absolute_error, normalized_root_mean_squared_error
             Defaults to normalized_root_mean_squared_error
@@ -339,7 +339,7 @@ def forecasting(
             training iterations.
             The default is None. For more information, see
             `Interpretability: model explanations in automated machine learning
-            <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
+            <https://learn.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
     :paramtype enable_model_explainability: bool
     :keyword weight_column_name: The name of the sample weight column. Automated ML supports a weighted column
             as an input, causing rows in the data to be weighted up or down.
@@ -361,7 +361,7 @@ def forecasting(
             For custom cross validation fold, use ``cv_split_column_names``.
 
             For more information, see
-            `Configure data splits and cross-validation in automated machine learning <https://docs.microsoft.com
+            `Configure data splits and cross-validation in automated machine learning <https://learn.microsoft.com
             /azure/machine-learning/how-to-configure-cross-validation-data-splits>`__.
 
             Defaults to None
@@ -373,7 +373,7 @@ def forecasting(
             For custom cross validation fold, use ``cv_split_column_names``.
 
             For more information, see
-            `Configure data splits and cross-validation in automated machine learning <https://docs.microsoft.com
+            `Configure data splits and cross-validation in automated machine learning <https://learn.microsoft.com
             /azure/machine-learning/how-to-configure-cross-validation-data-splits>`__.
 
             Defaults to None

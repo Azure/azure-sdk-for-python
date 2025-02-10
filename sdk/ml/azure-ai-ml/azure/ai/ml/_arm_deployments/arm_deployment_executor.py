@@ -85,7 +85,6 @@ class ArmDeploymentExecutor(object):
                 error_category=ErrorCategory.USER_ERROR,
             )
         error = None
-        # pylint: disable=too-many-nested-blocks
         try:
             poller = self._get_poller(template=template, parameters=parameters)
             module_logger.info(

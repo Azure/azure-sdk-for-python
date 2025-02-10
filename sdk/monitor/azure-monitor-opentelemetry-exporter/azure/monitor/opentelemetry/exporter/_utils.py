@@ -22,7 +22,7 @@ from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKey
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter._constants import (
     _AKS_ARM_NAMESPACE_ID,
-    _APPLICATION_INSIGHTS_RESOURCE_SCOPE,
+    _DEFAULT_AAD_SCOPE,
     _PYTHON_ENABLE_OPENTELEMETRY,
     _INSTRUMENTATIONS_BIT_MAP,
     _FUNCTIONS_WORKER_RUNTIME,
@@ -274,15 +274,23 @@ def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, 
     return truncated_properties
 
 
-def _get_auth_policy(credential, default_auth_policy):
+def _get_auth_policy(credential, default_auth_policy, aad_audience=None):
     if credential:
         if hasattr(credential, "get_token"):
             return BearerTokenCredentialPolicy(
                 credential,
-                _APPLICATION_INSIGHTS_RESOURCE_SCOPE,
+                _get_scope(aad_audience),
             )
         raise ValueError("Must pass in valid TokenCredential.")
     return default_auth_policy
+
+
+def _get_scope(aad_audience=None):
+    # The AUDIENCE is a url that identifies Azure Monitor in a specific cloud
+    # (For example: "https://monitor.azure.com/").
+    # The SCOPE is the audience + the permission
+    # (For example: "https://monitor.azure.com//.default").
+    return _DEFAULT_AAD_SCOPE if not aad_audience else "{}/.default".format(aad_audience)
 
 
 class Singleton(type):

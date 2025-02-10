@@ -21,12 +21,12 @@ class TestEventHubManagementConfigurationOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_patch(self, resource_group):
+    async def test_configuration_patch(self, resource_group):
         response = await self.client.configuration.patch(
             resource_group_name=resource_group.name,
             cluster_name="str",
             parameters={"settings": {"str": "str"}},
-            api_version="2018-01-01-preview",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -34,11 +34,11 @@ class TestEventHubManagementConfigurationOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_configuration_get(self, resource_group):
         response = await self.client.configuration.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2018-01-01-preview",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself

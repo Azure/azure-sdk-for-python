@@ -839,7 +839,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
+         <https://learn.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :return: JSON object
@@ -1033,7 +1033,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
+         <https://learn.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :return: JSON object
@@ -1180,7 +1180,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
+         <https://learn.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :return: JSON object
@@ -1391,7 +1391,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
+         <https://learn.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :return: JSON object
@@ -1676,7 +1676,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
+         <https://learn.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :return: JSON object
@@ -1960,7 +1960,7 @@ class WeatherOperations:
         every five minutes.
 
         The service supplements Azure Maps `Route Service
-        <https://docs.microsoft.com/rest/api/maps/route>`__ that allows you to first request a route
+        <https://learn.microsoft.com/rest/api/maps/route>`__ that allows you to first request a route
         between an origin and a destination and use that as an input for Weather Along Route endpoint.
 
         In addition, the service supports scenarios to generate weather notifications for waypoints
@@ -1970,7 +1970,7 @@ class WeatherOperations:
         notification before the driver reaches that waypoint.
 
         The trigger for when to display the notification for a waypoint could be based, for example,
-        on a `geofence <https://docs.microsoft.com/azure/azure-maps/tutorial-iot-hub-maps>`__\\ , or
+        on a `geofence <https://learn.microsoft.com/azure/azure-maps/tutorial-iot-hub-maps>`__\\ , or
         selectable distance to the waypoint.
 
         The API covers all regions of the planet except latitudes above Greenland and Antarctica.
@@ -2007,7 +2007,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
+         <https://learn.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :return: JSON object
@@ -2182,7 +2182,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
+         <https://learn.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :keyword details: Return full details for the severe weather alerts. Available values are
@@ -2318,7 +2318,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
+         <https://learn.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :keyword duration: Specifies for how many days the daily indices are returned. By default, the
@@ -2940,7 +2940,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
+         <https://learn.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :keyword include_pollutant_details: Boolean value that returns detailed information about each
@@ -3062,7 +3062,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
+         <https://learn.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :keyword duration: Specifies for how many days from now we would like to know about the air
@@ -3174,7 +3174,7 @@ class WeatherOperations:
          available for a specific field, default language is used.
 
          Please refer to `Supported Languages
-         <https://docs.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
+         <https://learn.microsoft.com/azure/azure-maps/supported-languages>`__ for details. Default value
          is None.
         :paramtype language: str
         :keyword duration: Specifies for how many hours from now we would like to know about the air

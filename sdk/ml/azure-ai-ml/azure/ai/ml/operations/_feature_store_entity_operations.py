@@ -170,7 +170,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         self,
         name: str,
         version: str,
-        **kwargs: Dict,  # pylint:disable=unused-argument
+        **kwargs: Dict,
     ) -> None:
         """Restore an archived FeatureStoreEntity asset.
 

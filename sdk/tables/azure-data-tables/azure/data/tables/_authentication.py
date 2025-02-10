@@ -209,9 +209,15 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
             return False
 
         if self._discover_tenant:
-            self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+            if isinstance(scope, str):
+                self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+            else:
+                self.authorize_request(request, *scope, tenant_id=challenge.tenant_id)
         else:
-            self.authorize_request(request, scope)
+            if isinstance(scope, str):
+                self.authorize_request(request, scope)
+            else:
+                self.authorize_request(request, *scope)
         return True
 
 
