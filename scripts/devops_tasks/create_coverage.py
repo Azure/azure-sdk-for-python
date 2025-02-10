@@ -76,28 +76,9 @@ def fix_coverage_xml(coverage_file):
             cov_file.write(out)
 
 
-# def verify_coverage_percentages():
-#     for file in os.listdir(coverage_dir):
-#         pkg_name = file.split("_")[1]
-#         pkg_details_array = discover_targeted_packages(pkg_name, root_dir)
-
-#         if pkg_details_array and len(pkg_details_array) == 1:
-#             pkg_path = pkg_details_array[0]
-
-#             if is_check_enabled(pkg_path, "cov_enforcement", True):
-#                 total_coverage = get_total_coverage(os.path.join(coverage_dir, file))
-
-#                 print(f"Total coverage for {pkg_name} is {total_coverage:.2f}%")
-#         else:
-#             logging.error(
-#                 f"Could not find package details for {pkg_name}."
-#             )
-
-
 if __name__ == "__main__":
     coverage_xml = os.path.join(root_dir, "coverage.xml")
 
-    # verify_coverage_percentages()
     collect_tox_coverage_files()
     generate_coverage_xml()
     create_coverage_report()
