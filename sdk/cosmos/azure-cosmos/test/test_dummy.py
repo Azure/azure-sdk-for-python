@@ -20,8 +20,10 @@ import sys
 from azure.core.pipeline.transport import AioHttpTransport
 from typing import Any, Callable
 import _fault_injection_transport
+import os
 
 COLLECTION = "created_collection"
+MGMT_TIMEOUT = 3.0 
 logger = logging.getLogger('azure.cosmos')
 logger.setLevel("INFO")
 logger.setLevel(logging.DEBUG)
@@ -36,47 +38,66 @@ TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
 def setup():
     return 
 
-
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestDummyAsync:
+    @classmethod
+    def setup_class(cls):
+        logger.info("starting class: {} execution".format(cls.__name__))
+        cls.host = test_config.TestConfig.host
+        cls.masterKey = test_config.TestConfig.masterKey
 
-    async def cleanup(self, initializedObjects: dict[str, Any]):
-        created_database: DatabaseProxy = initializedObjects["db"]
-        try:
-            await created_database.delete_container(initializedObjects["col"])
-        except Exception as containerDeleteError:    
-            logger.warn("Exception trying to delete database {}. {}".format(created_database.id, containerDeleteError))
-        finally:    
-            client: CosmosClient = initializedObjects["client"]
-            try:
-                await client.close()
-            except Exception as closeError:    
-                logger.warn("Exception trying to delete database {}. {}".format(created_database.id, closeError))
-
-    async def setup(self, custom_transport: AioHttpTransport):
-
-        host = test_config.TestConfig.host
-        masterKey = test_config.TestConfig.masterKey
-        connectionPolicy = test_config.TestConfig.connectionPolicy
-        TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
-        TEST_CONTAINER_SINGLE_PARTITION_ID = "test-timeout-retry-policy-container-" + str(uuid.uuid4())
-
-        if (masterKey == '[YOUR_KEY_HERE]' or
-                host == '[YOUR_ENDPOINT_HERE]'):
+        if (cls.masterKey == '[YOUR_KEY_HERE]' or
+                cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
+        
+        cls.connectionPolicy = test_config.TestConfig.connectionPolicy
+        cls.database_id = test_config.TestConfig.TEST_DATABASE_ID
+        cls.single_partition_container_name= os.path.basename(__file__) + str(uuid.uuid4())
 
+        cls.mgmtClient = CosmosClient(host, masterKey, consistency_level="Session",
+                            connection_policy=connectionPolicy, logger=logger)
+        created_database: DatabaseProxy = cls.mgmtClient.get_database_client(cls.database_id)
+        asyncio.run(asyncio.wait_for(
+            created_database.create_container(
+                cls.single_partition_container_name,
+                partition_key=PartitionKey("/pk")),
+            MGMT_TIMEOUT))
+    
+    @classmethod
+    def teardown_class(cls):
+        logger.info("tearing down class: {}".format(cls.__name__))
+        created_database: DatabaseProxy = cls.mgmtClient.get_database_client(cls.database_id)
+        try:
+            asyncio.run(asyncio.wait_for(
+                created_database.delete_container(cls.single_partition_container_name),
+                MGMT_TIMEOUT))
+        except Exception as containerDeleteError:    
+            logger.warn("Exception trying to delete database {}. {}".format(created_database.id, containerDeleteError))
+        finally:    
+            try:
+                asyncio.run(asyncio.wait_for(cls.mgmtClient.close(), MGMT_TIMEOUT))
+            except Exception as closeError:    
+                logger.warn("Exception trying to delete database {}. {}".format(created_database.id, closeError))
+
+    def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport):
         client = CosmosClient(host, masterKey, consistency_level="Session",
                             connection_policy=connectionPolicy, transport=custom_transport,
                             logger=logger)
-        created_database: DatabaseProxy = client.get_database_client(TEST_DATABASE_ID)
-        created_collection = await created_database.create_container(TEST_CONTAINER_SINGLE_PARTITION_ID,
-                                                                    partition_key=PartitionKey("/pk"))
-        return {"client": client, "db": created_database, "col": created_collection}
+        db: DatabaseProxy = client.get_database_client(TEST_DATABASE_ID)
+        container: ContainerProxy = db.get_container_client(self.single_partition_container_name)
+        return {"client": client, "db": db, "col": container}
+
+    def cleanup_method(self, initializedObjects: dict[str, Any]):
+        method_client: CosmosClient = initializedObjects["client"]
+        try:
+            asyncio.run(asyncio.wait_for(method_client.close(), MGMT_TIMEOUT))
+        except Exception as closeError:    
+            logger.warning("Exception trying to close method client.")
 
     def predicate_url_contains_id(self, r: HttpRequest, id: str):
         logger.info("FaultPredicate for request {} {}".format(r.method, r.url));
@@ -113,7 +134,7 @@ class TestDummyAsync:
                 status_code=502,
                 message="Some random reverse proxy error.")))
 
-        initializedObjects = await self.setup(custom_transport)
+        initializedObjects = self.setup_method_with_custom_transport(custom_transport)
         try:
             container: ContainerProxy = initializedObjects["col"]
             await container.create_item(body=document_definition)
@@ -122,7 +143,9 @@ class TestDummyAsync:
             if (cosmosError.status_code != 502):
                 raise cosmosError
         finally:
-            await self.cleanup(initializedObjects)
+            cleanupOp = self.cleanup_method(initializedObjects)
+            if (cleanupOp != None):
+                await cleanupOp
 
     async def test_succeeds_with_multiple_endpoints(self, setup):
         custom_transport = _fault_injection_transport.FaulInjectionTransport(logger)
@@ -132,7 +155,7 @@ class TestDummyAsync:
                                'name': 'sample document',
                                'key': 'value'}
 
-        initializedObjects = await self.setup(custom_transport)
+        initializedObjects = self.setup_method_with_custom_transport(custom_transport)
         try:
             container: ContainerProxy = initializedObjects["col"]
             
@@ -144,7 +167,7 @@ class TestDummyAsync:
                 await asyncio.sleep(0.2)
 
         finally:
-            await self.cleanup(initializedObjects)        
+            self.cleanup_method(initializedObjects)       
 
 if __name__ == '__main__':
     unittest.main()
