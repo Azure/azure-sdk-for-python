@@ -13,7 +13,8 @@ DESCRIPTION:
     This sample demonstrates how to analyze an document in markdown output format.
 
 USAGE:
-    python sample_analyze_documents_output_in_markdown_async.py
+    1. Navigate to azure-sdk-for-python\\sdk\\documentintelligence\\azure-ai-documentintelligence (grandparent directory of this file)
+    2. Execute command "python -m samples.async_samples.sample_analyze_documents_output_in_markdown_async"
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -23,11 +24,11 @@ USAGE:
 import asyncio
 import os
 
-
 async def analyze_documents_output_in_markdown():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, DocumentContentFormat, AnalyzeResult
+    from ..utils import utility
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -43,7 +44,8 @@ async def analyze_documents_output_in_markdown():
         result: AnalyzeResult = await poller.result()
 
     print(f"Here's the full content in format {result.content_format}:\n")
-    print(result.content)
+    parsedContent = utility.correct_tables_from_html_to_markdown(result.content)
+    print(parsedContent)
 
 
 async def main():

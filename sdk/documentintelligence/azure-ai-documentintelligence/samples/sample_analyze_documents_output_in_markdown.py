@@ -21,6 +21,7 @@ USAGE:
 """
 
 import os
+from utils import utility
 
 
 def analyze_documents_output_in_markdown():
@@ -42,8 +43,10 @@ def analyze_documents_output_in_markdown():
     result: AnalyzeResult = poller.result()
 
     print(f"Here's the full content in format {result.content_format}:\n")
-    print(result.content)
-    # [END analyze_documents_output_in_markdown]
+    parsedContent = utility.correct_tables_from_html_to_markdown(result.content)
+    print(parsedContent)
+
+# [END analyze_documents_output_in_markdown]
 
 
 if __name__ == "__main__":
