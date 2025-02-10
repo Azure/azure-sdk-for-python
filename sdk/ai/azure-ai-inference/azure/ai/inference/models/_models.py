@@ -194,8 +194,6 @@ class ChatCompletionsNamedToolChoice(_model_base.Model):
     """A tool selection of a specific, named function tool that will limit chat completions to using
     the named function.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar type: The type of the tool. Currently, only ``function`` is supported. Required. Default
      value is "function".
     :vartype type: str
@@ -394,9 +392,6 @@ class ChatCompletionsResponseFormatText(ChatCompletionsResponseFormat, discrimin
 class ChatCompletionsToolCall(_model_base.Model):
     """A function tool call requested by the AI model.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The ID of the tool call. Required.
     :vartype id: str
     :ivar type: The type of tool call. Currently, only ``function`` is supported. Required. Default
@@ -436,8 +431,6 @@ class ChatCompletionsToolCall(_model_base.Model):
 
 class ChatCompletionsToolDefinition(_model_base.Model):
     """The definition of a chat completions tool that can call a function.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar type: The type of the tool. Currently, only ``function`` is supported. Required. Default
      value is "function".
