@@ -158,33 +158,34 @@ class _GlobalEndpointManager(object):
                     pass
             raise
 
-    async def _endpoints_health_check(self, **kwargs):
+    def _endpoints_health_check(self, **kwargs):
         """Gets the database account for each endpoint.
 
         Validating if the endpoint is healthy else marking it as unavailable.
         """
         endpoints_attempted = set()
-        database_account, endpoint = await self._GetDatabaseAccount(**kwargs)
+        database_account, endpoint = self._GetDatabaseAccount(**kwargs)
         endpoints_attempted.add(endpoint)
         self.location_cache.perform_on_database_account_read(database_account)
         # should use the regions in the order returned from gateway
-        all_endpoints = [self.location_cache.available_read_regional_endpoints_by_location.values()[0]]
+        first_read_region = next(iter(self.location_cache.available_read_regional_endpoints_by_location.values()))
+        all_endpoints = [first_read_region]
         all_endpoints.extend(self.location_cache.available_write_regional_endpoints_by_location.values())
         count = 0
-        for endpoint in all_endpoints:
-            if endpoint not in endpoints_attempted:
-                endpoints_attempted.add(endpoint)
+        for regional_endpoint in all_endpoints:
+            if regional_endpoint.get_primary() not in endpoints_attempted:
+                endpoints_attempted.add(regional_endpoint.get_primary())
                 count += 1
                 if count > 3:
                     break
                 try:
-                    self.Client._GetDatabaseAccountCheck(endpoint.get_primary(), **kwargs)
-                    self.location_cache.mark_endpoint_available(endpoint.get_primary())
+                    self.Client._GetDatabaseAccountCheck(regional_endpoint.get_primary(), **kwargs)
+                    self.location_cache.mark_endpoint_available(regional_endpoint.get_primary())
                 except (exceptions.CosmosHttpResponseError, AzureError):
-                    if endpoint in self.location_cache.read_regional_endpoints:
-                        self.mark_endpoint_unavailable_for_read(endpoint.get_primary(), False)
-                    if endpoint in self.location_cache.write_regional_endpoints:
-                        self.mark_endpoint_unavailable_for_write(endpoint.get_primary(), False)
+                    if regional_endpoint in self.location_cache.read_regional_endpoints:
+                        self.mark_endpoint_unavailable_for_read(regional_endpoint.get_primary(), False)
+                    if regional_endpoint in self.location_cache.write_regional_endpoints:
+                        self.mark_endpoint_unavailable_for_write(regional_endpoint.get_primary(), False)
         self.location_cache.update_location_cache()
 
     def _GetDatabaseAccountStub(self, endpoint, **kwargs):
