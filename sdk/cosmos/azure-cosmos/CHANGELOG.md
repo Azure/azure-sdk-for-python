@@ -11,6 +11,7 @@
 
 #### Other Changes
 * This release requires aiohttp version 3.10.11 and above. See [PR 39396](https://github.com/Azure/azure-sdk-for-python/pull/39396)
+* Removed **provisional** status from `computed_properties` keyword when creating containers. 
 
 ### 4.9.1b1 (2024-12-13)
 
