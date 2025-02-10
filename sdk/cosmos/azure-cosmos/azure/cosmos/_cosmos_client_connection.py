@@ -234,8 +234,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Routing map provider
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
-        database_account = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
-        self._global_endpoint_manager.force_refresh(database_account)
+        database_account, _ = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
+        self._global_endpoint_manager.force_refresh_on_startup(database_account)
 
         # Use database_account if no consistency passed in to verify consistency level to be used
         self.session: Optional[_session.Session] = None

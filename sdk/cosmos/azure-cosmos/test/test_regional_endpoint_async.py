@@ -54,7 +54,7 @@ class TestRegionalEndpoints(unittest.IsolatedAsyncioTestCase):
                              mocked_client.client_connection._global_endpoint_manager
                              .location_cache.get_read_regional_endpoint())
             # return it
-            self.assertEqual(self.REGIONAL_ENDPOINT.get_current(),
+            self.assertEqual(self.REGIONAL_ENDPOINT.get_primary(),
                              mocked_client.client_connection._global_endpoint_manager
                              .location_cache.get_write_regional_endpoint())
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = original_get_database_account_stub
