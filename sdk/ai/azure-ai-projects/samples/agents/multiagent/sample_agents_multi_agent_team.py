@@ -87,7 +87,7 @@ if model_deployment_name is not None:
         agent_team.assemble_team()
 
         user_request = (
-            "Hello, Please provide me current time in '2023-%m-%d %H:%M:%S' format, and the weather in New York. "
+            "Hello, Please provide me current time in '%Y-%m-%d %H:%M:%S' format, and the weather in New York. "
             "Finally, convert the Celsius to Fahrenheit and send an email to Example Recipient with summary of results."
         )
 
