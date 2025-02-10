@@ -120,7 +120,7 @@ class _GlobalEndpointManager(object):
                 if self.health_check:
                 # this will perform getDatabaseAccount calls to check endpoint health
                 # in background
-                    asyncio.ensure_future(self._endpoints_health_check(**kwargs))
+                    await asyncio.create_task(self._endpoints_health_check(**kwargs))
                 else:
                     database_account, _ = await self._GetDatabaseAccount(**kwargs)
                     self.location_cache.perform_on_database_account_read(database_account)
