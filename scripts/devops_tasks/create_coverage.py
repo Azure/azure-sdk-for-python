@@ -14,6 +14,10 @@ from subprocess import run
 
 from code_cov_report import create_coverage_report
 from common_tasks import run_check_call
+from ci_tools.parsing import ParsedSetup
+from ci_tools.functions import discover_targeted_packages
+from ci_tools.environment_exclusions import is_check_enabled
+import coverage
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -53,7 +57,7 @@ def generate_coverage_xml():
     if os.path.exists(coverage_dir):
         logging.info("Generating coverage XML")
         commands = ["coverage", "xml", "-i"]
-        run_check_call(commands, root_dir, always_exit = False)
+        run_check_call(commands, root_dir, always_exit=False)
     else:
         logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_dir))
 
@@ -72,12 +76,36 @@ def fix_coverage_xml(coverage_file):
         out = re.sub("\.?\.tox[\s\S\.\d]*?\.site-packages", "", out)
 
     if out:
-        with open(coverage_file, 'w') as cov_file:
+        with open(coverage_file, "w") as cov_file:
             cov_file.write(out)
 
-if __name__ == "__main__":
-    coverage_xml = os.path.join(root_dir, 'coverage.xml')
 
+def get_total_coverage(coverage_file: str):
+    cov = coverage.Coverage(data_file=coverage_file)
+    cov.load()
+    cov.report()
+
+
+def verify_coverage_percentages():
+    for file in os.listdir(coverage_dir):
+        pkg_name = file.split("_")[1]
+        pkg_details_array = discover_targeted_packages(pkg_name, root_dir)
+
+        if pkg_details_array and len(pkg_details_array) == 1:
+            pkg_path = pkg_details_array[0]
+
+            if is_check_enabled(pkg_path, "cov_enforcement", True):
+                get_total_coverage(file)
+        else:
+            logging.error(
+                f"Could not find package details for {pkg_name}. Additional packages identified {pkg_details}"
+            )
+
+
+if __name__ == "__main__":
+    coverage_xml = os.path.join(root_dir, "coverage.xml")
+
+    verify_coverage_percentages()
     collect_tox_coverage_files()
     generate_coverage_xml()
     create_coverage_report()

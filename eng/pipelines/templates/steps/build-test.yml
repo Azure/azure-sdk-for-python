@@ -155,7 +155,7 @@ steps:
 
       python -m pip install coverage==7.2.5
       python scripts/devops_tasks/create_coverage.py
-    displayName: Create Coverage Report
+    displayName: Report Coverage
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
 
   - ${{ if eq('true', parameters.UseFederatedAuth) }}:
