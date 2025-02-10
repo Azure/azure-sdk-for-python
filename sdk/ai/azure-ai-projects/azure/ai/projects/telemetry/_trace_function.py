@@ -62,10 +62,11 @@ if _tracing_library_available:
                             if isinstance(sanitized_result, (list, dict, tuple, set)):
                                 if any(isinstance(i, (list, dict, tuple, set)) for i in sanitized_result):
                                     sanitized_result = str(sanitized_result)
-                            span.set_attribute("code.function.return.value", sanitized_result) # type: ignore
+                            span.set_attribute("code.function.return.value", sanitized_result)  # type: ignore
                         return result
                     except Exception as e:
                         span.record_exception(e)
+                        span.set_attribute("error.type", e.__class__.__qualname__)  # type: ignore
                         raise
 
             @functools.wraps(func)
@@ -90,10 +91,11 @@ if _tracing_library_available:
                             if isinstance(sanitized_result, (list, dict, tuple, set)):
                                 if any(isinstance(i, (list, dict, tuple, set)) for i in sanitized_result):
                                     sanitized_result = str(sanitized_result)
-                            span.set_attribute("code.function.return.value", sanitized_result) # type: ignore
+                            span.set_attribute("code.function.return.value", sanitized_result)  # type: ignore
                         return result
                     except Exception as e:
                         span.record_exception(e)
+                        span.set_attribute("error.type", e.__class__.__qualname__)  # type: ignore
                         raise
 
             # Determine if the function is async
@@ -105,7 +107,7 @@ if _tracing_library_available:
 
 else:
     # Define a no-op decorator if OpenTelemetry is not available
-    def trace_function(span_name: Optional[str] = None): # pylint: disable=unused-argument
+    def trace_function(span_name: Optional[str] = None):  # pylint: disable=unused-argument
         """
         A no-op decorator for tracing function calls when OpenTelemetry is not available.
 

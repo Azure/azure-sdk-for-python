@@ -73,8 +73,8 @@ def set_argument_return_value(a: Set[int]) -> Set[int]:
     return a
 
 
-@trace_function("exception")
-def exception() -> None:
+@trace_function("raise_exception")
+def raise_exception() -> None:
     raise ValueError("Test exception")
 
 
@@ -276,21 +276,19 @@ class TestFunctionTraceDecorator:
 
     def test_exception(self):
         processor, exporter = self.setup_memory_trace_exporter()
-
-        @trace_function("exception")
-        def dummy_function() -> None:
-            raise ValueError("Test exception")
-
-        with pytest_raises(ValueError, match="Test exception"):
-            dummy_function()
-
-        processor.force_flush()
-        spans = exporter.get_spans_by_name("exception")
-        assert len(spans) == 1
-        span: Span = spans[0]
-        assert GenAiTraceVerifier().check_decorator_span_attributes(span, [])
-        assert span.status.is_ok == False
-        assert span.status.description == "ValueError: Test exception"
+        try:
+            raise_exception()
+            assert False
+        except Exception as e:
+            processor.force_flush()
+            spans = exporter.get_spans_by_name("raise_exception")
+            assert len(spans) == 1
+            span: Span = spans[0]
+            assert span.status.is_ok == False
+            assert span.status.description == "ValueError: Test exception"
+            assert GenAiTraceVerifier().check_decorator_span_attributes(
+                span, [("error.type", e.__class__.__qualname__)]
+            )
 
     def test_object_argument_and_return_value(self):
         processor, exporter = self.setup_memory_trace_exporter()
