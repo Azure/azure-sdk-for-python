@@ -80,13 +80,13 @@ def fix_coverage_xml(coverage_file):
             cov_file.write(out)
 
 
-def get_total_coverage(coverage_file: str):
-    cov = coverage.Coverage(data_file=coverage_file)
-    cov.load()
-    try:
-        cov.report()
-    except Exception as e:
-        logging.error(f"Error while generating coverage report: {e}")
+def get_total_coverage(coverage_file: str) -> float:
+    cov1 = coverage.Coverage(data_file=coverage_file)
+    cov1.load()
+    report = cov1.report()
+
+    # coverage report returns a percentage for representation, vs actual value
+    return report
 
 
 def verify_coverage_percentages():
@@ -98,10 +98,12 @@ def verify_coverage_percentages():
             pkg_path = pkg_details_array[0]
 
             if is_check_enabled(pkg_path, "cov_enforcement", True):
-                get_total_coverage(file)
+                total_coverage = get_total_coverage(os.path.join(coverage_dir, file))
+
+                print(f"Total coverage for {pkg_name} is {total_coverage:.2f}%")
         else:
             logging.error(
-                f"Could not find package details for {pkg_name}. Additional packages identified {pkg_details}"
+                f"Could not find package details for {pkg_name}."
             )
 
 
