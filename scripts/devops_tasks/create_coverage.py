@@ -83,7 +83,10 @@ def fix_coverage_xml(coverage_file):
 def get_total_coverage(coverage_file: str):
     cov = coverage.Coverage(data_file=coverage_file)
     cov.load()
-    cov.report()
+    try:
+        cov.report()
+    except Exception as e:
+        logging.error(f"Error while generating coverage report: {e}")
 
 
 def verify_coverage_percentages():
