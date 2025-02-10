@@ -202,8 +202,13 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 if (self.available_write_locations
                         and write_location in self.available_write_regional_endpoints_by_location):
                     write_regional_endpoint = self.available_write_regional_endpoints_by_location[write_location]
-                    if self.is_endpoint_unavailable_internal(write_regional_endpoint.get_primary(),
-                                                             request.operation_type):
+                    if (
+                            request.last_routed_location_endpoint_within_region is not None
+                            and request.last_routed_location_endpoint_within_region
+                            == write_regional_endpoint.get_primary()
+                            or self.is_endpoint_unavailable_internal(write_regional_endpoint.get_primary(),
+                                                             request.operation_type)
+                    ):
                         return write_regional_endpoint.get_alternate()
                     return write_regional_endpoint.get_primary()
                 return self.default_regional_endpoint.get_primary()
@@ -214,8 +219,13 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             else self.get_read_regional_endpoints()
         )
         regional_endpoint = regional_endpoints[location_index % len(regional_endpoints)]
-        if self.is_endpoint_unavailable_internal(regional_endpoint.get_primary(),
-                                                 request.operation_type):
+        if (
+                request.last_routed_location_endpoint_within_region is not None
+                and request.last_routed_location_endpoint_within_region
+                == regional_endpoint.get_primary()
+                or self.is_endpoint_unavailable_internal(regional_endpoint.get_primary(),
+                                                          request.operation_type)
+        ):
             return regional_endpoint.get_alternate()
         return regional_endpoint.get_primary()
 
@@ -259,6 +269,22 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             return should_refresh
         return False
 
+    def clear_stale_endpoint_unavailability_info(self):
+        new_location_unavailability_info = {}
+        if self.location_unavailability_info_by_endpoint:
+            for unavailable_endpoint in self.location_unavailability_info_by_endpoint:  #pylint: disable=consider-using-dict-items
+                unavailability_info = self.location_unavailability_info_by_endpoint[unavailable_endpoint]
+                if not (
+                        unavailability_info
+                        and self.current_time_millis() - unavailability_info["lastUnavailabilityCheckTimeStamp"]
+                        > self.refresh_time_interval_in_ms
+                ):
+                    new_location_unavailability_info[
+                        unavailable_endpoint
+                    ] = self.location_unavailability_info_by_endpoint[unavailable_endpoint]
+
+        self.location_unavailability_info_by_endpoint = new_location_unavailability_info
+
     def is_regional_endpoint_unavailable(self, endpoint: RegionalEndpoint, operation_type: str):
         # For writes only mark it unavailable if both are down
         if not _OperationType.IsReadOnlyOperation(operation_type):
@@ -283,6 +309,13 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         ):
             return False
 
+        if (
+                self.current_time_millis() - unavailability_info["lastUnavailabilityCheckTimeStamp"]
+                > self.refresh_time_interval_in_ms
+        ):
+            return False
+        # Unexpired entry present. Endpoint is unavailable
+
         return True
 
     def mark_endpoint_unavailable(self, unavailable_endpoint: str, unavailable_operation_type, refresh_cache: bool):
@@ -294,13 +327,16 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             if unavailable_endpoint in self.location_unavailability_info_by_endpoint
             else None
         )
+        current_time = self.current_time_millis()
         if not unavailability_info:
             self.location_unavailability_info_by_endpoint[unavailable_endpoint] = {
+                "lastUnavailabilityCheckTimeStamp": current_time,
                 "operationType": set([unavailable_operation_type])
             }
         else:
             unavailable_operations = set([unavailable_operation_type]).union(unavailability_info["operationType"])
             self.location_unavailability_info_by_endpoint[unavailable_endpoint] = {
+                "lastUnavailabilityCheckTimeStamp": current_time,
                 "operationType": unavailable_operations
             }
 
@@ -317,6 +353,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         if enable_multiple_writable_locations:
             self.enable_multiple_writable_locations = enable_multiple_writable_locations
 
+        self.clear_stale_endpoint_unavailability_info()
         if self.enable_endpoint_discovery:
             if read_locations:
                 (self.available_read_regional_endpoints_by_location,
