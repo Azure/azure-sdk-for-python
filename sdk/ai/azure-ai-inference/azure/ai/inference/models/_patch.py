@@ -6,7 +6,6 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import asyncio
 import base64
 import json
 import logging
@@ -464,6 +463,9 @@ class StreamingChatCompletions(BaseStreamingChatCompletions):
             return True
         return self._deserialize_and_add_to_queue(element)
 
+    def __enter__(self):
+        return self
+
     def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:  # type: ignore
         self.close()
 
@@ -503,8 +505,11 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
             return True
         return self._deserialize_and_add_to_queue(element)
 
-    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:  # type: ignore
-        asyncio.run(self.aclose())
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:  # type: ignore
+        await self.aclose()
 
     async def aclose(self) -> None:
         await self._response.close()
