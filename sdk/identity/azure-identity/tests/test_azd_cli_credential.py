@@ -211,8 +211,8 @@ def test_multitenant_authentication_class(get_token_method):
     second_token = first_token * 2
 
     def fake_check_output(command_line, **_):
-        match = re.search("--tenant-id (.*)", command_line[-1])
-        tenant = match.groups()[0] if match else default_tenant
+        tenant_id_index = command_line.index("--tenant-id") if "--tenant-id" in command_line else None
+        tenant = command_line[tenant_id_index + 1] if tenant_id_index is not None else default_tenant
         assert tenant in (default_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
         return json.dumps(
             {
@@ -244,8 +244,8 @@ def test_multitenant_authentication(get_token_method):
     second_token = first_token * 2
 
     def fake_check_output(command_line, **_):
-        match = re.search("--tenant-id (.*)", command_line[-1])
-        tenant = match.groups()[0] if match else default_tenant
+        tenant_id_index = command_line.index("--tenant-id") if "--tenant-id" in command_line else None
+        tenant = command_line[tenant_id_index + 1] if tenant_id_index is not None else default_tenant
         assert tenant in (default_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
         return json.dumps(
             {
