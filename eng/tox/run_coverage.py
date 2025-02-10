@@ -2,6 +2,7 @@ import coverage
 import argparse
 import os
 import json
+import datetime
 
 from ci_tools.parsing import ParsedSetup
 from ci_tools.variables import in_ci
@@ -42,7 +43,7 @@ if __name__ == "__main__":
             metric_obj["value"] = total_coverage / 100
             metric_obj["name"] = "test_coverage_ratio"
             metric_obj["labels"] = { "package": pkg_details.name }
-
+            metric_obj["timestamp"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
             print(f'logmetric: {json.dumps(metric_obj)}')
 
     if is_check_enabled(args.target_package, "cov_enforcement", False):
