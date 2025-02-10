@@ -39,8 +39,8 @@ if __name__ == "__main__":
 
         if in_ci():
             metric_obj = {}
-            metric_obj["coverage"] = total_coverage
-            metric_obj["name"] = "coverage_percentage"
+            metric_obj["value"] = total_coverage / 100
+            metric_obj["name"] = "test_coverage_ratio"
             metric_obj["labels"] = { "package": pkg_details.name }
 
             print(f'logmetric: {json.dumps(metric_obj)}')
