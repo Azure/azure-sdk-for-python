@@ -5,19 +5,40 @@
 from enum import Enum
 import os
 import inspect
+import logging
+from datetime import datetime
 from azure.ai.evaluation._common._experimental import experimental
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from azure.ai.evaluation._evaluators import _content_safety, _protected_material,  _groundedness, _relevance, _similarity, _fluency, _xpia
 from azure.ai.evaluation._evaluate import _evaluate
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
-from azure.ai.evaluation.simulator import Simulator, AdversarialSimulator, AdversarialScenario, IndirectAttackSimulator, DirectAttackSimulator
+from azure.ai.evaluation.simulator import Simulator, AdversarialSimulator, AdversarialScenario, AdversarialScenarioJailbreak, IndirectAttackSimulator, DirectAttackSimulator
 from azure.ai.evaluation.simulator._utils import JsonLineList
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.core.credentials import TokenCredential
 import json
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
+
+def _setup_logger():
+    """Configure and return a logger instance for the CustomAdversarialSimulator.
+
+    :return: The logger instance.
+    :rtype: logging.Logger
+    """
+    log_filename = datetime.now().strftime("%Y_%m_%d__%H_%M.log")
+    logger = logging.getLogger("CustomAdversarialSimulatorLogger")
+    logger.setLevel(logging.DEBUG)  
+    file_handler = logging.FileHandler(log_filename)
+    file_handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+
+    return logger
 
 @experimental
 class _DSBEvaluator(Enum):
@@ -58,6 +79,7 @@ class _DSBEvaluation:
         validate_azure_ai_project(azure_ai_project)
         self.azure_ai_project = AzureAIProject(**azure_ai_project)
         self.credential=credential
+        self.logger = _setup_logger()
 
     @staticmethod
     def _validate_model_config(model_config: Any):
@@ -98,11 +120,11 @@ class _DSBEvaluation:
             self,
             target: Callable, 
             max_conversation_turns: int = 1,
-            max_simulation_results: int = 3, 
-            adversarial_scenario: Optional[AdversarialScenario] = None,
+            max_simulation_results: int = 3,
+            conversation_turns : List[List[Union[str, Dict[str, Any]]]] = [], 
+            adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
             source_text: Optional[str] = None,
             direct_attack: bool = False,
-            indirect_attack: bool = False
     ) -> Dict[str, str]:
         '''
         Generates synthetic conversations based on provided parameters.
@@ -113,10 +135,14 @@ class _DSBEvaluation:
         :type max_conversation_turns: int
         :param max_simulation_results: The maximum number of simulation results to generate.
         :type max_simulation_results: int
+        :param conversation_turns: Predefined conversation turns to simulate.
+        :type conversation_turns: List[List[Union[str, Dict[str, Any]]]]
         :param adversarial_scenario: The adversarial scenario to simulate. If None, the non-adversarial Simulator is used.
-        :type adversarial_scenario: Optional[AdversarialScenario]
+        :type adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]
         :param source_text: The source text to use as grounding document in the simulation.
         :type source_text: Optional[str]
+        :param direct_attack: If True, the DirectAttackSimulator will be run.
+        :type direct_attack: bool
         '''
         ## Define callback
         async def callback(
@@ -155,21 +181,21 @@ class _DSBEvaluation:
         simulator_data_paths = {}
 
         # if IndirectAttack, run IndirectAttackSimulator
-        if indirect_attack:
+        if adversarial_scenario == AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK:
+            self.logger.info(f"Running IndirectAttackSimulator with inputs: adversarial_scenario={adversarial_scenario}, max_conversation_turns={max_conversation_turns}, max_simulation_results={max_simulation_results}, conversation_turns={conversation_turns}, text={source_text}")
             simulator = IndirectAttackSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
-            xpia_outputs = await simulator(
+            simulator_outputs = await simulator(
+                scenario=adversarial_scenario,
                 max_conversation_turns=max_conversation_turns,
                 max_simulation_results=max_simulation_results,
+                conversation_turns=conversation_turns,
+                text=source_text,
                 target=callback,
             )
-            xpia_data_path = "xpia_simulator_outputs.jsonl"
-            with Path(xpia_data_path).open("w") as f:
-                f.writelines(xpia_outputs.to_eval_qr_json_lines())
-            simulator_data_paths["xpia"] = xpia_data_path
             
-
         # if DirectAttack, run DirectAttackSimulator
-        if direct_attack:
+        elif direct_attack:
+            self.logger.info(f"Running DirectAttackSimulator with inputs: adversarial_scenario={adversarial_scenario}, max_conversation_turns={max_conversation_turns}, max_simulation_results={max_simulation_results}")
             simulator = DirectAttackSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
             simulator_outputs = await simulator(
                 scenario=adversarial_scenario if adversarial_scenario else AdversarialScenario.ADVERSARIAL_REWRITE,
@@ -178,28 +204,35 @@ class _DSBEvaluation:
                 target=callback)
             jailbreak_outputs = simulator_outputs["jailbreak"]
             simulator_outputs = simulator_outputs["regular"]
+        
         ## If adversarial_scenario is not provided, run Simulator
         elif adversarial_scenario is None:
+            self.logger.info(f"Running Simulator with inputs: adversarial_scenario={adversarial_scenario}, max_conversation_turns={max_conversation_turns}, max_simulation_results={max_simulation_results}, conversation_turns={conversation_turns}, source_text={source_text}")
             simulator = Simulator(self.model_config)
             simulator_outputs = await simulator(
                 max_conversation_turns=max_conversation_turns,
                 max_simulation_results=max_simulation_results,
+                conversation_turns=conversation_turns,
                 target=callback,
                 text=source_text if source_text else "",
             )
+
         ## Run AdversarialSimulator
         elif adversarial_scenario:
+            self.logger.info(f"Running AdversarialSimulator with inputs: adversarial_scenario={adversarial_scenario}, max_conversation_turns={max_conversation_turns}, max_simulation_results={max_simulation_results}, conversation_turns={conversation_turns}, source_text={source_text}")
             simulator = AdversarialSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
             simulator_outputs = await simulator(
                 scenario=adversarial_scenario,
                 max_conversation_turns=max_conversation_turns,
                 max_simulation_results=max_simulation_results,
+                conversation_turns=conversation_turns,
                 target=callback,
                 text=source_text,
             )
 
         ## If no outputs are generated, raise an exception
         if not simulator_outputs:
+            self.logger.error("No outputs generated by the simulator")
             msg = "No outputs generated by the simulator"
             raise EvaluationException(
                 message=msg,
@@ -265,11 +298,6 @@ class _DSBEvaluation:
         :type evaluators: List[DSBEvaluator]
         '''
         evaluators_dict = {}
-        if _DSBEvaluator.INDIRECT_ATTACK in evaluators:
-            evaluators_dict["indirect_attack"] = _xpia.IndirectAttackEvaluator(
-                azure_ai_project=self.azure_ai_project, 
-                credential=self.credential,
-            )
         for evaluator in evaluators:
             if evaluator == _DSBEvaluator.CONTENT_SAFETY:
                 evaluators_dict["content_safety"] = _content_safety.ContentSafetyEvaluator(
@@ -295,6 +323,12 @@ class _DSBEvaluation:
                 evaluators_dict["fluency"] = _fluency.FluencyEvaluator(
                     model_config=self.model_config,
                 )
+            elif evaluator == _DSBEvaluator.INDIRECT_ATTACK:
+                evaluators_dict["indirect_attack"] = _xpia.IndirectAttackEvaluator(
+                    azure_ai_project=self.azure_ai_project, credential=self.credential
+                )
+            elif evaluator == _DSBEvaluator.DIRECT_ATTACK:
+                continue
             else:
                 msg = f"Invalid evaluator: {evaluator}. Supported evaluators are: {_DSBEvaluator.__members__.values()}"
                 raise EvaluationException(
@@ -322,22 +356,26 @@ class _DSBEvaluation:
             return True
         return False
 
-    def _validate_args(
+    def _validate_inputs(
             self,
             evaluators: List[_DSBEvaluator],
             target: Callable,
             source_text: Optional[str] = None,
+            adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
     ):
         '''
-        Validates the arguments provided to the __call__ function of the DSBEvaluation object.
+        Validates the inputs provided to the __call__ function of the DSBEvaluation object.
         :param evaluators: A list of DSBEvaluator.
         :type evaluators: List[DSBEvaluator]
         :param target: The target function to call during the evaluation.
         :type target: Callable
         :param source_text: The source text to use as grounding document in the evaluation.
         :type source_text: Optional[str]
+        :param adversarial_scenario: The adversarial scenario to simulate. 
+        :type adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]
         '''
         if _DSBEvaluator.GROUNDEDNESS in evaluators and not (self._check_target_returns_context(target) or source_text):
+            self.logger.error(f"GroundednessEvaluator requires either source_text or a target function that returns context. Source text: {source_text}, _check_target_returns_context: {self._check_target_returns_context(target)}")
             msg = "GroundednessEvaluator requires either source_text or a target function that returns context"
             raise EvaluationException(
                 message=msg,
@@ -345,21 +383,73 @@ class _DSBEvaluation:
                 target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
                 category=ErrorCategory.MISSING_FIELD,
                 blame=ErrorBlame.USER_ERROR,
-            )        
+            )
+        
+        if _DSBEvaluator.INDIRECT_ATTACK in evaluators and adversarial_scenario != AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK:
+            self.logger.error(f"IndirectAttackEvaluator requires adversarial_scenario to be set to ADVERSARIAL_INDIRECT_JAILBREAK. Adversarial scenario: {adversarial_scenario}")
+            msg = "IndirectAttackEvaluator requires adversarial_scenario to be set to ADVERSARIAL_INDIRECT_JAILBREAK"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.INDIRECT_ATTACK_EVALUATOR,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+        if evaluators != [_DSBEvaluator.INDIRECT_ATTACK] and adversarial_scenario == AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK:
+            self.logger.error(f"IndirectAttackEvaluator should be used when adversarial_scenario is set to ADVERSARIAL_INDIRECT_JAILBREAK. Evaluators {evaluators}")
+            msg = "IndirectAttackEvaluator should be used when adversarial_scenario is set to ADVERSARIAL_INDIRECT_JAILBREAK"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.INDIRECT_ATTACK_EVALUATOR,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+
+        if _DSBEvaluator.PROTECTED_MATERIAL in evaluators and adversarial_scenario != AdversarialScenario.ADVERSARIAL_CONTENT_PROTECTED_MATERIAL:
+            self.logger.error(f"ProtectedMaterialEvaluator requires adversarial_scenario to be set to ADVERSARIAL_CONTENT_PROTECTED_MATERIAL. Adversarial scenario: {adversarial_scenario}")
+            msg = "ProtectedMaterialEvaluator requires adversarial_scenario to be set to ADVERSARIAL_CONTENT_PROTECTED_MATERIAL"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.PROTECTED_MATERIAL_EVALUATOR,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+        if evaluators != [_DSBEvaluator.PROTECTED_MATERIAL] and adversarial_scenario == AdversarialScenario.ADVERSARIAL_CONTENT_PROTECTED_MATERIAL:
+            self.logger.error(f"ProtectedMaterialEvaluator should be used when adversarial_scenario is set to ADVERSARIAL_CONTENT_PROTECTED_MATERIAL. Evaluators: {evaluators}")
+            msg = "ProtectedMaterialEvaluator should be used when adversarial_scenario is set to ADVERSARIAL_CONTENT_PROTECTED_MATERIAL"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.PROTECTED_MATERIAL_EVALUATOR,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+        if _DSBEvaluator.DIRECT_ATTACK in evaluators and len(evaluators) == 1:
+            self.logger.error("DirectAttack should be used along with other evaluators") 
+            msg = "DirectAttack should be used along with other evaluators"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )            
 
     async def __call__(
             self,
             evaluators: List[_DSBEvaluator],
             target: Callable,
-            adversarial_scenario: Optional[AdversarialScenario] = None,
+            adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
             max_conversation_turns: int = 1,
             max_simulation_results: int = 3,
+            conversation_turns : List[List[Union[str, Dict[str, Any]]]] = [],
             source_text: Optional[str] = None,
             data_path: Optional[Union[str, os.PathLike]] = None,
             jailbreak_data_path: Optional[Union[str, os.PathLike]] = None,
-            xpia_data_path: Optional[Union[str, os.PathLike]] = None,
             output_path: Optional[Union[str, os.PathLike]] = None
-        ) -> Dict[str, EvaluationResult]:
+        ) -> Union[EvaluationResult, Dict[str, EvaluationResult]]:
         '''
         Evaluates the target function based on the provided parameters.
         
@@ -368,38 +458,47 @@ class _DSBEvaluation:
         :param target: The target function to call during the evaluation.
         :type target: Callable
         :param adversarial_scenario: The adversarial scenario to simulate. If None, the non-adversarial Simulator is used.
-        :type adversarial_scenario: Optional[AdversarialScenario]
+        :type adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]
         :param max_conversation_turns: The maximum number of turns in a conversation.
         :type max_conversation_turns: int
         :param max_simulation_results: The maximum number of simulation results to generate.
         :type max_simulation_results: int
+        :param conversation_turns: Predefined conversation turns to simulate.
+        :type conversation_turns: List[List[Union[str, Dict[str, Any]]]]
         :param source_text: The source text to use as grounding document in the evaluation.
         :type source_text: Optional[str]
         :param data_path: The path to the data file generated by the Simulator. If None, the Simulator will be run.
         :type data_path: Optional[Union[str, os.PathLike]]
+        :param jailbreak_data_path: The path to the data file generated by the Simulator for jailbreak scenario. If None, the DirectAttackSimulator will be run.
+        :type jailbreak_data_path: Optional[Union[str, os.PathLike]]
         :param output_path: The path to write the evaluation results to if set.
         :type output_path: Optional[Union[str, os.PathLike]]
         '''
+        ## Log inputs 
+        self.logger.info(f"User inputs: evaluators{evaluators}, adversarial_scenario={adversarial_scenario}, max_conversation_turns={max_conversation_turns}, max_simulation_results={max_simulation_results}, conversation_turns={conversation_turns}, source_text={source_text}, data_path={data_path}, jailbreak_data_path={jailbreak_data_path}, output_path={output_path}")
+
         ## Validate arguments
-        self._validate_args(
+        self._validate_inputs(
             evaluators=evaluators, 
             target=target, 
             source_text=source_text,
+            adversarial_scenario=adversarial_scenario
         )
 
         ## If `data_path` is not provided, run simulator
-        if data_path is None and jailbreak_data_path is None and xpia_data_path is None:
+        if data_path is None and jailbreak_data_path is None:
+            self.logger.info(f"No data_path provided. Running simulator.")
             data_paths = await self._simulate_dsb(
                 target=target,
                 adversarial_scenario=adversarial_scenario,
                 max_conversation_turns=max_conversation_turns,
                 max_simulation_results=max_simulation_results,
+                conversation_turns=conversation_turns,
                 source_text=source_text,
+                direct_attack=_DSBEvaluator.DIRECT_ATTACK in evaluators
             )
             data_path = data_paths.get("regular", None)
             jailbreak_data_path = data_paths.get("jailbreak", None)
-            xpia_data_path = data_paths.get("xpia", None)
-
 
         ## Get evaluators
         evaluators_dict = self._get_evaluators(evaluators)
@@ -407,6 +506,7 @@ class _DSBEvaluation:
 
         ## Run evaluation
         if _DSBEvaluator.DIRECT_ATTACK in evaluators and jailbreak_data_path:
+            self.logger.info(f"Running evaluation for jailbreak data with inputs jailbreak_data_path={jailbreak_data_path}, evaluators={evaluators_dict}, azure_ai_project={self.azure_ai_project}, output_path=jailbreak_{output_path}, credential={self.credential}")
             evaluate_outputs_jailbreak = _evaluate.evaluate(
                 data=jailbreak_data_path,
                 evaluators=evaluators_dict,
@@ -415,26 +515,17 @@ class _DSBEvaluation:
                 credential=self.credential,
             )
             evaluation_results["jailbreak"] = evaluate_outputs_jailbreak
-        
-        if _DSBEvaluator.INDIRECT_ATTACK in evaluators and xpia_data_path:
-            xpia_evaluator = _xpia.IndirectAttackEvaluator(azure_ai_project=self.azure_ai_project, credential=self.credential)
-            xpia_outputs = _evaluate.evaluate(
-                data=xpia_data_path,
-                evaluators={
-                    "indirect_attack": xpia_evaluator
-                },
-                azure_ai_project=self.azure_ai_project,
-                output_path=Path("xpia_" + str(output_path)),
-                credential=self.credential,
-            )
-            evaluation_results["xpia"] = xpia_outputs
 
         if data_path:
+            self.logger.info(f"Running evaluation for data with inputs data_path={data_path}, evaluators={evaluators_dict}, azure_ai_project={self.azure_ai_project}, output_path={output_path}")
             evaluate_outputs = _evaluate.evaluate(
                 data=data_path,
                 evaluators=evaluators_dict,
                 azure_ai_project=self.azure_ai_project,
                 output_path=output_path,
             )
-            evaluation_results["regular"] = evaluate_outputs
+            if _DSBEvaluator.DIRECT_ATTACK in evaluators:
+                evaluation_results["regular"] = evaluate_outputs
+            else: 
+                return evaluate_outputs
         return evaluation_results
