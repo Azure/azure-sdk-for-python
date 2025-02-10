@@ -67,7 +67,6 @@ class ServiceRequestRetryPolicy(object):
                 # # Check if it is safe to failover to another region
                 location_endpoint = self.resolve_next_region_service_endpoint()
             else:
-                self.global_endpoint_manager.swap_regional_endpoint_values(self.request)
                 location_endpoint = self.resolve_current_region_service_endpoint()
                 # This is the case where both current and previous point to the same writable endpoint
                 # In this case we don't want to retry again, rather failover to the next region
