@@ -1,6 +1,6 @@
 # Release History
 
-## 12.25.0b1 (Unreleased)
+## 12.25.0b1 (2025-02-11)
 
 ### Features Added
 - Added support for service version 2025-05-05.
