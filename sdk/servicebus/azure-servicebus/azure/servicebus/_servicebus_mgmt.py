@@ -139,11 +139,10 @@ class ServiceBusManagementOperationClient(BaseHandler, ReceiverMixin):
         self._open()
         message = {
             MGMT_REQUEST_LAST_UPDATED_TIME: last_updated_time,
-            MGMT_REQUEST_SKIP: self._amqp_transport.AMQP_UINT_VALUE(skip_num_sessions),
-            MGMT_REQUEST_TOP: self._amqp_transport.AMQP_UINT_VALUE(max_num_sessions),
+            MGMT_REQUEST_SKIP: skip_num_sessions,
+            MGMT_REQUEST_TOP: max_num_sessions,
         }
 
-        self._populate_message_properties(message)
         handler = functools.partial(mgmt_handlers.list_sessions_op, amqp_transport=self._amqp_transport)
         start_time = time.time_ns()
         messages = self._mgmt_request_response_with_retry(

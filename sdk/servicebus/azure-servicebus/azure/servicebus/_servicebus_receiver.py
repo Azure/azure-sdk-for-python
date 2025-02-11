@@ -594,49 +594,6 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
             raise ValueError("The max_wait_time must be greater than 0.")
         return self._iter_contextual_wrapper(max_wait_time)
 
-    def get_sessions(
-        self,
-        *,
-        last_updated_time: datetime.datetime = datetime.datetime.max,
-        skip_num_sessions: int = 0,
-        max_num_sessions: int = 1,
-        timeout: Optional[float] = None,
-        **kwargs
-    ):
-        """Get sessions from the Service Bus entity.
-        :keyword last_updated_time: Filter sessions based on the last updated time.
-        :paramtype last_updated_time: datetime.datetime
-        :keyword skip_num_sessions: Skip this number of sessions.
-        :paramtype skip_num_sessions: int
-        :keyword max_num_sessions: Maximum number of sessions to return.
-        :paramtype max_num_sessions: int
-        :return: List of session ids.
-        :rtype: List[str]
-        """
-        if kwargs:
-            warnings.warn(f"Unsupported keyword args: {kwargs}")
-        self._check_live()
-        if timeout is not None and timeout <= 0:
-            raise ValueError("The timeout must be greater than 0.")
-
-        self._open()
-        message = {
-            MGMT_REQUEST_LAST_UPDATED_TIME: last_updated_time,
-            MGMT_REQUEST_SKIP: self._amqp_transport.AMQP_UINT_VALUE(skip_num_sessions),
-            MGMT_REQUEST_TOP: self._amqp_transport.AMQP_UINT_VALUE(max_num_sessions),
-        }
-
-        # self._populate_message_properties(message)
-        handler = functools.partial(mgmt_handlers.list_sessions_op, amqp_transport=self._amqp_transport)
-        start_time = time.time_ns()
-        messages = self._mgmt_request_response_with_retry(
-            REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION, message, handler, timeout=timeout
-        )
-        links = get_receive_links(messages)
-        with receive_trace_context_manager(self, span_name=SPAN_NAME_SESSIONS, links=links, start_time=start_time):
-            return messages
-
-
     def receive_messages(
         self,
         max_message_count: Optional[int] = 1,
