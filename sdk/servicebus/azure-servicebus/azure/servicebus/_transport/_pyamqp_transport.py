@@ -474,9 +474,9 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         )
     
     @staticmethod
-    def create_amqp_client(config: "Configuration", **kwargs: Any) -> "SendClient": # pylint: disable=docstring-keyword-should-match-keyword-only
+    def create_amqp_client(config: "Configuration", **kwargs: Any) -> "AMQPClient": # pylint: disable=docstring-keyword-should-match-keyword-only
         """
-        Creates and returns the pyamqp SendClient.
+        Creates and returns the pyamqp AMQPClient.
         :param ~azure.servicebus._configuration.Configuration config: The configuration. Required.
 
         :keyword str target: Required. The target.
@@ -484,8 +484,8 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         :keyword retry_policy: Required.
         :keyword str client_name: Required.
         :keyword dict properties: Required.
-        :return: SendClient
-        :rtype: ~pyamqp.SendClient
+        :return: AMQPClient
+        :rtype: ~pyamqp.AMQPClient
         """
         from .._pyamqp import AMQPClient
         target = kwargs.pop("target")

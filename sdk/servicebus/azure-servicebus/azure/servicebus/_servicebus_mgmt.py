@@ -2,8 +2,6 @@ import functools
 import time
 import warnings
 import datetime
-from ._pyamqp import AMQPClient
-from ._pyamqp.constants import SenderSettleMode
 from typing import TYPE_CHECKING, Any, Optional, Union
 from ._common.utils import create_authentication
 from azure.servicebus._common.constants import (
@@ -11,7 +9,6 @@ from azure.servicebus._common.constants import (
     MGMT_REQUEST_TOP,
     MGMT_REQUEST_LAST_UPDATED_TIME,
     REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION,
-    ServiceBusReceiveMode,
 )
 from ._common.tracing import (
     get_receive_links,
@@ -19,7 +16,6 @@ from ._common.tracing import (
     SPAN_NAME_SESSIONS
 )
 from azure.servicebus._common.receiver_mixins import ReceiverMixin
-from ._servicebus_session import ServiceBusSession
 from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
 
@@ -135,8 +131,8 @@ class ServiceBusManagementOperationClient(BaseHandler, ReceiverMixin):
         self._check_live()
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-
         self._open()
+
         message = {
             MGMT_REQUEST_LAST_UPDATED_TIME: last_updated_time,
             MGMT_REQUEST_SKIP: skip_num_sessions,

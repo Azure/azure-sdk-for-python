@@ -173,6 +173,22 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
+    def create_amqp_client(config, **kwargs: Any): 
+        """
+        Creates and returns the pyamqp AMQPClient.
+        :param ~azure.servicebus._configuration.Configuration config: The configuration. Required.
+
+        :keyword str target: Required. The target.
+        :keyword ~pyamqp.authentication.JWTTokenAuth auth: Required.
+        :keyword retry_policy: Required.
+        :keyword str client_name: Required.
+        :keyword dict properties: Required.
+        :return: AMQPClient
+        :rtype: ~pyamqp.AMQPClient
+        """
+
+    @staticmethod
+    @abstractmethod
     def add_batch(sb_message_batch, outgoing_sb_message):
         """
         Add ServiceBusMessage to the data body of the BatchMessage.
