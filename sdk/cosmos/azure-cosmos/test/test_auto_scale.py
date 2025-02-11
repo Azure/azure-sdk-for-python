@@ -11,7 +11,7 @@ import test_config
 from azure.cosmos import CosmosClient, cosmos_client
 from azure.cosmos import ThroughputProperties, PartitionKey
 
-@pytest.mark.cosmosSplit
+@pytest.mark.cosmosLong
 class TestAutoScale(unittest.TestCase):
     client: CosmosClient = None
     host = test_config.TestConfig.host

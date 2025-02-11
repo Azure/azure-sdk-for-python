@@ -6,11 +6,12 @@ import uuid
 
 import pytest
 
-from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 import test_config
 import vector_test_data
-from azure.cosmos import http_constants, DatabaseProxy
+from azure.cosmos import CosmosClient as CosmosSyncClient
+from azure.cosmos import http_constants
+from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 
 
@@ -24,17 +25,16 @@ def verify_ordering(item_list, distance_function):
         for i in range(len(item_list) - 1):
             assert item_list[i]["SimilarityScore"] >= item_list[i + 1]["SimilarityScore"]
 
-@pytest.mark.cosmosQuery
+@pytest.mark.cosmosSearchQuery
 class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to check vector similarity queries behavior."""
 
-    created_db: DatabaseProxy = None
     client: CosmosClient = None
+    sync_client: CosmosSyncClient = None
     config = test_config.TestConfig
     host = config.host
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
-    TEST_DATABASE_ID = config.TEST_DATABASE_ID
     TEST_CONTAINER_ID = "Vector Similarity Container " + str(uuid.uuid4())
 
     @classmethod
@@ -45,37 +45,34 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-
-    async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
-        self.created_db = self.client.get_database_client(self.TEST_DATABASE_ID)
-        self.test_db = await self.client.create_database(str(uuid.uuid4()))
-        self.created_quantized_cosine_container = await self.test_db.create_container(
-            id="quantized" + self.TEST_CONTAINER_ID,
+        cls.sync_client = CosmosSyncClient(cls.host, cls.masterKey)
+        cls.test_db = cls.sync_client.create_database(str(uuid.uuid4()))
+        cls.created_quantized_cosine_container = cls.test_db.create_container(
+            id="quantized" + cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
             indexing_policy=test_config.get_vector_indexing_policy(embedding_type="quantizedFlat"),
             vector_embedding_policy=test_config.get_vector_embedding_policy(data_type="float32",
                                                                             distance_function="cosine",
                                                                             dimensions=128))
-        self.created_flat_euclidean_container = await self.test_db.create_container(
-            id="flat" + self.TEST_CONTAINER_ID,
+        cls.created_flat_euclidean_container = cls.test_db.create_container(
+            id="flat" + cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
             indexing_policy=test_config.get_vector_indexing_policy(embedding_type="flat"),
             vector_embedding_policy=test_config.get_vector_embedding_policy(data_type="float32",
                                                                             distance_function="euclidean",
                                                                             dimensions=128))
-        # self.created_diskANN_dotproduct_container = await self.test_db.create_container(
-        #     id="diskANN" + self.TEST_CONTAINER_ID,
+        # cls.created_diskANN_dotproduct_container = cls.test_db.create_container(
+        #     id="diskANN" + cls.TEST_CONTAINER_ID,
         #     partition_key=PartitionKey(path="/pk"),
         #     offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
         #     indexing_policy=test_config.get_vector_indexing_policy(embedding_type="diskANN"),
         #     vector_embedding_policy=test_config.get_vector_embedding_policy(data_type="float32",
         #                                                                     distance_function="dotproduct",
         #                                                                     dimensions=128))
-        self.created_large_container = await self.test_db.create_container(
-            id="large_container" + self.TEST_CONTAINER_ID,
+        cls.created_large_container = cls.test_db.create_container(
+            id="large_container" + cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS,
             indexing_policy=test_config.get_vector_indexing_policy(embedding_type="quantizedFlat"),
@@ -83,19 +80,25 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
                                                                             distance_function="cosine",
                                                                             dimensions=2))
         for item in vector_test_data.get_vector_items():
-            await self.created_quantized_cosine_container.create_item(item)
-            await self.created_flat_euclidean_container.create_item(item)
-            # await self.created_diskANN_dotproduct_container.create_item(item)
+            cls.created_quantized_cosine_container.create_item(item)
+            cls.created_flat_euclidean_container.create_item(item)
+            # await cls.created_diskANN_dotproduct_container.create_item(item)
 
-    async def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         try:
-            await self.test_db.delete_container("quantized" + self.TEST_CONTAINER_ID)
-            await self.test_db.delete_container("flat" + self.TEST_CONTAINER_ID)
-            await self.test_db.delete_container("large_container" + self.TEST_CONTAINER_ID)
-            # await self.test_db.delete_container("diskANN" + self.TEST_CONTAINER_ID)
-            await self.client.delete_database(self.test_db.id)
+            cls.sync_client.delete_database(cls.test_db.id)
         except exceptions.CosmosHttpResponseError:
             pass
+
+    async def asyncSetUp(self):
+        self.client = CosmosClient(self.host, self.masterKey)
+        self.test_db = self.client.get_database_client(self.test_db.id)
+        self.created_flat_euclidean_container = self.test_db.get_container_client(self.created_flat_euclidean_container.id)
+        self.created_quantized_cosine_container = self.test_db.get_container_client(self.created_quantized_cosine_container.id)
+        self.created_large_container = self.test_db.get_container_client(self.created_large_container.id)
+
+    async def asyncTearDown(self):
         await self.client.close()
 
     async def test_wrong_vector_search_queries_async(self):

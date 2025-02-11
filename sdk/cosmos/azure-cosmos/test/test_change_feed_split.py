@@ -46,25 +46,8 @@ class TestPartitionSplitChangeFeed(unittest.TestCase):
         assert len(iter_list) == 1
         continuation = created_collection.client_connection.last_response_headers['etag']
 
-        print("Triggering a split in test_query_change_feed_with_split")
-        created_collection.replace_throughput(11000)
-        print("changed offer to 11k")
-        print("--------------------------------")
-        print("Waiting for split to complete")
-        start_time = time.time()
+        test_config.TestConfig.trigger_split(created_collection, 11000)
 
-        while True:
-            offer = created_collection.get_throughput()
-            if offer.properties['content'].get('isOfferReplacePending', False):
-                if time.time() - start_time > 60 * 25:  # timeout test at 25 minutes
-                    unittest.skip("Partition split didn't complete in time.")
-                else:
-                    print("Waiting for split to complete")
-                    time.sleep(60)
-            else:
-                break
-
-        print("Split in test_query_change_feed_with_split has completed")
         print("creating few more documents")
         new_documents = [{'pk': 'pk2', 'id': 'doc2'}, {'pk': 'pk3', 'id': 'doc3'}, {'pk': 'pk4', 'id': 'doc4'}]
         expected_ids = ['doc2', 'doc3', 'doc4']
