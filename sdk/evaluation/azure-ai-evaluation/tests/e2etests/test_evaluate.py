@@ -291,6 +291,7 @@ class TestEvaluate:
         assert "f1_score.f1_score" in metrics.keys()
 
     # @pytest.mark.skipif(in_ci(), reason="This test fails in CI and needs to be investigate. Bug: 3458432")
+    # Testing it
     @pytest.mark.azuretest
     def test_evaluate_track_in_cloud(
         self,
