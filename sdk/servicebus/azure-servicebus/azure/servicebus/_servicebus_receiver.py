@@ -23,7 +23,6 @@ from ._common.tracing import (
     get_span_link_from_message,
     SPAN_NAME_RECEIVE_DEFERRED,
     SPAN_NAME_PEEK,
-    SPAN_NAME_SESSIONS
 )
 from ._common.constants import (
     CONSUMER_IDENTIFIER,
@@ -47,10 +46,6 @@ from ._common.constants import (
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION,
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
-    MGMT_REQUEST_LAST_UPDATED_TIME,
-    MGMT_REQUEST_SKIP,
-    MGMT_REQUEST_TOP,
-    REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION
 )
 from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
