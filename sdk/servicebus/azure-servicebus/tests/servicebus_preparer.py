@@ -156,7 +156,6 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
             playback_fake_resource=playback_fake_resource,
             client_kwargs=client_kwargs,
         )
-        self.disable_local_auth = True
         self.location = location
         self.sku = sku
         self.resource_group_parameter_name = resource_group_parameter_name
@@ -182,7 +181,6 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
                         {
                             "sku": {"name": self.sku},
                             "location": self.location,
-                            "disableLocalAuth": self.disable_local_auth,
                         },
                     )
                     self.resource = namespace_async_operation.result()
