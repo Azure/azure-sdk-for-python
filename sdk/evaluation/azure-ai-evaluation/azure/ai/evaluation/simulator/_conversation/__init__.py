@@ -128,19 +128,15 @@ class ConversationBot:
         self.conversation_starter: Optional[Union[str, jinja2.Template, Dict]] = None
         if role == ConversationRole.USER:
             if "conversation_starter" in self.persona_template_args:
-                print(self.persona_template_args)
                 conversation_starter_content = self.persona_template_args["conversation_starter"]
                 if isinstance(conversation_starter_content, dict):
                     self.conversation_starter = conversation_starter_content
-                    print(f"Conversation starter content: {conversation_starter_content}")
                 else:
                     try:
                         self.conversation_starter = jinja2.Template(
                             conversation_starter_content, undefined=jinja2.StrictUndefined
                         )
-                        print("Successfully created a Jinja2 template for the conversation starter.")
                     except jinja2.exceptions.TemplateSyntaxError as e:  # noqa: F841
-                        print(f"Template syntax error: {e}. Using raw content.")
                         self.conversation_starter = conversation_starter_content
             else:
                 self.logger.info(
@@ -153,6 +149,7 @@ class ConversationBot:
         conversation_history: List[ConversationTurn],
         max_history: int,
         turn_number: int = 0,
+        session_state: Optional[Dict[str, Any]] = None,
     ) -> Tuple[dict, dict, float, dict]:
         """
         Prompt the ConversationBot for a response.
@@ -262,6 +259,7 @@ class CallbackConversationBot(ConversationBot):
         conversation_history: List[Any],
         max_history: int,
         turn_number: int = 0,
+        session_state: Optional[Dict[str, Any]] = None,
     ) -> Tuple[dict, dict, float, dict]:
         chat_protocol_message = self._to_chat_protocol(
             self.user_template, conversation_history, self.user_template_parameters
@@ -269,7 +267,7 @@ class CallbackConversationBot(ConversationBot):
         msg_copy = copy.deepcopy(chat_protocol_message)
         result = {}
         start_time = time.time()
-        result = await self.callback(msg_copy)
+        result = await self.callback(msg_copy, session_state=session_state)
         end_time = time.time()
         if not result:
             result = {
@@ -348,6 +346,7 @@ class MultiModalConversationBot(ConversationBot):
         conversation_history: List[Any],
         max_history: int,
         turn_number: int = 0,
+        session_state: Optional[Dict[str, Any]] = None,
     ) -> Tuple[dict, dict, float, dict]:
         previous_prompt = conversation_history[-1]
         chat_protocol_message = await self._to_chat_protocol(conversation_history, self.user_template_parameters)
