@@ -10,22 +10,14 @@ Example to show browsing sessions.
 """
 
 import os
-from azure.servicebus import ServiceBusClient, NEXT_AVAILABLE_SESSION
+from azure.servicebus import ServiceBusClient
 from azure.identity import DefaultAzureCredential
-
-import logging
-import sys
-
-logger = logging.getLogger("azure.servicebus")
-handler = logging.StreamHandler(stream=sys.stdout)
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 QUEUE_NAME = os.environ["SERVICEBUS_SESSION_QUEUE_NAME"]
 
 credential = DefaultAzureCredential()
-servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential, logging_enable=True, retry_total=0)
+servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential, logging_enable=True, retry_total=0, uamqp_transport=True)
 
 with servicebus_client:
     receiver = servicebus_client.get_management_operation_client(entity_name=QUEUE_NAME)

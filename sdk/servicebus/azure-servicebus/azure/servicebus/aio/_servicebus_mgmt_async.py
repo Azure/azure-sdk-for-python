@@ -4,7 +4,7 @@ import warnings
 import datetime
 import asyncio
 from typing import TYPE_CHECKING, Any, Optional, Union
-from .._common.utils import create_authentication
+from ._async_utils import create_authentication
 from azure.servicebus._common.constants import (
     MGMT_REQUEST_SKIP,
     MGMT_REQUEST_TOP,
@@ -75,18 +75,25 @@ class ServiceBusManagementOperationClient(BaseHandler, ReceiverMixin):
             client_name=self._name,
         )
 
-    async def _open(self):
+    async def __aenter__(self) -> "ServiceBusManagementOperationClient":
+        if self._shutdown.is_set():
+            raise ValueError(
+                "The handler has already been shutdown. Please use ServiceBusClient to create a new instance."
+            )
+        await self._open_with_retry()
+        return self
+
+    async def _open(self) -> None:
         # pylint: disable=protected-access
         if self._running:
             return
         if self._handler and not self._handler._shutdown:
-            await self._handler.close()
-
-        auth = None if self._connection else create_authentication(self)
+            await self._handler.close_async()
+        auth = None if self._connection else (await create_authentication(self))
         self._create_handler(auth)
         try:
-            await self._handler.open(connection=self._connection)
-            while not await self._handler.client_ready():
+            await self._handler.open_async(connection=self._connection)
+            while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05)
             self._running = True
         except:
@@ -97,12 +104,11 @@ class ServiceBusManagementOperationClient(BaseHandler, ReceiverMixin):
             self._auto_lock_renewer.register(self, self.session)
 
     async def _close_handler(self):
-        super(ServiceBusManagementOperationClient, self)._close_handler()
+        await super(ServiceBusManagementOperationClient, self)._close_handler()
 
     async def close(self):
         # type: () -> None
-        super(ServiceBusManagementOperationClient, self).close()
-        self._message_iter = None  # pylint: disable=attribute-defined-outside-init
+        await super(ServiceBusManagementOperationClient, self).close()
 
     async def get_sessions(
         self,
