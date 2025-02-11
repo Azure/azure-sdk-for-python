@@ -205,11 +205,6 @@ def jsonl_escaped_broken_newline_data():
     )
 
 
-@streams_api.route("/jsonl_invalid_content_type", methods=["GET"])
-def jsonl_invalid_content_type():
-    return Response(stream_jsonl_basic(), status=200, headers={"content-type": "application/json"})
-
-
 @streams_api.route("/jsonl_broken_incomplete_char", methods=["GET"])
 def jsonl_broken_incomplete_char():
     return Response(stream_jsonl_broken_incomplete_char(), status=200, headers={"Content-Type": "application/jsonl"})
