@@ -348,7 +348,6 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     data.data = url
                 target, path = trace_utils._get_target_and_path_for_http_dependency(
                     span.attributes,
-                    target,  # type: ignore
                     url,
                 )
                 # http specific logic for name
