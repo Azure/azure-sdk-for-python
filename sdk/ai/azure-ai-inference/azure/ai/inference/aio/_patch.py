@@ -58,12 +58,12 @@ async def load_client(
     """
     Load a client from a given endpoint URL. The method makes a REST API call to the `/info` route
     on the given endpoint, to determine the model type and therefore which client to instantiate.
-    Keyword arguments are passed to the appropriate client constructor, so if you need to set things like
-    `api_version`, `logging_enable`, `user_agent`, etc., you can do so here.
     This method will only work when using Serverless API or Managed Compute endpoint.
     It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
+    Keyword arguments are passed through to the client constructor (you can set keywords such as
+    `api_version`, `user_agent`, `logging_enable` etc. on the client constructor).
 
-    :param endpoint: Service host. Required.
+    :param endpoint: Service endpoint URL for AI model inference. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a AsyncTokenCredential type. Required.
@@ -135,7 +135,7 @@ async def load_client(
 class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=too-many-instance-attributes
     """ChatCompletionsClient.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: Service endpoint URL for AI model inference. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a AsyncTokenCredential type. Required.
@@ -697,7 +697,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
 class EmbeddingsClient(EmbeddingsClientGenerated):
     """EmbeddingsClient.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: Service endpoint URL for AI model inference. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a AsyncTokenCredential type. Required.
@@ -993,7 +993,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     """ImageEmbeddingsClient.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: Service endpoint URL for AI model inference. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a AsyncTokenCredential type. Required.

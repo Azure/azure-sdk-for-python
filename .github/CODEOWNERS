@@ -317,7 +317,7 @@
 
 # ServiceLabel: %Purview
 # PRLabel: %Purview
-/sdk/purview/                                                        @yifan-zhou922
+/sdk/purview/                                                        @saxenarahulMs
 
 # ServiceLabel: %Recovery Services
 # ServiceOwners: @Daya-Patil @Sharmistha-Rai
@@ -367,7 +367,7 @@
 
 # ServiceLabel: %Health Deidentification
 # PRLabel: %Health Deidentification
-/sdk/healthdataaiservices/                                           @GrahamMThomas @alexathomases @Azure/healthdatadeidentification
+/sdk/healthdataaiservices/                                           @alexathomases @Azure/healthdatadeidentification
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Cognitive - Form Recognizer

@@ -475,18 +475,18 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [contributing]: https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sdk_logging_docs]: https://learn.microsoft.com/azure/developer/python/azure-sdk-logging
-[azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html
+[azure_core_ref_docs]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [pip_link]:https://pypi.org/project/pip/
 [conversationallanguage_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations
 [conversationallanguage_pypi_package]: https://pypi.org/project/azure-ai-language-conversations/
-[api_reference_documentation]:https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html
+[api_reference_documentation]:https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html
 [conversationallanguage_refdocs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations
 [conversationallanguage_docs]: https://learn.microsoft.com/azure/cognitive-services/language-service/conversational-language-understanding/overview
 [conversationallanguage_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/README.md
 [conversationallanguage_restdocs]: https://learn.microsoft.com/rest/api/language/
-[conversationanalysisclient_class]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html#azure.ai.language.conversations.ConversationAnalysisClient
-[conversationauthoringclient_class]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html#azure.ai.language.conversations.ConversationAuthoringClient
+[conversationanalysisclient_class]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html#azure.ai.language.conversations.ConversationAnalysisClient
+[conversationauthoringclient_class]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html#azure.ai.language.conversations.ConversationAuthoringClient
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [azure_language_portal]: https://language.cognitive.azure.com/home
 [cognitive_authentication_aad]: https://learn.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
@@ -497,4 +497,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [grant_role_access]: https://learn.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)
+

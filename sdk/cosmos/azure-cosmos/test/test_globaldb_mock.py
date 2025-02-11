@@ -80,7 +80,7 @@ class MockGlobalEndpointManager:
         return
 
     def can_use_multiple_write_locations(self, request):
-        return True
+        return False
 
     def GetDatabaseAccount1(self):
         database_account = documents.DatabaseAccount()
@@ -166,7 +166,7 @@ class TestGlobalDBMock(unittest.TestCase):
 
     def MockGetDatabaseAccountStub(self, endpoint):
         raise exceptions.CosmosHttpResponseError(
-            status_code=StatusCodes.SERVICE_UNAVAILABLE, message="Service unavailable")
+            status_code=StatusCodes.INTERNAL_SERVER_ERROR, message="Internal Server Error")
 
     def test_global_db_endpoint_discovery_retry_policy(self):
         connection_policy = documents.ConnectionPolicy()

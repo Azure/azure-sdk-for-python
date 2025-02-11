@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.0b8 (2025-01-29)
+
+### Features Added
+
+* Added support for Chat Completions with audio input. See new sample `sample_chat_completions_with_audio_data.py`.
+
+### Bugs Fixed
+
+* Fix a bug that caused filtering of a package with token usage from Azure OpenAI models in the streaming mode.
+
 ## 1.0.0b7 (2025-01-15)
 
 ### Features Added
