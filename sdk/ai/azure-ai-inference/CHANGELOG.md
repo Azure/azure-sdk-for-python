@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.0b9 (Unreleased)
+
+### Features Added
+
+* Added support for chat completion messages with `developer` role.
+* Updated package document with an example of how to set custom HTTP request headers,
+and an example of providing chat completion "messages" as an array of Python `dicts`.
+* Add a descriptive exception error message when `load_client` function or
+`get_model_info` method fails to run on an endpoint that does not support the `/info` route.
+
 ## 1.0.0b8 (2025-01-29)
 
 ### Features Added
