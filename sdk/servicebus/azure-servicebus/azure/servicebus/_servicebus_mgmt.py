@@ -116,7 +116,7 @@ class ServiceBusManagementOperationClient(BaseHandler, ReceiverMixin):
         timeout: Optional[float] = None,
         **kwargs
     ):
-        """Get sessions from the Service Bus entity.
+        """Get sessions from the Service Bus queue.
         :keyword last_updated_time: Filter sessions based on the last updated time.
         :paramtype last_updated_time: datetime.datetime
         :keyword skip_num_sessions: Skip this number of sessions.
