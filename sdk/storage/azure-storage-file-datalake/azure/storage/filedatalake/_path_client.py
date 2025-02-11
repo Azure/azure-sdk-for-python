@@ -153,7 +153,7 @@ class PathClient(StorageAccountHostsMixin):
         if isinstance(file_system_name, str):
             file_system_name = file_system_name.encode('UTF-8')
         return (f"{self.scheme}://{hostname}/{quote(file_system_name)}/"
-                f"{quote(self.path_name, safe='~')}{self._query_str}")
+                f"{quote(self.path_name, safe='~/')}{self._query_str}")
 
     def _create_path_options(self, resource_type,
                              content_settings=None,  # type: Optional[ContentSettings]
