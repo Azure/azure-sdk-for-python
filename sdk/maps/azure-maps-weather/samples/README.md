@@ -11,7 +11,7 @@ products:
 
 These code samples show common scenario operations with the Azure Maps Weather client library.
 
-Authenticate the client with Azure Maps Weather [API Key Credential](https://docs.microsoft.com/azure/azure-maps/how-to-manage-account-keys):
+Authenticate the client with Azure Maps Weather [API Key Credential](https://learn.microsoft.com/azure/azure-maps/how-to-manage-account-keys):
 
 Then for common Azure Maps Weather operations:
 
@@ -76,9 +76,9 @@ Then for common Azure Maps Weather operations:
 
 ## Next steps
 
-Check out the [API reference documentation](https://docs.microsoft.com/rest/api/maps/weather)
+Check out the [API reference documentation](https://learn.microsoft.com/rest/api/maps/weather)
 to learn more about what you can do with the Azure Maps Weather client library.
 
 <!-- LINKS -->
 [azure_portal]: https://portal.azure.com
-[azure_cli]: https://docs.microsoft.com/cli/azure
+[azure_cli]: https://learn.microsoft.com/cli/azure

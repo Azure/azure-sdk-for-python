@@ -1,6 +1,7 @@
 -e ../../../tools/azure-sdk-tools
 ../../identity/azure-identity
 aiohttp
-openai[realtime]
 pillow
 pydantic
+git+https://github.com/openai/openai-python@next
+websockets >= 13, < 15

@@ -108,6 +108,24 @@ class CallerRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "None"
 
 
+class CalloutType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the callout service, specifying the kind of external resource or service being
+    accessed.
+    """
+
+    KUSTO = "kusto"
+    SQL = "sql"
+    COSMOSDB = "cosmosdb"
+    EXTERNAL_DATA = "external_data"
+    AZURE_DIGITAL_TWINS = "azure_digital_twins"
+    SANDBOX_ARTIFACTS = "sandbox_artifacts"
+    WEBAPI = "webapi"
+    MYSQL = "mysql"
+    POSTGRESQL = "postgresql"
+    GENEVAMETRICS = "genevametrics"
+    AZURE_OPENAI = "azure_openai"
+
+
 class ClusterNetworkAccessFlag(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether or not to restrict outbound network access.  Value is optional but if passed in, must
     be 'Enabled' or 'Disabled'.
@@ -122,6 +140,7 @@ class ClusterPrincipalRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ALL_DATABASES_ADMIN = "AllDatabasesAdmin"
     ALL_DATABASES_VIEWER = "AllDatabasesViewer"
+    ALL_DATABASES_MONITOR = "AllDatabasesMonitor"
 
 
 class Compression(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -296,6 +315,8 @@ class LanguageExtensionImageName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PYTHON3_10_8 = "Python3_10_8"
     PYTHON3_10_8_DL = "Python3_10_8_DL"
     PYTHON_CUSTOM_IMAGE = "PythonCustomImage"
+    PYTHON3_11_7 = "Python3_11_7"
+    PYTHON3_11_7_DL = "Python3_11_7_DL"
 
 
 class LanguageExtensionName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -310,6 +331,20 @@ class MigrationClusterRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SOURCE = "Source"
     DESTINATION = "Destination"
+
+
+class OutboundAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether outbound access is permitted for the specified URI pattern."""
+
+    ALLOW = "Allow"
+    DENY = "Deny"
+
+
+class PrincipalPermissionsAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates if the permissions for the script caller are kept following completion of the script."""
+
+    RETAIN_PERMISSION_ON_SCRIPT_COMPLETION = "RetainPermissionOnScriptCompletion"
+    REMOVE_PERMISSION_ON_SCRIPT_COMPLETION = "RemovePermissionOnScriptCompletion"
 
 
 class PrincipalsModificationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -363,6 +398,15 @@ class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALREADY_EXISTS = "AlreadyExists"
 
 
+class ScriptLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Differentiates between the type of script commands included - Database or Cluster. The default
+    is Database.
+    """
+
+    DATABASE = "Database"
+    CLUSTER = "Cluster"
+
+
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of the resource."""
 
@@ -403,3 +447,11 @@ class VnetState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+
+class ZoneStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether the cluster is zonal or non-zonal."""
+
+    NON_ZONAL = "NonZonal"
+    ZONAL_INCONSISTENCY = "ZonalInconsistency"
+    ZONAL = "Zonal"

@@ -1,5 +1,22 @@
 # Release History
 
+## 1.0.0b34 (Unreleased)
+
+### Features Added
+
+- Support AAD for sovereign clouds
+  ([#39379](https://github.com/Azure/azure-sdk-for-python/pull/39379))
+- Support stable http semantic conventions for breeze exporter - REQUESTS
+  ([#39208](https://github.com/Azure/azure-sdk-for-python/pull/39208))
+- Support stable http semantic conventions for breeze exporter - DEPENDENCIES
+  ([#39441](https://github.com/Azure/azure-sdk-for-python/pull/39441))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b33 (2025-01-14)
 
 ### Features Added

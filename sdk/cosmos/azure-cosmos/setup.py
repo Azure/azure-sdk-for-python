@@ -75,6 +75,6 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "azure-core>=1.30.0",
-        "typing-extensions>=4.6.0",
+        "typing-extensions>=4.6.0"
     ],
 )

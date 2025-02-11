@@ -3,7 +3,7 @@ page_type: sample
 languages:
 - python
 products:
-# Including relevant stubs from https://review.docs.microsoft.com/help/contribute/metadata-taxonomies#product
+# Including relevant stubs from https://review.learn.microsoft.com/help/platform/metadata-taxonomies#product
 - azure
 name: Azure.Purview.Sharing samples for python
 description: Samples for the Azure.Purview.Sharing client library.

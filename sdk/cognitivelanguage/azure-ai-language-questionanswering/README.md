@@ -369,7 +369,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 <!-- LINKS -->
 
-[azure_cli]: https://docs.microsoft.com/cli/azure/
+[azure_cli]: https://learn.microsoft.com/cli/azure/
 [azure_portal]: https://portal.azure.com/
 [azure_subscription]: https://azure.microsoft.com/free/
 [language_service]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics
@@ -377,31 +377,31 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [coc_contact]: mailto:opencode@microsoft.com
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[cognitive_auth]: https://docs.microsoft.com/azure/cognitive-services/authentication/
+[cognitive_auth]: https://learn.microsoft.com/azure/cognitive-services/authentication/
 [contributing]: https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md
 [python_logging]: https://docs.python.org/3/library/logging.html
-[sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
-[azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html
+[sdk_logging_docs]: https://learn.microsoft.com/azure/developer/python/azure-sdk-logging
+[azure_core_ref_docs]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [pip_link]: https://pypi.org/project/pip/
-[questionanswering_client_class]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-questionanswering/latest/azure.ai.language.questionanswering.html#azure.ai.language.questionanswering.QuestionAnsweringClient
+[questionanswering_client_class]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-questionanswering/latest/azure.ai.language.questionanswering.html#azure.ai.language.questionanswering.QuestionAnsweringClient
 [authoring_client_class]: https://aka.ms/azsdk/python/questionansweringauthoringclient
-[questionanswering_refdocs_prompts]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-questionanswering/latest/azure.ai.language.questionanswering.models.html#azure.ai.language.questionanswering.models.KnowledgeBaseAnswerDialog
+[questionanswering_refdocs_prompts]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-questionanswering/latest/azure.ai.language.questionanswering.models.html#azure.ai.language.questionanswering.models.KnowledgeBaseAnswerDialog
 [questionanswering_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/
 [questionanswering_docs]: https://azure.microsoft.com/services/cognitive-services/qna-maker/
-[questionanswering_docs_chat]: https://docs.microsoft.com/azure/cognitive-services/qnamaker/how-to/chit-chat-knowledge-base
+[questionanswering_docs_chat]: https://learn.microsoft.com/azure/cognitive-services/qnamaker/how-to/chit-chat-knowledge-base
 [questionanswering_docs_demos]: https://azure.microsoft.com/services/cognitive-services/qna-maker/#demo
 [questionanswering_docs_features]: https://azure.microsoft.com/services/cognitive-services/qna-maker/#features
 [questionanswering_pypi_package]: https://pypi.org/project/azure-ai-language-questionanswering/
-[questionanswering_refdocs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-questionanswering/latest/azure.ai.language.questionanswering.html
+[questionanswering_refdocs]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-questionanswering/latest/azure.ai.language.questionanswering.html
 [questionanswering_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/README.md
-[cognitive_authentication_aad]: https://docs.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
+[cognitive_authentication_aad]: https://learn.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
-[custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
+[custom_subdomain]: https://learn.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [install_azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#install-the-package
-[register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
-[grant_role_access]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
+[register_aad_app]: https://learn.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
+[grant_role_access]: https://learn.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [questionanswering_rest_docs]: https://learn.microsoft.com/rest/api/language/question-answering?view=rest-language-2021-10-01
 [questionanswering_rest_docs_authoring]: https://learn.microsoft.com/rest/api/language/question-answering-projects?view=rest-language-2021-10-01
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)
+

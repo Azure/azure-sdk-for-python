@@ -10,7 +10,11 @@
 
 ### Bugs Fixed
 
+- A bug in the error handling for AzureCliCredentials and AzureDeveloperCliCredential which would result in the unexpected error `'NoneType' object has no attribute 'startswith'` has been fixed ([#39176](https://github.com/Azure/azure-sdk-for-python/pull/39176))
+
 ### Other Changes
+
+- `AzureCliCredential` and `AzureDeveloperCliCredential` will now call their corresponding executables directly instead of going through the shell. ([#38606](https://github.com/Azure/azure-sdk-for-python/pull/38606))
 
 ## 1.19.0 (2024-10-08)
 

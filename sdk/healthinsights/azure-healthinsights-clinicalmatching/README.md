@@ -193,7 +193,7 @@ See full SDK logging documentation with examples [here](https://learn.microsoft.
 ### Optional Configuration
 
 Optional keyword arguments can be passed in at the client and per-operation level.
-The azure-core [reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html) describes available configurations for retries, logging, transport protocols, and more.
+The azure-core [reference documentation](https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html) describes available configurations for retries, logging, transport protocols, and more.
 
 ## Next steps
 ## Additional documentation
@@ -218,7 +218,7 @@ see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 <!-- LINKS -->
-[azure_core]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html#module-azure.core.exceptions
+[azure_core]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#module-azure.core.exceptions
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [azure_sub]: https://azure.microsoft.com/free/
 [azure_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesHealthInsights
