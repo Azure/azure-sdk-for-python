@@ -1,6 +1,8 @@
 
 # Azure Core shared client library for Python
 
+JRS - TESTING ONLY WILL NOT BE CHECKED IN
+
 Azure core provides shared exceptions and modules for Python SDK client libraries.
 These libraries follow the [Azure SDK Design Guidelines for Python](https://azure.github.io/azure-sdk/python/guidelines/index.html) .
 
