@@ -77,6 +77,8 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         ~azure.ai.ml.UserIdentityConfiguration]]
     :keyword limits: The limits for the job.
     :paramtype limits: Optional[~azure.ai.ml.entities.CommandJobLimits]
+    :keyword parent_job_name: parent job id for command job
+    :paramtype parent_job_name: Optional[str]
     :keyword kwargs: A dictionary of additional configuration parameters.
     :paramtype kwargs: dict
 
@@ -103,11 +105,12 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         services: Optional[
             Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
         ] = None,
+        parent_job_name: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         kwargs[TYPE] = JobType.COMMAND
         self._parameters: dict = kwargs.pop("parameters", {})
-        self._parent_job_name = kwargs.pop("parent_job_name", None)
+        self.parent_job_name = parent_job_name
 
         super().__init__(**kwargs)
 
@@ -174,7 +177,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             limits=self.limits._to_rest_object() if self.limits else None,
             services=JobServiceBase._to_rest_job_services(self.services),
             queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
-            parent_job_name=self._parent_job_name,
+            parent_job_name=self.parent_job_name,
         )
         result = JobBase(properties=properties)
         result.name = self.name
