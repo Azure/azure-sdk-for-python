@@ -13,6 +13,7 @@ typing-extensions<=4.6.3
 pyproject-api<1.6
 cibuildwheel==2.16.5
 importlib-metadata==8.0.0
+build==1.2.2.post1
 
 # requirements leveraged for testing
 pytest==7.3.1
