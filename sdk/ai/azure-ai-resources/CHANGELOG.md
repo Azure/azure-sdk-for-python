@@ -1,5 +1,10 @@
 # Release History
 
+## 1.0.0b9 (2025-02-11)
+
+### Other Changes
+- Deprecation message added. 
+
 ## 1.0.0b8 (2024-03-27)
 
 ### Features Added
