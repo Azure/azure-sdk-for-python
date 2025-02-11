@@ -27,6 +27,7 @@ except ImportError:
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 from azure.servicebus._pyamqp.message import Message
 from azure.servicebus._pyamqp import error, client, management_operation
+from azure.servicebus._pyamqp._decode import decode_payload
 from azure.servicebus import (
     ServiceBusClient,
     AutoLockRenewer,
@@ -684,6 +685,65 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 # queue should be empty now
                 peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
                 assert len(peeked_msgs) == 0
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @ServiceBusQueuePreparer(
+        name_prefix="servicebustest", dead_lettering_on_message_expiration=True
+    )
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_queue_receive_handler_peek_check_uniq_corr_id(
+        self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
+    ):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential()
+        with ServiceBusClient(
+            fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport
+        ) as sb_client:
+            # send 10 messages
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(10):
+                    message = ServiceBusMessage("Handler message no. {}".format(i))
+                    sender.send_messages(message)
+
+            def _hack_parse_received_message(message, message_type, **kwargs):
+                    parsed = []
+                    # Get correlation ID from mgmt msg wrapper. Individual msgs in "value" do not have correlation IDs.
+                    correlation_ids.add(message.properties.correlation_id)
+                    if message.value:
+                        for m in message.value[b"messages"]:
+                            wrapped = decode_payload(memoryview(m[b"message"]))
+                            parsed.append(message_type(wrapped, **kwargs))
+                    return parsed
+
+            def peek_message(receiver, seq_num):
+                receiver.peek_messages(max_message_count=1, sequence_number=seq_num)
+
+            # Peek 10 unique messages concurrently
+            with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
+                received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
+                while len(received_msgs) < 10:
+                    received_msgs.extend(receiver.receive_messages(max_message_count=1, max_wait_time=5))
+                assert len(received_msgs) == 10
+
+                # Grab the sequence numbers of the received messages
+                seq_nums = set()
+                for msg in received_msgs:
+                    seq_nums.add(int(msg.sequence_number))
+
+                # Use the sequence numbers to peek messages concurrently
+                # Add the correlation IDs of the peeked msgs to a set
+                # If the correlation ID is not unique, the set will be smaller than 10
+                # Otherwise, the set will be 10
+                correlation_ids = set()
+                receiver._amqp_transport.parse_received_message = _hack_parse_received_message
+                with ThreadPoolExecutor(max_workers=10) as executor:
+                    for seq_num in seq_nums:
+                        executor.submit(peek_message, receiver, seq_num)
+                assert len(correlation_ids) == 10
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
