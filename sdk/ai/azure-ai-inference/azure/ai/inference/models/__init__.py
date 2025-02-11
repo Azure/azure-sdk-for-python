@@ -14,13 +14,15 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
-    AudioContentItem,
+    AudioUrlContentItem,
     ChatChoice,
     ChatCompletions,
     ChatCompletionsNamedToolChoice,
     ChatCompletionsNamedToolChoiceFunction,
     ChatCompletionsToolCall,
     ChatCompletionsToolDefinition,
+    ChatMessageAudioDataContentItem,
+    ChatMessageInputAudioUrl,
     ChatResponseMessage,
     CompletionsUsage,
     ContentItem,
@@ -57,13 +59,15 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AudioContentItem",
+    "AudioUrlContentItem",
     "ChatChoice",
     "ChatCompletions",
     "ChatCompletionsNamedToolChoice",
     "ChatCompletionsNamedToolChoiceFunction",
     "ChatCompletionsToolCall",
     "ChatCompletionsToolDefinition",
+    "ChatMessageAudioDataContentItem",
+    "ChatMessageInputAudioUrl",
     "ChatResponseMessage",
     "CompletionsUsage",
     "ContentItem",
