@@ -63,10 +63,10 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         return constants._Constants.DefaultUnavailableLocationExpirationTime
 
     def get_write_endpoint(self):
-        return self.location_cache.get_write_regional_endpoint()
+        return self.location_cache.get_write_dual_endpoint()
 
     def get_read_endpoint(self):
-        return self.location_cache.get_read_regional_endpoint()
+        return self.location_cache.get_read_dual_endpoint()
 
     def resolve_service_endpoint(self, request):
         return self.location_cache.resolve_service_endpoint(request)
@@ -135,9 +135,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         endpoints_attempted.add(endpoint)
         self.location_cache.perform_on_database_account_read(database_account)
         # should use the regions in the order returned from gateway
-        first_read_region = next(iter(self.location_cache.available_read_regional_endpoints_by_location.values()))
+        first_read_region = next(iter(self.location_cache.account_read_dual_endpoints_by_location.values()))
         all_endpoints = [first_read_region]
-        all_endpoints.extend(self.location_cache.available_write_regional_endpoints_by_location.values())
+        all_endpoints.extend(self.location_cache.account_write_dual_endpoints_by_location.values())
         count = 0
         for regional_endpoint in all_endpoints:
             if regional_endpoint.get_primary() not in endpoints_attempted:
@@ -149,9 +149,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     await self.client._GetDatabaseAccountCheck(regional_endpoint.get_primary(), **kwargs)
                     self.location_cache.mark_endpoint_available(regional_endpoint.get_primary())
                 except (exceptions.CosmosHttpResponseError, AzureError):
-                    if regional_endpoint in self.location_cache.read_regional_endpoints:
+                    if regional_endpoint in self.location_cache.read_dual_endpoints:
                         self.mark_endpoint_unavailable_for_read(regional_endpoint.get_primary(), False)
-                    if regional_endpoint in self.location_cache.write_regional_endpoints:
+                    if regional_endpoint in self.location_cache.write_dual_endpoints:
                         self.mark_endpoint_unavailable_for_write(regional_endpoint.get_primary(), False)
         self.location_cache.update_location_cache()
 
