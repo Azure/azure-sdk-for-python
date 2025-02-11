@@ -45,15 +45,12 @@ def _request_function(f: Callable[["HttpPipeline"], None]):
     def _(_: Callable[Concatenate[str, P], Any] = HttpRequest):
         @wraps(f)
         # pylint: disable-next=docstring-missing-param
-        def decorated(
-            self: "HttpPipeline", *args: P.args, **kwargs: P.kwargs
-        ) -> HttpResponse:  # pylint: disable=docstring-keyword-should-match-keyword-only
+        def decorated(self: "HttpPipeline", *args: P.args, **kwargs: P.kwargs) -> HttpResponse:
             """A function that sends an HTTP request and returns the response.
 
             Accepts the same parameters as azure.core.rest.HttpRequest, except for the method.
             All other kwargs are forwarded to azure.core.Pipeline.run
 
-            :keyword bool stream: Whether to stream the response, defaults to False
             :return: The request response
             :rtype: HttpResponse
             """

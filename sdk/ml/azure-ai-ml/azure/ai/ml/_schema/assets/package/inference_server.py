@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,redefined-builtin,no-else-return
+# pylint: disable=unused-argument,no-else-return
 
 import logging
 

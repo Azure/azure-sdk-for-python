@@ -13,7 +13,6 @@ from conftest import (
     GPT_4_AZURE,
     GPT_4_OPENAI,
     configure_async,
-    PREVIEW,
 )
 
 
@@ -24,7 +23,7 @@ class TestRealtimeAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")],
+        [(GPT_4_AZURE, "2024-10-01-preview"), (GPT_4_OPENAI, "v1")],
     )
     async def test_realtime_text(self, client_async, api_type, api_version, **kwargs):
         async with client_async.beta.realtime.connect(
@@ -51,7 +50,7 @@ class TestRealtimeAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(GPT_4_AZURE, PREVIEW)],
+        [(GPT_4_AZURE, "2024-10-01-preview")],
     )
     async def test_realtime_text_api_key(self, client_async, api_type, api_version, **kwargs):
         client_async = openai.AsyncAzureOpenAI(
@@ -83,7 +82,7 @@ class TestRealtimeAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(GPT_4_AZURE, PREVIEW)],
+        [(GPT_4_AZURE, "2024-10-01-preview")],
     )
     async def test_realtime_text_ad_token(self, client_async, api_type, api_version, **kwargs):
         credential = get_credential(is_async=True)

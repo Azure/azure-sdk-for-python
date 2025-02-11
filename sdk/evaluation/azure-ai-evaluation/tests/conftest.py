@@ -599,3 +599,10 @@ def pytest_sessionfinish() -> None:
         stop_service()
 
     stop_promptflow_service()
+
+@pytest.fixture
+def run_from_temp_dir(tmp_path):
+    original_cwd = os.getcwd()
+    os.chdir(tmp_path)
+    yield
+    os.chdir(original_cwd)

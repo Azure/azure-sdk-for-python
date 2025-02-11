@@ -11,12 +11,13 @@ import azure.cosmos.documents as documents
 
 import config
 import json
+from typing import Dict, Any
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites -
 #
 # 1. An Azure Cosmos account -
-#    https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
+#    https://learn.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
 #
 # 2. Microsoft Azure Cosmos
 #    pip install azure-cosmos>=4.0.0
@@ -141,7 +142,7 @@ def run_sample():
         user = create_user_if_not_exists(db, USERNAME)
 
         # Permission to perform operations on all items inside a container
-        permission_definition = {
+        permission_definition: Dict[str, Any] = {
             "id": CONTAINER_ALL_PERMISSION,
             "permissionMode": documents.PermissionMode.All,
             "resource": container.container_link,
@@ -211,7 +212,7 @@ def run_sample():
         permission_definition = {
             "id": DOCUMENT_ALL_PERMISSION,
             "permissionMode": documents.PermissionMode.All,
-            "resource": item_3.get('_self') #this identifies the item with id "3"
+            "resource": str(item_3.get('_self')) #this identifies the item with id "3"
         }
 
         permission = create_permission_if_not_exists(user_2, permission_definition)

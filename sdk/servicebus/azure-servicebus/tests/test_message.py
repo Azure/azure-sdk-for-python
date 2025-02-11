@@ -1,4 +1,5 @@
 import os
+from decimal import Decimal
 import pytest
 
 try:
@@ -845,3 +846,40 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             assert not incoming_message.message.release()
             assert not incoming_message.message.reject()
             assert not incoming_message.message.modify(True, True)
+    
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_message_property(
+        self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs
+    ):
+        queue_name = servicebus_queue.name
+        sb_message = ServiceBusMessage(
+            body="hello",
+            application_properties={
+                "prop": "test",
+                "intprop": 1,
+                "byteprop": b"byte",
+                "decimalprop": Decimal("1.2345"),
+                },
+        )
+        sb_client = ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport
+        )
+        with sb_client.get_queue_sender(queue_name) as sender:
+            sender.send_messages(sb_message)
+
+        with sb_client.get_queue_receiver(
+            queue_name, receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE, max_wait_time=10
+        ) as receiver:
+            batch = receiver.receive_messages()
+            incoming_message = batch[0]
+            assert incoming_message.application_properties
+            assert incoming_message.application_properties[b"prop"] == b"test"
+            assert incoming_message.application_properties[b"intprop"] == 1
+            assert incoming_message.application_properties[b"byteprop"] == b"byte"
+            assert incoming_message.application_properties[b"decimalprop"] == Decimal("1.2345")

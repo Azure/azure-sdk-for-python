@@ -84,5 +84,4 @@ class WorkspaceAssetReference(Asset):
         return resource_management
 
     def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
         return dict(WorkspaceAssetReferenceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
