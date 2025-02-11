@@ -27,8 +27,15 @@ from uuid import uuid4, UUID
 from enum import Enum
 from dotenv import find_dotenv, load_dotenv
 from dataclasses import dataclass, asdict
-from typing import Optional
+from typing import Any, Callable, Dict, Optional, Tuple, Union, Type
 from azure.data.tables import TableClient, UpdateMode, EdmType
+
+
+class Color(Enum):
+    WHITE = "white"
+    GRAY = "gray"
+    BLACK = "black"
+    RED = "red"
 
 
 @dataclass
@@ -40,50 +47,25 @@ class Car:
     product_id: Optional[UUID] = None
     inventory_count: Optional[int] = None
     barcode: Optional[bytes] = None
-    color: Optional[str] = None
-    maker: Optional[str] = None
+    color: Optional[Color] = None
+    make: Optional[str] = None
     model: Optional[str] = None
     production_date: Optional[datetime] = None
-    big_number: Optional[int] = None
     is_second_hand: Optional[bool] = None
 
 
-class Color(str, Enum):
-    WHITE = "white"
-    GRAY = "gray"
-    BLACK = "black"
-
-
-def encode_int(value):
-    return EdmType.STRING, str(value)
-
-
-def encode_uuid(value):
-    return None, str(value)
-
-
-encoder_map = {
-    int: encode_int,
-    UUID: encode_uuid,
+# Here we will define how certain types should be encoded,
+# in this case, we want to define all Python integers to be treated
+# as int64, and we also want to provide custom encoding for the enum type 'Color'.
+encoder_map: Dict[Type, Union[EdmType, Callable[[Any], Tuple[EdmType, str]]]] = {
+    Color: lambda v: (EdmType.STRING, v.value),
+    int: EdmType.INT64,
 }
 
-
-def decode_string(value):
-    try:
-        return int(value)
-    except ValueError:
-        try:
-            return Color(value)
-        except ValueError:
-            try:
-                return UUID(value)
-            except ValueError:
-                return value
-
-
-decoder_map = {
-    EdmType.STRING: decode_string,
-}
+# Here we will define how certain types should be decoded,
+# in this case we want to define all int64 properties to be decoded
+# as Python integers, as well as custom decoding for instantiating the 'Color' type.
+decoder_map: Dict[Union[Type, EdmType], Callable[[Any], Any]] = {Color: Color, EdmType.INT64: int}
 
 
 class InsertUpdateDeleteEntity(object):
@@ -98,7 +80,11 @@ class InsertUpdateDeleteEntity(object):
 
     def create_delete_entity(self):
         table_client = TableClient.from_connection_string(
-            self.connection_string, self.table_name, encoder_map=encoder_map, decoder_map=decoder_map
+            self.connection_string,
+            self.table_name,
+            custom_encode=encoder_map,
+            custom_decode=decoder_map,
+            entity_format=Car,
         )
         with table_client:
             table_client.create_table()
@@ -106,83 +92,25 @@ class InsertUpdateDeleteEntity(object):
             entity = Car(
                 PartitionKey="PK",
                 RowKey=uuid4(),
-                price=4.99,
+                price=4999.99,
                 last_updated=datetime.today(),
                 product_id=uuid4(),
                 inventory_count=42,
                 barcode=b"135aefg8oj0ld58",  # cspell:disable-line
                 color=Color.WHITE,
-                model="model",
+                model="Corolla",
                 production_date=datetime(year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc),
-                big_number=2**63,  # an integer exceeds max int64
                 is_second_hand=True,
             )
 
             result = table_client.create_entity(entity=asdict(entity))
             print(f"Created entity: {result}")
 
-            result = table_client.get_entity(entity.PartitionKey, str(entity.RowKey))
-            print(f"Get entity result: {result}")
+            result = table_client.get_entity(entity.PartitionKey, entity.RowKey)
+            model = Car(**result)
+            print(f"Get entity result: {model}")
 
-            table_client.delete_entity(entity=asdict(entity))
-            print("Successfully deleted!")
-
-            table_client.delete_table()
-            print("Cleaned up")
-
-    def upsert_update_entities(self):
-        table_client = TableClient.from_connection_string(
-            self.connection_string,
-            table_name=f"{self.table_name}UpsertUpdate",
-            encoder_map=encoder_map,
-            decoder_map=decoder_map,
-        )
-
-        with table_client:
-            table_client.create_table()
-
-            entity1 = Car(
-                PartitionKey="PK",
-                RowKey=uuid4(),
-                price=4.99,
-                last_updated=datetime.today(),
-                product_id=uuid4(),
-                inventory_count=42,
-                barcode=b"135aefg8oj0ld58",  # cspell:disable-line
-            )
-            entity2 = Car(
-                PartitionKey=entity1.PartitionKey,
-                RowKey=entity1.RowKey,
-                color="red",
-                maker="maker2",
-                model="model2",
-                production_date=datetime(year=2014, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc),
-                big_number=2**63,  # an integer exceeds max int64
-                is_second_hand=True,
-            )
-
-            table_client.upsert_entity(mode=UpdateMode.REPLACE, entity=asdict(entity1))
-            inserted_entity = table_client.get_entity(entity1.PartitionKey, str(entity1.RowKey))
-            print(f"Inserted entity: {inserted_entity}")
-
-            table_client.upsert_entity(mode=UpdateMode.MERGE, entity=asdict(entity2))
-            merged_entity = table_client.get_entity(entity2.PartitionKey, str(entity2.RowKey))
-            print(f"Merged entity: {merged_entity}")
-
-            entity3 = Car(
-                PartitionKey=entity1.PartitionKey,
-                RowKey=entity2.RowKey,
-                color="white",
-            )
-            table_client.update_entity(mode=UpdateMode.REPLACE, entity=asdict(entity3))
-            replaced_entity = table_client.get_entity(entity3.PartitionKey, str(entity3.RowKey))
-            print(f"Replaced entity: {replaced_entity}")
-
-            table_client.update_entity(mode=UpdateMode.REPLACE, entity=asdict(entity2))
-            merged_entity = table_client.get_entity(entity2.PartitionKey, str(entity2.RowKey))
-            print(f"Merged entity: {merged_entity}")
-
-            table_client.delete_entity(partition_key=entity1.PartitionKey, row_key=str(entity1.RowKey))
+            table_client.delete_entity(entity.PartitionKey, entity.RowKey)
             print("Successfully deleted!")
 
             table_client.delete_table()
@@ -192,4 +120,3 @@ class InsertUpdateDeleteEntity(object):
 if __name__ == "__main__":
     ide = InsertUpdateDeleteEntity()
     ide.create_delete_entity()
-    ide.upsert_update_entities()

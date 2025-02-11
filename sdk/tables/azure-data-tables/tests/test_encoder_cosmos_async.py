@@ -506,7 +506,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             test_entity = {"PartitionKey": "PK1", "RowKey": "RK1", "Data": int((max_int64 + 1) * 1000)}
             with pytest.raises(TypeError) as error:
                 await client.create_entity(test_entity)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
 
             test_entity = {"PartitionKey": "PK2", "RowKey": "RK2", "Data": (max_int64 + 1, "Edm.Int64")}
             expected_entity = {
@@ -517,19 +517,10 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             }
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to" in str(error.value)
-            with pytest.raises(HttpResponseError) as error:
-                resp = await client.create_entity(
-                    test_entity,
-                    verify_payload=json.dumps(expected_entity, sort_keys=True),
-                    verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
-                )
-            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert (
-                '"code":"InvalidInput","message":{"lang":"en-us","value":"One of the input values is invalid.'
-                in str(error.value)
-            )
+            assert "is out of range to be cast to" in str(error.value)
+            with pytest.raises(TypeError) as error:
+                await client.create_entity(test_entity)
+            assert "is out of range to be cast to" in str(error.value)
 
             # Valid int64 value with Edm
             test_entity = {"PartitionKey": "PK3", "RowKey": "RK3", "Data": (max_int64, "Edm.Int64")}
@@ -553,7 +544,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             test_entity = {"PartitionKey": "PK4", "RowKey": "RK4", "Data": max_int64}
             with pytest.raises(TypeError) as error:
                 await client.create_entity(test_entity)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
 
             # Infinite float values
             test_entity = {
@@ -605,7 +596,16 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 in str(error.value)
             )
 
-            # Test enums - it is not supported in old encoder
+        # Test enums - it is not supported in old encoder
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumBasicOptions, "Data": EnumBasicOptions},
+            custom_encode={EnumBasicOptions: lambda v: (None, v if isinstance(v, str) else v.value)},
+            custom_decode={EnumBasicOptions: EnumBasicOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -617,10 +617,19 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
                 verify_headers={"Content-Type": "application/json;odata=nometadata"},
-                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE.value), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumStrOptions, "Data": EnumStrOptions},
+            custom_encode={EnumStrOptions: lambda v: (None, v if isinstance(v, str) else v.value)},
+            custom_decode={EnumStrOptions: EnumStrOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -632,10 +641,19 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
                 verify_headers={"Content-Type": "application/json;odata=nometadata"},
-                verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "Two"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumIntOptions, "Data": EnumIntOptions},
+            custom_encode={EnumIntOptions: lambda v: (None, v.value)},
+            custom_decode={EnumIntOptions: EnumIntOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -648,7 +666,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
                     verify_headers={"Content-Type": "application/json;odata=nometadata"},
-                    verify_response=(lambda: client.get_entity("PK", "1"), expected_entity),
+                    verify_response=(lambda: client.get_entity("PK", "1"), test_entity),
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -716,20 +734,20 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
                 await client.upsert_entity(test_entity, mode="merge")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.upsert_entity(test_entity, mode="replace")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": True}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
                 await client.upsert_entity(test_entity, mode="merge")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.upsert_entity(test_entity, mode="replace")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
             expected_entity = {
@@ -740,10 +758,10 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
                 await client.upsert_entity(test_entity, mode="merge")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.upsert_entity(test_entity, mode="replace")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             await client.delete_table()
 
     @cosmos_decorator_async
@@ -1240,11 +1258,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     ):
         table_name = self.get_resource_name("uttable12")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
-        # Non-UTF8 characters in both keys and properties
-        # Invalid int32 and int64 values
-        # Infinite float values
-        # Non-string keys
-        # Test enums
+
         async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
@@ -1286,10 +1300,10 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             expected_entity = test_entity
             with pytest.raises(TypeError) as error:
                 await client.upsert_entity(test_entity, mode=UpdateMode.MERGE)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.upsert_entity(test_entity, mode=UpdateMode.REPLACE)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
 
             test_entity = {"PartitionKey": "PK2", "RowKey": "RK2", "Data": (max_int64 + 1, "Edm.Int64")}
             expected_entity = {
@@ -1300,33 +1314,13 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             }
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to" in str(error.value)
-            with pytest.raises(HttpResponseError) as error:
-                await client.upsert_entity(
-                    test_entity,
-                    mode=UpdateMode.REPLACE,
-                    verify_payload=json.dumps(expected_entity, sort_keys=True),
-                    verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
-                    verify_headers={
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                    },
-                )
-            assert "One of the input values is invalid." in str(error.value)
-            assert error.value.error_code == "InvalidInput"
-            with pytest.raises(HttpResponseError) as error:
-                await client.upsert_entity(
-                    test_entity,
-                    mode=UpdateMode.REPLACE,
-                    verify_payload=json.dumps(expected_entity, sort_keys=True),
-                    verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
-                    verify_headers={
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                    },
-                )
-            assert "One of the input values is invalid." in str(error.value)
-            assert error.value.error_code == "InvalidInput"
+            assert "is out of range to be cast to" in str(error.value)
+            with pytest.raises(TypeError) as error:
+                await client.upsert_entity(test_entity, mode=UpdateMode.MERGE)
+            assert "is out of range to be cast to" in str(error.value)
+            with pytest.raises(TypeError) as error:
+                await client.upsert_entity(test_entity, mode=UpdateMode.REPLACE)
+            assert "is out of range to be cast to" in str(error.value)
 
             # Valid int64 value with Edm
             test_entity = {"PartitionKey": "PK3", "RowKey": "RK3", "Data": (max_int64, "Edm.Int64")}
@@ -1366,10 +1360,10 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             test_entity = {"PartitionKey": "PK4", "RowKey": "RK4", "Data": max_int64}
             with pytest.raises(TypeError) as error:
                 await client.upsert_entity(test_entity, mode=UpdateMode.MERGE)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.upsert_entity(test_entity, mode=UpdateMode.REPLACE)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
 
             # Infinite float values
             test_entity = {
@@ -1449,7 +1443,16 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             assert "The property name '123' is invalid" in str(error.value)
             assert error.value.error_code.value == "PropertyNameInvalid"
 
-            # Test enums - it is not supported in old encoder
+        # Test enums - it is not supported in old encoder
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumBasicOptions, "Data": EnumBasicOptions},
+            custom_encode={EnumBasicOptions: lambda v: (None, v if isinstance(v, str) else v.value)},
+            custom_decode={EnumBasicOptions: EnumBasicOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -1466,7 +1469,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = await client.upsert_entity(
@@ -1478,10 +1481,19 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumStrOptions, "Data": EnumStrOptions},
+            custom_encode={EnumStrOptions: lambda v: (None, v if isinstance(v, str) else v.value)},
+            custom_decode={EnumStrOptions: EnumStrOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -1498,7 +1510,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "Two"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = await client.upsert_entity(
@@ -1510,10 +1522,19 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "Two"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"Data": EnumIntOptions},
+            custom_encode={EnumIntOptions: lambda v: (None, v.value)},
+            custom_decode={EnumIntOptions: EnumIntOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data": EnumIntOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -1530,7 +1551,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = await client.upsert_entity(
@@ -1542,7 +1563,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             await client.delete_table()
 
@@ -1607,20 +1628,20 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
                 await client.update_entity(test_entity, mode="merge")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.update_entity(test_entity, mode="replace")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": True}
             expected_entity = test_entity
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
                 await client.update_entity(test_entity, mode="merge")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.update_entity(test_entity, mode="replace")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
             test_entity = {"PartitionKey": "PK", "RowKey": 3.14}
             expected_entity = {
@@ -1631,10 +1652,10 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             _check_backcompat(test_entity, expected_entity)
             with pytest.raises(TypeError) as error:
                 await client.update_entity(test_entity, mode="merge")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.update_entity(test_entity, mode="replace")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             await client.delete_table()
 
     @cosmos_decorator_async
@@ -2104,11 +2125,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     ):
         table_name = self.get_resource_name("uttable18")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
-        # Non-UTF8 characters in both keys and properties
-        # Invalid int32 and int64 values
-        # Infinite float values
-        # Non-string keys
-        # Test enums
+
         async with TableClient(
             url, table_name, credential=tables_primary_cosmos_account_key, transport=EncoderVerificationTransport()
         ) as client:
@@ -2143,11 +2160,11 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             max_int64 = 9223372036854775807
             test_entity = {"PartitionKey": "PK1", "RowKey": "RK1", "Data": int((max_int64 + 1) * 1000)}
             with pytest.raises(TypeError) as error:
-                await client.upsert_entity(test_entity, mode=UpdateMode.MERGE)
-            assert "is too large to be cast to" in str(error.value)
+                await client.update_entity(test_entity, mode=UpdateMode.MERGE)
+            assert "is out of range to be cast to" in str(error.value)
             with pytest.raises(TypeError) as error:
-                await client.upsert_entity(test_entity, mode=UpdateMode.REPLACE)
-            assert "is too large to be cast to" in str(error.value)
+                await client.update_entity(test_entity, mode=UpdateMode.REPLACE)
+            assert "is out of range to be cast to" in str(error.value)
 
             test_entity = {"PartitionKey": "PK2", "RowKey": "RK2", "Data": (max_int64 + 1, "Edm.Int64")}
             expected_entity = {
@@ -2158,28 +2175,13 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             }
             with pytest.raises(TypeError) as error:
                 _check_backcompat(test_entity, expected_entity)
-            assert "is too large to be cast to" in str(error.value)
-            await client.upsert_entity({"PartitionKey": "PK2", "RowKey": "RK2"})
-            with pytest.raises(HttpResponseError) as error:
-                await client.update_entity(
-                    test_entity,
-                    mode=UpdateMode.REPLACE,
-                    verify_payload=json.dumps(expected_entity, sort_keys=True),
-                    verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
-                    verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                )
-            assert "One of the input values is invalid." in str(error.value)
-            assert error.value.error_code == "InvalidInput"
-            with pytest.raises(HttpResponseError) as error:
-                await client.update_entity(
-                    test_entity,
-                    mode=UpdateMode.REPLACE,
-                    verify_payload=json.dumps(expected_entity, sort_keys=True),
-                    verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
-                    verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                )
-            assert "One of the input values is invalid." in str(error.value)
-            assert error.value.error_code == "InvalidInput"
+            assert "is out of range to be cast to" in str(error.value)
+            with pytest.raises(TypeError) as error:
+                await client.update_entity(test_entity, mode=UpdateMode.MERGE)
+            assert "is out of range to be cast to" in str(error.value)
+            with pytest.raises(TypeError) as error:
+                await client.update_entity(test_entity, mode=UpdateMode.REPLACE)
+            assert "is out of range to be cast to" in str(error.value)
 
             # Valid int64 value with Edm
             test_entity = {"PartitionKey": "PK3", "RowKey": "RK3", "Data": (max_int64, "Edm.Int64")}
@@ -2214,10 +2216,10 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             test_entity = {"PartitionKey": "PK4", "RowKey": "RK4", "Data": max_int64}
             with pytest.raises(TypeError) as error:
                 await client.update_entity(test_entity, mode=UpdateMode.MERGE)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.update_entity(test_entity, mode=UpdateMode.REPLACE)
-            assert "is too large to be cast to" in str(error.value)
+            assert "is out of range to be cast to" in str(error.value)
 
             # Infinite float values
             test_entity = {
@@ -2287,7 +2289,16 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             assert "The property name '123' is invalid." in str(error.value)
             assert error.value.error_code.value == "PropertyNameInvalid"
 
-            # Test enums - it is not supported in old encoder
+        # Test enums - it is not supported in old encoder
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumBasicOptions, "Data": EnumBasicOptions},
+            custom_encode={EnumBasicOptions: lambda v: (None, v if isinstance(v, str) else v.value)},
+            custom_decode={EnumBasicOptions: EnumBasicOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -2302,7 +2313,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='One')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = await client.update_entity(
@@ -2311,10 +2322,19 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='One')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": EnumStrOptions, "Data": EnumStrOptions},
+            custom_encode={EnumStrOptions: lambda v: (None, v if isinstance(v, str) else v.value)},
+            custom_decode={EnumStrOptions: EnumStrOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.TWO, "Data": EnumStrOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -2329,7 +2349,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='Two')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "Two"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = await client.update_entity(
@@ -2338,10 +2358,19 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='Two')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "Two"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
 
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"Data": EnumIntOptions},
+            custom_encode={EnumIntOptions: lambda v: (None, v.value)},
+            custom_decode={EnumIntOptions: EnumIntOptions},
+        ) as client:
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data": EnumIntOptions.TWO}
             expected_entity = {
                 "PartitionKey": "PK",
@@ -2356,7 +2385,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             resp = await client.update_entity(
@@ -2365,7 +2394,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
                 verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-                verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
+                verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
             await client.delete_table()
@@ -2420,22 +2449,22 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", 1)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.delete_entity({"PartitionKey": "foo", "RowKey": 1})
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", True)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.delete_entity({"PartitionKey": "foo", "RowKey": True})
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", 3.14)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.delete_entity({"PartitionKey": "foo", "RowKey": 3.14})
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
             await client.delete_table()
 
@@ -2455,16 +2484,24 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", self.get_datetime())
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
-            await client.delete_entity({"PartitionKey": "foo", "RowKey": self.get_datetime()})
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
+            with pytest.raises(TypeError) as error:
+                await client.delete_entity({"PartitionKey": "foo", "RowKey": self.get_datetime()})
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", recorded_uuid)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
-            await client.delete_entity({"PartitionKey": "foo", "RowKey": recorded_uuid})
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", b"binarydata")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
-            await client.delete_entity({"PartitionKey": "foo", "RowKey": b"binarydata"})
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
+        async with TableClient(
+            url,
+            table_name,
+            credential=tables_primary_cosmos_account_key,
+            transport=EncoderVerificationTransport(),
+            entity_format={"RowKey": datetime},
+        ) as client:
+            await client.delete_entity({"PartitionKey": "foo", "RowKey": self.get_datetime()})
         return recorded_variables
 
     @cosmos_decorator_async
@@ -2479,8 +2516,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", EntityProperty("bar", "Edm.String"))
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
-            await client.delete_entity({"PartitionKey": "foo", "RowKey": ("bar", EdmType.STRING)})
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
@@ -2518,14 +2554,16 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", EnumBasicOptions.ONE)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
-            await client.delete_entity({"PartitionKey": "foo", "RowKey": EnumBasicOptions.ONE})
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
+            with pytest.raises(TypeError) as error:
+                await client.delete_entity({"PartitionKey": "foo", "RowKey": EnumBasicOptions.ONE})
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.delete_entity("foo", EnumIntOptions.ONE)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.delete_entity({"PartitionKey": "foo", "RowKey": EnumIntOptions.ONE})
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
             await client.upsert_entity({"PartitionKey": "foo", "RowKey": "One"})
             resp = await client.delete_entity(
@@ -2581,13 +2619,13 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", 1)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", True)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", 3.14)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
             await client.delete_table()
 
@@ -2607,13 +2645,13 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", self.get_datetime())
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", recorded_uuid)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", b"binarydata")
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
         return recorded_variables
 
     @cosmos_decorator_async
@@ -2628,7 +2666,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", EntityProperty("bar", "Edm.String"))
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
@@ -2658,10 +2696,10 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", EnumBasicOptions.ONE)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
             with pytest.raises(TypeError) as error:
                 await client.get_entity("foo", EnumIntOptions.ONE)
-            assert "PartitionKey or RowKey must be of type string." in str(error.value)
+            assert "PartitionKey or RowKey must be of type string" in str(error.value)
 
             test_entity = {"PartitionKey": "foo", "RowKey": "One"}
             await client.upsert_entity(test_entity)

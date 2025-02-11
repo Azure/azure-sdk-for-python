@@ -417,22 +417,14 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             dict32["large"] = EntityProperty(2**31, EdmType.INT32)
 
             # Assert
-            with pytest.raises(HttpResponseError) as error:
+            with pytest.raises(TypeError) as error:
                 self.table.create_entity(entity=dict32)
-            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert (
-                '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.'
-                in str(error.value)
-            )
+            assert "is out of range to be cast to" in str(error.value)
 
             dict32["large"] = EntityProperty(-(2**31 + 1), EdmType.INT32)
-            with pytest.raises(HttpResponseError) as error:
+            with pytest.raises(TypeError) as error:
                 self.table.create_entity(entity=dict32)
-            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert (
-                '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.'
-                in str(error.value)
-            )
+            assert "is out of range to be cast to" in str(error.value)
         finally:
             self._tear_down()
 
@@ -449,22 +441,14 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             dict64["large"] = EntityProperty(2**63, EdmType.INT64)
 
             # Assert
-            with pytest.raises(HttpResponseError) as error:
+            with pytest.raises(TypeError) as error:
                 self.table.create_entity(entity=dict64)
-            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert (
-                '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.'
-                in str(error.value)
-            )
+            assert "is out of range to be cast to" in str(error.value)
 
             dict64["large"] = EntityProperty(-(2**63 + 1), EdmType.INT64)
-            with pytest.raises(HttpResponseError) as error:
+            with pytest.raises(TypeError) as error:
                 self.table.create_entity(entity=dict64)
-            assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
-            assert (
-                '"code":"InvalidInput","message":{"lang":"en-US","value":"An error occurred while processing this request.'
-                in str(error.value)
-            )
+            assert "is out of range to be cast to" in str(error.value)
         finally:
             self._tear_down()
 
@@ -609,11 +593,15 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             pk, rk = self._create_pk_rk(None, None)
             entity = TableEntity(PartitionKey=pk, RowKey=rk, test1=Color.YELLOW, test2=Color.BLUE, test3=Color.RED)
 
-            self.table.create_entity(entity=entity)
-            resp_entity = self.table.get_entity(partition_key=pk, row_key=rk)
-            assert entity["test1"].value == resp_entity["test1"]
-            assert entity["test2"].value == resp_entity["test2"]
-            assert entity["test3"].value == resp_entity["test3"]
+            table = self.ts.get_table_client(
+                self.table_name, custom_encode={Color: lambda v: (None, v.value)}, custom_decode={int: Color}
+            )
+            table.create_entity(entity=entity)
+            resp_entity = table.get_entity(partition_key=pk, row_key=rk)
+            # Maintaining broken behaviour just in case.
+            assert entity["test1"] == resp_entity["test1"]
+            assert entity["test2"] == resp_entity["test2"]
+            assert entity["test3"] == resp_entity["test3"]
 
         finally:
             self._tear_down()
@@ -2232,10 +2220,12 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             assert received_entity1.metadata
 
         with TableClient(
-            url, table_name, credential=tables_primary_storage_account_key, flatten_result_entity=True
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            entity_format={"Timestamp": EdmType.DATETIME},
         ) as client:
             received_entity2 = client.get_entity("pk", "rk")
             assert received_entity2.metadata == received_entity1.metadata
-            for key, value in received_entity1.metadata.items():
-                assert received_entity2[key] == value
+            assert received_entity2["Timestamp"] == received_entity2.metadata["timestamp"]
             client.delete_table()
