@@ -1,4 +1,4 @@
-# --------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
@@ -579,6 +579,7 @@ class SendClient(AMQPClient):
         self._max_message_size = kwargs.pop("max_message_size", MAX_FRAME_SIZE_BYTES)
         self._link_properties = kwargs.pop("link_properties", None)
         self._link_credit = kwargs.pop("link_credit", None)
+        self._lock = threading.Lock()
         super(SendClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
@@ -667,15 +668,17 @@ class SendClient(AMQPClient):
 
     def _send_message_impl(self, message, *, timeout: float = 0):
         expire_time = (time.time() + timeout) if timeout else None
-        self.open()
+        with self._lock:
+            self.open()
         message_delivery = _MessageDelivery(message, MessageDeliveryState.WaitingToBeSent, expire_time)
         while not self.client_ready():
             time.sleep(0.05)
 
         self._transfer_message(message_delivery, timeout)
         running = True
-        while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            running = self.do_work()
+        with self._lock:
+            while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+                running = self.do_work()
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(
                 condition=ErrorCondition.ClientError, description="Send failed - connection not running."
