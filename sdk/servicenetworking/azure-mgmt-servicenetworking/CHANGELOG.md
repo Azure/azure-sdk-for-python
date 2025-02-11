@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0 (2025-01-20)
+## 2.0.0 (2025-02-05)
 
 ### Features Added
 
@@ -24,7 +24,7 @@
   - Added model `WafPolicy`
   - Added model `WafSecurityPolicy`
   - Added operation group `SecurityPoliciesInterfaceOperations`
-
+  
 ### Breaking Changes
 
   - Model `Association` deleted or renamed its instance variable `association_type`
@@ -38,7 +38,6 @@
   - Model `TrafficController` deleted or renamed its instance variable `frontends`
   - Model `TrafficController` deleted or renamed its instance variable `associations`
   - Model `TrafficController` deleted or renamed its instance variable `provisioning_state`
-  - Deleted or renamed model `AssociationSubnetUpdate`
 
 ## 1.1.0b1 (2024-09-29)
 

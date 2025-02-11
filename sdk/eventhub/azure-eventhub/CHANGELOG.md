@@ -1,6 +1,10 @@
 # Release History
 
-## 5.13.1 (2025-02-11)
+## 5.14.0 (2025-02-11)
+
+### Features Added
+
+- Add support for Decimal128 in pyAMQP ([#39511]https://github.com/Azure/azure-sdk-for-python/pull/39511)
 
 ### Bugs Fixed
 
