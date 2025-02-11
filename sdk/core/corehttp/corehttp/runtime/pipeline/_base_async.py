@@ -33,6 +33,7 @@ from . import PipelineRequest, PipelineResponse, PipelineContext
 from ..policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 from ..pipeline._base import is_sansio_http_policy
 from ._tools_async import await_result as _await_result
+from ._tools import sanitize_transport_options
 from ...transport import AsyncHttpTransport
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
@@ -97,6 +98,7 @@ class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseTy
         :return: The PipelineResponse object.
         :rtype: ~corehttp.runtime.pipeline.PipelineResponse
         """
+        sanitize_transport_options(request.context.options)
         return PipelineResponse(
             request.http_request,
             await self._sender.send(request.http_request, **request.context.options),
