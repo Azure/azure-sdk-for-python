@@ -49,7 +49,7 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
   }
 
   if ($targetedFiles) {
-    foreach($file in $diffObj.ChangedFiles) {
+    foreach($file in $targetedFiles) {
       $pathComponents = $file -split "/"
       # handle changes only in sdk/<service>/<file>/<extension>
       if ($pathComponents.Length -eq 3 -and $pathComponents[0] -eq "sdk") {
