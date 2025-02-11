@@ -3,6 +3,7 @@
 
 import unittest
 import uuid
+import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
@@ -33,6 +34,7 @@ class TestComputedPropertiesQuery(unittest.TestCase):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
+    @pytest.mark.cosmosQuery
     def test_computed_properties_query(self):
         computed_properties = [{'name': "cp_lower", 'query': "SELECT VALUE LOWER(c.db_group) FROM c"},
                                {'name': "cp_power",

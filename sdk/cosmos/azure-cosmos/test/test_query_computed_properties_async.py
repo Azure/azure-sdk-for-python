@@ -3,6 +3,7 @@
 
 import unittest
 import uuid
+import pytest
 
 import test_config
 from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
@@ -38,6 +39,7 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.client.close()
 
+    @pytest.mark.cosmosQuery
     async def test_computed_properties_query_async(self):
         computed_properties = [{'name': "cp_lower", 'query': "SELECT VALUE LOWER(c.db_group) FROM c"},
                                {'name': "cp_power",
