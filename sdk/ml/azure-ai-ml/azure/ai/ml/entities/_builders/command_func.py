@@ -156,6 +156,7 @@ def command(
     ] = None,
     job_tier: Optional[str] = None,
     priority: Optional[str] = None,
+    parent_job_name: Optional[str] = None,
     **kwargs: Any,
 ) -> Command:
     """Creates a Command object which can be used inside a dsl.pipeline function or used as a standalone Command job.
@@ -229,6 +230,8 @@ def command(
     :keyword priority: The priority of the job on the compute. Accepted values are "low", "medium", and "high".
         Defaults to "medium".
     :paramtype priority: Optional[str]
+    :keyword parent_job_name: parent job id for command job
+    :paramtype parent_job_name: Optional[str]
     :return: A Command object.
     :rtype: ~azure.ai.ml.entities.Command
 
@@ -283,6 +286,7 @@ def command(
         environment=environment,
         environment_variables=environment_variables,
         services=services,
+        parent_job_name=parent_job_name,
         **kwargs,
     )
 

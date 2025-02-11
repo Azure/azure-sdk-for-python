@@ -127,6 +127,8 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         ~azure.ai.ml.entities.VsCodeJobService]]]
     :keyword queue_settings: Queue settings for the job.
     :paramtype queue_settings: Optional[~azure.ai.ml.entities.QueueSettings]
+    :keyword parent_job_name: parent job id for command job
+    :paramtype parent_job_name: Optional[str]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Command cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -172,6 +174,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
+        parent_job_name: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         # validate init params are valid type
@@ -181,7 +184,6 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         services = _resolve_job_services(services)
         kwargs.pop("type", None)
         self._parameters: dict = kwargs.pop("parameters", {})
-        self._parent_job_name = kwargs.pop("parent_job_name", None)
         BaseNode.__init__(
             self,
             type=NodeType.COMMAND,
@@ -204,6 +206,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         self._resources = resources
         self._services = services
         self.queue_settings = queue_settings
+        self.parent_job_name = parent_job_name
 
         if isinstance(self.component, CommandComponent):
             self.resources = self.resources or self.component.resources  # type: ignore[assignment]
@@ -746,7 +749,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
                 creation_context=self.creation_context,
                 parameters=self.parameters,
                 queue_settings=self.queue_settings,
-                parent_job_name=self._parent_job_name,
+                parent_job_name=self.parent_job_name,
             )
 
         return CommandJob(
@@ -773,7 +776,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             creation_context=self.creation_context,
             parameters=self.parameters,
             queue_settings=self.queue_settings,
-            parent_job_name=self._parent_job_name,
+            parent_job_name=self.parent_job_name,
         )
 
     @classmethod

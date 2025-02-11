@@ -20,3 +20,4 @@ class CommandJobSchema(ParameterizedCommandSchema, BaseJobSchema):
     parameters = fields.Dict(dump_only=True)
     inputs = InputsField()
     outputs = OutputsField()
+    parent_job_name = fields.Str()
