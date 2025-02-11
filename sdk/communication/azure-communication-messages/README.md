@@ -126,6 +126,6 @@ additional questions or comments.
 [azure_sub]: https://azure.microsoft.com
 
 [source]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-messages
-[product_docs]: https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/advanced-messaging/whatsapp/get-started
+[product_docs]: https://learn.microsoft.com/azure/communication-services/overview
 [pypi]: https://pypi.org
-[nextsteps]: https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/advanced-messaging/whatsapp/get-started
+[nextsteps]: https://learn.microsoft.com/azure/communication-services/quickstarts/advanced-messaging/whatsapp/get-started
