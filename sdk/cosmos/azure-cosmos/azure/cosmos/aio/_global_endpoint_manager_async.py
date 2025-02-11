@@ -34,7 +34,7 @@ from .._location_cache import LocationCache
 
 # pylint: disable=protected-access
 
-class _GlobalEndpointManager(object):
+class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attributes
     """
     This internal class implements the logic for endpoint management for
     geo-replicated database accounts.
