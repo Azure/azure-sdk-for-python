@@ -33,7 +33,7 @@ from azure.identity import DefaultAzureCredential
 from azure.schemaregistry import SchemaRegistryClient
 from azure.schemaregistry.encoder.avroencoder import AvroEncoder
 
-EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
+EVENTHUB_CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR_AVRO']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ['SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE']
