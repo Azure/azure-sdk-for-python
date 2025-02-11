@@ -12,14 +12,6 @@ from ._evaluators._content_safety import (
     SexualEvaluator,
     ViolenceEvaluator,
 )
-from ._evaluators._multimodal._content_safety_multimodal import (
-    ContentSafetyMultimodalEvaluator,
-    HateUnfairnessMultimodalEvaluator,
-    SelfHarmMultimodalEvaluator,
-    SexualMultimodalEvaluator,
-    ViolenceMultimodalEvaluator,
-)
-from ._evaluators._multimodal._protected_material import ProtectedMaterialMultimodalEvaluator
 from ._evaluators._f1_score import F1ScoreEvaluator
 from ._evaluators._fluency import FluencyEvaluator
 from ._evaluators._gleu import GleuScoreEvaluator
@@ -42,7 +34,6 @@ from ._model_configurations import (
     Message,
     OpenAIModelConfiguration,
 )
-from ._constants import AggregationType
 
 __all__ = [
     "evaluate",
@@ -73,12 +64,5 @@ __all__ = [
     "EvaluatorConfig",
     "Conversation",
     "Message",
-    "EvaluationResult",
-    "ContentSafetyMultimodalEvaluator",
-    "HateUnfairnessMultimodalEvaluator",
-    "SelfHarmMultimodalEvaluator",
-    "SexualMultimodalEvaluator",
-    "ViolenceMultimodalEvaluator",
-    "ProtectedMaterialMultimodalEvaluator",
-    "AggregationType",
+    "EvaluationResult"
 ]

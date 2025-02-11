@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
+import logging
 import os
 import shutil
 import sys
@@ -24,6 +25,9 @@ from ..._credentials.azd_cli import (
     sanitize_output,
 )
 from ..._internal import resolve_tenant, within_dac, validate_tenant_id, validate_scope
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class AzureDeveloperCliCredential(AsyncContextManager):
@@ -153,8 +157,9 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         for scope in scopes:
             validate_scope(scope)
 
-        commandString = " --scope ".join(scopes)
-        command = COMMAND_LINE.format(commandString)
+        command_args = COMMAND_LINE.copy()
+        for scope in scopes:
+            command_args += ["--scope", scope]
         tenant = resolve_tenant(
             default_tenant=self.tenant_id,
             tenant_id=tenant_id,
@@ -163,8 +168,8 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         )
 
         if tenant:
-            command += " --tenant-id " + tenant
-        output = await _run_command(command, self._process_timeout)
+            command_args += ["--tenant-id", tenant]
+        output = await _run_command(command_args, self._process_timeout)
 
         token = parse_token(output)
         if not token:
@@ -184,19 +189,17 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         """Calling this method is unnecessary"""
 
 
-async def _run_command(command: str, timeout: int) -> str:
+async def _run_command(command_args: List[str], timeout: int) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
-    if shutil.which(EXECUTABLE_NAME) is None:
+    azd_path = shutil.which(EXECUTABLE_NAME)
+    if not azd_path:
         raise CredentialUnavailableError(message=CLI_NOT_FOUND)
 
-    if sys.platform.startswith("win"):
-        args = ("cmd", "/c " + command)
-    else:
-        args = ("/bin/sh", "-c", command)
-
+    args = [azd_path] + command_args
     working_directory = get_safe_working_dir()
 
     try:
+        _LOGGER.debug("Executing subprocess with the following arguments %s", args)
         proc = await asyncio.create_subprocess_exec(
             *args,
             stdout=asyncio.subprocess.PIPE,

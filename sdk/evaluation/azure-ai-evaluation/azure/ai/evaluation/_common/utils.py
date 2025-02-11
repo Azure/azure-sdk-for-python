@@ -366,7 +366,7 @@ def validate_conversation(conversation):
     if not isinstance(messages, list):
         raise_exception(
             "'messages' parameter must be a JSON-compatible list of chat messages",
-            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
         )
     expected_roles = {"user", "assistant", "system"}
     image_found = False
@@ -393,7 +393,7 @@ def validate_conversation(conversation):
             ):
                 raise_exception(
                     f"Messages must be a strongly typed class of ChatRequestMessage. Message number: {num}",
-                    ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                    ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
                 )
             if isinstance(message, AssistantMessage):
                 assistant_message_count += 1
@@ -407,7 +407,7 @@ def validate_conversation(conversation):
         if message.get("role") not in expected_roles:
             raise_exception(
                 f"Invalid role provided: {message.get('role')}. Message number: {num}",
-                ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
             )
         if message.get("role") == "assistant":
             assistant_message_count += 1
@@ -417,7 +417,7 @@ def validate_conversation(conversation):
         if not isinstance(content, (str, list)):
             raise_exception(
                 f"Content in each turn must be a string or array. Message number: {num}",
-                ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
             )
         if isinstance(content, list):
             if any(item.get("type") == "image_url" and "url" in item.get("image_url", {}) for item in content):
@@ -425,21 +425,21 @@ def validate_conversation(conversation):
     if not image_found:
         raise_exception(
             "Message needs to have multi-modal input like images.",
-            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
         )
     if assistant_message_count == 0:
         raise_exception(
             "Assistant role required in one of the messages.",
-            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
         )
     if user_message_count == 0:
         raise_exception(
             "User role required in one of the messages.",
-            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
         )
     if assistant_message_count > 1:
         raise_exception(
             "Evaluators for multimodal conversations only support single turn. "
             "User and assistant role expected as the only role in each message.",
-            ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+            ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
         )

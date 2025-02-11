@@ -428,4 +428,4 @@ contact opencode@microsoft.com with any additional questions or comments.
 [storage_explorer]: https://learn.microsoft.com/azure/vs-azure-tools-storage-manage-with-storage-explorer
 
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-administration%2FREADME.png)
+
