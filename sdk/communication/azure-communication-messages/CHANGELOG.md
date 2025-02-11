@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0b1 (2025-01-15-preview)
+## 1.2.0b1 (2025-01-15)
 This is feature addition public preview release.
 
 ### Features Added
