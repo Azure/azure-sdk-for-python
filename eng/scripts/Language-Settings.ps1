@@ -40,7 +40,15 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
   # packages WITHIN that service. This is because the service level file changes are likely to
   # have an impact on the packages within that service.
   $changedServices = @()
-  if ($diffObj.ChangedFiles) {
+  $targetedFiles = $diffObj.ChangedFiles
+  if ($diff.DeletedFiles) {
+    if (-not $targetedFiles) {
+      $targetedFiles = @()
+    }
+    $targetedFiles += $diff.DeletedFiles
+  }
+
+  if ($targetedFiles) {
     foreach($file in $diffObj.ChangedFiles) {
       $pathComponents = $file -split "/"
       # handle changes only in sdk/<service>/<file>/<extension>
@@ -71,10 +79,10 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
   $othersChanged = @()
   $engChanged = @()
 
-  if ($diffObj.ChangedFiles) {
-    $toolChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("tool")}
-    $engChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("eng")}
-    $othersChanged = $diffObj.ChangedFiles | Where-Object { isOther($_) }
+  if ($targetedFiles) {
+    $toolChanged = $targetedFiles | Where-Object { $_.StartsWith("tool")}
+    $engChanged = $targetedFiles | Where-Object { $_.StartsWith("eng")}
+    $othersChanged = $targetedFiles | Where-Object { isOther($_) }
   }
 
   $changedServices = $changedServices | Get-Unique
