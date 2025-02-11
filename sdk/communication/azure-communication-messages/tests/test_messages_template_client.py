@@ -17,7 +17,7 @@ class TestMessageTemplateClientToGetTemplates(MessagesRecordedTestCase):
     @MessagesPreparers.messages_test_decorator
     @recorded_by_proxy
     def test_get_templates(self):
-        channel_id = "b045be8c-45cd-492a-b2a2-47bae7c36959"
+        channel_id = "75476a19-a68d-4e10-806c-3680f099e069"
         raised = False
 
         message_template_client = self.create_message_template_client()
