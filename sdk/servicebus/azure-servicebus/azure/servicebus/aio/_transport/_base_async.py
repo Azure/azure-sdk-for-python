@@ -306,3 +306,16 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         :keyword int timeout: Timeout.
         :keyword Callable callback: Callback to process request response.
         """
+
+    @staticmethod
+    @abstractmethod
+    async def create_amqp_client_async(config, **kwargs):
+        """
+        Creates the AMQPClient.
+        :param Configuration config: Configuration.
+        :keyword str target: Required. The target.
+        :keyword JWTTokenAuth auth: Required.
+        :keyword dict properties: Required.
+        :keyword retry_policy: Required.
+        :keyword str client_name: Required.
+        """

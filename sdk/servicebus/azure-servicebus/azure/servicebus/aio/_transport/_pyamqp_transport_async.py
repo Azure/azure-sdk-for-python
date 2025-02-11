@@ -14,6 +14,7 @@ from ..._pyamqp import constants
 from ..._pyamqp.message import BatchMessage
 from ..._pyamqp.utils import amqp_string_value, amqp_uint_value
 from ..._pyamqp.aio import SendClientAsync, ReceiveClientAsync
+from ..._pyamqp.aio._client_async import AMQPClientAsync
 from ..._pyamqp.aio._authentication_async import JWTTokenAuthAsync
 from ..._pyamqp.aio._connection_async import Connection as ConnectionAsync
 from ..._pyamqp.error import (
@@ -56,7 +57,6 @@ if TYPE_CHECKING:
     from .._servicebus_sender_async import ServiceBusSender
     from ..._pyamqp.performatives import AttachFrame
     from ..._pyamqp.message import Message
-    from ..._pyamqp.aio._client_async import AMQPClientAsync
 
 
 class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
@@ -435,3 +435,37 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
         )
         return callback(status, response, description, amqp_transport=PyamqpTransportAsync)
+
+    @staticmethod
+    def create_amqp_client_async(config: "Configuration", **kwargs: Any) -> "AMQPClientAsync": # pylint:disable=docstring-keyword-should-match-keyword-only
+        """
+        Creates and returns the AMQPClient.
+        :param Configuration config: The configuration.
+
+        :keyword str target: Required. The target.
+        :keyword JWTTokenAuth auth: Required.
+        :keyword int idle_timeout: Required.
+        :keyword network_trace: Required.
+        :keyword retry_policy: Required.
+        :keyword keep_alive_interval: Required.
+        :keyword str client_name: Required.
+        :keyword dict link_properties: Required.
+        :keyword properties: Required.
+        :return: An instance of an asynchronous pyamqp AMQPClient.
+        :rtype: ~pyamqp.aio.AMQPClientAsync
+        """
+        target = kwargs.pop("target")
+        return AMQPClientAsync(
+            config.hostname,
+            target=target,
+            network_trace=config.logging_enable,
+            keep_alive_interval=config.keep_alive,
+            custom_endpoint_address=config.custom_endpoint_address,
+            connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
+            transport_type=config.transport_type,
+            http_proxy=config.http_proxy,
+            socket_timeout=config.socket_timeout,
+            use_tls=config.use_tls,
+            **kwargs,
+        )

@@ -12,6 +12,7 @@ try:
         constants,
         SendClientAsync,
         ReceiveClientAsync,
+        AMQPClientAsync,
     )
     from uamqp.authentication import JWTTokenAsync as JWTTokenAuthAsync
     from uamqp.async_ops import ConnectionAsync
@@ -22,7 +23,7 @@ try:
     from ..._common.constants import ServiceBusReceiveMode
 
     if TYPE_CHECKING:
-        from uamqp import AMQPClientAsync, Message
+        from uamqp import Message
         from logging import Logger
         from .._servicebus_receiver_async import ServiceBusReceiver
         from .._servicebus_sender_async import ServiceBusSender
@@ -330,6 +331,37 @@ try:
                 node=node,
                 timeout=timeout * UamqpTransportAsync.TIMEOUT_FACTOR if timeout else None,
                 callback=functools.partial(callback, amqp_transport=UamqpTransportAsync),
+            )
+    
+        @staticmethod
+        def create_amqp_client_async(config: "Configuration", **kwargs: Any) -> "AMQPClientAsync": # pylint:disable=docstring-keyword-should-match-keyword-only
+            """
+            Creates and returns the uamqp AMQPClient.
+            :param Configuration config: The configuration.
+
+            :keyword str target: Required. The target.
+            :keyword JWTTokenAuth auth: Required.
+            :keyword int idle_timeout: Required.
+            :keyword network_trace: Required.
+            :keyword retry_policy: Required.
+            :keyword keep_alive_interval: Required.
+            :keyword str client_name: Required.
+            :keyword dict link_properties: Required.
+            :keyword properties: Required.
+
+            :return: An instance of AMQPClientAsync.
+            :rtype: ~uamqp.aio.AMQPClientAsync
+            """
+            target = kwargs.pop("target")
+            retry_policy = kwargs.pop("retry_policy")
+
+            return AMQPClientAsync(
+                target,
+                debug=config.logging_enable,
+                error_policy=retry_policy,
+                keep_alive_interval=config.keep_alive,
+                encoding=config.encoding,
+                **kwargs,
             )
 
 except ImportError:
