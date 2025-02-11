@@ -51,7 +51,11 @@ def test_compute(data, initial, expected):
 
 @pytest.mark.parametrize("size", [1024, 4 * 1024 * 1024, 1 * 1024 * 1024 * 1024, 3 * 1024 * 1024 * 1024])
 def test_compute_chunks(size):
-    data = os.urandom(size)
+    data = b''
+    while len(data) < size:
+        length = min(size - len(data), 1 * 1024 * 1024 * 1024)
+        data += os.urandom(length)
+
     chunk_size = 1024 * 1024
     full_crc = crc64.compute(data, 0)
 
