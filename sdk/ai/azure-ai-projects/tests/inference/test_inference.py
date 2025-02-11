@@ -105,8 +105,8 @@ class TestInference(InferenceTestBase):
                 response = chat_completions_client.complete(
                     model=model,
                     messages=[
-                        SystemMessage(content="You are a helpful assistant."),
-                        UserMessage(content="How many feet are in a mile?"),
+                        SystemMessage("You are a helpful assistant."),
+                        UserMessage("How many feet are in a mile?"),
                     ],
                     raw_request_hook=self.request_callback,
                 )
@@ -128,8 +128,8 @@ class TestInference(InferenceTestBase):
                 response = chat_completions_client.complete(
                     model=model,
                     messages=[
-                        SystemMessage(content="You are a helpful assistant."),
-                        UserMessage(content="How many feet are in a mile?"),
+                        SystemMessage("You are a helpful assistant."),
+                        UserMessage("How many feet are in a mile?"),
                     ],
                     raw_request_hook=self.request_callback,
                 )
