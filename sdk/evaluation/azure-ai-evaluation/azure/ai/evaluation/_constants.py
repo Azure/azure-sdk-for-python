@@ -22,6 +22,9 @@ class EvaluationMetrics:
     SELF_HARM = "self_harm"
     SEXUAL = "sexual"
     PROTECTED_MATERIAL = "protected_material"
+    ARTWORK = "artwork"
+    FICTIONAL_CHARACTERS = "fictional_characters"
+    LOGOS_AND_BRANDS = "logos_and_brands"
     XPIA = "xpia"
 
 
@@ -60,7 +63,7 @@ class EvaluationRunProperties:
 
 
 @experimental
-class AggregationType(enum.Enum):
+class _AggregationType(enum.Enum):
     """Defines how numeric evaluation results should be aggregated
     to produce a single value. Used by individual evaluators to combine per-turn results for
     a conversation-based input. In general, wherever this enum is used, it is also possible

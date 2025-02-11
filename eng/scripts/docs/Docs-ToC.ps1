@@ -260,21 +260,6 @@ function Get-python-UpdatedDocsMsToc($toc) {
     }
   }
 
-  $functionService =  [PSCustomObject]@{
-    name = 'Functions';
-    landingPageType = 'Service';
-    children = @('azure.functions', 'azure.durable_functions')
-  }
-
-  # Add new services which are not onboarded in obvious ways in the CI config.
-  # This is done by creating a list of services excluding the ultimate item
-  # (i.e. the "Other" service), then appending the new services
-  # (e.g. "Functions"), sorting the resulting list, then re-adding the ultimate
-  # item to the end. This ensures that the "Other" service is at the bottom as
-  # intended.
-  $sortableServices = $services[0..($services.Length - 2)] + $functionService
-  $toc[0].items = ($sortableServices | Sort-Object -Property name) + $services[-1]
-
   # PowerShell outputs a single object if the output is an array with only one
   # object. The preceeding comma ensures that the output remains an array for
   # appropriate export formatting. Other formatting (e.g. `@($toc)`) does not
