@@ -105,7 +105,6 @@ def get_deleted_path_properties_from_generated_code(generated: "BlobItemInternal
     deleted_path.deleted_time = generated.properties.deleted_time
     deleted_path.remaining_retention_days = generated.properties.remaining_retention_days
     deleted_path.deletion_id = generated.deletion_id
-    deleted_path.file_system = None
     return deleted_path
 
 
