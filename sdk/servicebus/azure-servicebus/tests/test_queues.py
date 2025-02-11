@@ -1622,6 +1622,52 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
     @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @ServiceBusQueuePreparer(
+        name_prefix="servicebustest", dead_lettering_on_message_expiration=True, lock_duration="PT1M"
+    )
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_queue_receive_handler_with_autolockrenew_many_msgs(
+        self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
+    ):
+
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential()
+        with ServiceBusClient(
+            fully_qualified_namespace, credential, logging_enable=False, uamqp_transport=uamqp_transport
+        ) as sb_client:
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                msgs_to_send = [ServiceBusMessage("message: {}".format(i)) for i in range(400)]
+                sender.send_messages(msgs_to_send)
+                print("Send messages to non-sessionful queue.")
+
+            # Can also be called via "with AutoLockRenewer() as renewer" to automate shutdown.
+            renewer = AutoLockRenewer()
+
+            with sb_client.get_queue_receiver(queue_name=servicebus_queue.name, renewer=renewer) as receiver:
+                received_msgs = receiver.receive_messages(max_message_count=300)
+                # At least 300 messages should be renewed
+                while len(received_msgs) < 300:
+                    count = 300 - len(received_msgs)
+                    received_msgs.extend(receiver.receive_messages(max_message_count=count))
+
+                assert len(received_msgs) == 300, "Did not receive all messages"
+                print("Register messages into AutoLockRenewer done.")
+                # Sleep for 50 secs, then allow thread to renew locks 10 secs before expiry
+                time.sleep(50)
+
+                time.sleep(70)  # message handling for long period (E.g. application logic)
+
+                for msg in received_msgs:
+                    receiver.complete_message(msg)  # Settling the message deregisters it from the AutoLockRenewer
+                print("Complete messages.")
+
+            renewer.close()
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
     @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
