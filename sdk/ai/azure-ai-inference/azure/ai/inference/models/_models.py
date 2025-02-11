@@ -52,12 +52,12 @@ class ContentItem(_model_base.Model):
 
 
 class AudioUrlContentItem(ContentItem, discriminator="audio_url"):
-    """A structured chat content item for audio content passed as a url pointer.
+    """A structured chat content item for audio content passed as a url.
 
     :ivar type: The discriminated object type: always 'audio_url' for this type. Required. Default
      value is "audio_url".
     :vartype type: str
-    :ivar audio_url: The details of the audio url pointer. Required.
+    :ivar audio_url: The details of the audio url. Required.
     :vartype audio_url: ~azure.ai.inference.models.ChatMessageInputAudioUrl
     """
 
@@ -65,7 +65,7 @@ class AudioUrlContentItem(ContentItem, discriminator="audio_url"):
     """The discriminated object type: always 'audio_url' for this type. Required. Default value is
      \"audio_url\"."""
     audio_url: "_models.ChatMessageInputAudioUrl" = rest_field()
-    """The details of the audio url pointer. Required."""
+    """The details of the audio url. Required."""
 
     @overload
     def __init__(
@@ -392,6 +392,7 @@ class ChatCompletionsResponseFormatText(ChatCompletionsResponseFormat, discrimin
 class ChatCompletionsToolCall(_model_base.Model):
     """A function tool call requested by the AI model.
 
+
     :ivar id: The ID of the tool call. Required.
     :vartype id: str
     :ivar type: The type of tool call. Currently, only ``function`` is supported. Required. Default
@@ -499,7 +500,7 @@ class ChatMessageAudioDataContentItem(ContentItem, discriminator="input_audio"):
 
 
 class ChatMessageInputAudioUrl(_model_base.Model):
-    """The details of the audio url pointer.
+    """The details of the audio url.
 
     :ivar url: The URL of the audio content. Required.
     :vartype url: str
