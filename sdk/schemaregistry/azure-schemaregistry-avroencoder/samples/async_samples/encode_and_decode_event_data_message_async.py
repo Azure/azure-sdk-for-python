@@ -49,14 +49,10 @@ For more information on ClientSecretCredential, see:
 import os
 import asyncio
 
-from azure.identity.aio import ClientSecretCredential, DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry.encoder.avroencoder.aio import AvroEncoder
 from azure.eventhub import EventData
-
-TENANT_ID=os.environ['AZURE_TENANT_ID']
-CLIENT_ID=os.environ['AZURE_CLIENT_ID']
-CLIENT_SECRET=os.environ['AZURE_CLIENT_SECRET']
 
 SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE=os.environ['SCHEMAREGISTRY_AVRO_FULLY_QUALIFIED_NAMESPACE']
 GROUP_NAME=os.environ['SCHEMAREGISTRY_GROUP']

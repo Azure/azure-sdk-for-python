@@ -26,13 +26,9 @@
 import os
 import asyncio
 
-from azure.identity.aio import ClientSecretCredential, DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry.serializer.avroserializer.aio import AvroSerializer
-
-TENANT_ID=os.environ['AZURE_TENANT_ID']
-CLIENT_ID=os.environ['AZURE_CLIENT_ID']
-CLIENT_SECRET=os.environ['AZURE_CLIENT_SECRET']
 
 SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE=os.environ['SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE']
 GROUP_NAME=os.environ['SCHEMAREGISTRY_GROUP']

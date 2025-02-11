@@ -52,15 +52,11 @@ import asyncio
 import json
 from typing import cast, List
 
-from azure.identity.aio import ClientSecretCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.schemaregistry import MessageContent
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry.encoder.jsonencoder.aio import JsonSchemaEncoder
 from azure.eventhub import EventData
-
-TENANT_ID = os.environ["AZURE_TENANT_ID"]
-CLIENT_ID = os.environ["AZURE_CLIENT_ID"]
-CLIENT_SECRET = os.environ["AZURE_CLIENT_SECRET"]
 
 SCHEMAREGISTRY_FULLY_QUALIFIED_NAMESPACE = os.environ["SCHEMAREGISTRY_JSON_FULLY_QUALIFIED_NAMESPACE"]
 GROUP_NAME = os.environ["SCHEMAREGISTRY_GROUP"]
@@ -82,7 +78,7 @@ SCHEMA_JSON = {
 SCHEMA_STRING = json.dumps(SCHEMA_JSON)
 
 
-token_credential = ClientSecretCredential(tenant_id=TENANT_ID, client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
+token_credential = DefaultAzureCredential()
 
 
 async def encode_message_content_dict(encoder: JsonSchemaEncoder):
@@ -116,6 +112,9 @@ async def main():
     )
     encoder = JsonSchemaEncoder(
         client=schema_registry, group_name=GROUP_NAME, validate=cast(str, SCHEMA_JSON["$schema"])
+    )
+    await schema_registry.register_schema(
+        group_name=GROUP_NAME, name=cast(str, SCHEMA_JSON["title"]), definition=SCHEMA_STRING, format="Json"
     )
     event_data = await encode_message_content_dict(encoder)
     decoded_content = await decode_with_content_and_content_type(encoder, event_data)

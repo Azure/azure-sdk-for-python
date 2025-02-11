@@ -158,14 +158,19 @@ IGNORED_SAMPLES = {
         "blob_samples_client_side_encryption_keyvault.py"
     ],
     "azure-schemaregistry": [
-        "encode_and_decode_event_data_message.py",
-        "encode_and_decode_with_message_content.py",
+        "eventhub_receive_integration_async.py",
+        "eventhub_receive_integration.py"
+    ],
+    "azure-schemaregistry-avroencoder": [
+        "eventhub_receive_integration_async.py",
         "eventhub_receive_integration.py",
         "eventhub_send_integration.py",
-        "encode_and_decode_event_data_message_async.py",
-        "encode_and_decode_with_message_content_async.py",
+        "encode_and_decode_with_message_content.py",
+        "encode_and_decode_event_data_message.py"
+    ],
+    "azure-schemaregistry-avroserializer": [
         "eventhub_receive_integration_async.py",
-        "eventhub_send_integration_async.py",
+        "eventhub_receive_integration.py",
     ]
 }
 
