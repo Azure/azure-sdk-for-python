@@ -9,7 +9,7 @@ from typing import Any
 import multiprocessing
 from functools import partial
 
-from .package_utils import create_package, change_log_generate, extract_breaking_change
+from .package_utils import create_package, change_log_generate, extract_breaking_change, get_version_info
 
 logging.basicConfig(
     stream=sys.stdout,
@@ -35,17 +35,18 @@ def main(generate_input, generate_output):
         package_name = package["packageName"]
         prefolder = package["path"][0]
         # Changelog
-        last_version = ["first release"]
+        last_version, last_stable_release = get_version_info(package_name, package["tagIsStable"])
         change_log_func = partial(
             change_log_generate,
             package_name,
             last_version,
             package["tagIsStable"],
+            last_stable_release=last_stable_release,
             prefolder=prefolder,
             is_multiapi=package["isMultiapi"],
         )
         try:
-            md_output, last_version = execute_func_with_timeout(change_log_func)
+            md_output = execute_func_with_timeout(change_log_func)
         except multiprocessing.TimeoutError:
             md_output = "change log generation was timeout!!!"
         except:
@@ -55,7 +56,7 @@ def main(generate_input, generate_output):
             "hasBreakingChange": "Breaking Changes" in md_output,
             "breakingChangeItems": extract_breaking_change(md_output),
         }
-        package["version"] = last_version[-1]
+        package["version"] = last_version
 
         _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
         # Built package

@@ -1865,7 +1865,7 @@ class VectorThreshold(_serialization.Model):
 
 
 class SearchScoreThreshold(VectorThreshold):
-    """The results of the vector query will filter based on the '@search.score' value. Note this is
+    """The results of the vector query will filter based on the '\\@search.score' value. Note this is
     the @search.score returned as part of the search response. The threshold direction will be
     chosen for higher @search.score.
 
@@ -1874,7 +1874,7 @@ class SearchScoreThreshold(VectorThreshold):
     :ivar kind: The kind of threshold used to filter vector queries. Required. Known values are:
      "vectorSimilarity" and "searchScore".
     :vartype kind: str or ~azure.search.documents.models.VectorThresholdKind
-    :ivar value: The threshold will filter based on the '@search.score' value. Note this is the
+    :ivar value: The threshold will filter based on the '\\@search.score' value. Note this is the
      @search.score returned as part of the search response. The threshold direction will be chosen
      for higher @search.score. Required.
     :vartype value: float
@@ -1892,7 +1892,7 @@ class SearchScoreThreshold(VectorThreshold):
 
     def __init__(self, *, value: float, **kwargs: Any) -> None:
         """
-        :keyword value: The threshold will filter based on the '@search.score' value. Note this is the
+        :keyword value: The threshold will filter based on the '\\@search.score' value. Note this is the
          @search.score returned as part of the search response. The threshold direction will be chosen
          for higher @search.score. Required.
         :paramtype value: float
