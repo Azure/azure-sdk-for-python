@@ -219,6 +219,36 @@ class AssociationSubnet(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class AssociationSubnetUpdate(_model_base.Model):
+    """Association Subnet.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Association ID. Required.
+    :vartype id: str
+    """
+
+    id: str = rest_field()
+    """Association ID. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AssociationUpdate(_model_base.Model):
     """The type used for update operations of the Association.
 
@@ -258,12 +288,12 @@ class AssociationUpdateProperties(_model_base.Model):
     :ivar association_type: Association Type. "subnets"
     :vartype association_type: str or ~azure.mgmt.servicenetworking.models.AssociationType
     :ivar subnet: Association Subnet.
-    :vartype subnet: ~azure.mgmt.servicenetworking.models.AssociationSubnet
+    :vartype subnet: ~azure.mgmt.servicenetworking.models.AssociationSubnetUpdate
     """
 
     association_type: Optional[Union[str, "_models.AssociationType"]] = rest_field(name="associationType")
     """Association Type. \"subnets\""""
-    subnet: Optional["_models.AssociationSubnet"] = rest_field()
+    subnet: Optional["_models.AssociationSubnetUpdate"] = rest_field()
     """Association Subnet."""
 
     @overload
@@ -271,7 +301,7 @@ class AssociationUpdateProperties(_model_base.Model):
         self,
         *,
         association_type: Optional[Union[str, "_models.AssociationType"]] = None,
-        subnet: Optional["_models.AssociationSubnet"] = None,
+        subnet: Optional["_models.AssociationSubnetUpdate"] = None,
     ) -> None: ...
 
     @overload

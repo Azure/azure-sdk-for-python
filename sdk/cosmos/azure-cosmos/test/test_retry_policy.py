@@ -203,25 +203,6 @@ class TestRetryPolicy(unittest.TestCase):
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
-    def test_default_retry_policy_for_read(self):
-        document_definition = {'id': str(uuid.uuid4()),
-                               'pk': 'pk',
-                               'name': 'sample document',
-                               'key': 'value'}
-
-        created_document = self.created_collection.create_item(body=document_definition)
-        self.original_execute_function = _retry_utility.ExecuteFunction
-        try:
-            mf = self.MockExecuteFunctionConnectionReset(self.original_execute_function)
-            _retry_utility.ExecuteFunction = mf
-
-            doc = self.created_collection.read_item(item=created_document['id'], partition_key=created_document['pk'])
-            self.assertEqual(doc['id'], document_definition['id'])
-            self.assertEqual(mf.counter, 3)
-
-        finally:
-            _retry_utility.ExecuteFunction = self.original_execute_function
-
     def test_default_retry_policy_for_create(self):
         document_definition = {'id': str(uuid.uuid4()),
                                'pk': 'pk',

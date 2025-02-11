@@ -336,11 +336,12 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 # https://github.com/Azure/azure-sdk-for-python/issues/9256
                 data.type = span.attributes[_AZURE_SDK_NAMESPACE_NAME]
                 data.target = trace_utils._get_azure_sdk_target_source(span.attributes)
-            elif SpanAttributes.HTTP_METHOD in span.attributes:  # HTTP
+            elif HTTP_REQUEST_METHOD in span.attributes or SpanAttributes.HTTP_METHOD in span.attributes:  # HTTP
                 data.type = "HTTP"
-                if SpanAttributes.HTTP_USER_AGENT in span.attributes:
+                user_agent = trace_utils._get_user_agent(span.attributes)
+                if user_agent:
                     # TODO: Not exposed in Swagger, need to update def
-                    envelope.tags["ai.user.userAgent"] = span.attributes[SpanAttributes.HTTP_USER_AGENT]
+                    envelope.tags["ai.user.userAgent"] = user_agent
                 url = trace_utils._get_url_for_http_dependency(span.attributes)
                 # data
                 if url:
@@ -353,10 +354,12 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 # http specific logic for name
                 if path:
                     data.name = "{} {}".format(
-                        span.attributes[SpanAttributes.HTTP_METHOD],
+                        span.attributes.get(HTTP_REQUEST_METHOD) or \
+                            span.attributes.get(SpanAttributes.HTTP_METHOD),
                         path,
                     )
-                status_code = span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
+                status_code = span.attributes.get(HTTP_RESPONSE_STATUS_CODE) or \
+                    span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
                 if status_code:
                     try:
                         status_code = int(status_code)  # type: ignore
