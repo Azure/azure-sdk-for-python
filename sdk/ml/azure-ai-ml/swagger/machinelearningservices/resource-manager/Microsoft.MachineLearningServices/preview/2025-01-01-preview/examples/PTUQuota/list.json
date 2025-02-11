@@ -1,0 +1,31 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "location": "location",
+    "api-version": "2025-01-01-preview",
+    "$skipToken": "string"
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "value": [
+          {
+            "modelCollection": "string",
+            "quota": 1,
+            "usageDetails": [
+              {
+                "resourceGroup": "string",
+                "workspaceName": "string",
+                "deploymentName": "string",
+                "usage": 1,
+                "collectionQuotaUsage": 1
+              }
+            ]
+          }
+        ],
+        "nextLink": "string"
+      }
+    }
+  }
+}

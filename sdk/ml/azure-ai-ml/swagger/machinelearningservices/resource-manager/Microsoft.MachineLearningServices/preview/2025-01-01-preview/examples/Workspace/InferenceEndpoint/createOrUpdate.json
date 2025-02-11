@@ -1,0 +1,145 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg1",
+    "workspaceName": "my-aml-workspace",
+    "poolName": "string",
+    "endpointName": "testEndpointName",
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "properties": {
+        "description": "string",
+        "properties": [
+          {
+            "key": "string",
+            "value": "string"
+          }
+        ],
+        "groupName": "string",
+        "authMode": "AAD",
+        "requestConfiguration": {
+          "requestTimeout": "PT5M",
+          "maxConcurrentRequestsPerInstance": 1
+        }
+      },
+      "tags": {},
+      "location": "string",
+      "kind": "string",
+      "identity": {
+        "type": "SystemAssigned",
+        "userAssignedIdentities": {
+          "string": {}
+        }
+      },
+      "sku": {
+        "name": "string",
+        "tier": "Standard",
+        "size": "string",
+        "family": "string",
+        "capacity": 1
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "properties": [
+            {
+              "key": "string",
+              "value": "string"
+            }
+          ],
+          "provisioningState": "Canceled",
+          "groupName": "string",
+          "authMode": "AAD",
+          "endpointUri": "https://www.contoso.com/example"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999+00:19",
+          "createdBy": "string",
+          "createdByType": "Application",
+          "lastModifiedAt": "2020-01-01T12:34:56.999+00:19",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "ManagedIdentity"
+        },
+        "tags": {},
+        "location": "string",
+        "kind": "string",
+        "identity": {
+          "type": "SystemAssigned,UserAssigned",
+          "principalId": "00000000-1111-2222-3333-444444444444",
+          "tenantId": "00000000-1111-2222-3333-444444444444",
+          "userAssignedIdentities": {
+            "string": {
+              "principalId": "00000000-1111-2222-3333-444444444444",
+              "clientId": "00000000-1111-2222-3333-444444444444"
+            }
+          }
+        },
+        "sku": {
+          "name": "string",
+          "tier": "Standard",
+          "size": "string",
+          "family": "string",
+          "capacity": 1
+        }
+      }
+    },
+    "201": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "properties": [
+            {
+              "key": "string",
+              "value": "string"
+            }
+          ],
+          "provisioningState": "Succeeded",
+          "groupName": "string",
+          "authMode": "AAD",
+          "endpointUri": "https://www.contoso.com/example"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999+00:19",
+          "createdBy": "string",
+          "createdByType": "Key",
+          "lastModifiedAt": "2020-01-01T12:34:56.999+00:19",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "Key"
+        },
+        "tags": {},
+        "location": "string",
+        "kind": "string",
+        "identity": {
+          "type": "None",
+          "principalId": "00000000-1111-2222-3333-444444444444",
+          "tenantId": "00000000-1111-2222-3333-444444444444",
+          "userAssignedIdentities": {
+            "string": {
+              "principalId": "00000000-1111-2222-3333-444444444444",
+              "clientId": "00000000-1111-2222-3333-444444444444"
+            }
+          }
+        },
+        "sku": {
+          "name": "string",
+          "tier": "Basic",
+          "size": "string",
+          "family": "string",
+          "capacity": 1
+        }
+      }
+    }
+  }
+}

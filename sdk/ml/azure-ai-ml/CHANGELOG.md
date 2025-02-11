@@ -1,6 +1,10 @@
 # Release History
 ## 1.26.0 (unreleased)
 
+### Features Added
+  - Adding parent job support for command job.
+  - Adding multiple docker argument support for command job.
+
 ### Bugs Fixed
   - #37464 - Allowing to update a component in register with anonymousEnvironment environment.
 
