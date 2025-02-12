@@ -25,7 +25,9 @@ coverage_dir = os.path.join(root_dir, "_coverage/")
 def run_coverage(coverage_file: str) -> None:
     cov = coverage.Coverage(data_file=coverage_file)
     cov.load()
-    cov.report()
+    total = cov.report()
+    print(f"The total coverage for {coverage_file} is {total}%")
+
 
 def collect_tox_coverage_files():
     coverage_version_cmd = [sys.executable, "-m", "coverage", "--version"]
