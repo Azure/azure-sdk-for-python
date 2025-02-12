@@ -23,6 +23,7 @@ from azure.monitor.opentelemetry._constants import (
     _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
     _AZURE_SDK_INSTRUMENTATION_NAME,
     _PREVIEW_ENTRY_POINT_WARNING,
+    APPLICATIONINSIGHTS_PREVIEW_LIVE_METRICS_ENABLED,
 )
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     AzureDiagnosticLogging,
@@ -34,6 +35,9 @@ from azure.monitor.opentelemetry._diagnostics.status_logger import (
 )
 from azure.monitor.opentelemetry._utils.configurations import (
     _get_otel_disabled_instrumentations,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse import (  # pylint: disable=import-error,no-name-in-module
+    enable_live_metrics,
 )
 
 
@@ -62,3 +66,7 @@ def _configure_auto_instrumentation() -> None:
     otel_disabled_instrumentations = _get_otel_disabled_instrumentations()
     if _AZURE_SDK_INSTRUMENTATION_NAME not in otel_disabled_instrumentations:
         settings.tracing_implementation = OpenTelemetrySpan
+    # Live Metrics
+    live_metrics_enabled = environ.get(APPLICATIONINSIGHTS_PREVIEW_LIVE_METRICS_ENABLED, "false").lower()
+    if live_metrics_enabled == 'true':
+        enable_live_metrics()

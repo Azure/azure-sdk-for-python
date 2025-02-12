@@ -31,7 +31,7 @@ LOG_EXPORTER_NAMES_ARG = "log_exporter_names"
 METRIC_EXPORTER_NAMES_ARG = "metric_exporter_names"
 SAMPLER_ARG = "sampler"
 TRACE_EXPORTER_NAMES_ARG = "trace_exporter_names"
-
+APPLICATIONINSIGHTS_PREVIEW_LIVE_METRICS_ENABLED = "APPLICATIONINSIGHTS_PREVIEW_LIVE_METRICS_ENABLED"
 
 # --------------------Diagnostic/status logging------------------------------
 
