@@ -10,7 +10,7 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
 from azure.cosmos.partition_key import PartitionKey
 import azure.cosmos.exceptions as exceptions
 
-@pytest.mark.cosmosSplit
+@pytest.mark.cosmosQuery
 class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
@@ -99,7 +99,6 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert len(queried_items) == 0
 
 
-    @pytest.mark.cosmosQuery
     async def test_computed_properties_query_async(self):
         created_collection = await self.created_db.create_container(
             "computed_properties_query_test_" + str(uuid.uuid4()),
@@ -114,7 +113,6 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
         self.created_db.delete_container(created_collection.id)
 
 
-    @pytest.mark.cosmosQuery
     async def test_replace_with_same_computed_properties_async(self):
         created_collection = await self.created_db.create_container(
             "computed_properties_query_test_" + str(uuid.uuid4()),
@@ -135,8 +133,6 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
         await self.computedPropertiesTestCases(replaced_collection)
         self.created_db.delete_container(created_collection.id)
 
-
-    @pytest.mark.cosmosQuery
     async def test_replace_without_computed_properties_async(self):
         created_collection = await self.created_db.create_container(
             "computed_properties_query_test_" + str(uuid.uuid4()),
@@ -156,7 +152,6 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
         await self.computedPropertiesTestCases(replaced_collection)
         self.created_db.delete_container(created_collection.id)
 
-    @pytest.mark.cosmosQuery
     async def test_replace_with_new_computed_properties_async(self):
         created_collection = await self.created_db.create_container(
             "computed_properties_query_test_" + str(uuid.uuid4()),
@@ -210,7 +205,6 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(queried_items), 0)
         self.created_db.delete_container(created_collection.id)
 
-    @pytest.mark.cosmosQuery
     async def test_replace_with_incorrect_computed_properties_async(self):
         created_collection = await self.created_db.create_container(
             "computed_properties_query_test_" + str(uuid.uuid4()),
@@ -234,12 +228,11 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
                 partition_key=PartitionKey(path="/pk"),
                 computed_properties=new_computed_properties
             )
-            pytest.fail("Container creation should have failed for value mismatch.")
+            pytest.fail("Container creation should have failed for invalid input.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
             assert "One of the specified inputs is invalid" in e.http_error_message
 
-    @pytest.mark.cosmosQuery
     async def test_replace_with_remove_computed_properties_async(self):
         created_collection = await self.created_db.create_container(
             "computed_properties_query_test_" + str(uuid.uuid4()),

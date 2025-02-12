@@ -11,7 +11,7 @@ from azure.cosmos import DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 import azure.cosmos.exceptions as exceptions
 
-@pytest.mark.cosmosSplit
+@pytest.mark.cosmosQuery
 class TestComputedPropertiesQuery(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
@@ -91,7 +91,6 @@ class TestComputedPropertiesQuery(unittest.TestCase):
             created_collection.query_items(query='Select * from c Where c.cp_str_len = 3', partition_key="test"))
         self.assertEqual(len(queried_items), 0)
 
-    @pytest.mark.cosmosQuery
     def test_computed_properties_query(self):
 
         created_collection = self.created_db.create_container(
@@ -106,7 +105,6 @@ class TestComputedPropertiesQuery(unittest.TestCase):
         self.computedPropertiesTestCases(created_collection)
         self.created_db.delete_container(created_collection.id)
 
-    @pytest.mark.cosmosQuery
     def test_replace_with_same_computed_properties(self):
         created_collection = self.created_db.create_container(
             id="computed_properties_query_test_" + str(uuid.uuid4()),
@@ -127,7 +125,6 @@ class TestComputedPropertiesQuery(unittest.TestCase):
         self.computedPropertiesTestCases(replaced_collection)
         self.created_db.delete_container(replaced_collection.id)
 
-    @pytest.mark.cosmosQuery
     def test_replace_without_computed_properties(self):
         created_collection = self.created_db.create_container(
             id="computed_properties_query_test_" + str(uuid.uuid4()),
@@ -146,7 +143,6 @@ class TestComputedPropertiesQuery(unittest.TestCase):
         self.computedPropertiesTestCases(replaced_collection)
         self.created_db.delete_container(replaced_collection.id)
 
-    @pytest.mark.cosmosQuery
     def test_replace_with_new_computed_properties(self):
         created_collection = self.created_db.create_container(
             id="computed_properties_query_test_" + str(uuid.uuid4()),
@@ -193,7 +189,6 @@ class TestComputedPropertiesQuery(unittest.TestCase):
         self.assertEqual(len(queried_items), 0)
         self.created_db.delete_container(created_collection.id)
 
-    @pytest.mark.cosmosQuery
     def test_replace_with_incorrect_computed_properties(self):
         created_collection = self.created_db.create_container(
             id="computed_properties_query_test_" + str(uuid.uuid4()),
@@ -212,13 +207,12 @@ class TestComputedPropertiesQuery(unittest.TestCase):
                 partition_key=PartitionKey(path="/pk"),
                 computed_properties= computed_properties
             )
-            pytest.fail("Container creation should have failed for value mismatch.")
+            pytest.fail("Container creation should have failed for invalid input.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
             assert "One of the specified inputs is invalid" in e.http_error_message
 
-    @pytest.mark.cosmosQuery
-    async def test_replace_with_remove_computed_properties_(self):
+    def test_replace_with_remove_computed_properties_(self):
         created_collection = self.created_db.create_container(
             "computed_properties_query_test_" + str(uuid.uuid4()),
             PartitionKey(path="/pk"),
@@ -243,7 +237,6 @@ class TestComputedPropertiesQuery(unittest.TestCase):
         # If keyError is not raised the test will fail
         with pytest.raises(KeyError):
             computed_properties = container["computedProperties"]
-
 
 if __name__ == "__main__":
     unittest.main()
