@@ -3,12 +3,14 @@
 ### 4.9.1b5 (Unreleased)
 
 #### Features Added
+* Cross region retries when no preferred locations are set. See [PR 39647](https://github.com/Azure/azure-sdk-for-python/pull/39647)
 
 #### Breaking Changes
 
 #### Bugs Fixed
 
 #### Other Changes
+* Moved endpoint health check to the background. See [PR 39647](https://github.com/Azure/azure-sdk-for-python/pull/39647) 
 
 ### 4.9.1b4 (2025-02-06)
 
