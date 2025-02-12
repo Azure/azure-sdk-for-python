@@ -84,6 +84,7 @@ class TestHealthCheckAsync:
         expected_dual_endpoints.append(DualEndpoint(locational_endpoint, locational_endpoint))
         read_dual_endpoints = client.client_connection._global_endpoint_manager.location_cache.read_dual_endpoints
         assert read_dual_endpoints == expected_dual_endpoints
+        await client.close()
 
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
@@ -92,10 +93,10 @@ class TestHealthCheckAsync:
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
         regions = [REGION_1, REGION_2]
-        mock_gdba_check = self.MockGetDatabaseAccountCheck()
+        mock_get_database_account_check = self.MockGetDatabaseAccountCheck()
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
             self.MockGetDatabaseAccount(regions, use_write_global_endpoint, use_read_global_endpoint))
-        _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = mock_gdba_check
+        _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = mock_get_database_account_check
         try:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
             # this will setup the location cache
@@ -107,13 +108,14 @@ class TestHealthCheckAsync:
 
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
         if use_write_global_endpoint and use_read_global_endpoint:
-            assert mock_gdba_check.counter == 0
+            assert mock_get_database_account_check.counter == 0
         endpoint = self.host if use_read_global_endpoint else locational_endpoint
         expected_dual_endpoints.append(DualEndpoint(endpoint, endpoint))
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
         expected_dual_endpoints.append(DualEndpoint(locational_endpoint, locational_endpoint))
         read_dual_endpoints = client.client_connection._global_endpoint_manager.location_cache.read_dual_endpoints
         assert read_dual_endpoints == expected_dual_endpoints
+        await client.close()
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
     async def test_health_check_failure_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
@@ -140,6 +142,7 @@ class TestHealthCheckAsync:
         assert len(unavailable_endpoint_info) == len(expected_endpoints)
         for expected_dual_endpoint in expected_endpoints:
             assert expected_dual_endpoint in unavailable_endpoint_info.keys()
+        await client.close()
 
     class MockGetDatabaseAccountCheck(object):
         def __init__(self):

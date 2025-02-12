@@ -121,6 +121,7 @@ class TestTimeoutRetryPolicyAsync:
             await container.read_item(item=created_document['id'], partition_key=created_document['pk'])
         finally:
             _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
+            await mock_client.close()
 
     @pytest.mark.parametrize("error_code", error_codes())
     async def test_timeout_failover_retry_policy_for_write_failure_async(self, setup, error_code):

@@ -84,10 +84,10 @@ class TestHealthCheck:
         self.original_getDatabaseAccountStub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
         self.original_getDatabaseAccountCheck = _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck
         regions = [REGION_1, REGION_2]
-        mock_gdba_check = self.MockGetDatabaseAccountCheck()
+        mock_get_database_account_check = self.MockGetDatabaseAccountCheck()
         _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = (
             self.MockGetDatabaseAccount(regions, use_write_global_endpoint, use_read_global_endpoint))
-        _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = mock_gdba_check
+        _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = mock_get_database_account_check
         try:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
             # this will setup the location cache
@@ -99,7 +99,7 @@ class TestHealthCheck:
 
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
         if use_write_global_endpoint and use_read_global_endpoint:
-            assert mock_gdba_check.counter == 0
+            assert mock_get_database_account_check.counter == 0
         endpoint = self.host if use_read_global_endpoint else locational_endpoint
         expected_dual_endpoints.append(DualEndpoint(endpoint, endpoint))
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
@@ -139,7 +139,7 @@ class TestHealthCheck:
             self.counter = 0
 
         def __call__(self, endpoint):
-            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(TestHealthCheckAsync.host, REGION_1)
+            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(TestHealthCheck.host, REGION_1)
             assert endpoint == locational_endpoint
 
             assert self.counter == 0
