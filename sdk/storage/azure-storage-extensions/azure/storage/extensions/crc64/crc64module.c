@@ -15,7 +15,7 @@ PyObject* compute(PyObject* self, PyObject* args) {
     if (!PyArg_ParseTuple(args, "y#K", &src, &length, &uCrc))
         return NULL;
 
-    int pData = 0;
+    uint64_t pData = 0;
     uint64_t uSize = (uint64_t)length;
     uint64_t uBytes, uStop;
 
@@ -25,12 +25,12 @@ PyObject* compute(PyObject* self, PyObject* args) {
     uStop = uSize - (uSize % 32);
     if (uStop >= 2 * 32)
     {
-        uint64_t uCrc0 = 0ULL;
-        uint64_t uCrc1 = 0ULL;
-        uint64_t uCrc2 = 0ULL;
-        uint64_t uCrc3 = 0ULL;
+        uint64_t uCrc0 = 0;
+        uint64_t uCrc1 = 0;
+        uint64_t uCrc2 = 0;
+        uint64_t uCrc3 = 0;
 
-        int pLast = pData + (int)uStop - 32;
+        uint64_t pLast = pData + uStop - 32;
         uSize -= uStop;
         uCrc0 = uCrc;
 
