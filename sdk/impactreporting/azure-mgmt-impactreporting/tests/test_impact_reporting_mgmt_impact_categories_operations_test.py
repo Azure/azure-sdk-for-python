@@ -21,6 +21,6 @@ class TestImpactReportingMgmtImpactCategoriesOperations(AzureMgmtRecordedTestCas
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_impact_categories_list_by_subscription(self, resource_group):
-        response = self.client.impact_categories.list_by_subscription()
+        response = self.client.impact_categories.list_by_subscription(resource_type="microsoft.compute/virtualmachines")
         result = [r for r in response]
         assert response
