@@ -1,5 +1,29 @@
 # Release History
 
+## 22.1.0 (2025-02-23)
+
+### Features Added
+
+  - Added operation FileServicesOperations.get_service_usage
+  - Added operation FileServicesOperations.list_service_usages
+  - Model FileShare has a new parameter file_share_paid_bursting
+  - Model FileShare has a new parameter included_burst_iops
+  - Model FileShare has a new parameter max_burst_credits_for_iops
+  - Model FileShare has a new parameter next_allowed_provisioned_bandwidth_downgrade_time
+  - Model FileShare has a new parameter next_allowed_provisioned_iops_downgrade_time
+  - Model FileShare has a new parameter next_allowed_quota_downgrade_time
+  - Model FileShare has a new parameter provisioned_bandwidth_mibps
+  - Model FileShare has a new parameter provisioned_iops
+  - Model FileShareItem has a new parameter file_share_paid_bursting
+  - Model FileShareItem has a new parameter included_burst_iops
+  - Model FileShareItem has a new parameter max_burst_credits_for_iops
+  - Model FileShareItem has a new parameter next_allowed_provisioned_bandwidth_downgrade_time
+  - Model FileShareItem has a new parameter next_allowed_provisioned_iops_downgrade_time
+  - Model FileShareItem has a new parameter next_allowed_quota_downgrade_time
+  - Model FileShareItem has a new parameter provisioned_bandwidth_mibps
+  - Model FileShareItem has a new parameter provisioned_iops
+  - Model ObjectReplicationPolicy has a new parameter metrics
+
 ## 22.0.0 (2025-01-15)
 
 ### Breaking Changes

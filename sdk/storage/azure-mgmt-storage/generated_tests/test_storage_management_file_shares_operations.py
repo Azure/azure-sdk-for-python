@@ -24,7 +24,7 @@ class TestStorageManagementFileSharesOperations(AzureMgmtRecordedTestCase):
         response = self.client.file_shares.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2023-05-01",
+            api_version="2024-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,13 +45,25 @@ class TestStorageManagementFileSharesOperations(AzureMgmtRecordedTestCase):
                 "deletedTime": "2020-02-20 00:00:00",
                 "enabledProtocols": "str",
                 "etag": "str",
+                "fileSharePaidBursting": {
+                    "paidBurstingEnabled": bool,
+                    "paidBurstingMaxBandwidthMibps": 0,
+                    "paidBurstingMaxIops": 0,
+                },
                 "id": "str",
+                "includedBurstIops": 0,
                 "lastModifiedTime": "2020-02-20 00:00:00",
                 "leaseDuration": "str",
                 "leaseState": "str",
                 "leaseStatus": "str",
+                "maxBurstCreditsForIops": 0,
                 "metadata": {"str": "str"},
                 "name": "str",
+                "nextAllowedProvisionedBandwidthDowngradeTime": "2020-02-20 00:00:00",
+                "nextAllowedProvisionedIopsDowngradeTime": "2020-02-20 00:00:00",
+                "nextAllowedQuotaDowngradeTime": "2020-02-20 00:00:00",
+                "provisionedBandwidthMibps": 0,
+                "provisionedIops": 0,
                 "remainingRetentionDays": 0,
                 "rootSquash": "str",
                 "shareQuota": 0,
@@ -70,7 +82,7 @@ class TestStorageManagementFileSharesOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "version": "str",
             },
-            api_version="2023-05-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -91,13 +103,25 @@ class TestStorageManagementFileSharesOperations(AzureMgmtRecordedTestCase):
                 "deletedTime": "2020-02-20 00:00:00",
                 "enabledProtocols": "str",
                 "etag": "str",
+                "fileSharePaidBursting": {
+                    "paidBurstingEnabled": bool,
+                    "paidBurstingMaxBandwidthMibps": 0,
+                    "paidBurstingMaxIops": 0,
+                },
                 "id": "str",
+                "includedBurstIops": 0,
                 "lastModifiedTime": "2020-02-20 00:00:00",
                 "leaseDuration": "str",
                 "leaseState": "str",
                 "leaseStatus": "str",
+                "maxBurstCreditsForIops": 0,
                 "metadata": {"str": "str"},
                 "name": "str",
+                "nextAllowedProvisionedBandwidthDowngradeTime": "2020-02-20 00:00:00",
+                "nextAllowedProvisionedIopsDowngradeTime": "2020-02-20 00:00:00",
+                "nextAllowedQuotaDowngradeTime": "2020-02-20 00:00:00",
+                "provisionedBandwidthMibps": 0,
+                "provisionedIops": 0,
                 "remainingRetentionDays": 0,
                 "rootSquash": "str",
                 "shareQuota": 0,
@@ -116,7 +140,7 @@ class TestStorageManagementFileSharesOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "version": "str",
             },
-            api_version="2023-05-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -129,7 +153,7 @@ class TestStorageManagementFileSharesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             share_name="str",
-            api_version="2023-05-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -142,7 +166,7 @@ class TestStorageManagementFileSharesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             share_name="str",
-            api_version="2023-05-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -156,7 +180,7 @@ class TestStorageManagementFileSharesOperations(AzureMgmtRecordedTestCase):
             account_name="str",
             share_name="str",
             deleted_share={"deletedShareName": "str", "deletedShareVersion": "str"},
-            api_version="2023-05-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -169,7 +193,7 @@ class TestStorageManagementFileSharesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             share_name="str",
-            api_version="2023-05-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
