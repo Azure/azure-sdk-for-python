@@ -23,6 +23,12 @@
   - Model FileShareItem has a new parameter provisioned_bandwidth_mibps
   - Model FileShareItem has a new parameter provisioned_iops
   - Model ObjectReplicationPolicy has a new parameter metrics
+  - Enum `SkuName` added member `STANDARD_V2_LRS`
+  - Enum `SkuName` added member `STANDARD_V2_GRS`
+  - Enum `SkuName` added member `STANDARD_V2_ZRS`
+  - Enum `SkuName` added member `STANDARD_V2_GZRS`
+  - Enum `SkuName` added member `PREMIUM_V2_LRS`
+  - Enum `SkuName` added member `PREMIUM_V2_ZRS`
 
 ## 22.0.0 (2025-01-15)
 
