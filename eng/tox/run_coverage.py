@@ -68,12 +68,12 @@ if __name__ == "__main__":
             if is_check_enabled(args.target_package, "absolute_cov", False):
                 logging.info("Coverage enforcement is enabled for this package.")
 
-                cov_threshold = get_config_setting(args.target_package, "absolute_cov_percent", None)
-                if cov_threshold:
-                    if total_coverage < float(cov_threshold):
-                        logging.error(
-                            f"Coverage for {pkg_details.name} is below the threshold of {cov_threshold:.2f}% (actual: {total_coverage:.2f}%)"
-                        )
-                        exit(1)
+                # if this threshold is not set in config setting, the default will be very high
+                cov_threshold = get_config_setting(args.target_package, "absolute_cov_percent", 95.0)
+                if total_coverage < float(cov_threshold):
+                    logging.error(
+                        f"Coverage for {pkg_details.name} is below the threshold of {cov_threshold:.2f}% (actual: {total_coverage:.2f}%)"
+                    )
+                    exit(1)
 
 
