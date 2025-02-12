@@ -34,7 +34,6 @@ class CallConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class CallLocatorKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The call locator kind."""
 
-    UNKNOWN = "unknown"
     GROUP_CALL_LOCATOR = "groupCallLocator"
     SERVER_CALL_LOCATOR = "serverCallLocator"
     ROOM_CALL_LOCATOR = "roomCallLocator"
@@ -46,6 +45,49 @@ class CallRejectReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "none"
     BUSY = "busy"
     FORBIDDEN = "forbidden"
+
+
+class CallSessionEndReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CallSessionEndReason."""
+
+    SESSION_STILL_ONGOING = "sessionStillOngoing"
+    CALL_ENDED = "callEnded"
+    INITIATOR_LEFT = "initiatorLeft"
+    HANDED_OVER_OR_TRANSFERED = "handedOverOrTransfered"
+    MAXIMUM_SESSION_TIME_REACHED = "maximumSessionTimeReached"
+    CALL_START_TIMEOUT = "callStartTimeout"
+    MEDIA_TIMEOUT = "mediaTimeout"
+    AUDIO_STREAM_FAILURE = "audioStreamFailure"
+    ALL_INSTANCES_BUSY = "allInstancesBusy"
+    TEAMS_TOKEN_CONVERSION_FAILED = "teamsTokenConversionFailed"
+    REPORT_CALL_STATE_FAILED = "reportCallStateFailed"
+    REPORT_CALL_STATE_FAILED_AND_SESSION_MUST_BE_DISCARDED = "reportCallStateFailedAndSessionMustBeDiscarded"
+    COULD_NOT_REJOIN_CALL = "couldNotRejoinCall"
+    INVALID_BOT_DATA = "invalidBotData"
+    COULD_NOT_START = "couldNotStart"
+    APP_HOSTED_MEDIA_FAILURE_OUTCOME_WITH_ERROR = "appHostedMediaFailureOutcomeWithError"
+    APP_HOSTED_MEDIA_FAILURE_OUTCOME_GRACEFULLY = "appHostedMediaFailureOutcomeGracefully"
+    HANDED_OVER_DUE_TO_MEDIA_TIMEOUT = "handedOverDueToMediaTimeout"
+    HANDED_OVER_DUE_TO_AUDIO_STREAM_FAILURE = "handedOverDueToAudioStreamFailure"
+    SPEECH_RECOGNITION_SESSION_NON_RETRIABLE_ERROR = "speechRecognitionSessionNonRetriableError"
+    SPEECH_RECOGNITION_SESSION_RETRIABLE_ERROR_MAX_RETRY_COUNT_REACHED = (
+        "speechRecognitionSessionRetriableErrorMaxRetryCountReached"
+    )
+    HANDED_OVER_DUE_TO_CHUNK_CREATION_FAILURE = "handedOverDueToChunkCreationFailure"
+    CHUNK_CREATION_FAILED = "chunkCreationFailed"
+    HANDED_OVER_DUE_TO_PROCESSING_TIMEOUT = "handedOverDueToProcessingTimeout"
+    PROCESSING_TIMEOUT = "processingTimeout"
+    TRANSCRIPT_OBJECT_CREATION_FAILED = "transcriptObjectCreationFailed"
+
+
+class ChunkEndReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reason this chunk ended."""
+
+    CHUNK_IS_BEING_RECORDED = "chunkIsBeingRecorded"
+    SESSION_ENDED = "sessionEnded"
+    CHUNK_MAXIMUM_SIZE_EXCEEDED = "chunkMaximumSizeExceeded"
+    CHUNK_MAXIMUM_TIME_EXCEEDED = "chunkMaximumTimeExceeded"
+    CHUNK_UPLOAD_FAILURE = "chunkUploadFailure"
 
 
 class CommunicationCloudEnvironmentModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
