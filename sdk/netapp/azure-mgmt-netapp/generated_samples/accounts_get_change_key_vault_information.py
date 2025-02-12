@@ -30,12 +30,13 @@ def main():
         subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    client.accounts.begin_get_change_key_vault_information(
+    response = client.accounts.begin_get_change_key_vault_information(
         resource_group_name="myRG",
         account_name="account1",
     ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2024-07-01-preview/examples/Accounts_GetChangeKeyVaultInformation.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2024-09-01/examples/Accounts_GetChangeKeyVaultInformation.json
 if __name__ == "__main__":
     main()
