@@ -9,7 +9,7 @@ import logging
 from datetime import datetime
 from azure.ai.evaluation._common._experimental import experimental
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
-from azure.ai.evaluation._evaluators import _content_safety, _protected_material,  _groundedness, _relevance, _similarity, _fluency, _xpia
+from azure.ai.evaluation._evaluators import _content_safety, _protected_material,  _groundedness, _relevance, _similarity, _fluency, _xpia, _coherence
 from azure.ai.evaluation._evaluate import _evaluate
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
@@ -52,6 +52,7 @@ class _DSBEvaluator(Enum):
     RELEVANCE = "relevance"
     SIMILARITY = "similarity"
     FLUENCY = "fluency"
+    COHERENCE = "coherence"
     INDIRECT_ATTACK = "indirect_attack"
     DIRECT_ATTACK = "direct_attack"
 
@@ -122,6 +123,7 @@ class _DSBEvaluation:
             max_conversation_turns: int = 1,
             max_simulation_results: int = 3,
             conversation_turns : List[List[Union[str, Dict[str, Any]]]] = [], 
+            tasks: List[str] = [],
             adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
             source_text: Optional[str] = None,
             direct_attack: bool = False,
@@ -137,6 +139,8 @@ class _DSBEvaluation:
         :type max_simulation_results: int
         :param conversation_turns: Predefined conversation turns to simulate.
         :type conversation_turns: List[List[Union[str, Dict[str, Any]]]]
+        :param tasks A list of user tasks, each represented as a list of strings. Text should be relevant for the tasks and facilitate the simulation. One example is to use text to provide context for the tasks.
+        :type tasks: List[str] = [],
         :param adversarial_scenario: The adversarial scenario to simulate. If None, the non-adversarial Simulator is used.
         :type adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]
         :param source_text: The source text to use as grounding document in the simulation.
@@ -188,6 +192,7 @@ class _DSBEvaluation:
                 scenario=adversarial_scenario,
                 max_conversation_turns=max_conversation_turns,
                 max_simulation_results=max_simulation_results,
+                tasks=tasks,
                 conversation_turns=conversation_turns,
                 text=source_text,
                 target=callback,
@@ -323,6 +328,10 @@ class _DSBEvaluation:
                 evaluators_dict["fluency"] = _fluency.FluencyEvaluator(
                     model_config=self.model_config,
                 )
+            elif evaluator == _DSBEvaluator.COHERENCE:
+                evaluators_dict["coherence"] = _coherence.CoherenceEvaluator(
+                    model_config=self.model_config,
+                )
             elif evaluator == _DSBEvaluator.INDIRECT_ATTACK:
                 evaluators_dict["indirect_attack"] = _xpia.IndirectAttackEvaluator(
                     azure_ai_project=self.azure_ai_project, credential=self.credential
@@ -373,7 +382,7 @@ class _DSBEvaluation:
         :type source_text: Optional[str]
         :param adversarial_scenario: The adversarial scenario to simulate. 
         :type adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]
-        '''
+        '''       
         if _DSBEvaluator.GROUNDEDNESS in evaluators and not (self._check_target_returns_context(target) or source_text):
             self.logger.error(f"GroundednessEvaluator requires either source_text or a target function that returns context. Source text: {source_text}, _check_target_returns_context: {self._check_target_returns_context(target)}")
             msg = "GroundednessEvaluator requires either source_text or a target function that returns context"
@@ -435,7 +444,7 @@ class _DSBEvaluation:
                 target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
-            )            
+            )           
 
     async def __call__(
             self,
@@ -445,6 +454,7 @@ class _DSBEvaluation:
             max_conversation_turns: int = 1,
             max_simulation_results: int = 3,
             conversation_turns : List[List[Union[str, Dict[str, Any]]]] = [],
+            tasks: List[str] = [],
             source_text: Optional[str] = None,
             data_path: Optional[Union[str, os.PathLike]] = None,
             jailbreak_data_path: Optional[Union[str, os.PathLike]] = None,
@@ -465,6 +475,8 @@ class _DSBEvaluation:
         :type max_simulation_results: int
         :param conversation_turns: Predefined conversation turns to simulate.
         :type conversation_turns: List[List[Union[str, Dict[str, Any]]]]
+        :param tasks A list of user tasks, each represented as a list of strings. Text should be relevant for the tasks and facilitate the simulation. One example is to use text to provide context for the tasks.
+        :type tasks: List[str] = [],
         :param source_text: The source text to use as grounding document in the evaluation.
         :type source_text: Optional[str]
         :param data_path: The path to the data file generated by the Simulator. If None, the Simulator will be run.
@@ -494,6 +506,7 @@ class _DSBEvaluation:
                 max_conversation_turns=max_conversation_turns,
                 max_simulation_results=max_simulation_results,
                 conversation_turns=conversation_turns,
+                tasks=tasks,
                 source_text=source_text,
                 direct_attack=_DSBEvaluator.DIRECT_ATTACK in evaluators
             )
