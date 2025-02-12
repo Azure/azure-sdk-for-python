@@ -58,6 +58,7 @@ __all__ = ("ContainerProxy",)
 
 # pylint: disable=too-many-lines,disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
 

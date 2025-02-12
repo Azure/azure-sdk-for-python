@@ -13,4 +13,4 @@ If you are looking to install the Azure client libraries, see the
 [azure sdk python release](https://aka.ms/azsdk/python/all).
 
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-nspkg%2FREADME.png)
+
