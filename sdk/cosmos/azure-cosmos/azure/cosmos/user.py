@@ -24,15 +24,17 @@
 
 """Create, read, update and delete users in the Azure Cosmos DB SQL API service.
 """
-from typing import Any, Dict, List, Mapping, Union, Optional
+from typing import Any, Dict, List, Mapping, Union, Optional, Callable
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import CaseInsensitiveDict
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
 from .permission import Permission
 
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 class UserProxy:
     """An interface to interact with a specific user.
@@ -89,16 +91,22 @@ class UserProxy:
         return self._properties
 
     @distributed_trace
-    def list_permissions(self, max_item_count: Optional[int] = None, **kwargs: Any) -> ItemPaged[Dict[str, Any]]:
+    def list_permissions(
+            self,
+            max_item_count: Optional[int] = None,
+            *,
+            response_hook: Optional[Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]] = None,
+            **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
         """List all permission for the user.
 
         :param int max_item_count: Max number of permissions to be returned in the enumeration operation.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of permissions (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
         feed_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -119,6 +127,8 @@ class UserProxy:
         query: str,
         parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
+        *,
+        response_hook: Optional[Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Return all permissions matching the given `query`.
@@ -127,12 +137,12 @@ class UserProxy:
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :type parameters: List[Dict[str, Any]]
         :param int max_item_count: Max number of permissions to be returned in the enumeration operation.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of permissions (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
         feed_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
