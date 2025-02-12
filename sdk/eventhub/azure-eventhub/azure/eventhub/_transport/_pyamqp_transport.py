@@ -208,7 +208,9 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
 
         """
         return errors.RetryPolicy(
-            retry_total=config.max_retries,
+            # hardcoding to 0 to avoid double retries and
+            # 8 seconds of wait time when retrying compared to uamqp
+            retry_total=0,
             retry_backoff_factor=config.backoff_factor,
             retry_backoff_max=config.backoff_max,
             retry_mode=config.retry_mode,

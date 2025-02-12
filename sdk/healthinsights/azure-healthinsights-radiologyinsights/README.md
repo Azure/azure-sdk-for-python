@@ -328,7 +328,7 @@ additional questions or comments.
 <!-- LINKS -->
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_portal]: https://portal.azure.com
-[azure_core]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html#module-azure.core.exceptions
+[azure_core]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#module-azure.core.exceptions
 [health_insights]: https://learn.microsoft.com/azure/azure-health-insights/overview
 [radiology_insights_docs]: https://learn.microsoft.com/azure/azure-health-insights/radiology-insights/
 [azure_sub]: https://azure.microsoft.com/free/
