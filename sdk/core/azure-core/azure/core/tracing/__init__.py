@@ -6,7 +6,8 @@ from azure.core.tracing._abstract_span import (
     AbstractSpan,
     SpanKind,
     HttpSpanMixin,
-    Link,
 )
+from ._models import Link, SpanKind, StatusCode, TracingOptions
+from ._tracer import TracerProvider
 
-__all__ = ["AbstractSpan", "SpanKind", "HttpSpanMixin", "Link"]
+__all__ = ["AbstractSpan", "HttpSpanMixin", "Link", "SpanKind", "StatusCode", "TracingOptions", "TracerProvider"]

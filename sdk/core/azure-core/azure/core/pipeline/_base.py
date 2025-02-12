@@ -53,19 +53,21 @@ _LOGGER = logging.getLogger(__name__)
 
 def cleanup_kwargs_for_transport(kwargs: Dict[str, str]) -> None:
     """Remove kwargs that are not meant for the transport layer.
+
+    - "insecure_domain_change" is used to indicate that a redirect
+       has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy
+       to clean up sensitive headers. We need to remove it before sending the request
+       to the transport layer. This code is needed to handle the case that the
+       SensitiveHeaderCleanupPolicy is not added into the pipeline and "insecure_domain_change" is not popped.
+    - "enable_cae" is added to the `get_token` method of the `TokenCredential` protocol.
+    - "tracing_options" is used in the DistributedTracingPolicy and tracing decorators
+
     :param kwargs: The keyword arguments.
     :type kwargs: dict
-
-    "insecure_domain_change" is used to indicate that a redirect
-      has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy
-      to clean up sensitive headers. We need to remove it before sending the request
-      to the transport layer. This code is needed to handle the case that the
-      SensitiveHeaderCleanupPolicy is not added into the pipeline and "insecure_domain_change" is not popped.
-    "enable_cae" is added to the `get_token` method of the `TokenCredential` protocol.
     """
-    kwargs_to_remove = ["insecure_domain_change", "enable_cae"]
     if not kwargs:
         return
+    kwargs_to_remove = ["insecure_domain_change", "enable_cae", "tracing_options"]
     for key in kwargs_to_remove:
         kwargs.pop(key, None)
 
