@@ -9,7 +9,7 @@ import logging
 from datetime import datetime
 from azure.ai.evaluation._common._experimental import experimental
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
-from azure.ai.evaluation._evaluators import _content_safety, _protected_material,  _groundedness, _relevance, _similarity, _fluency, _xpia
+from azure.ai.evaluation._evaluators import _content_safety, _protected_material,  _groundedness, _relevance, _similarity, _fluency, _xpia, _coherence
 from azure.ai.evaluation._evaluate import _evaluate
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
@@ -52,6 +52,7 @@ class _DSBEvaluator(Enum):
     RELEVANCE = "relevance"
     SIMILARITY = "similarity"
     FLUENCY = "fluency"
+    COHERENCE = "coherence"
     INDIRECT_ATTACK = "indirect_attack"
     DIRECT_ATTACK = "direct_attack"
 
@@ -327,6 +328,10 @@ class _DSBEvaluation:
                 evaluators_dict["fluency"] = _fluency.FluencyEvaluator(
                     model_config=self.model_config,
                 )
+            elif evaluator == _DSBEvaluator.COHERENCE:
+                evaluators_dict["coherence"] = _coherence.CoherenceEvaluator(
+                    model_config=self.model_config,
+                )
             elif evaluator == _DSBEvaluator.INDIRECT_ATTACK:
                 evaluators_dict["indirect_attack"] = _xpia.IndirectAttackEvaluator(
                     azure_ai_project=self.azure_ai_project, credential=self.credential
@@ -377,7 +382,7 @@ class _DSBEvaluation:
         :type source_text: Optional[str]
         :param adversarial_scenario: The adversarial scenario to simulate. 
         :type adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]
-        '''
+        '''       
         if _DSBEvaluator.GROUNDEDNESS in evaluators and not (self._check_target_returns_context(target) or source_text):
             self.logger.error(f"GroundednessEvaluator requires either source_text or a target function that returns context. Source text: {source_text}, _check_target_returns_context: {self._check_target_returns_context(target)}")
             msg = "GroundednessEvaluator requires either source_text or a target function that returns context"
@@ -439,7 +444,7 @@ class _DSBEvaluation:
                 target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
-            )            
+            )           
 
     async def __call__(
             self,
