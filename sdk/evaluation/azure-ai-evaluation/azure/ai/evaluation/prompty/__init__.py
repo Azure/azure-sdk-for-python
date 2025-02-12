@@ -4,7 +4,6 @@
 
 from azure.ai.evaluation.prompty._prompty import AsyncPrompty
 from azure.ai.evaluation.prompty._connection import Connection, OpenAIConnection, AzureOpenAIConnection
-from azure.ai.evaluation.prompty._image import ImageBase, Base64Image, LazyUrlImage, FileImage
 from azure.ai.evaluation.prompty._exceptions import (
     PromptyException,
     MissingRequiredInputError,
@@ -28,10 +27,6 @@ __all__ = [
     "Connection",
     "AzureOpenAIConnection",
     "OpenAIConnection",
-    "ImageBase",
-    "Base64Image",
-    "FileImage",
-    "LazyUrlImage",
     "PromptyException",
     "MissingRequiredInputError",
     "InvalidInputError",

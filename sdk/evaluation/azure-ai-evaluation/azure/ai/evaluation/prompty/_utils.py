@@ -7,12 +7,13 @@ from dataclasses import dataclass, is_dataclass, fields
 import os
 import re
 import json
+import base64
 from pathlib import Path
 from typing import (
     Any,
     AsyncGenerator,
     Dict,
-    Iterable,
+    Final,
     List,
     Mapping,
     MutableMapping,
@@ -36,7 +37,9 @@ from azure.ai.evaluation.prompty._exceptions import (
     JinjaTemplateError,
     PromptyException,
 )
-from azure.ai.evaluation.prompty._image import Base64Image, FileImage, ImageBase, LazyUrlImage
+
+# from azure.ai.evaluation.prompty._image import Base64Image, FileImage, ImageBase, InjectedImage, LazyUrlImage
+# from azure.ai.evaluation.prompty._image import InjectedImage
 from azure.ai.evaluation.prompty._yaml_utils import load_yaml
 
 
@@ -189,17 +192,52 @@ def update_dict_recursively(origin_dict: Mapping[str, Any], overwrite_dict: Mapp
 # region: Jinja template rendering
 
 VALID_ROLES = ["system", "user", "assistant", "function"]
+"""Valid roles for the OpenAI Chat API"""
+
 PROMPTY_ROLE_SEPARATOR_PATTERN = re.compile(
     r"(?i)^\s*#?\s*(" + "|".join(VALID_ROLES) + r")\s*:\s*\n", flags=re.MULTILINE
 )
-IMAGE_MATCH_PATTERN = re.compile(r"\!\[(\s*image\s*)\]\(\{\{(\s*[^\s{}]+\s*)\}\}\)")
+"""Pattern to match the role separator in a prompty template"""
 
+MARKDOWN_IMAGE_PATTERN = re.compile(r"(?P<match>!\[[^\]]*\]\(.*?(?=\"|\))\))", flags=re.MULTILINE)
+"""Pattern to match markdown syntax for embedding images such as ![alt text](url).
+   This uses a 'hack' where by naming the capture group, using re.split() will cause
+   the named capture group to appear in the list of split parts"""
 
-def convert_prompt_template(template: str, inputs: Mapping[str, Any]) -> Sequence[Mapping[str, Any]]:
-    prompt = _preprocess_template_string(template)
-    reference_images = _find_referenced_image_set(inputs)
-    rendered_prompt = _build_messages(prompt=prompt, images=reference_images, **inputs)
-    return rendered_prompt
+IMAGE_URL_PARSING_PATTERN = re.compile(
+    r"^!\[(?P<alt_text>[^\]]+)\]\((?P<link>(?P<scheme>[^:]+(?=:))?:?(?P<mime_type>[^;]+(?=;))?;?(?P<data>[^\)]*))\)$"
+)
+"""Pattern used to parse the image URL from the markdown syntax. This caputres the following groups:
+    - alt_text: The alt text for the image
+    - link: The full link
+    - scheme: The scheme used in the link (e.g. data, http, https)
+    - mime_type: The mime type of the image (only for data URLs)
+    - data: The data part of the URL (only for data URLs)
+"""
+
+DEFAULT_IMAGE_MIME_TYPE: Final[str] = "image/*"
+"""The mime type to use when we don't know the image type"""
+
+FILE_EXT_TO_MIME: Final[Mapping[str, str]] = {
+    ".apng": "image/apng",
+    ".avif": "image/avif",
+    ".bmp": "image/bmp",
+    ".gif": "image/gif",
+    ".heic": "image/heic",
+    ".heif": "image/heif",
+    ".ico": "image/vnd.microsoft.icon",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".svg": "image/svg+xml",
+    ".tif": "image/tiff",
+    ".tiff": "image/tiff",
+    ".webp": "image/webp",
+}
+"""Mapping of file extensions to mime types"""
+
+# DATA_IMAGE_URL_DELIM_PATTERN = re.compile(r"[\(\):;,]")
+# """Pattern used to split the image URL from the markdown syntax"""
 
 
 def render_jinja_template(template_str: str, *, trim_blocks=True, keep_trailing_newline=True, **kwargs) -> str:
@@ -210,60 +248,19 @@ def render_jinja_template(template_str: str, *, trim_blocks=True, keep_trailing_
         raise PromptyException(f"Failed to render jinja template - {type(e).__name__}: {str(e)}") from e
 
 
-def _preprocess_template_string(template_string: str) -> str:
-    """Remove the image input decorator from the template string and place the image input in a new line.
-
-    :param str template_string: The template string.
-    :return: The processed template string.
-    :rtype: str
-    """
-
-    template_string = IMAGE_MATCH_PATTERN.sub(r"{{\1}}", template_string)
-    return template_string
-
-
-def _find_referenced_image_set(kwargs: Mapping) -> Set[ImageBase]:
-    referenced_images: Set[ImageBase] = set()
-    try:
-        for _, value in kwargs.items():
-            _add_referenced_images_to_set(value, referenced_images)
-    except ImportError:
-        pass
-    return referenced_images
-
-
-def _add_referenced_images_to_set(value: Any, image_set: Set[ImageBase]) -> None:
-    if isinstance(value, ImageBase):
-        image_set.add(value)
-    elif isinstance(value, list):
-        for item in value:
-            _add_referenced_images_to_set(item, image_set)
-    elif isinstance(value, dict):
-        for _, item in value.items():
-            _add_referenced_images_to_set(item, image_set)
-
-
-def _build_messages(
-    prompt: str,
-    images: Iterable[ImageBase],
-    image_detail: str = "auto",
-    **kwargs,
+def build_messages(
+    *, prompt: str, working_dir: Path, image_detail: str = "auto", **kwargs: Any
 ) -> Sequence[Mapping[str, Any]]:
     # keep_trailing_newline=True is to keep the last \n in the prompt to avoid converting "user:\t\n" to "user:".
     chat_str = render_jinja_template(prompt, trim_blocks=True, keep_trailing_newline=True, **kwargs)
-    messages = _parse_chat(chat_str, images=images, image_detail=image_detail)
+    messages = _parse_chat(chat_str, working_dir, image_detail)
     return messages
 
 
-def _parse_chat(
-    chat_str, images: Optional[Iterable[ImageBase]] = None, image_detail: str = "auto"
-) -> Sequence[Mapping[str, Any]]:
+def _parse_chat(chat_str: str, working_dir: Path, image_detail: str) -> Sequence[Mapping[str, Any]]:
     # openai chat api only supports VALID_ROLES as role names.
     # customer can add single # in front of role name for markdown highlight.
     # and we still support role name without # prefix for backward compatibility.
-
-    images = images or []
-    hash2images = {str(x): x for x in images}
 
     chunks = re.split(PROMPTY_ROLE_SEPARATOR_PATTERN, chat_str)
     chat_list: List[Dict[str, Any]] = []
@@ -306,13 +303,13 @@ def _parse_chat(
                     )
 
                 # "name" is optional for other role types.
-                last_message["content"] = to_content_str_or_list(  # pylint: disable=unsupported-assignment-operation
-                    chunk, hash2images, image_detail
+                last_message["content"] = _to_content_str_or_list(  # pylint: disable=unsupported-assignment-operation
+                    chunk, working_dir, image_detail
                 )
             else:
                 last_message["name"] = parsed_result[0]  # pylint: disable=unsupported-assignment-operation
-                last_message["content"] = to_content_str_or_list(  # pylint: disable=unsupported-assignment-operation
-                    parsed_result[1], hash2images, image_detail
+                last_message["content"] = _to_content_str_or_list(  # pylint: disable=unsupported-assignment-operation
+                    parsed_result[1], working_dir, image_detail
                 )
         else:
             if chunk.strip() == "":
@@ -338,81 +335,95 @@ def _validate_role(role: str):
         raise JinjaTemplateError(message=error_message)
 
 
-def to_content_str_or_list(
-    chat_str: str, hash2images: Mapping[str, ImageBase], image_detail: str
-) -> Union[str, List[Dict[str, Any]]]:
-    chat_str = chat_str.strip()
-    chunks = chat_str.split("\n")
-    include_image = False
-    result = []
+def _to_content_str_or_list(chat_str: str, working_dir: Path, image_detail: str) -> Union[str, List[Dict[str, Any]]]:
+    chunks = [c for c in (chunk.strip() for chunk in re.split(MARKDOWN_IMAGE_PATTERN, chat_str)) if c]
+    if len(chunks) <= 1:
+        return chat_str.strip()
 
+    messages: List[Dict[str, Any]] = []
     for chunk in chunks:
-        chunk = chunk.strip()
-
-        if not chunk:
-            continue
-
-        if (img := hash2images.get(chunk)) is not None:
-            image_url = img.as_url()
-            image_message = {
-                "type": "image_url",
-                "image_url": {
-                    "url": image_url,
-                    "detail": image_detail,
-                },
-            }
-            result.append(image_message)
-            include_image = True
+        if chunk.startswith("![") and chunk.endswith(")"):
+            messages.append(_inline_image(chunk, working_dir, image_detail))
         else:
-            result.append({"type": "text", "text": chunk})
+            messages.append({"type": "text", "text": chunk})
+    return messages
 
-    return result if include_image else chat_str
+
+def _inline_image(image: str, working_dir: Path, image_detail: str) -> Dict[str, Any]:
+    """This accepts an image URL in markdown format, and parses that into a message containing the image details
+    to be sent to AI service. In the case of local file images, they will be loaded and their contents encoded
+    into a base 64 data URI. Internal URLs will remained untouched. It can can accept http(s), ftp(s), as well
+    as data URIs.
+
+    :param str image: The image URL in markdown format (e.g. ![altnernative text](https://www.bing.com/favicon.ico))
+    :param Path working_dir: The working directory to use when resolving relative file paths
+    :param str image_detail: The image detail to use when sending the image to the AI service
+    :return: The image message to send to the AI service
+    :rtype: Mapping[str, Any]"""
+
+    def local_to_base64(local_file: str, mime_type: Optional[str]) -> str:
+        path = Path(local_file)
+        if not path.is_absolute():
+            path = working_dir / local_file
+        if not path.exists():
+            # TODO ralphe logging?
+            # logger.warning(f"Cannot find the image path {image_content},
+            #                  it will be regarded as {type(image_str)}.")
+            raise InvalidInputError(f"Cannot find the image path '{path.as_posix()}'")
+
+        base64_encoded = base64.b64encode(path.read_bytes()).decode("utf-8")
+        if not mime_type:
+            mime_type = FILE_EXT_TO_MIME.get(path.suffix.lower(), DEFAULT_IMAGE_MIME_TYPE)
+        return f"data:{mime_type};base64,{base64_encoded}"
+
+    match = re.match(IMAGE_URL_PARSING_PATTERN, image)
+    if not match:
+        raise InvalidInputError(f"Invalid image URL '{image}'")
+
+    inlined_uri: str
+    mime_type: Optional[str] = None
+
+    scheme: str = (match.group("scheme") or "").strip().lower()
+    if scheme in ["http", "https", "ftp", "ftps"]:
+        # nothing special to do here, pass through full URI as is
+        inlined_uri = (match.group("link") or "").strip()
+    elif scheme == "data":
+        mime_type = (match.group("mime_type") or "").strip()
+        data: str = (match.group("data") or "").strip()
+
+        # data urls may contain local paths too
+        if data[:5].lower() == "path:":
+            inlined_uri = local_to_base64(data[5:].strip(), mime_type)
+        elif data[:6].lower() == "base64":
+            # nothing special to do here, pass through full URI as is
+            inlined_uri = (match.group("link") or "").strip()
+        else:
+            raise InvalidInputError(f"Invalid image data URL '{image}'")
+    else:
+        # assume it's a file path
+        inlined_uri = local_to_base64((match.group("link") or "").strip(), mime_type)
+
+    if not inlined_uri:
+        raise InvalidInputError(f"Failed to determine how to inline the following image URL '{image}'")
+
+    return {
+        "type": "image_url",
+        "image_url": {
+            "url": inlined_uri,
+            "detail": image_detail,
+        },
+    }
 
 
 def _try_parse_name_and_content(role_prompt: str) -> Optional[Tuple[str, str]]:
     # customer can add ## in front of name/content for markdown highlight.
     # and we still support name/content without ## prefix for backward compatibility.
+    # TODO ralphe: This maybe has something to do with parsing functions or tool calls but I'm not sure
     pattern = r"\n*#{0,2}\s*name\s*:\s*\n+\s*(\S+)\s*\n*#{0,2}\s*content\s*:\s*\n?(.*)"
     match = re.search(pattern, role_prompt, re.DOTALL)
     if match:
         return match.group(1), match.group(2)
     return None
-
-
-# endregion
-
-
-# region: Image parsing
-
-MIME_PATTERN = re.compile(r"^data:image/(.*);(path|base64|url):\s*(.*)$")
-
-
-def get_image_obj(image_str: str, working_dir: Path) -> Union[str, ImageBase]:
-    match = re.match(MIME_PATTERN, image_str)
-    if match:
-        mime_type, image_type, image_content = f"image/{match.group(1)}", match.group(2), match.group(3)
-        if image_type == "path":
-            image_path = Path(image_content)
-            if not image_path.is_absolute():
-                image_path = Path(working_dir) / image_content
-            if not image_path.exists():
-                # TODO ralphe logging? Code threw a different exception initially
-                # logger.warning(f"Cannot find the image path {image_content},
-                #                  it will be regarded as {type(image_str)}.")
-                raise InvalidInputError(f"Cannot find the image path '{image_path.as_posix()}'")
-            return FileImage(image_path, mime_type)
-
-        if image_type == "base64":
-            # TODO ralphe: do we need to do image_content=image_content.split(",")[-1] ??
-            return Base64Image(image_content, mime_type)
-
-        if image_type == "url":
-            return LazyUrlImage(image_content, mime_type)
-
-        # TODO ralphe logging? Code did not throw an exception originally
-        # logger.warning(f"Invalid mine type {mime_type}, it will be regarded as {type(image_str)}.")
-        raise InvalidInputError(f"Image input format invalid or not supported '{match.group()}'")
-    return image_str
 
 
 # endregion

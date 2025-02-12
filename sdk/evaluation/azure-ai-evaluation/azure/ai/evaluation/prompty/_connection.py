@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from typing import Any, ClassVar, Mapping, Optional, Set, Union
 
 from azure.ai.evaluation.prompty._exceptions import MissingRequiredInputError
+from azure.ai.evaluation.prompty._utils import dataclass_from_dict
 
 
 ENV_VAR_PATTERN = re.compile(r"^\$\{env:(.*)\}$")
@@ -75,17 +76,16 @@ class Connection(ABC):
         connection_type = connection_dict.pop("type", "")
 
         if connection_type in [AzureOpenAIConnection.TYPE, "azure_openai"]:
-            connection_dict.setdefault("api_base", connection_dict.get("azure_endpoint"))
             if _is_empty_connection_config(connection_dict):
                 connection = AzureOpenAIConnection.from_env()
             else:
-                connection = AzureOpenAIConnection(**connection_dict)
+                connection = dataclass_from_dict(AzureOpenAIConnection, connection_dict)
 
         elif connection_type in [OpenAIConnection.TYPE, "openai"]:
             if _is_empty_connection_config(connection_dict):
                 connection = OpenAIConnection.from_env()
             else:
-                connection = OpenAIConnection(**connection_dict)
+                connection = dataclass_from_dict(OpenAIConnection, connection_dict)
 
         else:
             error_message = (

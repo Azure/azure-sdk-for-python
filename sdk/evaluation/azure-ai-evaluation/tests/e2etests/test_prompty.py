@@ -2,27 +2,36 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from copy import deepcopy
 import pytest
+import re
 from os import path
 from pathlib import Path
 from typing import Any, Final, Mapping, cast
 
-
 from azure.ai.evaluation.prompty import AsyncPrompty
+from azure.ai.evaluation import AzureOpenAIModelConfiguration
 
 
-PROMPTY_DIR: Final[Path] = Path(path.dirname(__file__), "data").resolve()
+PROMPTY_TEST_DIR: Final[Path] = Path(path.dirname(__file__), "data").resolve()
+EVALUATOR_ROOT_DIR: Final[Path] = Path(path.dirname(__file__), "../../azure/ai/evaluation/_evaluators").resolve()
+
+
+@pytest.fixture()
+def azure_model_config(model_config: AzureOpenAIModelConfiguration) -> Mapping[str, Any]:
+    cloned = deepcopy(model_config)
+    cloned.setdefault("type", "azure_openai")
+    return {"configuration": cloned}
 
 
 # @pytest.mark.usefixtures("recording_injection", "recorded_test")
-# @pytest.mark.asyncio
 class TestPrompty:
-    def test_load_basic(self, model_config: Mapping[str, Any]):
+    def test_load_basic(self, azure_model_config: Mapping[str, Any]):
         expected_prompt: Final[str] = (
             "[{'role': 'system', 'content': 'You are an AI assistant who helps people find information.\\nAs the assistant, you answer questions briefly, succinctly,\\nand in a personable manner using markdown and even add some personal flair with appropriate emojis.\\n\\n# Safety\\n- You **should always** reference factual statements to search results based on [relevant documents]\\n- Search results based on [relevant documents] may be incomplete or irrelevant. You do not make assumptions\\n# Customer\\nYou are helping Bob Doh to find answers to their questions.\\nUse their name to address them in your responses.'}, {'role': 'user', 'content': 'What is the answer?'}]"
         )
 
-        prompty = AsyncPrompty(PROMPTY_DIR / "basic.prompty", model_config)
+        prompty = AsyncPrompty(PROMPTY_TEST_DIR / "basic.prompty", azure_model_config)
         assert prompty
         assert isinstance(prompty, AsyncPrompty)
         assert prompty.name == "Basic Prompt"
@@ -32,8 +41,8 @@ class TestPrompty:
         rendered = prompty.render(firstName="Bob", question="What is the answer?")
         assert str(rendered) == expected_prompt
 
-    def test_load_images(self, model_config: Mapping[str, Any]):
-        prompty = AsyncPrompty(PROMPTY_DIR / "image.prompty", model_config)
+    def test_load_images(self, azure_model_config: Mapping[str, Any]):
+        prompty = AsyncPrompty(PROMPTY_TEST_DIR / "image.prompty", azure_model_config)
         assert prompty
         assert isinstance(prompty, AsyncPrompty)
         assert prompty.name == "Basic Prompt with Image"
@@ -55,3 +64,29 @@ class TestPrompty:
             "data:image/jpg;base64,/9j/4AAQSkZJRgABAQEBLAEsAAD/2w"
         )
         assert rendered[1]["content"][1]["image_url"]["detail"] == "auto"
+
+    @pytest.mark.asyncio
+    async def test_first_match_text(self, azure_model_config: Mapping[str, Any]):
+        prompty = AsyncPrompty(EVALUATOR_ROOT_DIR / "_coherence" / "coherence.prompty", azure_model_config)
+
+        result = await prompty(query="What is the capital of France?", response="France capital Paris")
+
+        # We expect an output string that contains <S0>chain of thoughts</S0> <S1>explanation<S1> <S2>int_score</S2>
+        assert isinstance(result, str)
+        matched = re.match(
+            r"^\s*<S0>(.*)</S0>\s*<S1>(.*)</S1>\s*<S2>(.*)</S2>\s*$",
+            result,
+            re.MULTILINE | re.DOTALL,
+        )
+        assert matched
+        assert isinstance(matched.group(1), str)
+        assert isinstance(matched.group(2), str)
+        score: int = int(matched.group(3))
+        assert score >= 0 and score <= 5
+
+    @pytest.mark.asyncio
+    async def test_first_match_image(self, azure_model_config: Mapping[str, Any]):
+        prompty = AsyncPrompty(PROMPTY_TEST_DIR / "image.prompty", azure_model_config)
+        result = await prompty(image="image1.jpg", question="What is this a picture of?")
+        assert isinstance(result, str)
+        assert "apple" in result.lower()

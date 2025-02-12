@@ -7,7 +7,7 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, Final, List, Mapping, Optional, Sequence, Tuple, Union, cast
 
-from openai import AsyncAzureOpenAI, AsyncOpenAI
+from openai import AsyncAzureOpenAI, AsyncOpenAI, NotGiven
 
 from azure.ai.evaluation._exceptions import ErrorTarget
 from azure.ai.evaluation._constants import DefaultOpenEncoding
@@ -23,9 +23,8 @@ from azure.ai.evaluation.prompty._utils import (
     dataclass_from_dict,
     PromptyModelConfiguration,
     OpenAIChatResponseType,
-    convert_prompt_template,
+    build_messages,
     format_llm_response,
-    get_image_obj,
     prepare_open_ai_request_params,
     resolve_references,
     update_dict_recursively,
@@ -233,11 +232,7 @@ class AsyncPrompty:
                 missing_inputs.append(input_name)
                 continue
 
-            resolved: Union[str, Any] = input_values.get(input_name, value.get("default", None))
-            if isinstance(resolved, str):
-                resolved = get_image_obj(resolved, working_dir=self.path.parent)
-
-            resolved_inputs[input_name] = resolved
+            resolved_inputs[input_name] = input_values.get(input_name, value.get("default", None))
 
         if missing_inputs:
             raise MissingRequiredInputError(f"Missing required inputs: {missing_inputs}")
@@ -264,10 +259,10 @@ class AsyncPrompty:
 
         inputs = self._resolve_inputs(kwargs)
         connection = Connection.parse_from_config(self._model.configuration)
-        template = convert_prompt_template(self._template, inputs)
-        params = prepare_open_ai_request_params(self._model, template)
+        messages = build_messages(prompt=self._template, working_dir=self.path.parent, **inputs)
+        params = prepare_open_ai_request_params(self._model, messages)
 
-        timeout: Optional[float] = None
+        timeout: Union[NotGiven, float] = NotGiven()
         if timeout_val := cast(Any, kwargs.get("timeout", None)):
             timeout = float(timeout_val)
 
@@ -319,5 +314,5 @@ class AsyncPrompty:
         """
 
         inputs = self._resolve_inputs(kwargs)
-        prompt = convert_prompt_template(self._template, inputs)
-        return prompt
+        messages = build_messages(prompt=self._template, working_dir=self.path.parent, **inputs)
+        return messages
