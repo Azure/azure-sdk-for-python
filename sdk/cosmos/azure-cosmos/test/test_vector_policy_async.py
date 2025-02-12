@@ -173,7 +173,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Container creation should have failed for value mismatch.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "QuantizationByteSize value :: 0 is out of range. The allowed range is between 1 and 200." \
+            assert "The Vector Indexing Policy parameter QuantizationByteSize value :: 0 is out of range. The allowed range is between 1 and 256." \
                    in e.http_error_message
 
         # Pass a vector indexing policy with wrong indexingSearchListSize value
