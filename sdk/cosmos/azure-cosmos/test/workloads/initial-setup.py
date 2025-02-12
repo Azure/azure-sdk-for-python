@@ -35,7 +35,7 @@ async def run_workload(client_id: str):
         time.sleep(1)
 
         try:
-            for i in range(0, 10000, 10000):
+            for i in range(0, 10000, 10001):
                 await write_item_concurrently_initial(cont, 10000, i)  # Number of concurrent upserts
                 time.sleep(1)
         except Exception as e:
