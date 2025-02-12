@@ -126,7 +126,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         refresh_time_interval_in_ms,
     ):
         self.preferred_locations = preferred_locations
-        self.effective_preferred_locations = preferred_locations
+        self.effective_preferred_locations = []
         self.default_dual_endpoint = DualEndpoint(default_endpoint, default_endpoint)
         self.enable_endpoint_discovery = enable_endpoint_discovery
         self.use_multiple_write_locations = use_multiple_write_locations
@@ -231,7 +231,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return regional_endpoint.get_primary()
 
     def should_refresh_endpoints(self):  # pylint: disable=too-many-return-statements
-        most_preferred_location = self.preferred_locations[0] if self.preferred_locations else None
+        most_preferred_location = self.effective_preferred_locations[0] if self.effective_preferred_locations else None
 
         # we should schedule refresh in background if we are unable to target the user's most preferredLocation.
         if self.enable_endpoint_discovery:
@@ -347,9 +347,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
     def mark_endpoint_available(self, available_endpoint: str):
         self.location_unavailability_info_by_endpoint.pop(available_endpoint, "")
 
-    def get_preferred_locations(self):
-        return self.preferred_locations
-
     def update_location_cache(self, write_locations=None, read_locations=None, enable_multiple_writable_locations=None):
         if enable_multiple_writable_locations:
             self.enable_multiple_writable_locations = enable_multiple_writable_locations
@@ -376,8 +373,11 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     self.use_multiple_write_locations,
                 )
 
-        if len(self.effective_preferred_locations) == 0:
+        # if preferred locations is empty, we should use the account read locations
+        if len(self.preferred_locations) == 0:
             self.effective_preferred_locations = self.account_read_locations
+        else:
+            self.effective_preferred_locations = self.preferred_locations
 
         self.write_dual_endpoints = self.get_preferred_dual_endpoints(
             self.account_write_dual_endpoints_by_location,
@@ -405,12 +405,12 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 or expected_available_operation == EndpointOperationType.ReadType
             ):
                 unavailable_endpoints = []
-                if self.preferred_locations:
+                if self.effective_preferred_locations:
                     # When client can not use multiple write locations, preferred locations
                     # list should only be used determining read endpoints order. If client
                     # can use multiple write locations, preferred locations list should be
                     # used for determining both read and write endpoints order.
-                    for location in self.preferred_locations:
+                    for location in self.effective_preferred_locations:
                         regional_endpoint = endpoints_by_location[location] if location in endpoints_by_location \
                             else None
                         if regional_endpoint:
@@ -473,28 +473,3 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 return locational_endpoint
 
         return None
-
-    # def is_default_global_endpoint(self):
-    #     # For default_endpoint like 'https://contoso.documents.azure.com:443/' parse it to
-    #     # generate URL format. This default_endpoint should be global endpoint(and cannot
-    #     # be a locational endpoint) and we agreed to document that
-    #     endpoint_url = urlparse(self.default_regional_endpoint.get_current())
-    #     # hostname attribute in endpoint_url will return 'contoso.documents.azure.com'
-    #     if endpoint_url.hostname is not None:
-    #         hostname_parts = str(endpoint_url.hostname).lower().split(".")
-    #         if hostname_parts is not None:
-    #             # global_database_account_name will return 'contoso'
-    #             global_database_account_name = hostname_parts[0]
-    #
-    #             # Prepare the locational_database_account_name as contoso-eastus for location_name 'east us'
-    #             locational_database_account_name = global_database_account_name + "-" + location_name.replace(" ", "")
-    #             locational_database_account_name = locational_database_account_name.lower()
-    #
-    #             # Replace 'contoso' with 'contoso-eastus' and return locational_endpoint
-    #             # as https://contoso-eastus.documents.azure.com:443/
-    #             locational_endpoint = default_endpoint.lower().replace(
-    #                 global_database_account_name, locational_database_account_name, 1
-    #             )
-    #             return locational_endpoint
-    #
-    #     return None
