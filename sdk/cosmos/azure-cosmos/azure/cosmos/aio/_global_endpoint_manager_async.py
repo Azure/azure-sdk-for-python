@@ -175,6 +175,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         # until we get the database account and return None at the end, if we are not able
         # to get that info from any endpoints
         except (exceptions.CosmosHttpResponseError, AzureError):
+            self.mark_endpoint_unavailable_for_read(self.DefaultEndpoint, False)
+            self.mark_endpoint_unavailable_for_write(self.DefaultEndpoint, False)
             for location_name in self.PreferredLocations:
                 locational_endpoint = LocationCache.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
@@ -182,7 +184,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     self._database_account_cache = database_account
                     return database_account, locational_endpoint
                 except (exceptions.CosmosHttpResponseError, AzureError):
-                    pass
+                    self.mark_endpoint_unavailable_for_read(locational_endpoint, False)
+                    self.mark_endpoint_unavailable_for_write(locational_endpoint, False)
             raise
 
     async def _GetDatabaseAccountStub(self, endpoint, **kwargs):
