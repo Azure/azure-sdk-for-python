@@ -115,7 +115,7 @@ class ServiceBusManagementOperationClient(BaseHandler, ReceiverMixin):
         *,
         last_updated_time: datetime.datetime = datetime.datetime.max,
         skip_num_sessions: int = 0,
-        max_num_sessions: int = 1,
+        max_num_sessions: int = 1000,
         timeout: Optional[float] = None,
         **kwargs
     ):
@@ -136,17 +136,25 @@ class ServiceBusManagementOperationClient(BaseHandler, ReceiverMixin):
             raise ValueError("The timeout must be greater than 0.")
         await self._open()
 
-        message = {
-            MGMT_REQUEST_LAST_UPDATED_TIME: last_updated_time,
-            MGMT_REQUEST_SKIP: skip_num_sessions,
-            MGMT_REQUEST_TOP: max_num_sessions,
-        }
+        messages = [0]
+        total_sessions = []
+        skip = skip_num_sessions
 
-        handler = functools.partial(mgmt_handlers.list_sessions_op, amqp_transport=self._amqp_transport)
-        start_time = time.time_ns()
-        messages = await self._mgmt_request_response_with_retry(
-            REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION, message, handler, timeout=timeout
-        )
-        links = get_receive_links(messages)
+        while len(messages) > 0 and len(total_sessions) < max_num_sessions:
+
+            message = {
+                MGMT_REQUEST_LAST_UPDATED_TIME: last_updated_time,
+                MGMT_REQUEST_SKIP: skip,
+                MGMT_REQUEST_TOP: max_num_sessions,
+            }
+
+            handler = functools.partial(mgmt_handlers.list_sessions_op, amqp_transport=self._amqp_transport)
+            start_time = time.time_ns()
+            messages, skip = await self._mgmt_request_response_with_retry(
+                REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION, message, handler, timeout=timeout
+            )
+            total_sessions.extend(messages)
+
+        links = get_receive_links(total_sessions)
         with receive_trace_context_manager(self, span_name=SPAN_NAME_SESSIONS, links=links, start_time=start_time):
-            return messages
+            return total_sessions

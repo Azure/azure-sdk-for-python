@@ -69,11 +69,12 @@ def list_sessions_op(  # pylint: disable=inconsistent-return-statements
     condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
         parsed = []
+        skip = amqp_transport.get_message_value(message)[b"skip"]
         for m in amqp_transport.get_message_value(message)[b"sessions-ids"]:
             parsed.append(m.decode("UTF-8"))
-        return parsed
+        return parsed, skip
     if status_code in [202, 204]:
-        return []
+        return [], 0
 
     amqp_transport.handle_amqp_mgmt_error(_LOGGER, "List sessions failed.", condition, description, status_code)
 

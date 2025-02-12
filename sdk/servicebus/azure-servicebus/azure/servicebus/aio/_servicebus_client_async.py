@@ -686,7 +686,20 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             client_identifier: Optional[str] = None,
             socket_timeout: Optional[float] = None,
             **kwargs: Any
-        ):
+        ) -> ServiceBusManagementOperationClient:
+
+        """Get ServiceBusManagementOperationClient for the specific queue or topic.
+        :param str entity_name: The path of specific Service Bus Queue or Topic the client connects to.
+        :keyword str or None client_identifier: A string-based identifier to uniquely identify the management operation
+            client instance. Service Bus will associate it with some error messages for easier correlation of errors.
+            If not specified, a unique id will be generated.
+        :keyword float or None socket_timeout: The time in seconds that the underlying socket on the connection should
+            wait when sending and receiving data before timing out. If None, a default value of 0.2 for TransportType.Amqp
+            and 1 for TransportType.AmqpOverWebsocket is used. If connection errors are occurring due to write timing out,
+            a larger than default value may need to be passed in.
+        :returns: A management operation client.
+        :rtype: ~azure.servicebus.aio.ServiceBusManagementOperationClient
+        """
 
         handler = ServiceBusManagementOperationClient(
             fully_qualified_namespace=self.fully_qualified_namespace,
