@@ -3,11 +3,11 @@ from typing import List
 
 import pytest
 import pytest_asyncio
+import test_config
 from azure.cosmos import DatabaseAccount, _location_cache, PartitionKey
 
 from azure.cosmos._location_cache import DualEndpoint
 from azure.cosmos.aio import CosmosClient, _global_endpoint_manager_async, _cosmos_client_connection_async
-import test_config
 
 COLLECTION = "created_collection"
 REGION_1 = "East US"
