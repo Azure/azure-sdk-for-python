@@ -57,5 +57,5 @@ extends:
     # These packages are deprecated: 
     # - name: azure-ai-generative
     #   safeName: azureaigenerative
-    #- name: azure-ai-resources
-    #  safeName: azureairesources
+    - name: azure-ai-resources
+      safeName: azureairesources
