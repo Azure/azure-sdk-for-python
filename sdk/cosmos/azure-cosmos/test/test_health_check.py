@@ -1,5 +1,4 @@
 import unittest
-import uuid
 
 import pytest
 import pytest_asyncio
@@ -7,7 +6,7 @@ from azure.cosmos import DatabaseAccount, _location_cache, PartitionKey, _cosmos
     _global_endpoint_manager, CosmosClient
 
 from azure.cosmos._location_cache import DualEndpoint
-from test import test_config
+import test_config
 
 COLLECTION = "created_collection"
 REGION_1 = "East US"
