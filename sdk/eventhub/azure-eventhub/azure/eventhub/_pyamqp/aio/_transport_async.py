@@ -406,7 +406,6 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
         use_tls: bool = True,
         **kwargs,
     ):
-        print("inside new")
         self._read_buffer = BytesIO()
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else None
@@ -522,7 +521,6 @@ class LegacyWebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too
         use_tls: bool = True,
         **kwargs,
     ):
-        print("inside old")
         self._read_buffer = BytesIO()
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else None

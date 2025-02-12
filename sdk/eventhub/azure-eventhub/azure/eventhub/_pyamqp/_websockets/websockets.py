@@ -276,7 +276,7 @@ class AsyncWebSocket:
         elif frame.opcode == Opcode.BINARY:
             return frame.data
 
-        return ""
+        return b""
 
     async def close(self, code: CloseReason = CloseReason.NORMAL, reason: bytes = b"") -> None:
         """

@@ -25,6 +25,7 @@ from ._exceptions import WebSocketConnectionError, WebSocketPayloadError, WebSoc
 
 class WebSocketMixin:
     def validate_handshake(self, code: bytes, status: bytes, headers: dict) -> None:
+        self._key: bytes
         if code != b'101':
                 raise ConnectionError(f'Handshake failed: {status.decode()}')
 
