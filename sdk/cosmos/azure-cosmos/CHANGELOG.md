@@ -3,12 +3,14 @@
 ### 4.9.1b5 (Unreleased)
 
 #### Features Added
+* Added ability to replace `computed_properties` through `replace_container` method. See [PR 39543](https://github.com/Azure/azure-sdk-for-python/pull/39543)
 
 #### Breaking Changes
 
 #### Bugs Fixed
 
 #### Other Changes
+* Un-marked `computed_properties` keyword as **provisional**. See [PR 39543](https://github.com/Azure/azure-sdk-for-python/pull/39543)
 
 ### 4.9.1b4 (2025-02-06)
 
@@ -45,7 +47,6 @@
 
 #### Other Changes
 * This release requires aiohttp version 3.10.11 and above. See [PR 39396](https://github.com/Azure/azure-sdk-for-python/pull/39396)
-* Un-marked `computed_properties` keyword as **provisional**. See [PR 39543](https://github.com/Azure/azure-sdk-for-python/pull/39543)
 
 ### 4.9.1b1 (2024-12-13)
 
