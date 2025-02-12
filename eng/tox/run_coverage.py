@@ -20,10 +20,10 @@ def get_total_coverage(coverage_file: str, package_name: str) -> Optional[float]
         return report
     except NoDataError as e:
         logging.warning(f"Package {package_name} did not generate any coverage output: {e}")
-        return None
+        return 0.0
     except Exception as e:
         logging.error(f"An error occurred while generating the coverage report for {package_name}: {e}")
-        return None
+        return 0.0
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
