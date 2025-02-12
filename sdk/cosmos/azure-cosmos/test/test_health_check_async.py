@@ -49,7 +49,7 @@ class TestHealthCheckAsync:
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
 
     @pytest.mark.parametrize("preferred_location", preferred_locations())
-    async def test_effective_preferred_regions(self, setup, preferred_location):
+    async def test_effective_preferred_regions_async(self, setup, preferred_location):
 
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
@@ -70,6 +70,41 @@ class TestHealthCheckAsync:
         read_dual_endpoints = client.client_connection._global_endpoint_manager.location_cache.read_dual_endpoints
         assert read_dual_endpoints == expected_dual_endpoints
 
+    @pytest.mark.parametrize("preferred_location", preferred_locations())
+    async def test_health_check_success_async(self, setup, preferred_location):
+
+        self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
+        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccount
+        _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.MockGetDatabaseAccountCheck()
+        try:
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
+            # this will setup the location cache
+            await client.client_connection._global_endpoint_manager.endpoint_health_check(None)
+        finally:
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+            _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
+        expected_dual_endpoints = []
+        locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
+        expected_dual_endpoints.append(DualEndpoint(locational_endpoint, locational_endpoint))
+        locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
+        expected_dual_endpoints.append(DualEndpoint(locational_endpoint, locational_endpoint))
+        read_dual_endpoints = client.client_connection._global_endpoint_manager.location_cache.read_dual_endpoints
+        assert read_dual_endpoints == expected_dual_endpoints
+
+
+
+    class MockGetDatabaseAccountCheck(object):
+        def __init__(self):
+            self.counter = 0
+
+        async def __call__(self, endpoint):
+            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(TestHealthCheckAsync.host, REGION_1)
+            assert endpoint == locational_endpoint
+
+            assert self.counter <= 1
+
+            self.counter += 1
 
 
 

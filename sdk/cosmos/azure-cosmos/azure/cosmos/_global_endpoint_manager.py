@@ -26,6 +26,7 @@ database service.
 import threading
 
 from azure.core.exceptions import AzureError
+from guppy.etc.Cat import dual_relations
 
 from . import _constants as constants
 from . import exceptions
@@ -169,23 +170,23 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.location_cache.perform_on_database_account_read(database_account)
         # should use the regions in the order returned from gateway
         first_read_region = next(iter(self.location_cache.account_read_dual_endpoints_by_location.values()))
-        all_endpoints = [first_read_region]
-        all_endpoints.extend(self.location_cache.account_write_dual_endpoints_by_location.values())
+        dual_endpoints = [first_read_region]
+        dual_endpoints.extend(self.location_cache.account_write_dual_endpoints_by_location.values())
         count = 0
-        for regional_endpoint in all_endpoints:
-            if regional_endpoint.get_primary() not in endpoints_attempted:
-                endpoints_attempted.add(regional_endpoint.get_primary())
+        for dual_endpoint in dual_endpoints:
+            if dual_endpoint.get_primary() not in endpoints_attempted:
+                endpoints_attempted.add(dual_endpoint.get_primary())
                 count += 1
                 if count > 3:
                     break
                 try:
-                    self.Client._GetDatabaseAccountCheck(regional_endpoint.get_primary(), **kwargs)
-                    self.location_cache.mark_endpoint_available(regional_endpoint.get_primary())
+                    self.Client._GetDatabaseAccountCheck(dual_endpoint.get_primary(), **kwargs)
+                    self.location_cache.mark_endpoint_available(dual_endpoint.get_primary())
                 except (exceptions.CosmosHttpResponseError, AzureError):
-                    if regional_endpoint in self.location_cache.read_dual_endpoints:
-                        self.mark_endpoint_unavailable_for_read(regional_endpoint.get_primary(), False)
-                    if regional_endpoint in self.location_cache.write_dual_endpoints:
-                        self.mark_endpoint_unavailable_for_write(regional_endpoint.get_primary(), False)
+                    if dual_endpoint in self.location_cache.read_dual_endpoints:
+                        self.mark_endpoint_unavailable_for_read(dual_endpoint.get_primary(), False)
+                    if dual_endpoint in self.location_cache.write_dual_endpoints:
+                        self.mark_endpoint_unavailable_for_write(dual_endpoint.get_primary(), False)
         self.location_cache.update_location_cache()
 
     def _GetDatabaseAccountStub(self, endpoint, **kwargs):
