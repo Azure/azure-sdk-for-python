@@ -1,5 +1,9 @@
 # Release History
 
+## 12.19.0 (Unreleased)
+
+### Features Added
+
 ## 12.19.0b1 (2025-02-11)
 
 ### Features Added
