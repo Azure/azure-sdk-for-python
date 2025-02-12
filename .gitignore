@@ -18,7 +18,7 @@ pythonenv*/
 .ptvs/
 
 # Coverage report
-**/.coverage
+**/.coverage*
 _coverage
 
 # Build results
