@@ -178,6 +178,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             ssl_opts=ssl_opts,
             transport_type=self._config.transport_type,
             http_proxy=self._config.http_proxy,
+            legacy_ws=self._config.legacy_ws,
         )
 
     def close(self) -> None:
@@ -339,6 +340,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             use_tls=self._config.use_tls,
             client_identifier=client_identifier,
             socket_timeout=socket_timeout,
+            legacy_ws=self._config.legacy_ws,
             **kwargs,
         )
         self._handlers.add(handler)
@@ -464,6 +466,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             use_tls=self._config.use_tls,
             client_identifier=client_identifier,
             socket_timeout=socket_timeout,
+            legacy_ws=self._config.legacy_ws,
             **kwargs,
         )
         self._handlers.add(handler)
@@ -527,6 +530,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             client_identifier=client_identifier,
             socket_timeout=socket_timeout,
             use_tls=self._config.use_tls,
+            legacy_ws=self._config.legacy_ws,
             **kwargs,
         )
         self._handlers.add(handler)
@@ -653,6 +657,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 use_tls=self._config.use_tls,
                 client_identifier=client_identifier,
                 socket_timeout=socket_timeout,
+                legacy_ws=self._config.legacy_ws,
                 **kwargs,
             )
         except ValueError:
