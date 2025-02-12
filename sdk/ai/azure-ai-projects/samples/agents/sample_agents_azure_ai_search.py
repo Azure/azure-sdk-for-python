@@ -60,8 +60,7 @@ with project_client:
         name="my-assistant",
         instructions="You are a helpful assistant",
         tools=ai_search.definitions,
-        tool_resources=ai_search.resources,
-        headers={"x-ms-enable-preview": "true"},
+        tool_resources=ai_search.resources
     )
     # [END create_agent_with_azure_ai_search_tool]
     print(f"Created agent, ID: {agent.id}")
@@ -84,6 +83,25 @@ with project_client:
 
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
+
+    # Fetch run steps to get the details of the run
+    run_steps = project_client.agents.list_run_steps(thread_id=thread.id, run_id=run.id)
+    for step in run_steps.data:
+        print(f"Step {step['id']} status: {step['status']}")
+        step_details = step.get('step_details', {})
+        tool_calls = step_details.get('tool_calls', [])
+
+        if tool_calls:
+            print("  Tool calls:")
+            for call in tool_calls:
+                print(f"    Tool Call ID: {call.get('id')}")
+                print(f"    Type: {call.get('type')}")
+
+                azure_ai_search_details = call.get('azure_ai_search', {})
+                if azure_ai_search_details:
+                    print(f"    azure_ai_search input: {azure_ai_search_details.get('input')}")
+                    print(f"    azure_ai_search output: {azure_ai_search_details.get('output')}")
+        print()  # add an extra newline between steps
 
     # Delete the assistant when done
     project_client.agents.delete_agent(agent.id)
