@@ -1,0 +1,6 @@
+{
+    "CrossLanguagePackageId": "SchemaRegistry",
+    "CrossLanguageDefinitionId": {
+        "azure.schemaregistry.models.SchemaContentTypeValues": "SchemaRegistry.SchemaContentTypeValues"
+    }
+}

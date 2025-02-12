@@ -72,6 +72,24 @@ class BrokerProperties(_model_base.Model):
     delivery_count: int = rest_field(name="deliveryCount")
     """The attempt count for delivering the event. Required."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        lock_token: str,
+        delivery_count: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
 
 class CloudEvent(_model_base.Model):
     """Properties of an event published to an Azure Messaging EventGrid Namespace topic using the
@@ -126,6 +144,32 @@ class CloudEvent(_model_base.Model):
     subject: Optional[str] = rest_field()
     """This describes the subject of the event in the context of the event producer (identified by
      source)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        source: str,
+        type: str,
+        specversion: str,
+        data: Optional[Any] = None,
+        data_base64: Optional[bytes] = None,
+        time: Optional[datetime.datetime] = None,
+        dataschema: Optional[str] = None,
+        datacontenttype: Optional[str] = None,
+        subject: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class FailedLockToken(_model_base.Model):
@@ -182,6 +226,24 @@ class ReceiveDetails(_model_base.Model):
     event: "_models._models.CloudEvent" = rest_field()
     """Cloud Event details. Required."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        broker_properties: "_models._models.BrokerProperties",
+        event: "_models._models.CloudEvent",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
 
 class ReceiveResult(_model_base.Model):
     """Details of the Receive operation response.
@@ -193,6 +255,23 @@ class ReceiveResult(_model_base.Model):
 
     details: List["_models._models.ReceiveDetails"] = rest_field(name="value")
     """Array of receive responses, one per cloud event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        details: List["_models._models.ReceiveDetails"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class RejectResult(_model_base.Model):
