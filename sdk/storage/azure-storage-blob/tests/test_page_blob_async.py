@@ -98,12 +98,9 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             props = await blob.get_blob_properties()
         return props
 
-    async def _get_bearer_token_string(
-        self, prefix: str = "Bearer ",
-        url: str = "https://storage.azure.com/.default"
-    ) -> str:
-        access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token(url)
-        return prefix + access_token.token
+    async def _get_bearer_token_string(self, resource: str = "https://storage.azure.com/.default") -> str:
+        access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token(resource)
+        return "Bearer " + access_token.token
 
     async def _create_file_share_oauth(
         self, storage_account_name: str,

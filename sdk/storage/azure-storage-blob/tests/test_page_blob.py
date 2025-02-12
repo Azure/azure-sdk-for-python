@@ -103,11 +103,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
 
         return blob_client
 
-    def _get_bearer_token_string(
-        self, prefix: str = "Bearer ",
-        url: str = "https://storage.azure.com/.default"
-    ) -> str:
-        return prefix + f"{self.get_credential(BlobServiceClient).get_token(url).token}"
+    def _get_bearer_token_string(self, resource: str = "https://storage.azure.com/.default") -> str:
+        return "Bearer " + f"{self.get_credential(BlobServiceClient).get_token(resource).token}"
 
     def _create_file_share_oauth(
         self, storage_account_name: str,

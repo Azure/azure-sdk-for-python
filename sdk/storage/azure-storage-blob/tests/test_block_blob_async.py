@@ -95,12 +95,9 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         await blob_client.upload_blob(data, overwrite=True)
         return blob_client
 
-    async def _get_bearer_token_string(
-        self, prefix: str = "Bearer ",
-        url: str = "https://storage.azure.com/.default"
-    ) -> str:
-        access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token(url)
-        return prefix + access_token.token
+    async def _get_bearer_token_string(self, resource: str = "https://storage.azure.com/.default") -> str:
+        access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token(resource)
+        return "Bearer " + access_token.token
 
     async def _create_file_share_oauth(
         self, storage_account_name: str,
@@ -216,7 +213,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         )
 
         try:
-            # Act
+            # Act / Assert
             token = await self._get_bearer_token_string()
             block_id = '1'
             await destination_blob_client.stage_block_from_url(
@@ -227,9 +224,11 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
             )
             block_list = [BlobBlock(block_id=block_id)]
             resp = await destination_blob_client.commit_block_list(block_list)
-
-            # Assert
             assert resp is not None
+
+            destination_blob = await destination_blob_client.download_blob()
+            destination_blob_data = await destination_blob.readall()
+            assert destination_blob_data == source_data
         finally:
             await share_service_client.delete_share(share_client.share_name)
             await blob_service_client.delete_container(self.source_container_name)

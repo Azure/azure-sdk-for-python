@@ -78,11 +78,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_client.upload_blob(data, overwrite=True)
         return blob_client
 
-    def _get_bearer_token_string(
-        self, prefix: str = "Bearer ",
-        url: str = "https://storage.azure.com/.default"
-    ) -> str:
-        return prefix + f"{self.get_credential(BlobServiceClient).get_token(url).token}"
+    def _get_bearer_token_string(self, resource: str = "https://storage.azure.com/.default") -> str:
+        return "Bearer " + f"{self.get_credential(BlobServiceClient).get_token(resource).token}"
 
     def _create_file_share_oauth(
         self, storage_account_name: str,
@@ -193,7 +190,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         )
 
         try:
-            # Act
+            # Act / Assert
             block_id = '1'
             destination_blob_client.stage_block_from_url(
                 block_id=block_id,
@@ -203,9 +200,10 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             )
             block_list = [BlobBlock(block_id=block_id)]
             resp = destination_blob_client.commit_block_list(block_list)
-
-            # Assert
             assert resp is not None
+
+            destination_blob_data = destination_blob_client.download_blob().readall()
+            assert destination_blob_data == source_data
         finally:
             share_service_client.delete_share(share_client.share_name)
             blob_service_client.delete_container(self.source_container_name)
