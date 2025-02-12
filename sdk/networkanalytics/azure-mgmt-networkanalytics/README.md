@@ -1,5 +1,9 @@
 # Microsoft Azure SDK for Python
 
+# Microsoft Azure SDK for Python
+
+This package has been deprecated and will no longer be maintained after 03-14-2025. This package will only receive security fixes until 03-14-2025.
+
 This is the Microsoft Azure Networkanalytics Management Client Library.
 This package has been tested with Python 3.8+.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
