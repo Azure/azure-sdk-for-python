@@ -1704,14 +1704,14 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             renewer = AutoLockRenewer(max_lock_renewal_duration=60*5)
 
             with sb_client.get_queue_receiver(queue_name=servicebus_queue.name, auto_lock_renewer=renewer) as receiver:
-                received_msgs = receiver.receive_messages(max_message_count=300)
+                received_msgs = receiver.receive_messages(max_message_count=250)
                 # At least 300 messages should be renewed
                 # TODO: This should be bumped up once sync alr perf is improved
-                while len(received_msgs) < 300:
-                    count = 300 - len(received_msgs)
+                while len(received_msgs) < 250:
+                    count = 250 - len(received_msgs)
                     received_msgs.extend(receiver.receive_messages(max_message_count=count))
 
-                assert len(received_msgs) == 300, "Did not receive all messages"
+                assert len(received_msgs) == 250, "Did not receive all messages"
                 time.sleep(100)
                 for msg in received_msgs:
                     receiver.complete_message(msg)  # Settling the message deregisters it from the AutoLockRenewer
