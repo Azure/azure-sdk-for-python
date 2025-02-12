@@ -7,22 +7,22 @@ import logging
 
 from typing import Optional
 
-from ci_tools.parsing import ParsedSetup
+from ci_tools.parsing import ParsedSetup, get_config_setting
 from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import is_check_enabled
 from coverage.exceptions import NoDataError
 
-def get_total_coverage(coverage_file: str) -> Optional[float]:
+def get_total_coverage(coverage_file: str, package_name: str) -> Optional[float]:
     cov = coverage.Coverage(data_file=coverage_file)
     cov.load()
     try:
         report = cov.report()
         return report
     except NoDataError as e:
-        logging.warning(f"This package did not generate any coverage output: {e}")
+        logging.warning(f"Package {package_name} did not generate any coverage output: {e}")
         return None
     except Exception as e:
-        logging.error(f"An error occurred while generating the coverage report: {e}")
+        logging.error(f"An error occurred while generating the coverage report for {package_name}: {e}")
         return None
 
 if __name__ == "__main__":
@@ -44,10 +44,10 @@ if __name__ == "__main__":
     possible_coverage_file = os.path.join(args.target_package, ".coverage")
 
     if os.path.exists(possible_coverage_file):
-        total_coverage = get_total_coverage(possible_coverage_file)
+        total_coverage = get_total_coverage(possible_coverage_file, pkg_details.name)
         if total_coverage is not None:
+            # log the metric for reporting before doing anything else
             logging.info(f"Total coverage for {pkg_details.name} is {total_coverage:.2f}%")
-
             if in_ci():
                 metric_obj = {}
                 metric_obj["value"] = total_coverage / 100
@@ -59,6 +59,21 @@ if __name__ == "__main__":
                 # before the 'logmetric' start string.
                 print(f'logmetric: {json.dumps(metric_obj)}')
 
-    if is_check_enabled(args.target_package, "cov_enforcement", False):
-        logging.info("Coverage enforcement is enabled for this package.")
+            # todo: add relative coverage comparison after we generate eng/coverages.json file in main
+            # when we add that, we will call the config setting relative_cov to check if this is enabled
+            # there, we will only ever compare the baseline % against the generated %
+
+            # as a fallback, we can always check the absolute coverage % against the config setting
+            # if the config setting is not set, we will not enforce any coverage
+            if is_check_enabled(args.target_package, "absolute_cov", False):
+                logging.info("Coverage enforcement is enabled for this package.")
+
+                cov_threshold = get_config_setting(args.target_package, "absolute_cov_percent", None)
+                if cov_threshold:
+                    if total_coverage < float(cov_threshold):
+                        logging.error(
+                            f"Coverage for {pkg_details.name} is below the threshold of {cov_threshold:.2f}% (actual: {total_coverage:.2f}%)"
+                        )
+                        exit(1)
+
 
