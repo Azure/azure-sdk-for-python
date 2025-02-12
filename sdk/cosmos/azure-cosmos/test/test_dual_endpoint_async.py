@@ -61,6 +61,7 @@ class TestDualEndpointsAsync(unittest.IsolatedAsyncioTestCase):
                              mocked_client.client_connection._global_endpoint_manager
                              .location_cache.get_write_dual_endpoint())
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = original_get_database_account_stub
+            await mocked_client.close()
 
     async def MockGetDatabaseAccountStub(self, endpoint):
         read_locations = []
