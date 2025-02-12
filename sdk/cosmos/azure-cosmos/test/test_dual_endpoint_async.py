@@ -36,6 +36,9 @@ class TestDualEndpointsAsync(unittest.IsolatedAsyncioTestCase):
         self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
         self.created_container = self.created_database.get_container_client(self.TEST_CONTAINER_ID)
 
+    async def asyncTearDown(self):
+        await self.client.close()
+
     async def test_no_swaps_on_successful_request(self):
         original_get_database_account_stub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
