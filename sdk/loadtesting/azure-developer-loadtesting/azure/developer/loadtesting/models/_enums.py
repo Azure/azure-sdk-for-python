@@ -48,7 +48,7 @@ class CertificateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If the certificate is stored in an Azure Key Vault."""
 
 
-class CreateByTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the entity that created the test run. (E.x. User, ScheduleTrigger, etc)."""
 
     USER = "User"

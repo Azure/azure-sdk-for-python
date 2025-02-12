@@ -265,20 +265,6 @@ class TestLoadTestAdministration(LoadTestAdministrationClientTestBase):
 
     @LoadTestAdministrationPreparer()
     @recorded_by_proxy
-    def test_begin_upload_test_file(self, loadtestadministration_endpoint):
-        client = self.create_client(endpoint=loadtestadministration_endpoint)
-        response = client.begin_upload_test_file(
-            test_id="str",
-            file_name="str",
-            body=bytes("bytes", encoding="utf-8"),
-            content_type="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @LoadTestAdministrationPreparer()
-    @recorded_by_proxy
     def test_delete_test_file(self, loadtestadministration_endpoint):
         client = self.create_client(endpoint=loadtestadministration_endpoint)
         response = client.delete_test_file(

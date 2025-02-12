@@ -1977,7 +1977,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def begin_upload_test_file(
+    def _begin_upload_test_file(
         self,
         test_id: str,
         file_name: str,
@@ -2576,7 +2576,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
 class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
 
     @overload
-    def begin_test_run(
+    def _begin_test_run(
         self,
         test_run_id: str,
         body: _models.TestRun,
@@ -2584,32 +2584,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         content_type: str = "application/merge-patch+json",
         old_test_run_id: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.TestRun:
-        """Create and start a new test run with the given test run Id.
-
-        Create and start a new test run with the given test run Id.
-
-        :param test_run_id: Unique test run identifier for the load test run, must contain only
-         lower-case alphabetic, numeric, underscore or hyphen characters. Required.
-        :type test_run_id: str
-        :param body: The resource instance. Required.
-        :type body: ~azure.developer.loadtesting.models.TestRun
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :keyword old_test_run_id: Existing test run identifier that should be rerun, if this is
-         provided, the
-         test will run with the JMX file, configuration and app components from the
-         existing test run. You can override the configuration values for new test run
-         in the request body. Default value is None.
-        :paramtype old_test_run_id: str
-        :return: TestRun. The TestRun is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.TestRun: ...
     @overload
-    def begin_test_run(
+    def _begin_test_run(
         self,
         test_run_id: str,
         body: JSON,
@@ -2617,32 +2594,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         content_type: str = "application/merge-patch+json",
         old_test_run_id: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.TestRun:
-        """Create and start a new test run with the given test run Id.
-
-        Create and start a new test run with the given test run Id.
-
-        :param test_run_id: Unique test run identifier for the load test run, must contain only
-         lower-case alphabetic, numeric, underscore or hyphen characters. Required.
-        :type test_run_id: str
-        :param body: The resource instance. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :keyword old_test_run_id: Existing test run identifier that should be rerun, if this is
-         provided, the
-         test will run with the JMX file, configuration and app components from the
-         existing test run. You can override the configuration values for new test run
-         in the request body. Default value is None.
-        :paramtype old_test_run_id: str
-        :return: TestRun. The TestRun is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.TestRun: ...
     @overload
-    def begin_test_run(
+    def _begin_test_run(
         self,
         test_run_id: str,
         body: IO[bytes],
@@ -2650,32 +2604,10 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         content_type: str = "application/merge-patch+json",
         old_test_run_id: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.TestRun:
-        """Create and start a new test run with the given test run Id.
-
-        Create and start a new test run with the given test run Id.
-
-        :param test_run_id: Unique test run identifier for the load test run, must contain only
-         lower-case alphabetic, numeric, underscore or hyphen characters. Required.
-        :type test_run_id: str
-        :param body: The resource instance. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :keyword old_test_run_id: Existing test run identifier that should be rerun, if this is
-         provided, the
-         test will run with the JMX file, configuration and app components from the
-         existing test run. You can override the configuration values for new test run
-         in the request body. Default value is None.
-        :paramtype old_test_run_id: str
-        :return: TestRun. The TestRun is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.TestRun: ...
 
     @distributed_trace
-    def begin_test_run(
+    def _begin_test_run(
         self,
         test_run_id: str,
         body: Union[_models.TestRun, JSON, IO[bytes]],
@@ -4050,84 +3982,34 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    def begin_test_profile_run(
+    def _begin_test_profile_run(
         self,
         test_profile_run_id: str,
         body: _models.TestProfileRun,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> _models.TestProfileRun:
-        """Create and start a new test profile run.
-
-        Create and start a new test profile run with the given test profile run Id.
-
-        :param test_profile_run_id: Unique identifier for the test profile run, must contain only
-         lower-case alphabetic, numeric, underscore or hyphen characters. Required.
-        :type test_profile_run_id: str
-        :param body: The resource instance. Required.
-        :type body: ~azure.developer.loadtesting.models.TestProfileRun
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: TestProfileRun. The TestProfileRun is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestProfileRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.TestProfileRun: ...
     @overload
-    def begin_test_profile_run(
+    def _begin_test_profile_run(
         self, test_profile_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.TestProfileRun:
-        """Create and start a new test profile run.
-
-        Create and start a new test profile run with the given test profile run Id.
-
-        :param test_profile_run_id: Unique identifier for the test profile run, must contain only
-         lower-case alphabetic, numeric, underscore or hyphen characters. Required.
-        :type test_profile_run_id: str
-        :param body: The resource instance. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: TestProfileRun. The TestProfileRun is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestProfileRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.TestProfileRun: ...
     @overload
-    def begin_test_profile_run(
+    def _begin_test_profile_run(
         self,
         test_profile_run_id: str,
         body: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> _models.TestProfileRun:
-        """Create and start a new test profile run.
-
-        Create and start a new test profile run with the given test profile run Id.
-
-        :param test_profile_run_id: Unique identifier for the test profile run, must contain only
-         lower-case alphabetic, numeric, underscore or hyphen characters. Required.
-        :type test_profile_run_id: str
-        :param body: The resource instance. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: TestProfileRun. The TestProfileRun is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestProfileRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.TestProfileRun: ...
 
     @distributed_trace
     @api_version_validation(
         method_added_on="2024-05-01-preview",
         params_added_on={"2024-05-01-preview": ["api_version", "test_profile_run_id", "content_type", "accept"]},
     )
-    def begin_test_profile_run(
+    def _begin_test_profile_run(
         self, test_profile_run_id: str, body: Union[_models.TestProfileRun, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.TestProfileRun:
         """Create and start a new test profile run.

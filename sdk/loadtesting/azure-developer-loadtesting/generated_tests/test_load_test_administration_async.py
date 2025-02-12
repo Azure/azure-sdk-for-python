@@ -266,20 +266,6 @@ class TestLoadTestAdministrationAsync(LoadTestAdministrationClientTestBaseAsync)
 
     @LoadTestAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_begin_upload_test_file(self, loadtestadministration_endpoint):
-        client = self.create_async_client(endpoint=loadtestadministration_endpoint)
-        response = await client.begin_upload_test_file(
-            test_id="str",
-            file_name="str",
-            body=bytes("bytes", encoding="utf-8"),
-            content_type="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @LoadTestAdministrationPreparer()
-    @recorded_by_proxy_async
     async def test_delete_test_file(self, loadtestadministration_endpoint):
         client = self.create_async_client(endpoint=loadtestadministration_endpoint)
         response = await client.delete_test_file(

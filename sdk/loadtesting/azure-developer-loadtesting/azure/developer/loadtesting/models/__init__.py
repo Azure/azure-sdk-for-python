@@ -63,7 +63,7 @@ from ._models import (  # type: ignore
 from ._enums import (  # type: ignore
     AggregationType,
     CertificateType,
-    CreateByTypes,
+    CreatedByType,
     FileStatus,
     FileType,
     ManagedIdentityType,
@@ -133,7 +133,7 @@ __all__ = [
     "TimeSeriesElement",
     "AggregationType",
     "CertificateType",
-    "CreateByTypes",
+    "CreatedByType",
     "FileStatus",
     "FileType",
     "ManagedIdentityType",

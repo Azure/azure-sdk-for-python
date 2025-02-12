@@ -282,21 +282,21 @@ class FunctionFlexConsumptionResourceConfiguration(_model_base.Model):  # pylint
     :ivar instance_memory_mb: Memory size of the instance. Supported values are 2048, 4096.
      Required.
     :vartype instance_memory_mb: int
-    :ivar http_concurrency: HTTP Concurrency for the function app. Required.
+    :ivar http_concurrency: HTTP Concurrency for the function app.
     :vartype http_concurrency: int
     """
 
     instance_memory_mb: int = rest_field(name="instanceMemoryMB")
     """Memory size of the instance. Supported values are 2048, 4096. Required."""
-    http_concurrency: int = rest_field(name="httpConcurrency")
-    """HTTP Concurrency for the function app. Required."""
+    http_concurrency: Optional[int] = rest_field(name="httpConcurrency")
+    """HTTP Concurrency for the function app."""
 
     @overload
     def __init__(
         self,
         *,
         instance_memory_mb: int,
-        http_concurrency: int,
+        http_concurrency: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -1817,7 +1817,7 @@ class TestRun(_model_base.Model):
     :vartype public_ip_disabled: bool
     :ivar created_by_type: The type of the entity that created the test run. (E.x. User,
      ScheduleTrigger, etc). Known values are: "User" and "ScheduledTrigger".
-    :vartype created_by_type: str or ~azure.developer.loadtesting.models.CreateByTypes
+    :vartype created_by_type: str or ~azure.developer.loadtesting.models.CreatedByType
     :ivar created_date_time: The creation datetime(RFC 3339 literal format).
     :vartype created_date_time: ~datetime.datetime
     :ivar created_by: The user that created.
@@ -1910,7 +1910,7 @@ class TestRun(_model_base.Model):
      otherwise."""
     public_ip_disabled: Optional[bool] = rest_field(name="publicIPDisabled", visibility=["read"])
     """Inject load test engines without deploying public IP for outbound access."""
-    created_by_type: Optional[Union[str, "_models.CreateByTypes"]] = rest_field(name="createdByType")
+    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="createdByType")
     """The type of the entity that created the test run. (E.x. User, ScheduleTrigger, etc). Known
      values are: \"User\" and \"ScheduledTrigger\"."""
     created_date_time: Optional[datetime.datetime] = rest_field(
@@ -1941,7 +1941,7 @@ class TestRun(_model_base.Model):
         description: Optional[str] = None,
         request_data_level: Optional[Union[str, "_models.RequestDataLevel"]] = None,
         debug_logs_enabled: Optional[bool] = None,
-        created_by_type: Optional[Union[str, "_models.CreateByTypes"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
     ) -> None: ...
 
     @overload
