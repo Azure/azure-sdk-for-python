@@ -295,13 +295,13 @@ class TestEvaluate:
         assert "answer.length" in metrics.keys()
         assert "f1_score.f1_score" in metrics.keys()
 
-    @pytest.mark.skipif(in_ci(), reason="This test fails in CI and needs to be investigate. Bug: 3458432")
+    # @pytest.mark.skipif(in_ci(), reason="This test fails in CI and needs to be investigate. Bug: 3458432")
+    # Testing it
     @pytest.mark.azuretest
     def test_evaluate_track_in_cloud(
         self,
         questions_file,
         azure_ml_client,
-        mock_trace_destination_to_cloud,
         project_scope,
     ):
         """Test evaluation with target function."""
@@ -317,7 +317,7 @@ class TestEvaluate:
         evaluation_name = "test_evaluate_track_in_cloud"
         # run the evaluation with targets
         result = evaluate(
-            # azure_ai_project=project_scope,
+            azure_ai_project=project_scope,
             evaluation_name=evaluation_name,
             data=questions_file,
             target=target_fn,
@@ -340,13 +340,12 @@ class TestEvaluate:
         assert remote_run["runMetadata"]["properties"]["_azureml.evaluation_run"] == "promptflow.BatchRun"
         assert remote_run["runMetadata"]["displayName"] == evaluation_name
 
-    @pytest.mark.skipif(in_ci(), reason="This test fails in CI and needs to be investigate. Bug: 3458432")
+    # @pytest.mark.skipif(in_ci(), reason="This test fails in CI and needs to be investigate. Bug: 3458432")
     @pytest.mark.azuretest
     def test_evaluate_track_in_cloud_no_target(
         self,
         data_file,
         azure_ml_client,
-        mock_trace_destination_to_cloud,
         project_scope,
     ):
         # data
@@ -357,7 +356,7 @@ class TestEvaluate:
 
         # run the evaluation
         result = evaluate(
-            # azure_ai_project=project_scope,
+            azure_ai_project=project_scope,
             evaluation_name=evaluation_name,
             data=data_file,
             evaluators={"f1_score": f1_score_eval},
