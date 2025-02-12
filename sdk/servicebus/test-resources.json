@@ -55,8 +55,10 @@
     "serviceBusSubscriptionName": "[concat('sb-', parameters('baseName'), '-subscription')]",
     "serviceBusTopicName": "[concat('sb-', parameters('baseName'), '-topic')]",
     "serviceBusQueueName": "[concat('sb-', parameters('baseName'), '-queue')]",
+    "serviceBusQueueNamePartitioned": "[concat('sb-', parameters('baseName'), '-queue-partitioned')]",
     "queueAuthorizationRuleName": "[concat('sb-', parameters('baseName'), '-queue-auth')]",
     "serviceBusSessionQueueName": "[concat('sb-', parameters('baseName'), '-session-queue')]",
+    "serviceBusSessionQueueNamePartitioned": "[concat('sb-', parameters('baseName'), '-session-queue-partitioned')]",
     "sessionQueueAuthorizationRuleName": "[concat('sb-', parameters('baseName'), '-session-queue-auth')]",
     "serviceBusSessionId": "[concat('sb-', parameters('baseName'), '-session-queue-id')]",
     "defaultSASKeyName": "RootManageSharedAccessKey",
@@ -95,6 +97,74 @@
                 "properties": {}
             }]
         },
+        {
+          "type": "Queues",
+          "apiVersion": "[variables('sbVersion')]",
+          "name": "[variables('serviceBusQueueNamePartitioned')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace'))]"
+          ],
+          "properties": {
+            "lockDuration": "PT5M",
+            "maxSizeInMegabytes": 1024,
+            "requiresDuplicateDetection": false,
+            "requiresSession": false,
+            "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+            "deadLetteringOnMessageExpiration": false,
+            "duplicateDetectionHistoryTimeWindow": "PT10M",
+            "maxDeliveryCount": 10,
+            "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+            "enablePartitioning": true,
+            "enableExpress": false
+          },
+          "resources": [
+            {
+              "apiVersion": "[variables('sbVersion')]",
+              "name": "[variables('queueAuthorizationRuleName')]",
+              "type": "authorizationRules",
+              "dependsOn": [
+                  "[variables('serviceBusQueueName')]"
+              ],
+              "properties": {
+                  "Rights": ["Manage", "Send", "Listen"]
+              }
+            }
+          ]
+        },
+        {
+          "type": "Queues",
+          "apiVersion": "[variables('sbVersion')]",
+          "name": "[variables('serviceBusSessionQueueNamePartitioned')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace'))]"
+          ],
+          "properties": {
+            "lockDuration": "PT5M",
+            "maxSizeInMegabytes": 1024,
+            "requiresDuplicateDetection": false,
+            "requiresSession": true,
+            "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+            "deadLetteringOnMessageExpiration": false,
+            "duplicateDetectionHistoryTimeWindow": "PT10M",
+            "maxDeliveryCount": 10,
+            "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+            "enablePartitioning": true,
+            "enableExpress": false
+          },
+          "resources": [
+            {
+              "apiVersion": "[variables('sbVersion')]",
+              "name": "[variables('sessionQueueAuthorizationRuleName')]",
+              "type": "authorizationRules",
+              "dependsOn": [
+                  "[variables('serviceBusSessionQueueName')]"
+              ],
+              "properties": {
+                  "Rights": ["Manage", "Send", "Listen"]
+              }
+            }
+          ]
+        }
         {
           "type": "Queues",
           "apiVersion": "[variables('sbVersion')]",
