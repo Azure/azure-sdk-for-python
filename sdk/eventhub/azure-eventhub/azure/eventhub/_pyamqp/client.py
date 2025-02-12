@@ -230,18 +230,18 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
         """
         self.close()
 
-    def _keep_alive(self):
-        start_time = time.time()
-        try:
-            while self._connection and not self._shutdown:
-                current_time = time.time()
-                elapsed_time = current_time - start_time
-                if elapsed_time >= self._keep_alive_interval:
-                    self._connection.listen(wait=self._socket_timeout, batch=self._link.total_link_credit)
-                    start_time = current_time
-                time.sleep(1)
-        except Exception as e:  # pylint: disable=broad-except
-            _logger.debug("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
+    # def _keep_alive(self):
+    #     start_time = time.time()
+    #     try:
+    #         while self._connection and not self._shutdown:
+    #             current_time = time.time()
+    #             elapsed_time = current_time - start_time
+    #             if elapsed_time >= self._keep_alive_interval:
+    #                 self._connection.listen(wait=self._socket_timeout, batch=self._link.total_link_credit)
+    #                 start_time = current_time
+    #             time.sleep(1)
+    #     except Exception as e:  # pylint: disable=broad-except
+    #         _logger.debug("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
 
     def _client_ready(self):
         """Determine whether the client is ready to start sending and/or
@@ -335,10 +335,10 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
                 outgoing_window=self._outgoing_window,
             )
             self._session.begin()
-        if self._keep_alive_interval:
-            self._keep_alive_thread = threading.Thread(target=self._keep_alive)
-            self._keep_alive_thread.daemon = True
-            self._keep_alive_thread.start()
+        # if self._keep_alive_interval:
+        #     self._keep_alive_thread = threading.Thread(target=self._keep_alive)
+        #     self._keep_alive_thread.daemon = True
+        #     self._keep_alive_thread.start()
         if self._auth.auth_type == AUTH_TYPE_CBS:
             self._cbs_authenticator = CBSAuthenticator(
                 session=self._session, auth=self._auth, auth_timeout=self._auth_timeout
