@@ -19,10 +19,6 @@ from unittest.mock import patch
 from opentelemetry.instrumentation.environment_variables import (
     OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
 )
-from azure.monitor.opentelemetry._utils.configurations import (
-    SAMPLING_RATIO_ENV_VAR,
-    _get_configurations,
-)
 from opentelemetry.environment_variables import (
     OTEL_LOGS_EXPORTER,
     OTEL_METRICS_EXPORTER,
@@ -31,6 +27,11 @@ from opentelemetry.environment_variables import (
 from opentelemetry.sdk.environment_variables import OTEL_EXPERIMENTAL_RESOURCE_DETECTORS
 from opentelemetry.sdk.resources import Resource, Attributes
 
+from azure.monitor.opentelemetry._constants import APPLICATIONINSIGHTS_PREVIEW_LIVE_METRICS_ENABLED
+from azure.monitor.opentelemetry._utils.configurations import (
+    SAMPLING_RATIO_ENV_VAR,
+    _get_configurations,
+)
 from azure.monitor.opentelemetry._version import VERSION
 
 
@@ -139,6 +140,7 @@ class TestConfigurations(TestCase):
             OTEL_LOGS_EXPORTER: "none",
             OTEL_METRICS_EXPORTER: "NONE",
             OTEL_EXPERIMENTAL_RESOURCE_DETECTORS: "custom_resource_detector",
+            APPLICATIONINSIGHTS_PREVIEW_LIVE_METRICS_ENABLED: "TRUE",
         },
         clear=True,
     )
@@ -167,6 +169,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
         self.assertEqual(configurations["sampling_ratio"], 0.5)
+        self.assertEqual(configurations["enable_live_metrics"], True)
 
     @patch.dict(
         "os.environ",

@@ -16,6 +16,9 @@ from opentelemetry.sdk.environment_variables import (
 
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+from azure.monitor.opentelemetry.exporter._quickpulse import (  # pylint: disable=import-error,no-name-in-module
+    enable_live_metrics,
+)
 from azure.monitor.opentelemetry.exporter._utils import (  # pylint: disable=import-error,no-name-in-module
     _is_attach_enabled,
 )
@@ -35,9 +38,6 @@ from azure.monitor.opentelemetry._diagnostics.status_logger import (
 )
 from azure.monitor.opentelemetry._utils.configurations import (
     _get_otel_disabled_instrumentations,
-)
-from azure.monitor.opentelemetry.exporter._quickpulse import (  # pylint: disable=import-error,no-name-in-module
-    enable_live_metrics,
 )
 
 
@@ -67,6 +67,6 @@ def _configure_auto_instrumentation() -> None:
     if _AZURE_SDK_INSTRUMENTATION_NAME not in otel_disabled_instrumentations:
         settings.tracing_implementation = OpenTelemetrySpan
     # Live Metrics
-    live_metrics_enabled = environ.get(APPLICATIONINSIGHTS_PREVIEW_LIVE_METRICS_ENABLED, "false").lower()
-    if live_metrics_enabled == 'true':
+    live_metrics_enabled_env_var = environ.get(APPLICATIONINSIGHTS_PREVIEW_LIVE_METRICS_ENABLED, "false").lower()
+    if live_metrics_enabled_env_var == 'true':
         enable_live_metrics()

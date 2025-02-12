@@ -27,6 +27,7 @@ from azure.monitor.opentelemetry._constants import (
     _AZURE_VM_RESOURCE_DETECTOR_NAME,
     _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES,
     _PREVIEW_INSTRUMENTED_LIBRARIES,
+    APPLICATIONINSIGHTS_PREVIEW_LIVE_METRICS_ENABLED,
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
@@ -151,7 +152,19 @@ def _default_span_processors(configurations):
 
 
 def _default_enable_live_metrics(configurations):
-    configurations.setdefault(ENABLE_LIVE_METRICS_ARG, False)
+    default = False
+    live_metrics_enabled_env_var = environ.get(APPLICATIONINSIGHTS_PREVIEW_LIVE_METRICS_ENABLED, "false").lower()
+    if live_metrics_enabled_env_var == 'true':
+        default = True
+    configurations.setdefault(ENABLE_LIVE_METRICS_ARG, default)
+
+
+def _get_otel_disabled_instrumentations():
+    disabled_instrumentation = environ.get(OTEL_PYTHON_DISABLED_INSTRUMENTATIONS, "")
+    disabled_instrumentation = disabled_instrumentation.split(",")
+    # to handle users entering "requests , flask" or "requests, flask" with spaces
+    disabled_instrumentation = [x.strip() for x in disabled_instrumentation]
+    return disabled_instrumentation
 
 
 def _default_views(configurations):
