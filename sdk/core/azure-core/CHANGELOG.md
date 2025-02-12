@@ -5,8 +5,8 @@
 ### Features Added
 
 - Added native OpenTelemetry tracing to Azure Core which enables users to use OpenTelemetry to trace Azure SDK operations without needing to install a plugin. #39563
-    - A new `TracerProvider` class was added, allowing SDK developers to pass in various metadata to the OpenTelemetry tracer and spans.
-    - `OpenTelemetryTracer` and `OpenTelemetrySpan` classes were added to the `azure.core.tracing` namespace.
+    - A new `Instrumentation` class was added, allowing SDK developers to pass in various metadata to the OpenTelemetry tracer and spans.
+    - `OpenTelemetryTracer` and `OpenTelemetrySpan` classes were added to the `azure.core.tracing.opentelemetry` namespace.
     - A `TracingOptions` TypedDict class was added to define the options that SDK users can use to configure tracing per-operation. These options include the ability to enable or disable tracing, set additional attributes on spans, and disable recording exceptions as events on spans.
     - The `tracing_enabled` setting on the global `settings` object is now respected and can be used to enable or disable native tracing for all SDKs.
         - If `setting.tracing_implementation` is set, it will take precedence over the native core tracing.

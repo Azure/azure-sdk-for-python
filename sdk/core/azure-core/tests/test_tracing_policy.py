@@ -4,22 +4,22 @@
 # ------------------------------------
 """Tests for the distributed tracing policy."""
 import logging
+import time
 import urllib
+from unittest import mock
 
+from azure.core.instrumentation import Instrumentation
 from azure.core.pipeline import Pipeline, PipelineResponse, PipelineRequest, PipelineContext
 from azure.core.pipeline.policies import DistributedTracingPolicy, UserAgentPolicy, RetryPolicy
-from azure.core.pipeline.transport import HttpTransport
+from azure.core.pipeline.transport import HttpTransport, RequestsTransport
 from azure.core.settings import settings
-from azure.core.tracing._tracer import TracerProvider
-from tracing_common import FakeSpan
-import time
 import pytest
-from utils import HTTP_RESPONSES, create_http_response, request_and_responses_product
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+# import requests
+
+from utils import HTTP_RESPONSES, HTTP_REQUESTS, create_http_response, request_and_responses_product
+from tracing_common import FakeSpan
 
 
 class TestTracingPolicyPluginImplementation:
@@ -366,16 +366,16 @@ class TestTracingPolicyNativeTracing:
         assert finished_spans[0].attributes.get("error.type") == "403"
 
     @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
-    def test_distributed_tracing_policy_custom_tracer_provider(self, tracing_helper, http_request, http_response):
+    def test_distributed_tracing_policy_custom_instrumentation(self, tracing_helper, http_request, http_response):
         """Test policy when a custom tracer provider is provided."""
-        custom_tracer_provider = TracerProvider(
+        custom_instrumentation = Instrumentation(
             library_name="my-library",
             library_version="1.0.0",
             schema_url="https://test.schema",
             attributes={"namespace": "Sample.Namespace"},
         )
         with tracing_helper.tracer.start_as_current_span("Root"):
-            policy = DistributedTracingPolicy(tracer_provider=custom_tracer_provider)
+            policy = DistributedTracingPolicy(instrumentation=custom_instrumentation)
 
             request = http_request("GET", "http://localhost/temp?query=query")
             pipeline_request = PipelineRequest(request, PipelineContext(None))
@@ -564,3 +564,25 @@ class TestTracingPolicyNativeTracing:
         finished_spans = tracing_helper.exporter.get_finished_spans()
         assert len(finished_spans) == 1
         assert finished_spans[0].name == "Root"
+
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_suppress_http_auto_instrumentation(self, port, tracing_helper, http_request):
+        """Test that automatic HTTP instrumentation is suppressed when a request is made through the pipeline."""
+        # Enable auto-instrumentation for requests.
+        requests_instrumentor = RequestsInstrumentor()
+        requests_instrumentor.instrument()
+        policy = DistributedTracingPolicy()
+        transport = RequestsTransport()
+
+        request = http_request("GET", f"http://localhost:{port}/basic/string")
+        with Pipeline(transport, policies=[policy]) as pipeline:
+            pipeline.run(request)
+
+        finished_spans = tracing_helper.exporter.get_finished_spans()
+        assert len(finished_spans) == 1
+        assert finished_spans[0].attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
+        assert finished_spans[0].attributes.get(policy._URL_FULL) == f"http://localhost:{port}/basic/string"
+        assert finished_spans[0].attributes.get(policy._SERVER_ADDRESS) == "localhost"
+        assert finished_spans[0].attributes.get(policy._HTTP_RESPONSE_STATUS_CODE) == 200
+
+        requests_instrumentor.uninstrument()

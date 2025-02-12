@@ -2,39 +2,48 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional, TYPE_CHECKING
-
-from ._models import Attributes
+from typing import Optional, Union, Sequence, Mapping, TYPE_CHECKING
 
 if TYPE_CHECKING:
     try:
-        from .opentelemetry_tracer import OpenTelemetryTracer
+        from .tracing.opentelemetry import OpenTelemetryTracer
     except ImportError:
         pass
+
+
+AttributeValue = Union[
+    str,
+    bool,
+    int,
+    float,
+    Sequence[str],
+    Sequence[bool],
+    Sequence[int],
+    Sequence[float],
+]
+Attributes = Mapping[str, AttributeValue]
 
 
 def _get_tracer_impl():
     # Check if OpenTelemetry is available/installed.
     try:
-        from .opentelemetry_tracer import OpenTelemetryTracer
+        from .tracing.opentelemetry import OpenTelemetryTracer
 
         return OpenTelemetryTracer
     except ImportError:
         return None
 
 
-class TracerProvider:
-    """A provider for a tracer instance.
+class Instrumentation:
+    """A manager for handling instrumentation providers.
 
-    Various metadata can be set on the provider to be used in the tracer.
-
-    :keyword library_name: The name of the library to use in the provided tracer.
+    :keyword library_name: The name of the library to use in the provided instrumentation.
     :paramtype library_name: str
-    :keyword library_version: The version of the library to use in the provided tracer.
+    :keyword library_version: The version of the library to use in the provided instrumentation.
     :paramtype library_version: str
-    :keyword schema_url: Specifies the Schema URL of the emitted spans.
+    :keyword schema_url: Specifies the Schema URL of the emitted instrumentation.
     :paramtype schema_url: str
-    :keyword attributes: Attributes to add to the emitted spans.
+    :keyword attributes: Attributes to add to the emitted instrumentation.
     :paramtype attributes: Mapping[str, Any]
     """
 
@@ -47,10 +56,10 @@ class TracerProvider:
         attributes: Optional[Attributes] = None,
     ) -> None:
         self._tracer = None
-        self._library_name = library_name
-        self._library_version = library_version
-        self._schema_url = schema_url
-        self._attributes = attributes
+        self.library_name = library_name
+        self.library_version = library_version
+        self.schema_url = schema_url
+        self.attributes = attributes
 
     def get_tracer(self) -> Optional["OpenTelemetryTracer"]:
         """Get the OpenTelemetry tracer instance if available.
@@ -59,22 +68,22 @@ class TracerProvider:
         yet, it will be created and returned. Otherwise, the existing tracer instance will be returned.
 
         :return: The OpenTelemetry tracer instance if available.
-        :rtype: Optional[~azure.core.tracing.opentelemetry_tracer.OpenTelemetryTracer]
+        :rtype: Optional[~azure.core.tracing.opentelemetry.OpenTelemetryTracer]
         """
         if self._tracer is None:
             tracer_impl = _get_tracer_impl()
             if tracer_impl:
                 self._tracer = tracer_impl(
-                    library_name=self._library_name,
-                    library_version=self._library_version,
-                    schema_url=self._schema_url,
-                    attributes=self._attributes,
+                    library_name=self.library_name,
+                    library_version=self.library_version,
+                    schema_url=self.schema_url,
+                    attributes=self.attributes,
                 )
         return self._tracer
 
 
-default_tracer_provider = TracerProvider()
-"""The global tracer provider that is used by default.
+default_instrumentation = Instrumentation()
+"""The global Instrumentation instance.
 
-:type default_tracer_provider: TracerProvider
+:type default_instrumentation: ~azure.core.instrumentation.Instrumentation
 """

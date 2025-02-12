@@ -12,19 +12,20 @@ except ImportError:
 import time
 
 import pytest
+from azure.core.instrumentation import Instrumentation
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.settings import settings
-from azure.core.tracing import common, SpanKind, TracerProvider
+from azure.core.tracing import common, SpanKind
 from azure.core.tracing.decorator import distributed_trace
-from opentelemetry.trace import SpanKind as OtelSpanKind, StatusCode as OtelStatusCode
+from opentelemetry.trace import StatusCode as OtelStatusCode
 
 from tracing_common import FakeSpan
 from utils import HTTP_REQUESTS
 
 
-custom_tracer_provider = TracerProvider(
+custom_instrumentation = Instrumentation(
     library_name="my-library",
     library_version="1.0.0",
     schema_url="https://test.schema",
@@ -92,7 +93,7 @@ class MockClient:
     def raising_exception(self, **kwargs):
         raise ValueError("Something went horribly wrong here")
 
-    @distributed_trace(tracer_provider=custom_tracer_provider)
+    @distributed_trace(instrumentation=custom_instrumentation)
     def method_with_custom_tracer(self):
         time.sleep(0.001)
 
@@ -314,22 +315,3 @@ class TestDecoratorNativeTracing:
 
             finished_spans = tracing_helper.exporter.get_finished_spans()
             assert len(finished_spans) == 0
-
-    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-    def test_decorated_method_without_recording_exception(self, tracing_helper, http_request):
-        """Test that exceptions being recorded as events can be suppressed."""
-        client = MockClient(http_request)
-        settings.tracing_enabled = True
-        with tracing_helper.tracer.start_as_current_span("Root"):
-            try:
-                client.raising_exception(tracing_options={"record_exception": False})
-            except ValueError:
-                pass
-
-            finished_spans = tracing_helper.exporter.get_finished_spans()
-            assert len(finished_spans) == 1
-            assert finished_spans[0].name == "MockClient.raising_exception"
-            assert finished_spans[0].status.status_code == OtelStatusCode.ERROR
-            assert "Something went horribly wrong here" in finished_spans[0].status.description
-            assert finished_spans[0].attributes.get("error.type") == "ValueError"
-            assert not finished_spans[0].events

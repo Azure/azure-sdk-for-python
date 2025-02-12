@@ -7,7 +7,11 @@
 FILE: example_tracing.py
 DESCRIPTION:
     This sample demonstrates how to trace a client method.
-    Note: This sample requires the opentelemetry-sdk library to be installed.
+
+    NOTE: The following example is for library developers to demonstrate how to customize tracing for their library.
+    End users should be using OpenTelemetry directly for their tracing needs.
+
+    This sample requires the opentelemetry-sdk library to be installed.
 USAGE:
     python example_tracing.py
 """
@@ -25,41 +29,29 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     DistributedTracingPolicy,
 )
-from azure.core.settings import settings
-from azure.core.tracing import TracerProvider as SDKTracerProvider
-
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import ConsoleSpanExporter
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+from azure.core.instrumentation import Instrumentation
 
 
-tracer_provider = TracerProvider()
-exporter = ConsoleSpanExporter()
-span_processor = SimpleSpanProcessor(exporter)
-
-tracer_provider.add_span_processor(span_processor)
-trace.set_tracer_provider(tracer_provider)
-tracer = tracer_provider.get_tracer("my-application")
-
-sdk_tracer_provider = SDKTracerProvider(
+"""The below code is for library developers to demonstrate how to customize tracing for their library."""
+library_instrumentation = Instrumentation(
     library_name="my-library",
     library_version="1.0.0",
     schema_url="https://opentelemetry.io/schemas/1.23.1",
     attributes={"namespace": "Sample.Namespace"},
 )
 
-distributed_trace = partial(core_distributed_trace, tracer_provider=sdk_tracer_provider)
+distributed_trace = partial(core_distributed_trace, instrumentation=library_instrumentation)
 
 
 class SampleClient:
+    """Sample client to demonstrate how an SDK developer would add tracing to their client."""
 
     def __init__(self, endpoint: str) -> None:
         policies: Iterable[Union[HTTPPolicy, SansIOHTTPPolicy]] = [
             HeadersPolicy(),
             UserAgentPolicy("myuseragent"),
             RetryPolicy(),
-            DistributedTracingPolicy(tracer_provider=sdk_tracer_provider),
+            DistributedTracingPolicy(instrumentation=library_instrumentation),
         ]
 
         self._client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(endpoint, policies=policies)
@@ -81,7 +73,23 @@ class SampleClient:
         self._client.__exit__(*exc_details)
 
 
-def sample_basic():
+def sample_user():
+    """Sample showing how an end user would enable tracing and configure OpenTelemetry."""
+    from azure.core.settings import settings
+
+    from opentelemetry import trace
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import ConsoleSpanExporter
+    from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+
+    tracer_provider = TracerProvider()
+    exporter = ConsoleSpanExporter()
+    span_processor = SimpleSpanProcessor(exporter)
+
+    tracer_provider.add_span_processor(span_processor)
+    trace.set_tracer_provider(tracer_provider)
+    tracer = tracer_provider.get_tracer("my-application")
+
     settings.tracing_enabled = True
 
     endpoint = "https://bing.com"
@@ -92,4 +100,4 @@ def sample_basic():
 
 
 if __name__ == "__main__":
-    sample_basic()
+    sample_user()

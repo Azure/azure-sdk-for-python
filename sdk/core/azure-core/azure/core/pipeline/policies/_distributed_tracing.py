@@ -39,14 +39,14 @@ from azure.core.pipeline.transport import (
 from azure.core.rest import HttpResponse, HttpRequest
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
-from ...tracing._tracer import default_tracer_provider, TracerProvider
-from ...tracing._models import TracingOptions
+from azure.core.instrumentation import Instrumentation, default_instrumentation
+from azure.core.tracing._models import TracingOptions
 
 if TYPE_CHECKING:
     from ...tracing._abstract_span import (
         AbstractSpan,
     )
-    from ...tracing.opentelemetry_span import OpenTelemetrySpan
+    from ...tracing.opentelemetry import OpenTelemetrySpan
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
@@ -102,10 +102,10 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     _REQUEST_ID_ATTR = "az.client_request_id"
     _RESPONSE_ID_ATTR = "az.service_request_id"
 
-    def __init__(self, *, tracer_provider: Optional[TracerProvider] = None, **kwargs: Any):
+    def __init__(self, *, instrumentation: Optional[Instrumentation] = None, **kwargs: Any):
         self._network_span_namer = kwargs.get("network_span_namer", _default_network_span_namer)
         self._tracing_attributes = kwargs.get("tracing_attributes", {})
-        self._tracer_provider = tracer_provider
+        self.instrumentation = instrumentation
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         ctxt = request.context.options
@@ -142,9 +142,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
             else:
                 # Otherwise, use the core tracing.
                 tracer = (
-                    self._tracer_provider.get_tracer()
-                    if self._tracer_provider
-                    else default_tracer_provider.get_tracer()
+                    self.instrumentation.get_tracer() if self.instrumentation else default_instrumentation.get_tracer()
                 )
                 if not tracer:
                     return
@@ -153,8 +151,8 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
                     name=span_name,
                     kind=SpanKind.CLIENT,
                     attributes=span_attributes,
-                    record_exception=tracing_options.get("record_exception", True),
                 )
+                core_span._suppress_auto_http_instrumentation()  # pylint: disable=protected-access
 
                 trace_context_headers = tracer.get_trace_context()
                 request.http_request.headers.update(trace_context_headers)
@@ -223,7 +221,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         Add correct attributes for a http client span.
 
         :param span: The span to add attributes to.
-        :type span: ~azure.core.tracing.AbstractSpan or ~azure.core.tracing.opentelemetry_span.OpenTelemetrySpan
+        :type span: ~azure.core.tracing.AbstractSpan or ~azure.core.tracing.opentelemetry.OpenTelemetrySpan
         :param request: The request made
         :type request: azure.core.rest.HttpRequest
         :param response: The response received from the server. Is None if no response received.

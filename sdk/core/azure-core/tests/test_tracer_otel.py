@@ -8,10 +8,10 @@ from concurrent.futures import ThreadPoolExecutor, wait
 import threading
 from unittest.mock import patch
 
-from azure.core.tracing._tracer import TracerProvider, default_tracer_provider
+from azure.core.instrumentation import Instrumentation, default_instrumentation
 from azure.core.tracing._models import SpanKind, Link, StatusCode
-from azure.core.tracing.opentelemetry_span import OpenTelemetrySpan
-from azure.core.tracing.opentelemetry_tracer import OpenTelemetryTracer
+from azure.core.tracing.opentelemetry import OpenTelemetrySpan
+from azure.core.tracing.opentelemetry import OpenTelemetryTracer
 from azure.core.tracing.common import with_current_context
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.settings import settings
@@ -30,16 +30,16 @@ import requests
 import pytest
 
 
-def test_tracer_provider(tracing_helper):
-    """Test basic usage of a TracerProvider."""
-    tracer_provider = TracerProvider(
+def test_instrumentation(tracing_helper):
+    """Test basic usage of a Instrumentation."""
+    instrumentation = Instrumentation(
         library_name="my-library",
         library_version="1.0.0",
         schema_url="https://test.schema",
         attributes={"namespace": "Sample.Namespace"},
     )
 
-    tracer = tracer_provider.get_tracer()
+    tracer = instrumentation.get_tracer()
     assert isinstance(tracer, OpenTelemetryTracer)
     assert isinstance(tracer._tracer, OtelTracer)
 
@@ -58,16 +58,16 @@ def test_tracer_provider(tracing_helper):
     assert finished_spans[0].instrumentation_scope.attributes.get("namespace") == "Sample.Namespace"
 
 
-def test_default_tracer_provider():
+def test_default_instrumentation():
     """Test that the default tracer manager returns an OpenTelemetryTracer."""
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
 
     assert isinstance(tracer, OpenTelemetryTracer)
     assert isinstance(tracer._tracer, OtelTracer)
 
 
 def test_start_span_with_links(tracing_helper):
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     trace_context_headers = {}
@@ -89,7 +89,7 @@ def test_start_span_with_links(tracing_helper):
 
 
 def test_start_span_with_attributes(tracing_helper):
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     with tracer.start_span(name="foo-span", attributes={"foo": "bar", "biz": 123}) as span:
@@ -102,7 +102,7 @@ def test_start_span_with_attributes(tracing_helper):
 
 
 def test_error_type_attribute_builtin_error():
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     with pytest.raises(ValueError):
@@ -113,7 +113,7 @@ def test_error_type_attribute_builtin_error():
 
 
 def test_error_type_attribute_azure_error():
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     with pytest.raises(ClientAuthenticationError):
@@ -125,7 +125,7 @@ def test_error_type_attribute_azure_error():
 
 def test_tracer_get_current_span():
     """Test that the tracer can get the current OpenTelemetry span instance."""
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     with tracer.start_span("test_span") as span:
@@ -141,7 +141,7 @@ def test_tracer_get_current_span():
 
 
 def test_tracer_get_current_span_nested():
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     with tracer.start_span(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
@@ -164,7 +164,7 @@ def test_tracer_get_current_span_nested():
 
 
 def test_nested_span_suppression(tracing_helper):
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     with tracer.start_span(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
@@ -182,7 +182,7 @@ def test_nested_span_suppression(tracing_helper):
 
 
 def test_nested_span_suppression_with_multiple_outer_spans(tracing_helper):
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     with tracer.start_span(name="outer-span-1", kind=SpanKind.INTERNAL) as outer_span_1:
@@ -209,7 +209,7 @@ def test_nested_span_suppression_with_multiple_outer_spans(tracing_helper):
 
 
 def test_nested_span_suppression_with_nested_client(tracing_helper):
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     with tracer.start_span(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
@@ -233,7 +233,7 @@ def test_nested_span_suppression_with_nested_client(tracing_helper):
 
 
 def test_nested_span_suppression_with_attributes():
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     with tracer.start_span(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
@@ -255,7 +255,7 @@ def test_nested_span_suppression_with_attributes():
 
 
 def test_nested_span_suppression_deep_nested(tracing_helper):
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     with tracer.start_span(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
@@ -278,7 +278,7 @@ def test_span_unsuppressed_unentered_context():
     # Creating an INTERNAL span without entering the context should not suppress
     # a subsequent INTERNAL span.
 
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     span1 = tracer.start_span(name="span1", kind=SpanKind.INTERNAL)
@@ -289,35 +289,8 @@ def test_span_unsuppressed_unentered_context():
     span1.end()
 
 
-def test_suppress_http_auto_instrumentationtracing_helper(tracing_helper):
-    # Enable auto-instrumentation for requests.
-    requests_instrumentor = RequestsInstrumentor()
-    requests_instrumentor.instrument()
-
-    tracer = default_tracer_provider.get_tracer()
-    assert tracer
-
-    with patch("requests.adapters.HTTPAdapter.send") as mock_request:
-        response = requests.Response()
-        response.status_code = 200
-        mock_request.return_value = response
-        with tracer.start_span(name="outer-span", kind=SpanKind.INTERNAL):
-            with tracer.start_span(name="client-span", kind=SpanKind.CLIENT):
-                # With CLIENT spans and automatic HTTP instrumentation is suppressed.
-                requests.get("https://www.foo.bar/first")
-            assert len(tracing_helper.exporter.get_finished_spans()) == 1
-            # The following requests should still be auto-instrumented since it's not in the scope
-            # of a CLIENT span.
-            requests.post("https://www.foo.bar/second")
-            requests.get("https://www.foo.bar/third")
-            assert len(tracing_helper.exporter.get_finished_spans()) == 3
-        assert len(tracing_helper.exporter.get_finished_spans()) == 4
-
-    requests_instrumentor.uninstrument()
-
-
 def test_end_span(tracing_helper):
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     span = tracer.start_span(name="foo-span", kind=SpanKind.INTERNAL)
@@ -336,7 +309,7 @@ def test_end_span(tracing_helper):
 
 def test_get_trace_context():
     """Test that the tracer can get the trace context and it contains the traceparent header."""
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     assert not tracer.get_trace_context()
@@ -355,7 +328,7 @@ def test_with_current_context_util_function(tracing_helper):
 
     settings.tracing_enabled = True
     result = []
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     def get_span_from_thread(output):
@@ -372,13 +345,13 @@ def test_with_current_context_util_function(tracing_helper):
 
 
 def test_nest_span_with_thread_pool_executor(tracing_helper):
-    custom_tracer_provider = TracerProvider(
+    custom_instrumentation = Instrumentation(
         library_name="my-library",
         library_version="1.0.0",
         schema_url="https://test.schema",
         attributes={"namespace": "Sample.Namespace"},
     )
-    tracer = custom_tracer_provider.get_tracer()
+    tracer = custom_instrumentation.get_tracer()
     assert tracer
 
     def nest_spans():
@@ -405,7 +378,7 @@ def test_nest_span_with_thread_pool_executor(tracing_helper):
 
 
 def test_set_span_status(tracing_helper):
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     with tracer.start_span(name="foo-span") as span:
@@ -424,7 +397,7 @@ def test_set_span_status(tracing_helper):
 
 
 def test_add_event(tracing_helper):
-    tracer = default_tracer_provider.get_tracer()
+    tracer = default_instrumentation.get_tracer()
     assert tracer
 
     with tracer.start_span(name="foo-span") as span:

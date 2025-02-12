@@ -81,6 +81,3 @@ class TracingOptions(TypedDict, total=False):
     enabled for all operations. This option can be used to override the global setting for a specific operation."""
     attributes: Attributes
     """Attributes to include in the spans emitted for the operation."""
-    record_exception: bool
-    """Whether to record any exceptions raised within the operation's context as error event on the span.
-    By default, exceptions are recorded as events."""

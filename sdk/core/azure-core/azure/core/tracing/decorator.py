@@ -27,12 +27,16 @@
 
 import functools
 
-from typing import Callable, Any, TypeVar, overload, Optional, Mapping
+from typing import Callable, Any, TypeVar, overload, Optional, Mapping, TYPE_CHECKING
 from typing_extensions import ParamSpec
 from .common import change_context
 from ..settings import settings
-from ._models import TracingOptions, SpanKind
-from ._tracer import default_tracer_provider, TracerProvider
+from ..instrumentation import default_instrumentation
+from ._models import SpanKind as _SpanKind
+
+if TYPE_CHECKING:
+    from ._models import TracingOptions
+    from ..instrumentation import Instrumentation
 
 
 P = ParamSpec("P")
@@ -48,9 +52,9 @@ def distributed_trace(__func: Callable[P, T]) -> Callable[P, T]:
 def distributed_trace(
     *,
     name_of_span: Optional[str] = None,
-    kind: Optional["SpanKind"] = None,
+    kind: Optional[_SpanKind] = None,
     tracing_attributes: Optional[Mapping[str, Any]] = None,
-    tracer_provider: Optional[TracerProvider] = None,
+    instrumentation: Optional["Instrumentation"] = None,
     **kwargs: Any,
 ) -> Callable[[Callable[P, T]], Callable[P, T]]:
     pass
@@ -60,9 +64,9 @@ def distributed_trace(
     __func: Optional[Callable[P, T]] = None,  # pylint: disable=unused-argument
     *,
     name_of_span: Optional[str] = None,
-    kind: Optional["SpanKind"] = None,
+    kind: Optional[_SpanKind] = None,
     tracing_attributes: Optional[Mapping[str, Any]] = None,
-    tracer_provider: Optional[TracerProvider] = None,
+    instrumentation: Optional["Instrumentation"] = None,
     **kwargs: Any,
 ) -> Any:
     """Decorator to apply to function to get traced automatically.
@@ -84,15 +88,15 @@ def distributed_trace(
     :paramtype kind: ~azure.core.tracing.SpanKind
     :keyword tracing_attributes: Attributes to add to the span.
     :paramtype tracing_attributes: Mapping[str, Any] or None
-    :keyword tracer_provider: The tracer provider to use. If not provided, a default tracer provider will be used.
-    :paramtype tracer_provider: ~azure.core.tracing.TracerProvider
+    :keyword instrumentation: The instrumentation instance to use. If not provided, a default one will be used.
+    :paramtype instrumentation: ~azure.core.instrumentation.Instrumentation
     :return: The decorated function
     :rtype: Any
     """
     if tracing_attributes is None:
         tracing_attributes = {}
     if kind is None:
-        kind = SpanKind.INTERNAL
+        kind = _SpanKind.INTERNAL
 
     def decorator(func: Callable[P, T]) -> Callable[P, T]:
         @functools.wraps(func)
@@ -125,14 +129,16 @@ def distributed_trace(
 
             name = name_of_span or func.__qualname__
             if span_impl_type:
+                # Plugin path
                 with change_context(passed_in_parent):
                     with span_impl_type(name=name, kind=kind) as span:
                         for key, value in span_attributes.items():
                             span.add_attribute(key, value)  # type: ignore
                         return func(*args, **kwargs)
             else:
+                # Native path
                 method_tracer = (
-                    tracer_provider.get_tracer() if tracer_provider else default_tracer_provider.get_tracer()
+                    instrumentation.get_tracer() if instrumentation else default_instrumentation.get_tracer()
                 )
                 if not method_tracer:
                     return func(*args, **kwargs)
@@ -140,7 +146,6 @@ def distributed_trace(
                     name=name,
                     kind=kind,
                     attributes=span_attributes,
-                    record_exception=tracing_options.get("record_exception", True),
                 ):
                     return func(*args, **kwargs)
 
