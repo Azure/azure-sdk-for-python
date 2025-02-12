@@ -26,7 +26,6 @@ database service.
 import asyncio # pylint: disable=do-not-import-asyncio
 
 from azure.core.exceptions import AzureError
-from guppy.etc.Cat import dual_relations
 
 from .. import _constants as constants
 from .. import exceptions
