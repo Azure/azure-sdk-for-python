@@ -35,6 +35,7 @@ from test_helpers import NonSeekableStream, ProgressTracker
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
+SMALL_BLOB_SIZE = 1024
 LARGE_BLOB_SIZE = 5 * 1024 + 5
 TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
 #------------------------------------------------------------------------------
@@ -132,7 +133,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
 
         # Set up source file share with random data
-        source_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
         share_service_client, share_client, source_file_client = self._create_file_share_oauth(
             storage_account_name,
             source_data
@@ -173,7 +174,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
 
         # Set up source file share with random data
-        source_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
         share_service_client, share_client, source_file_client = self._create_file_share_oauth(
             storage_account_name,
             source_data
@@ -218,7 +219,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
 
         # Set up source file share with random data
-        source_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
         share_service_client, share_client, source_file_client = self._create_file_share_oauth(
             storage_account_name,
             source_data
@@ -268,7 +269,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
 
         # Set up source file share with random data
-        source_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
         share_service_client, share_client, source_file_client = self._create_file_share_oauth(
             storage_account_name,
             source_data

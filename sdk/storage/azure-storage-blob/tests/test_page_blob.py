@@ -34,6 +34,7 @@ from test_helpers import NonSeekableStream, ProgressTracker
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
+SMALL_BLOB_SIZE = 1024
 LARGE_BLOB_SIZE = 10 * 1024 + 512
 EIGHT_TB = 8 * 1024 * 1024 * 1024 * 1024
 SOURCE_BLOB_SIZE = 8 * 1024
@@ -2405,7 +2406,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         self._setup(blob_service_client)
 
         # Set up source file share with random data
-        source_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
+        source_data = self.get_random_bytes(SMALL_BLOB_SIZE)
         share_service_client, share_client, source_file_client = self._create_file_share_oauth(
             storage_account_name,
             source_data
@@ -2416,14 +2417,14 @@ class TestStoragePageBlob(StorageRecordedTestCase):
             container=self.source_container_name,
             blob=self.get_resource_name(TEST_BLOB_PREFIX + "1")
         )
-        destination_blob_client.create_page_blob(SOURCE_BLOB_SIZE)
+        destination_blob_client.create_page_blob(SMALL_BLOB_SIZE)
 
         try:
             # Act
             destination_blob_client.upload_pages_from_url(
                 source_url=source_file_client.url,
                 offset=0,
-                length=SOURCE_BLOB_SIZE,
+                length=SMALL_BLOB_SIZE,
                 source_offset=0,
                 source_authorization=self._get_bearer_token_string(),
                 source_token_intent='backup'
