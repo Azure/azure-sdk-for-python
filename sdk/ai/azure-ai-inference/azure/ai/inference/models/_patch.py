@@ -370,7 +370,11 @@ class BaseStreamingChatCompletions:
         self._incomplete_json = ""
         self._done = False  # Will be set to True when reading 'data: [DONE]' line
 
+    # See https://html.spec.whatwg.org/multipage/server-sent-events.html#parsing-an-event-stream
     def _deserialize_and_add_to_queue(self, element: bytes) -> bool:
+
+        if self._ENABLE_CLASS_LOGS:
+            logger.debug("[Original element] %s", repr(element))
 
         # Clear the queue of StreamingChatCompletionsUpdate before processing the next block
         self._queue.queue.clear()

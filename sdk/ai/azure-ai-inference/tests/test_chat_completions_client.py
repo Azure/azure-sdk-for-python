@@ -656,4 +656,3 @@ class TestChatCompletionsClient(ModelClientTestBase):
                 assert "model information is not available on this endpoint" in e.message.lower()
 
             assert exception_caught
-
