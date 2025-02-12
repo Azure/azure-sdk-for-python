@@ -26,12 +26,19 @@ _logger = logging.getLogger(__name__)
 _logger.propagate = False
 _logger.setLevel(logging.INFO)
 _DIAGNOSTIC_LOG_PATH = _get_log_path()
+
 _DISTRO_DETECTS_ATTACH = "4100"
+_INFO = "4101"
+_INSTRUMENTATION_SKIPPED = "4101"
+
 _ATTACH_SUCCESS_DISTRO = "4200"
 _ATTACH_SUCCESS_CONFIGURATOR = "4201"
+_INSTRUMENTATION_SUCCEEDED = "4202"
+
 _ATTACH_FAILURE_DISTRO = "4400"
 _ATTACH_FAILURE_CONFIGURATOR = "4401"
 _ATTACH_DETECTS_SDK = "4402"
+_INSTRUMENTATION_FAILED = "4403"
 
 
 class AzureDiagnosticLogging:
@@ -68,6 +75,11 @@ class AzureDiagnosticLogging:
                     f_handler.setFormatter(formatter)
                     _logger.addHandler(f_handler)
                     AzureDiagnosticLogging._initialized = True
+
+    @classmethod
+    def debug(cls, message: str, message_id: str):
+        AzureDiagnosticLogging._initialize()
+        _logger.debug(message, extra={"msgId": message_id})
 
     @classmethod
     def info(cls, message: str, message_id: str):
