@@ -451,6 +451,7 @@ class _DSBEvaluation:
             evaluators: List[_DSBEvaluator],
             target: Callable,
             adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
+            evaluation_name: Optional[str] = None,
             max_conversation_turns: int = 1,
             max_simulation_results: int = 3,
             conversation_turns : List[List[Union[str, Dict[str, Any]]]] = [],
@@ -469,6 +470,8 @@ class _DSBEvaluation:
         :type target: Callable
         :param adversarial_scenario: The adversarial scenario to simulate. If None, the non-adversarial Simulator is used.
         :type adversarial_scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]
+        :param evaluation_name: The display name name of the evaluation.
+        :type evaluation_name: Optional[str]
         :param max_conversation_turns: The maximum number of turns in a conversation.
         :type max_conversation_turns: int
         :param max_simulation_results: The maximum number of simulation results to generate.
@@ -525,7 +528,7 @@ class _DSBEvaluation:
                 evaluators=evaluators_dict,
                 azure_ai_project=self.azure_ai_project,
                 output_path=Path("jailbreak_" + str(output_path)),
-                credential=self.credential,
+                evaluation_name=evaluation_name,
             )
             evaluation_results["jailbreak"] = evaluate_outputs_jailbreak
 
@@ -535,6 +538,7 @@ class _DSBEvaluation:
                 data=data_path,
                 evaluators=evaluators_dict,
                 azure_ai_project=self.azure_ai_project,
+                evaluation_name=evaluation_name,
                 output_path=output_path,
             )
             if _DSBEvaluator.DIRECT_ATTACK in evaluators:
