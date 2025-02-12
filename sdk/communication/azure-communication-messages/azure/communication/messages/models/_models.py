@@ -1219,7 +1219,7 @@ class ReactionNotificationContent(NotificationContent, discriminator="reaction")
     :vartype to: list[str]
     :ivar kind: Message notification type is reaction. Required. Reaction message type.
     :vartype kind: str or ~azure.communication.messages.models.REACTION
-    :ivar emoji: emoji content like uD83D. Required.
+    :ivar emoji: emoji content like \\uD83D\\uDE00. Required.
     :vartype emoji: str
     :ivar message_id: ID of the previous message you want to reply to. Required.
     :vartype message_id: str
@@ -1228,7 +1228,7 @@ class ReactionNotificationContent(NotificationContent, discriminator="reaction")
     kind: Literal[CommunicationMessageKind.REACTION] = rest_discriminator(name="kind")  # type: ignore
     """Message notification type is reaction. Required. Reaction message type."""
     emoji: str = rest_field()
-    """emoji content like :) Required."""
+    """emoji content like \uD83D\uDE00. Required."""
     message_id: str = rest_field(name="messageId")
     """ID of the previous message you want to reply to. Required."""
 
@@ -1601,7 +1601,7 @@ class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator="wh
     All required parameters must be populated in order to send to server.
 
     :ivar kind: MessageTemplateBindings is whatsApp. Required. The WhatsApp template type.
-    :vartype kind: str or ~azure.communication.messages.models.WHATSAPP
+    :vartype kind: str or ~azure.communication.messages.models.WHATS_APP
     :ivar header: The header template bindings.
     :vartype header:
      list[~azure.communication.messages.models.WhatsAppMessageTemplateBindingsComponent]
@@ -1616,7 +1616,7 @@ class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator="wh
      list[~azure.communication.messages.models.WhatsAppMessageTemplateBindingsButton]
     """
 
-    kind: Literal[MessageTemplateBindingsKind.WHATSAPP] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[MessageTemplateBindingsKind.WHATS_APP] = rest_discriminator(name="kind")  # type: ignore
     """MessageTemplateBindings is whatsApp. Required. The WhatsApp template type."""
     header: Optional[List["_models.WhatsAppMessageTemplateBindingsComponent"]] = rest_field()
     """The header template bindings."""
@@ -1645,7 +1645,7 @@ class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator="wh
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=MessageTemplateBindingsKind.WHATSAPP, **kwargs)
+        super().__init__(*args, kind=MessageTemplateBindingsKind.WHATS_APP, **kwargs)
 
 
 class WhatsAppMessageTemplateBindingsButton(_model_base.Model):
@@ -1733,12 +1733,12 @@ class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator="whatsApp")
     :vartype content: any
     :ivar kind: Message template response type is whatsApp. Required. The WhatsApp communication
      messages channel type.
-    :vartype kind: str or ~azure.communication.messages.models.WHATSAPP
+    :vartype kind: str or ~azure.communication.messages.models.WHATS_APP
     """
 
     content: Optional[Any] = rest_field()
     """WhatsApp platform's template content. This is the payload returned from WhatsApp API."""
-    kind: Literal[CommunicationMessagesChannel.WHATSAPP] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[CommunicationMessagesChannel.WHATS_APP] = rest_discriminator(name="kind")  # type: ignore
     """Message template response type is whatsApp. Required. The WhatsApp communication messages
      channel type."""
 
@@ -1759,7 +1759,7 @@ class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator="whatsApp")
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=CommunicationMessagesChannel.WHATSAPP, **kwargs)
+        super().__init__(*args, kind=CommunicationMessagesChannel.WHATS_APP, **kwargs)
 
 
 class WhatsAppUrlActionBindings(ActionBindings, discriminator="whatsAppUrlAction"):

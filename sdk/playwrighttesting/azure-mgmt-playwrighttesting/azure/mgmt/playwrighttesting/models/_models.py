@@ -194,8 +194,8 @@ class AccountProperties(_model_base.Model):
      results, including artifacts like traces and screenshots, in the Playwright portal. This
      enables faster and more efficient troubleshooting. Known values are: "Enabled" and "Disabled".
     :vartype reporting: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
-    :ivar local_auth: When enabled, this feature allows the workspace to use local auth(through
-     access key) for authentication of test runs. Known values are: "Enabled" and "Disabled".
+    :ivar local_auth: When enabled, this feature allows the workspace to use local auth (through
+     service access token) for executing operations. Known values are: "Enabled" and "Disabled".
     :vartype local_auth: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Creating", "Deleting", and "Accepted".
@@ -218,8 +218,8 @@ class AccountProperties(_model_base.Model):
      artifacts like traces and screenshots, in the Playwright portal. This enables faster and more
      efficient troubleshooting. Known values are: \"Enabled\" and \"Disabled\"."""
     local_auth: Optional[Union[str, "_models.EnablementStatus"]] = rest_field(name="localAuth")
-    """When enabled, this feature allows the workspace to use local auth(through access key) for
-     authentication of test runs. Known values are: \"Enabled\" and \"Disabled\"."""
+    """When enabled, this feature allows the workspace to use local auth (through service access
+     token) for executing operations. Known values are: \"Enabled\" and \"Disabled\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -395,8 +395,8 @@ class AccountUpdateProperties(_model_base.Model):
      results, including artifacts like traces and screenshots, in the Playwright portal. This
      enables faster and more efficient troubleshooting. Known values are: "Enabled" and "Disabled".
     :vartype reporting: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
-    :ivar local_auth: When enabled, this feature allows the workspace to use local auth(through
-     access key) for authentication of test runs. Known values are: "Enabled" and "Disabled".
+    :ivar local_auth: When enabled, this feature allows the workspace to use local auth (through
+     service access token) for executing operations. Known values are: "Enabled" and "Disabled".
     :vartype local_auth: str or ~azure.mgmt.playwrighttesting.models.EnablementStatus
     """
 
@@ -414,8 +414,8 @@ class AccountUpdateProperties(_model_base.Model):
      artifacts like traces and screenshots, in the Playwright portal. This enables faster and more
      efficient troubleshooting. Known values are: \"Enabled\" and \"Disabled\"."""
     local_auth: Optional[Union[str, "_models.EnablementStatus"]] = rest_field(name="localAuth")
-    """When enabled, this feature allows the workspace to use local auth(through access key) for
-     authentication of test runs. Known values are: \"Enabled\" and \"Disabled\"."""
+    """When enabled, this feature allows the workspace to use local auth (through service access
+     token) for executing operations. Known values are: \"Enabled\" and \"Disabled\"."""
 
     @overload
     def __init__(

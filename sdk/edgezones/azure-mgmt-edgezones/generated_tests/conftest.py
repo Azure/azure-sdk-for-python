@@ -18,7 +18,7 @@ from devtools_testutils import (
 load_dotenv()
 
 
-# aovid record sensitive identity information in recordings
+# For security, please avoid record sensitive identity information in recordings
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     edgezonesmgmt_subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")

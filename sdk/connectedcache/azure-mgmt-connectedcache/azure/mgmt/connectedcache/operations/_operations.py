@@ -12,6 +12,7 @@ import sys
 from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
+from azure.core import PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -32,8 +33,9 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
-from .._model_base import SdkJSONEncoder, _deserialize
-from .._serialization import Serializer
+from .._configuration import ConnectedCacheMgmtClientConfiguration
+from .._model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from .._serialization import Deserializer, Serializer
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -365,7 +367,7 @@ def build_cache_nodes_operations_list_by_resource_group_request(  # pylint: disa
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConnectedCache/cacheNodes"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConnectedCache/cacheNodes"  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -1193,10 +1195,10 @@ class Operations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ConnectedCacheMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def list(self, **kwargs: Any) -> Iterable["_models.Operation"]:
@@ -1274,7 +1276,7 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1294,10 +1296,10 @@ class EnterpriseCustomerOperationsOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ConnectedCacheMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def get(
@@ -1355,7 +1357,7 @@ class EnterpriseCustomerOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1424,7 +1426,7 @@ class EnterpriseCustomerOperationsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1763,7 +1765,7 @@ class EnterpriseCustomerOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1826,7 +1828,7 @@ class EnterpriseCustomerOperationsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -1916,7 +1918,7 @@ class EnterpriseCustomerOperationsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2001,7 +2003,7 @@ class EnterpriseCustomerOperationsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2021,10 +2023,10 @@ class CacheNodesOperationsOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ConnectedCacheMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def get(
@@ -2082,7 +2084,7 @@ class CacheNodesOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -2151,7 +2153,7 @@ class CacheNodesOperationsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2381,7 +2383,7 @@ class CacheNodesOperationsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -2545,7 +2547,7 @@ class CacheNodesOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -2642,7 +2644,7 @@ class CacheNodesOperationsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2727,7 +2729,7 @@ class CacheNodesOperationsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2747,10 +2749,10 @@ class IspCustomersOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ConnectedCacheMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def get(self, resource_group_name: str, customer_resource_name: str, **kwargs: Any) -> _models.IspCustomerResource:
@@ -2805,7 +2807,7 @@ class IspCustomersOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -2874,7 +2876,7 @@ class IspCustomersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3204,7 +3206,7 @@ class IspCustomersOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -3257,7 +3259,7 @@ class IspCustomersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3413,7 +3415,7 @@ class IspCustomersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3497,7 +3499,7 @@ class IspCustomersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3517,10 +3519,10 @@ class IspCacheNodesOperationsOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ConnectedCacheMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def get(
@@ -3580,7 +3582,7 @@ class IspCacheNodesOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -3651,7 +3653,7 @@ class IspCacheNodesOperationsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4007,7 +4009,7 @@ class IspCacheNodesOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -4063,7 +4065,7 @@ class IspCacheNodesOperationsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4227,7 +4229,7 @@ class IspCacheNodesOperationsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4293,7 +4295,7 @@ class IspCacheNodesOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -4365,7 +4367,7 @@ class IspCacheNodesOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -4391,10 +4393,10 @@ class EnterpriseMccCustomersOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ConnectedCacheMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def get(
@@ -4452,7 +4454,7 @@ class EnterpriseMccCustomersOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -4521,7 +4523,7 @@ class EnterpriseMccCustomersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4860,7 +4862,7 @@ class EnterpriseMccCustomersOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -4913,7 +4915,7 @@ class EnterpriseMccCustomersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5070,7 +5072,7 @@ class EnterpriseMccCustomersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5156,7 +5158,7 @@ class EnterpriseMccCustomersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5176,10 +5178,10 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ConnectedCacheMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def get(
@@ -5240,7 +5242,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -5311,7 +5313,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5676,7 +5678,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -5732,7 +5734,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5897,7 +5899,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5963,7 +5965,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:

@@ -12,6 +12,7 @@ import sys
 from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
+from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -33,7 +34,8 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._model_base import SdkJSONEncoder, _deserialize
+from ..._model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from ..._serialization import Deserializer, Serializer
 from ...operations._operations import (
     build_fabric_capacities_check_name_availability_request,
     build_fabric_capacities_create_or_update_request,
@@ -43,11 +45,13 @@ from ...operations._operations import (
     build_fabric_capacities_list_by_subscription_request,
     build_fabric_capacities_list_skus_for_capacity_request,
     build_fabric_capacities_list_skus_request,
+    build_fabric_capacities_list_usages_request,
     build_fabric_capacities_resume_request,
     build_fabric_capacities_suspend_request,
     build_fabric_capacities_update_request,
     build_operations_list_request,
 )
+from .._configuration import FabricMgmtClientConfiguration
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -70,10 +74,10 @@ class FabricCapacitiesOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: FabricMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def get(self, resource_group_name: str, capacity_name: str, **kwargs: Any) -> _models.FabricCapacity:
@@ -129,7 +133,7 @@ class FabricCapacitiesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -198,7 +202,7 @@ class FabricCapacitiesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -434,7 +438,7 @@ class FabricCapacitiesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -654,7 +658,7 @@ class FabricCapacitiesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -810,7 +814,7 @@ class FabricCapacitiesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -894,7 +898,7 @@ class FabricCapacitiesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -943,7 +947,7 @@ class FabricCapacitiesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1058,7 +1062,7 @@ class FabricCapacitiesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1258,7 +1262,7 @@ class FabricCapacitiesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1358,7 +1362,7 @@ class FabricCapacitiesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1443,7 +1447,94 @@ class FabricCapacitiesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list_usages(self, location: str, **kwargs: Any) -> AsyncIterable["_models.Quota"]:
+        """List the current consumption and limit in this location for the provided subscription.
+
+        :param location: The location name. Required.
+        :type location: str
+        :return: An iterator like instance of Quota
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.fabric.models.Quota]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Quota]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_fabric_capacities_list_usages_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.Quota], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1463,10 +1554,10 @@ class Operations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: FabricMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
@@ -1544,7 +1635,7 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

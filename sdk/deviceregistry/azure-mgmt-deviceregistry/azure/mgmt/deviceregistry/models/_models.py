@@ -2031,13 +2031,13 @@ class Operation(_model_base.Model):
     is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
     """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
      \"false\" for Azure Resource Manager/control-plane operations."""
-    display: Optional["_models.OperationDisplay"] = rest_field(visibility=["read"])
+    display: Optional["_models.OperationDisplay"] = rest_field()
     """Localized display information for this particular operation."""
     origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
      logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
      \"user,system\"."""
-    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType")
+    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType", visibility=["read"])
     """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
      internal only APIs. \"Internal\""""
 
@@ -2045,7 +2045,7 @@ class Operation(_model_base.Model):
     def __init__(
         self,
         *,
-        action_type: Optional[Union[str, "_models.ActionType"]] = None,
+        display: Optional["_models.OperationDisplay"] = None,
     ) -> None: ...
 
     @overload
@@ -2095,6 +2095,8 @@ class OperationDisplay(_model_base.Model):
 class OperationStatusResult(_model_base.Model):
     """The current status of an async operation.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
 
     :ivar id: Fully qualified ID for the async operation.
     :vartype id: str
@@ -2112,6 +2114,9 @@ class OperationStatusResult(_model_base.Model):
     :vartype operations: list[~azure.mgmt.deviceregistry.models.OperationStatusResult]
     :ivar error: If present, details of the operation error.
     :vartype error: ~azure.mgmt.deviceregistry.models.ErrorDetail
+    :ivar resource_id: Fully qualified ID of the resource against which the original async
+     operation was started.
+    :vartype resource_id: str
     """
 
     id: Optional[str] = rest_field()
@@ -2130,6 +2135,8 @@ class OperationStatusResult(_model_base.Model):
     """The operations list."""
     error: Optional["_models.ErrorDetail"] = rest_field()
     """If present, details of the operation error."""
+    resource_id: Optional[str] = rest_field(name="resourceId", visibility=["read"])
+    """Fully qualified ID of the resource against which the original async operation was started."""
 
     @overload
     def __init__(

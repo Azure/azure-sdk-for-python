@@ -29,6 +29,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: v1.2-preview.1/FaceListOperations_AddLargeFaceListFaceFromStream.json
+# x-ms-original-file: v1.2/FaceListOperations_AddLargeFaceListFaceFromStream.json
 if __name__ == "__main__":
     main()

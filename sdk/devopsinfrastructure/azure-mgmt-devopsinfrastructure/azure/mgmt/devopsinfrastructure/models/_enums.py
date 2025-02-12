@@ -19,6 +19,15 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class AvailabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AvailabilityStatus of a name."""
+
+    AVAILABLE = "Available"
+    """The name is available."""
+    UNAVAILABLE = "Unavailable"
+    """The name is unavailable"""
+
+
 class AzureDevOpsPermissionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines who has admin permissions to the Azure DevOps pool."""
 
@@ -41,6 +50,24 @@ class CachingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """For workloads that do a balance of read and write operations."""
 
 
+class CertificateStoreNameOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The certificate store name type."""
+
+    MY = "My"
+    """The X.509 certificate store for personal certificates."""
+    ROOT = "Root"
+    """The X.509 certificate store for trusted root certificate authorities (CAs)."""
+
+
+class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason code explaining why the name is unavailable. Will be null if the name is available."""
+
+    INVALID = "Invalid"
+    """The name is invalid."""
+    ALREADY_EXISTS = "AlreadyExists"
+    """The name already exists."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -52,6 +79,24 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a managed identity."""
     KEY = "Key"
     """The entity was created by a key."""
+
+
+class DevOpsInfrastructureResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of resource."""
+
+    MICROSOFT_DEV_OPS_INFRASTRUCTURE_POOLS = "Microsoft.DevOpsInfrastructure/pools"
+    """DevOpsInfrastructure pool resource."""
+
+
+class EphemeralType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of Ephemeral option the pool will use on underlying VMs when loading this image."""
+
+    AUTOMATIC = "Automatic"
+    """Ephemeral is handled by Managed DevOps Pools service."""
+    CACHE_DISK = "CacheDisk"
+    """CacheDisk ephemeral only, requires that the SKU has a cache that is large enough for the image."""
+    RESOURCE_DISK = "ResourceDisk"
+    """ResourceDisk ephemeral only, requires only that the SKU supports it."""
 
 
 class LogonType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
