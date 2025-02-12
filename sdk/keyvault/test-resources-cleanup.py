@@ -22,7 +22,7 @@ if "KEYVAULT_CLIENT_ID" not in os.environ:
 if "KEYVAULT_CLIENT_SECRET" not in os.environ:
     raise EnvironmentError("Missing a client secret for Key Vault")
 
-hsm_present = "AZURE_MANAGEDHSM_URL" in os.environ
+hsm_present = bool(os.environ.get("AZURE_MANAGEDHSM_URL"))
 
 credential = ClientSecretCredential(
     tenant_id=os.environ["KEYVAULT_TENANT_ID"],

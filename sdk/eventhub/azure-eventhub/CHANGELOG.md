@@ -1,12 +1,16 @@
 # Release History
 
-## 5.13.2b1 (2025-05-12)
+## 5.15.0b1 (2025-02-13)
 
 ### Features Added
 
 - Added support for geo-replication and disaster recovery-enabled Event Hubs. To learn more about geo-replication, refer to this [doc](https://learn.microsoft.com/azure/event-hubs/geo-replication). To enable geo-replication on your Dedicated Event Hubs namespace, refer to [this guide](https://learn.microsoft.com/azure/event-hubs/use-geo-replication).
 
-## 5.13.1 (2025-02-11)
+## 5.14.0 (2025-02-13)
+
+### Features Added
+
+- Add support for Decimal128 in pyAMQP ([#39511]https://github.com/Azure/azure-sdk-for-python/pull/39511)
 
 ### Bugs Fixed
 

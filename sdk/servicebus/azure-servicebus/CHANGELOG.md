@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added in emulator support, ServiceBusAdministrationClient is currently not supported by the emulator. ([#38655](https://github.com/Azure/azure-sdk-for-python/pull/38655))
+- Add support for Decimal128 in pyAMQP ([#39511]https://github.com/Azure/azure-sdk-for-python/pull/39511)
 
 ### Bugs Fixed
 

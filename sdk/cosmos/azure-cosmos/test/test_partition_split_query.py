@@ -41,7 +41,7 @@ def run_queries(container, iterations):
         print("validation succeeded for all query results")
 
 
-@pytest.mark.cosmosSplit
+@pytest.mark.cosmosQuery
 class TestPartitionSplitQuery(unittest.TestCase):
     database: DatabaseProxy = None
     container: ContainerProxy = None
