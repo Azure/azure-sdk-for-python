@@ -1,6 +1,6 @@
 # Release History
 
-## 7.14.0 (2025-02-11)
+## 7.14.0 (2025-02-13)
 
 ### Features Added
 
@@ -15,6 +15,8 @@
 - Fixed a bug where pyAMQP was doubly retrying, causing latency on reconnect. ([#39037](https://github.com/Azure/azure-sdk-for-python/pull/39037))
 - Fix to handle large messages being sent twice due to incoming flow frames triggering a resend. ([#38067](https://github.com/Azure/azure-sdk-for-python/pull/38067))
 - Missing await in sender async on pyAMQP. ([#39182](https://github.com/Azure/azure-sdk-for-python/pull/39182))
+- Improved AutoLockRenewer to renew locks for more registered messages. ([#37340](https://github.com/Azure/azure-sdk-for-python/issues/37340))
+- Fixed a bug where message IDs in management operation requests were not unique.
 
 ### Other Changes
 
