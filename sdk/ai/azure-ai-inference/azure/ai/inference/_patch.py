@@ -142,8 +142,10 @@ def load_client(
         try:
             model_info = client.get_model_info()  # type: ignore
         except ResourceNotFoundError as error:
-            error.message = "`load_client` function does not work on this endpoint (`/info` route not supported). " \
-                            "Please construct one of the clients (e.g. `ChatCompletionsClient`) directly."
+            error.message = (
+                "`load_client` function does not work on this endpoint (`/info` route not supported). "
+                "Please construct one of the clients (e.g. `ChatCompletionsClient`) directly."
+            )
             raise error
 
     _LOGGER.info("model_info=%s", model_info)
@@ -756,7 +758,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
             try:
                 self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
             except ResourceNotFoundError as error:
-                error.message="Model information is not available on this endpoint (`/info` route not supported)."
+                error.message = "Model information is not available on this endpoint (`/info` route not supported)."
                 raise error
 
         return self._model_info
@@ -1057,7 +1059,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             try:
                 self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
             except ResourceNotFoundError as error:
-                error.message="Model information is not available on this endpoint (`/info` route not supported)."
+                error.message = "Model information is not available on this endpoint (`/info` route not supported)."
                 raise error
 
         return self._model_info
@@ -1358,7 +1360,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             try:
                 self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
             except ResourceNotFoundError as error:
-                error.message="Model information is not available on this endpoint (`/info` route not supported)."
+                error.message = "Model information is not available on this endpoint (`/info` route not supported)."
                 raise error
 
         return self._model_info
