@@ -700,6 +700,7 @@ class WebSocketTransport(_AbstractTransport):
 
     def connect(self):
         http_proxy_host, http_proxy_port, http_proxy_auth = None, None, None
+        http_proxy = None
         if self._http_proxy:
             http_proxy_host = self._http_proxy["proxy_hostname"]
             http_proxy_port = self._http_proxy["proxy_port"]
@@ -707,6 +708,11 @@ class WebSocketTransport(_AbstractTransport):
             password = self._http_proxy.get("password", None)
             if username or password:
                 http_proxy_auth = (username, password)
+            http_proxy={
+                    "host": http_proxy_host,
+                    "port": http_proxy_port,
+                    "auth": http_proxy_auth,
+                }
 
 
         from .websockets import WebSocket
@@ -718,11 +724,7 @@ class WebSocketTransport(_AbstractTransport):
                     if self._use_tls
                     else f"ws://{self._custom_endpoint or self._host}"
                 ),
-                http_proxy={
-                    "host": http_proxy_host,
-                    "port": http_proxy_port,
-                    "auth": http_proxy_auth,
-                },
+                http_proxy=http_proxy,
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self.socket_timeout,  # timeout for read/write operations
             )

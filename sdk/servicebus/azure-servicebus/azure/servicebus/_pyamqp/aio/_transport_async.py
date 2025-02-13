@@ -423,12 +423,18 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
         self.sslopts = self._build_ssl_opts(self.sslopts)
         username, password = None, None
         http_proxy_host, http_proxy_port = None, None
+        http_proxy = None
 
         if self._http_proxy:
             http_proxy_host = self._http_proxy["proxy_hostname"]
             http_proxy_port = self._http_proxy["proxy_port"]
             username = self._http_proxy.get("username", None)
             password = self._http_proxy.get("password", None)
+            http_proxy={
+                    "host": http_proxy_host,
+                    "port": http_proxy_port,
+                    "auth": (username, password),
+                }
 
         from urllib.parse import urlsplit
 
@@ -447,11 +453,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
             self.sock = AsyncWebSocket(
                 url=url,
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
-                http_proxy={
-                    "host": http_proxy_host,
-                    "port": http_proxy_port,
-                    "auth": (username, password),
-                },
+                http_proxy=http_proxy,
             )
             await self.sock.connect()
         except WebSocketConnectionError as exc:
