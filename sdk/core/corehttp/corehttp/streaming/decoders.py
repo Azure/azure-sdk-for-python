@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 
-import re
 import codecs
 from typing import Iterator, AsyncIterator, Protocol
 
@@ -62,6 +61,63 @@ class AsyncStreamDecoder(Protocol):
         ...
 
 
+def iter_lines(iter_bytes: Iterator[bytes]) -> Iterator[str]:
+    """Iterate over lines from a byte iterator.
+
+    :param iter_bytes: An iterator of byte chunks.
+    :type iter_bytes: Iterator[bytes]
+    :rtype: Iterator[str]
+    :return: An iterator of lines.
+    """
+    decoder = codecs.getincrementaldecoder("utf-8")()
+
+    decoded = ""
+    for chunk in iter_bytes:
+        decoded += decoder.decode(chunk)
+        if decoded:
+            decoded_lines = decoded.splitlines()
+            if decoded.endswith(("\n", "\r\n")):
+                yield from decoded.splitlines()
+                decoded = ""
+            else:
+                yield from decoded_lines[:-1]
+                decoded = decoded_lines[-1]
+
+    decoded += decoder.decode(b"", final=True)
+    if decoded:
+        yield from decoded.splitlines()
+
+
+async def aiter_lines(iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[str]:
+    """Iterate over lines from a byte iterator.
+
+    :param iter_bytes: An iterator of byte chunks.
+    :type iter_bytes: Iterator[bytes]
+    :rtype: Iterator[str]
+    :return: An iterator of lines.
+    """
+    decoder = codecs.getincrementaldecoder("utf-8")()
+
+    decoded = ""
+    async for chunk in iter_bytes:
+        decoded += decoder.decode(chunk)
+        if decoded:
+            decoded_lines = decoded.splitlines()
+            if decoded.endswith(("\n", "\r\n")):
+                for line in decoded.splitlines():
+                    yield line
+                decoded = ""
+            else:
+                for line in decoded_lines[:-1]:
+                    yield line
+                decoded = decoded_lines[-1]
+
+    decoded += decoder.decode(b"", final=True)
+    if decoded:
+        for line in decoded.splitlines():
+            yield line
+
+
 class JSONLDecoder:
     """Decoder for JSON Lines (JSONL) format. https://jsonlines.org/"""
 
@@ -73,26 +129,8 @@ class JSONLDecoder:
         :rtype: Iterator[JSONLEvent]
         :return: An iterator of JSONLEvent objects.
         """
-        buffer = ""
-        decoder = codecs.getincrementaldecoder("utf-8")()
-        for chunk in iter_bytes:
-            buffer += decoder.decode(chunk)
-            lines = buffer.splitlines(keepends=True)
-            for idx, line in enumerate(lines):
-                if line.endswith(("\r\n", "\n")):
-                    yield JSONLEvent(data=line)
-                else:
-                    buffer = "".join(lines[idx:])
-                    break
-            else:
-                # all lines in chunk were processed
-                buffer = ""
 
-        buffer += decoder.decode(b"", final=True)
-        if buffer:
-            # the last line did not end with a line separator
-            # ok per JSONL spec
-            yield JSONLEvent(data=buffer)
+        yield from (JSONLEvent(data=line) for line in iter_lines(iter_bytes))
 
 
 class AsyncJSONLDecoder:
@@ -106,23 +144,6 @@ class AsyncJSONLDecoder:
         :rtype: AsyncIterator[JSONLEvent]
         :return: An asynchronous iterator of JSONLEvent objects.
         """
-        buffer = ""
-        decoder = codecs.getincrementaldecoder("utf-8")()
-        async for chunk in iter_bytes:
-            buffer += decoder.decode(chunk)
-            lines = buffer.splitlines(keepends=True)
-            for idx, line in enumerate(lines):
-                if line.endswith(("\r\n", "\n")):
-                    yield JSONLEvent(data=line)
-                else:
-                    buffer = "".join(lines[idx:])
-                    break
-            else:
-                # all lines in chunk were processed
-                buffer = ""
 
-        buffer += decoder.decode(b"", final=True)
-        if buffer:
-            # the last line did not end with a line separator
-            # ok per JSONL spec
-            yield JSONLEvent(data=buffer)
+        async for line in aiter_lines(iter_bytes):
+            yield JSONLEvent(data=line)
