@@ -4,7 +4,7 @@ from typing import List
 import pytest
 import pytest_asyncio
 import test_config
-from azure.cosmos import DatabaseAccount, _location_cache, PartitionKey
+from azure.cosmos import DatabaseAccount, _location_cache
 
 from azure.cosmos._location_cache import DualEndpoint
 from azure.cosmos.aio import CosmosClient, _global_endpoint_manager_async, _cosmos_client_connection_async
@@ -31,13 +31,6 @@ async def setup():
 
     await client.close()
 
-
-
-
-def preferred_locations():
-
-    return [([]), ([REGION_1, REGION_2])]
-
 def health_check():
     # preferred_location, use_write_global_endpoint, use_read_global_endpoint
     return [
@@ -51,7 +44,6 @@ def health_check():
         ([REGION_1, REGION_2], False, False)
     ]
 
-
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
@@ -61,31 +53,6 @@ class TestHealthCheckAsync:
     connectionPolicy = test_config.TestConfig.connectionPolicy
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
-
-    @pytest.mark.parametrize("preferred_location", preferred_locations())
-    async def test_effective_preferred_regions_async(self, setup, preferred_location):
-
-        self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
-        self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
-        regions = [REGION_1, REGION_2]
-        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccount(regions)
-        _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.MockGetDatabaseAccount(regions)
-        try:
-            client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
-            # this will setup the location cache
-            await client.client_connection._global_endpoint_manager.force_refresh_on_startup(None)
-        finally:
-            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
-            _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
-        expected_dual_endpoints = []
-        locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, regions[0])
-        expected_dual_endpoints.append(DualEndpoint(locational_endpoint, locational_endpoint))
-        locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, regions[1])
-        expected_dual_endpoints.append(DualEndpoint(locational_endpoint, locational_endpoint))
-        read_dual_endpoints = client.client_connection._global_endpoint_manager.location_cache.read_dual_endpoints
-        assert read_dual_endpoints == expected_dual_endpoints
-        await client.close()
-
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
     async def test_health_check_success_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):

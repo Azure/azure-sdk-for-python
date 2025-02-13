@@ -126,7 +126,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         refresh_time_interval_in_ms,
     ):
         self.preferred_locations = preferred_locations
-        self.effective_preferred_locations = []
         self.default_dual_endpoint = DualEndpoint(default_endpoint, default_endpoint)
         self.enable_endpoint_discovery = enable_endpoint_discovery
         self.use_multiple_write_locations = use_multiple_write_locations
@@ -231,7 +230,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         return regional_endpoint.get_primary()
 
     def should_refresh_endpoints(self):  # pylint: disable=too-many-return-statements
-        most_preferred_location = self.effective_preferred_locations[0] if self.effective_preferred_locations else None
+        most_preferred_location = self.preferred_locations[0] if self.preferred_locations else None
 
         # we should schedule refresh in background if we are unable to target the user's most preferredLocation.
         if self.enable_endpoint_discovery:
@@ -373,12 +372,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     self.use_multiple_write_locations,
                 )
 
-        # if preferred locations is empty, we should use the account read locations
-        if len(self.preferred_locations) == 0:
-            self.effective_preferred_locations = self.account_read_locations
-        else:
-            self.effective_preferred_locations = self.preferred_locations
-
         self.write_dual_endpoints = self.get_preferred_dual_endpoints(
             self.account_write_dual_endpoints_by_location,
             self.account_write_locations,
@@ -405,12 +398,12 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 or expected_available_operation == EndpointOperationType.ReadType
             ):
                 unavailable_endpoints = []
-                if self.effective_preferred_locations:
+                if self.preferred_locations:
                     # When client can not use multiple write locations, preferred locations
                     # list should only be used determining read endpoints order. If client
                     # can use multiple write locations, preferred locations list should be
                     # used for determining both read and write endpoints order.
-                    for location in self.effective_preferred_locations:
+                    for location in self.preferred_locations:
                         regional_endpoint = endpoints_by_location[location] if location in endpoints_by_location \
                             else None
                         if regional_endpoint:

@@ -28,9 +28,6 @@ def setup():
         COLLECTION: created_collection
     }
 
-def preferred_locations():
-    return [([]), ([REGION_1, REGION_2])]
-
 def health_check():
     # preferred_location, use_write_global_endpoint, use_read_global_endpoint
     return [
@@ -53,30 +50,6 @@ class TestHealthCheck:
     connectionPolicy = test_config.TestConfig.connectionPolicy
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
-
-    @pytest.mark.parametrize("preferred_location", preferred_locations())
-    def test_effective_preferred_regions(self, setup, preferred_location):
-
-        self.original_getDatabaseAccountStub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
-        self.original_getDatabaseAccountCheck = _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck
-        regions = [REGION_1, REGION_2]
-        _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccount(regions)
-        _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = self.MockGetDatabaseAccount(regions)
-        try:
-            client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
-            # this will setup the location cache
-            client.client_connection._global_endpoint_manager.force_refresh_on_startup(None)
-        finally:
-            _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
-            _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
-        expected_dual_endpoints = []
-        locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, regions[0])
-        expected_dual_endpoints.append(DualEndpoint(locational_endpoint, locational_endpoint))
-        locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, regions[1])
-        expected_dual_endpoints.append(DualEndpoint(locational_endpoint, locational_endpoint))
-        read_dual_endpoints = client.client_connection._global_endpoint_manager.location_cache.read_dual_endpoints
-        assert read_dual_endpoints == expected_dual_endpoints
-
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
     def test_health_check_success(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
