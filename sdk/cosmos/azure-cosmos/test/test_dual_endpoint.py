@@ -17,7 +17,7 @@ class TestDualEndpoints(unittest.TestCase):
     REGION1 = "West US"
     REGION2 = "East US"
     REGION3 = "West US 2"
-    REGIONAL_ENDPOINT = DualEndpoint(host, "something_different")
+    DUAL_ENDPOINT = DualEndpoint(host, "something_different")
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
 
@@ -50,8 +50,7 @@ class TestDualEndpoints(unittest.TestCase):
             self.assertEqual(original_read_endpoint,
                              mocked_client.client_connection._global_endpoint_manager
                              .location_cache.get_read_dual_endpoint())
-            # return it
-            self.assertEqual(self.REGIONAL_ENDPOINT.get_primary(),
+            self.assertEqual(self.DUAL_ENDPOINT.get_primary(),
                              mocked_client.client_connection._global_endpoint_manager
                              .location_cache.get_write_dual_endpoint())
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = original_get_database_account_stub
@@ -59,7 +58,7 @@ class TestDualEndpoints(unittest.TestCase):
     def MockGetDatabaseAccountStub(self, endpoint):
         read_locations = []
         read_locations.append({'databaseAccountEndpoint': endpoint, 'name': "West US"})
-        read_locations.append({'databaseAccountEndpoint': "some different endpoint", 'name': "West US"})
+        read_locations.append({'databaseAccountEndpoint': "some different endpoint", 'name': "East US"})
         write_regions = ["West US"]
         write_locations = []
         for loc in write_regions:
