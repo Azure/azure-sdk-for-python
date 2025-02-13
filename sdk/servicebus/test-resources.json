@@ -57,9 +57,11 @@
     "serviceBusQueueName": "[concat('sb-', parameters('baseName'), '-queue')]",
     "serviceBusQueueNamePartitioned": "[concat('sb-', parameters('baseName'), '-queue-partitioned')]",
     "queueAuthorizationRuleName": "[concat('sb-', parameters('baseName'), '-queue-auth')]",
+    "queueAuthorizationRuleNamePartitioned": "[concat('sb-', parameters('baseName'), '-queue-auth-partitioned')]",
     "serviceBusSessionQueueName": "[concat('sb-', parameters('baseName'), '-session-queue')]",
     "serviceBusSessionQueueNamePartitioned": "[concat('sb-', parameters('baseName'), '-session-queue-partitioned')]",
     "sessionQueueAuthorizationRuleName": "[concat('sb-', parameters('baseName'), '-session-queue-auth')]",
+    "sessionQueueAuthorizationRuleNamePartitioned": "[concat('sb-', parameters('baseName'), '-session-queue-auth-partitioned')]",
     "serviceBusSessionId": "[concat('sb-', parameters('baseName'), '-session-queue-id')]",
     "defaultSASKeyName": "RootManageSharedAccessKey",
     "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespace'), variables('defaultSASKeyName'))]",
@@ -120,10 +122,10 @@
           "resources": [
             {
               "apiVersion": "[variables('sbVersion')]",
-              "name": "[variables('queueAuthorizationRuleName')]",
+              "name": "[variables('queueAuthorizationRuleNamePartitioned')]",
               "type": "authorizationRules",
               "dependsOn": [
-                  "[variables('serviceBusQueueName')]"
+                  "[variables('serviceBusQueueNamePartitioned')]"
               ],
               "properties": {
                   "Rights": ["Manage", "Send", "Listen"]
@@ -154,17 +156,17 @@
           "resources": [
             {
               "apiVersion": "[variables('sbVersion')]",
-              "name": "[variables('sessionQueueAuthorizationRuleName')]",
+              "name": "[variables('sessionQueueAuthorizationRuleNamePartitioned')]",
               "type": "authorizationRules",
               "dependsOn": [
-                  "[variables('serviceBusSessionQueueName')]"
+                  "[variables('serviceBusSessionQueueNamePartitioned')]"
               ],
               "properties": {
                   "Rights": ["Manage", "Send", "Listen"]
               }
             }
           ]
-        }
+        },
         {
           "type": "Queues",
           "apiVersion": "[variables('sbVersion')]",
@@ -298,6 +300,14 @@
       "type": "string",
       "value": "[listkeys(variables('queueAuthorizationRuleName'), variables('sbVersion')).primaryKey]"
     },
+    "SERVICEBUS_PARTITION_SAS_POLICY":{
+      "type": "string",
+      "value": "[variables('queueAuthorizationRuleNamePartitioned')]"
+    },
+    "SERVICEBUS_PARTITION_SAS_KEY":{
+      "type": "string",
+      "value": "[listkeys(variables('queueAuthorizationRuleNamePartitioned'), variables('sbVersion')).primaryKey]"
+    },
     "SERVICEBUS_SESSION_QUEUE_NAME": {
       "type": "string",
       "value": "[variables('serviceBusSessionQueueName')]"
@@ -317,6 +327,14 @@
     "SERVICEBUS_SESSION_QUEUE_SAS_KEY":{
       "type": "string",
       "value": "[listkeys(variables('sessionQueueAuthorizationRuleName'), variables('sbVersion')).primaryKey]"
+    },
+    "SERVICEBUS_SESSION_PARTITION_QUEUE_SAS_POLICY":{
+      "type": "string",
+      "value": "[variables('sessionQueueAuthorizationRuleNamePartitioned')]"
+    },
+    "SERVICEBUS_SESSION_PARTITION_QUEUE_SAS_KEY":{
+      "type": "string",
+      "value": "[listkeys(variables('sessionQueueAuthorizationRuleNamePartitioned'), variables('sbVersion')).primaryKey]"
     },
     "RESOURCE_REGION": {
       "type": "string",
