@@ -440,8 +440,8 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
             url = f"{parsed_url.scheme}://{parsed_url.netloc}:{self.port}{parsed_url.path}"
 
         try:
-            from .._websockets.websockets import AsyncWebSocket
-            from .._websockets._exceptions import WebSocketConnectionError
+            from ..websockets import AsyncWebSocket
+            from .._exceptions import WebSocketConnectionError
 
 
             self.sock = AsyncWebSocket(
