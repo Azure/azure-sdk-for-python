@@ -13,7 +13,7 @@ from typing_extensions import Self
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from azure.storage.blob import BlobServiceClient  # pylint: disable=no-name-in-module
+from azure.storage.blob._blob_service_client import BlobServiceClient  # pylint: disable=no-name-in-module
 from azure.storage.blob._shared.base_client import parse_connection_str
 from ._models import ChangeFeedPaged
 
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
 
 
-class ChangeFeedClient(object):
+class ChangeFeedClient:
     """A client to interact with a specific account change feed.
 
     :param str account_url:
@@ -100,7 +100,7 @@ class ChangeFeedClient(object):
         return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace
-    def list_changes(self, **kwargs: Any) -> ItemPaged[ChangeFeedPaged]:
+    def list_changes(self, **kwargs: Any) -> ItemPaged[Dict[str, Any]]:
         """Returns a generator to list the change feed events.
         The generator will lazily follow the continuation tokens returned by
         the service.
@@ -111,8 +111,8 @@ class ChangeFeedClient(object):
             Filters the results to return only events which happened before this time.
         :keyword int results_per_page:
             The page size when list events by page using by_page() method on the generator.
-        :returns: An iterable (auto-paging) response of ChangeFeedPaged.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.changefeed.ChangeFeedPaged]
+        :returns: An iterable (auto-paging) response of events whose type is dictionary.
+        :rtype: ~azure.core.paging.ItemPaged[dict]
 
         .. admonition:: Example:
 
