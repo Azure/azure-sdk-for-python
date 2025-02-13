@@ -29,7 +29,7 @@ from azure.core.exceptions import AzureError
 
 from . import _constants as constants
 from . import exceptions
-from ._location_cache import LocationCache
+from ._location_cache import LocationCache, EndpointOperationType
 
 
 # pylint: disable=protected-access
@@ -59,6 +59,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.refresh_lock = threading.RLock()
         self.last_refresh_time = 0
         self._database_account_cache = None
+        self.consecutive_failures = {EndpointOperationType.ReadType: 0, EndpointOperationType.WriteType: 0}
 
     def get_refresh_time_interval_in_ms_stub(self):
         return constants._Constants.DefaultUnavailableLocationExpirationTime

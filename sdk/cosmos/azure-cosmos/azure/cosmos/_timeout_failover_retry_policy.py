@@ -4,10 +4,12 @@
 """Internal class for timeout failover retry policy implementation in the Azure
 Cosmos database service.
 """
+from azure.cosmos._location_cache import EndpointOperationType
 from azure.cosmos.documents import _OperationType
 
 
 class _TimeoutFailoverRetryPolicy(object):
+    FAILOVER_THRESHOLD = 5
 
     def __init__(self, connection_policy, global_endpoint_manager, *args):
         self.retry_after_in_milliseconds = 500
@@ -27,6 +29,14 @@ class _TimeoutFailoverRetryPolicy(object):
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """
+        if _OperationType.IsReadOnlyOperation(self.request.operation_type):
+            self.global_endpoint_manager.consecutive_failures[EndpointOperationType.ReadType] += 1
+            if self.global_endpoint_manager.consecutive_failures[EndpointOperationType.ReadType] >= self.FAILOVER_THRESHOLD:
+                self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.request.location_endpoint_to_route, True)
+        else:
+            self.global_endpoint_manager.consecutive_failures[EndpointOperationType.WriteType] += 1
+            if self.global_endpoint_manager.consecutive_failures[EndpointOperationType.WriteType] >= self.FAILOVER_THRESHOLD:
+                self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.request.location_endpoint_to_route, True)
         # we don't retry on write operations for timeouts or any internal server errors
         if self.request and (not _OperationType.IsReadOnlyOperation(self.request.operation_type)):
             return False
