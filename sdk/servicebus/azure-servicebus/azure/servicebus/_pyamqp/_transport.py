@@ -709,8 +709,8 @@ class WebSocketTransport(_AbstractTransport):
                 http_proxy_auth = (username, password)
 
 
-        from ._websockets.websockets import WebSocket
-        from ._websockets._exceptions import WebSocketConnectionError
+        from .websockets import WebSocket
+        from ._exceptions import WebSocketConnectionError
         try:
             self.sock = WebSocket(
                 url=(
@@ -752,7 +752,7 @@ class WebSocketTransport(_AbstractTransport):
         :return: The data read.
         :rtype: bytearray
         """
-        from ._websockets._exceptions import WebSocketConnectionError, WebSocketConnectionClosed
+        from ._exceptions import WebSocketConnectionError, WebSocketConnectionClosed
 
         try:
             length = 0
@@ -803,7 +803,7 @@ class WebSocketTransport(_AbstractTransport):
 
         :param str s: The string to write.
         """
-        from ._websockets._exceptions import WebSocketConnectionError, WebSocketConnectionClosed
+        from ._exceptions import WebSocketConnectionError, WebSocketConnectionClosed
 
         try:
             self.sock.send_bytes(s)
