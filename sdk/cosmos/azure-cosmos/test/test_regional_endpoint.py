@@ -30,7 +30,6 @@ class TestRegionalEndpoints(unittest.TestCase):
         cls.created_container = cls.created_database.get_container_client(cls.TEST_CONTAINER_ID)
 
     def test_no_swaps_on_successful_request(self):
-        # Mock the GetDatabaseAccountStub to return the regional endpoints
 
         original_read_endpoint = (self.client.client_connection._global_endpoint_manager
                                   .location_cache.get_read_regional_endpoint())
