@@ -752,7 +752,7 @@ class WebSocketTransport(_AbstractTransport):
         :return: The data read.
         :rtype: bytearray
         """
-        from _exceptions import WebSocketConnectionError, WebSocketConnectionClosed
+        from ._exceptions import WebSocketConnectionError, WebSocketConnectionClosed
 
         try:
             length = 0
