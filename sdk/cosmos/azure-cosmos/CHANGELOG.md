@@ -5,6 +5,7 @@
 #### Features Added
 
 #### Breaking Changes
+* Adds cross region retries when no preferred locations are set. See [PR 39647](https://github.com/Azure/azure-sdk-for-python/pull/39647)
 
 #### Bugs Fixed
 
