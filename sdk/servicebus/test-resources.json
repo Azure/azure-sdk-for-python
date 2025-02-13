@@ -164,7 +164,9 @@
           ]
         }
       ],
-      "properties": {}
+      "properties": {
+        "disableLocalAuth": true
+      }
     },
     {
       "type": "Microsoft.Authorization/roleAssignments",
