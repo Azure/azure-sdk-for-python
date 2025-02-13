@@ -286,6 +286,10 @@
       "type": "string",
       "value": "[variables('serviceBusQueueName')]"
     },
+    "SERVICEBUS_PARTITION_QUEUE_NAME": {
+      "type": "string",
+      "value": "[variables('serviceBusQueueNamePartitioned')]"
+    },
     "SERVICEBUS_SAS_POLICY":{
       "type": "string",
       "value": "[variables('queueAuthorizationRuleName')]"
@@ -297,6 +301,10 @@
     "SERVICEBUS_SESSION_QUEUE_NAME": {
       "type": "string",
       "value": "[variables('serviceBusSessionQueueName')]"
+    },
+    "SERVICEBUS_SESSION_PARTITION_QUEUE_NAME": {
+      "type": "string",
+      "value": "[variables('serviceBusSessionQueueNamePartitioned')]"
     },
     "SERVICEBUS_SESSION_ID":{
       "type": "string",
