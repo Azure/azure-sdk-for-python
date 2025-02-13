@@ -91,7 +91,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     client_timeout = kwargs.get('timeout')
     start_time = time.time()
     if request_params.resource_type != http_constants.ResourceType.DatabaseAccount:
-        global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
+        global_endpoint_manager.endpoint_health_check(None, **kwargs)
     else:
         # always override database account call timeouts
         read_timeout = connection_policy.DBAReadTimeout
