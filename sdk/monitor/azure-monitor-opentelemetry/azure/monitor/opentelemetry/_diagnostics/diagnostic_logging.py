@@ -24,7 +24,7 @@ _SUBSCRIPTION_ID_ENV_VAR = _env_var_or_default("WEBSITE_OWNER_NAME")
 _SUBSCRIPTION_ID = _SUBSCRIPTION_ID_ENV_VAR.split("+")[0] if _SUBSCRIPTION_ID_ENV_VAR else None
 _logger = logging.getLogger(__name__)
 _logger.propagate = False
-_logger.setLevel(logging.INFO)
+_logger.setLevel(logging.DEBUG)
 _DIAGNOSTIC_LOG_PATH = _get_log_path()
 
 _DISTRO_DETECTS_ATTACH = "4100"
