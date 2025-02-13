@@ -30,7 +30,7 @@ def parse_url(url: str) -> WebSocketURL:
         path = '/'
     else:
         path = parsed_url.path
-    
+
     return WebSocketURL(
         scheme=parsed_url.scheme,
         hostname=parsed_url.hostname,

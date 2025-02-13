@@ -35,7 +35,7 @@ class WebSocket:
         http_proxy: Optional[Dict[str, Union[int, str]]] = None,
         subprotocols: Optional[List[bytes]] = None,
         timeout: Optional[float] = None,
-        ssl: Optional["SSLContext"] = None,
+        ssl: Optional["SSLContext"] = None, # pylint: disable=unused-argument
     ) -> None:
         self._url: str = url
         self._is_open: bool = False
@@ -82,6 +82,8 @@ class WebSocket:
     def receive_str(self) -> str:
         """
         Receives the data from the server as a string.
+        :returns: The received data as a string.
+        :rtype: str
         """
         if not self._is_open:
             raise WebSocketConnectionError("Connection is closed")
@@ -89,17 +91,14 @@ class WebSocket:
         frame = self._protocol.receive_frame()
 
         if frame.opcode in (Opcode.TEXT, Opcode.BINARY):
-            if isinstance(frame.data, bytes):
-                return frame.data.decode("utf-8")
-            return frame.data
-        elif frame.opcode == Opcode.BINARY:
-            return frame.data
-
+            return frame.data.decode("utf-8")
         return ""
 
     def receive_frame(self) -> Frame:
         """
         Receives the websocket frame from the server
+        :returns Frame: The frame received from the server.
+        :rtype: Frame
         """
         if not self._is_open:
             raise WebSocketConnectionError("Connection is closed")
@@ -109,6 +108,8 @@ class WebSocket:
     def receive_bytes(self) -> bytes:
         """
         Receives the data from the server as bytes.
+        :returns: The data received from the server as bytes.
+        :rtype: bytes
         """
         if not self._is_open:
             raise WebSocketConnectionError("Connection is closed")
@@ -143,6 +144,7 @@ class WebSocket:
     def ping(self, data: bytes = b"") -> None:
         """
         Sends a ping frame to the server.
+        :param bytes data: The data to send with the ping frame.
         """
         if not self._is_open:
             raise WebSocketConnectionError("Connection is closed")
@@ -190,12 +192,17 @@ class AsyncWebSocket:
         headers: Optional[Dict[bytes, bytes]] = None,
         http_proxy: Optional[Dict[str, Union[int, str]]] = None,
         subprotocols: Optional[List[str]] = None,
-        timeout: Optional[float] = None,
-        ssl: Optional["SSLContext"] = None,
+        timeout: Optional[float] = None, # pylint: disable=unused-argument
+        ssl: Optional["SSLContext"] = None, # pylint: disable=unused-argument
     ) -> None:
         self._url: str = url
         self._is_open: bool = False
-        self._protocol: AsyncWebSocketProtocol = AsyncWebSocketProtocol(url, headers=headers, subprotocols=subprotocols)
+        self._protocol: AsyncWebSocketProtocol = AsyncWebSocketProtocol(
+            url,
+            headers=headers,
+            subprotocols=subprotocols,
+            http_proxy=http_proxy,
+        )
         self._headers = headers
         self._http_proxy = http_proxy
         self._subprotocols = subprotocols
@@ -236,6 +243,8 @@ class AsyncWebSocket:
     async def receive_str(self) -> str:
         """
         Receives the data from the server as a string.
+        :return: The received data as a string.
+        :rtype: str
         """
         if not self._is_open:
             raise WebSocketConnectionError("Connection is closed")
@@ -243,17 +252,14 @@ class AsyncWebSocket:
         frame = await self._protocol.receive_frame()
 
         if frame.opcode in (Opcode.TEXT, Opcode.BINARY):
-            if isinstance(frame.data, bytes):
-                return frame.data.decode("utf-8")
-            return frame.data
-        elif frame.opcode == Opcode.BINARY:
-            return frame.data
-
+            return frame.data.decode("utf-8")
         return ""
 
     async def receive_frame(self) -> Frame:
         """
         Receives the websocket frame from the server
+        :return Frame: The frame received from the server.
+        :rtype: Frame
         """
         if not self._is_open:
             raise WebSocketConnectionError("Connection is closed")
@@ -263,6 +269,8 @@ class AsyncWebSocket:
     async def receive_bytes(self) -> bytes:
         """
         Receives the data from the server as bytes.
+        :returns: The data received from the server.
+        :rtype: bytes
         """
         if not self._is_open:
             raise WebSocketConnectionError("Connection is closed")
@@ -273,7 +281,7 @@ class AsyncWebSocket:
             if isinstance(frame.data, str):
                 return frame.data.encode("utf-8")
             return frame.data
-        elif frame.opcode == Opcode.BINARY:
+        if frame.opcode == Opcode.BINARY:
             return frame.data
 
         return b""

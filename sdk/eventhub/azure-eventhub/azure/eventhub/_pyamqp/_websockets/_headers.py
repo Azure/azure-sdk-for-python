@@ -11,7 +11,15 @@ from typing import Dict, List, Tuple, Optional
 from ._constants import WS_KEY
 
 
-def build_request_headers(resource: str, url: str, host: str, port: int, is_secure: bool, key: bytes, *, subprotocols: Optional[List[str]] = None) -> bytes:
+def build_request_headers(
+        resource: str,
+        host: str,
+        port: int,
+        is_secure: bool,
+        key: bytes,
+        *,
+        subprotocols: Optional[List[str]] = None
+    ) -> bytes:
     request: List[bytes] = [
         f'GET {resource} HTTP/1.1'.encode(),
     ]
@@ -40,10 +48,10 @@ def build_request_headers(resource: str, url: str, host: str, port: int, is_secu
 def build_host(host: str, port: int) -> str:
     if ':' in host:
         return f'[{host}]:{port}'
-    
+
     if port in (80, 443):
         return host
-    
+
     return f'{host}:{port}'
 
 def build_key() -> bytes:
@@ -66,15 +74,15 @@ def parse_response_headers(response_headers: bytes) -> Tuple[bytes, bytes,  Dict
             break
         key, value = header.split(b': ')
         headers[key.lower()] = value.lower()
-    
+
     return code, status, headers
 
 def parse_proxy_response(response_headers: bytes) -> Tuple[bytes, bytes, bytes]:
     if not response_headers:
-       return b'', b'', b''
-    
+        return b'', b'', b''
+
     response_line = response_headers.split(b'\r\n')[0]
-    
+
     try:
         version, status, reason = response_line.split(b' ', 2)
     except ValueError:
@@ -83,8 +91,5 @@ def parse_proxy_response(response_headers: bytes) -> Tuple[bytes, bytes, bytes]:
             reason = b''
         except ValueError:
             version = b''
-        
-    return version, status, reason
 
-    
-   
+    return version, status, reason

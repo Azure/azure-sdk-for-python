@@ -159,7 +159,10 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         if transport:
             self._transport = transport
         elif "sasl_credential" in kwargs:
-            sasl_transport: Union[Type[SASLTransport], Type[SASLWithWebSocket], Type[SASLWithLegacyWebSocket]] = SASLTransport
+            sasl_transport: Union[
+                Type[SASLTransport],
+                Type[SASLWithWebSocket],
+                Type[SASLWithLegacyWebSocket]] = SASLTransport
             if self._transport_type.name == "AmqpOverWebsocket" or kwargs.get("http_proxy"):
                 use_legacy_ws = kwargs.get("legacy_ws", False)
                 sasl_transport = SASLWithWebSocket if not use_legacy_ws else SASLWithLegacyWebSocket

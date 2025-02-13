@@ -25,68 +25,74 @@ from ._exceptions import WebSocketConnectionError, WebSocketPayloadError, WebSoc
 
 class WebSocketMixin:
     def validate_handshake(self, code: bytes, status: bytes, headers: dict) -> None:
+        self._key: bytes
         if code != b'101':
-                raise ConnectionError(f'Handshake failed: {status.decode()}')
+            raise ConnectionError(f'Handshake failed: {status.decode()}')
 
         if b'upgrade' in headers and headers[b'upgrade'] != b'websocket':
             raise ConnectionError('Server did not upgrade to websocket')
-        
+
         if b'connection' in headers and headers[b'connection'] != b'upgrade':
             raise ConnectionError('Connection was not upgraded to websocket')
-        
+
         if b'sec-websocket-accept' in headers:
-                if not match_key(self._key, headers[b'sec-websocket-accept']):
-                    raise ConnectionError('Server did not accept the key')
+            if not match_key(self._key, headers[b'sec-websocket-accept']):
+                raise ConnectionError('Server did not accept the key')
 
 
 class WebSocketProtocol(WebSocketMixin):
-    def __init__(self, url: str, *, headers = None, http_proxy = {}, subprotocols = None, timeout=None) -> None:
+    def __init__(self, url: str, *, headers = None, http_proxy = None, subprotocols = None, timeout=None) -> None:
         self._socket: socket.socket
         self._url: str = url
         self._key = build_key()
         self._conn_status = ConnectionStatus.CLOSED
-        self._headers = headers
+        self._headers = headers if headers else {}
         self._http_proxy = http_proxy
         self._subprotocols = subprotocols
         self._ws_url: WebSocketURL = parse_url(self._url)
         self._timeout = timeout
 
-    
+
     def open_connection(self) -> None:
-        
+
         # create a socket connection
         try:
             # TODO: handle proxy support
             if self._http_proxy:
-                self._socket = socket.create_connection((self._http_proxy['host'], self._http_proxy['port']), timeout=self._timeout)
+                self._socket = socket.create_connection(
+                    (self._http_proxy['host'], self._http_proxy['port']),
+                    timeout=self._timeout
+                )
                 self._socket.sendall(f'CONNECT {self._ws_url.hostname}:{self._ws_url.port} HTTP/1.1\r\n\r\n'.encode())
                 proxy_response = parse_proxy_response(self._socket.recv(1024))
                 if not proxy_response[0].startswith(b'HTTP/'):
                     self._socket.close()
                     raise ConnectionError('Received invalid response from the proxy')
-                
+
                 if int(proxy_response[1]) < 100 or int(proxy_response[1]) > 999:
                     self._socket.close()
                     raise ConnectionError('Received invalid status code from the proxy')
-                
+
                 if proxy_response[1] != b'200':
                     self._socket.close()
                     raise ConnectionError('Could not connect to the proxy')
-                
+
                 if proxy_response[2] != b'Connection established':
                     raise ConnectionError('Could not connect to the proxy')
             else:
-                self._socket = socket.create_connection((self._ws_url.hostname, self._ws_url.port), timeout=self._timeout)
+                self._socket = socket.create_connection(
+                    (self._ws_url.hostname, self._ws_url.port),
+                    timeout=self._timeout
+                )
             if self._ws_url.is_secure:
                 self._socket = self._wrap_socket_sni(self._socket, server_hostname = self._ws_url.hostname)
             # TODO: add logging
             self._socket.setblocking(True)
             self._socket.settimeout(self._timeout)
-        
+
             # build the headers
             self._headers = build_request_headers(
                 self._ws_url.path if not self._ws_url.query else f'{self._ws_url.path}?{self._ws_url.query}',
-                self._url, 
                 self._ws_url.hostname,
                 self._ws_url.port,
                 self._ws_url.is_secure,
@@ -100,11 +106,11 @@ class WebSocketProtocol(WebSocketMixin):
             self._receive_handshake()
         except socket.error as e:
             raise ConnectionError('Could not send the handshake') from e
-        
+
     def _receive_handshake(self) -> None:
         if not self._socket:
             raise ConnectionError('Socket is not connected')
-        
+
         response_headers = []
         while True:
             # a response header ends with a double CRLF
@@ -115,7 +121,7 @@ class WebSocketProtocol(WebSocketMixin):
                 line.append(data)
                 data = self._socket.recv(1)
             line.append(data)
-            
+
             header_line = b''.join(line)
             if header_line == b'\r\n':
                 break
@@ -124,9 +130,9 @@ class WebSocketProtocol(WebSocketMixin):
         code, status, headers = parse_response_headers(b"".join(response_headers))
 
         self.validate_handshake(code, status, headers)
-        
+
         self._conn_status = ConnectionStatus.OPEN
-    
+
     def _wrap_socket_sni(
         self,
         sock,
@@ -195,14 +201,14 @@ class WebSocketProtocol(WebSocketMixin):
 
         sock = context.wrap_socket(**opts)
         return sock
-    
+
     def receive_frame(self) -> Frame:
         last_frame = None
 
         while True:
             if not self._socket or self._conn_status == ConnectionStatus.CLOSED:
                 raise ConnectionError('Socket is not connected')
-            
+
             # read the first two bytes to get the header of the frame
             header = self._read_socket(2)
 
@@ -222,14 +228,14 @@ class WebSocketProtocol(WebSocketMixin):
             elif payload_len > 127:
                 raise WebSocketPayloadError('Payload length is too large')
 
-            masking_key = None
+            masking_key = None # pylint: disable=unused-variable
             if mask:
                 masking_key = self._read_socket(4)
 
             payload = self._read_socket(payload_len)
 
             frame = Frame(payload, opcode, fin, mask, rsv1, rsv2, rsv3)
-                
+
             if frame.opcode == Opcode.CONTINUATION and not last_frame:
                 if frame.fin:
                     raise WebSocketProtocolError("Fragements must not have FIN bit set")
@@ -241,21 +247,21 @@ class WebSocketProtocol(WebSocketMixin):
                 frame.opcode = last_frame.opcode
 
             frame.validate()
-            
+
             if frame.opcode == Opcode.PING:
                 self.send_frame(frame.data, Opcode.PONG)
                 continue
-            
+
             if frame.fin:
                 break
 
             last_frame = frame
-            
+
         if frame.opcode == Opcode.CLOSE:
             self.close()
-        
+
         return frame
-    
+
     def _read_socket(self, n: int) -> bytes:
         data = []
 
@@ -273,18 +279,18 @@ class WebSocketProtocol(WebSocketMixin):
                     raise WebSocketConnectionError("Connection timed out") from exc
                 raise
         return b''.join(data)
-    
+
     def send_frame(self, data: Union[bytes, str], opcode: int = 1) -> None:
         if not self._socket or self._conn_status != ConnectionStatus.OPEN:
             raise ConnectionError('Socket is not connected')
-        
+
         if isinstance(data, str):
             data = data.encode("utf-8")
 
         frame = Frame(data,opcode)
-        
+
         payload = frame.encode()
-        
+
         while payload:
             try:
                 sent = self._socket.send(payload)
@@ -294,39 +300,39 @@ class WebSocketProtocol(WebSocketMixin):
                 error_code = exc.args[0]
                 if error_code not in [errno.EAGAIN, errno.EWOULDBLOCK]:
                     raise
-            
+
             if not sent:
                 raise WebSocketConnectionError("Could not send the frame")
             payload = payload[sent:]
-    
+
     def close(self, code: int = CloseReason.NORMAL, reason: bytes = b"") -> None:
         if self._conn_status != ConnectionStatus.OPEN:
             return
-        
+
         if not self._socket:
             raise WebSocketConnectionError('Websocket is not connected')
-        
+
         if code not in CloseReason:
             raise ValueError("Invalid close code")
-        
+
         close_frame = Frame(struct.pack('!H', code) + reason, Opcode.CLOSE)
         self.send_frame(close_frame.data, close_frame.opcode)
         self._conn_status = ConnectionStatus.CLOSING
-        
+
         while True:
             try:
                 frame = self.receive_frame()
                 if frame.opcode == Opcode.CLOSE:
                     break
-            except:
+            except: # pylint: disable=bare-except
                 break
-        
+
         self._conn_status = ConnectionStatus.CLOSED
         # shut down the socket
         self._socket.shutdown(socket.SHUT_RDWR)
         self._socket.close()
-        
-       
+
+
 class AsyncWebSocketProtocol(WebSocketMixin):
     def __init__(self, url: str, *, headers = None, http_proxy = None, subprotocols = None) -> None:
         self._stream_reader: asyncio.StreamReader
@@ -353,21 +359,23 @@ class AsyncWebSocketProtocol(WebSocketMixin):
                     ssl = ssl_ctx,
                     server_hostname = self._ws_url.hostname if ssl_ctx else None
                 )
-                self._stream_writer.write(f'CONNECT {self._ws_url.hostname}:{self._ws_url.port} HTTP/1.1\r\n\r\n'.encode())
+                self._stream_writer.write(
+                    f'CONNECT {self._ws_url.hostname}:{self._ws_url.port} HTTP/1.1\r\n\r\n'.encode()
+                )
                 await self._stream_writer.drain()
                 proxy_response = parse_proxy_response(await self._stream_reader.readuntil(EOF))
                 if not proxy_response[0].startswith(b'HTTP/'):
                     self._stream_writer.close()
                     raise ConnectionError('Received invalid response from the proxy')
-                
+
                 if int(proxy_response[1]) < 100 or int(proxy_response[1]) > 999:
                     self._stream_writer.close()
                     raise ConnectionError('Received invalid status code from the proxy')
-                
+
                 if proxy_response[1] != b'200':
                     self._stream_writer.close()
                     raise ConnectionError('Could not connect to the proxy')
-                
+
                 if proxy_response[2] != b'Connection established':
                     self._stream_writer.close()
                     raise ConnectionError('Could not connect to the proxy')
@@ -378,13 +386,12 @@ class AsyncWebSocketProtocol(WebSocketMixin):
                     ssl = ssl_ctx,
                     server_hostname = self._ws_url.hostname if ssl_ctx else None
                     )
-        
+
             # build the headers
             self._headers = build_request_headers(
-                self._ws_url.path if not self._ws_url.query else f'{self._ws_url.path}?{self._ws_url.query}', 
-                self._url, 
-                self._ws_url.hostname, 
-                self._ws_url.port, 
+                self._ws_url.path if not self._ws_url.query else f'{self._ws_url.path}?{self._ws_url.query}',
+                self._ws_url.hostname,
+                self._ws_url.port,
                 self._ws_url.is_secure,
                 self._key,
                 subprotocols=self._subprotocols
@@ -395,28 +402,26 @@ class AsyncWebSocketProtocol(WebSocketMixin):
             self._conn_status = ConnectionStatus.CONNECTING
 
             await self._receive_handshake()
-        except socket.error:
-            raise ConnectionError('Could not send the handshake')
-        
+        except socket.error as exc:
+            raise ConnectionError('Could not send the handshake') from exc
+
     async def _receive_handshake(self) -> None:
         if not self._stream_reader:
             raise ConnectionError('Socket is not connected')
-        
+
         response_headers = b''
         response_headers = await self._stream_reader.readuntil(EOF)
         code, status, headers = parse_response_headers(response_headers)
 
         self.validate_handshake(code, status, headers)
         self._conn_status = ConnectionStatus.OPEN
-    
+
     def _wrap_socket_sni(
         self,
         keyfile=None,
         certfile=None,
         cert_reqs=ssl.CERT_REQUIRED,
         ca_certs=None,
-        do_handshake_on_connect=True,
-        suppress_ragged_eofs=True,
         server_hostname=None,
         ciphers=None,
         ssl_version=None,
@@ -426,13 +431,10 @@ class AsyncWebSocketProtocol(WebSocketMixin):
         Default `ssl.wrap_socket` method augmented with support for
         setting the server_hostname field required for SNI hostname header
 
-        :param socket.socket sock: socket to wrap
         :param str or None keyfile: key file path
         :param str or None certfile: cert file path
         :param int cert_reqs: cert requirements
         :param str or None ca_certs: ca certs file path
-        :param bool do_handshake_on_connect: do handshake on connect
-        :param bool suppress_ragged_eofs: suppress ragged EOFs
         :param str or None server_hostname: server hostname
         :param str or None ciphers: ciphers to use
         :param int or None ssl_version: ssl version to use
@@ -444,11 +446,6 @@ class AsyncWebSocketProtocol(WebSocketMixin):
         if ssl_version is None:
             ssl_version = ssl.PROTOCOL_TLS_CLIENT
         purpose = ssl.Purpose.SERVER_AUTH
-
-        opts = {
-            "do_handshake_on_connect": do_handshake_on_connect,
-            "suppress_ragged_eofs": suppress_ragged_eofs,
-        }
 
         context = ssl.SSLContext(ssl_version)
 
@@ -473,7 +470,7 @@ class AsyncWebSocketProtocol(WebSocketMixin):
             context.verify_mode = cert_reqs
 
         return context
-    
+
     async def receive_frame(self) -> Frame:
         last_frame = None
 
@@ -502,7 +499,7 @@ class AsyncWebSocketProtocol(WebSocketMixin):
             if opcode == Opcode.PING and payload_len > 125:
                 raise WebSocketProtocolError("PING frame too large")
 
-            masking_key = None
+            masking_key = None # pylint: disable=unused-variable
             if mask:
                 masking_key = await self._stream_reader.readexactly(4)
             payload = await self._stream_reader.readexactly(payload_len)
@@ -516,13 +513,13 @@ class AsyncWebSocketProtocol(WebSocketMixin):
                     raise WebSocketProtocolError("Expected continuation frame")
                 frame.data = last_frame.data + frame.data
                 frame.opcode = last_frame.opcode
-            
+
             frame.validate()
-            
+
             if frame.opcode == Opcode.PING:
                 await self.send_frame(frame.data, Opcode.PONG)
                 continue
-            
+
             if frame.fin:
                 break
             last_frame = frame
@@ -531,46 +528,46 @@ class AsyncWebSocketProtocol(WebSocketMixin):
             await self.close()
 
         return frame
-    
+
     async def send_frame(self, data: Union[bytes, str], opcode: int = 1) -> None:
         if not self._stream_writer or self._conn_status != ConnectionStatus.OPEN:
             raise ConnectionError('Socket is not connected')
-        
+
         if isinstance(data, str):
             data = data.encode("utf-8")
 
         frame = Frame(data,opcode)
-        
+
         payload = frame.encode()
 
         try:
             self._stream_writer.write(payload)
             await self._stream_writer.drain()
-        except AttributeError:
-            raise WebSocketConnectionError("Could not send the frame")
-    
+        except AttributeError as exc:
+            raise WebSocketConnectionError("Could not send the frame") from exc
+
     async def close(self, code: int = CloseReason.NORMAL, reason: bytes = b"") -> None:
         if self._conn_status != ConnectionStatus.OPEN:
             return
-        
+
         if not self._stream_writer or not self._stream_reader:
             raise WebSocketConnectionError('Websocket is not connected')
-        
+
         if code not in CloseReason:
             raise ValueError("Invalid close code")
-        
+
         close_frame = Frame(struct.pack('!H', code) + reason, Opcode.CLOSE)
         await self.send_frame(close_frame.data, close_frame.opcode)
         self._conn_status = ConnectionStatus.CLOSING
-        
+
         while True:
             try:
                 frame = await self.receive_frame()
                 if frame.opcode == Opcode.CLOSE:
                     break
-            except:
+            except: # pylint: disable=bare-except
                 break
-        
+
         self._conn_status = ConnectionStatus.CLOSED
         # shut down the socket
         self._stream_writer.close()

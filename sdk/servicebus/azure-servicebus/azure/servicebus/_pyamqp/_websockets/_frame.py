@@ -96,8 +96,8 @@ class Frame:
 
     def encode(self) -> bytes:
         output = io.BytesIO()
-        
-        header = output.write(struct.pack('!B',
+
+        header = output.write(struct.pack('!B', # pylint: disable=unused-variable
                              (
                                     self.fin << 7 |  # FIN
                                     self.rsv1 << 6 |  # RSV1
@@ -121,9 +121,9 @@ class Frame:
             output.write(masking_key)
             mask_payload(masking_key, payload)
         output.write(payload)
-        
+
         return output.getvalue()
-    
+
     def validate(self) -> None:
         """
         Validate the frame according to the RFC 6455
@@ -147,7 +147,7 @@ class Frame:
             if self.opcode == Opcode.CLOSE:
                 if not self.data:
                     return
-                
+
                 payload_length = len(self.data)
 
                 # if there is a body, it must be at least 2 bytes long in order to contain the status code
@@ -171,5 +171,3 @@ class Frame:
                 self.data.decode("utf-8")
             except UnicodeDecodeError as ude:
                 raise WebSocketPayloadError('Invalid UTF-8 payload') from ude
-        
-        

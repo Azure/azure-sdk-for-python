@@ -708,16 +708,21 @@ class WebSocketTransport(_AbstractTransport):
             if username or password:
                 http_proxy_auth = (username, password)
 
-        
+
         from ._websockets.websockets import WebSocket
         from ._websockets._exceptions import WebSocketConnectionError
         try:
             self.sock = WebSocket(
-                 url=(
-                    "wss://{}".format(self._custom_endpoint or self._host)
+                url=(
+                    f"wss://{self._custom_endpoint or self._host}"
                     if self._use_tls
-                    else "ws://{}".format(self._custom_endpoint or self._host)
+                    else f"ws://{self._custom_endpoint or self._host}"
                 ),
+                http_proxy={
+                    "host": http_proxy_host,
+                    "port": http_proxy_port,
+                    "auth": http_proxy_auth,
+                },
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self.socket_timeout,  # timeout for read/write operations
             )
@@ -773,7 +778,7 @@ class WebSocketTransport(_AbstractTransport):
                 raise ConnectionError(f"Websocket disconnected: {e!r}") from e
             except WebSocketConnectionError as wte:
                 raise TimeoutError(f"Websocket receive timed out ({wte})") from wte
-            
+
         except:
             self._read_buffer = BytesIO(view[:length])
             raise
