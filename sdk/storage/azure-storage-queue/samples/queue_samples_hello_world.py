@@ -17,9 +17,8 @@ USAGE:
     python queue_samples_hello_world.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
-
 
 import os
 import sys
@@ -27,7 +26,7 @@ import sys
 
 class QueueHelloWorldSamples(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
     def create_client_with_connection_string(self):
         if self.connection_string is None:
