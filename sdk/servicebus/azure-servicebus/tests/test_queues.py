@@ -1682,6 +1682,51 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
     @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @ServiceBusQueuePreparer(
+        name_prefix="servicebustest", dead_lettering_on_message_expiration=True, lock_duration="PT55S"
+    )
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_queue_receive_handler_with_autolockrenew_many_msgs(
+        self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
+    ):
+        # number of messages to receive and renew locks for
+        max_msg_count = 300
+
+        # only tested on sync since async can concurrently send renew-lock requests without waiting for the transfer frame from the service
+        if sys.platform.startswith("darwin"):
+            pytest.skip("Skipping since ALR renewal is slower, so message locks are expiring. Potentially due to lower # of available threads/workers.")
+
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential()
+        with ServiceBusClient(
+            fully_qualified_namespace, credential, logging_enable=True, uamqp_transport=uamqp_transport
+        ) as sb_client:
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                msgs_to_send = [ServiceBusMessage("message: {}".format(i)) for i in range(400)]
+                sender.send_messages(msgs_to_send)
+
+            # Can also be called via "with AutoLockRenewer() as renewer" to automate shutdown.
+            renewer = AutoLockRenewer(max_lock_renewal_duration=60*5)
+            with sb_client.get_queue_receiver(queue_name=servicebus_queue.name, auto_lock_renewer=renewer) as receiver:
+                received_msgs = receiver.receive_messages(max_message_count=max_msg_count)
+                # At least 300 messages should be renewed
+                # TODO: This should be bumped up once sync alr perf is improved
+                while len(received_msgs) < max_msg_count:
+                    count = max_msg_count - len(received_msgs)
+                    received_msgs.extend(receiver.receive_messages(max_message_count=count))
+
+                assert len(received_msgs) == max_msg_count, "Did not receive all messages"
+                time.sleep(100)
+                for msg in received_msgs:
+                    receiver.complete_message(msg)  # Settling the message deregisters it from the AutoLockRenewer
+
+            renewer.close()
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
     @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
