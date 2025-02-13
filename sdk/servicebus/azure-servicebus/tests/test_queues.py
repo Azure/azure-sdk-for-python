@@ -1690,7 +1690,13 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     def test_queue_receive_handler_with_autolockrenew_many_msgs(
         self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
     ):
+        # number of messages to receive and renew locks for
+        max_msg_count = 300
+
         # only tested on sync since async can concurrently send renew-lock requests without waiting for the transfer frame from the service
+        if sys.platform.startswith("darwin"):
+            pytest.skip("Skipping since ALR renewal is slower, so message locks are expiring. Potentially due to lower # of available threads/workers.")
+
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential()
         with ServiceBusClient(
@@ -1702,16 +1708,15 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
 
             # Can also be called via "with AutoLockRenewer() as renewer" to automate shutdown.
             renewer = AutoLockRenewer(max_lock_renewal_duration=60*5)
-
             with sb_client.get_queue_receiver(queue_name=servicebus_queue.name, auto_lock_renewer=renewer) as receiver:
-                received_msgs = receiver.receive_messages(max_message_count=250)
+                received_msgs = receiver.receive_messages(max_message_count=max_msg_count)
                 # At least 300 messages should be renewed
                 # TODO: This should be bumped up once sync alr perf is improved
-                while len(received_msgs) < 250:
-                    count = 250 - len(received_msgs)
+                while len(received_msgs) < max_msg_count:
+                    count = max_msg_count - len(received_msgs)
                     received_msgs.extend(receiver.receive_messages(max_message_count=count))
 
-                assert len(received_msgs) == 250, "Did not receive all messages"
+                assert len(received_msgs) == max_msg_count, "Did not receive all messages"
                 time.sleep(100)
                 for msg in received_msgs:
                     receiver.complete_message(msg)  # Settling the message deregisters it from the AutoLockRenewer
