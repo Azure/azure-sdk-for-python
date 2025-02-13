@@ -6,6 +6,7 @@
 * Added ability to replace `computed_properties` through `replace_container` method. See [PR 39543](https://github.com/Azure/azure-sdk-for-python/pull/39543)
 
 #### Breaking Changes
+* Adds cross region retries when no preferred locations are set. This is only a breaking change for customers using bounded staleness consistency. See [PR 39714](https://github.com/Azure/azure-sdk-for-python/pull/39714)
 
 #### Bugs Fixed
 
