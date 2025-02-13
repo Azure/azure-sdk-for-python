@@ -1,13 +1,9 @@
 ## Release History
 
-### 4.9.1b5 (Unreleased)
+### 4.10.1b1 (2025-02-13)
 
 #### Features Added
 * Added ability to replace `computed_properties` through `replace_container` method. See [PR 39543](https://github.com/Azure/azure-sdk-for-python/pull/39543)
-
-#### Breaking Changes
-
-#### Bugs Fixed
 
 #### Other Changes
 * Un-marked `computed_properties` keyword as **provisional**. See [PR 39543](https://github.com/Azure/azure-sdk-for-python/pull/39543)
