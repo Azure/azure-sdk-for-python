@@ -64,7 +64,7 @@ class TestHealthCheck:
         try:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
             # this will setup the location cache
-            client.client_connection._global_endpoint_manager.endpoint_health_check(None)
+            client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
@@ -91,7 +91,7 @@ class TestHealthCheck:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
             client.client_connection._global_endpoint_manager.refresh_needed = True
             # this will setup the location cache
-            client.client_connection._global_endpoint_manager.endpoint_health_check(None)
+            client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
         expected_endpoints = []

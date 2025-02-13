@@ -1,4 +1,7 @@
+import asyncio
+import time
 import unittest
+import uuid
 from typing import List
 
 import pytest
@@ -67,7 +70,7 @@ class TestHealthCheckAsync:
         try:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
             # this will setup the location cache
-            await client.client_connection._global_endpoint_manager.endpoint_health_check(None)
+            await client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
@@ -95,7 +98,7 @@ class TestHealthCheckAsync:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
             # this will setup the location cache
             client.client_connection._global_endpoint_manager.refresh_needed = True
-            await client.client_connection._global_endpoint_manager.endpoint_health_check(None)
+            await client.client_connection._global_endpoint_manager._refresh_endpoint_list(None)
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
         expected_endpoints = []
@@ -110,6 +113,22 @@ class TestHealthCheckAsync:
         for expected_dual_endpoint in expected_endpoints:
             assert expected_dual_endpoint in unavailable_endpoint_info.keys()
         await client.close()
+
+    async def test_health_check_background(self, setup):
+        self.original_health_check = _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check
+        _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check = self.mock_health_check
+        start_time = time.time()
+        try:
+            for i in range(5):
+                await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
+        finally:
+            _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check = self.original_health_check
+        end_time = time.time()
+        duration = end_time - start_time
+        assert duration < 2, f"Test took too long: {duration} seconds"
+
+    async def mock_health_check(self, **kwargs):
+        await asyncio.sleep(100)
 
     class MockGetDatabaseAccountCheck(object):
         def __init__(self):

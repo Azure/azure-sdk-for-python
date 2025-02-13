@@ -54,7 +54,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             client.connection_policy.UseMultipleWriteLocations,
             self.refresh_time_interval_in_ms,
         )
-        self.health_check = True
+        self.startup = True
         self.refresh_needed = False
         self.refresh_lock = threading.RLock()
         self.last_refresh_time = 0
@@ -90,15 +90,11 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
 
     def force_refresh_on_startup(self, database_account):
         self.refresh_needed = True
-        self.health_check = False
         self.refresh_endpoint_list(database_account)
+        self.startup = False
 
     def update_location_cache(self):
         self.location_cache.update_location_cache()
-
-    def endpoint_health_check(self, database_account, **kwargs):
-        self.health_check = True
-        self.refresh_endpoint_list(database_account, **kwargs)
 
     def refresh_endpoint_list(self, database_account, **kwargs):
         if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
@@ -122,7 +118,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             if self.location_cache.should_refresh_endpoints() or self.refresh_needed:
                 self.refresh_needed = False
                 self.last_refresh_time = self.location_cache.current_time_millis()
-                if self.health_check:
+                if self.startup:
                     # this will perform getDatabaseAccount calls to check endpoint health
                     self._endpoints_health_check(**kwargs)
                 else:

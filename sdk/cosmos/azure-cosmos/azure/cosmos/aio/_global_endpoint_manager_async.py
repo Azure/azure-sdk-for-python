@@ -29,7 +29,7 @@ from azure.core.exceptions import AzureError
 
 from .. import _constants as constants
 from .. import exceptions
-from .._location_cache import LocationCache
+from .._location_cache import LocationCache, EndpointOperationType
 
 
 # pylint: disable=protected-access
@@ -53,11 +53,13 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             client.connection_policy.UseMultipleWriteLocations,
             self.refresh_time_interval_in_ms,
         )
-        self.health_check = True
+        self.startup = True
+        self.refresh_task = None
         self.refresh_needed = False
         self.refresh_lock = asyncio.Lock()
         self.last_refresh_time = 0
         self._database_account_cache = None
+        self.consecutive_failures = {EndpointOperationType.ReadType: 0, EndpointOperationType.WriteType: 0}
 
     def get_refresh_time_interval_in_ms_stub(self):
         return constants._Constants.DefaultUnavailableLocationExpirationTime
@@ -85,17 +87,15 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
 
     async def force_refresh_on_startup(self, database_account):
         self.refresh_needed = True
-        self.health_check = False
         await self.refresh_endpoint_list(database_account)
+        self.startup = False
 
     def update_location_cache(self):
         self.location_cache.update_location_cache()
 
-    async def endpoint_health_check(self, database_account, **kwargs):
-        self.health_check = True
-        await self.refresh_endpoint_list(database_account, **kwargs)
-
     async def refresh_endpoint_list(self, database_account, **kwargs):
+        if self.refresh_task and self.refresh_task.done():
+            await self.refresh_task
         if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
         if self.refresh_needed:
@@ -117,13 +117,13 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             if self.location_cache.should_refresh_endpoints() or self.refresh_needed:
                 self.refresh_needed = False
                 self.last_refresh_time = self.location_cache.current_time_millis()
-                if self.health_check:
+                if self.startup:
                 # this will perform getDatabaseAccount calls to check endpoint health
                 # in background
-                    await asyncio.create_task(self._endpoints_health_check(**kwargs))
+                    self.refresh_task = asyncio.create_task(self._endpoints_health_check(**kwargs))
                 else:
-                    database_account, _ = await self._GetDatabaseAccount(**kwargs)
-                    self.location_cache.perform_on_database_account_read(database_account)
+                # on startup do this in foreground
+                   await self._endpoints_health_check(**kwargs)
 
     async def _endpoints_health_check(self, **kwargs):
         """Gets the database account for each endpoint.
