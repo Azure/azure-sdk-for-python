@@ -59,6 +59,9 @@ def build_key() -> bytes:
     return base64.b64encode(random_bytes)
 
 def match_key(client_header_key: bytes, server_header_key: bytes) -> bool:
+    # the use of sha1 is a websocket protocol requirement and is used for hashing and not cryptography
+    # other impls have the same behavior
+    # https://github.com/dotnet/runtime/blob/45caaf85faa654114f7a3744910df86d8e92882f/src/libraries/System.Net.HttpListener/src/System/Net/WebSockets/HttpWebSocket.cs#L18
     match = base64.b64encode(sha1(client_header_key + WS_KEY).digest()).lower()
 
     return match == server_header_key
