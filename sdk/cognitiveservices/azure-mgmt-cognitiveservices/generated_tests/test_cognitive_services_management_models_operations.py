@@ -20,7 +20,7 @@ class TestCognitiveServicesManagementModelsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_models_list(self, resource_group):
         response = self.client.models.list(
             location="str",
             api_version="2024-10-01",

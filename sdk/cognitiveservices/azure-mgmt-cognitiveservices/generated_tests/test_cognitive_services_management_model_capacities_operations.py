@@ -20,7 +20,7 @@ class TestCognitiveServicesManagementModelCapacitiesOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_model_capacities_list(self, resource_group):
         response = self.client.model_capacities.list(
             model_format="str",
             model_name="str",

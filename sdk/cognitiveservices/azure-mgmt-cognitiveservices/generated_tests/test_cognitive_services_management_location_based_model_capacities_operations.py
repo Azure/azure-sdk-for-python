@@ -20,7 +20,7 @@ class TestCognitiveServicesManagementLocationBasedModelCapacitiesOperations(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_location_based_model_capacities_list(self, resource_group):
         response = self.client.location_based_model_capacities.list(
             location="str",
             model_format="str",

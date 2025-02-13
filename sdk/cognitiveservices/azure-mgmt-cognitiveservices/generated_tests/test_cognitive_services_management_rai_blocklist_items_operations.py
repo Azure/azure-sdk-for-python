@@ -20,7 +20,7 @@ class TestCognitiveServicesManagementRaiBlocklistItemsOperations(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_rai_blocklist_items_list(self, resource_group):
         response = self.client.rai_blocklist_items.list(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -33,7 +33,7 @@ class TestCognitiveServicesManagementRaiBlocklistItemsOperations(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_rai_blocklist_items_get(self, resource_group):
         response = self.client.rai_blocklist_items.get(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -47,7 +47,7 @@ class TestCognitiveServicesManagementRaiBlocklistItemsOperations(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_rai_blocklist_items_create_or_update(self, resource_group):
         response = self.client.rai_blocklist_items.create_or_update(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -77,7 +77,7 @@ class TestCognitiveServicesManagementRaiBlocklistItemsOperations(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_rai_blocklist_items_begin_delete(self, resource_group):
         response = self.client.rai_blocklist_items.begin_delete(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -91,7 +91,7 @@ class TestCognitiveServicesManagementRaiBlocklistItemsOperations(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_batch_add(self, resource_group):
+    def test_rai_blocklist_items_batch_add(self, resource_group):
         response = self.client.rai_blocklist_items.batch_add(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -105,7 +105,7 @@ class TestCognitiveServicesManagementRaiBlocklistItemsOperations(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_batch_delete(self, resource_group):
+    def test_rai_blocklist_items_batch_delete(self, resource_group):
         response = self.client.rai_blocklist_items.batch_delete(
             resource_group_name=resource_group.name,
             account_name="str",
