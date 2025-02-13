@@ -386,10 +386,10 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 )
 
         # if preferred locations is empty, we should use the read locations from gateway
-        if len(self.preferred_locations) == 0:
-            self.effective_preferred_locations = self.available_read_locations
-        else:
+        if self.preferred_locations:
             self.effective_preferred_locations = self.preferred_locations
+        else:
+            self.effective_preferred_locations = self.available_read_locations
 
         self.write_regional_endpoints = self.get_preferred_available_regional_endpoints(
             self.available_write_regional_endpoints_by_location,
