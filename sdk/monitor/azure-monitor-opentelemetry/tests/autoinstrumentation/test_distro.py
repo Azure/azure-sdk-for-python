@@ -12,10 +12,11 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import _ATTACH_
 
 class TestDistro(TestCase):
     @patch.dict("os.environ", {}, clear=True)
+    @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.enable_live_metrics")
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro._is_attach_enabled", return_value=True)
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.settings")
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.AzureDiagnosticLogging")
-    def test_configure(self, mock_diagnostics, azure_core_mock, attach_mock):
+    def test_configure(self, mock_diagnostics, azure_core_mock, attach_mock, live_metrics_mock):
         distro = AzureMonitorDistro()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
@@ -23,6 +24,7 @@ class TestDistro(TestCase):
         mock_diagnostics.info.assert_called_once_with(
             "Azure Monitor OpenTelemetry Distro configured successfully.", _ATTACH_SUCCESS_DISTRO
         )
+        live_metrics_mock.assert_not_called()
         self.assertEqual(azure_core_mock.tracing_implementation, OpenTelemetrySpan)
         self.assertEqual(
             environ,
@@ -41,13 +43,15 @@ class TestDistro(TestCase):
             # "OTEL_TRACES_SAMPLER": "custom_traces_sampler",
             "OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED": "false",
             "OTEL_EXPERIMENTAL_RESOURCE_DETECTORS": "custom_resource_detector",
+            "APPLICATIONINSIGHTS_PREVIEW_LIVE_METRICS_ENABLED": "TRUE",
         },
         clear=True,
     )
+    @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.enable_live_metrics")
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro._is_attach_enabled", return_value=True)
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.settings")
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.AzureDiagnosticLogging")
-    def test_configure_env_vars_set(self, mock_diagnostics, azure_core_mock, attach_mock):
+    def test_configure_env_vars_set(self, mock_diagnostics, azure_core_mock, attach_mock, live_metrics_mock):
         distro = AzureMonitorDistro()
         with warnings.catch_warnings():
             warnings.simplefilter("error")
@@ -55,6 +59,7 @@ class TestDistro(TestCase):
         mock_diagnostics.info.assert_called_once_with(
             "Azure Monitor OpenTelemetry Distro configured successfully.", _ATTACH_SUCCESS_DISTRO
         )
+        live_metrics_mock.assert_called_once()
         self.assertEqual(azure_core_mock.tracing_implementation, OpenTelemetrySpan)
         self.assertEqual(
             environ,
