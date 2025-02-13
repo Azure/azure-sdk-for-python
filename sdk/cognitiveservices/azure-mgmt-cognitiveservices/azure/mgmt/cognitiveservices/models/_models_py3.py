@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -16,10 +16,9 @@ from .. import _serialization
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -135,7 +134,7 @@ class AzureEntityResource(Resource):
         self.etag = None
 
 
-class Account(AzureEntityResource):  # pylint: disable=too-many-instance-attributes
+class Account(AzureEntityResource):
     """Cognitive Services account is an Azure resource representing the provisioned account, it's
     type, location and SKU.
 
@@ -332,7 +331,7 @@ class DeploymentModel(_serialization.Model):
         self.call_rate_limit = None
 
 
-class AccountModel(DeploymentModel):  # pylint: disable=too-many-instance-attributes
+class AccountModel(DeploymentModel):
     """Cognitive Services account Model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -502,7 +501,7 @@ class AccountModelListResult(_serialization.Model):
         self.value = value
 
 
-class AccountProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class AccountProperties(_serialization.Model):
     """Properties of Cognitive Services account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -792,7 +791,7 @@ class ApiKeys(_serialization.Model):
         self.key2 = key2
 
 
-class ApiProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ApiProperties(_serialization.Model):
     """The api properties for special APIs.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
@@ -2049,7 +2048,7 @@ class DeploymentListResult(_serialization.Model):
         self.value = None
 
 
-class DeploymentProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class DeploymentProperties(_serialization.Model):
     """Properties of Cognitive Services account deployment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
