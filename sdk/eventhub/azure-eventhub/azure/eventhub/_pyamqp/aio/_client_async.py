@@ -139,23 +139,6 @@ class AMQPClientAsync(AMQPClientSync):
         self._mgmt_link_lock_async = asyncio.Lock()
         super().__init__(hostname, **kwargs)
 
-    # async def _keep_alive_async(self):
-    #     start_time = time.time()
-    #     try:
-    #         while self._connection and not self._shutdown:
-    #             current_time = time.time()
-    #             elapsed_time = current_time - start_time
-    #             if elapsed_time >= self._keep_alive_interval:
-    #                 await asyncio.shield(
-    #                     self._connection.listen(wait=self._socket_timeout, batch=self._link.total_link_credit)
-    #                 )
-    #                 start_time = current_time
-    #             await asyncio.sleep(1)
-    #     except Exception as e:  # pylint: disable=broad-except
-    #         _logger.info(
-    #             "Connection keep-alive for %r failed: %r.", self.__class__.__name__, e, extra=self._network_trace_params
-    #         )
-
     async def __aenter__(self):
         """Run Client in an async context manager.
         :return: The Client object.
@@ -251,6 +234,7 @@ class AMQPClientAsync(AMQPClientSync):
                 custom_endpoint_address=self._custom_endpoint_address,
                 socket_timeout=self._socket_timeout,
                 use_tls=self._use_tls,
+                keep_alive_interval=self._keep_alive_interval,
             )
             await self._connection.open()
         if not self._session:
@@ -266,9 +250,6 @@ class AMQPClientAsync(AMQPClientSync):
         self._network_trace_params["amqpConnection"] = self._connection._container_id
         self._network_trace_params["amqpSession"] = self._session.name
         self._shutdown = False
-
-        # if self._keep_alive_interval:
-        #     self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_async())
 
     async def close_async(self):
         """Close the client asynchronously. This includes closing the Session
@@ -288,9 +269,6 @@ class AMQPClientAsync(AMQPClientSync):
         if not self._external_connection:
             await self._connection.close()
             self._connection = None
-        if self._keep_alive_thread:
-            await self._keep_alive_thread
-            self._keep_alive_thread = None
         self._network_trace_params["amqpConnection"] = ""
         self._network_trace_params["amqpSession"] = ""
 
