@@ -24,7 +24,7 @@ def azure_model_config(model_config: AzureOpenAIModelConfiguration) -> Mapping[s
     return {"configuration": cloned}
 
 
-# @pytest.mark.usefixtures("recording_injection", "recorded_test")
+@pytest.mark.usefixtures("recording_injection", "recorded_test")
 class TestPrompty:
     def test_load_basic(self, azure_model_config: Mapping[str, Any]):
         expected_prompt: Final[str] = (
