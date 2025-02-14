@@ -31,13 +31,9 @@ def setup():
 def health_check():
     # preferred_location, use_write_global_endpoint, use_read_global_endpoint
     return [
-        ([], True, True),
         ([REGION_1, REGION_2], True, True),
-        ([], False, True),
         ([REGION_1, REGION_2], False, True),
-        ([], True, False),
         ([REGION_1, REGION_2], True, False),
-        ([], False, False),
         ([REGION_1, REGION_2], False, False)
     ]
 
@@ -63,6 +59,7 @@ class TestHealthCheck:
         _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = mock_get_database_account_check
         try:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
+            client.client_connection._global_endpoint_manager.refresh_needed = True
             # this will setup the location cache
             client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
         finally:

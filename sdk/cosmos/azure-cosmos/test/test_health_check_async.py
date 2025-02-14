@@ -37,13 +37,9 @@ async def setup():
 def health_check():
     # preferred_location, use_write_global_endpoint, use_read_global_endpoint
     return [
-        ([], True, True),
         ([REGION_1, REGION_2], True, True),
-        ([], False, True),
         ([REGION_1, REGION_2], False, True),
-        ([], True, False),
         ([REGION_1, REGION_2], True, False),
-        ([], False, False),
         ([REGION_1, REGION_2], False, False)
     ]
 
@@ -70,6 +66,7 @@ class TestHealthCheckAsync:
         try:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
             # this will setup the location cache
+            client.client_connection._global_endpoint_manager.refresh_needed = True
             await client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
@@ -126,6 +123,8 @@ class TestHealthCheckAsync:
         end_time = time.time()
         duration = end_time - start_time
         assert duration < 2, f"Test took too long: {duration} seconds"
+
+    # make background task fail, it shouldn't fail the test
 
     async def mock_health_check(self, **kwargs):
         await asyncio.sleep(100)

@@ -138,15 +138,16 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         first_read_region = next(iter(self.location_cache.account_read_dual_endpoints_by_location.values()))
         dual_endpoints = [first_read_region]
         dual_endpoints.extend(self.location_cache.account_write_dual_endpoints_by_location.values())
-        count = 0
+        success_count = 0
         for dual_endpoint in dual_endpoints:
             if dual_endpoint.get_primary() not in endpoints_attempted:
                 endpoints_attempted.add(dual_endpoint.get_primary())
-                count += 1
-                if count > 3:
+                if success_count >= 2:
                     break
                 try:
                     await self.client._GetDatabaseAccountCheck(dual_endpoint.get_primary(), **kwargs)
+                    # health check continues until 2 successes or all endpoints are checked
+                    success_count += 1
                     self.location_cache.mark_endpoint_available(dual_endpoint.get_primary())
                 except (exceptions.CosmosHttpResponseError, AzureError):
                     if dual_endpoint in self.location_cache.read_dual_endpoints:
