@@ -42,7 +42,7 @@ class WebSocketMixin:
 
 
 class WebSocketProtocol(WebSocketMixin):
-    def __init__(self, url: str, *, headers = None, http_proxy = None, subprotocols = None, timeout=None) -> None:
+    def __init__(self, url: str, *, headers = None, http_proxy = None, subprotocols = None, ssl_ctx=None, timeout=None) -> None:
         self._socket: socket.socket
         self._url: str = url
         self._key = build_key()
@@ -52,6 +52,7 @@ class WebSocketProtocol(WebSocketMixin):
         self._subprotocols = subprotocols
         self._ws_url: WebSocketURL = parse_url(self._url)
         self._timeout = timeout
+        self._ssl_ctx = ssl_ctx
 
 
     def open_connection(self) -> None:
@@ -86,7 +87,10 @@ class WebSocketProtocol(WebSocketMixin):
                     timeout=self._timeout
                 )
             if self._ws_url.is_secure:
-                self._socket = self._wrap_socket_sni(self._socket, server_hostname = self._ws_url.hostname)
+                if not self._ssl_ctx:
+                    self._socket = self._wrap_socket_sni(self._socket, server_hostname = self._ws_url.hostname)
+                else:
+                    self._socket = self._ssl_ctx.wrap_socket(self._socket, server_hostname = self._ws_url.hostname)
             # TODO: add logging
             self._socket.setblocking(True)
             self._socket.settimeout(self._timeout)
@@ -335,7 +339,7 @@ class WebSocketProtocol(WebSocketMixin):
 
 
 class AsyncWebSocketProtocol(WebSocketMixin):
-    def __init__(self, url: str, *, headers = None, http_proxy = None, subprotocols = None) -> None:
+    def __init__(self, url: str, *, headers = None, http_proxy = None, subprotocols = None, ssl_ctx=None) -> None:
         self._stream_reader: asyncio.StreamReader
         self._stream_writer: asyncio.StreamWriter
         self._url = url
@@ -345,13 +349,17 @@ class AsyncWebSocketProtocol(WebSocketMixin):
         self._http_proxy = http_proxy
         self._subprotocols = subprotocols
         self._ws_url: WebSocketURL = parse_url(self._url)
+        self._ssl = ssl_ctx
 
     async def open_connection(self) -> None:
         try:
             # TODO: handle proxy support
             ssl_ctx = None
             if self._ws_url.is_secure:
-                ssl_ctx = self._wrap_socket_sni(server_hostname=self._ws_url.hostname)
+                if not self._ssl:
+                    ssl_ctx = self._wrap_socket_sni(server_hostname=self._ws_url.hostname)
+                else:
+                    ssl_ctx = self._ssl
 
             if self._http_proxy:
                 self._stream_reader, self._stream_writer = await asyncio.open_connection(
