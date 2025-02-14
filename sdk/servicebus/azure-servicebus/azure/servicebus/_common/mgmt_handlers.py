@@ -52,12 +52,14 @@ def peek_op(  # pylint: disable=inconsistent-return-statements
 ):
     condition = message.application_properties.get(MGMT_RESPONSE_MESSAGE_ERROR_CONDITION)
     if status_code == 200:
-        return amqp_transport.parse_received_message(
+        parsed_messages = amqp_transport.parse_received_message(
             message, message_type=ServiceBusReceivedMessage, receiver=receiver, is_peeked_message=True
         )
+        if parsed_messages:
+            receiver._last_received_sequenced_number = parsed_messages[-1].sequence_number # pylint: disable=protected-access
+        return parsed_messages
     if status_code in [202, 204]:
         return []
-
     amqp_transport.handle_amqp_mgmt_error(
         _LOGGER, "Message peek failed.", condition, description, status_code
     )
