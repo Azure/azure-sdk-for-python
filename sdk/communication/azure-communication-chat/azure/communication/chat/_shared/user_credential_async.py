@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+# pylint: disable=C4763
 from asyncio import Condition, Lock, Event
 from datetime import timedelta
 from typing import Any
@@ -19,14 +19,15 @@ class CommunicationTokenCredential(object):
 
     :param str token: The token used to authenticate to an Azure Communication service.
     :keyword token_refresher: The async token refresher to provide capacity to fetch a fresh token.
-        The returned token must be valid (expiration date must be in the future).
+     The returned token must be valid (expiration date must be in the future).
     :paramtype token_refresher: Callable[[], Awaitable[AccessToken]]
     :keyword bool proactive_refresh: Whether to refresh the token proactively or not.
-        If the proactive refreshing is enabled ('proactive_refresh' is true), the credential will use
-        a background thread to attempt to refresh the token within 10 minutes before the cached token expires,
-        the proactive refresh will request a new token by calling the 'token_refresher' callback.
-        When 'proactive_refresh is enabled', the Credential object must be either run within a context manager
-        or the 'close' method must be called once the object usage has been finished.
+     If the proactive refreshing is enabled ('proactive_refresh' is true), the credential will use
+     a background thread to attempt to refresh the token within 10 minutes before the cached token expires,
+     the proactive refresh will request a new token by calling the 'token_refresher' callback.
+     When 'proactive_refresh is enabled', the Credential object must be either run within a context manager
+     or the 'close' method must be called once the object usage has been finished.
+
     :raises: TypeError if paramater 'token' is not a string
     :raises: ValueError if the 'proactive_refresh' is enabled without providing the 'token_refresher' function.
     """
@@ -54,7 +55,6 @@ class CommunicationTokenCredential(object):
     async def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         # type (*str, **Any) -> AccessToken
         """The value of the configured token.
-
         :param any scopes: Scopes to be added to the token.
         :return: AccessToken
         :rtype: ~azure.core.credentials.AccessToken

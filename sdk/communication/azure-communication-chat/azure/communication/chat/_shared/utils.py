@@ -25,8 +25,7 @@ def _convert_datetime_to_utc_int(input_datetime) -> int:
     return int(calendar.timegm(input_datetime.utctimetuple()))
 
 
-def parse_connection_str(conn_str):
-    # type: (Optional[str]) -> Tuple[str, str]
+def parse_connection_str(conn_str: Optional[str]) -> Tuple[str, str]:
     if conn_str is None:
         raise ValueError("Connection string is undefined.")
     endpoint = None
@@ -51,19 +50,16 @@ def parse_connection_str(conn_str):
     return host, str(shared_access_key)
 
 
-def get_current_utc_time():
-    # type: () -> str
+def get_current_utc_time() -> str:
     return str(datetime.now(tz=TZ_UTC).strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
 
 
-def get_current_utc_as_int():
-    # type: () -> int
+def get_current_utc_as_int() -> int:
     current_utc_datetime = datetime.utcnow()
     return _convert_datetime_to_utc_int(current_utc_datetime)
 
 
-def create_access_token(token):
-    # type: (str) -> AccessToken
+def create_access_token(token) -> AccessToken:
     """Creates an instance of azure.core.credentials.AccessToken from a
     string token. The input string is jwt token in the following form:
     <token_header>.<token_payload>.<token_signature>
