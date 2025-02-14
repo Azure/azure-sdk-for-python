@@ -11,7 +11,7 @@ import test_config
 from azure.cosmos import PartitionKey, cosmos_client, exceptions, http_constants
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestResourceIds(unittest.TestCase):
     client: azure.cosmos.CosmosClient = None
     configs = test_config.TestConfig

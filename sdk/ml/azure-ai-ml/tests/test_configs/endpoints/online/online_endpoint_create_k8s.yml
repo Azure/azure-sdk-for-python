@@ -1,3 +1,13 @@
 name: k8se2etest
 compute: azureml:inferencecompute
 auth_mode: Key
+identity:
+  type: system_assigned
+  user_assigned_identities:
+    - resource_id: user_identity_ARM_id_place_holder
+traffic:
+  blue: 10
+  green: 90
+tags:
+  tag1: value1
+  tag2: value2

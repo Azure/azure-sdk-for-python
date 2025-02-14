@@ -183,4 +183,3 @@ what you can do with the Azure Data Tables client library.
 [sample_get_entity_etag_and_timestamp]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_get_entity_etag_and_timestamp.py
 [sample_get_entity_etag_and_timestamp_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_get_entity_etag_and_timestamp_async.py
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/tables/azure-data-tables/README.png)
