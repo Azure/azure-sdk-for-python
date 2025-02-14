@@ -13,7 +13,7 @@ from azure.core.pipeline import policies
 VERSION = "unknown"
 
 
-class PhoneNumbersClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class PhoneNumbersClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for PhoneNumbersClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -22,13 +22,13 @@ class PhoneNumbersClientConfiguration:  # pylint: disable=too-many-instance-attr
     :param endpoint: The communication resource, for example
      https://resourcename.communication.azure.com. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2024-03-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2025-02-11". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-03-01-preview")
+        api_version: str = kwargs.pop("api_version", "2025-02-11")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
