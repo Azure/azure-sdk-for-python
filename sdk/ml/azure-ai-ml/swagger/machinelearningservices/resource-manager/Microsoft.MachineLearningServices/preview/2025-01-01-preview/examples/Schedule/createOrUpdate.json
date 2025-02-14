@@ -1,0 +1,119 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "name": "string",
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "properties": {
+        "description": "string",
+        "tags": {
+          "string": "string"
+        },
+        "properties": {
+          "string": "string"
+        },
+        "displayName": "string",
+        "isEnabled": false,
+        "trigger": {
+          "endTime": "string",
+          "startTime": "string",
+          "timeZone": "string",
+          "triggerType": "Cron",
+          "expression": "string"
+        },
+        "action": {
+          "actionType": "InvokeBatchEndpoint",
+          "endpointInvocationDefinition": {
+            "9965593e-526f-4b89-bb36-761138cf2794": null
+          }
+        }
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "tags": {
+            "string": "string"
+          },
+          "properties": {
+            "string": "string"
+          },
+          "displayName": "string",
+          "isEnabled": false,
+          "trigger": {
+            "endTime": "string",
+            "startTime": "string",
+            "timeZone": "string",
+            "triggerType": "Cron",
+            "expression": "string"
+          },
+          "action": {
+            "actionType": "InvokeBatchEndpoint",
+            "endpointInvocationDefinition": {
+              "d77a9a9a-4bb5-4c0c-8a77-459be8b82b9f": null
+            }
+          },
+          "provisioningState": "Succeeded"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999Z",
+          "createdBy": "string",
+          "createdByType": "Key",
+          "lastModifiedAt": "2020-01-01T12:34:56.999Z",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "Application"
+        }
+      }
+    },
+    "201": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "tags": {
+            "string": "string"
+          },
+          "properties": {
+            "string": "string"
+          },
+          "displayName": "string",
+          "isEnabled": false,
+          "trigger": {
+            "endTime": "string",
+            "startTime": "string",
+            "timeZone": "string",
+            "triggerType": "Cron",
+            "expression": "string"
+          },
+          "action": {
+            "actionType": "InvokeBatchEndpoint",
+            "endpointInvocationDefinition": {
+              "13ea51e0-ff28-49c3-a85d-9b5199eb14e5": null
+            }
+          },
+          "provisioningState": "Failed"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999Z",
+          "createdBy": "string",
+          "createdByType": "Key",
+          "lastModifiedAt": "2020-01-01T12:34:56.999Z",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "User"
+        }
+      }
+    }
+  }
+}

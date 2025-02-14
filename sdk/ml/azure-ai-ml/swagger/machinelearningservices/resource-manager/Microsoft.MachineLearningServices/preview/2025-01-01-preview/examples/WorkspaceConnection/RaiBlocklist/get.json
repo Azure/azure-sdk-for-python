@@ -1,0 +1,31 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "aml-workspace-name",
+    "connectionName": "testConnection",
+    "raiBlocklistName": "raiBlocklistName",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.MachineLearningServices/workspaces/aml-workspace-name/connections/testConnection/raiBlocklists/raiBlocklistName",
+        "name": "raiBlocklistName",
+        "type": "Microsoft.MachineLearningServices/workspaces/connections/raiBlocklists",
+        "properties": {
+          "description": "Basic blocklist description"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T00:00:00Z",
+          "createdBy": "00000000-1111-2222-3333-444444444444",
+          "createdByType": "Application",
+          "lastModifiedAt": "2020-01-01T00:00:00Z",
+          "lastModifiedBy": "00000000-1111-2222-3333-444444444444",
+          "lastModifiedByType": "Application"
+        }
+      }
+    }
+  }
+}
