@@ -49,6 +49,8 @@ from user_functions import fetch_current_datetime
 # Import AzureLogicAppTool and the function factory from user_logic_apps
 from user_logic_apps import AzureLogicAppTool, create_send_email_function
 
+# [START register_logic_app]
+
 # Create the project client
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
@@ -63,7 +65,7 @@ resource_group = project_client.scope["resource_group_name"]
 logic_app_name = "<LOGIC_APP_NAME>"
 trigger_name = "<TRIGGER_NAME>"
 
-# Create and initialize our AzureLogicAppTool instance
+# Create and initialize AzureLogicAppTool utility
 logic_app_tool = AzureLogicAppTool(subscription_id, resource_group)
 logic_app_tool.register_logic_app(logic_app_name, trigger_name)
 print(f"Registered logic app '{logic_app_name}' with trigger '{trigger_name}'.")
@@ -76,6 +78,7 @@ functions_to_use: Set = {
     fetch_current_datetime,
     send_email_func,  # This references the AzureLogicAppTool instance via closure
 }
+# [END register_logic_app]
 
 with project_client:
     # Create an agent

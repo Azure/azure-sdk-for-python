@@ -675,27 +675,41 @@ After we have tested the function and made sure it works, please make sure that 
 #### Create Agent With Logic Apps
 
 Logic Apps allow HTTP requests to trigger actions. For more information, refer to the guide [Logic App Workflows for Function Calling](https://learn.microsoft.com/azure/ai-services/openai/how-to/assistants-logic-apps#create-logic-apps-workflows-for-function-calling).
+
 Your Logic App must be in the same resource group as your Azure AI Project, shown in the Azure Portal. Agents SDK accesses Logic Apps through Workflow URLs, which are fetched and called as requests in functions. 
 
-<!-- SNIPPET:user_logic_apps.create_send_email_function -->
+Below is an example of how to create an Azure Logic App utility tool and register a function with it.
+
+<!-- SNIPPET:sample_agents_logic_apps.register_logic_app -->
 
 ```python
-def send_email_via_logic_app(recipient: str, subject: str, body: str) -> str:
-        """
-        Sends an email by invoking the specified Logic App with the given recipient, subject, and body.
+# Create the project client
+project_client = AIProjectClient.from_connection_string(
+    credential=DefaultAzureCredential(),
+    conn_str=os.environ["PROJECT_CONNECTION_STRING"],
+)
 
-        :param recipient: The email address of the recipient.
-        :param subject: The subject of the email.
-        :param body: The body of the email.
-        :return: A JSON string summarizing the result of the operation.
-        """
-        payload = {
-            "to": recipient,
-            "subject": subject,
-            "body": body,
-        }
-        result = service.invoke_logic_app(logic_app_name, payload)
-        return json.dumps(result)
+# Extract subscription and resource group from the project scope
+subscription_id = project_client.scope["subscription_id"]
+resource_group = project_client.scope["resource_group_name"]
+
+# Logic App details
+logic_app_name = "<LOGIC_APP_NAME>"
+trigger_name = "<TRIGGER_NAME>"
+
+# Create and initialize AzureLogicAppTool utility
+logic_app_tool = AzureLogicAppTool(subscription_id, resource_group)
+logic_app_tool.register_logic_app(logic_app_name, trigger_name)
+print(f"Registered logic app '{logic_app_name}' with trigger '{trigger_name}'.")
+
+# Create the specialized "send_email_via_logic_app" function for your agent tools
+send_email_func = create_send_email_function(logic_app_tool, logic_app_name)
+
+# Prepare the function tools for the agent
+functions_to_use: Set = {
+    fetch_current_datetime,
+    send_email_func,  # This references the AzureLogicAppTool function
+}
 ```
 
 <!-- END SNIPPET -->
