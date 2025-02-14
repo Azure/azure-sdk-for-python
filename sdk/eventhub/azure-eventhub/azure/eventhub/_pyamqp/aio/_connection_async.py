@@ -93,6 +93,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         **kwargs: Any,
     ):  # pylint:disable=too-many-statements
         parsed_url = urlparse(endpoint)
+        self._shutdown = False
 
         if parsed_url.hostname is None:
             raise ValueError(f"Invalid endpoint: {endpoint}")
@@ -858,7 +859,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             await self._wait_for_response(wait, ConnectionState.OPENED)
         elif not self._allow_pipelined_open:
             raise ValueError("Connection has been configured to not allow piplined-open. Please set 'wait' parameter.")
-        
+        self._shutdown = False
         if self._keep_alive_interval:
             self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_async())
 
@@ -894,6 +895,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             else:
                 await self._set_state(ConnectionState.CLOSE_SENT)
             await self._wait_for_response(wait, ConnectionState.END)
+            self._shutdown = True
             if self._keep_alive_thread:
                 await self._keep_alive_thread
                 self._keep_alive_thread = None
