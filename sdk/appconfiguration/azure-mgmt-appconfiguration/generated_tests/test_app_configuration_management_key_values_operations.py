@@ -20,7 +20,7 @@ class TestAppConfigurationManagementKeyValuesOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_key_values_get(self, resource_group):
         response = self.client.key_values.get(
             resource_group_name=resource_group.name,
             config_store_name="str",
@@ -33,7 +33,7 @@ class TestAppConfigurationManagementKeyValuesOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_key_values_create_or_update(self, resource_group):
         response = self.client.key_values.create_or_update(
             resource_group_name=resource_group.name,
             config_store_name="str",
@@ -46,7 +46,7 @@ class TestAppConfigurationManagementKeyValuesOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_key_values_begin_delete(self, resource_group):
         response = self.client.key_values.begin_delete(
             resource_group_name=resource_group.name,
             config_store_name="str",
