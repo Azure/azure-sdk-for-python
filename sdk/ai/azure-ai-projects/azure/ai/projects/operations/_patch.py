@@ -2525,7 +2525,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 if toolset:
                     tool_outputs = toolset.execute_tool_calls(tool_calls)
                 else:
-                    logger.warning("Toolset is not available in the client.")
+                    logger.debug("Toolset is not available in the client.")
                     return
 
                 logger.info("Tool outputs: %s", tool_outputs)
@@ -2780,8 +2780,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         *,
         content_type: str = "application/json",
         file_ids: Optional[List[str]] = None,
-        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         name: Optional[str] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
@@ -2955,7 +2955,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         vector_store_id: str,
         *,
         file_ids: Optional[List[str]] = None,
-        store_configuration: Optional[_models.VectorStoreConfiguration] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
         content_type: str = "application/json",
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         sleep_interval: float = 1,
@@ -2967,9 +2967,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type vector_store_id: str
         :keyword file_ids: List of file identifiers. Required.
         :paramtype file_ids: list[str]
-        :keyword store_configuration: The vector store configuration, used when vector store is created
-         from Azure asset ID. Default value is None.
-        :paramtype store_configuration:~azure.ai.projects.VectorStorageConfiguration
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.projects.models.VectorStoreDataSource]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3033,7 +3032,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword file_ids: List of file identifiers. Required.
         :paramtype file_ids: list[str]
         :keyword data_sources: List of Azure assets. Default value is None.
-        :paramtype data_sources: list[~azure.ai.client.project.VectorStoreDataSource]
+        :paramtype data_sources: list[~azure.ai.client.models.VectorStoreDataSource]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
         :paramtype chunking_strategy: ~azure.ai.projects.models.VectorStoreChunkingStrategyRequest

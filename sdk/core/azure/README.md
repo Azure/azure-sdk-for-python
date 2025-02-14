@@ -18,4 +18,4 @@ Here's a non-exhaustive list of common packages:
 A more comprehensive discussion of the rationale for this decision can be found in the following issue:
 https://github.com/Azure/azure-sdk-for-python/issues/10646
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure%2FREADME.png)
+

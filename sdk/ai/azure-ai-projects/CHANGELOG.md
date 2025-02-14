@@ -4,6 +4,8 @@
 
 ### Features added
 
+* Added trace_function decorator which can be used to trace functions
+
 ### Bugs Fixed
 
 ### Breaking Changes

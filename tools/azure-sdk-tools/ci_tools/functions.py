@@ -42,7 +42,7 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
 ]
 
 TEST_COMPATIBILITY_MAP = {
-    "azure-ai-ml": ">=3.7, !=3.13.*",
+    "azure-ai-ml": ">=3.7",
     "azure-ai-evaluation": ">=3.9, !=3.13.*"
 }
 TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
