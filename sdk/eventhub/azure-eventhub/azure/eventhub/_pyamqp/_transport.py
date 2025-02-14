@@ -727,7 +727,7 @@ class WebSocketTransport(_AbstractTransport):
                 http_proxy=http_proxy,
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 timeout=self.socket_timeout,  # timeout for read/write operations
-                ssl_ctx=self.sslopts['context'] if self._use_tls else None,
+                ssl_ctx=self.sslopts if self._use_tls else None,
             )
             self.sock.connect()
         except WebSocketConnectionError as exc:

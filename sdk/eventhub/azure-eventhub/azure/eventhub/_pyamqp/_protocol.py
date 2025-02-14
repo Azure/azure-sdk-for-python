@@ -95,10 +95,18 @@ class WebSocketProtocol(WebSocketMixin):
                     timeout=self._timeout
                 )
             if self._ws_url.is_secure:
-                if not self._ssl_ctx:
-                    self._socket = self._wrap_socket_sni(self._socket, server_hostname = self._ws_url.hostname)
+                if 'context' not in self._ssl_ctx:
+                    self._socket = self._wrap_socket_sni(
+                        self._socket,
+                        keyfile=self._ssl_ctx.get('keyfile', None),
+                        certfile=self._ssl_ctx.get('certfile', None),
+                        ca_certs=self._ssl_ctx.get('ca_certs', None),
+                        ciphers=self._ssl_ctx.get('ciphers', None),
+                        ssl_version=self._ssl_ctx.get('ssl_version', None),
+                        server_hostname = self._ws_url.hostname
+                    )
                 else:
-                    self._socket = self._ssl_ctx.wrap_socket(self._socket, server_hostname = self._ws_url.hostname)
+                    self._socket = self._ssl_ctx['context'].wrap_socket(self._socket, server_hostname = self._ws_url.hostname)
             # TODO: add logging
             self._socket.setblocking(True)
             self._socket.settimeout(self._timeout)
