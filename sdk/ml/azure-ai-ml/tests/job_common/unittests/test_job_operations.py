@@ -20,12 +20,7 @@ from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.sweep.sweep_job import SweepJob
 from azure.ai.ml.exceptions import ValidationException
-from azure.ai.ml.operations import (
-    DatastoreOperations,
-    EnvironmentOperations,
-    JobOperations,
-    WorkspaceOperations,
-)
+from azure.ai.ml.operations import DatastoreOperations, EnvironmentOperations, JobOperations, WorkspaceOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._job_ops_helper import get_git_properties
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
@@ -119,6 +114,7 @@ def mock_job_operation(
     mock_aml_services_2024_01_01_preview: Mock,
     mock_aml_services_2024_10_01_preview: Mock,
     mock_aml_services_2023_08_01_preview: Mock,
+    mock_aml_services_2025_01_01_preview: Mock,
     mock_aml_services_run_history: Mock,
     mock_machinelearning_client: Mock,
     mock_code_operation: Mock,
@@ -138,6 +134,7 @@ def mock_job_operation(
         service_client_02_2023_preview=mock_aml_services_2023_02_01_preview,
         service_client_01_2024_preview=mock_aml_services_2024_01_01_preview,
         service_client_10_2024_preview=mock_aml_services_2024_10_01_preview,
+        service_client_01_2025_preview=mock_aml_services_2025_01_01_preview,
         service_client_run_history=mock_aml_services_run_history,
         all_operations=mock_machinelearning_client._operation_container,
         credential=Mock(spec_set=DefaultAzureCredential),
@@ -239,7 +236,7 @@ class TestJobOperations:
                 token=jwt.encode({"aud": aml_resource_id}, key="utf-8"), expires_on=1234
             )
             mock_job_operation.create_or_update(job=job)
-            mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
+            mock_job_operation.service_client_01_2025_preview.jobs.create_or_update.assert_called_once()
             mock_job_operation._credential.get_token.assert_called_once_with(azure_ml_scopes[0])
 
         with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
