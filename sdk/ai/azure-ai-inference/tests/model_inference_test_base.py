@@ -773,7 +773,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
 
 class HttpResponseForUnitTests(HttpResponse):
 
-    def __init__(self, response_bytes: list[bytes]):
+    def __init__(self, response_bytes: List[bytes]):
         self._response_bytes = response_bytes
 
     # Required to support context management
@@ -852,7 +852,7 @@ class HttpResponseForUnitTests(HttpResponse):
 
 class AsyncHttpResponseForUnitTests(AsyncHttpResponse):
 
-    def __init__(self, response_bytes: list[bytes]):
+    def __init__(self, response_bytes: List[bytes]):
         self._response_bytes = response_bytes
 
     # Required to support context management

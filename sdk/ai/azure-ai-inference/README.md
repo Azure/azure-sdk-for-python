@@ -326,7 +326,7 @@ response = client.complete(
         },
         {
             "role": "user",
-            "content": "How many feed are in a mile?",
+            "content": "How many feet are in a mile?",
         },
     ]
 )
@@ -360,7 +360,10 @@ response = client.complete(
 )
 
 for update in response:
-    print(update.choices[0].delta.content or "", end="", flush=True)
+    if update.choices and update.choices[0].delta:
+        print(update.choices[0].delta.content or "", end="", flush=True)
+    if update.usage:
+        print(f"\n\nUsage: {update.usage}")
 
 client.close()
 ```
