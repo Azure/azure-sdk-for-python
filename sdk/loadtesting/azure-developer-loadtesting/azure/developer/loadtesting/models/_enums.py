@@ -119,7 +119,7 @@ class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Count per second"""
 
 
-class PFAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PassFailAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Action to take on failure of pass/fail criteria."""
 
     CONTINUE = "continue"
@@ -128,7 +128,7 @@ class PFAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Test run will stop if pass fail criteria metric is not passed."""
 
 
-class PFAgFunc(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PassFailAggregationFunction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Aggregation functions for pass/fail criteria."""
 
     COUNT = "count"
@@ -163,6 +163,28 @@ class PFAgFunc(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Criteria applies for maximum value."""
 
 
+class PassFailResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Pass/fail criteria result."""
+
+    PASSED = "passed"
+    """Given pass fail criteria metric has passed."""
+    UNDETERMINED = "undetermined"
+    """Given pass fail criteria metric couldn't determine."""
+    FAILED = "failed"
+    """Given pass fail criteria metric has failed."""
+
+
+class PassFailTestResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Test result based on pass/fail criteria."""
+
+    PASSED = "PASSED"
+    """Pass/fail criteria has passed."""
+    NOT_APPLICABLE = "NOT_APPLICABLE"
+    """Pass/fail criteria is not applicable."""
+    FAILED = "FAILED"
+    """Pass/fail criteria has failed."""
+
+
 class PFMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Metrics for pass/fail criteria."""
 
@@ -176,28 +198,6 @@ class PFMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Pass fail criteria for total requests."""
     REQUESTS_PER_SEC = "requests_per_sec"
     """Pass fail criteria for request per second."""
-
-
-class PFResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Pass/fail criteria result."""
-
-    PASSED = "passed"
-    """Given pass fail criteria metric has passed."""
-    UNDETERMINED = "undetermined"
-    """Given pass fail criteria metric couldn't determine."""
-    FAILED = "failed"
-    """Given pass fail criteria metric has failed."""
-
-
-class PFTestResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Test result based on pass/fail criteria."""
-
-    PASSED = "PASSED"
-    """Pass/fail criteria has passed."""
-    NOT_APPLICABLE = "NOT_APPLICABLE"
-    """Pass/fail criteria is not applicable."""
-    FAILED = "FAILED"
-    """Pass/fail criteria has failed."""
 
 
 class RecommendationCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):

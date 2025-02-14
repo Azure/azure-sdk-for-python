@@ -855,7 +855,7 @@ class PassFailMetric(_model_base.Model):
        ‘max’ - for response_time_ms and latency metric, ‘avg’ - for requests_per_sec,
        ‘count’ - for requests. Known values are: "count", "percentage", "avg", "p50", "p75", "p90",
      "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99", "min", and "max".
-    :vartype aggregate: str or ~azure.developer.loadtesting.models.PFAgFunc
+    :vartype aggregate: str or ~azure.developer.loadtesting.models.PassFailAggregationFunction
     :ivar condition: The comparison operator. Supported types ‘>’, ‘<’.
     :vartype condition: str
     :ivar request_name: Request name for which the Pass fail criteria has to be applied.
@@ -865,18 +865,18 @@ class PassFailMetric(_model_base.Model):
     :vartype value: float
     :ivar action: Action taken after the threshold is met. Default is ‘continue’. Known values are:
      "continue" and "stop".
-    :vartype action: str or ~azure.developer.loadtesting.models.PFAction
+    :vartype action: str or ~azure.developer.loadtesting.models.PassFailAction
     :ivar actual_value: The actual value of the client metric for the test run.
     :vartype actual_value: float
     :ivar result: Outcome of the test run. Known values are: "passed", "undetermined", and
      "failed".
-    :vartype result: str or ~azure.developer.loadtesting.models.PFResult
+    :vartype result: str or ~azure.developer.loadtesting.models.PassFailResult
     """
 
     client_metric: Optional[Union[str, "_models.PFMetrics"]] = rest_field(name="clientMetric")
     """The client metric on which the criteria should be applied. Known values are:
      \"response_time_ms\", \"latency\", \"error\", \"requests\", and \"requests_per_sec\"."""
-    aggregate: Optional[Union[str, "_models.PFAgFunc"]] = rest_field()
+    aggregate: Optional[Union[str, "_models.PassFailAggregationFunction"]] = rest_field()
     """The aggregation function to be applied on the client metric. Allowed functions
      
      
@@ -892,12 +892,12 @@ class PassFailMetric(_model_base.Model):
     value: Optional[float] = rest_field()
     """The value to compare with the client metric. Allowed values - ‘error : [0.0 ,
      100.0] unit- % ’, response_time_ms and latency : any integer value unit- ms."""
-    action: Optional[Union[str, "_models.PFAction"]] = rest_field()
+    action: Optional[Union[str, "_models.PassFailAction"]] = rest_field()
     """Action taken after the threshold is met. Default is ‘continue’. Known values are: \"continue\"
      and \"stop\"."""
     actual_value: Optional[float] = rest_field(name="actualValue", visibility=["read"])
     """The actual value of the client metric for the test run."""
-    result: Optional[Union[str, "_models.PFResult"]] = rest_field(visibility=["read"])
+    result: Optional[Union[str, "_models.PassFailResult"]] = rest_field(visibility=["read"])
     """Outcome of the test run. Known values are: \"passed\", \"undetermined\", and \"failed\"."""
 
     @overload
@@ -905,11 +905,11 @@ class PassFailMetric(_model_base.Model):
         self,
         *,
         client_metric: Optional[Union[str, "_models.PFMetrics"]] = None,
-        aggregate: Optional[Union[str, "_models.PFAgFunc"]] = None,
+        aggregate: Optional[Union[str, "_models.PassFailAggregationFunction"]] = None,
         condition: Optional[str] = None,
         request_name: Optional[str] = None,
         value: Optional[float] = None,
-        action: Optional[Union[str, "_models.PFAction"]] = None,
+        action: Optional[Union[str, "_models.PassFailAction"]] = None,
     ) -> None: ...
 
     @overload
@@ -943,12 +943,12 @@ class PassFailServerMetric(_model_base.Model):
     :vartype value: float
     :ivar action: Action taken after the threshold is met. Default is ‘continue’. Known values are:
      "continue" and "stop".
-    :vartype action: str or ~azure.developer.loadtesting.models.PFAction
+    :vartype action: str or ~azure.developer.loadtesting.models.PassFailAction
     :ivar actual_value: The actual value of the server metric.
     :vartype actual_value: float
     :ivar result: Outcome of the test run. Known values are: "passed", "undetermined", and
      "failed".
-    :vartype result: str or ~azure.developer.loadtesting.models.PFResult
+    :vartype result: str or ~azure.developer.loadtesting.models.PassFailResult
     """
 
     resource_id: str = rest_field(name="resourceId")
@@ -963,12 +963,12 @@ class PassFailServerMetric(_model_base.Model):
     """The comparison operator. Supported types ‘>’, ‘<’. Required."""
     value: float = rest_field()
     """The value to compare with the server metric. Required."""
-    action: Optional[Union[str, "_models.PFAction"]] = rest_field()
+    action: Optional[Union[str, "_models.PassFailAction"]] = rest_field()
     """Action taken after the threshold is met. Default is ‘continue’. Known values are: \"continue\"
      and \"stop\"."""
     actual_value: Optional[float] = rest_field(name="actualValue", visibility=["read"])
     """The actual value of the server metric."""
-    result: Optional[Union[str, "_models.PFResult"]] = rest_field(visibility=["read"])
+    result: Optional[Union[str, "_models.PassFailResult"]] = rest_field(visibility=["read"])
     """Outcome of the test run. Known values are: \"passed\", \"undetermined\", and \"failed\"."""
 
     @overload
@@ -981,7 +981,7 @@ class PassFailServerMetric(_model_base.Model):
         aggregation: str,
         condition: str,
         value: float,
-        action: Optional[Union[str, "_models.PFAction"]] = None,
+        action: Optional[Union[str, "_models.PassFailAction"]] = None,
     ) -> None: ...
 
     @overload
@@ -1776,7 +1776,7 @@ class TestRun(_model_base.Model):
     :vartype test_artifacts: ~azure.developer.loadtesting.models.TestRunArtifacts
     :ivar test_result: Test result for pass/Fail criteria used during the test run. Known values
      are: "PASSED", "NOT_APPLICABLE", and "FAILED".
-    :vartype test_result: str or ~azure.developer.loadtesting.models.PFTestResult
+    :vartype test_result: str or ~azure.developer.loadtesting.models.PassFailTestResult
     :ivar virtual_users: Number of virtual users, for which test has been run.
     :vartype virtual_users: int
     :ivar display_name: Display name of a testRun.
@@ -1867,7 +1867,7 @@ class TestRun(_model_base.Model):
     """The load test configuration."""
     test_artifacts: Optional["_models.TestRunArtifacts"] = rest_field(name="testArtifacts", visibility=["read"])
     """Collection of test run artifacts."""
-    test_result: Optional[Union[str, "_models.PFTestResult"]] = rest_field(name="testResult", visibility=["read"])
+    test_result: Optional[Union[str, "_models.PassFailTestResult"]] = rest_field(name="testResult", visibility=["read"])
     """Test result for pass/Fail criteria used during the test run. Known values are: \"PASSED\",
      \"NOT_APPLICABLE\", and \"FAILED\"."""
     virtual_users: Optional[int] = rest_field(name="virtualUsers", visibility=["read"])
