@@ -64,7 +64,7 @@ TEST_BLOB_PREFIX = 'blob'
 class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
     # --Helpers-----------------------------------------------------------------
     async def _setup(self, storage_account_name, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key, retry_total=0)
         self.container_name = self.get_resource_name('utcontainer')
         self.source_container_name = self.get_resource_name('utcontainersource')
         self.byte_data = self.get_random_bytes(1024)
@@ -3552,7 +3552,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act / Assert
         await blob.upload_blob(data=compressed_data, content_settings=content_settings, overwrite=True)
-        downloaded = await blob.download_blob(validate_content=True)
+        downloaded = await blob.download_blob(validate_content=True, decompress=False)
         result = await downloaded.readall()
         assert result == decompressed_data
 # ------------------------------------------------------------------------------
