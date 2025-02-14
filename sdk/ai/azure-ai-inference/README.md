@@ -271,6 +271,7 @@ response = client.complete(
 )
 
 print(response.choices[0].message.content)
+print(f"\nToken usage: {response.usage}")
 ```
 
 <!-- END SNIPPET -->
@@ -363,7 +364,7 @@ for update in response:
     if update.choices and update.choices[0].delta:
         print(update.choices[0].delta.content or "", end="", flush=True)
     if update.usage:
-        print(f"\n\nUsage: {update.usage}")
+        print(f"\n\nToken usage: {update.usage}")
 
 client.close()
 ```
