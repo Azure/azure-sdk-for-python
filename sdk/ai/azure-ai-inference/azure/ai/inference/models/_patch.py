@@ -360,14 +360,14 @@ class BaseStreamingChatCompletions:
 
     # The prefix of each line in the SSE stream that contains a JSON string
     # to deserialize into a StreamingChatCompletionsUpdate object
-    _SSE_DATA_EVENT_PREFIX = "data: "
+    _SSE_DATA_EVENT_PREFIX = b"data: "
 
     # The line indicating the end of the SSE stream
-    _SSE_DATA_EVENT_DONE = "data: [DONE]"
+    _SSE_DATA_EVENT_DONE = b"data: [DONE]"
 
     def __init__(self):
         self._queue: "queue.Queue[_models.StreamingChatCompletionsUpdate]" = queue.Queue()
-        self._incomplete_json = ""
+        self._incomplete_line = b""
         self._done = False  # Will be set to True when reading 'data: [DONE]' line
 
     # See https://html.spec.whatwg.org/multipage/server-sent-events.html#parsing-an-event-stream
@@ -379,26 +379,34 @@ class BaseStreamingChatCompletions:
         # Clear the queue of StreamingChatCompletionsUpdate before processing the next block
         self._queue.queue.clear()
 
-        # Convert `bytes` to string and split the string by newline, while keeping the new line char.
-        # the last may be a partial "line" that does not contain a newline char at the end.
-        line_list: List[str] = re.split(r"(?<=\n)", element.decode("utf-8"))
+        # Split the single input bytes object at new line characters, and get a list of bytes objects, each
+        # representing a single "line". The bytes object at the end of the list may be a partial "line" that
+        # does not contain a new line character at the end.
+        # Note 1: DO NOT try to use something like this here:
+        #   line_list: List[str] = re.split(r"(?<=\n)", element.decode("utf-8"))
+        #   to do full UTF8 decoding of the whole input bytes object, as the last line in the list may be partial, and
+        #   as such may contain a partial UTF8 Chinese character (for example). `decode("utf-8")` will raise an
+        #   exception for such a case. See GitHub issue https://github.com/Azure/azure-sdk-for-python/issues/39565
+        # Note 2: Consider future re-write and simplifications of this code by using:
+        #   `codecs.getincrementaldecoder("utf-8")`
+        line_list: List[bytes] = re.split(re.compile(b"(?<=\n)"), element)
         for index, line in enumerate(line_list):
 
             if self._ENABLE_CLASS_LOGS:
                 logger.debug("[Original line] %s", repr(line))
 
             if index == 0:
-                line = self._incomplete_json + line
-                self._incomplete_json = ""
+                line = self._incomplete_line + line
+                self._incomplete_line = b""
 
-            if index == len(line_list) - 1 and not line.endswith("\n"):
-                self._incomplete_json = line
+            if index == len(line_list) - 1 and not line.endswith(b"\n"):
+                self._incomplete_line = line
                 return False
 
             if self._ENABLE_CLASS_LOGS:
                 logger.debug("[Modified line] %s", repr(line))
 
-            if line == "\n":  # Empty line, indicating flush output to client
+            if line == b"\n":  # Empty line, indicating flush output to client
                 continue
 
             if not line.startswith(self._SSE_DATA_EVENT_PREFIX):
@@ -411,23 +419,19 @@ class BaseStreamingChatCompletions:
 
             # If you reached here, the line should contain `data: {...}\n`
             # where the curly braces contain a valid JSON object.
+            # It is now safe to do UTF8 decoding of the line.
+            line_str = line.decode("utf-8")
+
             # Deserialize it into a StreamingChatCompletionsUpdate object
             # and add it to the queue.
             # pylint: disable=W0212 # Access to a protected member _deserialize of a client class
             update = _models.StreamingChatCompletionsUpdate._deserialize(
-                json.loads(line[len(self._SSE_DATA_EVENT_PREFIX) : -1]), []
+                json.loads(line_str[len(self._SSE_DATA_EVENT_PREFIX) : -1]), []
             )
 
-            # We skip any update that has a None or empty choices list
+            # We skip any update that has a None or empty choices list, and does not have token usage info.
             # (this is what OpenAI Python SDK does)
             if update.choices or update.usage:
-
-                # We update all empty content strings to None
-                # (this is what OpenAI Python SDK does)
-                # for choice in update.choices:
-                #    if not choice.delta.content:
-                #        choice.delta.content = None
-
                 self._queue.put(update)
 
             if self._ENABLE_CLASS_LOGS:
