@@ -29,11 +29,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class AppConfigurationManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class AppConfigurationManagementClient:  # pylint: disable=too-many-instance-attributes
     """AppConfigurationManagementClient.
 
     :ivar configuration_stores: ConfigurationStoresOperations operations

@@ -20,7 +20,7 @@ class TestAppConfigurationManagementPrivateLinkResourcesOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_configuration_store(self, resource_group):
+    def test_private_link_resources_list_by_configuration_store(self, resource_group):
         response = self.client.private_link_resources.list_by_configuration_store(
             resource_group_name=resource_group.name,
             config_store_name="str",
@@ -32,7 +32,7 @@ class TestAppConfigurationManagementPrivateLinkResourcesOperations(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_private_link_resources_get(self, resource_group):
         response = self.client.private_link_resources.get(
             resource_group_name=resource_group.name,
             config_store_name="str",

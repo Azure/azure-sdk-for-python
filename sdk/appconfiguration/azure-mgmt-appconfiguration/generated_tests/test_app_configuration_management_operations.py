@@ -20,7 +20,7 @@ class TestAppConfigurationManagementOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_check_name_availability(self, resource_group):
+    def test_operations_check_name_availability(self, resource_group):
         response = self.client.operations.check_name_availability(
             check_name_availability_parameters={"name": "str", "type": "str"},
             api_version="2024-05-01",
@@ -31,7 +31,7 @@ class TestAppConfigurationManagementOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_operations_list(self, resource_group):
         response = self.client.operations.list(
             api_version="2024-05-01",
         )
@@ -41,7 +41,7 @@ class TestAppConfigurationManagementOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_regional_check_name_availability(self, resource_group):
+    def test_operations_regional_check_name_availability(self, resource_group):
         response = self.client.operations.regional_check_name_availability(
             location="str",
             check_name_availability_parameters={"name": "str", "type": "str"},
