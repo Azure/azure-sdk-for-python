@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -99,6 +99,7 @@ class BigDataPoolsOperations:
     def list(self, **kwargs: Any) -> _models.BigDataPoolResourceInfoListResult:
         """List Big Data Pools.
 
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BigDataPoolResourceInfoListResult or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.BigDataPoolResourceInfoListResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -153,6 +154,7 @@ class BigDataPoolsOperations:
 
         :param big_data_pool_name: The Big Data Pool name. Required.
         :type big_data_pool_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BigDataPoolResourceInfo or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.BigDataPoolResourceInfo
         :raises ~azure.core.exceptions.HttpResponseError:

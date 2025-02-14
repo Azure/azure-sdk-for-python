@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -99,6 +99,7 @@ class SqlPoolsOperations:
     def list(self, **kwargs: Any) -> _models.SqlPoolInfoListResult:
         """List Sql Pools.
 
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SqlPoolInfoListResult or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.SqlPoolInfoListResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -153,6 +154,7 @@ class SqlPoolsOperations:
 
         :param sql_pool_name: The Sql Pool name. Required.
         :type sql_pool_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SqlPool or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.SqlPool
         :raises ~azure.core.exceptions.HttpResponseError:

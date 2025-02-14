@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -58,7 +58,7 @@ class RunNotebookOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     async def _create_run_initial(
-        self, run_id: str, run_notebook_request: Union[_models.RunNotebookRequest, IO[bytes]], **kwargs: Any
+        self, run_id: str, run_notebook_request: Union[_models.RunNotebookRequest, IO], **kwargs: Any
     ) -> _models.RunNotebookResponse:
         error_map = {
             401: ClientAuthenticationError,
@@ -130,13 +130,22 @@ class RunNotebookOperations:
     ) -> AsyncLROPoller[_models.RunNotebookResponse]:
         """Run notebook.
 
-        :param run_id: Notebook run id. Required.
+        :param run_id: Notebook run id. For Create Run, you can generate a new GUID and use it here.
+         For other actions, this is the same ID used in Create Run. Required.
         :type run_id: str
         :param run_notebook_request: Run notebook request payload. Required.
         :type run_notebook_request: ~azure.synapse.artifacts.models.RunNotebookRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RunNotebookResponse or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.RunNotebookResponse]
@@ -145,17 +154,26 @@ class RunNotebookOperations:
 
     @overload
     async def begin_create_run(
-        self, run_id: str, run_notebook_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, run_id: str, run_notebook_request: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.RunNotebookResponse]:
         """Run notebook.
 
-        :param run_id: Notebook run id. Required.
+        :param run_id: Notebook run id. For Create Run, you can generate a new GUID and use it here.
+         For other actions, this is the same ID used in Create Run. Required.
         :type run_id: str
         :param run_notebook_request: Run notebook request payload. Required.
-        :type run_notebook_request: IO[bytes]
+        :type run_notebook_request: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RunNotebookResponse or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.RunNotebookResponse]
@@ -164,15 +182,27 @@ class RunNotebookOperations:
 
     @distributed_trace_async
     async def begin_create_run(
-        self, run_id: str, run_notebook_request: Union[_models.RunNotebookRequest, IO[bytes]], **kwargs: Any
+        self, run_id: str, run_notebook_request: Union[_models.RunNotebookRequest, IO], **kwargs: Any
     ) -> AsyncLROPoller[_models.RunNotebookResponse]:
         """Run notebook.
 
-        :param run_id: Notebook run id. Required.
+        :param run_id: Notebook run id. For Create Run, you can generate a new GUID and use it here.
+         For other actions, this is the same ID used in Create Run. Required.
         :type run_id: str
         :param run_notebook_request: Run notebook request payload. Is either a RunNotebookRequest type
-         or a IO[bytes] type. Required.
-        :type run_notebook_request: ~azure.synapse.artifacts.models.RunNotebookRequest or IO[bytes]
+         or a IO type. Required.
+        :type run_notebook_request: ~azure.synapse.artifacts.models.RunNotebookRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RunNotebookResponse or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.RunNotebookResponse]
@@ -224,22 +254,22 @@ class RunNotebookOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.RunNotebookResponse].from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.RunNotebookResponse](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
     async def get_status(self, run_id: str, **kwargs: Any) -> _models.RunNotebookResponse:
         """Get RunNotebook Status for run id.
 
-        :param run_id: Notebook run id. Required.
+        :param run_id: Notebook run id. For Create Run, you can generate a new GUID and use it here.
+         For other actions, this is the same ID used in Create Run. Required.
         :type run_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RunNotebookResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.RunNotebookResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -292,8 +322,10 @@ class RunNotebookOperations:
     async def cancel_run(self, run_id: str, **kwargs: Any) -> _models.RunNotebookResponse:
         """Cancel notebook run.
 
-        :param run_id: Notebook run id. Required.
+        :param run_id: Notebook run id. For Create Run, you can generate a new GUID and use it here.
+         For other actions, this is the same ID used in Create Run. Required.
         :type run_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RunNotebookResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.RunNotebookResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -334,7 +366,7 @@ class RunNotebookOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         deserialized = self._deserialize("RunNotebookResponse", pipeline_response)
@@ -348,8 +380,10 @@ class RunNotebookOperations:
     async def get_snapshot(self, run_id: str, **kwargs: Any) -> _models.RunNotebookSnapshotResponse:
         """Get RunNotebook Snapshot for run id.
 
-        :param run_id: Notebook run id. Required.
+        :param run_id: Notebook run id. For Create Run, you can generate a new GUID and use it here.
+         For other actions, this is the same ID used in Create Run. Required.
         :type run_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RunNotebookSnapshotResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.RunNotebookSnapshotResponse
         :raises ~azure.core.exceptions.HttpResponseError:

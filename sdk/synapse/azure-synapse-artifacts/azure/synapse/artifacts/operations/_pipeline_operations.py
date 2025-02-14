@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -272,6 +272,7 @@ class PipelineOperations:
     def get_pipelines_by_workspace(self, **kwargs: Any) -> Iterable["_models.PipelineResource"]:
         """Lists pipelines.
 
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PipelineResource or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.PipelineResource]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -345,7 +346,7 @@ class PipelineOperations:
     def _create_or_update_pipeline_initial(
         self,
         pipeline_name: str,
-        pipeline: Union[_models.PipelineResource, IO[bytes]],
+        pipeline: Union[_models.PipelineResource, IO],
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[_models.PipelineResource]:
@@ -430,6 +431,14 @@ class PipelineOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either PipelineResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.PipelineResource]
@@ -440,7 +449,7 @@ class PipelineOperations:
     def begin_create_or_update_pipeline(
         self,
         pipeline_name: str,
-        pipeline: IO[bytes],
+        pipeline: IO,
         if_match: Optional[str] = None,
         *,
         content_type: str = "application/json",
@@ -451,13 +460,21 @@ class PipelineOperations:
         :param pipeline_name: The pipeline name. Required.
         :type pipeline_name: str
         :param pipeline: Pipeline resource definition. Required.
-        :type pipeline: IO[bytes]
+        :type pipeline: IO
         :param if_match: ETag of the pipeline entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either PipelineResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.PipelineResource]
@@ -468,7 +485,7 @@ class PipelineOperations:
     def begin_create_or_update_pipeline(
         self,
         pipeline_name: str,
-        pipeline: Union[_models.PipelineResource, IO[bytes]],
+        pipeline: Union[_models.PipelineResource, IO],
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> LROPoller[_models.PipelineResource]:
@@ -476,12 +493,23 @@ class PipelineOperations:
 
         :param pipeline_name: The pipeline name. Required.
         :type pipeline_name: str
-        :param pipeline: Pipeline resource definition. Is either a PipelineResource type or a IO[bytes]
-         type. Required.
-        :type pipeline: ~azure.synapse.artifacts.models.PipelineResource or IO[bytes]
+        :param pipeline: Pipeline resource definition. Is either a PipelineResource type or a IO type.
+         Required.
+        :type pipeline: ~azure.synapse.artifacts.models.PipelineResource or IO
         :param if_match: ETag of the pipeline entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either PipelineResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.PipelineResource]
@@ -529,15 +557,13 @@ class PipelineOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.PipelineResource].from_continuation_token(
+            return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.PipelineResource](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get_pipeline(
@@ -551,6 +577,7 @@ class PipelineOperations:
          ETag matches the existing entity tag, or if * was provided, then no content will be returned.
          Default value is None.
         :type if_none_match: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PipelineResource or None or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.PipelineResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -651,6 +678,14 @@ class PipelineOperations:
 
         :param pipeline_name: The pipeline name. Required.
         :type pipeline_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -691,13 +726,13 @@ class PipelineOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[None].from_continuation_token(
+            return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _rename_pipeline_initial(  # pylint: disable=inconsistent-return-statements
         self, pipeline_name: str, new_name: Optional[str] = None, **kwargs: Any
@@ -758,6 +793,14 @@ class PipelineOperations:
         :type pipeline_name: str
         :param new_name: New name of the artifact. Default value is None.
         :type new_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -801,13 +844,13 @@ class PipelineOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[None].from_continuation_token(
+            return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @overload
     def create_pipeline_run(
@@ -841,6 +884,7 @@ class PipelineOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateRunResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.CreateRunResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -853,7 +897,7 @@ class PipelineOperations:
         reference_pipeline_run_id: Optional[str] = None,
         is_recovery: Optional[bool] = None,
         start_activity_name: Optional[str] = None,
-        parameters: Optional[IO[bytes]] = None,
+        parameters: Optional[IO] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -874,10 +918,11 @@ class PipelineOperations:
         :type start_activity_name: str
         :param parameters: Parameters of the pipeline run. These parameters will be used only if the
          runId is not specified. Default value is None.
-        :type parameters: IO[bytes]
+        :type parameters: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateRunResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.CreateRunResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -890,7 +935,7 @@ class PipelineOperations:
         reference_pipeline_run_id: Optional[str] = None,
         is_recovery: Optional[bool] = None,
         start_activity_name: Optional[str] = None,
-        parameters: Optional[Union[Dict[str, JSON], IO[bytes]]] = None,
+        parameters: Optional[Union[Dict[str, JSON], IO]] = None,
         **kwargs: Any
     ) -> _models.CreateRunResponse:
         """Creates a run of a pipeline.
@@ -908,9 +953,12 @@ class PipelineOperations:
          specified, all activities will run. Default value is None.
         :type start_activity_name: str
         :param parameters: Parameters of the pipeline run. These parameters will be used only if the
-         runId is not specified. Is either a {str: JSON} type or a IO[bytes] type. Default value is
-         None.
-        :type parameters: dict[str, JSON] or IO[bytes]
+         runId is not specified. Is either a {str: JSON} type or a IO type. Default value is None.
+        :type parameters: dict[str, JSON] or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateRunResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.CreateRunResponse
         :raises ~azure.core.exceptions.HttpResponseError:
