@@ -84,7 +84,7 @@ with project_client:
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
 
-    # Fetch run steps to get the details of the run
+    # Fetch run steps to get the details of the agent run
     run_steps = project_client.agents.list_run_steps(thread_id=thread.id, run_id=run.id)
     for step in run_steps.data:
         print(f"Step {step['id']} status: {step['status']}")
