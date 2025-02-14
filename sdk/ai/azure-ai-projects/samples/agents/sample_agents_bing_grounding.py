@@ -71,6 +71,11 @@ with project_client:
     run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
     print(f"Run finished with status: {run.status}")
 
+    # Retrieve Bing search query links through run step details. We recommend you replace the endpoint with www.bing.com to render the web page
+    run_steps = project_client.agents.list_run_steps(run_id=run.id, thread_id=thread.id)
+    run_steps_data = run_steps['data']
+    print(f"Last run step detail: {run_steps_data}")
+
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
 
