@@ -52,7 +52,7 @@ class Workspace(Model):
         "agents_endpoint_uri": {"readonly": True},
         "ml_flow_tracking_uri": {"readonly": True},
         #'notebook_info': {'readonly': True},
-        "private_endpoint_connections": {"readonly": True},
+        #"private_endpoint_connections": {"readonly": True},
         #'private_link_count': {'readonly': True},
         "provisioning_state": {"readonly": True},
         "service_provisioned_resource_group": {"readonly": True},
@@ -99,10 +99,10 @@ class Workspace(Model):
         #'network_acls': {'key': 'properties.networkAcls', 'type': 'NetworkAcls'},
         #'notebook_info': {'key': 'properties.notebookInfo', 'type': 'NotebookResourceInfo'},
         "primary_user_assigned_identity": {"key": "properties.primaryUserAssignedIdentity", "type": "str"},
-        "private_endpoint_connections": {
-            "key": "properties.privateEndpointConnections",
-            "type": "[PrivateEndpointConnection]",
-        },
+        #"private_endpoint_connections": {
+        #    "key": "properties.privateEndpointConnections",
+        #    "type": "[PrivateEndpointConnection]",
+        #},
         "private_link_count": {"key": "properties.privateLinkCount", "type": "int"},
         "provision_network_now": {"key": "properties.provisionNetworkNow", "type": "bool"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
@@ -207,7 +207,7 @@ class Workspace(Model):
         # self.network_acls = network_acls
         # self.notebook_info = None
         self.primary_user_assigned_identity = primary_user_assigned_identity
-        self.private_endpoint_connections = None
+        # self.private_endpoint_connections = None
         self.private_link_count = None
         self.provision_network_now = provision_network_now
         self.provisioning_state = None
