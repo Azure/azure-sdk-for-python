@@ -19,7 +19,9 @@ Following Built-in evaluators are provided in new Azure AI Evaluation SDK ([azur
 
 
 
-### Difference b/w promptflow-eval package and azure-ai-evaluation package. 
+### Promptflow Eval vs Azure AI Evaluation
+
+Following are the few key differences b/w promptflow-eval package and azure-ai-evaluation package. 
 
 | SDK  |Import statements                                                                                                              |
 |-----------|------------------------------------------------------------------------------------------------------------------------------------|
@@ -105,7 +107,7 @@ pprint(content_safety_score)
 ```
 ### Using Evaluate API
 
-| SDK  |Statements                                                                                                              |
+| SDK  |Import Statements                                                                                                              |
 |-----------|------------------------------------------------------------------------------------------------------------------------------------|
 | promptflow-eval | ``from promptflow.evals.evaluate import evaluate`` |
 | azure-ai-evaluation   | ``from azure.ai.evaluation import evaluate`` |
@@ -164,10 +166,74 @@ result = evaluate(
 pprint(result)
 ```
 
+### Adversarial Simulator. 
+
+Azure AI Evaluation SDK's Simulator provides an end-to-end synthetic datasets generation capabilities to help developers evaluate their LLM or GenAI application's responses against user prompts.
+
+All the adversarial scenarios supported in PromptFlow SDK ([here](https://github.com/microsoft/promptflow/tree/main/src/promptflow-evals/promptflow/evals/synthetic)) has been provided in new Azure AI Evaluation SDK. Please refer to documentation [here](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/develop/simulator-interaction-data#supported-adversarial-simulation-scenarios) for more details and sample code.
+
+Following code snippet represents the basic differences between two SDKs.
 
 
+##### Promptflow Evals SDK
+
+```python
+from promptflow.evals.synthetic import AdversarialSimulator, AdversarialScenario
+from pprint import pprint
+
+azure_cred = DefaultAzureCredential()
+project_scope = {
+    "subscription_id": "<your-subscription-id>",
+    "resource_group_name": "<your-resource-group>",
+    "project_name": "<your-project-name>",
+}
+
+simulator = AdversarialSimulator(azure_ai_project=project_scope, credential=azure_cred)
+
+outputs = await simulator(
+    scenario=AdversarialScenario.ADVERSARIAL_QA, 
+    max_conversation_turns=1, 
+    max_simulation_results=1, 
+    target=callback
+)
+
+pprint(outputs.to_eval_qa_json_lines())
+```
 
 
+##### Azure AI Evaluation SDK
+
+```python
+from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
+from pprint import pprint
+
+azure_cred = DefaultAzureCredential()
+project_scope = {
+    "subscription_id": "<your-subscription-id>",
+    "resource_group_name": "<your-resource-group>",
+    "project_name": "<your-project-name>",
+}
+
+simulator = AdversarialSimulator(azure_ai_project=project_scope, credential=azure_cred)
+
+outputs = await simulator(
+    scenario=AdversarialScenario.ADVERSARIAL_QA, 
+    max_conversation_turns=1, 
+    max_simulation_results=1, 
+    target=callback
+)
+
+pprint(outputs.to_eval_qr_json_lines())
+```
+Note: **`AdversarialSimulator`** in prompftflow-eval SDK had function `to_eval_qa_json_lines()` to return following output:
+```python
+{"question": <user_message>, "answer": <assistant_message>}
+```
+Now, **`AdversarialSimulator`** in azure-ai-evaluation SDK have function `to_eval_qr_json_lines()` to return following output:
+
+```python
+{"query": <user_message>, "response": assistant_message}
+```
 <!-- LINKS -->
 
 [performance_and_quality_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#performance-and-quality-evaluators
