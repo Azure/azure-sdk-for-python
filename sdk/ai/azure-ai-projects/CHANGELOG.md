@@ -4,7 +4,7 @@
 
 ### Features added
 
-* Add the instructions on how to deploy an Azure functions into RREADME.
+* Add the instructions on how to deploy an Azure functions into package README.
 * Added trace_function decorator which can be used to trace functions
 
 ### Bugs Fixed
