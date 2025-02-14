@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -128,6 +128,14 @@ class DataFlowOperations:
         :param if_match: ETag of the data flow entity. Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either DataFlowResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.DataFlowResource]
@@ -176,15 +184,13 @@ class DataFlowOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.DataFlowResource].from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.DataFlowResource](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
     async def get_data_flow(
@@ -198,6 +204,7 @@ class DataFlowOperations:
          ETag matches the existing entity tag, or if * was provided, then no content will be returned.
          Default value is None.
         :type if_none_match: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DataFlowResource or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.DataFlowResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -296,6 +303,14 @@ class DataFlowOperations:
 
         :param data_flow_name: The data flow name. Required.
         :type data_flow_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -337,13 +352,13 @@ class DataFlowOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     async def _rename_data_flow_initial(  # pylint: disable=inconsistent-return-statements
         self, data_flow_name: str, new_name: Optional[str] = None, **kwargs: Any
@@ -404,6 +419,14 @@ class DataFlowOperations:
         :type data_flow_name: str
         :param new_name: New name of the artifact. Default value is None.
         :type new_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -448,18 +471,19 @@ class DataFlowOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get_data_flows_by_workspace(self, **kwargs: Any) -> AsyncIterable["_models.DataFlowResource"]:
         """Lists data flows.
 
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DataFlowResource or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.DataFlowResource]

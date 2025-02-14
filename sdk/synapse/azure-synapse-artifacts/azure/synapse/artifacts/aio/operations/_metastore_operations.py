@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -63,6 +63,7 @@ class MetastoreOperations:
         :type id: str
         :param input_folder: The input folder containing CDM files. Required.
         :type input_folder: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MetastoreRegistrationResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.MetastoreRegistrationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -124,6 +125,7 @@ class MetastoreOperations:
 
         :param id: Required.
         :type id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MetastoreRequestSuccessResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.MetastoreRequestSuccessResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -181,6 +183,7 @@ class MetastoreOperations:
         :type id: str
         :param input_folder: The input folder containing CDM files. Required.
         :type input_folder: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: MetastoreUpdationResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.MetastoreUpdationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -242,6 +245,7 @@ class MetastoreOperations:
 
         :param id: Required.
         :type id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

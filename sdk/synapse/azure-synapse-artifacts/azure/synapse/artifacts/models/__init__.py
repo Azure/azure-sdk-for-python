@@ -21,6 +21,7 @@ from ._models_py3 import AmazonRdsForOraclePartitionSettings
 from ._models_py3 import AmazonRdsForOracleSource
 from ._models_py3 import AmazonRdsForOracleTableDataset
 from ._models_py3 import AmazonRdsForSqlServerLinkedService
+from ._models_py3 import AmazonRdsForSqlServerLinkedServiceTypeProperties
 from ._models_py3 import AmazonRdsForSqlServerSource
 from ._models_py3 import AmazonRdsForSqlServerTableDataset
 from ._models_py3 import AmazonRedshiftLinkedService
@@ -105,19 +106,24 @@ from ._models_py3 import AzureSearchIndexDataset
 from ._models_py3 import AzureSearchIndexSink
 from ._models_py3 import AzureSearchLinkedService
 from ._models_py3 import AzureSqlDWLinkedService
+from ._models_py3 import AzureSqlDWLinkedServiceTypeProperties
 from ._models_py3 import AzureSqlDWTableDataset
 from ._models_py3 import AzureSqlDatabaseLinkedService
+from ._models_py3 import AzureSqlDatabaseLinkedServiceTypeProperties
 from ._models_py3 import AzureSqlMILinkedService
+from ._models_py3 import AzureSqlMILinkedServiceTypeProperties
 from ._models_py3 import AzureSqlMITableDataset
 from ._models_py3 import AzureSqlSink
 from ._models_py3 import AzureSqlSource
 from ._models_py3 import AzureSqlTableDataset
 from ._models_py3 import AzureStorageLinkedService
+from ._models_py3 import AzureStorageLinkedServiceTypeProperties
 from ._models_py3 import AzureSynapseArtifactsLinkedService
 from ._models_py3 import AzureTableDataset
 from ._models_py3 import AzureTableSink
 from ._models_py3 import AzureTableSource
 from ._models_py3 import AzureTableStorageLinkedService
+from ._models_py3 import AzureTableStorageLinkedServiceTypeProperties
 from ._models_py3 import BigDataPoolParametrizationReference
 from ._models_py3 import BigDataPoolReference
 from ._models_py3 import BigDataPoolResourceInfo
@@ -143,6 +149,7 @@ from ._models_py3 import CompressionReadSettings
 from ._models_py3 import ConcurLinkedService
 from ._models_py3 import ConcurObjectDataset
 from ._models_py3 import ConcurSource
+from ._models_py3 import ContinuationSettingsReference
 from ._models_py3 import ControlActivity
 from ._models_py3 import CopyActivity
 from ._models_py3 import CopyActivityLogSettings
@@ -324,6 +331,9 @@ from ._models_py3 import HttpSource
 from ._models_py3 import HubspotLinkedService
 from ._models_py3 import HubspotObjectDataset
 from ._models_py3 import HubspotSource
+from ._models_py3 import IcebergDataset
+from ._models_py3 import IcebergSink
+from ._models_py3 import IcebergWriteSettings
 from ._models_py3 import IfConditionActivity
 from ._models_py3 import ImpalaLinkedService
 from ._models_py3 import ImpalaObjectDataset
@@ -684,7 +694,9 @@ from ._models_py3 import SqlScriptFolder
 from ._models_py3 import SqlScriptMetadata
 from ._models_py3 import SqlScriptResource
 from ._models_py3 import SqlScriptsListResponse
+from ._models_py3 import SqlServerBaseLinkedServiceTypeProperties
 from ._models_py3 import SqlServerLinkedService
+from ._models_py3 import SqlServerLinkedServiceTypeProperties
 from ._models_py3 import SqlServerSink
 from ._models_py3 import SqlServerSource
 from ._models_py3 import SqlServerStoredProcedureActivity
@@ -708,6 +720,7 @@ from ._models_py3 import SwitchCase
 from ._models_py3 import SybaseLinkedService
 from ._models_py3 import SybaseSource
 from ._models_py3 import SybaseTableDataset
+from ._models_py3 import SynapseActivityAuthentication
 from ._models_py3 import SynapseNotebookActivity
 from ._models_py3 import SynapseNotebookReference
 from ._models_py3 import SynapseSparkJobDefinitionActivity
@@ -717,8 +730,10 @@ from ._models_py3 import TabularTranslator
 from ._models_py3 import TarGZipReadSettings
 from ._models_py3 import TarReadSettings
 from ._models_py3 import TeamDeskLinkedService
+from ._models_py3 import TeradataImportCommand
 from ._models_py3 import TeradataLinkedService
 from ._models_py3 import TeradataPartitionSettings
+from ._models_py3 import TeradataSink
 from ._models_py3 import TeradataSource
 from ._models_py3 import TeradataTableDataset
 from ._models_py3 import TextFormat
@@ -783,9 +798,13 @@ from ._artifacts_client_enums import ActionOnExistingTargetTable
 from ._artifacts_client_enums import ActivityOnInactiveMarkAs
 from ._artifacts_client_enums import ActivityState
 from ._artifacts_client_enums import AmazonRdsForOraclePartitionOption
+from ._artifacts_client_enums import AmazonRdsForSqlServerAuthenticationType
 from ._artifacts_client_enums import AvroCompressionCodec
 from ._artifacts_client_enums import AzureFunctionActivityMethod
 from ._artifacts_client_enums import AzureSearchIndexWriteBehaviorType
+from ._artifacts_client_enums import AzureSqlDWAuthenticationType
+from ._artifacts_client_enums import AzureSqlDatabaseAuthenticationType
+from ._artifacts_client_enums import AzureSqlMIAuthenticationType
 from ._artifacts_client_enums import AzureStorageAuthenticationType
 from ._artifacts_client_enums import BigDataPoolReferenceType
 from ._artifacts_client_enums import BlobEventType
@@ -816,6 +835,7 @@ from ._artifacts_client_enums import FtpAuthenticationType
 from ._artifacts_client_enums import GoogleAdWordsAuthenticationType
 from ._artifacts_client_enums import GoogleBigQueryAuthenticationType
 from ._artifacts_client_enums import GoogleBigQueryV2AuthenticationType
+from ._artifacts_client_enums import GreenplumAuthenticationType
 from ._artifacts_client_enums import HBaseAuthenticationType
 from ._artifacts_client_enums import HDInsightActivityDebugInfoOption
 from ._artifacts_client_enums import HdiNodeTypes
@@ -843,6 +863,7 @@ from ._artifacts_client_enums import NotebookParameterType
 from ._artifacts_client_enums import NotebookReferenceType
 from ._artifacts_client_enums import ODataAadServicePrincipalCredentialType
 from ._artifacts_client_enums import ODataAuthenticationType
+from ._artifacts_client_enums import OracleAuthenticationType
 from ._artifacts_client_enums import OraclePartitionOption
 from ._artifacts_client_enums import OrcCompressionCodec
 from ._artifacts_client_enums import ParameterType
@@ -890,6 +911,7 @@ from ._artifacts_client_enums import SqlConnectionType
 from ._artifacts_client_enums import SqlPartitionOption
 from ._artifacts_client_enums import SqlPoolReferenceType
 from ._artifacts_client_enums import SqlScriptType
+from ._artifacts_client_enums import SqlServerAuthenticationType
 from ._artifacts_client_enums import SsisLogLocationType
 from ._artifacts_client_enums import SsisPackageLocationType
 from ._artifacts_client_enums import StoredProcedureParameterType
@@ -927,6 +949,7 @@ __all__ = [
     "AmazonRdsForOracleSource",
     "AmazonRdsForOracleTableDataset",
     "AmazonRdsForSqlServerLinkedService",
+    "AmazonRdsForSqlServerLinkedServiceTypeProperties",
     "AmazonRdsForSqlServerSource",
     "AmazonRdsForSqlServerTableDataset",
     "AmazonRedshiftLinkedService",
@@ -1011,19 +1034,24 @@ __all__ = [
     "AzureSearchIndexSink",
     "AzureSearchLinkedService",
     "AzureSqlDWLinkedService",
+    "AzureSqlDWLinkedServiceTypeProperties",
     "AzureSqlDWTableDataset",
     "AzureSqlDatabaseLinkedService",
+    "AzureSqlDatabaseLinkedServiceTypeProperties",
     "AzureSqlMILinkedService",
+    "AzureSqlMILinkedServiceTypeProperties",
     "AzureSqlMITableDataset",
     "AzureSqlSink",
     "AzureSqlSource",
     "AzureSqlTableDataset",
     "AzureStorageLinkedService",
+    "AzureStorageLinkedServiceTypeProperties",
     "AzureSynapseArtifactsLinkedService",
     "AzureTableDataset",
     "AzureTableSink",
     "AzureTableSource",
     "AzureTableStorageLinkedService",
+    "AzureTableStorageLinkedServiceTypeProperties",
     "BigDataPoolParametrizationReference",
     "BigDataPoolReference",
     "BigDataPoolResourceInfo",
@@ -1049,6 +1077,7 @@ __all__ = [
     "ConcurLinkedService",
     "ConcurObjectDataset",
     "ConcurSource",
+    "ContinuationSettingsReference",
     "ControlActivity",
     "CopyActivity",
     "CopyActivityLogSettings",
@@ -1230,6 +1259,9 @@ __all__ = [
     "HubspotLinkedService",
     "HubspotObjectDataset",
     "HubspotSource",
+    "IcebergDataset",
+    "IcebergSink",
+    "IcebergWriteSettings",
     "IfConditionActivity",
     "ImpalaLinkedService",
     "ImpalaObjectDataset",
@@ -1590,7 +1622,9 @@ __all__ = [
     "SqlScriptMetadata",
     "SqlScriptResource",
     "SqlScriptsListResponse",
+    "SqlServerBaseLinkedServiceTypeProperties",
     "SqlServerLinkedService",
+    "SqlServerLinkedServiceTypeProperties",
     "SqlServerSink",
     "SqlServerSource",
     "SqlServerStoredProcedureActivity",
@@ -1614,6 +1648,7 @@ __all__ = [
     "SybaseLinkedService",
     "SybaseSource",
     "SybaseTableDataset",
+    "SynapseActivityAuthentication",
     "SynapseNotebookActivity",
     "SynapseNotebookReference",
     "SynapseSparkJobDefinitionActivity",
@@ -1623,8 +1658,10 @@ __all__ = [
     "TarGZipReadSettings",
     "TarReadSettings",
     "TeamDeskLinkedService",
+    "TeradataImportCommand",
     "TeradataLinkedService",
     "TeradataPartitionSettings",
+    "TeradataSink",
     "TeradataSource",
     "TeradataTableDataset",
     "TextFormat",
@@ -1688,9 +1725,13 @@ __all__ = [
     "ActivityOnInactiveMarkAs",
     "ActivityState",
     "AmazonRdsForOraclePartitionOption",
+    "AmazonRdsForSqlServerAuthenticationType",
     "AvroCompressionCodec",
     "AzureFunctionActivityMethod",
     "AzureSearchIndexWriteBehaviorType",
+    "AzureSqlDWAuthenticationType",
+    "AzureSqlDatabaseAuthenticationType",
+    "AzureSqlMIAuthenticationType",
     "AzureStorageAuthenticationType",
     "BigDataPoolReferenceType",
     "BlobEventType",
@@ -1721,6 +1762,7 @@ __all__ = [
     "GoogleAdWordsAuthenticationType",
     "GoogleBigQueryAuthenticationType",
     "GoogleBigQueryV2AuthenticationType",
+    "GreenplumAuthenticationType",
     "HBaseAuthenticationType",
     "HDInsightActivityDebugInfoOption",
     "HdiNodeTypes",
@@ -1748,6 +1790,7 @@ __all__ = [
     "NotebookReferenceType",
     "ODataAadServicePrincipalCredentialType",
     "ODataAuthenticationType",
+    "OracleAuthenticationType",
     "OraclePartitionOption",
     "OrcCompressionCodec",
     "ParameterType",
@@ -1795,6 +1838,7 @@ __all__ = [
     "SqlPartitionOption",
     "SqlPoolReferenceType",
     "SqlScriptType",
+    "SqlServerAuthenticationType",
     "SsisLogLocationType",
     "SsisPackageLocationType",
     "StoredProcedureParameterType",
