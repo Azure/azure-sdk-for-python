@@ -1,6 +1,6 @@
 # Release History
 
-## 1.6.5 (Unreleased)
+## 1.6.5 (2025-02-14)
 
 ### Features Added
 
@@ -14,12 +14,6 @@
     ([#37694](https://github.com/Azure/azure-sdk-for-python/pull/37694))
 - Ignore backoff warning from distro if in functions environment
     ([#38787](https://github.com/Azure/azure-sdk-for-python/pull/38787))
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.6.4 (2024-11-06)
 
