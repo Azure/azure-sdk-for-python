@@ -21,7 +21,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_at_scope(self, resource_group):
+    async def test_deployment_operations_get_at_scope(self, resource_group):
         response = await self.client.deployment_operations.get_at_scope(
             scope="str",
             deployment_name="str",
@@ -34,7 +34,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_at_scope(self, resource_group):
+    async def test_deployment_operations_list_at_scope(self, resource_group):
         response = self.client.deployment_operations.list_at_scope(
             scope="str",
             deployment_name="str",
@@ -46,7 +46,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_at_tenant_scope(self, resource_group):
+    async def test_deployment_operations_get_at_tenant_scope(self, resource_group):
         response = await self.client.deployment_operations.get_at_tenant_scope(
             deployment_name="str",
             operation_id="str",
@@ -58,7 +58,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_at_tenant_scope(self, resource_group):
+    async def test_deployment_operations_list_at_tenant_scope(self, resource_group):
         response = self.client.deployment_operations.list_at_tenant_scope(
             deployment_name="str",
             api_version="2022-09-01",
@@ -69,7 +69,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_at_management_group_scope(self, resource_group):
+    async def test_deployment_operations_get_at_management_group_scope(self, resource_group):
         response = await self.client.deployment_operations.get_at_management_group_scope(
             group_id="str",
             deployment_name="str",
@@ -82,7 +82,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_at_management_group_scope(self, resource_group):
+    async def test_deployment_operations_list_at_management_group_scope(self, resource_group):
         response = self.client.deployment_operations.list_at_management_group_scope(
             group_id="str",
             deployment_name="str",
@@ -94,7 +94,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_at_subscription_scope(self, resource_group):
+    async def test_deployment_operations_get_at_subscription_scope(self, resource_group):
         response = await self.client.deployment_operations.get_at_subscription_scope(
             deployment_name="str",
             operation_id="str",
@@ -106,7 +106,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_at_subscription_scope(self, resource_group):
+    async def test_deployment_operations_list_at_subscription_scope(self, resource_group):
         response = self.client.deployment_operations.list_at_subscription_scope(
             deployment_name="str",
             api_version="2022-09-01",
@@ -117,7 +117,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_deployment_operations_get(self, resource_group):
         response = await self.client.deployment_operations.get(
             resource_group_name=resource_group.name,
             deployment_name="str",
@@ -130,7 +130,7 @@ class TestResourceManagementDeploymentOperationsOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_deployment_operations_list(self, resource_group):
         response = self.client.deployment_operations.list(
             resource_group_name=resource_group.name,
             deployment_name="str",

@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -16,10 +16,9 @@ from ... import _serialization
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -382,7 +381,7 @@ class ParameterValuesValue(_serialization.Model):
         self.value = value
 
 
-class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PolicyAssignment(_serialization.Model):
     """The policy assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -407,6 +406,12 @@ class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instan
     :vartype policy_definition_id: str
     :ivar definition_version: The version of the policy definition to use.
     :vartype definition_version: str
+    :ivar latest_definition_version: The latest version of the policy definition available. This is
+     only present if requested via the $expand query parameter.
+    :vartype latest_definition_version: str
+    :ivar effective_definition_version: The effective version of the policy definition in use. This
+     is only present if requested via the $expand query parameter.
+    :vartype effective_definition_version: str
     :ivar scope: The scope for the policy assignment.
     :vartype scope: str
     :ivar not_scopes: The policy's excluded scopes.
@@ -440,6 +445,8 @@ class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instan
         "type": {"readonly": True},
         "name": {"readonly": True},
         "system_data": {"readonly": True},
+        "latest_definition_version": {"readonly": True},
+        "effective_definition_version": {"readonly": True},
         "scope": {"readonly": True},
     }
 
@@ -453,6 +460,8 @@ class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instan
         "display_name": {"key": "properties.displayName", "type": "str"},
         "policy_definition_id": {"key": "properties.policyDefinitionId", "type": "str"},
         "definition_version": {"key": "properties.definitionVersion", "type": "str"},
+        "latest_definition_version": {"key": "properties.latestDefinitionVersion", "type": "str"},
+        "effective_definition_version": {"key": "properties.effectiveDefinitionVersion", "type": "str"},
         "scope": {"key": "properties.scope", "type": "str"},
         "not_scopes": {"key": "properties.notScopes", "type": "[str]"},
         "parameters": {"key": "properties.parameters", "type": "{ParameterValuesValue}"},
@@ -531,6 +540,8 @@ class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instan
         self.display_name = display_name
         self.policy_definition_id = policy_definition_id
         self.definition_version = definition_version
+        self.latest_definition_version = None
+        self.effective_definition_version = None
         self.scope = None
         self.not_scopes = not_scopes
         self.parameters = parameters
@@ -625,7 +636,7 @@ class PolicyAssignmentUpdate(_serialization.Model):
         self.overrides = overrides
 
 
-class PolicyDefinition(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PolicyDefinition(_serialization.Model):
     """The policy definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -837,12 +848,20 @@ class PolicyDefinitionListResult(_serialization.Model):
 class PolicyDefinitionReference(_serialization.Model):
     """The policy definition reference.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to server.
 
     :ivar policy_definition_id: The ID of the policy definition or policy set definition. Required.
     :vartype policy_definition_id: str
     :ivar definition_version: The version of the policy definition to use.
     :vartype definition_version: str
+    :ivar latest_definition_version: The latest version of the policy definition available. This is
+     only present if requested via the $expand query parameter.
+    :vartype latest_definition_version: str
+    :ivar effective_definition_version: The effective version of the policy definition in use. This
+     is only present if requested via the $expand query parameter.
+    :vartype effective_definition_version: str
     :ivar parameters: The parameter values for the referenced policy rule. The keys are the
      parameter names.
     :vartype parameters: dict[str,
@@ -856,11 +875,15 @@ class PolicyDefinitionReference(_serialization.Model):
 
     _validation = {
         "policy_definition_id": {"required": True},
+        "latest_definition_version": {"readonly": True},
+        "effective_definition_version": {"readonly": True},
     }
 
     _attribute_map = {
         "policy_definition_id": {"key": "policyDefinitionId", "type": "str"},
         "definition_version": {"key": "definitionVersion", "type": "str"},
+        "latest_definition_version": {"key": "latestDefinitionVersion", "type": "str"},
+        "effective_definition_version": {"key": "effectiveDefinitionVersion", "type": "str"},
         "parameters": {"key": "parameters", "type": "{ParameterValuesValue}"},
         "policy_definition_reference_id": {"key": "policyDefinitionReferenceId", "type": "str"},
         "group_names": {"key": "groupNames", "type": "[str]"},
@@ -895,12 +918,14 @@ class PolicyDefinitionReference(_serialization.Model):
         super().__init__(**kwargs)
         self.policy_definition_id = policy_definition_id
         self.definition_version = definition_version
+        self.latest_definition_version = None
+        self.effective_definition_version = None
         self.parameters = parameters
         self.policy_definition_reference_id = policy_definition_reference_id
         self.group_names = group_names
 
 
-class PolicyDefinitionVersion(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PolicyDefinitionVersion(_serialization.Model):
     """The ID of the policy definition version.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1041,7 +1066,7 @@ class PolicyDefinitionVersionListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class PolicySetDefinition(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PolicySetDefinition(_serialization.Model):
     """The policy set definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1195,7 +1220,7 @@ class PolicySetDefinitionListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class PolicySetDefinitionVersion(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PolicySetDefinitionVersion(_serialization.Model):
     """The policy set definition version.
 
     Variables are only populated by the server, and will be ignored when sending a request.

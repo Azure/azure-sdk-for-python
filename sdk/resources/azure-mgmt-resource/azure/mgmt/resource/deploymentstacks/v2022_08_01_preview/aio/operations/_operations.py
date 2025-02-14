@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -53,7 +53,7 @@ from ...operations._operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -82,6 +82,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
     def list_at_resource_group(
         self, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentStack"]:
+        # pylint: disable=line-too-long
         """Lists all the Deployment Stacks within the specified resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -100,7 +101,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[_models.DeploymentStackListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -164,6 +165,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def list_at_subscription(self, **kwargs: Any) -> AsyncIterable["_models.DeploymentStack"]:
+        # pylint: disable=line-too-long
         """Lists all the Deployment Stacks within the specified subscription.
 
         :return: An iterator like instance of either DeploymentStack or the result of cls(response)
@@ -179,7 +181,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[_models.DeploymentStackListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -244,6 +246,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
     def list_at_management_group(
         self, management_group_id: str, **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentStack"]:
+        # pylint: disable=line-too-long
         """Lists all the Deployment Stacks within the specified management group.
 
         :param management_group_id: Management Group. Required.
@@ -261,7 +264,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         )
         cls: ClsType[_models.DeploymentStackListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -329,7 +332,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         deployment_stack: Union[_models.DeploymentStack, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -401,6 +404,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentStack]:
+        # pylint: disable=line-too-long
         """Creates or updates a Deployment Stack.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -431,6 +435,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentStack]:
+        # pylint: disable=line-too-long
         """Creates or updates a Deployment Stack.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -458,6 +463,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         deployment_stack: Union[_models.DeploymentStack, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentStack]:
+        # pylint: disable=line-too-long
         """Creates or updates a Deployment Stack.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -542,7 +548,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStack
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -595,7 +601,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -729,7 +735,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
     async def _create_or_update_at_subscription_initial(  # pylint: disable=name-too-long
         self, deployment_stack_name: str, deployment_stack: Union[_models.DeploymentStack, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -799,6 +805,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentStack]:
+        # pylint: disable=line-too-long
         """Creates or updates a Deployment Stack.
 
         :param deployment_stack_name: Name of the deployment stack. Required.
@@ -825,6 +832,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentStack]:
+        # pylint: disable=line-too-long
         """Creates or updates a Deployment Stack.
 
         :param deployment_stack_name: Name of the deployment stack. Required.
@@ -845,6 +853,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
     async def begin_create_or_update_at_subscription(
         self, deployment_stack_name: str, deployment_stack: Union[_models.DeploymentStack, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentStack]:
+        # pylint: disable=line-too-long
         """Creates or updates a Deployment Stack.
 
         :param deployment_stack_name: Name of the deployment stack. Required.
@@ -920,7 +929,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStack
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -971,7 +980,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1103,7 +1112,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         deployment_stack: Union[_models.DeploymentStack, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1174,6 +1183,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentStack]:
+        # pylint: disable=line-too-long
         """Creates or updates a Deployment Stack.
 
         :param management_group_id: Management Group. Required.
@@ -1203,6 +1213,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentStack]:
+        # pylint: disable=line-too-long
         """Creates or updates a Deployment Stack.
 
         :param management_group_id: Management Group. Required.
@@ -1229,6 +1240,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         deployment_stack: Union[_models.DeploymentStack, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentStack]:
+        # pylint: disable=line-too-long
         """Creates or updates a Deployment Stack.
 
         :param management_group_id: Management Group. Required.
@@ -1311,7 +1323,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStack
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1364,7 +1376,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1516,7 +1528,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
          ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStackTemplateDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1574,7 +1586,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
          ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStackTemplateDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1633,7 +1645,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
          ~azure.mgmt.resource.deploymentstacks.v2022_08_01_preview.models.DeploymentStackTemplateDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

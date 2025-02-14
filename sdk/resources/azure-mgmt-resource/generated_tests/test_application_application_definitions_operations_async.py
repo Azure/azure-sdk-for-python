@@ -21,7 +21,7 @@ class TestApplicationApplicationDefinitionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_application_definitions_get(self, resource_group):
         response = await self.client.application_definitions.get(
             resource_group_name=resource_group.name,
             application_definition_name="str",
@@ -33,7 +33,7 @@ class TestApplicationApplicationDefinitionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_application_definitions_begin_delete(self, resource_group):
         response = await (
             await self.client.application_definitions.begin_delete(
                 resource_group_name=resource_group.name,
@@ -47,7 +47,7 @@ class TestApplicationApplicationDefinitionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_application_definitions_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.application_definitions.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -91,7 +91,7 @@ class TestApplicationApplicationDefinitionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_application_definitions_list_by_resource_group(self, resource_group):
         response = self.client.application_definitions.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2019-07-01",
@@ -102,7 +102,7 @@ class TestApplicationApplicationDefinitionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_id(self, resource_group):
+    async def test_application_definitions_get_by_id(self, resource_group):
         response = await self.client.application_definitions.get_by_id(
             resource_group_name=resource_group.name,
             application_definition_name="str",
@@ -114,7 +114,7 @@ class TestApplicationApplicationDefinitionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete_by_id(self, resource_group):
+    async def test_application_definitions_begin_delete_by_id(self, resource_group):
         response = await (
             await self.client.application_definitions.begin_delete_by_id(
                 resource_group_name=resource_group.name,
@@ -128,7 +128,7 @@ class TestApplicationApplicationDefinitionsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update_by_id(self, resource_group):
+    async def test_application_definitions_begin_create_or_update_by_id(self, resource_group):
         response = await (
             await self.client.application_definitions.begin_create_or_update_by_id(
                 resource_group_name=resource_group.name,

@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +7,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -40,7 +39,7 @@ from ...operations._operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -140,7 +139,7 @@ class PrivateLinkAssociationOperations:
         :rtype: ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PrivateLinkAssociation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -205,7 +204,7 @@ class PrivateLinkAssociationOperations:
         :rtype: ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PrivateLinkAssociation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -247,9 +246,7 @@ class PrivateLinkAssociationOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, group_id: str, pla_id: str, **kwargs: Any
-    ) -> None:
+    async def delete(self, group_id: str, pla_id: str, **kwargs: Any) -> None:
         """Delete a PrivateLinkAssociation.
 
         :param group_id: The management group ID. Required.
@@ -260,7 +257,7 @@ class PrivateLinkAssociationOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -307,7 +304,7 @@ class PrivateLinkAssociationOperations:
         :rtype: ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PrivateLinkAssociationGetResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -447,7 +444,7 @@ class ResourceManagementPrivateLinkOperations:
         :rtype: ~azure.mgmt.resource.privatelinks.v2020_05_01.models.ResourceManagementPrivateLink
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -516,7 +513,7 @@ class ResourceManagementPrivateLinkOperations:
         :rtype: ~azure.mgmt.resource.privatelinks.v2020_05_01.models.ResourceManagementPrivateLink
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -559,9 +556,7 @@ class ResourceManagementPrivateLinkOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, rmpl_name: str, **kwargs: Any
-    ) -> None:
+    async def delete(self, resource_group_name: str, rmpl_name: str, **kwargs: Any) -> None:
         """Delete a resource management private link.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -573,7 +568,7 @@ class ResourceManagementPrivateLinkOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -620,7 +615,7 @@ class ResourceManagementPrivateLinkOperations:
          ~azure.mgmt.resource.privatelinks.v2020_05_01.models.ResourceManagementPrivateLinkListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -674,7 +669,7 @@ class ResourceManagementPrivateLinkOperations:
          ~azure.mgmt.resource.privatelinks.v2020_05_01.models.ResourceManagementPrivateLinkListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

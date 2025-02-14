@@ -1,12 +1,12 @@
 {
-  "commit": "34424077cae09522361ea641761dc37941603383",
+  "commit": "39879dbcfe0d8d66afbe073f287cf8f246928243",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.19.0",
+    "@autorest/python@6.27.4",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/resources/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.19.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/resources/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.27.4 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/resources/resource-manager/readme.md",
   "package-privatelinks-2020-05": "2022-03-18 16:14:07 -0700 2c68b6f0c9566d97d9d590a31b0d46997622eef7 Microsoft.Authorization/stable/2020-05-01/privateLinks.json",
   "package-features-2021-07": "2022-03-06 17:36:42 -0800 6a57e9cedc87cafd2dc9e4f3e8af62b5725e3d22 Microsoft.Features/stable/2021-07-01/features.json",

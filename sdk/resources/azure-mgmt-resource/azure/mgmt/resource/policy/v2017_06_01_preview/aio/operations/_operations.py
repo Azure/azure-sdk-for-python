@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -53,7 +53,7 @@ from ...operations._operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -92,7 +92,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyAssignment or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -221,7 +221,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -289,7 +289,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -337,6 +337,7 @@ class PolicyAssignmentsOperations:
     def list_for_resource_group(
         self, resource_group_name: str, filter: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignment"]:
+        # pylint: disable=line-too-long
         """Gets policy assignments for the resource group.
 
         :param resource_group_name: The name of the resource group that contains policy assignments.
@@ -357,7 +358,7 @@ class PolicyAssignmentsOperations:
         )
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -431,6 +432,7 @@ class PolicyAssignmentsOperations:
         filter: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignment"]:
+        # pylint: disable=line-too-long
         """Gets policy assignments for a resource.
 
         :param resource_group_name: The name of the resource group containing the resource. The name is
@@ -459,7 +461,7 @@ class PolicyAssignmentsOperations:
         )
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -528,6 +530,7 @@ class PolicyAssignmentsOperations:
 
     @distributed_trace
     def list(self, filter: Optional[str] = None, **kwargs: Any) -> AsyncIterable["_models.PolicyAssignment"]:
+        # pylint: disable=line-too-long
         """Gets all the policy assignments for a subscription.
 
         :param filter: The filter to apply on the operation. Default value is None.
@@ -545,7 +548,7 @@ class PolicyAssignmentsOperations:
         )
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -625,7 +628,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -755,7 +758,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -828,7 +831,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -954,7 +957,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1011,9 +1014,7 @@ class PolicySetDefinitionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, policy_set_definition_name: str, **kwargs: Any
-    ) -> None:
+    async def delete(self, policy_set_definition_name: str, **kwargs: Any) -> None:
         """Deletes a policy set definition.
 
         :param policy_set_definition_name: The name of the policy set definition to delete. Required.
@@ -1022,7 +1023,7 @@ class PolicySetDefinitionsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1072,7 +1073,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1126,7 +1127,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1171,6 +1172,7 @@ class PolicySetDefinitionsOperations:
 
     @distributed_trace
     def list(self, **kwargs: Any) -> AsyncIterable["_models.PolicySetDefinition"]:
+        # pylint: disable=line-too-long
         """Gets all the policy set definitions for a subscription.
 
         :return: An iterator like instance of either PolicySetDefinition or the result of cls(response)
@@ -1186,7 +1188,7 @@ class PolicySetDefinitionsOperations:
         )
         cls: ClsType[_models.PolicySetDefinitionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1249,6 +1251,7 @@ class PolicySetDefinitionsOperations:
 
     @distributed_trace
     def list_built_in(self, **kwargs: Any) -> AsyncIterable["_models.PolicySetDefinition"]:
+        # pylint: disable=line-too-long
         """Gets all the built in policy set definitions.
 
         :return: An iterator like instance of either PolicySetDefinition or the result of cls(response)
@@ -1264,7 +1267,7 @@ class PolicySetDefinitionsOperations:
         )
         cls: ClsType[_models.PolicySetDefinitionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1398,7 +1401,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1455,7 +1458,7 @@ class PolicySetDefinitionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_at_management_group(  # pylint: disable=inconsistent-return-statements
+    async def delete_at_management_group(
         self, policy_set_definition_name: str, management_group_id: str, **kwargs: Any
     ) -> None:
         """Deletes a policy set definition at management group level.
@@ -1468,7 +1471,7 @@ class PolicySetDefinitionsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1522,7 +1525,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1570,6 +1573,7 @@ class PolicySetDefinitionsOperations:
     def list_by_management_group(
         self, management_group_id: str, **kwargs: Any
     ) -> AsyncIterable["_models.PolicySetDefinition"]:
+        # pylint: disable=line-too-long
         """Gets all the policy set definitions for a subscription at management group.
 
         :param management_group_id: The ID of the management group. Required.
@@ -1587,7 +1591,7 @@ class PolicySetDefinitionsOperations:
         )
         cls: ClsType[_models.PolicySetDefinitionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
