@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Add more diagnostic log options
+    ([#39701](https://github.com/Azure/azure-sdk-for-python/pull/39701))
 - Only add OpenTelemetry LoggingHandler if current logger does not have it
     ([#38549](https://github.com/Azure/azure-sdk-for-python/pull/38549))
 - Distro to automatically configure event logger provider
