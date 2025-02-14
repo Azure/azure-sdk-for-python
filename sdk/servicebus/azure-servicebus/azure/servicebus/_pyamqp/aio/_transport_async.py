@@ -454,6 +454,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
                 url=url,
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
                 http_proxy=http_proxy,
+                ssl_ctx=self.sslopts if self._use_tls else None,
             )
             await self.sock.connect()
         except WebSocketConnectionError as exc:

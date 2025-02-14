@@ -42,7 +42,15 @@ class WebSocketMixin:
 
 
 class WebSocketProtocol(WebSocketMixin):
-    def __init__(self, url: str, *, headers = None, http_proxy = None, subprotocols = None, ssl_ctx=None, timeout=None) -> None:
+    def __init__(self,
+                 url: str,
+                 *,
+                 headers = None,
+                 http_proxy = None,
+                 subprotocols = None,
+                 ssl_ctx=None,
+                 timeout=None
+        ) -> None:
         self._socket: socket.socket
         self._url: str = url
         self._key = build_key()

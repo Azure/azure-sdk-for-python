@@ -35,12 +35,17 @@ class WebSocket:
         http_proxy: Optional[Dict[str, Union[int, str]]] = None,
         subprotocols: Optional[List[bytes]] = None,
         timeout: Optional[float] = None,
-        ssl: Optional["SSLContext"] = None, # pylint: disable=unused-argument
+        ssl_ctx: Optional["SSLContext"] = None, # pylint: disable=unused-argument
     ) -> None:
         self._url: str = url
         self._is_open: bool = False
         self._protocol: WebSocketProtocol = WebSocketProtocol(
-            url, headers=headers, subprotocols=subprotocols, http_proxy=http_proxy, timeout=timeout
+            url,
+            headers=headers,
+            subprotocols=subprotocols,
+            http_proxy=http_proxy,
+            ssl_ctx=ssl_ctx,
+            timeout=timeout
         )
         self._headers = headers
         self._http_proxy = http_proxy
@@ -193,7 +198,7 @@ class AsyncWebSocket:
         http_proxy: Optional[Dict[str, Union[int, str]]] = None,
         subprotocols: Optional[List[str]] = None,
         timeout: Optional[float] = None, # pylint: disable=unused-argument
-        ssl: Optional["SSLContext"] = None, # pylint: disable=unused-argument
+        ssl_ctx: Optional["SSLContext"] = None,
     ) -> None:
         self._url: str = url
         self._is_open: bool = False
@@ -202,6 +207,7 @@ class AsyncWebSocket:
             headers=headers,
             subprotocols=subprotocols,
             http_proxy=http_proxy,
+            ssl_ctx = ssl_ctx,
         )
         self._headers = headers
         self._http_proxy = http_proxy
