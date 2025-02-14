@@ -3,11 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import sys
-import os
 import logging
 import functools
+from os import path
+from typing import Optional
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AIProjectClientAsync
+from azure.ai.inference.models import ImageEmbeddingInput
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 
 servicePreparerInferenceTests = functools.partial(
@@ -62,3 +64,19 @@ class InferenceTestBase(AzureRecordedTestCase):
             logging_enable=LOGGING_ENABLED,
         )
         return project_client
+
+    @staticmethod
+    def get_image_embeddings_input(with_text: Optional[bool] = False) -> ImageEmbeddingInput:
+        local_folder = path.dirname(path.abspath(__file__))
+        image_file = path.join(local_folder, "test_image1.png")
+        if with_text:
+            return ImageEmbeddingInput.load(
+                image_file=image_file,
+                image_format="png",
+                text="some text",
+            )
+        else:
+            return ImageEmbeddingInput.load(
+                image_file=image_file,
+                image_format="png",
+            )

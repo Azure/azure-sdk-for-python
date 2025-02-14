@@ -136,7 +136,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
     @distributed_trace
     def get_index(self, name: str, **kwargs: Any) -> SearchIndex:
-        """ Retrieve a named index in an Azure Search service
+        """Retrieve a named index in an Azure Search service
 
         :param name: The name of the index to retrieve.
         :type name: str

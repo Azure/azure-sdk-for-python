@@ -13,6 +13,7 @@ import urllib.parse as urllib
 import uuid
 from typing import Any, Dict, Optional
 
+import pytest
 import requests
 from azure.core import MatchConditions
 from azure.core.exceptions import AzureError, ServiceResponseError
@@ -53,6 +54,7 @@ class TimeoutTransport(AsyncioRequestsTransport):
         return response
 
 
+@pytest.mark.cosmosLong
 class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """
@@ -92,7 +94,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         self.logger = logging.getLogger("TestCRUDOperationsAsyncResponsePayloadOnWriteDisabledLogger")
         self.logger.setLevel(logging.DEBUG)
 
-    async def tearDown(self):
+    async def asyncTearDown(self):
         await self.client.close()
 
     async def test_database_crud_async(self):
@@ -119,15 +121,15 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         read_db = self.client.get_database_client(created_db.id)
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND, read_db.read)
 
-        database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=10000)
+        database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         assert database_id == database_proxy.id
         db_throughput = await database_proxy.get_throughput()
-        assert 10000 == db_throughput.offer_throughput
+        assert 5000 == db_throughput.offer_throughput
 
-        database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=9000)
+        database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         assert database_id == database_proxy.id
         db_throughput = await database_proxy.get_throughput()
-        assert 10000 == db_throughput.offer_throughput
+        assert 5000 == db_throughput.offer_throughput
 
         # delete database.
         await self.client.delete_database(database_id)
@@ -1755,22 +1757,28 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
             # making timeout 0 ms to make sure it will throw
             connection_policy.RequestTimeout = 0.000000000001
 
-            with self.assertRaises(Exception):
-                # client does a getDatabaseAccount on initialization, which will time out
-                async with CosmosClient(TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.host, TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.masterKey,
-                                        connection_policy=connection_policy) as client:
+            # client does a getDatabaseAccount on initialization, which will not time out because
+            # there is a forced timeout for those calls
+            async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as client:
+                with self.assertRaises(Exception):
+                    databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
+                    container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+                    await container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
                     print('Async initialization')
 
     async def test_client_request_timeout_when_connection_retry_configuration_specified_async(self):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
         connection_policy.RequestTimeout = 0.000000000001
-        with self.assertRaises(AzureError):
-            # client does a getDatabaseAccount on initialization, which will time out
-            async with CosmosClient(TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.host, TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.masterKey,
-                                    connection_policy=connection_policy,
-                                    retry_total=3, retry_connect=3, retry_read=3, retry_backoff_max=0.3,
-                                    retry_on_status_codes=[500, 502, 504]) as client:
+        async with CosmosClient(TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.host,
+                                TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.masterKey,
+                                connection_policy=connection_policy,
+                                retry_total=3, retry_connect=3, retry_read=3, retry_backoff_max=0.3,
+                                retry_on_status_codes=[500, 502, 504]) as client:
+            with self.assertRaises(AzureError):
+                databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
+                container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+                await container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
                 print('Async Initialization')
 
     async def test_query_iterable_functionality_async(self):
@@ -2505,7 +2513,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         # Negative Test: Verify that if we send a value other than High or Low that it will not set the header value
         # and result in bad request
         try:
-            item2_read = created_container.read_item("item2", "pk2", priority="Medium")
+            item2_read = await created_container.read_item("item2", "pk2", priority="Medium")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction

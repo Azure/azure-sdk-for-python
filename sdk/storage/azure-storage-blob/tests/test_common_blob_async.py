@@ -53,7 +53,7 @@ from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from test_helpers_async import AsyncStream
+from test_helpers_async import AsyncStream, MockStorageTransport
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -3459,16 +3459,6 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
     @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_download_blob_decompress(self, **kwargs):
-        # This test will currently fail against the current codebase
-        # AssertionError: assert b'hello from gzip' ==
-        # b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
-        # Becuase on decompress=False, data.response.read() does not respect turning off decompression. So result (LHS) comes back decompressed.
-
-        # Proposed fix:
-        # If we change how we access the content to: content = b"".join([d async for d in data]) in _download_async
-        # from await data.response.read() / content = cast(bytes, data.response.content)
-        # This will respect the decompress=
-
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 

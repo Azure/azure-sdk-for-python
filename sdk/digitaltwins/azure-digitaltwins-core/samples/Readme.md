@@ -403,7 +403,7 @@ model = service_client.get_model(model_id, logging_enable=True)
 ```
 
 ### Optional Configuration
-Optional keyword arguments can be passed in at the client and per-operation level. The azure-core [reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html) describes available configurations for retries, logging, transport protocols, and more.
+Optional keyword arguments can be passed in at the client and per-operation level. The azure-core [reference documentation](https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html) describes available configurations for retries, logging, transport protocols, and more.
 
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [azure_identity_pypi]: https://pypi.org/project/azure-identity/

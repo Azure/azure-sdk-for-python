@@ -271,7 +271,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :type algorithm: ~azure.keyvault.keys.crypto.EncryptionAlgorithm
         :param bytes ciphertext: Encrypted bytes to decrypt. Microsoft recommends you not use CBC without first ensuring
             the integrity of the ciphertext using, for example, an HMAC. See
-            https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
+            https://learn.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
 
         :keyword iv: The initialization vector used during encryption. Required for AES decryption.
         :paramtype iv: bytes or None

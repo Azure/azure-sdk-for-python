@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,8 +8,9 @@
 # --------------------------------------------------------------------------
 import datetime
 import sys
-from typing import Any, Callable, Dict, IO, Literal, Optional, Type, TypeVar, Union
+from typing import Any, Callable, Dict, IO, Literal, Optional, TypeVar, Union
 
+from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -24,6 +25,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
+from ..._serialization import Deserializer, Serializer
 from ...operations._block_blob_operations import (
     build_commit_block_list_request,
     build_get_block_list_request,
@@ -32,11 +34,12 @@ from ...operations._block_blob_operations import (
     build_stage_block_request,
     build_upload_request,
 )
+from .._configuration import AzureBlobStorageConfiguration
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -55,13 +58,13 @@ class BlockBlobOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AzureBlobStorageConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def upload(  # pylint: disable=inconsistent-return-statements
+    async def upload(
         self,
         content_length: int,
         body: IO[bytes],
@@ -154,7 +157,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -288,7 +291,7 @@ class BlockBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def put_blob_from_url(  # pylint: disable=inconsistent-return-statements
+    async def put_blob_from_url(
         self,
         content_length: int,
         copy_source: str,
@@ -381,7 +384,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -523,7 +526,7 @@ class BlockBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def stage_block(  # pylint: disable=inconsistent-return-statements
+    async def stage_block(
         self,
         block_id: str,
         content_length: int,
@@ -582,7 +585,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -676,7 +679,7 @@ class BlockBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def stage_block_from_url(  # pylint: disable=inconsistent-return-statements
+    async def stage_block_from_url(
         self,
         block_id: str,
         content_length: int,
@@ -738,7 +741,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -839,7 +842,7 @@ class BlockBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def commit_block_list(  # pylint: disable=inconsistent-return-statements
+    async def commit_block_list(
         self,
         blocks: _models.BlockLookupList,
         timeout: Optional[int] = None,
@@ -922,7 +925,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1094,7 +1097,7 @@ class BlockBlobOperations:
         :rtype: ~azure.storage.blob.models.BlockList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

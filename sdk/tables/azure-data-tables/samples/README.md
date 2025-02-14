@@ -32,7 +32,7 @@ These sample programs show common scenarios for the Tables client's offerings.
 ### Prerequisites
 * Python 3.8 or later is required to use this package.
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and either an
-[Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) or an [Azure Cosmos Account](https://docs.microsoft.com/azure/cosmos-db/account-overview) to use this package.
+[Azure storage account](https://learn.microsoft.com/azure/storage/common/storage-account-overview) or an [Azure Cosmos Account](https://learn.microsoft.com/azure/cosmos-db/account-overview) to use this package.
 
 ## Setup
 
@@ -150,8 +150,8 @@ what you can do with the Azure Data Tables client library.
 
 
 <!-- LINKS -->
-[api_reference_documentation]: https://docs.microsoft.com/rest/api/storageservices/table-service-rest-api
-[query_reference_documentation]: https://docs.microsoft.com/rest/api/storageservices/querying-tables-and-entities
+[api_reference_documentation]: https://learn.microsoft.com/rest/api/storageservices/table-service-rest-api
+[query_reference_documentation]: https://learn.microsoft.com/rest/api/storageservices/querying-tables-and-entities
 
 [sample_authentication]:https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_authentication.py
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_authentication_async.py
@@ -183,4 +183,3 @@ what you can do with the Azure Data Tables client library.
 [sample_get_entity_etag_and_timestamp]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_get_entity_etag_and_timestamp.py
 [sample_get_entity_etag_and_timestamp_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_get_entity_etag_and_timestamp_async.py
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/tables/azure-data-tables/README.png)

@@ -49,7 +49,7 @@ from azure.ai.ml._artifacts._constants import (
     WORKSPACE_MANAGED_DATASTORE,
     WORKSPACE_MANAGED_DATASTORE_WITH_SLASH,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: disable = unused-import
+from azure.ai.ml._restclient.v2022_02_01_preview.operations import (
     ComponentContainersOperations,
     ComponentVersionsOperations,
     DataContainersOperations,

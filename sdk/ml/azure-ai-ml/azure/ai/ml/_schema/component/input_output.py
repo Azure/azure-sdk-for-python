@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument
-
 from marshmallow import INCLUDE, fields, pre_dump
 
 from azure.ai.ml._schema.core.fields import DumpableEnumField, ExperimentalField, NestedField, UnionField
@@ -107,7 +105,7 @@ class PrimitiveOutputSchema(OutputPortSchema):
         :keyword many: Whether obj is a collection of objects.
         :paramtype many: bool
         """
-        from azure.ai.ml.entities._job.pipeline._attr_dict import has_attr_safe  # pylint: disable=protected-access
+        from azure.ai.ml.entities._job.pipeline._attr_dict import has_attr_safe
 
         ret = super()._serialize(obj, many=many)  # pylint: disable=no-member
         if has_attr_safe(obj, "early_available") and obj.early_available is not None and "early_available" not in ret:

@@ -55,7 +55,7 @@ C:\Users> python -m venv -p <path/to/Python/Python38/python.exe> py38_venv
 
 In the root directory of our SDK, a number of mandatory files have been added. When creating your own SDK, these files can be copied from the [`sdk/template`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/template) project, and modified to your needs.
 
-- README.md. This is the description and guidance for customers or your SDK. Please see the guide on writing a README to make sure you have the complete [content requirements and formatting](https://review.docs.microsoft.com/help/contribute-ref/contribute-ref-how-to-document-sdk?branch=master#readme).
+- README.md. This is the description and guidance for customers or your SDK. Please see the guide on writing a README to make sure you have the complete [content requirements and formatting](https://review.learn.microsoft.com/help/platform/reference-document-sdk-client-libraries#readme).
 - CHANGELOG.md. This is where you will add the summary of changes for each new release. Please see [the guidance](https://azure.github.io/azure-sdk/policies_releases.html#changelog-guidance) for correct formatting.
 - setup.py. This is the 'installer' for your Python SDK. Please see [the guide on Python packaging][packaging] for details on customizing this for a specific package.
 - setup.cfg. This is an artifact used in building the Python package. Please see [the guide on Python packaging][packaging] for details.
@@ -594,7 +594,7 @@ For information about more advanced testing scenarios, refer to the [advanced te
 [generate_sas]: https://github.com/Azure/azure-sdk-for-python/blob/bf4749babb363e2dc972775f4408036e31f361b4/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L196
 [get_credential]: https://github.com/Azure/azure-sdk-for-python/blob/20cf5b0bd9b87f90bd5ad4fd36358d3b257f95c5/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L96
 [git_setup]: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
-[kv_test_resources]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/test-resources.json
+[kv_test_resources]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json
 [kv_test_resources_outputs]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L255
 [kv_test_resources_resources]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L116
 [manage_recordings]: https://github.com/Azure/azure-sdk-for-python/blob/main/scripts/manage_recordings.py

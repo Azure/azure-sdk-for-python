@@ -1,8 +1,19 @@
 # Release History
 
-## 12.25.0b1 (Unreleased)
+## 12.25.0 (Unreleased)
 
 ### Features Added
+
+## 12.25.0b1 (2025-02-11)
+
+### Features Added
+- Added support for service version 2025-05-05.
+
+## 12.24.1 (2025-01-22)
+
+### Bugs Fixed
+- Fixed an issue where custom transports may encounter `AttributeError` on certain requests.
+- Fixed an issue where `StorageStreamDownloader(chars=-1)` may not return all data.
 
 ## 12.24.0 (2024-11-13)
 

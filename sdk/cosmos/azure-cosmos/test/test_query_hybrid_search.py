@@ -15,11 +15,10 @@ import hybrid_search_data
 from azure.cosmos import http_constants, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
-
+@pytest.mark.cosmosSearchQuery
 class TestFullTextHybridSearchQuery(unittest.TestCase):
     """Test to check full text search and hybrid search queries behavior."""
 
-    created_db: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
     config = test_config.TestConfig
     host = config.host
@@ -38,12 +37,9 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
                 "tests.")
 
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
-
-    def setUp(self):
-        self.test_db = self.client.create_database(str(uuid.uuid4()))
-        self.test_container = self.test_db.create_container(
-            id="FTS" + self.TEST_CONTAINER_ID,
+        cls.test_db = cls.client.create_database(str(uuid.uuid4()))
+        cls.test_container = cls.test_db.create_container(
+            id="FTS" + cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/id"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_1_PARTITION,
             indexing_policy=test_config.get_full_text_indexing_policy(path="/text"),
@@ -51,26 +47,29 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         data = hybrid_search_data.get_full_text_items()
         for index, item in enumerate(data.get("items")):
             item['id'] = str(index)
-            self.test_container.create_item(item)
+            cls.test_container.create_item(item)
         # Need to give the container time to index all the recently added items - 10 minutes seems to work
         time.sleep(10 * 60)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         try:
-            self.test_db.delete_container(self.test_container.id)
-            self.client.delete_database(self.test_db.id)
+            cls.test_db.delete_container(cls.test_container.id)
+            cls.client.delete_database(cls.test_db.id)
         except exceptions.CosmosHttpResponseError:
             pass
 
-    def test_wrong_queries(self):
+    def test_wrong_hybrid_search_queries(self):
         try:
-            query = "SELECT c.index, RRF(VectorDistance(c.vector, [1,2,3]), FullTextScore(c.text, “test”) FROM c"
+            query = "SELECT c.index, RRF(VectorDistance(c.vector, [1,2,3]), FullTextScore(c.text, 'test') FROM c"
             results = self.test_container.query_items(query, enable_cross_partition_query=True)
             list(results)
             pytest.fail("Attempting to project RRF in a query should fail.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-            assert "One of the inputs is invalid" in e.message
+            # TODO: This message seems to differ depending on machine as well
+            assert ("One of the input values is invalid" in e.message or
+             "Syntax error, incorrect syntax near 'FROM'" in e.message)
 
         try:
             query = "SELECT TOP 10 c.index FROM c WHERE FullTextContains(c.title, 'John')" \
@@ -80,7 +79,8 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             pytest.fail("Attempting to set an ordering direction in a full text score query should fail.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-            assert "One of the inputs is invalid" in e.message
+            assert ("One of the input values is invalid" in e.message or
+                    "Specifying a sort order (ASC or DESC) in the ORDER BY RANK clause is not allowed." in e.message)
 
         try:
             query = "SELECT TOP 10 c.index FROM c WHERE FullTextContains(c.title, 'John')" \
@@ -90,7 +90,9 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
             pytest.fail("Attempting to set an ordering direction in a hybrid search query should fail.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
-            assert "One of the inputs is invalid" in e.message
+            # TODO: Find why this behavior is inconsistent across runs - message should be the same
+            assert ("One of the input values is invalid" in e.message or
+                    "Specifying a sort order (ASC or DESC) in the ORDER BY RANK clause is not allowed." in e.message)
 
     def test_hybrid_search_queries(self):
         query = "SELECT TOP 10 c.index, c.title FROM c WHERE FullTextContains(c.title, 'John') OR " \

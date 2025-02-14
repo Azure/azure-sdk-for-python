@@ -105,7 +105,7 @@ with TableServiceClient.from_connection_string(conn_str=connection_string) as ta
 ```
 
 ##### Creating the client from a SAS token
-To use a [shared access signature (SAS) token][azure_sas_token], provide the token as a string. If your account URL includes the SAS token, omit the credential parameter. You can generate a SAS token from the Azure Portal under [Shared access signature](https://docs.microsoft.com/rest/api/storageservices/create-service-sas) or use one of the `generate_*_sas()` functions to create a sas token for the account or table:
+To use a [shared access signature (SAS) token][azure_sas_token], provide the token as a string. If your account URL includes the SAS token, omit the credential parameter. You can generate a SAS token from the Azure Portal under [Shared access signature](https://learn.microsoft.com/rest/api/storageservices/create-service-sas) or use one of the `generate_*_sas()` functions to create a sas token for the account or table:
 
 ```python
 from datetime import datetime, timedelta
@@ -363,7 +363,7 @@ These code samples show common scenario operations with the Azure Tables client 
 * Committing many requests in a single transaction: [sample_batching.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_batching.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py))
 
 ### Additional documentation
-For more extensive documentation on Azure Tables, see the [Azure Tables documentation][Tables_product_doc] on docs.microsoft.com.
+For more extensive documentation on Azure Tables, see the [Azure Tables documentation][Tables_product_doc] on learn.microsoft.com.
 
 ## Known Issues
 A list of currently known issues relating to Cosmos DB table endpoints can be found [here](https://aka.ms/tablesknownissues).
@@ -378,43 +378,43 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 <!-- LINKS -->
 [source_code]:https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables
 [Tables_pypi]:https://aka.ms/azsdk/python/tablespypi
-[Tables_ref_docs]:https://docs.microsoft.com/python/api/overview/azure/data-tables-readme?view=azure-python
-[Tables_product_doc]:https://docs.microsoft.com/azure/cosmos-db/table-introduction
+[Tables_ref_docs]:https://learn.microsoft.com/python/api/overview/azure/data-tables-readme?view=azure-python
+[Tables_product_doc]:https://learn.microsoft.com/azure/cosmos-db/table-introduction
 [Tables_samples]:https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples
 [migration_guide]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/migration_guide.md
 
 [azure_subscription]:https://azure.microsoft.com/free/
-[azure_storage_account]:https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal
-[azure_cosmos_account]:https://docs.microsoft.com/azure/cosmos-db/create-cosmosdb-resources-portal
+[azure_storage_account]:https://learn.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal
+[azure_cosmos_account]:https://learn.microsoft.com/azure/cosmos-db/create-cosmosdb-resources-portal
 [pip_link]:https://pypi.org/project/pip/
 
-[azure_create_cosmos]:https://docs.microsoft.com/azure/cosmos-db/create-cosmosdb-resources-portal
-[azure_cli_create_cosmos]:https://docs.microsoft.com/azure/cosmos-db/scripts/cli/table/create
-[azure_portal_create_cosmos]:https://docs.microsoft.com/azure/cosmos-db/create-cosmosdb-resources-portal
-[azure_portal_create_account]:https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal
-[azure_powershell_create_account]:https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-powershell
-[azure_cli_create_account]: https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-cli
+[azure_create_cosmos]:https://learn.microsoft.com/azure/cosmos-db/create-cosmosdb-resources-portal
+[azure_cli_create_cosmos]:https://learn.microsoft.com/azure/cosmos-db/scripts/cli/table/create
+[azure_portal_create_cosmos]:https://learn.microsoft.com/azure/cosmos-db/create-cosmosdb-resources-portal
+[azure_portal_create_account]:https://learn.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal
+[azure_powershell_create_account]:https://learn.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-powershell
+[azure_cli_create_account]: https://learn.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-cli
 
-[azure_cli_account_url]:https://docs.microsoft.com/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show
-[azure_powershell_account_url]:https://docs.microsoft.com/powershell/module/az.storage/get-azstorageaccount?view=azps-4.6.1
-[azure_portal_account_url]:https://docs.microsoft.com/azure/storage/common/storage-account-overview#storage-account-endpoints
+[azure_cli_account_url]:https://learn.microsoft.com/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-show
+[azure_powershell_account_url]:https://learn.microsoft.com/powershell/module/az.storage/get-azstorageaccount?view=azps-4.6.1
+[azure_portal_account_url]:https://learn.microsoft.com/azure/storage/common/storage-account-overview#storage-account-endpoints
 
-[azure_sas_token]:https://docs.microsoft.com/azure/storage/common/storage-sas-overview
-[azure_shared_key]:https://docs.microsoft.com/rest/api/storageservices/authorize-with-shared-key
+[azure_sas_token]:https://learn.microsoft.com/azure/storage/common/storage-sas-overview
+[azure_shared_key]:https://learn.microsoft.com/rest/api/storageservices/authorize-with-shared-key
 
 [odata_syntax]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/README.md#writing-filters
 
-[azure_core_ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html
+[azure_core_ref_docs]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 
 [python_logging]: https://docs.python.org/3/library/logging.html
-[tables_error_codes]: https://docs.microsoft.com/rest/api/storageservices/table-service-error-codes
+[tables_error_codes]: https://learn.microsoft.com/rest/api/storageservices/table-service-error-codes
 
 [msft_oss_coc]:https://opensource.microsoft.com/codeofconduct/
 [msft_oss_coc_faq]:https://opensource.microsoft.com/codeofconduct/faq/
 [contact_msft_oss]:mailto:opencode@microsoft.com
 
-[tables_rest]: https://docs.microsoft.com/rest/api/storageservices/table-service-rest-api
+[tables_rest]: https://learn.microsoft.com/rest/api/storageservices/table-service-rest-api
 
 [create_entity]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py#L67-L73
 [delete_entity]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py#L89-L92
@@ -423,4 +423,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 [get_entity]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py#L67-L71
 [upsert_entity]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py#L155-L163
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/tables/azure-data-tables/README.png)
+
