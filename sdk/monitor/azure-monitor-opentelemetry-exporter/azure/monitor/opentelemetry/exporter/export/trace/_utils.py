@@ -152,7 +152,6 @@ def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str
 @no_type_check
 def _get_target_and_path_for_http_dependency(
     attributes: Attributes,
-    target: Optional[str] = "",
     url: Optional[str] = "",  # Usually populated by _get_url_for_http_dependency()
 ) -> Tuple[Optional[str], str]:
     parsed_url = None
@@ -174,29 +173,33 @@ def _get_target_and_path_for_http_dependency(
             # if not default port, include port in target
             if server_port != default_port:
                 target = "{}:{}".format(target, server_port)
-        # We only use these values for target if not already populated by peer.service
-        elif not SpanAttributes.PEER_SERVICE in attributes:
-            # Target from http.host
-            if SpanAttributes.HTTP_HOST in attributes:
-                host = attributes[SpanAttributes.HTTP_HOST]
-                try:
-                    # urlparse insists on absolute URLs starting with "//"
-                    # This logic assumes host does not include a "//"
-                    host_name = urlparse("//" + str(host))
-                    # Ignore port from target if default port
-                    if host_name.port == default_port:
-                        target = host_name.hostname
-                    else:
-                        # Else include the whole host as the target
-                        target = str(host)
-                except Exception:  # pylint: disable=broad-except
-                    pass
-            elif parsed_url:
-                # Target from httpUrl
-                if parsed_url.port and parsed_url.port == default_port:
-                    target = parsed_url.hostname
+        # Target from peer.service
+        elif SpanAttributes.PEER_SERVICE in attributes:
+            target = attributes[SpanAttributes.PEER_SERVICE]
+        # Target from http.host
+        elif SpanAttributes.HTTP_HOST in attributes:
+            host = attributes[SpanAttributes.HTTP_HOST]
+            try:
+                # urlparse insists on absolute URLs starting with "//"
+                # This logic assumes host does not include a "//"
+                host_name = urlparse("//" + str(host))
+                # Ignore port from target if default port
+                if host_name.port == default_port:
+                    target = host_name.hostname
                 else:
-                    target = parsed_url.netloc
+                    # Else include the whole host as the target
+                    target = str(host)
+            except Exception:  # pylint: disable=broad-except
+                pass
+        elif parsed_url:
+            # Target from httpUrl
+            if parsed_url.port and parsed_url.port == default_port:
+                target = parsed_url.hostname
+            else:
+                target = parsed_url.netloc
+        else:
+            # Get target from peer.* attributes that are NOT peer.service
+            target = _get_target_for_dependency_from_peer(attributes)
     return (target, path)
 
 
@@ -268,24 +271,24 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
         http_target = ""
         if url_attributes.URL_PATH in attributes:
             http_target = attributes.get(url_attributes.URL_PATH, "")
-        if url_attributes.URL_QUERY in attributes:
-            http_target = "{}?{}".format(
-                http_target,
-                attributes.get(url_attributes.URL_QUERY, "")
-            )
-        if not http_target:
+            if http_target and url_attributes.URL_QUERY in attributes:
+                http_target = "{}?{}".format(
+                    http_target,
+                    attributes.get(url_attributes.URL_QUERY, "")
+                )
+        elif SpanAttributes.HTTP_TARGET in attributes:
             http_target = attributes.get(SpanAttributes.HTTP_TARGET)
         if scheme and http_target:
             # Host
             http_host = ""
             if server_attributes.SERVER_ADDRESS in attributes:
                 http_host = attributes.get(server_attributes.SERVER_ADDRESS, "")
-            if server_attributes.SERVER_PORT in attributes:
-                http_host = "{}:{}".format(
-                    http_host,
-                    attributes.get(server_attributes.SERVER_PORT, "")
-                )
-            if not http_host:
+                if http_host and server_attributes.SERVER_PORT in attributes:
+                    http_host = "{}:{}".format(
+                        http_host,
+                        attributes.get(server_attributes.SERVER_PORT, "")
+                    )
+            elif SpanAttributes.HTTP_HOST in attributes:
                 http_host = attributes.get(SpanAttributes.HTTP_HOST, "")
             if http_host:
                 url = "{}://{}{}".format(
