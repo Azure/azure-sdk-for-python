@@ -410,7 +410,7 @@ class BaseStreamingChatCompletions:
                 continue
 
             if not line.startswith(self._SSE_DATA_EVENT_PREFIX):
-                raise ValueError(f"SSE event not supported (line `{line}`)")
+                raise ValueError(f"SSE event not supported (line `{repr(line)}`)")
 
             if line.startswith(self._SSE_DATA_EVENT_DONE):
                 if self._ENABLE_CLASS_LOGS:
