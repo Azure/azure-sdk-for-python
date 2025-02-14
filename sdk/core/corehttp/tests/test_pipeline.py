@@ -4,11 +4,12 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from unittest.mock import Mock
+import os
+from unittest.mock import Mock, patch
 import json
 from io import BytesIO
 import xml.etree.ElementTree as ET
-
+import ssl
 import pytest
 import httpx
 import requests
@@ -26,6 +27,7 @@ from corehttp.runtime._base import PipelineClientBase, _format_url_section
 from corehttp.transport import HttpTransport
 from corehttp.transport.requests import RequestsTransport
 from corehttp.transport.httpx import HttpXTransport
+from corehttp.transport._base import _build_ssl_config
 from corehttp.exceptions import BaseError
 
 from utils import SYNC_TRANSPORTS
@@ -428,3 +430,52 @@ def test_httpx_separate_session(port):
     transport.close()
     assert transport.client
     transport.client.close()
+
+
+@pytest.mark.parametrize(
+    "cert, verify, expected",
+    [
+        # Case 1: cert is None, verify is True
+        (None, True, True),
+        # Case 2: cert is None, verify is False
+        (None, False, False),
+        # Case 3: cert is a string, verify is True
+        ("path/to/cert.pem", True, ssl.SSLContext),
+        # Case 4: cert is a tuple, verify is True
+        (("path/to/cert.pem", "path/to/key.pem"), True, ssl.SSLContext),
+        # Case 5: cert is None, verify is a string (file path)
+        (None, "path/to/ca.pem", ssl.SSLContext),
+        # Case 6: cert is a string, verify is a string (file path)
+        ("path/to/cert.pem", "path/to/ca.pem", ssl.SSLContext),
+        # Case 7: cert is a tuple, verify is a string (file path)
+        (("path/to/cert.pem", "path/to/key.pem"), "path/to/ca.pem", ssl.SSLContext),
+        # Case 8: cert is None, verify is a string (directory path)
+        (None, "path/to/ca_dir", ssl.SSLContext),
+        # Case 9: cert is a string, verify is a string (directory path)
+        ("path/to/cert.pem", "path/to/ca_dir", ssl.SSLContext),
+        # Case 10: cert is a tuple, verify is a string (directory path)
+        (("path/to/cert.pem", "path/to/key.pem"), "path/to/ca_dir", ssl.SSLContext),
+    ],
+)
+@patch("ssl.create_default_context")
+@patch("ssl.SSLContext.load_cert_chain")
+def test_build_ssl_config(mock_load_cert_chain, mock_create_default_context, cert, verify, expected):
+    mock_ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    mock_create_default_context.return_value = mock_ssl_context
+
+    result = _build_ssl_config(cert, verify)
+
+    if isinstance(expected, bool):
+        assert result == expected
+    else:
+        assert isinstance(result, expected)
+        if cert:
+            if isinstance(cert, str):
+                mock_load_cert_chain.assert_called_once_with(cert)
+            else:
+                mock_load_cert_chain.assert_called_once_with(*cert)
+        if verify not in (True, False):
+            if os.path.isdir(verify):
+                mock_create_default_context.assert_called_once_with(capath=verify)
+            else:
+                mock_create_default_context.assert_called_once_with(cafile=verify)

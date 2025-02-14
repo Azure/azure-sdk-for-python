@@ -37,7 +37,7 @@ from ...exceptions import (
     ServiceResponseError,
 )
 from .._base_async import AsyncHttpTransport, _handle_non_stream_rest_response
-from .._base import _create_connection_config
+from .._base import _create_connection_config, _build_ssl_config
 from ...rest._aiohttp import RestAioHttpTransportResponse
 from ...utils._utils import get_file_items
 
@@ -105,28 +105,6 @@ class AioHttpTransport(AsyncHttpTransport):
             self._session_owner = False
             self.session = None
 
-    def _build_ssl_config(self, cert, verify):
-        """Build the SSL configuration.
-
-        :param tuple cert: Cert information
-        :param bool verify: SSL verification or path to CA file or directory
-        :rtype: bool or str or ssl.SSLContext
-        :return: SSL configuration
-        """
-        ssl_ctx = None
-
-        if cert or verify not in (True, False):
-            import ssl
-
-            if verify not in (True, False):
-                ssl_ctx = ssl.create_default_context(cafile=verify)
-            else:
-                ssl_ctx = ssl.create_default_context()
-            if cert:
-                ssl_ctx.load_cert_chain(*cert)
-            return ssl_ctx
-        return verify
-
     def _get_request_data(self, request: RestHttpRequest):
         """Get the request data.
 
@@ -184,7 +162,7 @@ class AioHttpTransport(AsyncHttpTransport):
                     break
 
         response: Optional[RestAsyncHttpResponse] = None
-        ssl = self._build_ssl_config(
+        ssl = _build_ssl_config(
             cert=config.pop("connection_cert", self.connection_config.get("connection_cert")),
             verify=config.pop("connection_verify", self.connection_config.get("connection_verify")),
         )

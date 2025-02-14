@@ -26,7 +26,7 @@
 from typing import Any, Optional, cast
 
 import httpx
-from .._base import _create_connection_config, _handle_non_stream_rest_response
+from .._base import _create_connection_config, _handle_non_stream_rest_response, _build_ssl_config
 from .._base_async import _handle_non_stream_rest_response as _handle_non_stream_rest_response_async
 from ...exceptions import ServiceRequestError, ServiceResponseError
 from ...rest._httpx import HttpXTransportResponse, AsyncHttpXTransportResponse
@@ -57,10 +57,13 @@ class HttpXTransport(HttpTransport):
 
     def open(self) -> None:
         if self.client is None:
-            self.client = httpx.Client(
-                trust_env=self._use_env_settings,
+            verify = _build_ssl_config(
                 verify=self.connection_config.get("connection_verify", True),
                 cert=self.connection_config.get("connection_cert"),
+            )
+            self.client = httpx.Client(
+                trust_env=self._use_env_settings,
+                verify=verify,
             )
 
     def close(self) -> None:
@@ -150,10 +153,13 @@ class AsyncHttpXTransport(AsyncHttpTransport):
 
     async def open(self) -> None:
         if self.client is None:
-            self.client = httpx.AsyncClient(
-                trust_env=self._use_env_settings,
+            verify = _build_ssl_config(
                 verify=self.connection_config.get("connection_verify", True),
                 cert=self.connection_config.get("connection_cert"),
+            )
+            self.client = httpx.AsyncClient(
+                trust_env=self._use_env_settings,
+                verify=verify,
             )
 
     async def close(self) -> None:
