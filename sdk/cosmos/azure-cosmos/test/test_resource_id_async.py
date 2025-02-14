@@ -11,7 +11,7 @@ from azure.cosmos import PartitionKey, http_constants, exceptions
 from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
     configs = test_config.TestConfig
     host = configs.host

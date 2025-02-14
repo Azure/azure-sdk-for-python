@@ -32,7 +32,7 @@ Use the Azure.Search.Documents client library to:
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/search/azure-search-documents)
 | [Package (PyPI)](https://pypi.org/project/azure-search-documents/)
 | [Package (Conda)](https://anaconda.org/microsoft/azure-search-documents/)
-| [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/latest/index.html)
+| [API reference documentation](https://azuresdkdocs.z19.web.core.windows.net/python/azure-search-documents/latest/index.html)
 | [Product documentation](https://learn.microsoft.com/azure/search/search-what-is-azure-search)
 | [Samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples)
 
@@ -410,7 +410,7 @@ For more information, see the [Code of Conduct FAQ][coc_faq]
 or contact [opencode@microsoft.com][coc_contact] with any
 additional questions or comments.
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-net%2Fsdk%2Fsearch%2FAzure.Search.Documents%2FREADME.png)
+
 
 ## Related projects
 
@@ -418,7 +418,7 @@ additional questions or comments.
 
 <!-- LINKS -->
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fsearch%2Fazure-search-documents%2FREADME.png)
+
 
 [azure_cli]: https://learn.microsoft.com/cli/azure
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
