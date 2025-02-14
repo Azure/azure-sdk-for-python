@@ -175,7 +175,7 @@ def _get_target_and_path_for_http_dependency(
                 target = "{}:{}".format(target, server_port)
         # Target from peer.service
         elif SpanAttributes.PEER_SERVICE in attributes:
-            target = target = attributes[SpanAttributes.PEER_SERVICE]
+            target = attributes[SpanAttributes.PEER_SERVICE]
         # Target from http.host
         elif SpanAttributes.HTTP_HOST in attributes:
             host = attributes[SpanAttributes.HTTP_HOST]
