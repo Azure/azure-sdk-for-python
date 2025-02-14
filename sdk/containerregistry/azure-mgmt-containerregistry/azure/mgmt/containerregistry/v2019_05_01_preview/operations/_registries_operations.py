@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, Union, cast, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -15,12 +15,13 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -28,8 +29,11 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -97,10 +101,10 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        generate_credentials_parameters: Union[_models.GenerateCredentialsParameters, IO],
+        generate_credentials_parameters: Union[_models.GenerateCredentialsParameters, IO[bytes]],
         **kwargs: Any
-    ) -> Optional[_models.GenerateCredentialsResult]:
-        error_map = {
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -115,7 +119,7 @@ class RegistriesOperations:
             "api_version", _params.pop("api-version", self._api_version or "2019-05-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.GenerateCredentialsResult]] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -125,7 +129,7 @@ class RegistriesOperations:
         else:
             _json = self._serialize.body(generate_credentials_parameters, "GenerateCredentialsParameters")
 
-        request = build_generate_credentials_request(
+        _request = build_generate_credentials_request(
             resource_group_name=resource_group_name,
             registry_name=registry_name,
             subscription_id=self._config.subscription_id,
@@ -133,36 +137,33 @@ class RegistriesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._generate_credentials_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("GenerateCredentialsResult", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _generate_credentials_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/generateCredentials"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_generate_credentials(
@@ -174,6 +175,7 @@ class RegistriesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GenerateCredentialsResult]:
+        # pylint: disable=line-too-long
         """Generate keys for a token of a specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -187,14 +189,6 @@ class RegistriesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either GenerateCredentialsResult or the result
          of cls(response)
         :rtype:
@@ -207,11 +201,12 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        generate_credentials_parameters: IO,
+        generate_credentials_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GenerateCredentialsResult]:
+        # pylint: disable=line-too-long
         """Generate keys for a token of a specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -220,18 +215,10 @@ class RegistriesOperations:
         :param registry_name: The name of the container registry. Required.
         :type registry_name: str
         :param generate_credentials_parameters: The parameters for generating credentials. Required.
-        :type generate_credentials_parameters: IO
+        :type generate_credentials_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either GenerateCredentialsResult or the result
          of cls(response)
         :rtype:
@@ -244,9 +231,10 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        generate_credentials_parameters: Union[_models.GenerateCredentialsParameters, IO],
+        generate_credentials_parameters: Union[_models.GenerateCredentialsParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.GenerateCredentialsResult]:
+        # pylint: disable=line-too-long
         """Generate keys for a token of a specified container registry.
 
         :param resource_group_name: The name of the resource group to which the container registry
@@ -255,20 +243,10 @@ class RegistriesOperations:
         :param registry_name: The name of the container registry. Required.
         :type registry_name: str
         :param generate_credentials_parameters: The parameters for generating credentials. Is either a
-         GenerateCredentialsParameters type or a IO type. Required.
+         GenerateCredentialsParameters type or a IO[bytes] type. Required.
         :type generate_credentials_parameters:
-         ~azure.mgmt.containerregistry.v2019_05_01_preview.models.GenerateCredentialsParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ~azure.mgmt.containerregistry.v2019_05_01_preview.models.GenerateCredentialsParameters or
+         IO[bytes]
         :return: An instance of LROPoller that returns either GenerateCredentialsResult or the result
          of cls(response)
         :rtype:
@@ -298,12 +276,13 @@ class RegistriesOperations:
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("GenerateCredentialsResult", pipeline_response)
+            deserialized = self._deserialize("GenerateCredentialsResult", pipeline_response.http_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -313,14 +292,12 @@ class RegistriesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.GenerateCredentialsResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_generate_credentials.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/generateCredentials"
-    }
+        return LROPoller[_models.GenerateCredentialsResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
