@@ -21,11 +21,10 @@ from ._configuration import PolicyClientConfiguration
 from .operations import VariableValuesOperations, VariablesOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword
+class PolicyClient:
     """To use in policy authoring you can create a variable at a scope. Variables created at a scope
     can be shared between multiple policy definitions.
 

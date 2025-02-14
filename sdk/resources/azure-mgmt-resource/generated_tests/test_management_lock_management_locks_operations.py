@@ -20,7 +20,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update_at_resource_group_level(self, resource_group):
+    def test_management_locks_create_or_update_at_resource_group_level(self, resource_group):
         response = self.client.management_locks.create_or_update_at_resource_group_level(
             resource_group_name=resource_group.name,
             lock_name="str",
@@ -40,7 +40,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete_at_resource_group_level(self, resource_group):
+    def test_management_locks_delete_at_resource_group_level(self, resource_group):
         response = self.client.management_locks.delete_at_resource_group_level(
             resource_group_name=resource_group.name,
             lock_name="str",
@@ -52,7 +52,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_at_resource_group_level(self, resource_group):
+    def test_management_locks_get_at_resource_group_level(self, resource_group):
         response = self.client.management_locks.get_at_resource_group_level(
             resource_group_name=resource_group.name,
             lock_name="str",
@@ -64,7 +64,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update_by_scope(self, resource_group):
+    def test_management_locks_create_or_update_by_scope(self, resource_group):
         response = self.client.management_locks.create_or_update_by_scope(
             scope="str",
             lock_name="str",
@@ -84,7 +84,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete_by_scope(self, resource_group):
+    def test_management_locks_delete_by_scope(self, resource_group):
         response = self.client.management_locks.delete_by_scope(
             scope="str",
             lock_name="str",
@@ -96,7 +96,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_scope(self, resource_group):
+    def test_management_locks_get_by_scope(self, resource_group):
         response = self.client.management_locks.get_by_scope(
             scope="str",
             lock_name="str",
@@ -108,7 +108,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update_at_resource_level(self, resource_group):
+    def test_management_locks_create_or_update_at_resource_level(self, resource_group):
         response = self.client.management_locks.create_or_update_at_resource_level(
             resource_group_name=resource_group.name,
             resource_provider_namespace="str",
@@ -132,7 +132,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete_at_resource_level(self, resource_group):
+    def test_management_locks_delete_at_resource_level(self, resource_group):
         response = self.client.management_locks.delete_at_resource_level(
             resource_group_name=resource_group.name,
             resource_provider_namespace="str",
@@ -148,7 +148,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_at_resource_level(self, resource_group):
+    def test_management_locks_get_at_resource_level(self, resource_group):
         response = self.client.management_locks.get_at_resource_level(
             resource_group_name=resource_group.name,
             resource_provider_namespace="str",
@@ -164,7 +164,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update_at_subscription_level(self, resource_group):
+    def test_management_locks_create_or_update_at_subscription_level(self, resource_group):
         response = self.client.management_locks.create_or_update_at_subscription_level(
             lock_name="str",
             parameters={
@@ -183,7 +183,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete_at_subscription_level(self, resource_group):
+    def test_management_locks_delete_at_subscription_level(self, resource_group):
         response = self.client.management_locks.delete_at_subscription_level(
             lock_name="str",
             api_version="2016-09-01",
@@ -194,7 +194,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_at_subscription_level(self, resource_group):
+    def test_management_locks_get_at_subscription_level(self, resource_group):
         response = self.client.management_locks.get_at_subscription_level(
             lock_name="str",
             api_version="2016-09-01",
@@ -205,7 +205,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_at_resource_group_level(self, resource_group):
+    def test_management_locks_list_at_resource_group_level(self, resource_group):
         response = self.client.management_locks.list_at_resource_group_level(
             resource_group_name=resource_group.name,
             api_version="2016-09-01",
@@ -216,7 +216,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_at_resource_level(self, resource_group):
+    def test_management_locks_list_at_resource_level(self, resource_group):
         response = self.client.management_locks.list_at_resource_level(
             resource_group_name=resource_group.name,
             resource_provider_namespace="str",
@@ -231,7 +231,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_at_subscription_level(self, resource_group):
+    def test_management_locks_list_at_subscription_level(self, resource_group):
         response = self.client.management_locks.list_at_subscription_level(
             api_version="2016-09-01",
         )
@@ -241,7 +241,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_scope(self, resource_group):
+    def test_management_locks_list_by_scope(self, resource_group):
         response = self.client.management_locks.list_by_scope(
             scope="str",
             api_version="2016-09-01",

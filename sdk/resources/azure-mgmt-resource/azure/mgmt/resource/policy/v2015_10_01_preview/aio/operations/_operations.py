@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -47,7 +47,7 @@ from ...operations._operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -84,7 +84,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -210,7 +210,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -277,7 +277,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -324,6 +324,7 @@ class PolicyAssignmentsOperations:
     def list_for_resource_group(
         self, resource_group_name: str, filter: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignment"]:
+        # pylint: disable=line-too-long
         """Gets policy assignments for the resource group.
 
         :param resource_group_name: The name of the resource group that contains policy assignments.
@@ -344,7 +345,7 @@ class PolicyAssignmentsOperations:
         )
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -417,6 +418,7 @@ class PolicyAssignmentsOperations:
         filter: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignment"]:
+        # pylint: disable=line-too-long
         """Gets policy assignments for a  resource.
 
         :param resource_group_name: The name of the resource group containing the resource. The name is
@@ -445,7 +447,7 @@ class PolicyAssignmentsOperations:
         )
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -513,6 +515,7 @@ class PolicyAssignmentsOperations:
 
     @distributed_trace
     def list(self, filter: Optional[str] = None, **kwargs: Any) -> AsyncIterable["_models.PolicyAssignment"]:
+        # pylint: disable=line-too-long
         """Gets all the policy assignments for a subscription.
 
         :param filter: The filter to apply on the operation. Default value is None.
@@ -530,7 +533,7 @@ class PolicyAssignmentsOperations:
         )
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -609,7 +612,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -738,7 +741,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -810,7 +813,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -935,7 +938,7 @@ class PolicyDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -991,9 +994,7 @@ class PolicyDefinitionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, policy_definition_name: str, **kwargs: Any
-    ) -> None:
+    async def delete(self, policy_definition_name: str, **kwargs: Any) -> None:
         """Deletes a policy definition.
 
         :param policy_definition_name: The name of the policy definition to delete. Required.
@@ -1002,7 +1003,7 @@ class PolicyDefinitionsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1051,7 +1052,7 @@ class PolicyDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2015_10_01_preview.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1096,6 +1097,7 @@ class PolicyDefinitionsOperations:
 
     @distributed_trace
     def list(self, filter: Optional[str] = None, **kwargs: Any) -> AsyncIterable["_models.PolicyDefinition"]:
+        # pylint: disable=line-too-long
         """Gets all the policy definitions for a subscription.
 
         :param filter: The filter to apply on the operation. Default value is None.
@@ -1113,7 +1115,7 @@ class PolicyDefinitionsOperations:
         )
         cls: ClsType[_models.PolicyDefinitionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

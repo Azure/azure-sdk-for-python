@@ -21,11 +21,10 @@ from ._configuration import TemplateSpecsClientConfiguration
 from .operations import TemplateSpecVersionsOperations, TemplateSpecsOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class TemplateSpecsClient:  # pylint: disable=client-accepts-api-version-keyword
+class TemplateSpecsClient:
     """The APIs listed in this specification can be used to manage Template Spec resources through the
     Azure Resource Manager.
 

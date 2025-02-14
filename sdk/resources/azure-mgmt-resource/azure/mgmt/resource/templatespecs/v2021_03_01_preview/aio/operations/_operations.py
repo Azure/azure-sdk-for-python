@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -45,7 +45,7 @@ from ...operations._operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -147,7 +147,7 @@ class TemplateSpecsOperations:
         :rtype: ~azure.mgmt.resource.templatespecs.v2021_03_01_preview.models.TemplateSpec
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -285,7 +285,7 @@ class TemplateSpecsOperations:
         :rtype: ~azure.mgmt.resource.templatespecs.v2021_03_01_preview.models.TemplateSpec
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -368,7 +368,7 @@ class TemplateSpecsOperations:
         :rtype: ~azure.mgmt.resource.templatespecs.v2021_03_01_preview.models.TemplateSpec
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -415,9 +415,7 @@ class TemplateSpecsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, template_spec_name: str, **kwargs: Any
-    ) -> None:
+    async def delete(self, resource_group_name: str, template_spec_name: str, **kwargs: Any) -> None:
         """Deletes a Template Spec by name. When operation completes, status code 200 returned without
         content.
 
@@ -430,7 +428,7 @@ class TemplateSpecsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -475,6 +473,7 @@ class TemplateSpecsOperations:
     def list_by_subscription(
         self, expand: Optional[Union[str, _models.TemplateSpecExpandKind]] = None, **kwargs: Any
     ) -> AsyncIterable["_models.TemplateSpec"]:
+        # pylint: disable=line-too-long
         """Lists all the Template Specs within the specified subscriptions.
 
         :param expand: Allows for expansion of additional Template Spec details in the response.
@@ -494,7 +493,7 @@ class TemplateSpecsOperations:
         )
         cls: ClsType[_models.TemplateSpecsListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -563,6 +562,7 @@ class TemplateSpecsOperations:
         expand: Optional[Union[str, _models.TemplateSpecExpandKind]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.TemplateSpec"]:
+        # pylint: disable=line-too-long
         """Lists all the Template Specs within the specified resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -585,7 +585,7 @@ class TemplateSpecsOperations:
         )
         cls: ClsType[_models.TemplateSpecsListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -756,7 +756,7 @@ class TemplateSpecVersionsOperations:
         :rtype: ~azure.mgmt.resource.templatespecs.v2021_03_01_preview.models.TemplateSpecVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -905,7 +905,7 @@ class TemplateSpecVersionsOperations:
         :rtype: ~azure.mgmt.resource.templatespecs.v2021_03_01_preview.models.TemplateSpecVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -983,7 +983,7 @@ class TemplateSpecVersionsOperations:
         :rtype: ~azure.mgmt.resource.templatespecs.v2021_03_01_preview.models.TemplateSpecVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1030,7 +1030,7 @@ class TemplateSpecVersionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
+    async def delete(
         self, resource_group_name: str, template_spec_name: str, template_spec_version: str, **kwargs: Any
     ) -> None:
         """Deletes a specific version from a Template Spec. When operation completes, status code 200
@@ -1047,7 +1047,7 @@ class TemplateSpecVersionsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1093,6 +1093,7 @@ class TemplateSpecVersionsOperations:
     def list(
         self, resource_group_name: str, template_spec_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.TemplateSpecVersion"]:
+        # pylint: disable=line-too-long
         """Lists all the Template Spec versions in the specified Template Spec.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1113,7 +1114,7 @@ class TemplateSpecVersionsOperations:
         )
         cls: ClsType[_models.TemplateSpecVersionsListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

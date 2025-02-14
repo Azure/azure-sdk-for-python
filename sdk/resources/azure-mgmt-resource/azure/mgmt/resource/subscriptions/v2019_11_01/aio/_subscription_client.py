@@ -21,11 +21,10 @@ from ._configuration import SubscriptionClientConfiguration
 from .operations import Operations, SubscriptionClientOperationsMixin, SubscriptionsOperations, TenantsOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class SubscriptionClient(SubscriptionClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class SubscriptionClient(SubscriptionClientOperationsMixin):
     """All resource groups and resources exist within subscriptions. These operation enable you get
     information about your subscriptions and tenants. A tenant is a dedicated instance of Azure
     Active Directory (Azure AD) for your organization.

@@ -21,11 +21,10 @@ from ._configuration import ManagementLockClientConfiguration
 from .operations import ManagementLocksOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ManagementLockClient:  # pylint: disable=client-accepts-api-version-keyword
+class ManagementLockClient:
     """ManagementLockClient.
 
     :ivar management_locks: ManagementLocksOperations operations

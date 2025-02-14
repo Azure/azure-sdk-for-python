@@ -21,7 +21,7 @@ class TestResourceManagementProviderResourceTypesOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_provider_resource_types_list(self, resource_group):
         response = await self.client.provider_resource_types.list(
             resource_provider_namespace="str",
             api_version="2022-09-01",

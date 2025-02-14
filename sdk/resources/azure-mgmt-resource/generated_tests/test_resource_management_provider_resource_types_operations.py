@@ -20,7 +20,7 @@ class TestResourceManagementProviderResourceTypesOperations(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_provider_resource_types_list(self, resource_group):
         response = self.client.provider_resource_types.list(
             resource_provider_namespace="str",
             api_version="2022-09-01",

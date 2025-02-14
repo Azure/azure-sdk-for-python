@@ -21,11 +21,10 @@ from ._configuration import ManagementLockClientConfiguration
 from .operations import AuthorizationOperationsOperations, ManagementLocksOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class ManagementLockClient:  # pylint: disable=client-accepts-api-version-keyword
+class ManagementLockClient:
     """Azure resources can be locked to prevent other users in your organization from deleting or
     modifying resources.
 

@@ -21,11 +21,10 @@ from ._configuration import FeatureClientConfiguration
 from .operations import FeatureClientOperationsMixin, FeaturesOperations, SubscriptionFeatureRegistrationsOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class FeatureClient(FeatureClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class FeatureClient(FeatureClientOperationsMixin):
     """Azure Feature Exposure Control (AFEC) provides a mechanism for the resource providers to
     control feature exposure to users. Resource providers typically use this mechanism to provide
     public/private preview for new features prior to making them generally available. Users need to

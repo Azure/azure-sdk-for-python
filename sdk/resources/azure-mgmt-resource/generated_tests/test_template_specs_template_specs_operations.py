@@ -20,7 +20,7 @@ class TestTemplateSpecsTemplateSpecsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_template_specs_create_or_update(self, resource_group):
         response = self.client.template_specs.create_or_update(
             resource_group_name=resource_group.name,
             template_spec_name="str",
@@ -57,7 +57,7 @@ class TestTemplateSpecsTemplateSpecsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_template_specs_update(self, resource_group):
         response = self.client.template_specs.update(
             resource_group_name=resource_group.name,
             template_spec_name="str",
@@ -69,7 +69,7 @@ class TestTemplateSpecsTemplateSpecsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_template_specs_get(self, resource_group):
         response = self.client.template_specs.get(
             resource_group_name=resource_group.name,
             template_spec_name="str",
@@ -81,7 +81,7 @@ class TestTemplateSpecsTemplateSpecsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_template_specs_delete(self, resource_group):
         response = self.client.template_specs.delete(
             resource_group_name=resource_group.name,
             template_spec_name="str",
@@ -93,7 +93,7 @@ class TestTemplateSpecsTemplateSpecsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_template_specs_list_by_subscription(self, resource_group):
         response = self.client.template_specs.list_by_subscription(
             api_version="2022-02-01",
         )
@@ -103,7 +103,7 @@ class TestTemplateSpecsTemplateSpecsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_template_specs_list_by_resource_group(self, resource_group):
         response = self.client.template_specs.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2022-02-01",
@@ -114,7 +114,7 @@ class TestTemplateSpecsTemplateSpecsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_built_in(self, resource_group):
+    def test_template_specs_get_built_in(self, resource_group):
         response = self.client.template_specs.get_built_in(
             template_spec_name="str",
             api_version="2022-02-01",
@@ -125,7 +125,7 @@ class TestTemplateSpecsTemplateSpecsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_built_ins(self, resource_group):
+    def test_template_specs_list_built_ins(self, resource_group):
         response = self.client.template_specs.list_built_ins(
             api_version="2022-02-01",
         )

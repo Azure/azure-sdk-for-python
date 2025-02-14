@@ -21,11 +21,10 @@ from ._configuration import PolicyClientConfiguration
 from .operations import PolicyExemptionsOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class PolicyClient:  # pylint: disable=client-accepts-api-version-keyword
+class PolicyClient:
     """To exempt your resources from policy evaluation and non-compliance state, you can create an
     exemption at a scope.
 

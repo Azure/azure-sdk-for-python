@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -90,7 +90,7 @@ from ...operations._operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
@@ -131,7 +131,7 @@ class Operations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-01"))
         cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -212,7 +212,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     async def _delete_at_subscription_scope_initial(self, deployment_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -325,7 +325,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -366,7 +366,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
     async def _create_or_update_at_subscription_scope_initial(  # pylint: disable=name-too-long
         self, deployment_name: str, parameters: Union[_models.Deployment, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -548,7 +548,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.DeploymentExtended
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -590,9 +590,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def cancel_at_subscription_scope(  # pylint: disable=inconsistent-return-statements
-        self, deployment_name: str, **kwargs: Any
-    ) -> None:
+    async def cancel_at_subscription_scope(self, deployment_name: str, **kwargs: Any) -> None:
         """Cancels a currently running template deployment.
 
         You can cancel a deployment only if the provisioningState is Accepted or Running. After the
@@ -606,7 +604,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -702,7 +700,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.DeploymentValidateResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -767,7 +765,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.DeploymentExportResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -831,7 +829,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-01"))
         cls: ClsType[_models.DeploymentListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -896,7 +894,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
     async def _delete_initial(
         self, resource_group_name: str, deployment_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1018,7 +1016,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1064,7 +1062,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         parameters: Union[_models.Deployment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1271,7 +1269,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.DeploymentExtended
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1314,9 +1312,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def cancel(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, deployment_name: str, **kwargs: Any
-    ) -> None:
+    async def cancel(self, resource_group_name: str, deployment_name: str, **kwargs: Any) -> None:
         """Cancels a currently running template deployment.
 
         You can cancel a deployment only if the provisioningState is Accepted or Running. After the
@@ -1333,7 +1329,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1450,7 +1446,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.DeploymentValidateResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1519,7 +1515,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.DeploymentExportResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1587,7 +1583,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-01"))
         cls: ClsType[_models.DeploymentListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1660,7 +1656,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.TemplateHashResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1736,7 +1732,7 @@ class ProvidersOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.Provider
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1788,7 +1784,7 @@ class ProvidersOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.Provider
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1853,7 +1849,7 @@ class ProvidersOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-01"))
         cls: ClsType[_models.ProviderListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1930,7 +1926,7 @@ class ProvidersOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.Provider
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2002,24 +1998,26 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         top: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.GenericResourceExpanded"]:
+        # pylint: disable=line-too-long
         """Get all the resources for a resource group.
 
         :param resource_group_name: The resource group with the resources to get. Required.
         :type resource_group_name: str
-        :param filter: The filter to apply on the operation.:code:`<br>`:code:`<br>`The properties you
-         can use for eq (equals) or ne (not equals) are: location, resourceType, name, resourceGroup,
-         identity, identity/principalId, plan, plan/publisher, plan/product, plan/name, plan/version,
-         and plan/promotionCode.:code:`<br>`:code:`<br>`For example, to filter by a resource type, use:
-         $filter=resourceType eq 'Microsoft.Network/virtualNetworks':code:`<br>`:code:`<br>`You can use
-         substringof(value, property) in the filter. The properties you can use for substring are: name
-         and resourceGroup.:code:`<br>`:code:`<br>`For example, to get all resources with 'demo'
-         anywhere in the name, use: $filter=substringof('demo', name):code:`<br>`:code:`<br>`You can
-         link more than one substringof together by adding and/or operators.:code:`<br>`:code:`<br>`You
-         can filter by tag names and values. For example, to filter for a tag name and value, use
-         $filter=tagName eq 'tag1' and tagValue eq 'Value1':code:`<br>`:code:`<br>`You can use some
-         properties together when filtering. The combinations you can use are: substringof and/or
-         resourceType, plan and plan/publisher and plan/name, identity and identity/principalId. Default
-         value is None.
+        :param filter: The filter to apply on the operation.\\ :code:`<br>`\\ :code:`<br>`The
+         properties you can use for eq (equals) or ne (not equals) are: location, resourceType, name,
+         resourceGroup, identity, identity/principalId, plan, plan/publisher, plan/product, plan/name,
+         plan/version, and plan/promotionCode.\\ :code:`<br>`\\ :code:`<br>`For example, to filter by a
+         resource type, use: $filter=resourceType eq 'Microsoft.Network/virtualNetworks'\\
+         :code:`<br>`\\ :code:`<br>`You can use substringof(value, property) in the filter. The
+         properties you can use for substring are: name and resourceGroup.\\ :code:`<br>`\\
+         :code:`<br>`For example, to get all resources with 'demo' anywhere in the name, use:
+         $filter=substringof('demo', name)\\ :code:`<br>`\\ :code:`<br>`You can link more than one
+         substringof together by adding and/or operators.\\ :code:`<br>`\\ :code:`<br>`You can filter by
+         tag names and values. For example, to filter for a tag name and value, use $filter=tagName eq
+         'tag1' and tagValue eq 'Value1'\\ :code:`<br>`\\ :code:`<br>`You can use some properties
+         together when filtering. The combinations you can use are: substringof and/or resourceType,
+         plan and plan/publisher and plan/name, identity and identity/principalId. Default value is
+         None.
         :type filter: str
         :param expand: Comma-separated list of additional properties to be included in the response.
          Valid values include ``createdTime``\\ , ``changedTime`` and ``provisioningState``. For
@@ -2040,7 +2038,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-01"))
         cls: ClsType[_models.ResourceListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2107,7 +2105,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
     async def _move_resources_initial(
         self, source_resource_group_name: str, parameters: Union[_models.ResourcesMoveInfo, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2290,7 +2288,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
     async def _validate_move_resources_initial(
         self, source_resource_group_name: str, parameters: Union[_models.ResourcesMoveInfo, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2480,22 +2478,24 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
     def list(
         self, filter: Optional[str] = None, expand: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.GenericResourceExpanded"]:
+        # pylint: disable=line-too-long
         """Get all the resources in a subscription.
 
-        :param filter: The filter to apply on the operation.:code:`<br>`:code:`<br>`The properties you
-         can use for eq (equals) or ne (not equals) are: location, resourceType, name, resourceGroup,
-         identity, identity/principalId, plan, plan/publisher, plan/product, plan/name, plan/version,
-         and plan/promotionCode.:code:`<br>`:code:`<br>`For example, to filter by a resource type, use:
-         $filter=resourceType eq 'Microsoft.Network/virtualNetworks':code:`<br>`:code:`<br>`You can use
-         substringof(value, property) in the filter. The properties you can use for substring are: name
-         and resourceGroup.:code:`<br>`:code:`<br>`For example, to get all resources with 'demo'
-         anywhere in the name, use: $filter=substringof('demo', name):code:`<br>`:code:`<br>`You can
-         link more than one substringof together by adding and/or operators.:code:`<br>`:code:`<br>`You
-         can filter by tag names and values. For example, to filter for a tag name and value, use
-         $filter=tagName eq 'tag1' and tagValue eq 'Value1':code:`<br>`:code:`<br>`You can use some
-         properties together when filtering. The combinations you can use are: substringof and/or
-         resourceType, plan and plan/publisher and plan/name, identity and identity/principalId. Default
-         value is None.
+        :param filter: The filter to apply on the operation.\\ :code:`<br>`\\ :code:`<br>`The
+         properties you can use for eq (equals) or ne (not equals) are: location, resourceType, name,
+         resourceGroup, identity, identity/principalId, plan, plan/publisher, plan/product, plan/name,
+         plan/version, and plan/promotionCode.\\ :code:`<br>`\\ :code:`<br>`For example, to filter by a
+         resource type, use: $filter=resourceType eq 'Microsoft.Network/virtualNetworks'\\
+         :code:`<br>`\\ :code:`<br>`You can use substringof(value, property) in the filter. The
+         properties you can use for substring are: name and resourceGroup.\\ :code:`<br>`\\
+         :code:`<br>`For example, to get all resources with 'demo' anywhere in the name, use:
+         $filter=substringof('demo', name)\\ :code:`<br>`\\ :code:`<br>`You can link more than one
+         substringof together by adding and/or operators.\\ :code:`<br>`\\ :code:`<br>`You can filter by
+         tag names and values. For example, to filter for a tag name and value, use $filter=tagName eq
+         'tag1' and tagValue eq 'Value1'\\ :code:`<br>`\\ :code:`<br>`You can use some properties
+         together when filtering. The combinations you can use are: substringof and/or resourceType,
+         plan and plan/publisher and plan/name, identity and identity/principalId. Default value is
+         None.
         :type filter: str
         :param expand: Comma-separated list of additional properties to be included in the response.
          Valid values include ``createdTime``\\ , ``changedTime`` and ``provisioningState``. For
@@ -2516,7 +2516,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-01"))
         cls: ClsType[_models.ResourceListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2609,7 +2609,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2660,7 +2660,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         api_version: str,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2792,7 +2792,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         parameters: Union[_models.GenericResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3032,7 +3032,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         parameters: Union[_models.GenericResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3291,7 +3291,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.GenericResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3337,6 +3337,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def check_existence_by_id(self, resource_id: str, api_version: str, **kwargs: Any) -> bool:
+        # pylint: disable=line-too-long
         """Checks by ID whether a resource exists.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -3350,7 +3351,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3387,7 +3388,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         return 200 <= response.status_code <= 299
 
     async def _delete_by_id_initial(self, resource_id: str, api_version: str, **kwargs: Any) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3433,6 +3434,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_delete_by_id(self, resource_id: str, api_version: str, **kwargs: Any) -> AsyncLROPoller[None]:
+        # pylint: disable=line-too-long
         """Deletes a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -3487,7 +3489,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
     async def _create_or_update_by_id_initial(
         self, resource_id: str, api_version: str, parameters: Union[_models.GenericResource, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3553,6 +3555,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.GenericResource]:
+        # pylint: disable=line-too-long
         """Create a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -3584,6 +3587,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.GenericResource]:
+        # pylint: disable=line-too-long
         """Create a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -3609,6 +3613,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
     async def begin_create_or_update_by_id(
         self, resource_id: str, api_version: str, parameters: Union[_models.GenericResource, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.GenericResource]:
+        # pylint: disable=line-too-long
         """Create a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -3676,7 +3681,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
     async def _update_by_id_initial(
         self, resource_id: str, api_version: str, parameters: Union[_models.GenericResource, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3742,6 +3747,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.GenericResource]:
+        # pylint: disable=line-too-long
         """Updates a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -3773,6 +3779,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.GenericResource]:
+        # pylint: disable=line-too-long
         """Updates a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -3798,6 +3805,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
     async def begin_update_by_id(
         self, resource_id: str, api_version: str, parameters: Union[_models.GenericResource, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.GenericResource]:
+        # pylint: disable=line-too-long
         """Updates a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -3864,6 +3872,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def get_by_id(self, resource_id: str, api_version: str, **kwargs: Any) -> _models.GenericResource:
+        # pylint: disable=line-too-long
         """Gets a resource by ID.
 
         :param resource_id: The fully qualified ID of the resource, including the resource name and
@@ -3877,7 +3886,7 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.GenericResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3948,7 +3957,7 @@ class ResourceGroupsOperations:
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4048,7 +4057,7 @@ class ResourceGroupsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.ResourceGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4102,7 +4111,7 @@ class ResourceGroupsOperations:
         return deserialized  # type: ignore
 
     async def _delete_initial(self, resource_group_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4212,7 +4221,7 @@ class ResourceGroupsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.ResourceGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4325,7 +4334,7 @@ class ResourceGroupsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.ResourceGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4435,7 +4444,7 @@ class ResourceGroupsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.ResourceGroupExportResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4494,9 +4503,9 @@ class ResourceGroupsOperations:
     ) -> AsyncIterable["_models.ResourceGroup"]:
         """Gets all the resource groups for a subscription.
 
-        :param filter: The filter to apply on the operation.:code:`<br>`:code:`<br>`You can filter by
-         tag names and values. For example, to filter for a tag name and value, use $filter=tagName eq
-         'tag1' and tagValue eq 'Value1'. Default value is None.
+        :param filter: The filter to apply on the operation.\\ :code:`<br>`\\ :code:`<br>`You can
+         filter by tag names and values. For example, to filter for a tag name and value, use
+         $filter=tagName eq 'tag1' and tagValue eq 'Value1'. Default value is None.
         :type filter: str
         :param top: The number of results to return. If null is passed, returns all resource groups.
          Default value is None.
@@ -4512,7 +4521,7 @@ class ResourceGroupsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-01"))
         cls: ClsType[_models.ResourceGroupListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4596,9 +4605,7 @@ class TagsOperations:
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace_async
-    async def delete_value(  # pylint: disable=inconsistent-return-statements
-        self, tag_name: str, tag_value: str, **kwargs: Any
-    ) -> None:
+    async def delete_value(self, tag_name: str, tag_value: str, **kwargs: Any) -> None:
         """Deletes a tag value.
 
         :param tag_name: The name of the tag. Required.
@@ -4609,7 +4616,7 @@ class TagsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4659,7 +4666,7 @@ class TagsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.TagValue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4715,7 +4722,7 @@ class TagsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.TagDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4757,7 +4764,7 @@ class TagsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(self, tag_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    async def delete(self, tag_name: str, **kwargs: Any) -> None:
         """Deletes a tag from the subscription.
 
         You must remove all values from a resource tag before you can delete it.
@@ -4768,7 +4775,7 @@ class TagsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4820,7 +4827,7 @@ class TagsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-01"))
         cls: ClsType[_models.TagsListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4915,7 +4922,7 @@ class DeploymentOperationsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.DeploymentOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4978,7 +4985,7 @@ class DeploymentOperationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-01"))
         cls: ClsType[_models.DeploymentOperationsListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5057,7 +5064,7 @@ class DeploymentOperationsOperations:
         :rtype: ~azure.mgmt.resource.resources.v2019_03_01.models.DeploymentOperation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5124,7 +5131,7 @@ class DeploymentOperationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-03-01"))
         cls: ClsType[_models.DeploymentOperationsListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

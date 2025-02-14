@@ -20,7 +20,7 @@ class TestFeatureFeaturesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_all(self, resource_group):
+    def test_features_list_all(self, resource_group):
         response = self.client.features.list_all(
             api_version="2021-07-01",
         )
@@ -30,7 +30,7 @@ class TestFeatureFeaturesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_features_list(self, resource_group):
         response = self.client.features.list(
             resource_provider_namespace="str",
             api_version="2021-07-01",
@@ -41,7 +41,7 @@ class TestFeatureFeaturesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_features_get(self, resource_group):
         response = self.client.features.get(
             resource_provider_namespace="str",
             feature_name="str",
@@ -53,7 +53,7 @@ class TestFeatureFeaturesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_register(self, resource_group):
+    def test_features_register(self, resource_group):
         response = self.client.features.register(
             resource_provider_namespace="str",
             feature_name="str",
@@ -65,7 +65,7 @@ class TestFeatureFeaturesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_unregister(self, resource_group):
+    def test_features_unregister(self, resource_group):
         response = self.client.features.unregister(
             resource_provider_namespace="str",
             feature_name="str",
