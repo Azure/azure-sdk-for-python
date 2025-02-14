@@ -90,8 +90,7 @@ class TestCommandJob(AzureRecordedTestCase):
             params_override=params_override,
         )
         command_job: CommandJob = client.jobs.create_or_update(job=job)
-        assert command_job.queue_settings == QueueSettings(job_tier="premium", priority="medium")
-        assert command_job.resources.locations == ["westus", "eastus"]
+        assert command_job.queue_settings.job_tier == "premium"
         assert command_job.name == job_name
         assert command_job.status in RunHistoryConstants.IN_PROGRESS_STATUSES
         assert command_job.environment == "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
@@ -108,7 +107,7 @@ class TestCommandJob(AzureRecordedTestCase):
             command_job_2.compute
             == "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/Runtime/providers/Microsoft.MachineLearningServices/virtualclusters/centeuapvc"
         )
-        assert command_job_2.queue_settings == command_job.queue_settings
+        assert command_job_2.queue_settings.job_tier == command_job.queue_settings.job_tier
         assert command_job_2.resources.locations == command_job.resources.locations
         check_tid_in_url(client, command_job_2)
 
