@@ -20,7 +20,7 @@ Why do we patch auto-generated code? Below is a summary of the changes made in a
    JsonSchemaFormat object, instead of using auto-generated base/derived classes named
    ChatCompletionsResponseFormatXxxInternal.
 10. Allow UserMessage("my message") in addition to UserMessage(content="my message"). Same applies to 
-AssistantMessage, SystemMessage and ToolMessage.
+AssistantMessage, SystemMessage, DeveloperMessage and ToolMessage.
 
 """
 import json
@@ -139,7 +139,14 @@ def load_client(
     with ChatCompletionsClient(
         endpoint, credential, **kwargs
     ) as client:  # Pick any of the clients, it does not matter.
-        model_info = client.get_model_info()  # type: ignore
+        try:
+            model_info = client.get_model_info()  # type: ignore
+        except ResourceNotFoundError as error:
+            error.message = (
+                "`load_client` function does not work on this endpoint (`/info` route not supported). "
+                "Please construct one of the clients (e.g. `ChatCompletionsClient`) directly."
+            )
+            raise error
 
     _LOGGER.info("model_info=%s", model_info)
     if not model_info.model_type:
@@ -748,7 +755,12 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not self._model_info:
-            self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
+            try:
+                self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
+            except ResourceNotFoundError as error:
+                error.message = "Model information is not available on this endpoint (`/info` route not supported)."
+                raise error
+
         return self._model_info
 
     def __str__(self) -> str:
@@ -1044,7 +1056,12 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not self._model_info:
-            self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
+            try:
+                self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
+            except ResourceNotFoundError as error:
+                error.message = "Model information is not available on this endpoint (`/info` route not supported)."
+                raise error
+
         return self._model_info
 
     def __str__(self) -> str:
@@ -1340,7 +1357,12 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not self._model_info:
-            self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
+            try:
+                self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
+            except ResourceNotFoundError as error:
+                error.message = "Model information is not available on this endpoint (`/info` route not supported)."
+                raise error
+
         return self._model_info
 
     def __str__(self) -> str:
