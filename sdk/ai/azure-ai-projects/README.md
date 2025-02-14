@@ -65,7 +65,8 @@ To report an issue with the client library, or request additional features, plea
         - [Example Remote Evaluation](#example-remote-evaluation)
   - [Tracing](#tracing)
     - [Installation](#installation)
-    - [Tracing example](#tracing-example)
+    - [How to enable tracing](#how-to-enable-tracing)
+    - [How to trace your own functions](#how-to-trace-your-own-functions)
 - [Troubleshooting](#troubleshooting)
   - [Exceptions](#exceptions)
   - [Logging](#logging)
@@ -1243,9 +1244,9 @@ To connect to Aspire Dashboard or another OpenTelemetry compatible backend, inst
 pip install opentelemetry-exporter-otlp
 ```
 
-#### Tracing example
+#### How to enable tracing
 
-Here is a code sample to be included above `create_agent`:
+Here is a code sample that shows how to enable Azure Monitor tracing:
 
 <!-- SNIPPET:sample_agents_basics_with_azure_monitor_tracing.enable_tracing -->
 
@@ -1270,11 +1271,25 @@ with tracer.start_as_current_span(scenario):
 
 <!-- END SNIPPET -->
 
-In additional, you might find helpful to see the tracing logs in console. You can achieve by the following code:
+In addition, you might find helpful to see the tracing logs in console. You can achieve by the following code:
 
 ```python
 project_client.telemetry.enable(destination=sys.stdout)
 ```
+#### How to trace your own functions
+
+The decorator `trace_function` is provided for tracing your own function calls using OpenTelemetry. By default the function name is used as the name for the span. Alternatively you can provide the name for the span as a parameter to the decorator.
+
+This decorator handles various data types for function parameters and return values, and records them as attributes in the trace span. The supported data types include:
+* Basic data types: str, int, float, bool
+* Collections: list, dict, tuple, set
+    * Special handling for collections:
+      - If a collection (list, dict, tuple, set) contains nested collections, the entire collection is converted to a string before being recorded as an attribute.
+      - Sets and dictionaries are always converted to strings to ensure compatibility with span attributes.
+
+Object types are omitted, and the corresponding parameter is not traced.
+
+The parameters are recorded in attributes `code.function.parameter.<parameter_name>` and the return value is recorder in attribute `code.function.return.value`
 
 ## Troubleshooting
 
