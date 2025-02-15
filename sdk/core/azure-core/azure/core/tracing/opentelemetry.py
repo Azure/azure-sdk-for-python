@@ -17,6 +17,7 @@ from opentelemetry.trace import (
 )
 from opentelemetry.trace.propagation import get_current_span as get_current_span_otel
 from opentelemetry.propagate import extract, inject
+
 try:
     from opentelemetry.context import _SUPPRESS_HTTP_INSTRUMENTATION_KEY  # type: ignore[attr-defined]
 except ImportError:
