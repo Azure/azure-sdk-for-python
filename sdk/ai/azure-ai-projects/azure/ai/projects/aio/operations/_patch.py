@@ -2697,20 +2697,12 @@ class AgentsOperations(AgentsOperationsGenerated):
         if body is not _Unset:
             if isinstance(body, dict):
                 vector_store = await super().create_vector_store(
-                    body=body,
-                    content_type=content_type or "application/json",
-                    **kwargs
+                    body=body, content_type=content_type or "application/json", **kwargs
                 )
             elif isinstance(body, io.IOBase):
-                vector_store = await super().create_vector_store(
-                    body=body,
-                    content_type=content_type,
-                    **kwargs
-                )
+                vector_store = await super().create_vector_store(body=body, content_type=content_type, **kwargs)
             else:
-                raise ValueError(
-                    "Invalid 'body' type: must be a dictionary (JSON) or a file-like object (IO[bytes])."
-                )
+                raise ValueError("Invalid 'body' type: must be a dictionary (JSON) or a file-like object (IO[bytes]).")
         else:
             store_configuration = None
             if data_sources:
@@ -2723,7 +2715,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 expires_after=expires_after,
                 chunking_strategy=chunking_strategy,
                 metadata=metadata,
-                **kwargs
+                **kwargs,
             )
 
         while vector_store.status == "in_progress":
@@ -2872,9 +2864,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                     **kwargs,
                 )
             else:
-                raise ValueError(
-                    "Invalid type for 'body'. Must be a dict (JSON) or file-like (IO[bytes])."
-                )
+                raise ValueError("Invalid type for 'body'. Must be a dict (JSON) or file-like (IO[bytes]).")
         else:
             vector_store_file_batch = await super().create_vector_store_file_batch(
                 vector_store_id=vector_store_id,
@@ -3032,9 +3022,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                     **kwargs,
                 )
             else:
-                raise ValueError(
-                    "Invalid type for 'body'. Must be a dict (JSON) or file-like object (IO[bytes])."
-                )
+                raise ValueError("Invalid type for 'body'. Must be a dict (JSON) or file-like object (IO[bytes]).")
         else:
             vector_store_file = await super().create_vector_store_file(
                 vector_store_id=vector_store_id,

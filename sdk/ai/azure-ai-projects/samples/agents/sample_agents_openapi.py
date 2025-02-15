@@ -49,7 +49,9 @@ auth = OpenApiAnonymousAuthDetails()
 openapi_tool = OpenApiTool(
     name="get_weather", spec=openapi_weather, description="Retrieve weather information for a location", auth=auth
 )
-openapi_tool.add_definition(name="get_countries", spec=openapi_countries, description="Retrieve a list of countries", auth=auth)
+openapi_tool.add_definition(
+    name="get_countries", spec=openapi_countries, description="Retrieve a list of countries", auth=auth
+)
 
 # Create agent with OpenApi tool and process assistant run
 with project_client:
@@ -88,18 +90,18 @@ with project_client:
     # Loop through each step
     for step in run_steps.data:
         print(f"Step {step['id']} status: {step['status']}")
-        
+
         # Check if there are tool calls in the step details
-        step_details = step.get('step_details', {})
-        tool_calls = step_details.get('tool_calls', [])
-        
+        step_details = step.get("step_details", {})
+        tool_calls = step_details.get("tool_calls", [])
+
         if tool_calls:
             print("  Tool calls:")
             for call in tool_calls:
                 print(f"    Tool Call ID: {call.get('id')}")
                 print(f"    Type: {call.get('type')}")
-                
-                function_details = call.get('function', {})
+
+                function_details = call.get("function", {})
                 if function_details:
                     print(f"    Function name: {function_details.get('name')}")
         print()  # add an extra newline between steps

@@ -458,7 +458,7 @@ Here is an example to integrate Azure AI Search:
 conn_list = project_client.connections.list()
 conn_id = ""
 for conn in conn_list:
-    if conn.connection_type == "CognitiveSearch":
+    if conn.connection_type == ConnectionType.AZURE_AI_SEARCH:
         conn_id = conn.id
         break
 
@@ -475,7 +475,6 @@ with project_client:
         instructions="You are a helpful assistant",
         tools=ai_search.definitions,
         tool_resources=ai_search.resources,
-        headers={"x-ms-enable-preview": "true"},
     )
 ```
 
@@ -681,7 +680,9 @@ Your Logic App must be in the same resource group as your Azure AI Project, show
 Below is an example of how to create an Azure Logic App utility tool and register a function with it.
 
 <!-- SNIPPET:sample_agents_logic_apps.register_logic_app -->
+
 ```python
+
 # Create the project client
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
@@ -707,9 +708,10 @@ send_email_func = create_send_email_function(logic_app_tool, logic_app_name)
 # Prepare the function tools for the agent
 functions_to_use: Set = {
     fetch_current_datetime,
-    send_email_func,  # This references the AzureLogicAppTool function
+    send_email_func,  # This references the AzureLogicAppTool instance via closure
 }
 ```
+
 <!-- END SNIPPET -->
 
 After this the functions can be incorporated normally into code using `FunctionTool`.
@@ -726,14 +728,20 @@ Here is an example creating an OpenAPI tool (using anonymous authentication):
 ```python
 
 with open("./weather_openapi.json", "r") as f:
-    openapi_spec = jsonref.loads(f.read())
+    openapi_weather = jsonref.loads(f.read())
+
+with open("./countries.json", "r") as f:
+    openapi_countries = jsonref.loads(f.read())
 
 # Create Auth object for the OpenApiTool (note that connection or managed identity auth setup requires additional setup in Azure)
 auth = OpenApiAnonymousAuthDetails()
 
 # Initialize agent OpenApi tool using the read in OpenAPI spec
-openapi = OpenApiTool(
-    name="get_weather", spec=openapi_spec, description="Retrieve weather information for a location", auth=auth
+openapi_tool = OpenApiTool(
+    name="get_weather", spec=openapi_weather, description="Retrieve weather information for a location", auth=auth
+)
+openapi_tool.add_definition(
+    name="get_countries", spec=openapi_countries, description="Retrieve a list of countries", auth=auth
 )
 
 # Create agent with OpenApi tool and process assistant run
@@ -742,7 +750,7 @@ with project_client:
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are a helpful assistant",
-        tools=openapi.definitions,
+        tools=openapi_tool.definitions,
     )
 ```
 

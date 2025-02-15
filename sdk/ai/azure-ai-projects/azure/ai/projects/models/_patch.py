@@ -810,13 +810,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         """
         return self._definitions
 
-    def add_definition(
-        self,
-        name: str,
-        description: str,
-        spec: Any,
-        auth: Optional[OpenApiAuthDetails] = None
-    ) -> None:
+    def add_definition(self, name: str, description: str, spec: Any, auth: Optional[OpenApiAuthDetails] = None) -> None:
         """
         Adds a new API definition dynamically.
         Raises a ValueError if a definition with the same name already exists.
@@ -840,12 +834,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
         auth_to_use = auth if auth is not None else self._default_auth
 
         new_definition = OpenApiToolDefinition(
-            openapi=OpenApiFunctionDefinition(
-                name=name,
-                description=description,
-                spec=spec,
-                auth=auth_to_use
-            )
+            openapi=OpenApiFunctionDefinition(name=name, description=description, spec=spec, auth=auth_to_use)
         )
         self._definitions.append(new_definition)
 
