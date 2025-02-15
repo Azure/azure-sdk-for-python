@@ -1,9 +1,11 @@
 # Release History
 ## 1.26.0 (unreleased)
 
+### Features Added
+  - #39763 - Added optional property `system_metadata` to azure ml model class.
+
 ### Bugs Fixed
   - #37464 - Allowing to update a component in register with anonymousEnvironment environment.
-  - #39763 - Added optional property `system_metadata` to azure ml model class.
 
 ## 1.25.0 (2025-02-11)
 
