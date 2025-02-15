@@ -4,12 +4,12 @@
 
 ### Features added
 
-* Added `trace_function` decorator for conveniently tracing function calls using OpenTelemetry. Please see the README.md for updated documentation.
+* Added `trace_function` decorator for conveniently tracing function calls in Agents using OpenTelemetry. Please see the README.md for updated documentation.
 
 ### Sample updates
 
-* Added AzureLogicAppTool utility and logic app sample under `samples/agents` folder to make Azure Logic App integration with agents easier.
-* Added better observability for azure ai search sample for agents via improved run steps information from the service.
+* Added AzureLogicAppTool utility and Logic App sample under `samples/agents`, folder to make Azure Logic App integration with Agents easier.
+* Added better observability for Azure AI Search sample for Agents via improved run steps information from the service.
 * Added sample to demonstrate how to add custom attributes to telemetry span.
 
 ### Bugs Fixed
