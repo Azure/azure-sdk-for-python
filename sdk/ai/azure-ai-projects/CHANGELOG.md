@@ -14,7 +14,7 @@
 
 ### Bugs Fixed
 
-* Lowered the logging level of Toolset is not available in the client from `warning` to `debug` to prevent unnecessary log entries in agent application runs.
+* Lowered the logging level of `Toolset is not available in the client` from `warning` to `debug` to prevent unnecessary log entries in agent application runs.
 
 ### Breaking Changes
 
