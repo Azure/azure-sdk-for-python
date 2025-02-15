@@ -2263,16 +2263,14 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         if file_id:
             ds = None
         else:
-            ds = [
-                VectorStoreDataSource(
-                    asset_identifier=kwargs["azure_ai_projects_agents_tests_data_path"],
-                    asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
-                )
-            ]
+            ds = VectorStoreDataSource(
+                asset_identifier=kwargs["azure_ai_projects_agents_tests_data_path"],
+                asset_type=VectorStoreDataSourceAssetType.URI_ASSET,
+            )
         vector_store = await ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
         assert vector_store.id
         vector_store_file = await ai_client.agents.create_vector_store_file(
-            vector_store_id=vector_store.id, data_sources=ds, file_id=file_id
+            vector_store_id=vector_store.id, data_source=ds, file_id=file_id
         )
         assert vector_store_file.id
         await self._test_file_search(ai_client, vector_store, file_id)
@@ -2695,10 +2693,11 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         await ai_client.close()
 
     @agentClientPreparer()
-    @pytest.mark.skip("New test, will need recording in future.")
     @recorded_by_proxy_async
     async def test_azure_function_call(self, **kwargs):
         """Test calling Azure functions."""
+        # Note: This test was recorded in westus region as for now
+        # 2025-02-05 it is not supported in test region (East US 2)
         # create client
         storage_queue = kwargs["azure_ai_projects_agents_tests_storage_queue"]
         async with self.create_client(**kwargs) as client:
@@ -2752,8 +2751,8 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             assert run.status == RunStatus.COMPLETED, f"The run is in {run.status} state."
 
             # Get messages from the thread
-            messages = await client.agents.get_messages(thread_id=thread.id)
-            assert len(messages.text_messages), "No messages were received."
+            messages = await client.agents.list_messages(thread_id=thread.id)
+            assert len(messages.text_messages) > 1, "No messages were received from agent."
 
             # Chech that we have function response in at least one message.
             assert any("bar" in msg.text.value.lower() for msg in messages.text_messages)
