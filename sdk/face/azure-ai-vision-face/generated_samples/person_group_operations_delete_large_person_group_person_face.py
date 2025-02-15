@@ -29,6 +29,6 @@ def main():
     )
 
 
-# x-ms-original-file: v1.2-preview.1/PersonGroupOperations_DeleteLargePersonGroupPersonFace.json
+# x-ms-original-file: v1.2/PersonGroupOperations_DeleteLargePersonGroupPersonFace.json
 if __name__ == "__main__":
     main()

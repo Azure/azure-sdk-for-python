@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -37,7 +38,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
     """
 
     @distributed_trace_async
-    async def _get_schema_properties_by_content(    # type: ignore[override]
+    async def _get_schema_properties_by_content(  # type: ignore[override]
         self,
         group_name: str,
         schema_name: str,
@@ -127,7 +128,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
             return cls(pipeline_response, None, response_headers)
 
     @distributed_trace_async
-    async def _register_schema( # type: ignore[override]
+    async def _register_schema(  # type: ignore[override]
         self,
         group_name: str,
         schema_name: str,
