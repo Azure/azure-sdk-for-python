@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 #############################################################################
 ####These files are used to extract the enums - update this list as necessary
 #############################################################################

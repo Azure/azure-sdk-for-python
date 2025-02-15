@@ -1,4 +1,4 @@
 directory: specification/cognitiveservices/ContentSafety
-commit: fb39d9813934567c594ca253efff7c5c01a474e8
+commit: e26b89bcbec9eed5026c01416e481408b2a1ca1a
 repo: Azure/azure-rest-api-specs
 additionalDirectories: []

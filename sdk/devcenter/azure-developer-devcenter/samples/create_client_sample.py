@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 #
@@ -39,6 +40,7 @@ USAGE:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
 
+
 def create_dev_center_client():
     # [START create_dev_center_client]
     import os
@@ -56,6 +58,7 @@ def create_dev_center_client():
     # Build a client through AAD
     client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
     # [END create_dev_center_client]
+
 
 if __name__ == "__main__":
     create_dev_center_client()

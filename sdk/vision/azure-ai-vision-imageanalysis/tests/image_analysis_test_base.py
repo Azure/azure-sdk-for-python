@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -56,7 +57,9 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         credential = AzureKeyCredential(key)
         self._create_client(endpoint, credential, sync, get_connection_url)
 
-    def _create_client_for_standard_analysis_with_entra_id_auth(self, sync: bool, get_connection_url: bool = False, **kwargs):
+    def _create_client_for_standard_analysis_with_entra_id_auth(
+        self, sync: bool, get_connection_url: bool = False, **kwargs
+    ):
         endpoint = kwargs.pop("vision_endpoint")
         # See /tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py for `get_credential`
         if sync:
@@ -71,8 +74,14 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         credential = AzureKeyCredential(key)
         self._create_client(endpoint, credential, sync, False)
 
-    def _create_client(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], sync: bool, get_connection_url: bool):
-        
+    def _create_client(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, TokenCredential],
+        sync: bool,
+        get_connection_url: bool,
+    ):
+
         if sync:
             self.client = sdk.ImageAnalysisClient(
                 endpoint=endpoint,
