@@ -676,12 +676,11 @@ After we have tested the function and made sure it works, please make sure that 
 
 Logic Apps allow HTTP requests to trigger actions. For more information, refer to the guide [Logic App Workflows for Function Calling](https://learn.microsoft.com/azure/ai-services/openai/how-to/assistants-logic-apps#create-logic-apps-workflows-for-function-calling).
 
-Your Logic App must be in the same resource group as your Azure AI Project, shown in the Azure Portal. Agents SDK accesses Logic Apps through Workflow URLs, which are fetched and called as requests in functions. 
+Your Logic App must be in the same resource group as your Azure AI Project, shown in the Azure Portal. Agents SDK accesses Logic Apps through Workflow URLs, which are fetched and called as requests in functions.
 
 Below is an example of how to create an Azure Logic App utility tool and register a function with it.
 
 <!-- SNIPPET:sample_agents_logic_apps.register_logic_app -->
-
 ```python
 # Create the project client
 project_client = AIProjectClient.from_connection_string(
@@ -711,30 +710,11 @@ functions_to_use: Set = {
     send_email_func,  # This references the AzureLogicAppTool function
 }
 ```
-
 <!-- END SNIPPET -->
-Then, the Logic App and other functions can be incorporated into code using `FunctionTool` and `ToolSet`. 
-<!--SNIPPET: -->
 
-```python
-functions_to_use: Set = {
-        fetch_current_datetime,
-        send_email_via_logic_app,
-    }
- 
-    functions = FunctionTool(functions=functions_to_use)
-    toolset = ToolSet()
-    toolset.add(functions)
- 
-    agent = project_client.agents.create_agent(
-        model=os.environ["MODEL_DEPLOYMENT_NAME"],
-        name="SendEmailAgent",
-        instructions="You are a specialized agent for sending emails.",
-        toolset=toolset,
-    )
-```
+After this the functions can be incorporated normally into code using `FunctionTool`.
 
-<!-- END SNIPPET -->
+
 #### Create Agent With OpenAPI
 
 OpenAPI specifications describe REST operations against a specific endpoint. Agents SDK can read an OpenAPI spec, create a function from it, and call that function against the REST endpoint without additional client-side execution.
