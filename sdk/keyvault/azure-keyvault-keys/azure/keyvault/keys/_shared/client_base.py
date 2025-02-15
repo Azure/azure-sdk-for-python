@@ -100,6 +100,8 @@ class KeyVaultClientBase(object):
 
             verify_challenge = kwargs.pop("verify_challenge_resource", True)
             self._client = _KeyVaultClient(
+                credential=credential,
+                vault_base_url=self._vault_url,
                 api_version=self.api_version,
                 authentication_policy=ChallengeAuthPolicy(credential, verify_challenge_resource=verify_challenge),
                 sdk_moniker=SDK_MONIKER,
