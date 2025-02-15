@@ -10,7 +10,6 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 import pytest
 
 
-
 def get_decorator(**kwargs):
     """returns a test decorator for test parameterization"""
     versions = kwargs.pop("api_versions", None) or ApiVersion
@@ -23,13 +22,13 @@ class CertificatesClientPreparer(AzureRecordedTestCase):
         self.azure_keyvault_url = "https://vaultname.vault.azure.net"
 
         self.is_logging_enabled = kwargs.pop("logging_enable", True)
-        
+
         if is_live():
             self.azure_keyvault_url = os.environ["AZURE_KEYVAULT_URL"]
             os.environ["AZURE_TENANT_ID"] = os.getenv("KEYVAULT_TENANT_ID", "")  # empty in pipelines
             os.environ["AZURE_CLIENT_ID"] = os.getenv("KEYVAULT_CLIENT_ID", "")  # empty in pipelines
             os.environ["AZURE_CLIENT_SECRET"] = os.getenv("KEYVAULT_CLIENT_SECRET", "")  # empty for user-based auth
-            
+
     def __call__(self, fn):
         def _preparer(test_class, api_version, **kwargs):
 
@@ -40,13 +39,14 @@ class CertificatesClientPreparer(AzureRecordedTestCase):
 
             with client:
                 fn(test_class, client)
+
         return _preparer
-        
+
     def create_client(self, vault_uri, **kwargs):
         from azure.keyvault.certificates import CertificateClient
-        
+
         credential = self.get_credential(CertificateClient)
-        
+
         return self.create_client_from_credential(
             CertificateClient, credential=credential, vault_url=vault_uri, **kwargs
         )
