@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,21 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import (
-    Any,
-    AsyncIterable,
-    AsyncIterator,
-    Callable,
-    Dict,
-    IO,
-    List,
-    Optional,
-    Type,
-    TypeVar,
-    Union,
-    cast,
-    overload,
-)
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -68,7 +54,7 @@ from ...operations._deployments_operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -111,7 +97,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.appplatform.models.DeploymentResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -164,7 +150,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         deployment_resource: Union[_models.DeploymentResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -374,7 +360,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
     async def _delete_initial(
         self, resource_group_name: str, service_name: str, app_name: str, deployment_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -493,7 +479,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         deployment_resource: Union[_models.DeploymentResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -707,6 +693,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         version: Optional[List[str]] = None,
+        expand: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.DeploymentResource"]:
         """Handles requests to list all resources in an App.
@@ -720,6 +707,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type app_name: str
         :param version: Version of the deployments to be listed. Default value is None.
         :type version: list[str]
+        :param expand: The expand expression to apply on the operation. Default value is None.
+        :type expand: str
         :return: An iterator like instance of either DeploymentResource or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.appplatform.models.DeploymentResource]
@@ -731,7 +720,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.DeploymentResourceCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -748,6 +737,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                     app_name=app_name,
                     subscription_id=self._config.subscription_id,
                     version=version,
+                    expand=expand,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -826,7 +816,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.DeploymentResourceCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -893,7 +883,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
     async def _start_initial(
         self, resource_group_name: str, service_name: str, app_name: str, deployment_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1006,7 +996,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
     async def _stop_initial(
         self, resource_group_name: str, service_name: str, app_name: str, deployment_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1119,7 +1109,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
     async def _restart_initial(
         self, resource_group_name: str, service_name: str, app_name: str, deployment_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1238,7 +1228,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         remote_debugging_payload: Optional[Union[_models.RemoteDebuggingPayload, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1452,7 +1442,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
     async def _disable_remote_debugging_initial(
         self, resource_group_name: str, service_name: str, app_name: str, deployment_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1586,7 +1576,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.appplatform.models.RemoteDebugging
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1649,7 +1639,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.appplatform.models.LogFileUrlResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1704,7 +1694,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         diagnostic_parameters: Union[_models.DiagnosticParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1913,7 +1903,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         diagnostic_parameters: Union[_models.DiagnosticParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2122,7 +2112,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         diagnostic_parameters: Union[_models.DiagnosticParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
