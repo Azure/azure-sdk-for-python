@@ -15,10 +15,18 @@ from subprocess import run
 from code_cov_report import create_coverage_report
 from common_tasks import run_check_call
 
+import coverage
+
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 coverage_dir = os.path.join(root_dir, "_coverage/")
+
+def run_coverage(coverage_file: str) -> None:
+    cov = coverage.Coverage(data_file=coverage_file)
+    cov.load()
+    total = cov.report()
+    print(f"The total coverage for {coverage_file} is {total}%")
 
 
 def collect_tox_coverage_files():
@@ -36,6 +44,12 @@ def collect_tox_coverage_files():
     logging.info(".coverage files: {}".format(coverage_files))
 
     if len(coverage_files):
+        for coverage_file in coverage_files:
+            try:
+                run_coverage(coverage_file)
+            except Exception as e:
+                logging.error("Ignoring issue running coverage report: {}".format(e))
+
         cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
         cov_cmd_array.extend(coverage_files)
 
