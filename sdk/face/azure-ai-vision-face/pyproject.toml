@@ -1,4 +1,3 @@
-[tool.generate]
-autorest-post-process = true
+
 [tool.azure-sdk-build]
 verifytypes = false
