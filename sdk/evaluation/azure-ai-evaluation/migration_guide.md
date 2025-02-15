@@ -3,7 +3,9 @@
 
 
 Github: [link](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/evaluation/azure-ai-evaluation)
+
 Pypi: [link](https://pypi.org/project/azure-ai-evaluation/)
+
 Documentation: [link](https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk)
 
 Following Built-in evaluators are provided in new Azure AI Evaluation SDK ([azure-ai-evaluation](https://pypi.org/project/azure-ai-evaluation/)).
