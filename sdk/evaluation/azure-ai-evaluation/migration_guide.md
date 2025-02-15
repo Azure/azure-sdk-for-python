@@ -4,7 +4,7 @@
 
 Github: [link](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/evaluation/azure-ai-evaluation)
 Pypi: [link](https://pypi.org/project/azure-ai-evaluation/)
-Documentation: [link](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/develop/evaluate-sdk)
+Documentation: [link](https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk)
 
 Following Built-in evaluators are provided in new Azure AI Evaluation SDK ([azure-ai-evaluation](https://pypi.org/project/azure-ai-evaluation/)).
 
@@ -170,7 +170,7 @@ pprint(result)
 
 Azure AI Evaluation SDK's Simulator provides an end-to-end synthetic datasets generation capabilities to help developers evaluate their LLM or GenAI application's responses against user prompts.
 
-All the adversarial scenarios supported in PromptFlow SDK ([here](https://github.com/microsoft/promptflow/tree/main/src/promptflow-evals/promptflow/evals/synthetic)) has been provided in new Azure AI Evaluation SDK. Please refer to documentation [here](https://learn.microsoft.com/en-us/azure/ai-studio/how-to/develop/simulator-interaction-data#supported-adversarial-simulation-scenarios) for more details and sample code.
+All the adversarial scenarios supported in PromptFlow SDK ([here](https://github.com/microsoft/promptflow/tree/main/src/promptflow-evals/promptflow/evals/synthetic)) has been provided in new Azure AI Evaluation SDK. Please refer to documentation [here](https://learn.microsoft.com/azure/ai-studio/how-to/develop/simulator-interaction-data#supported-adversarial-simulation-scenarios) for more details and sample code.
 
 Following code snippet represents the basic differences between two SDKs.
 
@@ -237,5 +237,5 @@ Now, **`AdversarialSimulator`** in azure-ai-evaluation SDK have function `to_eva
 <!-- LINKS -->
 
 [performance_and_quality_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#performance-and-quality-evaluators
-[risk_and_safety_evaluators]: https://learn.microsoft.com/en-us/azure/ai-studio/how-to/develop/evaluate-sdk#risk-and-safety-evaluators-preview
+[risk_and_safety_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#risk-and-safety-evaluators-preview
 [composite_evaluators]: https://learn.microsoft.com/azure/ai-studio/how-to/develop/evaluate-sdk#composite-evaluators
