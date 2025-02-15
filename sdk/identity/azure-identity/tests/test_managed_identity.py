@@ -4,11 +4,13 @@
 # ------------------------------------
 from itertools import product
 import time
+import logging
 from unittest import mock
 
 from azure.identity import ManagedIdentityCredential, CredentialUnavailableError
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.imds import IMDS_AUTHORITY, IMDS_TOKEN_PATH
+from azure.identity._credentials.managed_identity import validate_identity_config
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity._internal import within_credential_chain
 import pytest
@@ -1003,6 +1005,20 @@ def test_validate_identity_config():
         ManagedIdentityCredential(identity_config={"object_id": "bar", "client_id": "foo"})
 
 
+def test_validate_identity_config_output():
+    output = validate_identity_config(None, {"client_id": "foo"})
+    assert output == ("client_id", "foo")
+
+    output = validate_identity_config("foo", None)
+    assert output == ("client_id", "foo")
+
+    output = validate_identity_config(None, {"object_id": "bar"})
+    assert output == ("object_id", "bar")
+
+    output = validate_identity_config(None, {"resource_id": "biz"})
+    assert output == ("resource_id", "biz")
+
+
 def test_validate_cloud_shell_credential():
     with mock.patch.dict(
         MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True
@@ -1016,3 +1032,41 @@ def test_validate_cloud_shell_credential():
             ManagedIdentityCredential(identity_config={"object_id": "foo"})
         with pytest.raises(ValueError):
             ManagedIdentityCredential(identity_config={"resource_id": "foo"})
+
+
+def test_log(caplog):
+    with caplog.at_level(logging.INFO, logger="azure.identity._credentials.managed_identity"):
+        ManagedIdentityCredential()
+        assert "ManagedIdentityCredential will use IMDS" in caplog.text
+
+        caplog.clear()
+        with mock.patch.dict(
+            MANAGED_IDENTITY_ENVIRON,
+            {
+                EnvironmentVariables.IDENTITY_ENDPOINT: "new_endpoint",
+                EnvironmentVariables.IDENTITY_HEADER: "new_secret",
+                EnvironmentVariables.MSI_ENDPOINT: "endpoint",
+                EnvironmentVariables.MSI_SECRET: "secret",
+            },
+            clear=True,
+        ):
+            ManagedIdentityCredential()
+            assert "App Service managed identity" in caplog.text
+
+            caplog.clear()
+            ManagedIdentityCredential(client_id="foo")
+            assert "App Service managed identity with client_id: foo" in caplog.text
+
+            caplog.clear()
+            ManagedIdentityCredential(identity_config={"object_id": "bar"})
+            assert "App Service managed identity with object_id: bar" in caplog.text
+
+        caplog.clear()
+        mock_environ = {
+            EnvironmentVariables.AZURE_AUTHORITY_HOST: "authority",
+            EnvironmentVariables.AZURE_TENANT_ID: "tenant",
+            EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: "token_file",
+        }
+        with mock.patch.dict("os.environ", mock_environ, clear=True):
+            ManagedIdentityCredential(client_id="foo")
+            assert "workload identity with client_id: foo" in caplog.text
