@@ -21,11 +21,11 @@ class TestAppPlatformManagementContainerRegistriesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_container_registries_list(self, resource_group):
         response = self.client.container_registries.list(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestAppPlatformManagementContainerRegistriesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_container_registries_get(self, resource_group):
         response = await self.client.container_registries.get(
             resource_group_name=resource_group.name,
             service_name="str",
             container_registry_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestAppPlatformManagementContainerRegistriesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_container_registries_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.container_registries.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -66,7 +66,7 @@ class TestAppPlatformManagementContainerRegistriesOperationsAsync(AzureMgmtRecor
                     },
                     "type": "str",
                 },
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -75,13 +75,13 @@ class TestAppPlatformManagementContainerRegistriesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_container_registries_begin_delete(self, resource_group):
         response = await (
             await self.client.container_registries.begin_delete(
                 resource_group_name=resource_group.name,
                 service_name="str",
                 container_registry_name="str",
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -90,7 +90,7 @@ class TestAppPlatformManagementContainerRegistriesOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_validate(self, resource_group):
+    async def test_container_registries_begin_validate(self, resource_group):
         response = await (
             await self.client.container_registries.begin_validate(
                 resource_group_name=resource_group.name,
@@ -100,7 +100,7 @@ class TestAppPlatformManagementContainerRegistriesOperationsAsync(AzureMgmtRecor
                     "credentials": "container_registry_credentials",
                     "provisioningState": "str",
                 },
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

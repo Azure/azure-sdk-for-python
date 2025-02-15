@@ -20,13 +20,13 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_deployments_get(self, resource_group):
         response = self.client.deployments.get(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
             deployment_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_deployments_begin_create_or_update(self, resource_group):
         response = self.client.deployments.begin_create_or_update(
             resource_group_name=resource_group.name,
             service_name="str",
@@ -69,6 +69,33 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                             "timeoutSeconds": 0,
                         },
                         "resourceRequests": {"cpu": "str", "memory": "str"},
+                        "scale": {
+                            "maxReplicas": 10,
+                            "minReplicas": 0,
+                            "rules": [
+                                {
+                                    "azureQueue": {
+                                        "auth": [{"secretRef": "str", "triggerParameter": "str"}],
+                                        "queueLength": 0,
+                                        "queueName": "str",
+                                    },
+                                    "custom": {
+                                        "auth": [{"secretRef": "str", "triggerParameter": "str"}],
+                                        "metadata": {"str": "str"},
+                                        "type": "str",
+                                    },
+                                    "http": {
+                                        "auth": [{"secretRef": "str", "triggerParameter": "str"}],
+                                        "metadata": {"str": "str"},
+                                    },
+                                    "name": "str",
+                                    "tcp": {
+                                        "auth": [{"secretRef": "str", "triggerParameter": "str"}],
+                                        "metadata": {"str": "str"},
+                                    },
+                                }
+                            ],
+                        },
                         "startupProbe": {
                             "disableProbe": False,
                             "failureThreshold": 0,
@@ -105,7 +132,7 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -113,13 +140,13 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_deployments_begin_delete(self, resource_group):
         response = self.client.deployments.begin_delete(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
             deployment_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -127,7 +154,7 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_deployments_begin_update(self, resource_group):
         response = self.client.deployments.begin_update(
             resource_group_name=resource_group.name,
             service_name="str",
@@ -162,6 +189,33 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                             "timeoutSeconds": 0,
                         },
                         "resourceRequests": {"cpu": "str", "memory": "str"},
+                        "scale": {
+                            "maxReplicas": 10,
+                            "minReplicas": 0,
+                            "rules": [
+                                {
+                                    "azureQueue": {
+                                        "auth": [{"secretRef": "str", "triggerParameter": "str"}],
+                                        "queueLength": 0,
+                                        "queueName": "str",
+                                    },
+                                    "custom": {
+                                        "auth": [{"secretRef": "str", "triggerParameter": "str"}],
+                                        "metadata": {"str": "str"},
+                                        "type": "str",
+                                    },
+                                    "http": {
+                                        "auth": [{"secretRef": "str", "triggerParameter": "str"}],
+                                        "metadata": {"str": "str"},
+                                    },
+                                    "name": "str",
+                                    "tcp": {
+                                        "auth": [{"secretRef": "str", "triggerParameter": "str"}],
+                                        "metadata": {"str": "str"},
+                                    },
+                                }
+                            ],
+                        },
                         "startupProbe": {
                             "disableProbe": False,
                             "failureThreshold": 0,
@@ -198,7 +252,7 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -206,12 +260,12 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_deployments_list(self, resource_group):
         response = self.client.deployments.list(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -219,11 +273,11 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_for_cluster(self, resource_group):
+    def test_deployments_list_for_cluster(self, resource_group):
         response = self.client.deployments.list_for_cluster(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -231,13 +285,13 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_start(self, resource_group):
+    def test_deployments_begin_start(self, resource_group):
         response = self.client.deployments.begin_start(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
             deployment_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -245,13 +299,13 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_stop(self, resource_group):
+    def test_deployments_begin_stop(self, resource_group):
         response = self.client.deployments.begin_stop(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
             deployment_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -259,13 +313,13 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_restart(self, resource_group):
+    def test_deployments_begin_restart(self, resource_group):
         response = self.client.deployments.begin_restart(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
             deployment_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -273,13 +327,13 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_enable_remote_debugging(self, resource_group):
+    def test_deployments_begin_enable_remote_debugging(self, resource_group):
         response = self.client.deployments.begin_enable_remote_debugging(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
             deployment_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -287,13 +341,13 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_disable_remote_debugging(self, resource_group):
+    def test_deployments_begin_disable_remote_debugging(self, resource_group):
         response = self.client.deployments.begin_disable_remote_debugging(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
             deployment_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -301,13 +355,13 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_remote_debugging_config(self, resource_group):
+    def test_deployments_get_remote_debugging_config(self, resource_group):
         response = self.client.deployments.get_remote_debugging_config(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
             deployment_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -315,13 +369,13 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_log_file_url(self, resource_group):
+    def test_deployments_get_log_file_url(self, resource_group):
         response = self.client.deployments.get_log_file_url(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
             deployment_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -329,14 +383,14 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_generate_heap_dump(self, resource_group):
+    def test_deployments_begin_generate_heap_dump(self, resource_group):
         response = self.client.deployments.begin_generate_heap_dump(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
             deployment_name="str",
             diagnostic_parameters={"appInstance": "str", "duration": "str", "filePath": "str"},
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -344,14 +398,14 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_generate_thread_dump(self, resource_group):
+    def test_deployments_begin_generate_thread_dump(self, resource_group):
         response = self.client.deployments.begin_generate_thread_dump(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
             deployment_name="str",
             diagnostic_parameters={"appInstance": "str", "duration": "str", "filePath": "str"},
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -359,14 +413,14 @@ class TestAppPlatformManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_start_jfr(self, resource_group):
+    def test_deployments_begin_start_jfr(self, resource_group):
         response = self.client.deployments.begin_start_jfr(
             resource_group_name=resource_group.name,
             service_name="str",
             app_name="str",
             deployment_name="str",
             diagnostic_parameters={"appInstance": "str", "duration": "str", "filePath": "str"},
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

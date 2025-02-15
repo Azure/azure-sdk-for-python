@@ -20,12 +20,12 @@ class TestAppPlatformManagementStoragesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_storages_get(self, resource_group):
         response = self.client.storages.get(
             resource_group_name=resource_group.name,
             service_name="str",
             storage_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestAppPlatformManagementStoragesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_storages_begin_create_or_update(self, resource_group):
         response = self.client.storages.begin_create_or_update(
             resource_group_name=resource_group.name,
             service_name="str",
@@ -52,7 +52,7 @@ class TestAppPlatformManagementStoragesOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -60,12 +60,12 @@ class TestAppPlatformManagementStoragesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_storages_begin_delete(self, resource_group):
         response = self.client.storages.begin_delete(
             resource_group_name=resource_group.name,
             service_name="str",
             storage_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -73,11 +73,11 @@ class TestAppPlatformManagementStoragesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_storages_list(self, resource_group):
         response = self.client.storages.list(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

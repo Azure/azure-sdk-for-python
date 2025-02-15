@@ -21,11 +21,11 @@ class TestAppPlatformManagementMonitoringSettingsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_monitoring_settings_get(self, resource_group):
         response = await self.client.monitoring_settings.get(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestAppPlatformManagementMonitoringSettingsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update_put(self, resource_group):
+    async def test_monitoring_settings_begin_update_put(self, resource_group):
         response = await (
             await self.client.monitoring_settings.begin_update_put(
                 resource_group_name=resource_group.name,
@@ -59,7 +59,7 @@ class TestAppPlatformManagementMonitoringSettingsOperationsAsync(AzureMgmtRecord
                     },
                     "type": "str",
                 },
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -68,7 +68,7 @@ class TestAppPlatformManagementMonitoringSettingsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update_patch(self, resource_group):
+    async def test_monitoring_settings_begin_update_patch(self, resource_group):
         response = await (
             await self.client.monitoring_settings.begin_update_patch(
                 resource_group_name=resource_group.name,
@@ -94,7 +94,7 @@ class TestAppPlatformManagementMonitoringSettingsOperationsAsync(AzureMgmtRecord
                     },
                     "type": "str",
                 },
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

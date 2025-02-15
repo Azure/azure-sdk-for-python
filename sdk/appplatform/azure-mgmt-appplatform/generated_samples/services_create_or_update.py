@@ -33,11 +33,17 @@ def main():
     response = client.services.begin_create_or_update(
         resource_group_name="myResourceGroup",
         service_name="myservice",
-        resource={"location": "eastus", "sku": {"name": "S0", "tier": "Standard"}, "tags": {"key1": "value1"}},
+        resource={
+            "identity": {"type": "SystemAssigned"},
+            "location": "eastus",
+            "properties": {"maintenanceScheduleConfiguration": {"day": "Sunday", "frequency": "Weekly", "hour": 10}},
+            "sku": {"name": "S0", "tier": "Standard"},
+            "tags": {"key1": "value1"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2023-12-01/examples/Services_CreateOrUpdate.json
+# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/preview/2024-05-01-preview/examples/Services_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

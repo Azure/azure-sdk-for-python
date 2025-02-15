@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2023-12-01/examples/Apps_List_VNetInjection.json
+# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/preview/2024-05-01-preview/examples/Apps_List_VNetInjection.json
 if __name__ == "__main__":
     main()

@@ -14,11 +14,10 @@ from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuth
 from .._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AppPlatformManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class AppPlatformManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for AppPlatformManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -29,13 +28,13 @@ class AppPlatformManagementClientConfiguration:  # pylint: disable=too-many-inst
     :param subscription_id: Gets subscription ID which uniquely identify the Microsoft Azure
      subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2023-12-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-05-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2023-12-01")
+        api_version: str = kwargs.pop("api_version", "2024-05-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

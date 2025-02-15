@@ -20,13 +20,13 @@ class TestAppPlatformManagementGatewayRouteConfigsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_gateway_route_configs_get(self, resource_group):
         response = self.client.gateway_route_configs.get(
             resource_group_name=resource_group.name,
             service_name="str",
             gateway_name="str",
             route_config_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestAppPlatformManagementGatewayRouteConfigsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_gateway_route_configs_begin_create_or_update(self, resource_group):
         response = self.client.gateway_route_configs.begin_create_or_update(
             resource_group_name=resource_group.name,
             service_name="str",
@@ -75,7 +75,7 @@ class TestAppPlatformManagementGatewayRouteConfigsOperations(AzureMgmtRecordedTe
                 },
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -83,13 +83,13 @@ class TestAppPlatformManagementGatewayRouteConfigsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_gateway_route_configs_begin_delete(self, resource_group):
         response = self.client.gateway_route_configs.begin_delete(
             resource_group_name=resource_group.name,
             service_name="str",
             gateway_name="str",
             route_config_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -97,12 +97,12 @@ class TestAppPlatformManagementGatewayRouteConfigsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_gateway_route_configs_list(self, resource_group):
         response = self.client.gateway_route_configs.list(
             resource_group_name=resource_group.name,
             service_name="str",
             gateway_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

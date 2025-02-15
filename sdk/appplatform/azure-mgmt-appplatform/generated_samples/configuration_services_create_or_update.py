@@ -46,7 +46,8 @@ def main():
                                 "uri": "https://github.com/fake-user/fake-repository",
                             }
                         ]
-                    }
+                    },
+                    "refreshIntervalInSeconds": 60,
                 }
             }
         },
@@ -54,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2023-12-01/examples/ConfigurationServices_CreateOrUpdate.json
+# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/preview/2024-05-01-preview/examples/ConfigurationServices_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

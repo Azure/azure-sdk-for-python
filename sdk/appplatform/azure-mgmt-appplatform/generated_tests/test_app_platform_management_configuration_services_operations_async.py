@@ -21,12 +21,12 @@ class TestAppPlatformManagementConfigurationServicesOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_configuration_services_get(self, resource_group):
         response = await self.client.configuration_services.get(
             resource_group_name=resource_group.name,
             service_name="str",
             configuration_service_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestAppPlatformManagementConfigurationServicesOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_configuration_services_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.configuration_services.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -67,7 +67,8 @@ class TestAppPlatformManagementConfigurationServicesOperationsAsync(AzureMgmtRec
                                         "username": "str",
                                     }
                                 ]
-                            }
+                            },
+                            "refreshIntervalInSeconds": 0,
                         },
                     },
                     "systemData": {
@@ -80,7 +81,7 @@ class TestAppPlatformManagementConfigurationServicesOperationsAsync(AzureMgmtRec
                     },
                     "type": "str",
                 },
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -89,13 +90,13 @@ class TestAppPlatformManagementConfigurationServicesOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_configuration_services_begin_delete(self, resource_group):
         response = await (
             await self.client.configuration_services.begin_delete(
                 resource_group_name=resource_group.name,
                 service_name="str",
                 configuration_service_name="str",
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -104,11 +105,11 @@ class TestAppPlatformManagementConfigurationServicesOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_configuration_services_list(self, resource_group):
         response = self.client.configuration_services.list(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -116,7 +117,7 @@ class TestAppPlatformManagementConfigurationServicesOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_validate(self, resource_group):
+    async def test_configuration_services_begin_validate(self, resource_group):
         response = await (
             await self.client.configuration_services.begin_validate(
                 resource_group_name=resource_group.name,
@@ -141,9 +142,10 @@ class TestAppPlatformManagementConfigurationServicesOperationsAsync(AzureMgmtRec
                                 "username": "str",
                             }
                         ]
-                    }
+                    },
+                    "refreshIntervalInSeconds": 0,
                 },
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -152,7 +154,7 @@ class TestAppPlatformManagementConfigurationServicesOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_validate_resource(self, resource_group):
+    async def test_configuration_services_begin_validate_resource(self, resource_group):
         response = await (
             await self.client.configuration_services.begin_validate_resource(
                 resource_group_name=resource_group.name,
@@ -185,7 +187,8 @@ class TestAppPlatformManagementConfigurationServicesOperationsAsync(AzureMgmtRec
                                         "username": "str",
                                     }
                                 ]
-                            }
+                            },
+                            "refreshIntervalInSeconds": 0,
                         },
                     },
                     "systemData": {
@@ -198,7 +201,7 @@ class TestAppPlatformManagementConfigurationServicesOperationsAsync(AzureMgmtRec
                     },
                     "type": "str",
                 },
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
