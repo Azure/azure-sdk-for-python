@@ -225,7 +225,7 @@ outputs = await simulator(
 
 pprint(outputs.to_eval_qr_json_lines())
 ```
-Note: **`AdversarialSimulator`** in prompftflow-eval SDK had function `to_eval_qa_json_lines()` to return following output:
+Note: **`AdversarialSimulator`** in promptflow-eval SDK had function `to_eval_qa_json_lines()` to return following output:
 ```python
 {"question": <user_message>, "answer": <assistant_message>}
 ```
