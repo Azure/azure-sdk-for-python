@@ -61,6 +61,7 @@ class AadClientBase(abc.ABC):
             self._custom_cache = True
         else:
             self._custom_cache = False
+        self._is_adfs = self._tenant_id.lower() == "adfs"
 
     def _get_cache(self, **kwargs: Any) -> TokenCache:
         cache = self._cae_cache if kwargs.get("enable_cae") else self._cache
@@ -239,7 +240,16 @@ class AadClientBase(abc.ABC):
 
     def _get_client_certificate_assertion(self, certificate: AadClientCertificate, **kwargs: Any) -> str:
         now = int(time.time())
-        header = json.dumps({"typ": "JWT", "alg": "RS256", "x5t": certificate.thumbprint}).encode("utf-8")
+        headers = {"typ": "JWT"}
+        if self._is_adfs:
+            # Maintain backwards compatibility with older versions of ADFS.
+            headers["alg"] = "RS256"
+            headers["x5t"] = certificate.thumbprint
+        else:
+            headers["alg"] = "PS256"
+            headers["x5t#S256"] = certificate.sha256_thumbprint
+
+        jwt_header = json.dumps(headers).encode("utf-8")
         payload = json.dumps(
             {
                 "jti": str(uuid4()),
@@ -250,8 +260,8 @@ class AadClientBase(abc.ABC):
                 "exp": now + (60 * 30),
             }
         ).encode("utf-8")
-        jws = base64.urlsafe_b64encode(header) + b"." + base64.urlsafe_b64encode(payload)
-        signature = certificate.sign(jws)
+        jws = base64.urlsafe_b64encode(jwt_header) + b"." + base64.urlsafe_b64encode(payload)
+        signature = certificate.sign_ps256(jws) if not self._is_adfs else certificate.sign_rs256(jws)
         jwt_bytes = jws + b"." + base64.urlsafe_b64encode(signature)
         return jwt_bytes.decode("utf-8")
 
