@@ -98,7 +98,7 @@ class CertificateOperationError(object):
         return f"CertificateOperationError({self.code}, {self.message}, {self.inner_error})"[:1024]
 
     @classmethod
-    def _from_error_bundle(cls, error_bundle: models.KeyVaultError) -> "CertificateOperationError":
+    def _from_error_bundle(cls, error_bundle: models.KeyVaultErrorError) -> "CertificateOperationError":
         return cls(
             code=error_bundle.code,  # type: ignore
             message=error_bundle.message,  # type: ignore
@@ -148,7 +148,13 @@ class CertificateProperties(object):
 
     @classmethod
     def _from_certificate_item(
-        cls, certificate_item: Union[models.CertificateItem, models.CertificateBundle]
+        cls,
+        certificate_item: Union[
+            models.CertificateItem,
+            models.CertificateBundle,
+            models.DeletedCertificateItem,
+            models.DeletedCertificateBundle,
+        ],
     ) -> "CertificateProperties":
         return cls(
             attributes=certificate_item.attributes,
@@ -726,15 +732,13 @@ class CertificatePolicy(object):
         else:
             issuer_parameters = None
 
-        if (
-            self.enabled is not None
-            or self.created_on is not None
-            or self.updated_on is not None
-        ):
+        if self.enabled is not None or self.created_on is not None or self.updated_on is not None:
             attributes = models.CertificateAttributes(
-                enabled=self.enabled,
-                created=self.created_on,
-                updated=self.updated_on,
+                {
+                    "enabled": self.enabled,
+                    "created": self.created_on,
+                    "updated": self.updated_on,
+                }
             )
         else:
             attributes = None
