@@ -16,8 +16,6 @@
 
 * Lowered the logging level of "Toolset is not available in the client" from `warning` to `debug` to prevent unnecessary log entries in agent application runs.
 
-### Breaking Changes
-
 ## 1.0.0b5 (2025-01-17)
 
 ### Features added
