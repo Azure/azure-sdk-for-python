@@ -44,7 +44,7 @@ RECORDINGS_TEST_CONFIGS_ROOT = Path(PROMPTFLOW_ROOT / "azure-ai-evaluation/tests
 ZERO_GUID: Final[str] = "00000000-0000-0000-0000-000000000000"
 
 
-def pytest_configure(config):
+def pytest_configure(config: pytest.Config) -> None:
     # register Azure test markers to reduce spurious warnings on test runs
     config.addinivalue_line("markers", "azuretest: mark test as an Azure test.")
     config.addinivalue_line("markers", "localtest: mark test as a local test.")
@@ -209,7 +209,7 @@ def add_sanitizers(
 
 
 @pytest.fixture
-def redirect_asyncio_requests_traffic() -> None:
+def redirect_asyncio_requests_traffic():
     """Redirects requests sent through AsyncioRequestsTransport to the test proxy.
 
     .. note::
@@ -393,19 +393,26 @@ def project_scope(request, dev_connections: Dict[str, Any]) -> dict:
 
 
 @pytest.fixture
-def datastore_project_scopes(connection_file, project_scope, mock_project_scope):
-    conn_name = "azure_ai_entra_id_project_scope"
-    if not is_live():
-        entra_id = mock_project_scope
-    else:
-        entra_id = connection_file.get(conn_name)
-        if not entra_id:
-            raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
-
-    return {
-        "sas": project_scope,
-        "none": entra_id,
+def datastore_project_scopes(connection_file, project_scope, mock_project_scope) -> Dict[str, Any]:
+    keys = {
+        "none": "azure_ai_entra_id_project_scope",
+        "private": "azure_ai_private_connection_project_scope"
     }
+
+    scopes: Dict[str, Any] = {
+        "sas": project_scope,
+    }
+
+    if not is_live():
+        for key in keys.keys():
+            scopes[key] = mock_project_scope
+    else:
+        for key, value in keys.items():
+            if value not in connection_file:
+                raise ValueError(f"Connection '{value}' not found in dev connections.")
+            scopes[key] = connection_file[value]["value"]
+
+    return scopes
 
 
 @pytest.fixture
@@ -469,14 +476,14 @@ class MockSpawnProcess(SpawnProcess):
 @pytest.fixture
 def recording_injection(mocker: MockerFixture):
     original_process_class = multiprocessing.get_context("spawn").Process
-    multiprocessing.get_context("spawn").Process = MockSpawnProcess
+    multiprocessing.get_context("spawn").Process = MockSpawnProcess  # type: ignore
     if "spawn" == multiprocessing.get_start_method():
         multiprocessing.Process = MockSpawnProcess
 
     try:
         yield
     finally:
-        multiprocessing.get_context("spawn").Process = original_process_class
+        multiprocessing.get_context("spawn").Process = original_process_class  # type: ignore
         if "spawn" == multiprocessing.get_start_method():
             multiprocessing.Process = original_process_class
 
@@ -489,22 +496,8 @@ def _mock_create_spawned_fork_process_manager(*args, **kwargs):
     return create_spawned_fork_process_manager(*args, **kwargs)
 
 
-def package_scope_in_live_mode() -> str:
-    """Determine the scope of some expected sharing fixtures.
-
-    We have many tests against flows and runs, and it's very time consuming to create a new flow/run
-    for each test. So we expect to leverage pytest fixture concept to share flows/runs across tests.
-    However, we also have replay tests, which require function scope fixture as it will locate the
-    recording YAML based on the test function info.
-
-    Use this function to determine the scope of the fixtures dynamically. For those fixtures that
-    will request dynamic scope fixture(s), they also need to be dynamic scope.
-    """
-    # package-scope should be enough for Azure tests
-    return "package" if is_live() else "function"
-
-
-def get_cred() -> TokenCredential:
+@pytest.fixture
+def azure_cred() -> TokenCredential:
     from azure.identity import AzureCliCredential, DefaultAzureCredential
 
     """get credential for azure tests"""
@@ -525,38 +518,31 @@ def get_cred() -> TokenCredential:
 
 
 @pytest.fixture
-def azure_cred() -> TokenCredential:
-    return get_cred()
-
-
-@pytest.fixture(scope=package_scope_in_live_mode())
-def user_object_id() -> str:
+def user_object_id(azure_cred: TokenCredential) -> str:
     if not is_live():
         return SanitizedValues.USER_OBJECT_ID
-    credential = get_cred()
-    access_token = credential.get_token("https://management.azure.com/.default")
+    access_token = azure_cred.get_token("https://management.azure.com/.default")
     decoded_token = jwt.decode(access_token.token, options={"verify_signature": False})
     return decoded_token["oid"]
 
 
-@pytest.fixture(scope=package_scope_in_live_mode())
-def tenant_id() -> str:
+@pytest.fixture
+def tenant_id(azure_cred: TokenCredential) -> str:
     if not is_live():
         return SanitizedValues.TENANT_ID
-    credential = get_cred()
-    access_token = credential.get_token("https://management.azure.com/.default")
+    access_token = azure_cred.get_token("https://management.azure.com/.default")
     decoded_token = jwt.decode(access_token.token, options={"verify_signature": False})
     return decoded_token["tid"]
 
 
 @pytest.fixture()
-def mock_token(scope=package_scope_in_live_mode()):
+def mock_token():
     expiration_time = time.time() + 3600  # 1 hour in the future
     return jwt.encode({"exp": expiration_time}, "secret", algorithm="HS256")
 
 
 @pytest.fixture()
-def mock_expired_token(scope=package_scope_in_live_mode()):
+def mock_expired_token():
     expiration_time = time.time() - 3600  # 1 hour in the past
     return jwt.encode({"exp": expiration_time}, "secret", algorithm="HS256")
 
