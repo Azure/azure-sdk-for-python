@@ -1,5 +1,4 @@
-import os
-from typing import Callable
+import os, sys
 from unittest.mock import Mock, patch
 
 import pytest
@@ -69,6 +68,10 @@ class TestDatastoreOperations:
         mock_datastore_operation.create_or_update(ds)
         mock_datastore_operation._operation.create_or_update.assert_called_once()
 
+    @pytest.mark.skipif(
+        sys.version_info >= (3, 13),
+        reason="Skipping because Python version is 3.13 or above. azureml.dataprep.rslex do not support py313",
+    )
     def test_mount_persistent(
         self,
         mock_from_rest,
@@ -90,6 +93,10 @@ class TestDatastoreOperations:
             mock_build_uri.assert_called_once()
             mock_datastore_operation._compute_operation.update_data_mounts.assert_called_once()
 
+    @pytest.mark.skipif(
+        sys.version_info >= (3, 13),
+        reason="Skipping because Python version is 3.13 or above. azureml.dataprep.rslex do not support py313",
+    )
     def test_mount_non_persistent(
         self,
         mock_from_rest,

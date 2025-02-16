@@ -113,7 +113,6 @@ class LocalFileStorage:
     def __exit__(self, type, value, traceback):
         self.close()
 
-    # pylint: disable=unused-variable
     def _maintenance_routine(self):
         try:
             # pylint: disable=unused-variable

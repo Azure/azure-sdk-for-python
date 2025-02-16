@@ -17,10 +17,10 @@ _Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For
 - Python2.7, Python 3.6 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Event Hubs, you'll need a subscription. If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://azure.microsoft.com/).
 
-- **Event Hubs namespace with an Event Hub:** To interact with Azure Event Hubs, you'll also need to have a namespace and Event Hub  available.  If you are not familiar with creating Azure resources, you may wish to follow the step-by-step guide for [creating an Event Hub using the Azure portal](https://docs.microsoft.com/azure/event-hubs/event-hubs-create).  There, you can also find detailed instructions for using the Azure CLI, Azure PowerShell, or Azure Resource Manager (ARM) templates to create an Event Hub.
+- **Event Hubs namespace with an Event Hub:** To interact with Azure Event Hubs, you'll also need to have a namespace and Event Hub  available.  If you are not familiar with creating Azure resources, you may wish to follow the step-by-step guide for [creating an Event Hub using the Azure portal](https://learn.microsoft.com/azure/event-hubs/event-hubs-create).  There, you can also find detailed instructions for using the Azure CLI, Azure PowerShell, or Azure Resource Manager (ARM) templates to create an Event Hub.
 
 - **Azure Storage Account:** You'll need to have an Azure Storage Account and create a Azure Table Storage to store the checkpoint data with entities. You may follow the guide [creating an Azure Table Storage Account]
-(https://docs.microsoft.com/azure/storage/tables/table-storage-overview).
+(https://learn.microsoft.com/azure/storage/tables/table-storage-overview).
 
 # Key concepts
 
@@ -42,4 +42,4 @@ More sample code should go here, along with links out to the appropriate example
 
 If you encounter any bugs or have suggestions, please file an issue in the [Issues](<https://github.com/Azure/azure-sdk-for-python/issues>) section of the project.
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Feventhub%2Fazure-eventhub-checkpointstoretable%2FREADME.png)
+

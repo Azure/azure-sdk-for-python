@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
 from typing import Any
 from azure.ai.ml._utils._experimental import experimental
 

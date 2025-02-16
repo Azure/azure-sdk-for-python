@@ -24,7 +24,7 @@ USAGE:
         https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
-    2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
+    2) AZURE_AI_CHAT_KEY - Your model key. Keep it secret.
     3) AZURE_AI_CHAT_DEPLOYMENT_NAME - Optional. The value for the HTTP
         request header `azureml-model-deployment`.
 """
@@ -66,9 +66,9 @@ def sample_chat_completions_with_image_data():
 
     response = client.complete(
         messages=[
-            SystemMessage(content="You are an AI assistant that describes images in details."),
+            SystemMessage("You are an AI assistant that describes images in details."),
             UserMessage(
-                content=[
+                [
                     TextContentItem(text="What's in this image?"),
                     ImageContentItem(
                         image_url=ImageUrl.load(

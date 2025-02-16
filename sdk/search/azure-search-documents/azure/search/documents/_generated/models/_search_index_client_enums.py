@@ -419,6 +419,6 @@ class VectorThresholdKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     threshold direction (larger or smaller) will be chosen automatically according to the metric
     used by the field."""
     SEARCH_SCORE = "searchScore"
-    """The results of the vector query will filter based on the '@search.score' value. Note this is
+    """The results of the vector query will filter based on the '\\@search.score' value. Note this is
     the @search.score returned as part of the search response. The threshold direction will be
     chosen for higher @search.score."""

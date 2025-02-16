@@ -7,8 +7,14 @@
 DESCRIPTION:
     This sample demonstrates how to use agent operations with the 
     Azure AI Search tool from the Azure Agents service using a synchronous client.
-    To learn how to set up an Azure AI Search resource,
-    visit https://learn.microsoft.com/azure/search/search-get-started-portal
+
+PREREQUISITES:
+    You will need an Azure AI Search Resource. 
+    If you already have one, you must create an agent that can use an existing Azure AI Search index:
+    https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/azure-ai-search?tabs=azurecli%2Cpython&pivots=overview-azure-ai-search
+    
+    If you do not already have an Agent Setup with an Azure AI Search resource, follow the guide for a Standard Agent setup: 
+    https://learn.microsoft.com/azure/ai-services/agents/quickstart?pivots=programming-language-python-azure
 
 USAGE:
     python sample_agents_azure_ai_search.py
@@ -17,14 +23,17 @@ USAGE:
 
     pip install azure-ai-projects azure-identity
 
-    Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
+    Set these environment variables with your own values:
+    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
+       Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+       the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import AzureAISearchTool
+from azure.ai.projects.models import AzureAISearchTool, ConnectionType
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
@@ -35,7 +44,7 @@ project_client = AIProjectClient.from_connection_string(
 conn_list = project_client.connections.list()
 conn_id = ""
 for conn in conn_list:
-    if conn.connection_type == "CognitiveSearch":
+    if conn.connection_type == ConnectionType.AZURE_AI_SEARCH:
         conn_id = conn.id
         break
 
@@ -52,7 +61,6 @@ with project_client:
         instructions="You are a helpful assistant",
         tools=ai_search.definitions,
         tool_resources=ai_search.resources,
-        headers={"x-ms-enable-preview": "true"},
     )
     # [END create_agent_with_azure_ai_search_tool]
     print(f"Created agent, ID: {agent.id}")
@@ -75,6 +83,25 @@ with project_client:
 
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
+
+    # Fetch run steps to get the details of the agent run
+    run_steps = project_client.agents.list_run_steps(thread_id=thread.id, run_id=run.id)
+    for step in run_steps.data:
+        print(f"Step {step['id']} status: {step['status']}")
+        step_details = step.get("step_details", {})
+        tool_calls = step_details.get("tool_calls", [])
+
+        if tool_calls:
+            print("  Tool calls:")
+            for call in tool_calls:
+                print(f"    Tool Call ID: {call.get('id')}")
+                print(f"    Type: {call.get('type')}")
+
+                azure_ai_search_details = call.get("azure_ai_search", {})
+                if azure_ai_search_details:
+                    print(f"    azure_ai_search input: {azure_ai_search_details.get('input')}")
+                    print(f"    azure_ai_search output: {azure_ai_search_details.get('output')}")
+        print()  # add an extra newline between steps
 
     # Delete the assistant when done
     project_client.agents.delete_agent(agent.id)

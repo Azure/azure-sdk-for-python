@@ -20,12 +20,12 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_authorization_rules(self, resource_group):
+    def test_disaster_recovery_configs_list_authorization_rules(self, resource_group):
         response = self.client.disaster_recovery_configs.list_authorization_rules(
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
-            api_version="2017-04-01",
+            api_version="2024-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_authorization_rule(self, resource_group):
+    def test_disaster_recovery_configs_get_authorization_rule(self, resource_group):
         response = self.client.disaster_recovery_configs.get_authorization_rule(
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
             authorization_rule_name="str",
-            api_version="2017-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -47,13 +47,13 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_keys(self, resource_group):
+    def test_disaster_recovery_configs_list_keys(self, resource_group):
         response = self.client.disaster_recovery_configs.list_keys(
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
             authorization_rule_name="str",
-            api_version="2017-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -61,12 +61,12 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_check_name_availability(self, resource_group):
+    def test_disaster_recovery_configs_check_name_availability(self, resource_group):
         response = self.client.disaster_recovery_configs.check_name_availability(
             resource_group_name=resource_group.name,
             namespace_name="str",
             parameters={"name": "str"},
-            api_version="2017-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -74,11 +74,11 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_disaster_recovery_configs_list(self, resource_group):
         response = self.client.disaster_recovery_configs.list(
             resource_group_name=resource_group.name,
             namespace_name="str",
-            api_version="2017-04-01",
+            api_version="2024-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_disaster_recovery_configs_create_or_update(self, resource_group):
         response = self.client.disaster_recovery_configs.create_or_update(
             resource_group_name=resource_group.name,
             namespace_name="str",
@@ -94,14 +94,23 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
             parameters={
                 "alternateName": "str",
                 "id": "str",
+                "location": "str",
                 "name": "str",
                 "partnerNamespace": "str",
                 "pendingReplicationOperationsCount": 0,
                 "provisioningState": "str",
                 "role": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "type": "str",
             },
-            api_version="2017-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -109,12 +118,12 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_disaster_recovery_configs_delete(self, resource_group):
         response = self.client.disaster_recovery_configs.delete(
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
-            api_version="2017-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -122,12 +131,12 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_disaster_recovery_configs_get(self, resource_group):
         response = self.client.disaster_recovery_configs.get(
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
-            api_version="2017-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -135,12 +144,12 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_break_pairing(self, resource_group):
+    def test_disaster_recovery_configs_break_pairing(self, resource_group):
         response = self.client.disaster_recovery_configs.break_pairing(
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
-            api_version="2017-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -148,12 +157,12 @@ class TestEventHubManagementDisasterRecoveryConfigsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_fail_over(self, resource_group):
+    def test_disaster_recovery_configs_fail_over(self, resource_group):
         response = self.client.disaster_recovery_configs.fail_over(
             resource_group_name=resource_group.name,
             namespace_name="str",
             alias="str",
-            api_version="2017-04-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself

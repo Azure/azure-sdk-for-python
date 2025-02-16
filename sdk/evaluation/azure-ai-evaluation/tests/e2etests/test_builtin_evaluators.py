@@ -38,12 +38,6 @@ from azure.ai.evaluation import (
     ViolenceEvaluator,
     RetrievalEvaluator,
     GroundednessProEvaluator,
-    ContentSafetyMultimodalEvaluator,
-    SexualMultimodalEvaluator,
-    HateUnfairnessMultimodalEvaluator,
-    SelfHarmMultimodalEvaluator,
-    ViolenceMultimodalEvaluator,
-    ProtectedMaterialMultimodalEvaluator,
 )
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 
@@ -546,7 +540,6 @@ class TestBuiltInEvaluators:
     @pytest.mark.parametrize(
         "evaluator_class",
         [
-            (ContentSafetyMultimodalEvaluator),
             (ContentSafetyEvaluator),
         ],
     )
@@ -603,7 +596,6 @@ class TestBuiltInEvaluators:
     @pytest.mark.parametrize(
         "evaluator_class",
         [
-            (ContentSafetyMultimodalEvaluator),
             (ContentSafetyEvaluator),
         ],
     )
@@ -661,7 +653,6 @@ class TestBuiltInEvaluators:
     @pytest.mark.parametrize(
         "evaluator_class",
         [
-            (ContentSafetyMultimodalEvaluator),
             (ContentSafetyEvaluator),
         ],
     )
@@ -711,7 +702,6 @@ class TestBuiltInEvaluators:
     @pytest.mark.parametrize(
         "evaluator_class",
         [
-            (ContentSafetyMultimodalEvaluator),
             (ContentSafetyEvaluator),
         ],
     )
@@ -769,7 +759,6 @@ class TestBuiltInEvaluators:
     @pytest.mark.parametrize(
         "evaluator_class",
         [
-            (ContentSafetyMultimodalEvaluator),
             (ContentSafetyEvaluator),
         ],
     )
@@ -818,7 +807,6 @@ class TestBuiltInEvaluators:
     @pytest.mark.parametrize(
         "evaluator_class",
         [
-            (ViolenceMultimodalEvaluator),
             (ViolenceEvaluator),
         ],
     )
@@ -865,7 +853,6 @@ class TestBuiltInEvaluators:
     @pytest.mark.parametrize(
         "evaluator_class",
         [
-            (SexualMultimodalEvaluator),
             (SexualEvaluator),
         ],
     )
@@ -912,7 +899,6 @@ class TestBuiltInEvaluators:
     @pytest.mark.parametrize(
         "evaluator_class",
         [
-            (HateUnfairnessMultimodalEvaluator),
             (HateUnfairnessEvaluator),
         ],
     )
@@ -959,7 +945,6 @@ class TestBuiltInEvaluators:
     @pytest.mark.parametrize(
         "evaluator_class",
         [
-            (SelfHarmMultimodalEvaluator),
             (SelfHarmEvaluator),
         ],
     )
@@ -1006,7 +991,6 @@ class TestBuiltInEvaluators:
     @pytest.mark.parametrize(
         "evaluator_class",
         [
-            (ProtectedMaterialMultimodalEvaluator),
             (ProtectedMaterialEvaluator),
         ],
     )

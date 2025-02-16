@@ -1,4 +1,5 @@
 import logging, os
+from typing import Dict, Callable, Any
 from azure.cosmos import CosmosClient, PartitionKey, cosmos_diagnostics_handler
 
 # Initialize the logger
@@ -32,7 +33,7 @@ for item in items:
 
 # Delete the items
 for item in items:
-    container.delete_item(item=item['id'], partition_key=[item['State'], item['City']])
+    container.delete_item(item=str(item['id']), partition_key=[str(item['State']), str(item['City'])])
 
 
 # Custom should_log method
@@ -67,11 +68,11 @@ for item in items:
 
 # Delete the items
 for item in items:
-    container.delete_item(item=item['id'], partition_key=[item['State'], item['City']])
+    container.delete_item(item=str(item['id']), partition_key=[str(item['State']), str(item['City'])])
 
 
 # Diagnostics handler dictionary
-diagnostics_handler = {
+diagnostics_handler_dict: Dict[str, Callable[[Any], Any]] = {
     'duration': lambda duration: duration > 2000,
     'status code': (lambda x: (
                     isinstance(x, (list, tuple)) and x[0] >= 400) if isinstance(x, (list, tuple)) else x >= 400),
@@ -86,7 +87,7 @@ file_handler = logging.FileHandler('diagnostics3.output')
 logger.addHandler(file_handler)
 
 # Initialize the Cosmos client with diagnostics handler dictionary
-client = CosmosClient(endpoint, key,logger=logger, diagnostics_handler=diagnostics_handler, enable_diagnostics_logging=True)
+client = CosmosClient(endpoint, key,logger=logger, diagnostics_handler=diagnostics_handler_dict, enable_diagnostics_logging=True)
 
 # Create a database and container
 database_name = 'SD'
@@ -106,5 +107,5 @@ for item in items:
 
 # Delete the items
 for item in items:
-    container.delete_item(item=item['id'], partition_key=[item['State'], item['City']])
+    container.delete_item(item=str(item['id']), partition_key=[str(item['State']), str(item['City'])])
 

@@ -28,11 +28,11 @@ from azure.ai.projects.models import (
     CodeInterpreterToolResource,
     FileSearchToolResource,
     ToolResources,
-    AgentRunStream,
+    AgentEventHandler,
+    MessageRole,
 )
 from azure.ai.projects.models import (
     AgentStreamEvent,
-    MessageDeltaTextContent,
     MessageDeltaChunk,
     ThreadMessage,
     ThreadRun,
@@ -1613,7 +1613,6 @@ class TestAgentClient(AzureRecordedTestCase):
 
     # TODO create_stream doesn't work with body -- fails on for event_type, event_data : TypeError: 'ThreadRun' object is not an iterator
     @agentClientPreparer()
-    @pytest.mark.skip("Streaming functions with body need to be updated.")
     @recorded_by_proxy
     def test_create_stream_with_body(self, **kwargs):
         """Test creating stream with body."""
@@ -1658,7 +1657,6 @@ class TestAgentClient(AzureRecordedTestCase):
             print("Deleted agent")
 
     @agentClientPreparer()
-    @pytest.mark.skip("Streaming functions with body need to be updated.")
     @recorded_by_proxy
     def test_create_stream_with_iobytes(self, **kwargs):
         """Test creating stream with body: IO[bytes]."""
@@ -1701,7 +1699,6 @@ class TestAgentClient(AzureRecordedTestCase):
             print("Deleted agent")
 
     @agentClientPreparer()
-    @pytest.mark.skip("Working on recording sanitation.")
     @recorded_by_proxy
     def test_submit_tool_outputs_to_stream(self, **kwargs):
         """Test submitting tool outputs to stream."""
@@ -1712,7 +1709,6 @@ class TestAgentClient(AzureRecordedTestCase):
             self._do_test_submit_tool_outputs_to_stream(client=client, use_body=False, use_io=False)
 
     @agentClientPreparer()
-    @pytest.mark.skip("Working on recording sanitation.")
     @recorded_by_proxy
     def test_submit_tool_outputs_to_stream_with_body(self, **kwargs):
         """Test submitting tool outputs to stream with body: JSON."""
@@ -1723,7 +1719,6 @@ class TestAgentClient(AzureRecordedTestCase):
             self._do_test_submit_tool_outputs_to_stream(client=client, use_body=True, use_io=False)
 
     @agentClientPreparer()
-    @pytest.mark.skip("Working on recording sanitation.")
     @recorded_by_proxy
     def test_submit_tool_outputs_to_stream_with_iobytes(self, **kwargs):
         """Test submitting tool outputs to stream with body: IO[bytes]."""
@@ -1766,7 +1761,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
         # create stream
         with client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
-            for event_type, event_data in stream:
+            for event_type, event_data, _ in stream:
 
                 # Check if tools are needed
                 if (
@@ -1784,35 +1779,33 @@ class TestAgentClient(AzureRecordedTestCase):
                     # submit tool outputs to stream
                     tool_outputs = toolset.execute_tool_calls(tool_calls)
 
+                    tool_event_handler = AgentEventHandler()
                     if tool_outputs:
                         if use_body:
                             body = {"tool_outputs": tool_outputs, "stream": True}
                             if use_io:
                                 binary_body = json.dumps(body).encode("utf-8")
                                 body = io.BytesIO(binary_body)
-                            with client.agents.submit_tool_outputs_to_stream(
-                                thread_id=thread.id, run_id=event_data.id, body=io.BytesIO(binary_body), stream=True
-                            ) as tool_stream:
-                                assert isinstance(tool_stream, AgentRunStream)
-                                for tool_event_type, tool_event_data in tool_stream:
-                                    assert (
-                                        isinstance(
-                                            tool_event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)
-                                        )
-                                        or tool_event_type == AgentStreamEvent.DONE
-                                    )
+                            client.agents.submit_tool_outputs_to_stream(
+                                thread_id=thread.id,
+                                run_id=event_data.id,
+                                body=body,
+                                event_handler=tool_event_handler,
+                                stream=True,
+                            )
                         else:
-                            with client.agents.submit_tool_outputs_to_stream(
-                                thread_id=thread.id, run_id=event_data.id, tool_outputs=tool_outputs
-                            ) as tool_stream:
-                                assert isinstance(tool_stream, AgentRunStream)
-                                for tool_event_type, tool_event_data in tool_stream:
-                                    assert (
-                                        isinstance(
-                                            tool_event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep)
-                                        )
-                                        or tool_event_type == AgentStreamEvent.DONE
-                                    )
+                            client.agents.submit_tool_outputs_to_stream(
+                                thread_id=thread.id,
+                                run_id=event_data.id,
+                                tool_outputs=tool_outputs,
+                                event_handler=tool_event_handler,
+                            )
+                        for tool_event_type, tool_event_data, _ in tool_event_handler:
+                            assert (
+                                isinstance(tool_event_data, (MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep))
+                                or tool_event_type == AgentStreamEvent.DONE
+                            )
+
                         print("Submitted tool outputs to stream")
 
             print("Stream processing completed")
@@ -2377,7 +2370,6 @@ class TestAgentClient(AzureRecordedTestCase):
         self._do_test_create_vector_store_add_file(file_path=self._get_data_file(), **kwargs)
 
     @agentClientPreparer()
-    # @pytest.markp("The CreateVectorStoreFile API is not supported yet.")
     @pytest.mark.skip("Not deployed in all regions.")
     @recorded_by_proxy
     def test_create_vector_store_add_file_azure(self, **kwargs):
@@ -2394,16 +2386,14 @@ class TestAgentClient(AzureRecordedTestCase):
         if file_id:
             ds = None
         else:
-            ds = [
-                VectorStoreDataSource(
-                    asset_identifier=kwargs["azure_ai_projects_agents_tests_data_path"],
-                    asset_type="uri_asset",
-                )
-            ]
+            ds = VectorStoreDataSource(
+                asset_identifier=kwargs["azure_ai_projects_agents_tests_data_path"],
+                asset_type="uri_asset",
+            )
         vector_store = ai_client.agents.create_vector_store_and_poll(file_ids=[], name="sample_vector_store")
         assert vector_store.id
         vector_store_file = ai_client.agents.create_vector_store_file(
-            vector_store_id=vector_store.id, data_sources=ds, file_id=file_id
+            vector_store_id=vector_store.id, data_source=ds, file_id=file_id
         )
         assert vector_store_file.id
         self._test_file_search(ai_client, vector_store, file_id)
@@ -3018,7 +3008,7 @@ class TestAgentClient(AzureRecordedTestCase):
                 messages = client.agents.list_messages(thread_id=thread.id)
                 print(f"Messages: {messages}")
 
-                last_msg = messages.get_last_text_message_by_sender("assistant")
+                last_msg = messages.get_last_text_message_by_role(MessageRole.AGENT)
                 if last_msg:
                     print(f"Last Message: {last_msg.text.value}")
 
@@ -3032,10 +3022,11 @@ class TestAgentClient(AzureRecordedTestCase):
             assert output_file_exist
 
     @agentClientPreparer()
-    @pytest.mark.skip("New test, will need recording in future.")
     @recorded_by_proxy
     def test_azure_function_call(self, **kwargs):
         """Test calling Azure functions."""
+        # Note: This test was recorded in westus region as for now
+        # 2025-02-05 it is not supported in test region (East US 2)
         # create client
         storage_queue = kwargs["azure_ai_projects_agents_tests_storage_queue"]
         with self.create_client(**kwargs) as client:
@@ -3089,10 +3080,10 @@ class TestAgentClient(AzureRecordedTestCase):
             assert run.status == RunStatus.COMPLETED, f"The run is in {run.status} state."
 
             # Get messages from the thread
-            messages = client.agents.get_messages(thread_id=thread.id)
-            assert len(messages.text_messages), "No messages were received."
+            messages = client.agents.list_messages(thread_id=thread.id)
+            assert len(messages.text_messages) > 1, "No messages were received from agent."
 
-            # Chech that we have function response in at least one message.
+            # Check that we have function response in at least one message.
             assert any("bar" in msg.text.value.lower() for msg in messages.text_messages)
 
             # Delete the agent once done

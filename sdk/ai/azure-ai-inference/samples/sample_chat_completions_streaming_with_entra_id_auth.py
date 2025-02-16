@@ -57,13 +57,16 @@ def sample_chat_completions_streaming_with_entra_id_auth():
     response = client.complete(
         stream=True,
         messages=[
-            SystemMessage(content="You are a helpful assistant."),
-            UserMessage(content="Give me 5 good reasons why I should exercise every day."),
+            SystemMessage("You are a helpful assistant."),
+            UserMessage("Give me 5 good reasons why I should exercise every day."),
         ],
     )
 
     for update in response:
-        print(update.choices[0].delta.content or "", end="", flush=True)
+        if update.choices and update.choices[0].delta:
+            print(update.choices[0].delta.content or "", end="", flush=True)
+        if update.usage:
+            print(f"\n\nToken usage: {update.usage}")
 
     client.close()
 
