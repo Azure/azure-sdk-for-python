@@ -19,6 +19,72 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class ContentItem(_model_base.Model):
+    """An abstract representation of a structured content item within a chat message.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ImageContentItem, AudioContentItem, TextContentItem
+
+    :ivar type: The discriminated object type. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type")
+    """The discriminated object type. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AudioContentItem(ContentItem, discriminator="input_audio"):
+    """A structured chat content item containing an audio content.
+
+    :ivar type: The discriminated object type: always 'input_audio' for this type. Required.
+     Default value is "input_audio".
+    :vartype type: str
+    :ivar input_audio: The details of the input audio. Required.
+    :vartype input_audio: ~azure.ai.inference.models.InputAudio
+    """
+
+    type: Literal["input_audio"] = rest_discriminator(name="type")  # type: ignore
+    """The discriminated object type: always 'input_audio' for this type. Required. Default value is
+     \"input_audio\"."""
+    input_audio: "_models.InputAudio" = rest_field()
+    """The details of the input audio. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        input_audio: "_models.InputAudio",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="input_audio", **kwargs)
+
+
 class ChatChoice(_model_base.Model):
     """The representation of a single prompt completion as part of an overall chat completions
     request.
@@ -127,8 +193,6 @@ class ChatCompletions(_model_base.Model):
 class ChatCompletionsNamedToolChoice(_model_base.Model):
     """A tool selection of a specific, named function tool that will limit chat completions to using
     the named function.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar type: The type of the tool. Currently, only ``function`` is supported. Required. Default
      value is "function".
@@ -328,9 +392,6 @@ class ChatCompletionsResponseFormatText(ChatCompletionsResponseFormat, discrimin
 class ChatCompletionsToolCall(_model_base.Model):
     """A function tool call requested by the AI model.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar id: The ID of the tool call. Required.
     :vartype id: str
     :ivar type: The type of tool call. Currently, only ``function`` is supported. Required. Default
@@ -371,8 +432,6 @@ class ChatCompletionsToolCall(_model_base.Model):
 class ChatCompletionsToolDefinition(_model_base.Model):
     """The definition of a chat completions tool that can call a function.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar type: The type of the tool. Currently, only ``function`` is supported. Required. Default
      value is "function".
     :vartype type: str
@@ -409,18 +468,18 @@ class ChatRequestMessage(_model_base.Model):
     """An abstract representation of a chat message as provided in a request.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ChatRequestAssistantMessage, ChatRequestSystemMessage, ChatRequestToolMessage,
-    ChatRequestUserMessage
+    ChatRequestAssistantMessage, ChatRequestDeveloperMessage, ChatRequestSystemMessage,
+    ChatRequestToolMessage, ChatRequestUserMessage
 
     :ivar role: The chat role associated with this message. Required. Known values are: "system",
-     "user", "assistant", and "tool".
+     "user", "assistant", "tool", and "developer".
     :vartype role: str or ~azure.ai.inference.models.ChatRole
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
     role: str = rest_discriminator(name="role")
     """The chat role associated with this message. Required. Known values are: \"system\", \"user\",
-     \"assistant\", and \"tool\"."""
+     \"assistant\", \"tool\", and \"developer\"."""
 
     @overload
     def __init__(
@@ -482,6 +541,44 @@ class ChatRequestAssistantMessage(ChatRequestMessage, discriminator="assistant")
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, role=ChatRole.ASSISTANT, **kwargs)
+
+
+class ChatRequestDeveloperMessage(ChatRequestMessage, discriminator="developer"):
+    """A request chat message containing system instructions that influence how the model will
+    generate a chat completions
+    response. Some AI models support a developer message instead of a system message.
+
+    :ivar role: The chat role associated with this message, which is always 'developer' for
+     developer messages. Required. The role that instructs or sets the behavior of the assistant.
+     Some AI models support this role instead of the 'system' role.
+    :vartype role: str or ~azure.ai.inference.models.DEVELOPER
+    :ivar content: The contents of the developer message. Required.
+    :vartype content: str
+    """
+
+    role: Literal[ChatRole.DEVELOPER] = rest_discriminator(name="role")  # type: ignore
+    """The chat role associated with this message, which is always 'developer' for developer messages.
+     Required. The role that instructs or sets the behavior of the assistant. Some AI models support
+     this role instead of the 'system' role."""
+    content: str = rest_field()
+    """The contents of the developer message. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, role=ChatRole.DEVELOPER, **kwargs)
 
 
 class ChatRequestSystemMessage(ChatRequestMessage, discriminator="system"):
@@ -601,7 +698,7 @@ class ChatResponseMessage(_model_base.Model):
 
 
     :ivar role: The chat role associated with the message. Required. Known values are: "system",
-     "user", "assistant", and "tool".
+     "user", "assistant", "tool", and "developer".
     :vartype role: str or ~azure.ai.inference.models.ChatRole
     :ivar content: The content of the message. Required.
     :vartype content: str
@@ -613,7 +710,7 @@ class ChatResponseMessage(_model_base.Model):
 
     role: Union[str, "_models.ChatRole"] = rest_field()
     """The chat role associated with the message. Required. Known values are: \"system\", \"user\",
-     \"assistant\", and \"tool\"."""
+     \"assistant\", \"tool\", and \"developer\"."""
     content: str = rest_field()
     """The content of the message. Required."""
     tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = rest_field()
@@ -672,38 +769,6 @@ class CompletionsUsage(_model_base.Model):
         completion_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ContentItem(_model_base.Model):
-    """An abstract representation of a structured content item within a chat message.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ImageContentItem, TextContentItem
-
-    :ivar type: The discriminated object type. Required. Default value is None.
-    :vartype type: str
-    """
-
-    __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
-    """The discriminated object type. Required. Default value is None."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
     ) -> None: ...
 
     @overload
@@ -1034,6 +1099,40 @@ class ImageUrl(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class InputAudio(_model_base.Model):
+    """The details of an audio chat message content part.
+
+    :ivar data: Base64 encoded audio data. Required.
+    :vartype data: str
+    :ivar format: The audio format of the audio content. Required. Known values are: "wav" and
+     "mp3".
+    :vartype format: str or ~azure.ai.inference.models.AudioContentFormat
+    """
+
+    data: str = rest_field()
+    """Base64 encoded audio data. Required."""
+    format: Union[str, "_models.AudioContentFormat"] = rest_field()
+    """The audio format of the audio content. Required. Known values are: \"wav\" and \"mp3\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: str,
+        format: Union[str, "_models.AudioContentFormat"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class JsonSchemaFormat(_model_base.Model):
     """Defines the response format for chat completions as JSON with a given schema.
     The AI model will need to adhere to this schema when generating completions.
@@ -1251,7 +1350,7 @@ class StreamingChatResponseMessageUpdate(_model_base.Model):
     """A representation of a chat message update as received in a streaming response.
 
     :ivar role: The chat role associated with the message. If present, should always be
-     'assistant'. Known values are: "system", "user", "assistant", and "tool".
+     'assistant'. Known values are: "system", "user", "assistant", "tool", and "developer".
     :vartype role: str or ~azure.ai.inference.models.ChatRole
     :ivar content: The content of the message.
     :vartype content: str
@@ -1263,7 +1362,7 @@ class StreamingChatResponseMessageUpdate(_model_base.Model):
 
     role: Optional[Union[str, "_models.ChatRole"]] = rest_field()
     """The chat role associated with the message. If present, should always be 'assistant'. Known
-     values are: \"system\", \"user\", \"assistant\", and \"tool\"."""
+     values are: \"system\", \"user\", \"assistant\", \"tool\", and \"developer\"."""
     content: Optional[str] = rest_field()
     """The content of the message."""
     tool_calls: Optional[List["_models.StreamingChatResponseToolCallUpdate"]] = rest_field()

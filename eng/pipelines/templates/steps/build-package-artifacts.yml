@@ -56,6 +56,13 @@ steps:
       }
     displayName: Set Component Governance Path
 
+  # Create package properties file before updating the version to daily dev build
+  # This is required to set the package version in info file before it's updated.
+  - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      ExcludePaths: ${{ parameters.ExcludePaths }}
+
   # set dev build calls SavePackageProperties with dev version if necessary. this will never happen in a PR build
   # however, it will set the variable SetDevVersion as appropriate for normal nightly runs
   - template: set-dev-build.yml
@@ -88,6 +95,10 @@ steps:
       $(VENV_ACTIVATION_SCRIPT)
       which python
       python -m pip install --force -r eng/ci_tools.txt
+      if ($env:AGENT_OS -eq "Linux") {
+        Write-Host "Installing release reqs"
+        python -m pip install -r eng/release_requirements.txt
+      }
       python -m pip freeze --all
     displayName: 'Prep Environment'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
@@ -109,8 +120,8 @@ steps:
     env:
       CIBW_BUILD_VERBOSITY: 3
 
-  - script: |
-      python -m pip install -r eng/release_requirements.txt
+  - pwsh: |
+      $(VENV_ACTIVATION_SCRIPT)
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
       twine check $(Build.ArtifactStagingDirectory)/**/*.tar.gz
     displayName: 'Verify Readme'
@@ -126,6 +137,19 @@ steps:
         | Remove-Item -Force -Recurse
     displayName: Clean up repo
     condition: and(succeeded(), ne(variables['ENABLE_EXTENSION_BUILD'], 'true'), ne('${{ parameters.ArtifactSuffix }}', 'linux'))
+
+  # we need to only publish this if running on linux. we only need one for all stages
+  - pwsh: |
+      New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)/release_artifact"
+      Copy-Item -Path "$(Build.SourcesDirectory)/eng/release_requirements.txt" -Destination "$(Build.ArtifactStagingDirectory)/release_artifact/release_requirements.txt"
+    displayName: 'Assemble Static Files for Release Stage'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+
+  - ${{ if eq(parameters.ArtifactSuffix, 'linux') }}:
+    - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.ArtifactStagingDirectory)/release_artifact'
+        ArtifactName: 'release_artifact'
 
   - ${{ if eq(parameters.ArtifactSuffix, '') }}:
     - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml

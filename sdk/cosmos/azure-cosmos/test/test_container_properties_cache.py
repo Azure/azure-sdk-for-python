@@ -16,7 +16,7 @@ import test_config
 from azure.cosmos.partition_key import PartitionKey
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestContainerPropertiesCache(unittest.TestCase):
     """Python CRUD Tests.
         """

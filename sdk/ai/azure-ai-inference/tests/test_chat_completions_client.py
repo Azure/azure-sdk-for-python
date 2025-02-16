@@ -13,7 +13,7 @@ from model_inference_test_base import (
 )
 
 from devtools_testutils import recorded_by_proxy
-from azure.core.exceptions import AzureError, ServiceRequestError
+from azure.core.exceptions import AzureError, ServiceRequestError, ResourceNotFoundError
 from azure.core.credentials import AzureKeyCredential
 
 
@@ -389,16 +389,15 @@ class TestChatCompletionsClient(ModelClientTestBase):
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
     def test_chat_completions_streaming(self, **kwargs):
-        client = self._create_chat_client(**kwargs)
-        response = client.complete(
-            stream=True,
-            messages=[
-                sdk.models.SystemMessage("You are a helpful assistant."),
-                sdk.models.UserMessage("Give me 3 good reasons why I should exercise every day."),
-            ],
-        )
-        self._validate_chat_completions_streaming_result(response)
-        client.close()
+        with self._create_chat_client(**kwargs) as client:
+            with client.complete(
+                stream=True,
+                messages=[
+                    sdk.models.SystemMessage("You are a helpful assistant."),
+                    sdk.models.UserMessage("Give me 3 good reasons why I should exercise every day."),
+                ],
+            ) as response:
+                self._validate_chat_completions_streaming_result(response)
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
@@ -559,6 +558,38 @@ class TestChatCompletionsClient(ModelClientTestBase):
         )
         client.close()
 
+    # We use AOAI endpoint here because at the moment there is no MaaS model that supports
+    # input audio.
+    @ServicePreparerAOAIChatCompletions()
+    @recorded_by_proxy
+    def test_chat_completions_with_audio_input(self, **kwargs):
+        client = self._create_aoai_audio_chat_client(**kwargs)
+
+        # Construct the full path to the image file
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        audio_file_path = os.path.join(script_dir, "hello_how_are_you.mp3")
+
+        response = client.complete(
+            messages=[
+                sdk.models.SystemMessage(
+                    content="You are an AI assistant for translating and transcribing audio clips."
+                ),
+                sdk.models.UserMessage(
+                    content=[
+                        sdk.models.TextContentItem(text="Please translate this audio snippet to spanish."),
+                        sdk.models.AudioContentItem(
+                            input_audio=sdk.models.InputAudio.load(
+                                audio_file=audio_file_path, audio_format=sdk.models.AudioContentFormat.MP3
+                            )
+                        ),
+                    ],
+                ),
+            ],
+        )
+        self._print_chat_completions_result(response)
+        self._validate_chat_completions_result(response, ["Hola", "cómo", "estás"], is_aoai=True)
+        client.close()
+
     # **********************************************************************************
     #
     #                            ERROR TESTS - CHAT COMPLETIONS
@@ -596,3 +627,32 @@ class TestChatCompletionsClient(ModelClientTestBase):
             assert "not found" in e.message.lower() or "not allowed" in e.message.lower()
         client.close()
         assert exception_caught
+
+    @ServicePreparerAOAIChatCompletions()
+    @recorded_by_proxy
+    def test_load_client_on_aoai_endpoint(self, **kwargs):
+
+        exception_caught = False
+        try:
+            _ = self._load_chat_client_on_aoai_endpoint(**kwargs)
+        except ResourceNotFoundError as e:
+            exception_caught = True
+            print(e)
+            assert "`load_client` function does not work on this endpoint" in e.message.lower()
+        assert exception_caught
+
+    @ServicePreparerAOAIChatCompletions()
+    @recorded_by_proxy
+    def test_get_model_info_on_aoai_endpoint(self, **kwargs):
+
+        with self._create_aoai_chat_client(**kwargs) as client:
+
+            exception_caught = False
+            try:
+                _ = client.get_model_info()
+            except ResourceNotFoundError as e:
+                exception_caught = True
+                print(e)
+                assert "model information is not available on this endpoint" in e.message.lower()
+
+            assert exception_caught

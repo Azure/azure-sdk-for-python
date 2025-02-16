@@ -20,7 +20,7 @@ USAGE:
         https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
-    2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
+    2) AZURE_AI_CHAT_KEY - Your model key. Keep it secret.
 """
 import asyncio
 
@@ -31,7 +31,6 @@ async def sample_chat_completions_async():
     from azure.ai.inference.models import SystemMessage, UserMessage
     from azure.core.credentials import AzureKeyCredential
 
-    # Read the values of your model endpoint and key from environment variables
     try:
         endpoint = os.environ["AZURE_AI_CHAT_ENDPOINT"]
         key = os.environ["AZURE_AI_CHAT_KEY"]
@@ -40,10 +39,8 @@ async def sample_chat_completions_async():
         print("Set them before running this sample.")
         exit()
 
-    # Create a chat completion client for synchronous operations
     async with ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as client:
 
-        # Do a single chat completion operation
         response = await client.complete(
             messages=[
                 SystemMessage("You are a helpful assistant."),
@@ -51,8 +48,8 @@ async def sample_chat_completions_async():
             ]
         )
 
-        # Print response the the console
         print(response.choices[0].message.content)
+        print(f"\nToken usage: {response.usage}")
 
 
 async def main():

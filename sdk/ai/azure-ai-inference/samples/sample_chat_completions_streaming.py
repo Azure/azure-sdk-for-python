@@ -20,7 +20,7 @@ USAGE:
         https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
-    2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.
+    2) AZURE_AI_CHAT_KEY - Your model key. Keep it secret.
 """
 
 
@@ -51,7 +51,10 @@ def sample_chat_completions_streaming():
     )
 
     for update in response:
-        print(update.choices[0].delta.content or "", end="", flush=True)
+        if update.choices and update.choices[0].delta:
+            print(update.choices[0].delta.content or "", end="", flush=True)
+        if update.usage:
+            print(f"\n\nToken usage: {update.usage}")
 
     client.close()
     # [END chat_completions_streaming]
