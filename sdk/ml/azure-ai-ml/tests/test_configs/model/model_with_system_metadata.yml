@@ -14,6 +14,6 @@ flavors:
   python_function:
     loader_module: office.plrmodel
     python_version: 3.8.5
-system_metatdata:
+system_metadata:
   publisher: "Contoso"
   license: "MIT License"
