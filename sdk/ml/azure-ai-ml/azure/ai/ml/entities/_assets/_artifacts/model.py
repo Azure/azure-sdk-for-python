@@ -85,6 +85,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
     ) -> None:
         self.job_name = kwargs.pop("job_name", None)
         self._intellectual_property = kwargs.pop("intellectual_property", None)
+        self._system_metadata = kwargs.pop("system_metadata", None)
         super().__init__(
             name=name,
             version=version,
@@ -151,6 +152,10 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
                 else None
             ),
         )
+
+        if hasattr(model_rest_object, "system_metadata"):
+            model.system_metadata = model_rest_object.system_metadata
+
         return model
 
     @classmethod
@@ -182,6 +187,8 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             stage=self.stage,
             is_anonymous=self._is_anonymous,
         )
+        model_version.system_metadata = self._system_metadata if hasattr(self, "_system_metadata") else None
+
         model_version_resource = ModelVersion(properties=model_version)
 
         return model_version_resource
