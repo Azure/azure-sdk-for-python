@@ -31,15 +31,7 @@
   - Added model `WebApplicationFirewallPackage`
   - Added model `WebApplicationFirewallSettings`
   - Added model `WebApplicationFirewallStatus`
-  - Added model `ApiKeysOperations`
-  - Method `CertificatesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, deployment_name: str, certificate_name: str, body: Optional[IO[bytes]], content_type: str)`
-  - Method `ConfigurationsOperations.analysis` has a new overload `def analysis(self: None, resource_group_name: str, deployment_name: str, configuration_name: str, body: Optional[IO[bytes]], content_type: str)`
-  - Method `ConfigurationsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, deployment_name: str, configuration_name: str, body: Optional[NginxConfigurationRequest], content_type: str)`
-  - Method `ConfigurationsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, deployment_name: str, configuration_name: str, body: Optional[IO[bytes]], content_type: str)`
-  - Method `DeploymentsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, deployment_name: str, body: Optional[IO[bytes]], content_type: str)`
-  - Method `DeploymentsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, deployment_name: str, body: Optional[IO[bytes]], content_type: str)`
-  - Method `ApiKeysOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, deployment_name: str, api_key_name: str, body: Optional[NginxDeploymentApiKeyRequest], content_type: str)`
-  - Method `ApiKeysOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, deployment_name: str, api_key_name: str, body: Optional[IO[bytes]], content_type: str)`
+  - Added operation group `ApiKeysOperations`
 
 ### Breaking Changes
 
