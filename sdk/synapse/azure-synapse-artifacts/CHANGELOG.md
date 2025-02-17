@@ -35,9 +35,6 @@
 
   - Model LinkedService parameter PostgreSqlV2LinkedService has a new required properties authentication_type
   - Model LinkedService parameter SapOdpLinkedService update properties sncMode
-### Bugs Fixed
-
-### Other Changes
 
 ## 0.19.0 (2024-06-04)
 
