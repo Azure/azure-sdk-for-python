@@ -70,6 +70,9 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
         $changedServices += "template"
       }
     }
+
+    # dedupe the changed service list before processing
+    $changedServices = $changedServices | Get-Unique
     foreach ($changedService in $changedServices) {
       $additionalPackages = $AllPkgProps | Where-Object { $_.ServiceDirectory -eq $changedService }
 
@@ -93,8 +96,6 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
     $engChanged = $targetedFiles | Where-Object { $_.StartsWith("eng")}
     $othersChanged = $targetedFiles | Where-Object { isOther($_) }
   }
-
-  $changedServices = $changedServices | Get-Unique
 
   if ($toolChanged) {
     $additionalPackages = @(
