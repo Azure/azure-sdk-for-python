@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -17,12 +17,13 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
@@ -30,7 +31,6 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._configurations_operations import (
     build_analysis_request,
     build_create_or_update_request,
@@ -39,6 +39,10 @@ from ...operations._configurations_operations import (
     build_list_request,
 )
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -65,7 +69,7 @@ class ConfigurationsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, deployment_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NginxConfiguration"]:
+    ) -> AsyncIterable["_models.NginxConfigurationResponse"]:
         """List the NGINX configuration of given NGINX deployment.
 
         List the NGINX configuration of given NGINX deployment.
@@ -75,9 +79,10 @@ class ConfigurationsOperations:
         :type resource_group_name: str
         :param deployment_name: The name of targeted NGINX deployment. Required.
         :type deployment_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either NginxConfiguration or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.nginx.models.NginxConfiguration]
+        :return: An iterator like instance of either NginxConfigurationResponse or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.nginx.models.NginxConfigurationResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -86,7 +91,7 @@ class ConfigurationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.NginxConfigurationListResponse] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -97,17 +102,15 @@ class ConfigurationsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     resource_group_name=resource_group_name,
                     deployment_name=deployment_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -119,13 +122,12 @@ class ConfigurationsOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("NginxConfigurationListResponse", pipeline_response)
@@ -135,33 +137,27 @@ class ConfigurationsOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(
-                    _models.ResourceProviderDefaultErrorResponse, pipeline_response
-                )
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/configurations"
-    }
-
     @distributed_trace_async
     async def get(
         self, resource_group_name: str, deployment_name: str, configuration_name: str, **kwargs: Any
-    ) -> _models.NginxConfiguration:
+    ) -> _models.NginxConfigurationResponse:
         """Get the NGINX configuration of given NGINX deployment.
 
         Get the NGINX configuration of given NGINX deployment.
@@ -174,12 +170,11 @@ class ConfigurationsOperations:
         :param configuration_name: The name of configuration, only 'default' is supported value due to
          the singleton of NGINX conf. Required.
         :type configuration_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: NginxConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.nginx.models.NginxConfiguration
+        :return: NginxConfigurationResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.nginx.models.NginxConfigurationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -191,55 +186,47 @@ class ConfigurationsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.NginxConfiguration] = kwargs.pop("cls", None)
+        cls: ClsType[_models.NginxConfigurationResponse] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             deployment_name=deployment_name,
             configuration_name=configuration_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _models.ResourceProviderDefaultErrorResponse, pipeline_response
-            )
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NginxConfiguration", pipeline_response)
+        deserialized = self._deserialize("NginxConfigurationResponse", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/configurations/{configurationName}"
-    }
+        return deserialized  # type: ignore
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         deployment_name: str,
         configuration_name: str,
-        body: Optional[Union[_models.NginxConfiguration, IO]] = None,
+        body: Optional[Union[_models.NginxConfigurationRequest, IO[bytes]]] = None,
         **kwargs: Any
-    ) -> _models.NginxConfiguration:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -252,7 +239,7 @@ class ConfigurationsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.NginxConfiguration] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -261,11 +248,11 @@ class ConfigurationsOperations:
             _content = body
         else:
             if body is not None:
-                _json = self._serialize.body(body, "NginxConfiguration")
+                _json = self._serialize.body(body, "NginxConfigurationRequest")
             else:
                 _json = None
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             deployment_name=deployment_name,
             configuration_name=configuration_name,
@@ -274,41 +261,34 @@ class ConfigurationsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _models.ResourceProviderDefaultErrorResponse, pipeline_response
-            )
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("NginxConfiguration", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("NginxConfiguration", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/configurations/{configurationName}"
-    }
 
     @overload
     async def begin_create_or_update(
@@ -316,11 +296,11 @@ class ConfigurationsOperations:
         resource_group_name: str,
         deployment_name: str,
         configuration_name: str,
-        body: Optional[_models.NginxConfiguration] = None,
+        body: Optional[_models.NginxConfigurationRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.NginxConfiguration]:
+    ) -> AsyncLROPoller[_models.NginxConfigurationResponse]:
         """Create or update the NGINX configuration for given NGINX deployment.
 
         Create or update the NGINX configuration for given NGINX deployment.
@@ -334,21 +314,13 @@ class ConfigurationsOperations:
          the singleton of NGINX conf. Required.
         :type configuration_name: str
         :param body: The NGINX configuration. Default value is None.
-        :type body: ~azure.mgmt.nginx.models.NginxConfiguration
+        :type body: ~azure.mgmt.nginx.models.NginxConfigurationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either NginxConfiguration or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.nginx.models.NginxConfiguration]
+        :return: An instance of AsyncLROPoller that returns either NginxConfigurationResponse or the
+         result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.nginx.models.NginxConfigurationResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -358,11 +330,11 @@ class ConfigurationsOperations:
         resource_group_name: str,
         deployment_name: str,
         configuration_name: str,
-        body: Optional[IO] = None,
+        body: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.NginxConfiguration]:
+    ) -> AsyncLROPoller[_models.NginxConfigurationResponse]:
         """Create or update the NGINX configuration for given NGINX deployment.
 
         Create or update the NGINX configuration for given NGINX deployment.
@@ -376,21 +348,13 @@ class ConfigurationsOperations:
          the singleton of NGINX conf. Required.
         :type configuration_name: str
         :param body: The NGINX configuration. Default value is None.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either NginxConfiguration or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.nginx.models.NginxConfiguration]
+        :return: An instance of AsyncLROPoller that returns either NginxConfigurationResponse or the
+         result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.nginx.models.NginxConfigurationResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -400,9 +364,9 @@ class ConfigurationsOperations:
         resource_group_name: str,
         deployment_name: str,
         configuration_name: str,
-        body: Optional[Union[_models.NginxConfiguration, IO]] = None,
+        body: Optional[Union[_models.NginxConfigurationRequest, IO[bytes]]] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.NginxConfiguration]:
+    ) -> AsyncLROPoller[_models.NginxConfigurationResponse]:
         """Create or update the NGINX configuration for given NGINX deployment.
 
         Create or update the NGINX configuration for given NGINX deployment.
@@ -415,23 +379,12 @@ class ConfigurationsOperations:
         :param configuration_name: The name of configuration, only 'default' is supported value due to
          the singleton of NGINX conf. Required.
         :type configuration_name: str
-        :param body: The NGINX configuration. Is either a NginxConfiguration type or a IO type. Default
-         value is None.
-        :type body: ~azure.mgmt.nginx.models.NginxConfiguration or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either NginxConfiguration or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.nginx.models.NginxConfiguration]
+        :param body: The NGINX configuration. Is either a NginxConfigurationRequest type or a IO[bytes]
+         type. Default value is None.
+        :type body: ~azure.mgmt.nginx.models.NginxConfigurationRequest or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either NginxConfigurationResponse or the
+         result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.nginx.models.NginxConfigurationResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -439,7 +392,7 @@ class ConfigurationsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.NginxConfiguration] = kwargs.pop("cls", None)
+        cls: ClsType[_models.NginxConfigurationResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -456,12 +409,13 @@ class ConfigurationsOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("NginxConfiguration", pipeline_response)
+            deserialized = self._deserialize("NginxConfigurationResponse", pipeline_response.http_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -474,22 +428,20 @@ class ConfigurationsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.NginxConfigurationResponse].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[_models.NginxConfigurationResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/configurations/{configurationName}"
-    }
-
-    async def _delete_initial(  # pylint: disable=inconsistent-return-statements
+    async def _delete_initial(
         self, resource_group_name: str, deployment_name: str, configuration_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -501,41 +453,42 @@ class ConfigurationsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             deployment_name=deployment_name,
             configuration_name=configuration_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _models.ResourceProviderDefaultErrorResponse, pipeline_response
-            )
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/configurations/{configurationName}"
-    }
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
@@ -553,14 +506,6 @@ class ConfigurationsOperations:
         :param configuration_name: The name of configuration, only 'default' is supported value due to
          the singleton of NGINX conf. Required.
         :type configuration_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -574,7 +519,7 @@ class ConfigurationsOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._delete_initial(  # type: ignore
+            raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 deployment_name=deployment_name,
                 configuration_name=configuration_name,
@@ -584,11 +529,12 @@ class ConfigurationsOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
@@ -597,17 +543,13 @@ class ConfigurationsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/configurations/{configurationName}"
-    }
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @overload
     async def analysis(
@@ -637,7 +579,6 @@ class ConfigurationsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalysisResult or the result of cls(response)
         :rtype: ~azure.mgmt.nginx.models.AnalysisResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -649,7 +590,7 @@ class ConfigurationsOperations:
         resource_group_name: str,
         deployment_name: str,
         configuration_name: str,
-        body: Optional[IO] = None,
+        body: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -667,11 +608,10 @@ class ConfigurationsOperations:
          the singleton of NGINX conf. Required.
         :type configuration_name: str
         :param body: The NGINX configuration to analyze. Default value is None.
-        :type body: IO
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalysisResult or the result of cls(response)
         :rtype: ~azure.mgmt.nginx.models.AnalysisResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -683,7 +623,7 @@ class ConfigurationsOperations:
         resource_group_name: str,
         deployment_name: str,
         configuration_name: str,
-        body: Optional[Union[_models.AnalysisCreate, IO]] = None,
+        body: Optional[Union[_models.AnalysisCreate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.AnalysisResult:
         """Analyze an NGINX configuration without applying it to the NGINXaaS deployment.
@@ -698,18 +638,14 @@ class ConfigurationsOperations:
         :param configuration_name: The name of configuration, only 'default' is supported value due to
          the singleton of NGINX conf. Required.
         :type configuration_name: str
-        :param body: The NGINX configuration to analyze. Is either a AnalysisCreate type or a IO type.
-         Default value is None.
-        :type body: ~azure.mgmt.nginx.models.AnalysisCreate or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+        :param body: The NGINX configuration to analyze. Is either a AnalysisCreate type or a IO[bytes]
+         type. Default value is None.
+        :type body: ~azure.mgmt.nginx.models.AnalysisCreate or IO[bytes]
         :return: AnalysisResult or the result of cls(response)
         :rtype: ~azure.mgmt.nginx.models.AnalysisResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -735,7 +671,7 @@ class ConfigurationsOperations:
             else:
                 _json = None
 
-        request = build_analysis_request(
+        _request = build_analysis_request(
             resource_group_name=resource_group_name,
             deployment_name=deployment_name,
             configuration_name=configuration_name,
@@ -744,34 +680,26 @@ class ConfigurationsOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.analysis.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _models.ResourceProviderDefaultErrorResponse, pipeline_response
-            )
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("AnalysisResult", pipeline_response)
+        deserialized = self._deserialize("AnalysisResult", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    analysis.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/configurations/{configurationName}/analyze"
-    }
+        return deserialized  # type: ignore
