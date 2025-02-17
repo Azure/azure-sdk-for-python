@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -37,7 +37,7 @@ from .._vendor import ApplicationClientMixinABC
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -865,7 +865,7 @@ class ApplicationClientOperationsMixin(ApplicationClientMixinABC):
         )
         cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -958,7 +958,7 @@ class ApplicationsOperations:
         :rtype: ~azure.mgmt.resource.managedapplications.v2019_07_01.models.Application
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1002,7 +1002,7 @@ class ApplicationsOperations:
         return deserialized  # type: ignore
 
     def _delete_initial(self, resource_group_name: str, application_name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1110,7 +1110,7 @@ class ApplicationsOperations:
         parameters: Union[_models.Application, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1383,7 +1383,7 @@ class ApplicationsOperations:
         :rtype: ~azure.mgmt.resource.managedapplications.v2019_07_01.models.Application or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1461,7 +1461,7 @@ class ApplicationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-07-01"))
         cls: ClsType[_models.ApplicationListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1538,7 +1538,7 @@ class ApplicationsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-07-01"))
         cls: ClsType[_models.ApplicationListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1612,7 +1612,7 @@ class ApplicationsOperations:
         :rtype: ~azure.mgmt.resource.managedapplications.v2019_07_01.models.Application
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1654,7 +1654,7 @@ class ApplicationsOperations:
         return deserialized  # type: ignore
 
     def _delete_by_id_initial(self, application_id: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1755,7 +1755,7 @@ class ApplicationsOperations:
     def _create_or_update_by_id_initial(
         self, application_id: str, parameters: Union[_models.Application, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2007,7 +2007,7 @@ class ApplicationsOperations:
         :rtype: ~azure.mgmt.resource.managedapplications.v2019_07_01.models.Application
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2066,7 +2066,7 @@ class ApplicationsOperations:
     def _refresh_permissions_initial(
         self, resource_group_name: str, application_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2205,7 +2205,7 @@ class ApplicationDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.managedapplications.v2019_07_01.models.ApplicationDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2251,7 +2251,7 @@ class ApplicationDefinitionsOperations:
     def _delete_initial(
         self, resource_group_name: str, application_definition_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2362,7 +2362,7 @@ class ApplicationDefinitionsOperations:
         parameters: Union[_models.ApplicationDefinition, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2432,6 +2432,7 @@ class ApplicationDefinitionsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.ApplicationDefinition]:
+        # pylint: disable=line-too-long
         """Creates a new managed application definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2463,6 +2464,7 @@ class ApplicationDefinitionsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.ApplicationDefinition]:
+        # pylint: disable=line-too-long
         """Creates a new managed application definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2491,6 +2493,7 @@ class ApplicationDefinitionsOperations:
         parameters: Union[_models.ApplicationDefinition, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ApplicationDefinition]:
+        # pylint: disable=line-too-long
         """Creates a new managed application definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2576,7 +2579,7 @@ class ApplicationDefinitionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-07-01"))
         cls: ClsType[_models.ApplicationDefinitionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2653,7 +2656,7 @@ class ApplicationDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.managedapplications.v2019_07_01.models.ApplicationDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2699,7 +2702,7 @@ class ApplicationDefinitionsOperations:
     def _delete_by_id_initial(
         self, resource_group_name: str, application_definition_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2809,7 +2812,7 @@ class ApplicationDefinitionsOperations:
         parameters: Union[_models.ApplicationDefinition, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2879,6 +2882,7 @@ class ApplicationDefinitionsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.ApplicationDefinition]:
+        # pylint: disable=line-too-long
         """Creates a new managed application definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2910,6 +2914,7 @@ class ApplicationDefinitionsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.ApplicationDefinition]:
+        # pylint: disable=line-too-long
         """Creates a new managed application definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2938,6 +2943,7 @@ class ApplicationDefinitionsOperations:
         parameters: Union[_models.ApplicationDefinition, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ApplicationDefinition]:
+        # pylint: disable=line-too-long
         """Creates a new managed application definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3036,7 +3042,7 @@ class JitRequestsOperations:
         :rtype: ~azure.mgmt.resource.managedapplications.v2019_07_01.models.JitRequestDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3086,7 +3092,7 @@ class JitRequestsOperations:
         parameters: Union[_models.JitRequestDefinition, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3355,7 +3361,7 @@ class JitRequestsOperations:
         :rtype: ~azure.mgmt.resource.managedapplications.v2019_07_01.models.JitRequestDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3425,7 +3431,7 @@ class JitRequestsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3473,7 +3479,7 @@ class JitRequestsOperations:
          ~azure.mgmt.resource.managedapplications.v2019_07_01.models.JitRequestDefinitionListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3526,7 +3532,7 @@ class JitRequestsOperations:
          ~azure.mgmt.resource.managedapplications.v2019_07_01.models.JitRequestDefinitionListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

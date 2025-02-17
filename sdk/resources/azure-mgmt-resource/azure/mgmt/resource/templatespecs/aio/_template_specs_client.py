@@ -94,7 +94,7 @@ class TemplateSpecsClient(MultiApiClientMixin, _SDKClient):
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
         super(TemplateSpecsClient, self).__init__(
             api_version=api_version,
             profile=profile

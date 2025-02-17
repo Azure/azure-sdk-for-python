@@ -21,11 +21,10 @@ from ._configuration import ManagementLinkClientConfiguration
 from .operations import Operations, ResourceLinksOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class ManagementLinkClient:  # pylint: disable=client-accepts-api-version-keyword
+class ManagementLinkClient:
     """Azure resources can be linked together to form logical relationships. You can establish links
     between resources belonging to different resource groups. However, all the linked resources
     must belong to the same subscription. Each resource can be linked to 50 other resources. If any

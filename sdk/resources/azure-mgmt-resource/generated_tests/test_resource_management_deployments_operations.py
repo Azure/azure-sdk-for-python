@@ -20,7 +20,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete_at_scope(self, resource_group):
+    def test_deployments_begin_delete_at_scope(self, resource_group):
         response = self.client.deployments.begin_delete_at_scope(
             scope="str",
             deployment_name="str",
@@ -32,7 +32,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_check_existence_at_scope(self, resource_group):
+    def test_deployments_check_existence_at_scope(self, resource_group):
         response = self.client.deployments.check_existence_at_scope(
             scope="str",
             deployment_name="str",
@@ -44,7 +44,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update_at_scope(self, resource_group):
+    def test_deployments_begin_create_or_update_at_scope(self, resource_group):
         response = self.client.deployments.begin_create_or_update_at_scope(
             scope="str",
             deployment_name="str",
@@ -81,7 +81,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_at_scope(self, resource_group):
+    def test_deployments_get_at_scope(self, resource_group):
         response = self.client.deployments.get_at_scope(
             scope="str",
             deployment_name="str",
@@ -93,7 +93,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cancel_at_scope(self, resource_group):
+    def test_deployments_cancel_at_scope(self, resource_group):
         response = self.client.deployments.cancel_at_scope(
             scope="str",
             deployment_name="str",
@@ -105,7 +105,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_validate_at_scope(self, resource_group):
+    def test_deployments_begin_validate_at_scope(self, resource_group):
         response = self.client.deployments.begin_validate_at_scope(
             scope="str",
             deployment_name="str",
@@ -142,7 +142,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_export_template_at_scope(self, resource_group):
+    def test_deployments_export_template_at_scope(self, resource_group):
         response = self.client.deployments.export_template_at_scope(
             scope="str",
             deployment_name="str",
@@ -154,7 +154,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_at_scope(self, resource_group):
+    def test_deployments_list_at_scope(self, resource_group):
         response = self.client.deployments.list_at_scope(
             scope="str",
             api_version="2022-09-01",
@@ -165,7 +165,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete_at_tenant_scope(self, resource_group):
+    def test_deployments_begin_delete_at_tenant_scope(self, resource_group):
         response = self.client.deployments.begin_delete_at_tenant_scope(
             deployment_name="str",
             api_version="2022-09-01",
@@ -176,7 +176,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_check_existence_at_tenant_scope(self, resource_group):
+    def test_deployments_check_existence_at_tenant_scope(self, resource_group):
         response = self.client.deployments.check_existence_at_tenant_scope(
             deployment_name="str",
             api_version="2022-09-01",
@@ -187,7 +187,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update_at_tenant_scope(self, resource_group):
+    def test_deployments_begin_create_or_update_at_tenant_scope(self, resource_group):
         response = self.client.deployments.begin_create_or_update_at_tenant_scope(
             deployment_name="str",
             parameters={
@@ -223,7 +223,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_at_tenant_scope(self, resource_group):
+    def test_deployments_get_at_tenant_scope(self, resource_group):
         response = self.client.deployments.get_at_tenant_scope(
             deployment_name="str",
             api_version="2022-09-01",
@@ -234,7 +234,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cancel_at_tenant_scope(self, resource_group):
+    def test_deployments_cancel_at_tenant_scope(self, resource_group):
         response = self.client.deployments.cancel_at_tenant_scope(
             deployment_name="str",
             api_version="2022-09-01",
@@ -245,7 +245,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_validate_at_tenant_scope(self, resource_group):
+    def test_deployments_begin_validate_at_tenant_scope(self, resource_group):
         response = self.client.deployments.begin_validate_at_tenant_scope(
             deployment_name="str",
             parameters={
@@ -281,7 +281,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_what_if_at_tenant_scope(self, resource_group):
+    def test_deployments_begin_what_if_at_tenant_scope(self, resource_group):
         response = self.client.deployments.begin_what_if_at_tenant_scope(
             deployment_name="str",
             parameters={
@@ -317,7 +317,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_export_template_at_tenant_scope(self, resource_group):
+    def test_deployments_export_template_at_tenant_scope(self, resource_group):
         response = self.client.deployments.export_template_at_tenant_scope(
             deployment_name="str",
             api_version="2022-09-01",
@@ -328,7 +328,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_at_tenant_scope(self, resource_group):
+    def test_deployments_list_at_tenant_scope(self, resource_group):
         response = self.client.deployments.list_at_tenant_scope(
             api_version="2022-09-01",
         )
@@ -338,7 +338,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete_at_management_group_scope(self, resource_group):
+    def test_deployments_begin_delete_at_management_group_scope(self, resource_group):
         response = self.client.deployments.begin_delete_at_management_group_scope(
             group_id="str",
             deployment_name="str",
@@ -350,7 +350,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_check_existence_at_management_group_scope(self, resource_group):
+    def test_deployments_check_existence_at_management_group_scope(self, resource_group):
         response = self.client.deployments.check_existence_at_management_group_scope(
             group_id="str",
             deployment_name="str",
@@ -362,7 +362,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update_at_management_group_scope(self, resource_group):
+    def test_deployments_begin_create_or_update_at_management_group_scope(self, resource_group):
         response = self.client.deployments.begin_create_or_update_at_management_group_scope(
             group_id="str",
             deployment_name="str",
@@ -399,7 +399,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_at_management_group_scope(self, resource_group):
+    def test_deployments_get_at_management_group_scope(self, resource_group):
         response = self.client.deployments.get_at_management_group_scope(
             group_id="str",
             deployment_name="str",
@@ -411,7 +411,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cancel_at_management_group_scope(self, resource_group):
+    def test_deployments_cancel_at_management_group_scope(self, resource_group):
         response = self.client.deployments.cancel_at_management_group_scope(
             group_id="str",
             deployment_name="str",
@@ -423,7 +423,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_validate_at_management_group_scope(self, resource_group):
+    def test_deployments_begin_validate_at_management_group_scope(self, resource_group):
         response = self.client.deployments.begin_validate_at_management_group_scope(
             group_id="str",
             deployment_name="str",
@@ -460,7 +460,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_what_if_at_management_group_scope(self, resource_group):
+    def test_deployments_begin_what_if_at_management_group_scope(self, resource_group):
         response = self.client.deployments.begin_what_if_at_management_group_scope(
             group_id="str",
             deployment_name="str",
@@ -497,7 +497,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_export_template_at_management_group_scope(self, resource_group):
+    def test_deployments_export_template_at_management_group_scope(self, resource_group):
         response = self.client.deployments.export_template_at_management_group_scope(
             group_id="str",
             deployment_name="str",
@@ -509,7 +509,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_at_management_group_scope(self, resource_group):
+    def test_deployments_list_at_management_group_scope(self, resource_group):
         response = self.client.deployments.list_at_management_group_scope(
             group_id="str",
             api_version="2022-09-01",
@@ -520,7 +520,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete_at_subscription_scope(self, resource_group):
+    def test_deployments_begin_delete_at_subscription_scope(self, resource_group):
         response = self.client.deployments.begin_delete_at_subscription_scope(
             deployment_name="str",
             api_version="2022-09-01",
@@ -531,7 +531,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_check_existence_at_subscription_scope(self, resource_group):
+    def test_deployments_check_existence_at_subscription_scope(self, resource_group):
         response = self.client.deployments.check_existence_at_subscription_scope(
             deployment_name="str",
             api_version="2022-09-01",
@@ -542,7 +542,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update_at_subscription_scope(self, resource_group):
+    def test_deployments_begin_create_or_update_at_subscription_scope(self, resource_group):
         response = self.client.deployments.begin_create_or_update_at_subscription_scope(
             deployment_name="str",
             parameters={
@@ -578,7 +578,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_at_subscription_scope(self, resource_group):
+    def test_deployments_get_at_subscription_scope(self, resource_group):
         response = self.client.deployments.get_at_subscription_scope(
             deployment_name="str",
             api_version="2022-09-01",
@@ -589,7 +589,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cancel_at_subscription_scope(self, resource_group):
+    def test_deployments_cancel_at_subscription_scope(self, resource_group):
         response = self.client.deployments.cancel_at_subscription_scope(
             deployment_name="str",
             api_version="2022-09-01",
@@ -600,7 +600,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_validate_at_subscription_scope(self, resource_group):
+    def test_deployments_begin_validate_at_subscription_scope(self, resource_group):
         response = self.client.deployments.begin_validate_at_subscription_scope(
             deployment_name="str",
             parameters={
@@ -636,7 +636,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_what_if_at_subscription_scope(self, resource_group):
+    def test_deployments_begin_what_if_at_subscription_scope(self, resource_group):
         response = self.client.deployments.begin_what_if_at_subscription_scope(
             deployment_name="str",
             parameters={
@@ -672,7 +672,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_export_template_at_subscription_scope(self, resource_group):
+    def test_deployments_export_template_at_subscription_scope(self, resource_group):
         response = self.client.deployments.export_template_at_subscription_scope(
             deployment_name="str",
             api_version="2022-09-01",
@@ -683,7 +683,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_at_subscription_scope(self, resource_group):
+    def test_deployments_list_at_subscription_scope(self, resource_group):
         response = self.client.deployments.list_at_subscription_scope(
             api_version="2022-09-01",
         )
@@ -693,7 +693,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_deployments_begin_delete(self, resource_group):
         response = self.client.deployments.begin_delete(
             resource_group_name=resource_group.name,
             deployment_name="str",
@@ -705,7 +705,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_check_existence(self, resource_group):
+    def test_deployments_check_existence(self, resource_group):
         response = self.client.deployments.check_existence(
             resource_group_name=resource_group.name,
             deployment_name="str",
@@ -717,7 +717,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_deployments_begin_create_or_update(self, resource_group):
         response = self.client.deployments.begin_create_or_update(
             resource_group_name=resource_group.name,
             deployment_name="str",
@@ -754,7 +754,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_deployments_get(self, resource_group):
         response = self.client.deployments.get(
             resource_group_name=resource_group.name,
             deployment_name="str",
@@ -766,7 +766,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cancel(self, resource_group):
+    def test_deployments_cancel(self, resource_group):
         response = self.client.deployments.cancel(
             resource_group_name=resource_group.name,
             deployment_name="str",
@@ -778,7 +778,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_validate(self, resource_group):
+    def test_deployments_begin_validate(self, resource_group):
         response = self.client.deployments.begin_validate(
             resource_group_name=resource_group.name,
             deployment_name="str",
@@ -815,7 +815,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_what_if(self, resource_group):
+    def test_deployments_begin_what_if(self, resource_group):
         response = self.client.deployments.begin_what_if(
             resource_group_name=resource_group.name,
             deployment_name="str",
@@ -852,7 +852,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_export_template(self, resource_group):
+    def test_deployments_export_template(self, resource_group):
         response = self.client.deployments.export_template(
             resource_group_name=resource_group.name,
             deployment_name="str",
@@ -864,7 +864,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_deployments_list_by_resource_group(self, resource_group):
         response = self.client.deployments.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2022-09-01",
@@ -875,7 +875,7 @@ class TestResourceManagementDeploymentsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_calculate_template_hash(self, resource_group):
+    def test_deployments_calculate_template_hash(self, resource_group):
         response = self.client.deployments.calculate_template_hash(
             template={},
             api_version="2022-09-01",

@@ -1,10 +1,10 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 # covered ops:
 #   operations: 1/1
@@ -17,19 +17,18 @@ import azure.mgmt.resource
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 import pytest
 
+
 @pytest.mark.live_test_only
 class TestMgmtResourceSubscriptions(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.subscriptions_client = self.create_mgmt_client(
-            azure.mgmt.resource.SubscriptionClient
-        )
+        self.subscriptions_client = self.create_mgmt_client(azure.mgmt.resource.SubscriptionClient)
 
     @recorded_by_proxy
     def test_subscriptions(self):
         subs = list(self.subscriptions_client.subscriptions.list())
         assert len(subs) >= 0
-        
+
         # [ZIM] temporarily disabled
         # assert all(isinstance(v, azure.mgmt.resource.subscriptions.models.Subscription) for v in subs)
 
@@ -47,7 +46,7 @@ class TestMgmtResourceSubscriptions(AzureMgmtRecordedTestCase):
     def test_tenants(self):
         tenants = list(self.subscriptions_client.tenants.list())
         assert len(tenants) >= 0
-        
+
         # [ZIM] temporarily disabled
         # assert all(isinstance(v, azure.mgmt.resource.subscriptions.models.TenantIdDescription) for v in tenants)
 
@@ -56,6 +55,6 @@ class TestMgmtResourceSubscriptions(AzureMgmtRecordedTestCase):
         self.subscriptions_client.operations.list()
 
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

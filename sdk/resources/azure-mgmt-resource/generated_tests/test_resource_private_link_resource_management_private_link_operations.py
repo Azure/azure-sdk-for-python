@@ -20,7 +20,7 @@ class TestResourcePrivateLinkResourceManagementPrivateLinkOperations(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_put(self, resource_group):
+    def test_resource_management_private_link_put(self, resource_group):
         response = self.client.resource_management_private_link.put(
             resource_group_name=resource_group.name,
             rmpl_name="str",
@@ -33,7 +33,7 @@ class TestResourcePrivateLinkResourceManagementPrivateLinkOperations(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_resource_management_private_link_get(self, resource_group):
         response = self.client.resource_management_private_link.get(
             resource_group_name=resource_group.name,
             rmpl_name="str",
@@ -45,7 +45,7 @@ class TestResourcePrivateLinkResourceManagementPrivateLinkOperations(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_resource_management_private_link_delete(self, resource_group):
         response = self.client.resource_management_private_link.delete(
             resource_group_name=resource_group.name,
             rmpl_name="str",
@@ -57,7 +57,7 @@ class TestResourcePrivateLinkResourceManagementPrivateLinkOperations(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_resource_management_private_link_list(self, resource_group):
         response = self.client.resource_management_private_link.list(
             api_version="2020-05-01",
         )
@@ -67,7 +67,7 @@ class TestResourcePrivateLinkResourceManagementPrivateLinkOperations(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_resource_management_private_link_list_by_resource_group(self, resource_group):
         response = self.client.resource_management_private_link.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2020-05-01",

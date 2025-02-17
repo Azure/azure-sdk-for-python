@@ -21,7 +21,7 @@ class TestResourceManagementTagsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete_value(self, resource_group):
+    async def test_tags_delete_value(self, resource_group):
         response = await self.client.tags.delete_value(
             tag_name="str",
             tag_value="str",
@@ -33,7 +33,7 @@ class TestResourceManagementTagsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update_value(self, resource_group):
+    async def test_tags_create_or_update_value(self, resource_group):
         response = await self.client.tags.create_or_update_value(
             tag_name="str",
             tag_value="str",
@@ -45,7 +45,7 @@ class TestResourceManagementTagsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_tags_create_or_update(self, resource_group):
         response = await self.client.tags.create_or_update(
             tag_name="str",
             api_version="2022-09-01",
@@ -56,7 +56,7 @@ class TestResourceManagementTagsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_tags_delete(self, resource_group):
         response = await self.client.tags.delete(
             tag_name="str",
             api_version="2022-09-01",
@@ -67,7 +67,7 @@ class TestResourceManagementTagsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_tags_list(self, resource_group):
         response = self.client.tags.list(
             api_version="2022-09-01",
         )
@@ -77,7 +77,7 @@ class TestResourceManagementTagsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update_at_scope(self, resource_group):
+    async def test_tags_begin_create_or_update_at_scope(self, resource_group):
         response = await (
             await self.client.tags.begin_create_or_update_at_scope(
                 scope="str",
@@ -91,7 +91,7 @@ class TestResourceManagementTagsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update_at_scope(self, resource_group):
+    async def test_tags_begin_update_at_scope(self, resource_group):
         response = await (
             await self.client.tags.begin_update_at_scope(
                 scope="str",
@@ -105,7 +105,7 @@ class TestResourceManagementTagsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_at_scope(self, resource_group):
+    async def test_tags_get_at_scope(self, resource_group):
         response = await self.client.tags.get_at_scope(
             scope="str",
             api_version="2022-09-01",
@@ -116,7 +116,7 @@ class TestResourceManagementTagsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete_at_scope(self, resource_group):
+    async def test_tags_begin_delete_at_scope(self, resource_group):
         response = await (
             await self.client.tags.begin_delete_at_scope(
                 scope="str",

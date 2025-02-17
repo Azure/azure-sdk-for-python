@@ -26,11 +26,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class ApplicationClient(ApplicationClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class ApplicationClient(ApplicationClientOperationsMixin):
     """ARM applications.
 
     :ivar applications: ApplicationsOperations operations

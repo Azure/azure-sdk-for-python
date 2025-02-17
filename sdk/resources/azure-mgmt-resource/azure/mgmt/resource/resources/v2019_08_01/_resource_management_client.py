@@ -29,11 +29,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class ResourceManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class ResourceManagementClient:  # pylint: disable=too-many-instance-attributes
     """Provides operations for working with resources and resource groups.
 
     :ivar operations: Operations operations
