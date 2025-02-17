@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource.databoundaries.aio import DataBoundaryMgmtClient
+from azure.mgmt.resource.policy.aio import PolicyClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,26 +15,22 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.live_test_only
-class TestDataBoundaryMgmtDataBoundariesOperationsAsync(AzureMgmtRecordedTestCase):
+class TestPolicyPolicyAssignmentsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DataBoundaryMgmtClient, is_async=True)
-
-    @pytest.mark.skip(reason="can not pass")
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_put(self, resource_group):
-        response = await self.client.data_boundaries.put(
-            default="default",
-            data_boundary_definition={"properties": {"dataBoundary": "EU"}},
-        )
-
-        assert response
+        self.client = self.create_mgmt_client(PolicyClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_tenant(self, resource_group):
-        response = await self.client.data_boundaries.get_tenant(
-            default="default",
+    async def test_policy_assignments_list_for_resource_group(self, resource_group):
+        response = self.client.policy_assignments.list_for_resource_group(
+            resource_group_name=resource_group.name,
         )
+        result = [r async for r in response]
+        assert result
 
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_policy_assignments_list(self, resource_group):
+        response = self.client.policy_assignments.list()
+        result = [r async for r in response]
         assert response

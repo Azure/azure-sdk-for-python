@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource.databoundaries import DataBoundaryMgmtClient
+from azure.mgmt.resource import SubscriptionClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,26 +14,13 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.live_test_only
-class TestDataBoundaryMgmtDataBoundariesOperations(AzureMgmtRecordedTestCase):
+class TestSubscriptionSubscriptionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DataBoundaryMgmtClient)
-
-    @pytest.mark.skip(reason="can not pass")
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_put(self, resource_group):
-        response = self.client.data_boundaries.put(
-            default="default",
-            data_boundary_definition={"properties": {"dataBoundary": "EU"}},
-        )
-
-        assert response
+        self.client = self.create_mgmt_client(SubscriptionClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_tenant(self, resource_group):
-        response = self.client.data_boundaries.get_tenant(
-            default="default",
-        )
-
+    def test_subscriptions_list(self, resource_group):
+        response = self.client.subscriptions.list()
+        result = [r for r in response]
         assert response

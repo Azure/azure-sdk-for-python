@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource.databoundaries.aio import DataBoundaryMgmtClient
+from azure.mgmt.resource.resources.aio import ResourceManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,26 +15,22 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.live_test_only
-class TestDataBoundaryMgmtDataBoundariesOperationsAsync(AzureMgmtRecordedTestCase):
+class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DataBoundaryMgmtClient, is_async=True)
-
-    @pytest.mark.skip(reason="can not pass")
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_put(self, resource_group):
-        response = await self.client.data_boundaries.put(
-            default="default",
-            data_boundary_definition={"properties": {"dataBoundary": "EU"}},
-        )
-
-        assert response
+        self.client = self.create_mgmt_client(ResourceManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_tenant(self, resource_group):
-        response = await self.client.data_boundaries.get_tenant(
-            default="default",
+    async def test_resources_list_by_resource_group(self, resource_group):
+        response = self.client.resources.list_by_resource_group(
+            resource_group_name=resource_group.name,
         )
+        result = [r async for r in response]
+        assert result == []
 
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_resources_list(self, resource_group):
+        response = self.client.resources.list()
+        result = [r async for r in response]
         assert response
