@@ -1,0 +1,47 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "api-version": "2025-01-01-preview",
+    "$skipToken": "string",
+    "tags": "string",
+    "listViewType": "ArchivedOnly"
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "value": [
+          {
+            "id": "string",
+            "name": "string",
+            "type": "string",
+            "properties": {
+              "description": "string",
+              "tags": {
+                "string": "string"
+              },
+              "properties": {
+                "string": "string"
+              },
+              "isArchived": false,
+              "latestVersion": "string",
+              "nextVersion": "string",
+              "provisioningState": "Canceled"
+            },
+            "systemData": {
+              "createdAt": "2020-01-01T12:34:56.999+00:46",
+              "createdBy": "string",
+              "createdByType": "Application",
+              "lastModifiedAt": "2020-01-01T12:34:56.999+00:46",
+              "lastModifiedBy": "string",
+              "lastModifiedByType": "User"
+            }
+          }
+        ],
+        "nextLink": "string"
+      }
+    }
+  }
+}

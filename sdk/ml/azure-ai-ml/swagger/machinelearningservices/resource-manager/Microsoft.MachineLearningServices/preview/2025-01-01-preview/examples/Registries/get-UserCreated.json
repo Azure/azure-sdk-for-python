@@ -1,0 +1,100 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "registryName": "string",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "tags": {},
+        "location": "string",
+        "kind": "string",
+        "identity": {
+          "type": "UserAssigned",
+          "principalId": "00000000-1111-2222-3333-444444444444",
+          "tenantId": "00000000-1111-2222-3333-444444444444",
+          "userAssignedIdentities": {
+            "string": {
+              "principalId": "00000000-1111-2222-3333-444444444444",
+              "clientId": "00000000-1111-2222-3333-444444444444"
+            }
+          }
+        },
+        "sku": {
+          "name": "string",
+          "tier": "Free",
+          "size": "string",
+          "family": "string",
+          "capacity": 1
+        },
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "regionDetails": [
+            {
+              "location": "string",
+              "storageAccountDetails": [
+                {
+                  "userCreatedStorageAccount": {
+                    "armResourceId": {
+                      "resourceId": "string"
+                    }
+                  }
+                }
+              ],
+              "acrDetails": [
+                {
+                  "userCreatedAcrAccount": {
+                    "armResourceId": {
+                      "resourceId": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "intellectualPropertyPublisher": "string",
+          "publicNetworkAccess": "string",
+          "discoveryUrl": "string",
+          "managedResourceGroup": {
+            "resourceId": "string"
+          },
+          "mlFlowRegistryUri": "string",
+          "registryPrivateEndpointConnections": [
+            {
+              "id": "string",
+              "location": "string",
+              "properties": {
+                "provisioningState": "string",
+                "privateEndpoint": {
+                  "id": "string",
+                  "subnetArmId": "string"
+                },
+                "registryPrivateLinkServiceConnectionState": {
+                  "status": "Approved",
+                  "description": "string",
+                  "actionsRequired": "string"
+                },
+                "groupIds": [
+                  "string"
+                ]
+              }
+            }
+          ]
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999+00:45",
+          "createdBy": "string",
+          "createdByType": "User",
+          "lastModifiedAt": "2020-01-01T12:34:56.999+00:45",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "User"
+        }
+      }
+    }
+  }
+}

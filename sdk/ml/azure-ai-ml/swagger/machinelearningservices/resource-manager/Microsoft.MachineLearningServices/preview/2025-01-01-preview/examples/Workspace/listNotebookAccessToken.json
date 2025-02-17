@@ -1,0 +1,20 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "workspace-1234",
+    "workspaceName": "testworkspace",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "notebookResourceId": "94350843095843059",
+        "hostName": "Host product name",
+        "publicDns": "resource.notebooks.azure.net",
+        "tokenType": "Bearer",
+        "expiresIn": 28800.0,
+        "scope": "aznb_identity"
+      }
+    }
+  }
+}
