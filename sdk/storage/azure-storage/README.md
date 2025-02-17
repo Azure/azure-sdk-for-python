@@ -14,4 +14,4 @@ Here's a non-exhaustive list of common packages:
 - [azure-storage-file-datalake](https://pypi.org/project/azure-storage-file-datalake) : ADLS Gen2 client
 - [azure-storage-queue](https://pypi.org/project/azure-storage-queue): Queue storage client
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-storage%2FREADME.png)
+

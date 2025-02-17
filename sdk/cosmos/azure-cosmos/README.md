@@ -714,13 +714,16 @@ For vector index types of diskANN and quantizedFlat, there are additional option
 quantizationByteSize - the number of bytes used in product quantization of the vectors. A larger value may result in better recall for vector searches at the expense of latency. This applies to index types diskANN and quantizedFlat. The allowed range is between 1 and the minimum between 512 and the vector dimensions. The default value is 64.
 
 indexingSearchListSize - which represents the size of the candidate list of approximate neighbors stored while building the diskANN index as part of the optimization processes. This applies only to index type diskANN. The allowed range is between 25 and 500.
+
+vectorIndexShardKey - a list of strings containing the shard keys used for partitioning vector indexes. The maximum allowed size for this array is 1, meaning that there is only one allowed path. This applies to index types diskANN and quantizedFlat.
 ```python
 indexing_policy = {
         "automatic": True,
         "indexingMode": "consistent",
         "vectorIndexes": [
             {"path": "/vector1", "type": "quantizedFlat", "quantizationByteSize": 8},
-            {"path": "/vector2", "type": "diskANN", "indexingSearchListSize": 50}
+            {"path": "/vector2", "type": "diskANN", "indexingSearchListSize": 50},
+            {"path": "/vector3", "type": "diskANN", "vectorIndexShardKey": ["/country/city"]}
         ]
     }
 ```

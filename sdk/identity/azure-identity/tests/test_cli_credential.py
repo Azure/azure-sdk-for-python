@@ -85,7 +85,9 @@ def test_subscription(get_token_method):
     assert credential.subscription == subscription
 
     def fake_check_output(command_line, **_):
-        assert f'--subscription "{subscription}"' in command_line[-1]
+        assert "--subscription" in command_line
+        subscription_id_index = command_line.index("--subscription")
+        assert command_line[subscription_id_index + 1]
         return json.dumps(
             {
                 "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
@@ -293,8 +295,8 @@ def test_multitenant_authentication_class(get_token_method):
     second_token = first_token * 2
 
     def fake_check_output(command_line, **_):
-        match = re.search("--tenant (.*)", command_line[-1])
-        tenant = match.groups()[0] if match else default_tenant
+        tenant_index = command_line.index("--tenant") if "--tenant" in command_line else None
+        tenant = command_line[tenant_index + 1] if tenant_index is not None else default_tenant
         assert tenant in (default_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
         return json.dumps(
             {
@@ -326,8 +328,8 @@ def test_multitenant_authentication(get_token_method):
     second_token = first_token * 2
 
     def fake_check_output(command_line, **_):
-        match = re.search("--tenant (.*)", command_line[-1])
-        tenant = match.groups()[0] if match else default_tenant
+        tenant_index = command_line.index("--tenant") if "--tenant" in command_line else None
+        tenant = command_line[tenant_index + 1] if tenant_index is not None else default_tenant
         assert tenant in (default_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
         return json.dumps(
             {
@@ -368,8 +370,9 @@ def test_multitenant_authentication_not_allowed(get_token_method):
     expected_token = "***"
 
     def fake_check_output(command_line, **_):
-        match = re.search("--tenant (.*)", command_line[-1])
-        assert match is None or match[1] == expected_tenant
+        tenant_index = command_line.index("--tenant") if "--tenant" in command_line else None
+        tenant = command_line[tenant_index + 1] if tenant_index is not None else None
+        assert tenant is None or tenant == expected_tenant
         return json.dumps(
             {
                 "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),

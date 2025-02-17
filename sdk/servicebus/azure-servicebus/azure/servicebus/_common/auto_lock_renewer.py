@@ -200,7 +200,6 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
                     except AttributeError:
                         # Renewable is a message
                         receiver.renew_message_lock(renewable)  # type: ignore
-                time.sleep(self._sleep_time)
                 # enqueue a new task, keeping renewing the renewable
                 if self._renewable(renewable):
                     self._renew_tasks.put(
