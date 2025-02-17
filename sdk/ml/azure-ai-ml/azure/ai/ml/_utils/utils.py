@@ -790,7 +790,7 @@ def hash_dict(items: Dict[str, Any], keys_to_omit: Optional[Iterable[str]] = Non
     serialized_component_interface = json.dumps(items, sort_keys=True)
     object_hash = hashlib.sha256()
     object_hash.update(serialized_component_interface.encode("utf-8"))
-    return str(UUID(object_hash.hexdigest()))
+    return str(UUID(object_hash.hexdigest()[:32]))
 
 
 def convert_identity_dict(
