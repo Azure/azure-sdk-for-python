@@ -1,5 +1,12 @@
 # Release History
 
+## 1.0.0b3 (2025-02-24)
+
+### Features Added
+
+  - Model `OperationStatusResult` added property `resource_id`
+  - Method `Operation.__init__` has a new overload `def __init__(self: None, display: Optional[_models.OperationDisplay])`
+
 ## 1.0.0b2 (2024-12-16)
 
 ### Features Added
