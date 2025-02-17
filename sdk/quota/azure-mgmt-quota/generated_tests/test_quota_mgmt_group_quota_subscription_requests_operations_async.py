@@ -25,7 +25,7 @@ class TestQuotaMgmtGroupQuotaSubscriptionRequestsOperationsAsync(AzureMgmtRecord
         response = self.client.group_quota_subscription_requests.list(
             management_group_id="str",
             group_quota_name="str",
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestQuotaMgmtGroupQuotaSubscriptionRequestsOperationsAsync(AzureMgmtRecord
             management_group_id="str",
             group_quota_name="str",
             request_id_parameter="str",
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

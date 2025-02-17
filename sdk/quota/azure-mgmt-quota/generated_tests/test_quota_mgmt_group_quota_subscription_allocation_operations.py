@@ -26,7 +26,7 @@ class TestQuotaMgmtGroupQuotaSubscriptionAllocationOperations(AzureMgmtRecordedT
             group_quota_name="str",
             resource_provider_name="str",
             location="str",
-            api_version="2024-12-18-preview",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
