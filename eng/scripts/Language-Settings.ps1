@@ -62,8 +62,11 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
         $changedServices += $pathComponents[1]
       }
 
-      # handle any changes under sdk/<file>.<extension>
-      if ($pathComponents.Length -eq 2 -and $pathComponents[0] -eq "sdk") {
+      # handle any changes under sdk/<file>.<extension> as well as any
+      # changes to the root of the repository. Changes to the root of
+      # repository is the case where pathComponents.Lenght -eq 1
+      if (($pathComponents.Length -eq 2 -and $pathComponents[0] -eq "sdk") -or
+          ($pathComponents.Length -eq 1)) {
         $changedServices += "template"
       }
     }
