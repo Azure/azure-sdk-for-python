@@ -76,7 +76,7 @@
 
 ### Breaking Changes
 
-  - Parameter `max_surge` of method `AgentPoolUpgradeSettings` is now not required
+  - Parameter `max_surge` of method `AgentPoolUpgradeSettings` is now optional
 
 ## 2.0.0b1 (2024-11-21)
 
