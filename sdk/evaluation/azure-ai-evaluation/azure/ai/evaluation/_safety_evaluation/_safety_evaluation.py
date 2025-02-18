@@ -223,6 +223,7 @@ class _SafetyEvaluation:
                 max_conversation_turns=max_conversation_turns,
                 max_simulation_results=max_simulation_results,
                 conversation_turns=conversation_turns,
+                num_queries=max_simulation_results,
                 target=callback,
                 text=source_text if source_text else "",
             )
