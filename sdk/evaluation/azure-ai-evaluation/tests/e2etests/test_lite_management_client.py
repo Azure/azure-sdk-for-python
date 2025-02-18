@@ -68,9 +68,11 @@ class TestLiteAzureManagementClient(object):
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize("config_name", ["sas", "none", "private"])
-    def test_workspace_get_info(self, datastore_project_scopes: Mapping[str, Any], azure_cred: TokenCredential, config_name: str):
+    def test_workspace_get_info(
+        self, datastore_project_scopes: Mapping[str, Any], azure_cred: TokenCredential, config_name: str
+    ):
         project_scope = datastore_project_scopes[config_name]
-        
+
         client = LiteMLClient(
             subscription_id=project_scope["subscription_id"],
             resource_group=project_scope["resource_group_name"],
