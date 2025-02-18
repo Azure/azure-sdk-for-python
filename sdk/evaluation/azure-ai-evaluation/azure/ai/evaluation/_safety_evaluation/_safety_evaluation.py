@@ -313,6 +313,7 @@ class _SafetyEvaluation:
         :param scenario: The adversarial scenario to simulate.
         :type scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]
         '''
+        if len(evaluators) == 0: return AdversarialScenario.ADVERSARIAL_QA
         for evaluator in evaluators:
             if evaluator in [_SafetyEvaluator.CONTENT_SAFETY, _SafetyEvaluator.DIRECT_ATTACK]:
                 if num_turns == 1 and scenario: return scenario
