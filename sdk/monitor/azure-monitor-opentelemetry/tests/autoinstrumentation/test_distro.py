@@ -70,6 +70,7 @@ class TestDistro(TestCase):
                 # "OTEL_TRACES_SAMPLER": "custom_traces_sampler",
                 "OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED": "false",
                 "OTEL_EXPERIMENTAL_RESOURCE_DETECTORS": "custom_resource_detector",
+                "APPLICATIONINSIGHTS_PREVIEW_LIVE_METRICS_ENABLED": "TRUE",
             },
         )
 
