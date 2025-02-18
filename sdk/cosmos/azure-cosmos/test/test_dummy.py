@@ -14,12 +14,12 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 import test_config
 from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient, _retry_utility_async
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, AsyncHttpResponse
 import asyncio
 import sys
 from azure.core.pipeline.transport import AioHttpTransport
 from typing import Any, Callable
-import _fault_injection_transport
+from _fault_injection_transport import FaultInjectionTransport
 import os
 
 COLLECTION = "created_collection"
@@ -36,7 +36,8 @@ TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
 
 @pytest.fixture()
 def setup():
-    return 
+    return
+
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
@@ -87,7 +88,7 @@ class TestDummyAsync:
     def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport):
         client = CosmosClient(host, masterKey, consistency_level="Session",
                             connection_policy=connectionPolicy, transport=custom_transport,
-                            logger=logger)
+                            logger=logger, enable_diagnostics_logging=True)
         db: DatabaseProxy = client.get_database_client(TEST_DATABASE_ID)
         container: ContainerProxy = db.get_container_client(self.single_partition_container_name)
         return {"client": client, "db": db, "col": container}
@@ -99,26 +100,6 @@ class TestDummyAsync:
         except Exception as closeError:    
             logger.warning("Exception trying to close method client.")
 
-    def predicate_url_contains_id(self, r: HttpRequest, id: str):
-        logger.info("FaultPredicate for request {} {}".format(r.method, r.url));
-        return  id in r.url;   
-
-    def predicate_req_payload_contains_id(self, r: HttpRequest, id: str):
-        logger.info("FaultPredicate for request {} {} - request payload {}".format(
-            r.method, 
-            r.url,
-            "NONE" if r.body is None else r.body));
-        
-        if (r.body == None):
-            return False
-        
-        
-        return  '"id":"{}"'.format(id) in r.body;       
-
-    async def throw_after_delay(self, delayInMs: int, error: Exception):
-        await asyncio.sleep(delayInMs/1000.0)
-        raise error
-
     async def test_throws_injected_error(self, setup):
         idValue: str = str(uuid.uuid4())
         document_definition = {'id': idValue,
@@ -126,9 +107,9 @@ class TestDummyAsync:
                                'name': 'sample document',
                                'key': 'value'}
 
-        custom_transport =  _fault_injection_transport.FaulInjectionTransport(logger)
-        predicate : Callable[[HttpRequest], bool] = lambda r: self.predicate_req_payload_contains_id(r, idValue) 
-        custom_transport.addFault(predicate, lambda: self.throw_after_delay(
+        custom_transport =  FaultInjectionTransport(logger)
+        predicate : Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransport.predicate_req_for_document_with_id(r, idValue)
+        custom_transport.addFault(predicate, lambda: FaultInjectionTransport.throw_after_delay(
             500,
             CosmosHttpResponseError(
                 status_code=502,
@@ -148,7 +129,11 @@ class TestDummyAsync:
                 await cleanupOp
 
     async def test_succeeds_with_multiple_endpoints(self, setup):
-        custom_transport = _fault_injection_transport.FaulInjectionTransport(logger)
+        custom_transport = FaultInjectionTransport(logger)
+        predicate: Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransport.predicate_is_database_account_call(r)
+        transformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], AsyncHttpResponse] = lambda r, inner: FaultInjectionTransport.transform_pass_through(r, inner)
+        custom_transport.add_response_transformation(predicate, transformation)
+
         idValue: str = str(uuid.uuid4())
         document_definition = {'id': idValue,
                                'pk': idValue,

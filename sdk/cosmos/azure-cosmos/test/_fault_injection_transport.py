@@ -25,14 +25,13 @@
 import asyncio
 import aiohttp
 import logging
-import sys
 
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from collections.abc import MutableMapping
 from typing import Any, Callable
 
-class FaulInjectionTransport(AioHttpTransport):
+class FaultInjectionTransport(AioHttpTransport):
     def __init__(self, logger: logging.Logger, *, session: aiohttp.ClientSession | None = None, loop=None, session_owner: bool = True, **config):
         self.logger = logger
         self.faults = []
@@ -46,7 +45,7 @@ class FaulInjectionTransport(AioHttpTransport):
     def addRequestTransformation(self, predicate: Callable[[HttpRequest], bool], requestTransformation: Callable[[HttpRequest], asyncio.Task[HttpRequest]]):
         self.requestTransformations.append({"predicate": predicate, "apply": requestTransformation})
 
-    def addResponseTransformation(self, predicate: Callable[[HttpRequest], bool], responseTransformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], AsyncHttpResponse]):
+    def add_response_transformation(self, predicate: Callable[[HttpRequest], bool], responseTransformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], asyncio.Task[AsyncHttpResponse]]):
         self.responseTransformations.append({
             "predicate": predicate, 
             "apply": responseTransformation})    
@@ -59,7 +58,7 @@ class FaulInjectionTransport(AioHttpTransport):
         """
         return next((x for x in iterable if condition(x)), None)
 
-    async def send(self, request: HttpRequest, *, stream: bool = False, proxies: MutableMapping[str, str] | None = None, **config):
+    async def send(self, request: HttpRequest, *, stream: bool = False, proxies: MutableMapping[str, str] | None = None, **config) -> AsyncHttpResponse:
         # find the first fault Factory with matching predicate if any
         firstFaultFactory = self.firstItem(iter(self.faults), lambda f: f["predicate"](request))
         if (firstFaultFactory != None):
@@ -74,7 +73,7 @@ class FaulInjectionTransport(AioHttpTransport):
 
         firstResonseTransformation = self.firstItem(iter(self.responseTransformations), lambda f: f["predicate"](request))
         
-        getResponseTask = super().send(request, stream=stream, proxies=proxies, **config)
+        getResponseTask =  super().send(request, stream=stream, proxies=proxies, **config)
         
         if (firstResonseTransformation != None):
             self.logger.info(f"Invoking response transformation")
@@ -86,4 +85,35 @@ class FaulInjectionTransport(AioHttpTransport):
             response = await getResponseTask
             self.logger.info(f"Received response with status code {response.status_code}")
             return response
-    
+
+    @staticmethod
+    def predicate_url_contains_id(r: HttpRequest, id: str) -> bool:
+        return id in r.url
+
+    @staticmethod
+    def predicate_req_payload_contains_id(r: HttpRequest, id: str):
+        if r.body is None:
+            return False
+
+        return '"id":"{}"'.format(id) in r.body
+
+    @staticmethod
+    def predicate_req_for_document_with_id(r: HttpRequest, id: str) -> bool:
+        return (FaultInjectionTransport.predicate_url_contains_id(r, id)
+                or FaultInjectionTransport.predicate_req_payload_contains_id(r, id))
+
+    @staticmethod
+    def predicate_is_database_account_call(r: HttpRequest) -> bool:
+        return (r.headers.get('x-ms-thinclient-proxy-resource-type') == 'databaseaccount'
+                and r.headers.get('x-ms-thinclient-proxy-operation-type') == 'Read')
+
+    @staticmethod
+    async def throw_after_delay(delay_in_ms: int, error: Exception):
+        await asyncio.sleep(delay_in_ms / 1000.0)
+        raise error
+
+    @staticmethod
+    async def transform_pass_through(r: HttpRequest,
+                                     inner: Callable[[],asyncio.Task[AsyncHttpResponse]]) -> asyncio.Task[AsyncHttpResponse]:
+        await asyncio.sleep(1)
+        return await inner()
