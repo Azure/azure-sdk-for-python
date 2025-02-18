@@ -155,9 +155,12 @@ def _get_target_and_path_for_http_dependency(
     url: Optional[str] = "",  # Usually populated by _get_url_for_http_dependency()
 ) -> Tuple[Optional[str], str]:
     parsed_url = None
+    target = ""
     path = "/"
     default_port = _get_default_port_http(attributes)
     # Find path from url
+    if not url:
+        url = _get_url_for_http_dependency(attributes)
     try:
         parsed_url = urlparse(url)
         if parsed_url.path:
@@ -194,10 +197,11 @@ def _get_target_and_path_for_http_dependency(
         elif parsed_url:
             # Target from httpUrl
             if parsed_url.port and parsed_url.port == default_port:
-                target = parsed_url.hostname
-            else:
+                if parsed_url.hostname:
+                    target = parsed_url.hostname
+            elif parsed_url.netloc:
                 target = parsed_url.netloc
-        else:
+        if not target:
             # Get target from peer.* attributes that are NOT peer.service
             target = _get_target_for_dependency_from_peer(attributes)
     return (target, path)
