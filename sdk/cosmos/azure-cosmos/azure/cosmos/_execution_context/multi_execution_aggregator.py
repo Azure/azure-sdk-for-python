@@ -75,7 +75,8 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         self._sort_orders = partitioned_query_ex_info.get_order_by()
 
         if self._sort_orders:
-            self._document_producer_comparator = document_producer._OrderByDocumentProducerComparator(self._sort_orders)
+            self._document_producer_comparator = document_producer._OrderByDocumentProducerComparator(
+                self._sort_orders)
         else:
             self._document_producer_comparator = document_producer._PartitionKeyRangeDocumentProducerComparator()
 
@@ -86,7 +87,8 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         for partitionTargetRange in targetPartitionRanges:
             # create and add the child execution context for the target range
             targetPartitionQueryExecutionContextList.append(
-                self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
+                self._createTargetPartitionQueryExecutionContext(
+                    partitionTargetRange)
             )
 
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
@@ -134,7 +136,8 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
     def fetch_next_block(self):
 
-        raise NotImplementedError("You should use pipeline's fetch_next_block.")
+        raise NotImplementedError(
+            "You should use pipeline's fetch_next_block.")
 
     def _repair_document_producer(self):
         """Repairs the document producer context by using the re-initialized routing map provider in the client,
@@ -150,7 +153,8 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         for partitionTargetRange in targetPartitionRanges:
             # create and add the child execution context for the target range
             targetPartitionQueryExecutionContextList.append(
-                self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
+                self._createTargetPartitionQueryExecutionContext(
+                    partitionTargetRange)
             )
 
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
@@ -192,7 +196,8 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
         return self._routing_provider.get_overlapping_ranges(
-            self._resource_link, [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges]
+            self._resource_link, [routing_range.Range.ParseFromDict(
+                range_as_dict) for range_as_dict in query_ranges]
         )
 
     next = __next__  # Python 2 compatibility.

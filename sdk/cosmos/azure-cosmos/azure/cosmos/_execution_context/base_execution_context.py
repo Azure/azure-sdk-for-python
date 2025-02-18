@@ -23,9 +23,14 @@
 database service.
 """
 
+from typing import Optional, Mapping, Any, TYPE_CHECKING
 from collections import deque
 import copy
 from .. import _retry_utility, http_constants
+
+if TYPE_CHECKING:
+    # We can't import this at runtime because it's circular, so only import it for type checking
+    from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 
 # pylint: disable=protected-access
 
@@ -35,7 +40,10 @@ class _QueryExecutionContextBase(object):
     This is the abstract base execution context class.
     """
 
-    def __init__(self, client, options):
+    def __init__(self,
+                 # We have to use a string for this annotation because of the circular import problem above
+                 client: 'CosmosClientConnection',
+                 options: Optional[Mapping[str, Any]]):
         """
         :param CosmosClient client:
         :param dict options: The request options for the request.

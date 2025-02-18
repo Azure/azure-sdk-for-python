@@ -25,14 +25,22 @@ Cosmos database service.
 
 import json
 import os
+from typing import Optional, Union, Dict, List, Mapping, Any, Callable, Tuple, TYPE_CHECKING
+from requests.structures import CaseInsensitiveDict
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos._execution_context import endpoint_component, multi_execution_aggregator
 from azure.cosmos._execution_context import non_streaming_order_by_aggregator, hybrid_search_aggregator
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
+from azure.cosmos._execution_context.query_engine_execution_context import _QueryEngineExecutionContext
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
+from azure.cosmos.query_engine import QueryEngine
+
+if TYPE_CHECKING:
+    # We can't import this at runtime because it's circular, so only import it for type checking
+    from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 
 # pylint: disable=protected-access
 
@@ -75,16 +83,26 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     to _MultiExecutionContextAggregator
     """
 
-    def __init__(self, client, resource_link, query, options, fetch_function):
+    def __init__(self,
+                 # We have to use a string for this annotation because of the circular import problem above
+                 client: 'CosmosClientConnection',
+                 resource_link: str,
+                 query: Optional[Union[str, Dict[str, Any]]],
+                 options: Optional[Mapping[str, Any]] = {},
+                 fetch_function: Callable[[
+                     Mapping[str, Any]], Tuple[List[Dict[str, Any]], CaseInsensitiveDict]] = None,
+                 query_engine: Optional[QueryEngine] = None):
         """
         Constructor
         """
         super(_ProxyQueryExecutionContext, self).__init__(client, options)
 
-        self._execution_context = _DefaultQueryExecutionContext(client, options, fetch_function)
+        self._execution_context = _DefaultQueryExecutionContext(
+            client, options, fetch_function)
         self._resource_link = resource_link
         self._query = query
         self._fetch_function = fetch_function
+        self._query_engine = query_engine
 
     def __next__(self):
         """Returns the next query result.
@@ -99,9 +117,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         except CosmosHttpResponseError as e:
             if _is_partitioned_execution_info(e):
                 query_to_use = self._query if self._query is not None else "Select * from root r"
-                query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway
-                                                                      (query_to_use, self._resource_link))
-                self._execution_context = self._create_pipelined_execution_context(query_execution_info)
+                self._create_execution_context(query_to_use)
             else:
                 raise e
 
@@ -124,13 +140,31 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         except CosmosHttpResponseError as e:
             if _is_partitioned_execution_info(e) or _is_hybrid_search_query(self._query, e):
                 query_to_use = self._query if self._query is not None else "Select * from root r"
-                query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway
-                                                                      (query_to_use, self._resource_link))
-                self._execution_context = self._create_pipelined_execution_context(query_execution_info)
+                self._create_execution_context(query_to_use)
             else:
                 raise e
 
         return self._execution_context.fetch_next_block()
+
+    def _create_execution_context(self, query):
+        if self._query_engine is not None:
+            # Use the native query engine instead of the built-in pipelined execution context.
+            query_plan = self._client._GetQueryPlanThroughGateway(
+                query, self._resource_link)
+            # TODO: Right now, it's easiest to just JSON-serialize the partition key ranges.
+            # But this is slower because we fetch them, deserialize them, buffer all the pages of data, then reserialize the full list, only to be deserialized again in the native engine.
+            # In theory, we could find a way to aggregate this data better and avoid the double-deserialization.
+            pkranges = list(self._client._ReadPartitionKeyRanges(
+                collection_link=self._resource_link))
+            self._execution_context = _QueryEngineExecutionContext(
+                self._client, self._query_engine, query_plan, pkranges, self._query, self._resource_link, self._options)
+        else:
+            query_plan = self._client._GetQueryPlanThroughGateway(
+                query, self._resource_link)
+            query_execution_info = _PartitionedQueryExecutionInfo(
+                query_plan)
+            self._execution_context = self._create_pipelined_execution_context(
+                query_execution_info)
 
     def _create_pipelined_execution_context(self, query_execution_info):
         assert self._resource_link, "code bug, resource_link is required."
@@ -144,7 +178,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         # throw exception here for vector search query without limit filter or limit > max_limit
         if query_execution_info.get_non_streaming_order_by():
             total_item_buffer = (query_execution_info.get_top() or 0) or \
-                                ((query_execution_info.get_limit() or 0) + (query_execution_info.get_offset() or 0))
+                                ((query_execution_info.get_limit() or 0) +
+                                 (query_execution_info.get_offset() or 0))
             if total_item_buffer == 0:
                 raise ValueError("Executing a vector search query without TOP or LIMIT can consume many" +
                                  " RUs very fast and have long runtimes. Please ensure you are using one" +
@@ -159,7 +194,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                                         self._options,
                                                                                         query_execution_info)
         elif query_execution_info.has_hybrid_search_query_info():
-            hybrid_search_query_info = query_execution_info._query_execution_info['hybridSearchQueryInfo']
+            hybrid_search_query_info = query_execution_info._query_execution_info[
+                'hybridSearchQueryInfo']
             _verify_valid_hybrid_search_query(hybrid_search_query_info)
             execution_context_aggregator = \
                 hybrid_search_aggregator._HybridSearchContextAggregator(self._client,
@@ -195,36 +231,45 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
 
         self._execution_context = execution_context
 
-        self._endpoint = endpoint_component._QueryExecutionEndpointComponent(execution_context)
+        self._endpoint = endpoint_component._QueryExecutionEndpointComponent(
+            execution_context)
 
         order_by = query_execution_info.get_order_by()
         if query_execution_info.get_non_streaming_order_by():
-            self._endpoint = endpoint_component._QueryExecutionNonStreamingEndpointComponent(self._endpoint)
+            self._endpoint = endpoint_component._QueryExecutionNonStreamingEndpointComponent(
+                self._endpoint)
         elif order_by:
-            self._endpoint = endpoint_component._QueryExecutionOrderByEndpointComponent(self._endpoint)
+            self._endpoint = endpoint_component._QueryExecutionOrderByEndpointComponent(
+                self._endpoint)
 
         aggregates = query_execution_info.get_aggregates()
         if aggregates:
-            self._endpoint = endpoint_component._QueryExecutionAggregateEndpointComponent(self._endpoint, aggregates)
+            self._endpoint = endpoint_component._QueryExecutionAggregateEndpointComponent(
+                self._endpoint, aggregates)
 
         distinct_type = query_execution_info.get_distinct_type()
         if distinct_type != _DistinctType.NoneType:
             if distinct_type == _DistinctType.Ordered:
-                self._endpoint = endpoint_component._QueryExecutionDistinctOrderedEndpointComponent(self._endpoint)
+                self._endpoint = endpoint_component._QueryExecutionDistinctOrderedEndpointComponent(
+                    self._endpoint)
             else:
-                self._endpoint = endpoint_component._QueryExecutionDistinctUnorderedEndpointComponent(self._endpoint)
+                self._endpoint = endpoint_component._QueryExecutionDistinctUnorderedEndpointComponent(
+                    self._endpoint)
 
         offset = query_execution_info.get_offset()
         if offset is not None:
-            self._endpoint = endpoint_component._QueryExecutionOffsetEndpointComponent(self._endpoint, offset)
+            self._endpoint = endpoint_component._QueryExecutionOffsetEndpointComponent(
+                self._endpoint, offset)
 
         top = query_execution_info.get_top()
         if top is not None:
-            self._endpoint = endpoint_component._QueryExecutionTopEndpointComponent(self._endpoint, top)
+            self._endpoint = endpoint_component._QueryExecutionTopEndpointComponent(
+                self._endpoint, top)
 
         limit = query_execution_info.get_limit()
         if limit is not None:
-            self._endpoint = endpoint_component._QueryExecutionTopEndpointComponent(self._endpoint, limit)
+            self._endpoint = endpoint_component._QueryExecutionTopEndpointComponent(
+                self._endpoint, limit)
 
     def __next__(self):
         """Returns the next query result.

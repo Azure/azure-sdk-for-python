@@ -46,7 +46,8 @@ __all__ = ("CosmosClient",)
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 CredentialType = Union[
-    TokenCredential, CredentialDict, str, Mapping[str, Any], Iterable[Mapping[str, Any]]
+    TokenCredential, CredentialDict, str, Mapping[str,
+                                                  Any], Iterable[Mapping[str, Any]]
 ]
 
 
@@ -54,7 +55,8 @@ def _parse_connection_str(conn_str: str, credential: Optional[Any]) -> Dict[str,
     conn_str = conn_str.rstrip(";")
     conn_settings = dict([s.split("=", 1) for s in conn_str.split(";")])
     if 'AccountEndpoint' not in conn_settings:
-        raise ValueError("Connection string missing setting 'AccountEndpoint'.")
+        raise ValueError(
+            "Connection string missing setting 'AccountEndpoint'.")
     if not credential and 'AccountKey' not in conn_settings:
         raise ValueError("Connection string missing setting 'AccountKey'.")
     return conn_settings
@@ -89,16 +91,23 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
     if 'request_timeout' in kwargs:
         policy.RequestTimeout = kwargs.pop('request_timeout') / 1000.0
     else:
-        policy.RequestTimeout = kwargs.pop('connection_timeout', policy.RequestTimeout)
-    policy.ConnectionMode = kwargs.pop('connection_mode', policy.ConnectionMode)
-    policy.ProxyConfiguration = kwargs.pop('proxy_config', policy.ProxyConfiguration)
-    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
-    policy.PreferredLocations = kwargs.pop('preferred_locations', policy.PreferredLocations)
-    policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', policy.UseMultipleWriteLocations)
+        policy.RequestTimeout = kwargs.pop(
+            'connection_timeout', policy.RequestTimeout)
+    policy.ConnectionMode = kwargs.pop(
+        'connection_mode', policy.ConnectionMode)
+    policy.ProxyConfiguration = kwargs.pop(
+        'proxy_config', policy.ProxyConfiguration)
+    policy.EnableEndpointDiscovery = kwargs.pop(
+        'enable_endpoint_discovery', policy.EnableEndpointDiscovery)
+    policy.PreferredLocations = kwargs.pop(
+        'preferred_locations', policy.PreferredLocations)
+    policy.UseMultipleWriteLocations = kwargs.pop(
+        'multiple_write_locations', policy.UseMultipleWriteLocations)
 
     # SSL config
     verify = kwargs.pop('connection_verify', None)
-    policy.DisableSSLVerification = not bool(verify if verify is not None else True)
+    policy.DisableSSLVerification = not bool(
+        verify if verify is not None else True)
     ssl = kwargs.pop('ssl_config', policy.SSLConfiguration)
     if ssl:
         ssl.SSLCertFile = kwargs.pop('connection_cert', ssl.SSLCertFile)
@@ -138,7 +147,8 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
             retry_backoff_factor=kwargs.pop('retry_backoff_factor', 1),
         )
     policy.ConnectionRetryConfiguration = connection_retry
-    policy.ResponsePayloadOnWriteDisabled = kwargs.pop('no_response_on_write', False)
+    policy.ResponsePayloadOnWriteDisabled = kwargs.pop(
+        'no_response_on_write', False)
     return policy
 
 
@@ -184,6 +194,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         level (to log all requests) or at a single request level. Requests will be logged at INFO level.
     :keyword bool no_response_on_write: Indicates whether service should be instructed to skip sending 
         response payloads on rite operations for items.
+    :keyword query_engine.QueryEngine query_engine: An optional client query engine to use for executing queries.
 
     .. admonition:: Example:
 
@@ -223,7 +234,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     def from_connection_string(
         cls,
         conn_str: str,
-        credential: Optional[Union[TokenCredential, str, Dict[str, Any]]] = None,
+        credential: Optional[Union[TokenCredential,
+                                   str, Dict[str, Any]]] = None,
         consistency_level: Optional[str] = None,
         **kwargs
     ) -> 'CosmosClient':
@@ -304,8 +316,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        _set_throughput_options(offer=offer_throughput, request_options=request_options)
-        result = self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
+        _set_throughput_options(offer=offer_throughput,
+                                request_options=request_options)
+        result = self.client_connection.CreateDatabase(
+            database={"id": id}, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
@@ -419,7 +433,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             )
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
-        result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
+        result = self.client_connection.ReadDatabases(
+            options=feed_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return result
@@ -475,12 +490,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             # the headers were misleading)
             # This needs to change for "real" implementation
             result = self.client_connection.QueryDatabases(
-                query=query if parameters is None else {'query': query, 'parameters': parameters},
+                query=query if parameters is None else {
+                    'query': query, 'parameters': parameters},
                 options=feed_options,
                 **kwargs
             )
         else:
-            result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
+            result = self.client_connection.ReadDatabases(
+                options=feed_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return result
@@ -529,7 +546,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         database_link = _get_database_link(database)
-        self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
+        self.client_connection.DeleteDatabase(
+            database_link, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
 

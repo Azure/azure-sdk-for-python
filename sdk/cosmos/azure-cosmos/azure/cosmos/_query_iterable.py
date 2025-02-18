@@ -21,10 +21,17 @@
 
 """Iterable query results in the Azure Cosmos database service.
 """
+from typing import Optional, Union, Dict, Any, Mapping, Callable, Tuple, List, TYPE_CHECKING
+from requests.structures import CaseInsensitiveDict
 from azure.core.paging import PageIterator  # type: ignore
 from azure.cosmos._execution_context import execution_dispatcher
+from azure.cosmos.query_engine import QueryEngine
 
 # pylint: disable=protected-access
+
+if TYPE_CHECKING:
+    # We can't import this at runtime because it's circular, so only import it for type checking
+    from azure.cosmos._cosmos_client_connection import PartitionKeyType, CosmosClientConnection
 
 
 class QueryIterable(PageIterator):
@@ -35,14 +42,16 @@ class QueryIterable(PageIterator):
 
     def __init__(
         self,
-        client,
-        query,
-        options,
-        fetch_function=None,
-        collection_link=None,
-        database_link=None,
-        partition_key=None,
-        continuation_token=None,
+        client: 'CosmosClientConnection',
+        query: Optional[Union[str, Dict[str, Any]]],
+        options: Optional[Mapping[str, Any]],
+        fetch_function: Callable[[
+            Mapping[str, Any]], Tuple[List[Dict[str, Any]], CaseInsensitiveDict]] = None,
+        collection_link: Optional[str] = None,
+        database_link: Optional[str] = None,
+        partition_key: Optional['PartitionKeyType'] = None,
+        continuation_token: Optional[str] = None,
+        query_engine: Optional[QueryEngine] = None,
     ):
         """Instantiates a QueryIterable for non-client side partitioning queries.
 
@@ -73,9 +82,10 @@ class QueryIterable(PageIterator):
         self._database_link = database_link
         self._partition_key = partition_key
         self._ex_context = execution_dispatcher._ProxyQueryExecutionContext(
-            self._client, self._collection_link, self._query, self._options, self._fetch_function
+            self._client, self._collection_link, self._query, self._options, self._fetch_function, query_engine
         )
-        super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
+        super(QueryIterable, self).__init__(self._fetch_next,
+                                            self._unpack, continuation_token=continuation_token)
 
     def _unpack(self, block):
         continuation = None
