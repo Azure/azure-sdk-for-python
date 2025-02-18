@@ -186,7 +186,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         self._incoming_endpoints: Dict[int, Session] = {}
 
         self._keep_alive_interval = kwargs.pop("keep_alive_interval", None)
-        self._keep_alive_thread = None
+        self._keep_alive_task = None
 
     async def __aenter__(self) -> "Connection":
         await self.open()
@@ -823,22 +823,18 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         self._outgoing_endpoints[assigned_channel] = session
         return session
 
-    async def _keep_alive_async(self):
-        start_time = time.time()
-        try:
-            while not self._shutdown:
-                current_time = time.time()
-                elapsed_time = current_time - start_time
-                if elapsed_time >= self._keep_alive_interval:
-                    await asyncio.shield(
-                        self.listen(wait=self._socket_timeout, batch=1)
-                    )
-                    start_time = current_time
-                await asyncio.sleep(1)
-        except Exception as e:  # pylint: disable=broad-except
-            _LOGGER.info(
-                "Connection keep-alive for %r failed: %r.", self.__class__.__name__, e, extra=self._network_trace_params
-            )
+    async def _send_empty_frame(self):
+        if self._can_write():
+            await self._outgoing_empty()
+        await self._schedule_keep_alive()
+
+    async def _schedule_keep_alive(self):
+        if self._keep_alive_interval > 0 and not self._shutdown:
+            self._keep_alive_task = asyncio.create_task(self._keep_alive())
+
+    async def _keep_alive(self):
+        await asyncio.sleep(self._keep_alive_interval)
+        await self._send_empty_frame()
 
     async def open(self, wait: bool = False) -> None:
         """Send an Open frame to start the connection.
@@ -861,7 +857,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             raise ValueError("Connection has been configured to not allow piplined-open. Please set 'wait' parameter.")
         self._shutdown = False
         if self._keep_alive_interval:
-            self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_async())
+            await self._schedule_keep_alive()
 
     async def close(self, error: Optional[AMQPError] = None, wait: bool = False) -> None:
         """Close the connection and disconnect the transport.
@@ -896,9 +892,9 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                 await self._set_state(ConnectionState.CLOSE_SENT)
             await self._wait_for_response(wait, ConnectionState.END)
             self._shutdown = True
-            if self._keep_alive_thread:
-                await self._keep_alive_thread
-                self._keep_alive_thread = None
+            if self._keep_alive_task:
+                self._keep_alive_task.cancel()
+                self._keep_alive_task = None
         except Exception as exc:  # pylint:disable=broad-except
             # If error happened during closing, ignore the error and set state to END
             _LOGGER.info("An error occurred when closing the connection: %r", exc, extra=self._network_trace_params)
