@@ -12,8 +12,10 @@ from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import is_check_enabled
 from coverage.exceptions import NoDataError
 
+coveragerc_file = os.path.join(os.path.dirname(__file__), "tox.ini")
+
 def get_total_coverage(coverage_file: str, package_name: str) -> Optional[float]:
-    cov = coverage.Coverage(data_file=coverage_file)
+    cov = coverage.Coverage(data_file=coverage_file, config_file=coveragerc_file)
     cov.load()
     try:
         report = cov.report()
