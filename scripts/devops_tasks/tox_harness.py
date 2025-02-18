@@ -48,7 +48,7 @@ def combine_coverage_files(targeted_packages):
             coverage_file = os.path.join(package_dir, ".coverage")
 
             try:
-                cov = coverage.Coverage(data_file=coverage_file)
+                cov = coverage.Coverage(data_file=coverage_file, config_file=tox_ini_file)
                 cov.load()
                 report = cov.report()
                 logging.info("Total coverage before combine with rcfile and as I collect it is{:.2f}%".format(report))
