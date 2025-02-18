@@ -15,6 +15,6 @@
     "@typespec/openapi": "~0.65.0",
     "@typespec/versioning": "~0.65.0",
     "@typespec/xml": "~0.65.0",
-    "@azure-tools/typespec-liftr-base": "~0.6.0"
+    "@azure-tools/typespec-liftr-base": "~0.7.0"
   }
 }
