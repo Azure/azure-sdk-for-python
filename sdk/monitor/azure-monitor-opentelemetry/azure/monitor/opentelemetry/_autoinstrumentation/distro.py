@@ -13,6 +13,7 @@ from opentelemetry.sdk.environment_variables import (
     _OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED,
     OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
 )
+from opentelemetry.sdk.resources import Resource
 
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
@@ -68,5 +69,10 @@ def _configure_auto_instrumentation() -> None:
         settings.tracing_implementation = OpenTelemetrySpan
     # Live Metrics
     live_metrics_enabled_env_var = environ.get(APPLICATIONINSIGHTS_PREVIEW_LIVE_METRICS_ENABLED, "false").lower()
-    if live_metrics_enabled_env_var == 'true':
-        enable_live_metrics()
+    if live_metrics_enabled_env_var == 'true' and "APPLICATIONINSIGHTS_CONNECTION_STRING" in environ:
+        enable_live_metrics(
+            connection_string=environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING"),
+            resource=Resource.create(),
+            # TODO: Add Credential to Live Metrics in autoinstrumentation.
+            # credential=
+        )
