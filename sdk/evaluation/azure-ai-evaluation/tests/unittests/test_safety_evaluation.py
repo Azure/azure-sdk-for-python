@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from azure.ai.evaluation._safety_evaluation._safety_evaluation import _SafetyEvaluation, _SafetyEvaluator
 from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialScenarioJailbreak, AdversarialSimulator
+from azure.ai.evaluation._model_configurations import EvaluationResult
 from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation.simulator._utils import JsonLineChatProtocol, JsonLineList
 from azure.core.credentials import TokenCredential
@@ -35,6 +36,34 @@ def mock_target_with_context():
     def mock_target_with_context_fn() -> tuple:
         return ("mock response", "mock context")
     return mock_target_with_context_fn
+
+@pytest.fixture
+def mock_eval_result_dict():
+    jailbreak = {
+        'rows': [
+            {
+                'outputs.content_safety.hate_unfairness_score': 0.0,
+                'outputs.content_safety.self_harm_score': 0.0,
+                'outputs.content_safety.sexual_score': 0.0,
+                'outputs.content_safety.violence_score': 0.0,
+            }
+        ],
+        'metrics': {},
+        'studio_url': 'some url'
+    }
+    regular = {
+        'rows': [
+            {
+                'outputs.content_safety.hate_unfairness_score': 0.0,
+                'outputs.content_safety.self_harm_score': 0.0,
+                'outputs.content_safety.sexual_score': 0.0,
+                'outputs.content_safety.violence_score': 0.0,
+            }
+        ],
+        'metrics': {},
+        'studio_url': 'some url'
+    }
+    return {'jailbreak': jailbreak , 'regular': regular} 
 
 @pytest.fixture
 def safety_eval(mock_model_config_dict_valid, mock_credential):
@@ -80,6 +109,32 @@ class TestSafetyEvaluation:
                 source_text=None,
             )
         assert "requires either source_text" in str(exc_info.value)
+    
+    def test_validate_inputs_multi_turn_scenario(self, safety_eval, mock_target):
+        with pytest.raises(EvaluationException) as exc_info:
+            safety_eval._validate_inputs(
+                target=mock_target,
+
+                evaluators=[_SafetyEvaluator.CONTENT_SAFETY],
+                scenario=AdversarialScenario.ADVERSARIAL_SUMMARIZATION,
+                num_turns=3,
+            )
+        assert "content safety evaluation with more than 1 turn" in str(exc_info.value)
+
+    def test_validate_inputs_scenario_not_content_safety(self, safety_eval, mock_target):
+        with pytest.raises(EvaluationException) as exc_info:
+            safety_eval._validate_inputs(
+                target=mock_target,
+                evaluators=[_SafetyEvaluator.PROTECTED_MATERIAL],
+                scenario=AdversarialScenario.ADVERSARIAL_SUMMARIZATION,
+            )
+        assert "not supported without content safety evaluation" in str(exc_info.value)
+    
+    def test_calculate_defect_rate(self, safety_eval, mock_eval_result_dict):
+        eval_result = safety_eval._calculate_defect_rate(mock_eval_result_dict)
+        assert eval_result is not None
+        assert isinstance(eval_result['metrics']['content_safety.violence_defect_rate'], float)
+        assert eval_result['metrics']['content_safety.violence_defect_rate'] == 0.0
     
     @pytest.mark.asyncio
     @patch("azure.ai.evaluation.simulator._simulator.Simulator.__call__", new_callable=AsyncMock)
