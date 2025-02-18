@@ -526,11 +526,11 @@ class _SafetyEvaluation:
 
     async def __call__(
             self,
-            evaluators: List[_SafetyEvaluator],
             target: Callable,
+            evaluators: List[_SafetyEvaluator] = [],
             evaluation_name: Optional[str] = None,
-            num_turns : int=1,
-            num_rows: int = 3,
+            num_turns : int = 1,
+            num_rows: int = 5,
             scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
             conversation_turns : List[List[Union[str, Dict[str, Any]]]] = [],
             tasks: List[str] = [],
@@ -542,10 +542,10 @@ class _SafetyEvaluation:
         '''
         Evaluates the target function based on the provided parameters.
         
-        :param evaluators: A list of SafetyEvaluator.
-        :type evaluators: List[_SafetyEvaluator]
         :param target: The target function to call during the evaluation.
         :type target: Callable
+        :param evaluators: A list of SafetyEvaluator.
+        :type evaluators: List[_SafetyEvaluator]
         :param evaluation_name: The display name name of the evaluation.
         :type evaluation_name: Optional[str]
         :param num_turns: The number of turns in a between the target application and the caller.
