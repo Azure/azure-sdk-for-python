@@ -267,7 +267,9 @@ def append_results_to_csv(entities: list[dict[str, Any]]) -> None:
 def should_run() -> bool:
     """We only update the typing dashboard once a month on the Monday after release week.
     """
-    today = datetime.date.today()
+    utc_now = datetime.datetime.now(datetime.timezone.utc)
+    pst_now = utc_now - datetime.timedelta(hours=8)
+    today = pst_now.date()
     c = calendar.Calendar(firstweekday=calendar.SUNDAY)
     month_dates = c.monthdatescalendar(today.year, today.month)
 
@@ -282,9 +284,9 @@ def should_run() -> bool:
 
 
 def update_main_typescores() -> None:
-    if not should_run():
-        logging.info(f"Skipping type scoring update - only runs once a month on the Monday after release week.")
-        return
+    # if not should_run():
+    #     logging.info(f"Skipping type scoring update - only runs once a month on the Monday after release week.")
+    #     return
 
     packages_to_score = get_packages_to_score()
 
