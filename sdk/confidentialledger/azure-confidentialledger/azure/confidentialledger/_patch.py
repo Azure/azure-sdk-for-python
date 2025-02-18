@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
+
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -80,6 +82,7 @@ class ConfidentialLedgerClient(GeneratedClient):
     ) -> None:
         # Remove some kwargs first so that there aren't unexpected kwargs passed to
         # get_ledger_identity.
+
         if isinstance(credential, ConfidentialLedgerCertificateCredential):
             auth_policy = None
         else:
@@ -88,30 +91,31 @@ class ConfidentialLedgerClient(GeneratedClient):
                 "authentication_policy",
                 policies.BearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
             )
-
         if os.path.isfile(ledger_certificate_path) is False:
             # We'll need to fetch the TLS certificate.
+
             identity_service_client = ConfidentialLedgerCertificateClient(**kwargs)
 
             # Ledger URIs are of the form https://<ledger id>.confidential-ledger.azure.com.
+
             ledger_id = endpoint.replace("https://", "").split(".")[0]
             ledger_cert = identity_service_client.get_ledger_identity(ledger_id, **kwargs)
 
             with open(ledger_certificate_path, "w", encoding="utf-8") as outfile:
                 outfile.write(ledger_cert["ledgerTlsCertificate"])
-
         # For ConfidentialLedgerCertificateCredential, pass the path to the certificate down to the
         # PipelineCLient.
+
         if isinstance(credential, ConfidentialLedgerCertificateCredential):
             kwargs["connection_cert"] = kwargs.get("connection_cert", credential.certificate_path)
-
         # The auto-generated client has authentication disabled so we can customize authentication.
         # If the credential is the typical TokenCredential, then construct the authentication policy
         # the normal way.
+
         else:
             kwargs["authentication_policy"] = auth_policy
-
         # Customize the underlying client to use a self-signed TLS certificate.
+
         kwargs["connection_verify"] = kwargs.get("connection_verify", ledger_certificate_path)
 
         super().__init__(endpoint, **kwargs)

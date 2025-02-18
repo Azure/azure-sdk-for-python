@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
+
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -66,7 +68,6 @@ class BaseStatePollingMethod:
     def _give_up_not_found_error(self, exception: ResourceNotFoundError) -> bool:
         if exception.error is not None and exception.error.code == "InvalidTransactionId":
             return True
-
         return False
 
     def status(self) -> str:
@@ -78,7 +79,6 @@ class BaseStatePollingMethod:
     def resource(self):
         if self._deserialization_callback:
             return self._deserialization_callback(self._latest_response)
-
         return self._latest_response
 
 
@@ -105,16 +105,13 @@ class StatePollingMethod(BaseStatePollingMethod, PollingMethod):
                 except ResourceNotFoundError as not_found_exception:
                     # We'll allow some instances of resource not found to account for replication
                     # delay if session stickiness is lost.
+
                     self._not_found_count += 1
 
-                    not_retryable = (
-                        not self._retry_not_found or
-                        self._give_up_not_found_error(not_found_exception)
-                    )
+                    not_retryable = not self._retry_not_found or self._give_up_not_found_error(not_found_exception)
 
-                    if not_retryable or self._not_found_count >=3:
+                    if not_retryable or self._not_found_count >= 3:
                         raise
-
                 if not self.finished():
                     time.sleep(self._polling_interval_s)
         except Exception:
@@ -155,7 +152,6 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
             polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
-
         return LROPoller(self._client, initial_response, lambda x: x, polling_method)
 
     def begin_get_receipt(self, transaction_id: str, **kwargs: Any) -> LROPoller[JSON]:
@@ -184,7 +180,6 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
             polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
-
         return LROPoller(self._client, initial_response, lambda x: x, polling_method)
 
     def begin_create_ledger_entry(
@@ -209,11 +204,13 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         """
 
         # Pop arguments that are unexpected in the pipeline.
+
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", 0.5)
 
         # Pop the custom deserializer, if any, so we know the format of the response and can
         # retrieve the transactionId. Serialize the response later.
+
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
         kwargs["cls"] = lambda pipeline_response, json_response, headers: (
             pipeline_response,
@@ -230,6 +227,7 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
 
         # Delete the cls because it should only apply to the create_ledger_entry response, not the
         # wait_for_commit call.
+
         del kwargs["cls"]
 
         transaction_id = post_result["transactionId"]  # type: ignore
@@ -243,7 +241,6 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
             )
         else:
             kwargs["_create_ledger_entry_response"] = post_result
-
         return self.begin_wait_for_commit(transaction_id, **kwargs)
 
     def begin_wait_for_commit(
@@ -266,8 +263,11 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
 
         # If this poller was called from begin_create_ledger_entry, we should return the
         # create_ledger_entry response, not the transaction status.
+
         post_result = kwargs.pop("_create_ledger_entry_response", None)
-        deserialization_callback = lambda x: x if post_result is None else post_result # pylint: disable=unnecessary-lambda-assignment
+
+        def deserialization_callback(x):
+            return x if post_result is None else post_result
 
         def operation() -> JSON:
             return super(ConfidentialLedgerClientOperationsMixin, self).get_transaction_status(
@@ -279,18 +279,16 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         except ResourceNotFoundError:
             if polling is False or polling is None:
                 raise
-
             # This method allows for temporary resource not found errors, which may occur if session
             # stickiness is lost and there is replication lag.
-            initial_response = {}
 
+            initial_response = {}
         if polling is True:
             polling_method = cast(PollingMethod, StatePollingMethod(operation, "Committed", lro_delay, True))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
             polling_method = polling
-
         return LROPoller(self._client, initial_response, deserialization_callback, polling_method)
 
     def create_ledger_entry(
