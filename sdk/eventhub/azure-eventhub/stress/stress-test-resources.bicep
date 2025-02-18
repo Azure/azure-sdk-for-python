@@ -27,7 +27,9 @@ resource eventHubsNamespace 'Microsoft.EventHub/Namespaces@2017-04-01' = {
     name: 'Standard'
     tier: 'Standard'
   }
-  properties: {}
+  properties: {
+    disableLocalAuth: true
+  }
 }
 
 resource eventHubsNamespace_eventHubName 'Microsoft.EventHub/namespaces/eventhubs@2017-04-01' = {
@@ -36,6 +38,7 @@ resource eventHubsNamespace_eventHubName 'Microsoft.EventHub/namespaces/eventhub
   properties: {
     messageRetentionInDays: 5
     partitionCount: 32
+    disableLocalAuth: true
   }
   dependsOn: [
     eventHubsNamespace
@@ -66,6 +69,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   kind: 'StorageV2'
   properties: {
     accessTier: 'Hot'
+    allowSharedKeyAccess: false
   }
 }
 

@@ -55,9 +55,13 @@
     "serviceBusSubscriptionName": "[concat('sb-', parameters('baseName'), '-subscription')]",
     "serviceBusTopicName": "[concat('sb-', parameters('baseName'), '-topic')]",
     "serviceBusQueueName": "[concat('sb-', parameters('baseName'), '-queue')]",
+    "serviceBusQueueNamePartitioned": "[concat('sb-', parameters('baseName'), '-queue-partitioned')]",
     "queueAuthorizationRuleName": "[concat('sb-', parameters('baseName'), '-queue-auth')]",
+    "queueAuthorizationRuleNamePartitioned": "[concat('sb-', parameters('baseName'), '-queue-auth-partitioned')]",
     "serviceBusSessionQueueName": "[concat('sb-', parameters('baseName'), '-session-queue')]",
+    "serviceBusSessionQueueNamePartitioned": "[concat('sb-', parameters('baseName'), '-session-queue-partitioned')]",
     "sessionQueueAuthorizationRuleName": "[concat('sb-', parameters('baseName'), '-session-queue-auth')]",
+    "sessionQueueAuthorizationRuleNamePartitioned": "[concat('sb-', parameters('baseName'), '-session-queue-auth-partitioned')]",
     "serviceBusSessionId": "[concat('sb-', parameters('baseName'), '-session-queue-id')]",
     "defaultSASKeyName": "RootManageSharedAccessKey",
     "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespace'), variables('defaultSASKeyName'))]",
@@ -94,6 +98,74 @@
                 ],
                 "properties": {}
             }]
+        },
+        {
+          "type": "Queues",
+          "apiVersion": "[variables('sbVersion')]",
+          "name": "[variables('serviceBusQueueNamePartitioned')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace'))]"
+          ],
+          "properties": {
+            "lockDuration": "PT5M",
+            "maxSizeInMegabytes": 1024,
+            "requiresDuplicateDetection": false,
+            "requiresSession": false,
+            "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+            "deadLetteringOnMessageExpiration": false,
+            "duplicateDetectionHistoryTimeWindow": "PT10M",
+            "maxDeliveryCount": 10,
+            "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+            "enablePartitioning": true,
+            "enableExpress": false
+          },
+          "resources": [
+            {
+              "apiVersion": "[variables('sbVersion')]",
+              "name": "[variables('queueAuthorizationRuleNamePartitioned')]",
+              "type": "authorizationRules",
+              "dependsOn": [
+                  "[variables('serviceBusQueueNamePartitioned')]"
+              ],
+              "properties": {
+                  "Rights": ["Manage", "Send", "Listen"]
+              }
+            }
+          ]
+        },
+        {
+          "type": "Queues",
+          "apiVersion": "[variables('sbVersion')]",
+          "name": "[variables('serviceBusSessionQueueNamePartitioned')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace'))]"
+          ],
+          "properties": {
+            "lockDuration": "PT5M",
+            "maxSizeInMegabytes": 1024,
+            "requiresDuplicateDetection": false,
+            "requiresSession": true,
+            "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+            "deadLetteringOnMessageExpiration": false,
+            "duplicateDetectionHistoryTimeWindow": "PT10M",
+            "maxDeliveryCount": 10,
+            "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+            "enablePartitioning": true,
+            "enableExpress": false
+          },
+          "resources": [
+            {
+              "apiVersion": "[variables('sbVersion')]",
+              "name": "[variables('sessionQueueAuthorizationRuleNamePartitioned')]",
+              "type": "authorizationRules",
+              "dependsOn": [
+                  "[variables('serviceBusSessionQueueNamePartitioned')]"
+              ],
+              "properties": {
+                  "Rights": ["Manage", "Send", "Listen"]
+              }
+            }
+          ]
         },
         {
           "type": "Queues",
@@ -164,7 +236,9 @@
           ]
         }
       ],
-      "properties": {}
+      "properties": {
+        "disableLocalAuth": true
+      }
     },
     {
       "type": "Microsoft.Authorization/roleAssignments",
@@ -214,6 +288,10 @@
       "type": "string",
       "value": "[variables('serviceBusQueueName')]"
     },
+    "SERVICEBUS_PARTITION_QUEUE_NAME": {
+      "type": "string",
+      "value": "[variables('serviceBusQueueNamePartitioned')]"
+    },
     "SERVICEBUS_SAS_POLICY":{
       "type": "string",
       "value": "[variables('queueAuthorizationRuleName')]"
@@ -222,9 +300,21 @@
       "type": "string",
       "value": "[listkeys(variables('queueAuthorizationRuleName'), variables('sbVersion')).primaryKey]"
     },
+    "SERVICEBUS_PARTITION_SAS_POLICY":{
+      "type": "string",
+      "value": "[variables('queueAuthorizationRuleNamePartitioned')]"
+    },
+    "SERVICEBUS_PARTITION_SAS_KEY":{
+      "type": "string",
+      "value": "[listkeys(variables('queueAuthorizationRuleNamePartitioned'), variables('sbVersion')).primaryKey]"
+    },
     "SERVICEBUS_SESSION_QUEUE_NAME": {
       "type": "string",
       "value": "[variables('serviceBusSessionQueueName')]"
+    },
+    "SERVICEBUS_SESSION_PARTITION_QUEUE_NAME": {
+      "type": "string",
+      "value": "[variables('serviceBusSessionQueueNamePartitioned')]"
     },
     "SERVICEBUS_SESSION_ID":{
       "type": "string",
@@ -237,6 +327,14 @@
     "SERVICEBUS_SESSION_QUEUE_SAS_KEY":{
       "type": "string",
       "value": "[listkeys(variables('sessionQueueAuthorizationRuleName'), variables('sbVersion')).primaryKey]"
+    },
+    "SERVICEBUS_SESSION_PARTITION_QUEUE_SAS_POLICY":{
+      "type": "string",
+      "value": "[variables('sessionQueueAuthorizationRuleNamePartitioned')]"
+    },
+    "SERVICEBUS_SESSION_PARTITION_QUEUE_SAS_KEY":{
+      "type": "string",
+      "value": "[listkeys(variables('sessionQueueAuthorizationRuleNamePartitioned'), variables('sbVersion')).primaryKey]"
     },
     "RESOURCE_REGION": {
       "type": "string",
