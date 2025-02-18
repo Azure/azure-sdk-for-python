@@ -113,6 +113,7 @@ known_content_issues:
   - ['sdk/modelsrepository/azure-iot-modelsrepository/README.md', '#4554']
   - ['sdk/openai/azure-openai/README.md', '#4554']
   - ['sdk/ai/azure-ai-generative/README.md', 'Deprecated package.']
+  - ['sdk/ai/azure-ai-resources/README.md', 'Deprecated package.']
 
   # common.
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'common']
