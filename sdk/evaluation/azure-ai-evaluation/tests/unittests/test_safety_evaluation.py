@@ -73,6 +73,13 @@ def safety_eval(mock_model_config_dict_valid, mock_credential):
         model_config=mock_model_config_dict_valid,
     )
 
+@pytest.fixture
+def safety_eval_no_model_config(mock_credential):
+    return _SafetyEvaluation(
+        azure_ai_project={"subscription_id": "mock-sub", "resource_group_name": "mock-rg", "project_name": "mock-proj"},
+        credential=mock_credential,
+    )
+
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
 class TestSafetyEvaluation:
@@ -121,6 +128,15 @@ class TestSafetyEvaluation:
             )
         assert "content safety evaluation with more than 1 turn" in str(exc_info.value)
 
+    def test_validate_inputs_no_model_config(self, safety_eval_no_model_config, mock_target):
+        with pytest.raises(EvaluationException) as exc_info:
+            safety_eval_no_model_config._validate_inputs(
+                target=mock_target,
+                evaluators=[_SafetyEvaluator.COHERENCE],
+            )
+        assert "Model configuration is required" in str(exc_info.value)
+    
+    
     def test_validate_inputs_scenario_not_content_safety(self, safety_eval, mock_target):
         with pytest.raises(EvaluationException) as exc_info:
             safety_eval._validate_inputs(

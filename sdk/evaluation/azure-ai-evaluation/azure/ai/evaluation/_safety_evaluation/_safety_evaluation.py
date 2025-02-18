@@ -64,7 +64,7 @@ class _SafetyEvaluation:
         self,
         azure_ai_project: dict,
         credential: TokenCredential,
-        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
+        model_config: Optional[Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]] = None,
     ):
         '''
         Initializes a SafetyEvaluation object.
@@ -77,8 +77,11 @@ class _SafetyEvaluation:
         :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration, ~azure.ai.evaluation.OpenAIModelConfiguration]
         :raises ValueError: If the model_config does not contain the required keys or any value is None.
         '''
-        self._validate_model_config(model_config)
-        self.model_config = model_config
+        if model_config:
+            self._validate_model_config(model_config)
+            self.model_config = model_config
+        else:
+            self.model_config = None
         validate_azure_ai_project(azure_ai_project)
         self.azure_ai_project = AzureAIProject(**azure_ai_project)
         self.credential=credential
@@ -213,7 +216,7 @@ class _SafetyEvaluation:
             simulator_outputs = simulator_outputs["regular"]
         
         ## If adversarial_scenario is not provided, run Simulator
-        elif adversarial_scenario is None:
+        elif adversarial_scenario is None and self.model_config:
             self.logger.info(f"Running Simulator with inputs: adversarial_scenario={adversarial_scenario}, max_conversation_turns={max_conversation_turns}, max_simulation_results={max_simulation_results}, conversation_turns={conversation_turns}, source_text={source_text}")
             simulator = Simulator(self.model_config)
             simulator_outputs = await simulator(
@@ -475,6 +478,24 @@ class _SafetyEvaluation:
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
             )
+        
+        if any(e in evaluators for e in [
+            _SafetyEvaluator.GROUNDEDNESS,
+            _SafetyEvaluator.RELEVANCE,
+            _SafetyEvaluator.SIMILARITY,
+            _SafetyEvaluator.FLUENCY,
+            _SafetyEvaluator.COHERENCE,
+        ]) and not self.model_config:
+            self.logger.error(f"Model configuration is required for evaluators: {evaluators}")
+            msg = f"Model configuration is required for evaluators: {evaluators}"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.UNKNOWN,
+                category=ErrorCategory.MISSING_FIELD,
+                blame=ErrorBlame.USER_ERROR,
+            )
+            
 
     def _calculate_defect_rate(self, evaluation_result_dict) -> EvaluationResult:
         hate_unfairness_defects = []
