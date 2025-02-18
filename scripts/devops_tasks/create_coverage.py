@@ -46,6 +46,7 @@ def collect_tox_coverage_files():
     if len(coverage_files):
         for coverage_file in coverage_files:
             try:
+                logging.info("running coverage report on {}".format(coverage_file))
                 run_coverage(coverage_file)
             except Exception as e:
                 logging.error("Ignoring issue running coverage report: {}".format(e))
