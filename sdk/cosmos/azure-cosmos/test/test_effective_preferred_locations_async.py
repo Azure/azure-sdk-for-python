@@ -33,7 +33,20 @@ async def setup():
     await client.close()
 
 def preferred_locations():
-    return [([]), ([REGION_1, REGION_2]), ([REGION_1]), ([REGION_2, REGION_3]), ([REGION_1, REGION_2, REGION_3])]
+    host = test_config.TestConfig.host
+    locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(host, REGION_2)
+    return [
+        ([], host),
+        ([REGION_1, REGION_2], host),
+        ([REGION_1], host),
+        ([REGION_2, REGION_3], host),
+        ([REGION_1, REGION_2, REGION_3], host),
+        ([], locational_endpoint),
+        ([REGION_2], locational_endpoint),
+        ([REGION_3, REGION_1], locational_endpoint),
+        ([REGION_1, REGION_3], locational_endpoint),
+        ([REGION_1, REGION_2, REGION_3], locational_endpoint)
+    ]
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
@@ -45,15 +58,15 @@ class TestPreferredLocationsAsync:
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
 
-    @pytest.mark.parametrize("preferred_location", preferred_locations())
-    async def test_effective_preferred_regions_async(self, setup, preferred_location):
+    @pytest.mark.parametrize("preferred_location, default_endpoint", preferred_locations())
+    async def test_effective_preferred_regions_async(self, setup, preferred_location, default_endpoint):
 
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccount(ACCOUNT_REGIONS)
         _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.MockGetDatabaseAccount(ACCOUNT_REGIONS)
         try:
-            client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
+            client = CosmosClient(default_endpoint, self.masterKey, preferred_locations=preferred_location)
             # this will setup the location cache
             await client.client_connection._global_endpoint_manager.force_refresh(None)
         finally:
@@ -61,14 +74,22 @@ class TestPreferredLocationsAsync:
             _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
         expected_dual_endpoints = []
 
+        # if preferred location set should use that
         if preferred_location:
             expected_locations = preferred_location
+        # if client created with regional endpoint preferred locations, only use hub region
+        elif default_endpoint != self.host:
+            expected_locations = ACCOUNT_REGIONS[:1]
+        # if client created with global endpoint and no preferred locations, use all regions
         else:
             expected_locations = ACCOUNT_REGIONS
 
         for location in expected_locations:
             locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, location)
-            expected_dual_endpoints.append(RegionalEndpoint(locational_endpoint, locational_endpoint))
+            if default_endpoint == self.host or preferred_location:
+                expected_dual_endpoints.append(RegionalEndpoint(locational_endpoint, locational_endpoint))
+            else:
+                expected_dual_endpoints.append(RegionalEndpoint(locational_endpoint, default_endpoint))
 
         read_dual_endpoints = client.client_connection._global_endpoint_manager.location_cache.read_regional_endpoints
         assert read_dual_endpoints == expected_dual_endpoints
@@ -85,13 +106,13 @@ class TestPreferredLocationsAsync:
             read_locations = []
             counter = 0
             for loc in read_regions:
-                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(endpoint, loc)
+                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(TestPreferredLocationsAsync.host, loc)
                 read_locations.append({'databaseAccountEndpoint': locational_endpoint, 'name': loc})
                 counter += 1
             write_regions = [self.regions[0]]
             write_locations = []
             for loc in write_regions:
-                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(endpoint, loc)
+                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(TestPreferredLocationsAsync.host, loc)
                 write_locations.append({'databaseAccountEndpoint': locational_endpoint, 'name': loc})
             multi_write = False
 

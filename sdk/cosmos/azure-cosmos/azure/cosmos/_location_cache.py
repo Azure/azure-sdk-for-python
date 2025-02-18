@@ -23,8 +23,10 @@
 DatabaseAccount with multiple writable and readable locations.
 """
 import collections
+import difflib
 import logging
 import time
+from typing import List, OrderedDict
 from urllib.parse import urlparse
 
 from . import documents
@@ -113,7 +115,6 @@ def get_endpoints_by_location(new_locations,
                                 default_regional_endpoint.get_current(),
                                 new_location["name"])
                             regional_object.set_previous(constructed_region_uri)
-                # pass in object with region uri , last known good, curr etc
                 endpoints_by_location.update({new_location["name"]: regional_object})
             except Exception as e:
                 raise e
@@ -385,9 +386,16 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     self.use_multiple_write_locations,
                 )
 
-        # if preferred locations is empty, we should use the read locations from gateway
+        # if preferred locations is empty and the default endpoint is a global endpoint,
+        # we should use the read locations from gateway
         if self.preferred_locations:
             self.effective_preferred_locations = self.preferred_locations
+        elif not LocationCache.is_global_endpoint(
+                self.default_regional_endpoint.get_current(),
+                self.available_read_regional_endpoints_by_location,
+                self.available_read_locations
+        ):
+            self.effective_preferred_locations = []
         else:
             self.effective_preferred_locations = self.available_read_locations
 
@@ -485,3 +493,46 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 return locational_endpoint
 
         return None
+
+    @staticmethod
+    def is_global_endpoint(
+            endpoint: str,
+            account_read_endpoints_by_location: OrderedDict[str, RegionalEndpoint],
+            read_locations: List[str]
+    ):
+
+        # if there is only one read location, the sdk cannot figure out the global endpoint
+        if len(read_locations) < 2:
+            return True
+
+        first_endpoint_url = urlparse(account_read_endpoints_by_location[read_locations[0]].get_current())
+        second_endpoint_url = urlparse(account_read_endpoints_by_location[read_locations[1]].get_current())
+
+        # hostname attribute in endpoint_url will return something like 'contoso.documents.azure.com'
+        if first_endpoint_url.hostname is not None and second_endpoint_url.hostname is not None:
+            first_hostname_parts = str(first_endpoint_url.hostname).lower().split(".")
+            # first account name will return something like 'contoso-eastus'
+            first_account_name = first_hostname_parts[0]
+            second_hostname_parts = str(second_endpoint_url.hostname).lower().split(".")
+            # second account name will return something like 'contoso-westus'
+            second_account_name = second_hostname_parts[0]
+            #
+            common_account_name = LocationCache.get_common_part(first_account_name, second_account_name)
+
+            # if both were regional endpoints the common account name will have a - at the end
+            if common_account_name[len(common_account_name) - 1] == "-":
+                global_account_name = common_account_name[:-1]
+            else:
+                global_account_name = common_account_name
+            default_endpoint_account_name = str(urlparse(endpoint).hostname).lower().split('.', maxsplit=1)[0]
+            return global_account_name == default_endpoint_account_name
+        return False
+
+    # finds the longest matching consecutive substring in two strings
+    @staticmethod
+    def get_common_part(str1: str, str2: str):
+        sequence_matcher = difflib.SequenceMatcher(None, str1, str2)
+        match = sequence_matcher.find_longest_match(0, len(str1), 0, len(str2))
+        if match.size != 0:
+            return str1[match.a: match.a + match.size]
+        return ""
