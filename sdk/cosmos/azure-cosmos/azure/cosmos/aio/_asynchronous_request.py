@@ -117,6 +117,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     response = response.http_response
     headers = copy.copy(response.headers)
 
+    await response.load_body()
     data = response.body()
     if data:
         data = data.decode("utf-8")

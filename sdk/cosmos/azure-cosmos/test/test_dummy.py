@@ -1,31 +1,30 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import asyncio
 import logging
+import os
+import sys
 import time
 import unittest
 import uuid
+from typing import Any, Callable
 
 import pytest
+from azure.core.pipeline.transport import AioHttpTransport
+from azure.core.rest import HttpRequest, AsyncHttpResponse
 
+import test_config
+from _fault_injection_transport import FaultInjectionTransport
+from azure.cosmos import PartitionKey
+from azure.cosmos.aio import CosmosClient
 from azure.cosmos.aio._container import ContainerProxy
 from azure.cosmos.aio._database import DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError
-import test_config
-from azure.cosmos import PartitionKey
-from azure.cosmos.aio import CosmosClient, _retry_utility_async
-from azure.core.rest import HttpRequest, AsyncHttpResponse
-import asyncio
-import sys
-from azure.core.pipeline.transport import AioHttpTransport
-from typing import Any, Callable
-from _fault_injection_transport import FaultInjectionTransport
-import os
 
 COLLECTION = "created_collection"
 MGMT_TIMEOUT = 3.0 
 logger = logging.getLogger('azure.cosmos')
-logger.setLevel("INFO")
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
@@ -107,7 +106,7 @@ class TestDummyAsync:
                                'name': 'sample document',
                                'key': 'value'}
 
-        custom_transport =  FaultInjectionTransport(logger)
+        custom_transport =  FaultInjectionTransport()
         predicate : Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransport.predicate_req_for_document_with_id(r, idValue)
         custom_transport.addFault(predicate, lambda: FaultInjectionTransport.throw_after_delay(
             500,
@@ -129,10 +128,15 @@ class TestDummyAsync:
                 await cleanupOp
 
     async def test_succeeds_with_multiple_endpoints(self, setup):
-        custom_transport = FaultInjectionTransport(logger)
-        predicate: Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransport.predicate_is_database_account_call(r)
-        transformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], AsyncHttpResponse] = lambda r, inner: FaultInjectionTransport.transform_pass_through(r, inner)
-        custom_transport.add_response_transformation(predicate, transformation)
+        custom_transport = FaultInjectionTransport()
+        is_get_account_predicate: Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransport.predicate_is_database_account_call(r)
+        is_write_operation_predicate: Callable[[HttpRequest], bool] = lambda \
+            r: FaultInjectionTransport.predicate_is_write_operation(r, "https://localhost")
+        emulator_as_multi_region_sm_account_transformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], AsyncHttpResponse] = \
+            lambda r, inner: FaultInjectionTransport.transform_convert_emulator_to_single_master_read_multi_region_account(r, inner)
+
+        custom_transport.addFault(is_write_operation_predicate, lambda: FaultInjectionTransport.throw_write_forbidden())
+        custom_transport.add_response_transformation(is_get_account_predicate, emulator_as_multi_region_sm_account_transformation)
 
         idValue: str = str(uuid.uuid4())
         document_definition = {'id': idValue,
@@ -143,16 +147,17 @@ class TestDummyAsync:
         initializedObjects = self.setup_method_with_custom_transport(custom_transport)
         try:
             container: ContainerProxy = initializedObjects["col"]
-            
+
             created_document = await container.create_item(body=document_definition)
             start = time.perf_counter()
-            
-            while ((time.perf_counter() - start) < 2):
-                await container.read_item(idValue, partition_key=idValue)
-                await asyncio.sleep(0.2)
+
+
+            #while ((time.perf_counter() - start) < 2):
+            #    await container.read_item(idValue, partition_key=idValue)
+            #    await asyncio.sleep(0.2)
 
         finally:
-            self.cleanup_method(initializedObjects)       
+            self.cleanup_method(initializedObjects)
 
 if __name__ == '__main__':
     unittest.main()

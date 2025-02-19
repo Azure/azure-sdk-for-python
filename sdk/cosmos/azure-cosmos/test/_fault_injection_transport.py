@@ -23,17 +23,24 @@
 """
 
 import asyncio
-import aiohttp
+import json
 import logging
+import sys
+from collections.abc import MutableMapping
+from typing import Callable
 
+import aiohttp
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.rest import HttpRequest, AsyncHttpResponse
-from collections.abc import MutableMapping
-from typing import Any, Callable
+
+from azure.cosmos.exceptions import CosmosHttpResponseError
+
 
 class FaultInjectionTransport(AioHttpTransport):
-    def __init__(self, logger: logging.Logger, *, session: aiohttp.ClientSession | None = None, loop=None, session_owner: bool = True, **config):
-        self.logger = logger
+    logger = logging.getLogger('azure.cosmos.fault_injection_transport')
+    logger.setLevel(logging.DEBUG)
+
+    def __init__(self, *, session: aiohttp.ClientSession | None = None, loop=None, session_owner: bool = True, **config):
         self.faults = []
         self.requestTransformations = []
         self.responseTransformations = []
@@ -59,36 +66,49 @@ class FaultInjectionTransport(AioHttpTransport):
         return next((x for x in iterable if condition(x)), None)
 
     async def send(self, request: HttpRequest, *, stream: bool = False, proxies: MutableMapping[str, str] | None = None, **config) -> AsyncHttpResponse:
+        FaultInjectionTransport.logger.info("--> FaultInjectionTransport.Send {} {}".format(request.method, request.url))
         # find the first fault Factory with matching predicate if any
         firstFaultFactory = self.firstItem(iter(self.faults), lambda f: f["predicate"](request))
         if (firstFaultFactory != None):
+            FaultInjectionTransport.logger.info("--> FaultInjectionTransport.ApplyFaultInjection")
             injectedError = await firstFaultFactory["apply"]()
-            self.logger.info("Found to-be-injected error {}".format(injectedError))
+            FaultInjectionTransport.logger.info("Found to-be-injected error {}".format(injectedError))
             raise injectedError
 
         # apply the chain of request transformations with matching predicates if any
         matchingRequestTransformations = filter(lambda f: f["predicate"](f["predicate"]), iter(self.requestTransformations))
         for currentTransformation in matchingRequestTransformations:
+            FaultInjectionTransport.logger.info("--> FaultInjectionTransport.ApplyRequestTransformation")
             request = await currentTransformation["apply"](request)
 
-        firstResonseTransformation = self.firstItem(iter(self.responseTransformations), lambda f: f["predicate"](request))
-        
-        getResponseTask =  super().send(request, stream=stream, proxies=proxies, **config)
-        
-        if (firstResonseTransformation != None):
-            self.logger.info(f"Invoking response transformation")
-            response = await firstResonseTransformation["apply"](request, lambda: getResponseTask)        
-            self.logger.info(f"Received response transformation result with status code {response.status_code}")
+        firstResponseTransformation = self.firstItem(iter(self.responseTransformations), lambda f: f["predicate"](request))
+
+        FaultInjectionTransport.logger.info("--> FaultInjectionTransport.BeforeGetResponseTask")
+        getResponseTask =  asyncio.create_task(super().send(request, stream=stream, proxies=proxies, **config))
+        FaultInjectionTransport.logger.info("<-- FaultInjectionTransport.AfterGetResponseTask")
+
+        if (firstResponseTransformation != None):
+            FaultInjectionTransport.logger.info(f"Invoking response transformation")
+            response = await firstResponseTransformation["apply"](request, lambda: getResponseTask)
+            FaultInjectionTransport.logger.info(f"Received response transformation result with status code {response.status_code}")
             return response
         else:
-            self.logger.info(f"Sending request to {request.url}")
+            FaultInjectionTransport.logger.info(f"Sending request to {request.url}")
             response = await getResponseTask
-            self.logger.info(f"Received response with status code {response.status_code}")
+            FaultInjectionTransport.logger.info(f"Received response with status code {response.status_code}")
             return response
 
     @staticmethod
     def predicate_url_contains_id(r: HttpRequest, id: str) -> bool:
         return id in r.url
+
+    @staticmethod
+    def print_call_stack():
+        print("Call stack:")
+        frame = sys._getframe()
+        while frame:
+            print(f"File: {frame.f_code.co_filename}, Line: {frame.f_lineno}, Function: {frame.f_code.co_name}")
+            frame = frame.f_back
 
     @staticmethod
     def predicate_req_payload_contains_id(r: HttpRequest, id: str):
@@ -104,8 +124,20 @@ class FaultInjectionTransport(AioHttpTransport):
 
     @staticmethod
     def predicate_is_database_account_call(r: HttpRequest) -> bool:
-        return (r.headers.get('x-ms-thinclient-proxy-resource-type') == 'databaseaccount'
+        isDbAccountRead = (r.headers.get('x-ms-thinclient-proxy-resource-type') == 'databaseaccount'
                 and r.headers.get('x-ms-thinclient-proxy-operation-type') == 'Read')
+
+        return isDbAccountRead
+
+    @staticmethod
+    def predicate_is_write_operation(r: HttpRequest, uri_prefix: str) -> bool:
+        isWriteDocumentOperation = (r.headers.get('x-ms-thinclient-proxy-resource-type') == 'docs'
+                and r.headers.get('x-ms-thinclient-proxy-operation-type') != 'Read'
+                and r.headers.get('x-ms-thinclient-proxy-operation-type') != 'ReadFeed'
+                and r.headers.get('x-ms-thinclient-proxy-operation-type') != 'Query')
+
+        return isWriteDocumentOperation and uri_prefix in r.url
+
 
     @staticmethod
     async def throw_after_delay(delay_in_ms: int, error: Exception):
@@ -113,7 +145,27 @@ class FaultInjectionTransport(AioHttpTransport):
         raise error
 
     @staticmethod
-    async def transform_pass_through(r: HttpRequest,
+    async def throw_write_forbidden():
+        raise CosmosHttpResponseError(
+            status_code=403,
+            message="Injected error disallowing writes in this region.",
+            response=None,
+            sub_status_code=3,
+        )
+
+    @staticmethod
+    async def transform_convert_emulator_to_single_master_read_multi_region_account(r: HttpRequest,
                                      inner: Callable[[],asyncio.Task[AsyncHttpResponse]]) -> asyncio.Task[AsyncHttpResponse]:
-        await asyncio.sleep(1)
-        return await inner()
+
+        response = await inner()
+        if not FaultInjectionTransport.predicate_is_database_account_call(response.request):
+            return response
+
+        await response.load_body()
+        data = response.body()
+        if response.status_code == 200 and data:
+            data = data.decode("utf-8")
+            result = json.loads(data)
+            result["readableLocations"].append({"name": "East US", "databaseAccountEndpoint" : "https://localhost:8888/"})
+            FaultInjectionTransport.logger.info("Transformed Account Topology: {}".format(result))
+        return response
