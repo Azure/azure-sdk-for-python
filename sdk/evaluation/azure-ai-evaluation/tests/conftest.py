@@ -20,7 +20,7 @@ from devtools_testutils import (
     add_header_regex_sanitizer,
     is_live,
     remove_batch_sanitizers,
-    add_batch_sanitizers,
+    add_remove_header_sanitizer,
     Sanitizer,
 )
 from devtools_testutils.config import PROXY_URL
@@ -196,8 +196,9 @@ def add_sanitizers(
         add_body_key_sanitizer(json_path="$..userTenantId", value=ZERO_GUID)
         add_body_key_sanitizer(json_path="$..upn", value="Sanitized")
 
-        # remove the stainless retry header since it is causing some unnecessary mismatches in recordings
-        add_batch_sanitizers({Sanitizer.REMOVE_HEADER: [{"headers": "x-stainless-retry-count"}]})
+        # removes some stainless headers since they are causing some unnecessary mismatches in recordings
+        stainless_headers = ["x-stainless-retry-count", "x-stainless-read-timeout"]
+        add_remove_header_sanitizer(headers=",".join(stainless_headers))
 
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
@@ -209,7 +210,7 @@ def add_sanitizers(
 
 
 @pytest.fixture
-def redirect_asyncio_requests_traffic():
+def redirect_asyncio_requests_traffic() -> Generator:
     """Redirects requests sent through AsyncioRequestsTransport to the test proxy.
 
     .. note::
