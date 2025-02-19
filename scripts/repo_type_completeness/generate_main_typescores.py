@@ -308,4 +308,4 @@ def update_main_typescores() -> None:
 
 
 if __name__ == "__main__":
-    should_run()
+    update_main_typescores()
