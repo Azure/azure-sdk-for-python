@@ -3,6 +3,10 @@
 # cSpell:disable
 
 from opentelemetry.semconv.metrics import MetricInstruments
+from opentelemetry.semconv.metrics.http_metrics import (
+    HTTP_CLIENT_REQUEST_DURATION,
+    HTTP_SERVER_REQUEST_DURATION,
+)
 
 # Environment variables
 
@@ -172,6 +176,8 @@ _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(
 
 # List of metric instrument names that are autocollected from instrumentations
 _AUTOCOLLECTED_INSTRUMENT_NAMES = (
+    HTTP_CLIENT_REQUEST_DURATION,
+    HTTP_SERVER_REQUEST_DURATION,
     MetricInstruments.HTTP_SERVER_DURATION,
     MetricInstruments.HTTP_SERVER_REQUEST_SIZE,
     MetricInstruments.HTTP_SERVER_RESPONSE_SIZE,
