@@ -196,8 +196,9 @@ def add_sanitizers(
         add_body_key_sanitizer(json_path="$..userTenantId", value=ZERO_GUID)
         add_body_key_sanitizer(json_path="$..upn", value="Sanitized")
 
-        # remove the stainless retry header since it is causing some unnecessary mismatches in recordings
+        # remove the stainless retry header and read timeout since it is causing some unnecessary mismatches in recordings
         add_batch_sanitizers({Sanitizer.REMOVE_HEADER: [{"headers": "x-stainless-retry-count"}]})
+        add_batch_sanitizers({Sanitizer.REMOVE_HEADER: [{"headers": "x-stainless-read-timeout"}]})
 
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
@@ -325,7 +326,7 @@ def dev_connections(
 @pytest.fixture(scope="session")
 def mock_model_config() -> AzureOpenAIModelConfiguration:
     return AzureOpenAIModelConfiguration(
-        azure_endpoint="https://Sanitized.cognitiveservices.azure.com",
+        azure_endpoint="https://Sanitized.openai.azure.com",
         api_key="aoai-api-key",
         api_version="2024-08-01-preview",
         azure_deployment="aoai-deployment",
