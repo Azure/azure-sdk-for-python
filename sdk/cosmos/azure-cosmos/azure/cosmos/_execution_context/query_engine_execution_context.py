@@ -63,12 +63,9 @@ class _QueryEngineExecutionContext(_QueryExecutionContextBase):
         :raises StopIteration: If no more result is left.
         """
 
-        # Are we done?
-        if self._completed:
-            raise StopIteration()
-
         # Ensure we have a buffer of results.
-        self._ensure_buffer()
+        if not self._completed:
+            self._ensure_buffer()
 
         # Return the next item, if there is one.
         return self._pop_item()
@@ -105,8 +102,10 @@ class _QueryEngineExecutionContext(_QueryExecutionContextBase):
                     self._completed = True
                     raise StopIteration()
 
-            # If this buffer has items, we're good.
-            if self._items_available():
+            self._completed = self._active_results.terminated
+
+            # If this buffer has items, or is terminated, we're done.
+            if self._completed or self._items_available():
                 return
 
             # Ok, we have a batch, but it has no more items left.
@@ -149,8 +148,7 @@ class _QueryEngineExecutionContext(_QueryExecutionContextBase):
         return (len(self._active_results.items) - self._result_offset) > 0
 
     def _pop_item(self):
-        if self._completed or not self._items_available():
-            print("Stopping in pop_item")
+        if not self._items_available():
             raise StopIteration()
 
         index = self._result_offset

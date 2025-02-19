@@ -20,6 +20,10 @@ class PipelineResult(Protocol):
     def requests(self) -> List[DataRequest]:
         raise NotImplementedError
 
+    @property
+    def terminated(self) -> bool:
+        raise NotImplementedError
+
 
 class QueryPipeline(Protocol):
     def close(self) -> None:
@@ -28,7 +32,7 @@ class QueryPipeline(Protocol):
     def query(self) -> str:
         raise NotImplementedError
 
-    def next_batch(self) -> Optional[PipelineResult]:
+    def next_batch(self) -> PipelineResult:
         raise NotImplementedError
 
     def provide_data(self, pkrangeid: str, data: List[Dict[str, Any]], continuation: Optional[str]) -> None:
