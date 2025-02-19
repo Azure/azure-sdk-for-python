@@ -171,7 +171,6 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
         self._keep_alive_interval = kwargs.get("keep_alive_interval", 0)
         self._keep_alive_interval = int(self._keep_alive_interval) if self._keep_alive_interval is not None else 0
-        self._keep_alive_thread = None
 
         # Connection settings
         self._max_frame_size = kwargs.pop("max_frame_size", MAX_FRAME_SIZE_BYTES)
@@ -229,19 +228,6 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
         :param any args: Ignored.
         """
         self.close()
-
-    def _keep_alive(self):
-        start_time = time.time()
-        try:
-            while self._connection and not self._shutdown:
-                current_time = time.time()
-                elapsed_time = current_time - start_time
-                if elapsed_time >= self._keep_alive_interval:
-                    self._connection.listen(wait=self._socket_timeout, batch=self._link.total_link_credit)
-                    start_time = current_time
-                time.sleep(1)
-        except Exception as e:  # pylint: disable=broad-except
-            _logger.debug("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
 
     def _client_ready(self):
         """Determine whether the client is ready to start sending and/or
@@ -327,6 +313,7 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
                 custom_endpoint_address=self._custom_endpoint_address,
                 socket_timeout=self._socket_timeout,
                 use_tls=self._use_tls,
+                keep_alive_interval=self._keep_alive_interval,
             )
             self._connection.open()
         if not self._session:
@@ -335,10 +322,6 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
                 outgoing_window=self._outgoing_window,
             )
             self._session.begin()
-        if self._keep_alive_interval:
-            self._keep_alive_thread = threading.Thread(target=self._keep_alive)
-            self._keep_alive_thread.daemon = True
-            self._keep_alive_thread.start()
         if self._auth.auth_type == AUTH_TYPE_CBS:
             self._cbs_authenticator = CBSAuthenticator(
                 session=self._session, auth=self._auth, auth_timeout=self._auth_timeout
@@ -372,12 +355,6 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
         if not self._external_connection:
             self._connection.close()
             self._connection = None
-        if self._keep_alive_thread:
-            try:
-                self._keep_alive_thread.join()
-            except RuntimeError:  # Probably thread failed to start in .open()
-                logging.debug("Keep alive thread failed to join.", exc_info=True)
-            self._keep_alive_thread = None
         self._network_trace_params["amqpConnection"] = ""
         self._network_trace_params["amqpSession"] = ""
 
@@ -852,7 +829,8 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         :rtype: bool
         """
         try:
-            if self._link.total_link_credit <= 0:
+            flow = kwargs.pop("flow", True)
+            if self._link.current_link_credit <= 0 and flow:
                 self._link.flow(link_credit=self._link_credit)
             self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
@@ -928,6 +906,20 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
             except queue.Empty:
                 break
         return batch
+
+    @staticmethod
+    def _process_receive_error(message_delivery, condition, description=None, info=None):
+        # TODO: Do we want to raise MessageSendFailed/MessageException here?
+        try:
+            amqp_condition = ErrorCondition(condition)
+        except ValueError:
+            error = MessageException(condition, description=description, info=info)
+        else:
+            error = MessageSendFailed(
+                amqp_condition, description=description, info=info
+            )
+        message_delivery.state = MessageDeliveryState.Error
+        message_delivery.error = error
 
     def close(self):
         self._received_messages = queue.Queue()
@@ -1016,6 +1008,42 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
             if self._shutdown:
                 self.close()
 
+    def _on_disposition_received(self, message_delivery, reason, state):
+        for state_key in state:
+            state_error = state[state_key]
+        message_delivery.reason = reason
+        if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
+            if state and (len(state_error) == 0 or state_error[0] is None):
+                message_delivery.state = MessageDeliveryState.Ok
+            else:
+                try:
+                    error_info = state[SEND_DISPOSITION_REJECT]
+                    self._process_receive_error(
+                        message_delivery,
+                        condition=error_info[0][0],
+                        description=error_info[0][1],
+                        info=error_info[0][2]
+                    )
+                except TypeError:
+                    self._process_receive_error(
+                        message_delivery,
+                        condition=ErrorCondition.UnknownError
+                    )
+        elif reason == LinkDeliverySettleReason.SETTLED:
+            message_delivery.state = MessageDeliveryState.Ok
+        elif reason == LinkDeliverySettleReason.TIMEOUT:
+            message_delivery.state = MessageDeliveryState.Timeout
+            message_delivery.error = TimeoutError("Sending disposition timed out.")
+        else:
+            # NotDelivered and other unknown errors
+            self._process_receive_error(
+                message_delivery,
+                condition=ErrorCondition.UnknownError
+            )
+
+
+
+
     @overload
     def settle_messages(
         self,
@@ -1074,6 +1102,10 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
 
     def settle_messages(self, delivery_id: Union[int, Tuple[int, int]], delivery_tag: bytes, outcome: str, **kwargs):
         batchable = kwargs.pop("batchable", None)
+        # TODO: timeout is not used here, should it be?
+        timeout = kwargs.pop("timeout", 0)
+        expire_time = (time.time() + timeout) if timeout else None
+
         if outcome.lower() == "accepted":
             state: Outcomes = Accepted()
         elif outcome.lower() == "released":
@@ -1091,12 +1123,45 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         except TypeError:
             first = delivery_id
             last = None
+
+
+        message_delivery = _MessageDelivery(
+            None,
+            MessageDeliveryState.WaitingToBeSent,
+            expire_time
+        )
+        on_disposition_received = partial(self._on_disposition_received, message_delivery)
+
         self._link.send_disposition(
             first_delivery_id=first,
             last_delivery_id=last,
             delivery_tag=delivery_tag,
-            settled=True,
+            settled=False,
             delivery_state=state,
             batchable=batchable,
             wait=True,
+            on_disposition=on_disposition_received,
         )
+
+        running = True
+        while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            running = self.do_work(flow=False)
+
+        if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            raise MessageException(
+                condition=ErrorCondition.ClientError,
+                description="Settlement failed - connection not running."
+            )
+
+        if message_delivery.state in (
+            MessageDeliveryState.Error,
+            MessageDeliveryState.Cancelled,
+            MessageDeliveryState.Timeout
+        ):
+            try:
+                raise message_delivery.error  # pylint: disable=raising-bad-type
+            except TypeError:
+                # This is a default handler
+                raise MessageException(
+                    condition=ErrorCondition.UnknownError,
+                    description="Settlement failed.") from None

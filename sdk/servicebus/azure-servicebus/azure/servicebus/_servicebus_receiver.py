@@ -12,7 +12,6 @@ import warnings
 from enum import Enum
 from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
 
-from .exceptions import MessageLockLostError
 from ._base_handler import BaseHandler
 from ._common.message import ServiceBusReceivedMessage
 from ._common.utils import create_authentication
@@ -51,6 +50,7 @@ from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
 from ._common.utils import utc_from_timestamp
 from ._servicebus_session import ServiceBusSession
+from .exceptions import ServiceBusConnectionError, SessionLockLostError
 
 if TYPE_CHECKING:
     try:
@@ -72,7 +72,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many-instance-attributes
+class ServiceBusReceiver(BaseHandler, ReceiverMixin):
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
@@ -401,27 +401,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
                 link_credit_needed = max_message_count - len(batch)
                 self._amqp_transport.reset_link_credit(amqp_receive_client, link_credit_needed)
 
-            first_message_received = expired = False
-            receiving = True
-            while receiving and not expired and len(batch) < max_message_count:
-                while receiving and received_messages_queue.qsize() < max_message_count:
-                    if abs_timeout and self._amqp_transport.get_current_time(amqp_receive_client) > abs_timeout:
-                        expired = True
-                        break
-                    before = received_messages_queue.qsize()
-                    receiving = amqp_receive_client.do_work()
-                    received = received_messages_queue.qsize() - before
-                    if not first_message_received and received_messages_queue.qsize() > 0 and received > 0:
-                        # first message(s) received, continue receiving for some time
-                        first_message_received = True
-                        abs_timeout = (
-                            self._amqp_transport.get_current_time(amqp_receive_client)
-                            + self._further_pull_receive_timeout
-                        )
-                while not received_messages_queue.empty() and len(batch) < max_message_count:
-                    batch.append(received_messages_queue.get())
-                    received_messages_queue.task_done()
-            return [self._build_received_message(message) for message in batch]
+            return self._amqp_transport.receive_loop(self, amqp_receive_client, max_message_count, batch, abs_timeout, timeout_time)
         finally:
             self._receive_context.clear()
 
@@ -438,28 +418,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
             raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
         self._check_message_alive(message, settle_operation)
 
-        # The following condition check is a hot fix for settling a message received for non-session queue after
-        # lock expiration.
-        # pyamqp doesn't currently (and uamqp doesn't have the ability to) wait to receive disposition result returned
-        # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
-        # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
-        if not self._session and message._lock_expired:
-            raise MessageLockLostError(
-                message="The lock on the message lock has expired.",
-                error=message.auto_renew_error,
-            )
-        link = get_span_link_from_message(message)
-        trace_links = [link] if link else []
-        with settle_trace_context_manager(self, settle_operation, links=trace_links):
-            self._do_retryable_operation(
-                self._settle_message,
-                timeout=None,
-                message=message,
-                settle_operation=settle_operation,
-                dead_letter_reason=dead_letter_reason,
-                dead_letter_error_description=dead_letter_error_description,
-            )
-            message._settled = True
+        self._amqp_transport._settle_message_with_retry(self, message, settle_operation, dead_letter_reason, dead_letter_error_description)
 
     def _settle_message(
         self,
@@ -480,7 +439,15 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
                         dead_letter_error_description=dead_letter_error_description,
                     )
                     return
-                except RuntimeError as exception:
+                except SessionLockLostError as exception:
+                    _LOGGER.info(
+                        "Session Message settling: %r has encountered an exception (%r)."
+                        "Will not retry through management link.",
+                        settle_operation,
+                        exception,
+                    )
+                    raise
+                except (RuntimeError, ServiceBusConnectionError) as exception:
                     _LOGGER.info(
                         "Message settling: %r has encountered an exception (%r)."
                         "Trying to settle through management link",
@@ -502,7 +469,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
             )
         except Exception as exception:
             _LOGGER.info(
-                "Message settling: %r has encountered an exception (%r) through management link",
+                "Message settling: %r has encountered an exception (%r)",
                 settle_operation,
                 exception,
             )
