@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, AsyncIterator, Callable, Dict, Optional, Type, TypeVar, Union, cast
+from typing import Any, AsyncIterator, Callable, Dict, Optional, TypeVar, Union, cast
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -40,7 +39,7 @@ from ...operations._net_app_resource_operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -92,7 +91,7 @@ class NetAppResourceOperations:
         :rtype: ~azure.mgmt.netapp.models.CheckAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -163,7 +162,7 @@ class NetAppResourceOperations:
         :rtype: ~azure.mgmt.netapp.models.CheckAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -239,7 +238,7 @@ class NetAppResourceOperations:
         :rtype: ~azure.mgmt.netapp.models.CheckAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -299,7 +298,7 @@ class NetAppResourceOperations:
         :rtype: ~azure.mgmt.netapp.models.RegionInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -345,6 +344,7 @@ class NetAppResourceOperations:
     async def query_network_sibling_set(
         self, location: str, network_sibling_set_id: str, subnet_id: str, **kwargs: Any
     ) -> _models.NetworkSiblingSet:
+        # pylint: disable=line-too-long
         """Describe a network sibling set.
 
         Get details of the specified network sibling set.
@@ -363,7 +363,7 @@ class NetAppResourceOperations:
         :rtype: ~azure.mgmt.netapp.models.NetworkSiblingSet
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -422,7 +422,7 @@ class NetAppResourceOperations:
         network_features: Union[str, _models.NetworkFeatures] = "Basic",
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -494,6 +494,7 @@ class NetAppResourceOperations:
         network_features: Union[str, _models.NetworkFeatures] = "Basic",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NetworkSiblingSet]:
+        # pylint: disable=line-too-long
         """Update the network features of a network sibling set.
 
         Update the network features of the specified network sibling set.
