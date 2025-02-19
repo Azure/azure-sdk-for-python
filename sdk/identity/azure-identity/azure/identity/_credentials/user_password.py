@@ -11,6 +11,9 @@ from .._internal import InteractiveCredential, wrap_exceptions
 class UsernamePasswordCredential(InteractiveCredential):
     """Authenticates a user with a username and password.
 
+    **Deprecated**: This credential doesn't support multifactor authentication (MFA).
+    For more details on Microsoft Entra MFA enforcement, see https://aka.ms/azsdk/identity/mfa.
+
     In general, Microsoft doesn't recommend this kind of authentication, because it's less secure than other
     authentication flows.
 
@@ -61,8 +64,8 @@ class UsernamePasswordCredential(InteractiveCredential):
 
     def __init__(self, client_id: str, username: str, password: str, **kwargs: Any) -> None:
         warnings.warn(
-            f"{self.__class__.__name__} is deprecated. Please use a more secure credential. See "
-            "https://aka.ms/azsdk/identity/mfa for details.",
+            f"{self.__class__.__name__} is deprecated, as is it doesn't support multifactor "
+            "authentication (MFA). For more details, see https://aka.ms/azsdk/identity/mfa.",
             category=DeprecationWarning,
             stacklevel=2,
         )
