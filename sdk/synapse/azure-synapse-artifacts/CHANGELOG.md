@@ -4,43 +4,194 @@
 
 ### Features Added
 
+  - Add a new Model IcebergDataset
+  - Add a new Model IcebergSink
+  - Add a new Model TeradataSink
   - Model AzureFileStorageLinkedService has a new parameter service_endpoint
   - Model AzureFileStorageLinkedService has a new parameter credential
   - Model AzureTableStorageLinkedService has a new parameter service_endpoint
   - Model AzureTableStorageLinkedService has a new parameter credential
   - Model DynamicsCrmLinkedService has a new properties credential
-  - Model LinkedService parameter DynamicsLinkedService has a new properties domain
-  - Model LinkedService parameter GreenplumLinkedService has some new connection properties
-  - Model LinkedService parameter MySqlLinkedService has some new properties
-  - Model LinkedService parameter OracleLinkedService update properties
-  - Model LinkedService parameter RestService and SharePointOnlineList support ServicePrincipalCert auth
-  - Model LinkedService parameter SAP ODP update properties sncMode
-  - Model LinkedService parameter SnowflakeV2LinkedService has a new properties host
-  - Model LinkedService parameter SqlServerLinkedService add authenticationType UserAssignedManagedIdentity
-  - Model LinkedService parameter TeradataLinkedService has some new Teradata connection properties
-  - Model LinkedService parameter VerticaLinkedService support Vertica V2
+  - Model DynamicsLinkedService has a new properties domain
+  - Model GreenplumLinkedService has a new parameter authentication_type
+  - Model GreenplumLinkedService has a new parameter host
+  - Model GreenplumLinkedService has a new parameter port
+  - Model GreenplumLinkedService has a new parameter username
+  - Model GreenplumLinkedService has a new parameter database
+  - Model GreenplumLinkedService has a new parameter ssl_mode
+  - Model GreenplumLinkedService has a new parameter connection_timeout
+  - Model GreenplumLinkedService has a new parameter command_timeout
+  - Model GreenplumLinkedService has a new parameter password
+  - Model MySqlLinkedService has a new parameter allow_zero_date_time
+  - Model MySqlLinkedService has a new parameter connection_timeout
+  - Model MySqlLinkedService has a new parameter convert_zero_date_time
+  - Model MySqlLinkedService has a new parameter guid_format
+  - Model MySqlLinkedService has a new parameter ssl_cert
+  - Model MySqlLinkedService has a new parameter ssl_key
+  - Model MySqlLinkedService has a new parameter treat_tiny_as_boolean
+  - Model OracleLinkedService has a new parameter server
+  - Model OracleLinkedService has a new parameter authentication_type
+  - Model OracleLinkedService has a new parameter username
+  - Model OracleLinkedService has a new parameter encryption_client
+  - Model OracleLinkedService has a new parameter encryption_types_client
+  - Model OracleLinkedService has a new parameter crypto_checksum_client
+  - Model OracleLinkedService has a new parameter crypto_checksum_types_client
+  - Model OracleLinkedService has a new parameter initial_lob_fetch_size
+  - Model OracleLinkedService has a new parameter fetch_size
+  - Model OracleLinkedService has a new parameter statement_cache_size
+  - Model OracleLinkedService has a new parameter initialization_string
+  - Model OracleLinkedService has a new parameter enable_bulk_load
+  - Model OracleLinkedService has a new parameter support_v1_data_types
+  - Model OracleLinkedService has a new parameter fetch_tswtz_as_timestamp
+  - Model RestServiceLinkedService has a new parameter service_principal_credential_type
+  - Model RestServiceLinkedService has a new parameter service_principal_embedded_cert
+  - Model RestServiceLinkedService has a new parameter service_principal_embedded_cert_password
+  - Model SharePointOnlineListLinkedService has a new parameter service_principal_credential_type
+  - Model SharePointOnlineListLinkedService has a new parameter service_principal_embedded_cert
+  - Model SharePointOnlineListLinkedService has a new parameter service_principal_embedded_cert_password
+  - Model SapTableLinkedService update parameter snc_mode
+  - Model SnowflakeV2LinkedService has a new properties host
+  - Model SqlServerLinkedService has a new parameter server 
+  - Model SqlServerLinkedService has a new parameter database
+  - Model SqlServerLinkedService has a new parameter encrypt
+  - Model SqlServerLinkedService has a new parameter trust_server_certificate
+  - Model SqlServerLinkedService has a new parameter host_name_in_certificate
+  - Model SqlServerLinkedService has a new parameter application_intent
+  - Model SqlServerLinkedService has a new parameter connect_timeout
+  - Model SqlServerLinkedService has a new parameter connect_retry_count
+  - Model SqlServerLinkedService has a new parameter connect_retry_interval
+  - Model SqlServerLinkedService has a new parameter load_balance_timeout
+  - Model SqlServerLinkedService has a new parameter command_timeout
+  - Model SqlServerLinkedService has a new parameter integrated_security
+  - Model SqlServerLinkedService has a new parameter failover_partner
+  - Model SqlServerLinkedService has a new parameter max_pool_size
+  - Model SqlServerLinkedService has a new parameter min_pool_size
+  - Model SqlServerLinkedService has a new parameter multiple_active_result_sets
+  - Model SqlServerLinkedService has a new parameter multi_subnet_failover
+  - Model SqlServerLinkedService has a new parameter packet_size
+  - Model SqlServerLinkedService has a new parameter pooling
+  - Model SqlServerLinkedService has a new parameter authentication_type
+  - Model SqlServerLinkedService has a new parameter credential
+  - Model AzureSqlDWLinkedService has a new parameter server 
+  - Model AzureSqlDWLinkedService has a new parameter database
+  - Model AzureSqlDWLinkedService has a new parameter encrypt
+  - Model AzureSqlDWLinkedService has a new parameter trust_server_certificate
+  - Model AzureSqlDWLinkedService has a new parameter host_name_in_certificate
+  - Model AzureSqlDWLinkedService has a new parameter application_intent
+  - Model AzureSqlDWLinkedService has a new parameter connect_timeout
+  - Model AzureSqlDWLinkedService has a new parameter connect_retry_count
+  - Model AzureSqlDWLinkedService has a new parameter connect_retry_interval
+  - Model AzureSqlDWLinkedService has a new parameter load_balance_timeout
+  - Model AzureSqlDWLinkedService has a new parameter command_timeout
+  - Model AzureSqlDWLinkedService has a new parameter integrated_security
+  - Model AzureSqlDWLinkedService has a new parameter failover_partner
+  - Model AzureSqlDWLinkedService has a new parameter max_pool_size
+  - Model AzureSqlDWLinkedService has a new parameter min_pool_size
+  - Model AzureSqlDWLinkedService has a new parameter multiple_active_result_sets
+  - Model AzureSqlDWLinkedService has a new parameter multi_subnet_failover
+  - Model AzureSqlDWLinkedService has a new parameter packet_size
+  - Model AzureSqlDWLinkedService has a new parameter pooling
+  - Model AzureSqlDWLinkedService has a new parameter authentication_type
+  - Model AzureSqlDWLinkedService has a new parameter username
+  - Model AzureSqlDWLinkedService has a new parameter service_principal_credential_type
+  - Model AzureSqlDWLinkedService has a new parameter service_principal_credential
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter server 
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter database
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter encrypt
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter trust_server_certificate
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter host_name_in_certificate
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter application_intent
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter connect_timeout
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter connect_retry_count
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter connect_retry_interval
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter load_balance_timeout
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter command_timeout
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter integrated_security
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter failover_partner
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter max_pool_size
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter min_pool_size
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter multiple_active_result_sets
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter multi_subnet_failover
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter packet_size
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter pooling
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter authentication_type
+  - Model AzureSqlDatabaseLinkedService has a new parameter server 
+  - Model AzureSqlDatabaseLinkedService has a new parameter database
+  - Model AzureSqlDatabaseLinkedService has a new parameter encrypt
+  - Model AzureSqlDatabaseLinkedService has a new parameter trust_server_certificate
+  - Model AzureSqlDatabaseLinkedService has a new parameter host_name_in_certificate
+  - Model AzureSqlDatabaseLinkedService has a new parameter application_intent
+  - Model AzureSqlDatabaseLinkedService has a new parameter connect_timeout
+  - Model AzureSqlDatabaseLinkedService has a new parameter connect_retry_count
+  - Model AzureSqlDatabaseLinkedService has a new parameter connect_retry_interval
+  - Model AzureSqlDatabaseLinkedService has a new parameter load_balance_timeout
+  - Model AzureSqlDatabaseLinkedService has a new parameter command_timeout
+  - Model AzureSqlDatabaseLinkedService has a new parameter integrated_security
+  - Model AzureSqlDatabaseLinkedService has a new parameter failover_partner
+  - Model AzureSqlDatabaseLinkedService has a new parameter max_pool_size
+  - Model AzureSqlDatabaseLinkedService has a new parameter min_pool_size
+  - Model AzureSqlDatabaseLinkedService has a new parameter multiple_active_result_sets
+  - Model AzureSqlDatabaseLinkedService has a new parameter multi_subnet_failover
+  - Model AzureSqlDatabaseLinkedService has a new parameter packet_size
+  - Model AzureSqlDatabaseLinkedService has a new parameter pooling
+  - Model AzureSqlDatabaseLinkedService has a new parameter authentication_type
+  - Model AzureSqlDatabaseLinkedService has a new parameter username
+  - Model AzureSqlDatabaseLinkedService has a new parameter service_principal_credential_type
+  - Model AzureSqlDatabaseLinkedService has a new parameter service_principal_credential
+  - Model AzureSqlMILinkedService has a new parameter server 
+  - Model AzureSqlMILinkedService has a new parameter database
+  - Model AzureSqlMILinkedService has a new parameter encrypt
+  - Model AzureSqlMILinkedService has a new parameter trust_server_certificate
+  - Model AzureSqlMILinkedService has a new parameter host_name_in_certificate
+  - Model AzureSqlMILinkedService has a new parameter application_intent
+  - Model AzureSqlMILinkedService has a new parameter connect_timeout
+  - Model AzureSqlMILinkedService has a new parameter connect_retry_count
+  - Model AzureSqlMILinkedService has a new parameter connect_retry_interval
+  - Model AzureSqlMILinkedService has a new parameter load_balance_timeout
+  - Model AzureSqlMILinkedService has a new parameter command_timeout
+  - Model AzureSqlMILinkedService has a new parameter integrated_security
+  - Model AzureSqlMILinkedService has a new parameter failover_partner
+  - Model AzureSqlMILinkedService has a new parameter max_pool_size
+  - Model AzureSqlMILinkedService has a new parameter min_pool_size
+  - Model AzureSqlMILinkedService has a new parameter multiple_active_result_sets
+  - Model AzureSqlMILinkedService has a new parameter multi_subnet_failover
+  - Model AzureSqlMILinkedService has a new parameter packet_size
+  - Model AzureSqlMILinkedService has a new parameter pooling
+  - Model AzureSqlMILinkedService has a new parameter authentication_type
+  - Model AzureSqlMILinkedService has a new parameter username
+  - Model AzureSqlMILinkedService has a new parameter service_principal_credential_type
+  - Model AzureSqlMILinkedService has a new parameter service_principal_credential
+  - Model TeradataLinkedService a new parameter ssl_mode
+  - Model TeradataLinkedService a new parameter port_number
+  - Model TeradataLinkedService a new parameter https_port_number
+  - Model TeradataLinkedService a new parameter use_data_encryption
+  - Model TeradataLinkedService a new parameter character_set
+  - Model TeradataLinkedService a new parameter max_resp_size
+  - Model VerticaLinkedService a new parameter server
+  - Model VerticaLinkedService a new parameter port
+  - Model VerticaLinkedService a new parameter uid
+  - Model VerticaLinkedService a new parameter database
   - Model LinkedService has a new parameter version
-  - Model Pipeline Add credential reference in notebook and spark job definition activity
-  - Model Pipeline feature snowflake support multi-resultset
-  - Model Pipeline feature snowflake support storage integration
-  - Model Pipeline parameter ExecuteDataFlowActivity has a new properties continuationSettings
-  - Model Pipeline parameter ExpressionV2 has a new properties page_size
-  - Model Pipeline parameter SalesforceV2Source has a new properties page_size
-  - Model Pipeline support Iceberg Format As Sink
-  - Model Pipeline support TeradataSink
-  - Model Dataset support Iceberg Format As Sink
-  - Model runNotebook parameter runId update description
-  - Model LinkedService support sslMode and useSystemTrustStore for MariaDB
+  - Model SynapseNotebookActivity has a new parameter authentication
+  - Model SynapseSparkJobDefinitionActivity has a new parameter authentication
+  - Model ScriptActivity has a new parameter return_multistatement_result
+  - Model ExecuteDataFlowActivity has a new properties continuation_settings
+  - Model ExpressionV2 has a new parameter operators
+  - Model SalesforceV2Source has a new parameter page_size
+  - Model SalesforceV2Source has a new parameter query
+  - Model MariaDBLinkedService has a new parameter ssl_mode
+  - Model MariaDBLinkedService has a new parameter use_system_trust_store
 
 ### Breaking Changes
 
   - Model LinkedService parameter PostgreSqlV2LinkedService has a new required properties authentication_type
   - Model LinkedService parameter SapOdpLinkedService update properties sncMode
-  - Model LinkedService parameter AzureSqlDWLinkedService update required properties
-  - Model LinkedService parameter SqlServerLinkedService update required properties
-  - Model LinkedService parameter AmazonRdsForSqlServerLinkedService update required properties
-  - Model LinkedService parameter AzureSqlDatabaseLinkedService update required properties
-  - Model LinkedService parameter AzureSqlMILinkedService update required properties
+  - Model LinkedService parameter AzureSqlDWLinkedService parameter connection_string now is not required
+  - Model LinkedService parameter SqlServerLinkedService parameter connection_string now is not required
+  - Model LinkedService parameter AmazonRdsForSqlServerLinkedService parameter connection_string now is not required
+  - Model LinkedService parameter AzureSqlDatabaseLinkedService parameter connection_string now is not required
+  - Model LinkedService parameter AzureSqlMILinkedService parameter connection_string now is not required
+  - Model SharePointOnlineListLinkedService parameter service_principal_key now is not required
 
 ## 0.19.0 (2024-06-04)
 
