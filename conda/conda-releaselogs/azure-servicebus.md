@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-servicebus-7.13.0
+- azure-servicebus-7.14.0
 
 ## 2024.12.01
 

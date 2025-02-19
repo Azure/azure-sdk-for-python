@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-identity-1.19.0
+- azure-identity-1.20.0
 
 ## 2024.12.01
 

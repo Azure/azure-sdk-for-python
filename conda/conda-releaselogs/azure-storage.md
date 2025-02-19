@@ -4,10 +4,10 @@
 
 ### Packages included
 
-- azure-storage-blob-12.24.0
+- azure-storage-blob-12.24.1
 - azure-storage-queue-12.12.0
-- azure-storage-file-share-12.20.0
-- azure-storage-file-datalake-12.18.0
+- azure-storage-file-share-12.20.1
+- azure-storage-file-datalake-12.18.1
 
 ## 2024.12.01
 

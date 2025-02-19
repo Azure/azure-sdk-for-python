@@ -32,15 +32,16 @@
 - azure-mgmt-cognitiveservices-13.5.0
 - azure-mgmt-commerce-6.0.0
 - azure-mgmt-communication-2.1.0
-- azure-mgmt-compute-33.0.0
+- azure-mgmt-compute-34.0.0
 - azure-mgmt-computefleet-1.0.0
+- azure-mgmt-computeschedule-1.0.0
 - azure-mgmt-confidentialledger-1.0.0
 - azure-mgmt-confluent-2.1.0
 - azure-mgmt-connectedvmware-1.0.0
 - azure-mgmt-consumption-10.0.0
 - azure-mgmt-containerinstance-10.1.0
 - azure-mgmt-containerregistry-10.3.0
-- azure-mgmt-containerservice-33.0.0
+- azure-mgmt-containerservice-34.0.0
 - azure-mgmt-containerservicefleet-3.0.0
 - azure-mgmt-cosmosdb-9.7.0
 - azure-mgmt-costmanagement-4.0.1
@@ -50,7 +51,7 @@
 - azure-mgmt-databoxedge-1.0.0
 - azure-mgmt-databricks-2.0.0
 - azure-mgmt-datadog-2.1.0
-- azure-mgmt-datafactory-9.0.0
+- azure-mgmt-datafactory-9.1.0
 - azure-mgmt-datamigration-10.0.0
 - azure-mgmt-dataprotection-1.4.0
 - azure-mgmt-datashare-1.0.0
@@ -68,7 +69,7 @@
 - azure-mgmt-elastic-1.0.0
 - azure-mgmt-elasticsan-1.1.0
 - azure-mgmt-eventgrid-10.2.0
-- azure-mgmt-eventhub-11.1.0
+- azure-mgmt-eventhub-11.2.0
 - azure-mgmt-extendedlocation-2.0.0
 - azure-mgmt-fabric-1.0.0
 - azure-mgmt-fluidrelay-1.0.0
@@ -88,14 +89,15 @@
 - azure-mgmt-iothub-3.0.0
 - azure-mgmt-iothubprovisioningservices-1.1.0
 - azure-mgmt-iotfirmwaredefense-1.0.0
+- azure-mgmt-iotoperations-1.0.0
 - azure-mgmt-keyvault-10.3.1
 - azure-mgmt-kubernetesconfiguration-3.1.0
-- azure-mgmt-kusto-3.3.0
+- azure-mgmt-kusto-3.4.0
 - azure-mgmt-labservices-2.0.0
 - azure-mgmt-loadtesting-1.0.0
 - azure-mgmt-loganalytics-12.0.0
 - azure-mgmt-logic-10.0.0
-- azure-mgmt-logz-1.0.0
+- azure-mgmt-logz-1.1.1
 - azure-mgmt-machinelearningservices-1.0.0
 - azure-mgmt-maintenance-2.1.0
 - azure-mgmt-managednetworkfabric-1.0.0
@@ -123,6 +125,7 @@
 - azure-mgmt-operationsmanagement-1.0.0
 - azure-mgmt-paloaltonetworksngfw-1.0.0
 - azure-mgmt-peering-1.0.0
+- azure-mgmt-playwrighttesting-1.0.0
 - azure-mgmt-policyinsights-1.0.0
 - azure-mgmt-portal-1.0.0
 - azure-mgmt-postgresqlflexibleservers-1.0.0
@@ -136,7 +139,7 @@
 - azure-mgmt-recoveryservicesbackup-9.1.0
 - azure-mgmt-recoveryservicessiterecovery-1.2.0
 - azure-mgmt-redhatopenshift-2.0.0
-- azure-mgmt-redis-14.4.0
+- azure-mgmt-redis-14.5.0
 - azure-mgmt-redisenterprise-3.0.0
 - azure-mgmt-relay-1.1.0
 - azure-mgmt-reservations-2.3.0
@@ -159,7 +162,7 @@
 - azure-mgmt-sphere-1.0.0
 - azure-mgmt-sql-3.0.1
 - azure-mgmt-standbypool-1.0.0
-- azure-mgmt-storage-21.2.1
+- azure-mgmt-storage-22.0.0
 - azure-mgmt-storagecache-2.0.0
 - azure-mgmt-storagemover-2.1.0
 - azure-mgmt-storagepool-1.0.0
@@ -171,7 +174,7 @@
 - azure-mgmt-timeseriesinsights-1.0.0
 - azure-mgmt-trafficmanager-1.1.0
 - azure-mgmt-voiceservices-1.0.0
-- azure-mgmt-web-7.3.1
+- azure-mgmt-web-8.0.0
 - azure-mgmt-webpubsub-2.0.0
 - azure-mgmt-workloads-1.0.0
 

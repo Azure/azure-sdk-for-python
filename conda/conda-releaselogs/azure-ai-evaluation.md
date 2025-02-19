@@ -4,7 +4,7 @@ Azure AI Evaluation client library for Python (conda)
 
 ### Packages included
 
-- azure-ai-evaluation-1.0.1
+- azure-ai-evaluation-1.2.0
 
 ## 2024.12.01
 

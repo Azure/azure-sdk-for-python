@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-ai-ml-1.22.2
+- azure-ai-ml-1.25.0
 
 ## 2024.12.01
 

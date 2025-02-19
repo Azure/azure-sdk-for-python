@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-monitor-query-1.4.0
+- azure-monitor-query-1.4.1
 
 ## 2024.12.01
 

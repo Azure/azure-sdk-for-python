@@ -4,7 +4,7 @@
 
 ### Packages included
 
-- azure-developer-loadtesting-1.0.0
+- azure-developer-loadtesting-1.0.1
 
 ## 2024.12.01
 
