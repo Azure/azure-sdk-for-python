@@ -1,5 +1,4 @@
 # Release History
-# Release History
 
 ## 1.0.0b7 (Unreleased)
 
