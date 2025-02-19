@@ -1,6 +1,3 @@
-# Microsoft Azure SDK for Python
-
-# Microsoft Azure SDK for Python
 
 **NOTE**: This package has been deprecated and will no longer be maintained after 03-14-2025. This package will only receive security fixes until 03-14-2025.
 
