@@ -7,8 +7,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
+import sys
 from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, overload
 
+from azure.core import PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -19,15 +21,18 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._serialization import Serializer
-from .._vendor import _convert_request
+from .._configuration import ArtifactsClientConfiguration
+from .._serialization import Deserializer, Serializer
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -370,16 +375,15 @@ class LinkConnectionOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ArtifactsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def list_by_workspace(self, **kwargs: Any) -> Iterable["_models.LinkConnectionResource"]:
         """List link connections.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LinkConnectionResource or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.LinkConnectionResource]
@@ -391,7 +395,7 @@ class LinkConnectionOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[_models.LinkConnectionListResponse] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -407,7 +411,6 @@ class LinkConnectionOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -417,7 +420,6 @@ class LinkConnectionOperations:
 
             else:
                 _request = HttpRequest("GET", next_link)
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -469,7 +471,6 @@ class LinkConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkConnectionResource or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -477,18 +478,22 @@ class LinkConnectionOperations:
 
     @overload
     def create_or_update(
-        self, link_connection_name: str, link_connection: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        link_connection_name: str,
+        link_connection: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.LinkConnectionResource:
         """Creates or updates a link connection.
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
         :param link_connection: Link connection resource definition. Required.
-        :type link_connection: IO
+        :type link_connection: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkConnectionResource or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -496,24 +501,23 @@ class LinkConnectionOperations:
 
     @distributed_trace
     def create_or_update(
-        self, link_connection_name: str, link_connection: Union[_models.LinkConnectionResource, IO], **kwargs: Any
+        self,
+        link_connection_name: str,
+        link_connection: Union[_models.LinkConnectionResource, IO[bytes]],
+        **kwargs: Any
     ) -> _models.LinkConnectionResource:
         """Creates or updates a link connection.
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
         :param link_connection: Link connection resource definition. Is either a LinkConnectionResource
-         type or a IO type. Required.
-        :type link_connection: ~azure.synapse.artifacts.models.LinkConnectionResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         type or a IO[bytes] type. Required.
+        :type link_connection: ~azure.synapse.artifacts.models.LinkConnectionResource or IO[bytes]
         :return: LinkConnectionResource or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -545,7 +549,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -562,7 +565,7 @@ class LinkConnectionOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("LinkConnectionResource", pipeline_response)
+        deserialized = self._deserialize("LinkConnectionResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -575,12 +578,11 @@ class LinkConnectionOperations:
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkConnectionResource or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -600,7 +602,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -617,7 +618,7 @@ class LinkConnectionOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("LinkConnectionResource", pipeline_response)
+        deserialized = self._deserialize("LinkConnectionResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -632,12 +633,11 @@ class LinkConnectionOperations:
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -657,7 +657,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -687,12 +686,11 @@ class LinkConnectionOperations:
         :type link_connection_name: str
         :param link_tables: Edit link tables request. Default value is None.
         :type link_tables: list[~azure.synapse.artifacts.models.LinkTableRequest]
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -718,7 +716,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -745,12 +742,11 @@ class LinkConnectionOperations:
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -770,7 +766,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -797,12 +792,11 @@ class LinkConnectionOperations:
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -822,7 +816,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -848,12 +841,11 @@ class LinkConnectionOperations:
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkConnectionDetailedStatus or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionDetailedStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -873,7 +865,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -890,7 +881,7 @@ class LinkConnectionOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("LinkConnectionDetailedStatus", pipeline_response)
+        deserialized = self._deserialize("LinkConnectionDetailedStatus", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -903,12 +894,11 @@ class LinkConnectionOperations:
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkTableListResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkTableListResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -928,7 +918,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -945,7 +934,7 @@ class LinkConnectionOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("LinkTableListResponse", pipeline_response)
+        deserialized = self._deserialize("LinkTableListResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -970,7 +959,6 @@ class LinkConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkConnectionQueryTableStatus or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionQueryTableStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -980,7 +968,7 @@ class LinkConnectionOperations:
     def query_table_status(
         self,
         link_connection_name: str,
-        query_table_status_request: IO,
+        query_table_status_request: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -990,11 +978,10 @@ class LinkConnectionOperations:
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
         :param query_table_status_request: Query table status request. Required.
-        :type query_table_status_request: IO
+        :type query_table_status_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LinkConnectionQueryTableStatus or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionQueryTableStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1004,7 +991,7 @@ class LinkConnectionOperations:
     def query_table_status(
         self,
         link_connection_name: str,
-        query_table_status_request: Union[_models.QueryTableStatusRequest, IO],
+        query_table_status_request: Union[_models.QueryTableStatusRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.LinkConnectionQueryTableStatus:
         """Query the link table status of a link connection.
@@ -1012,17 +999,14 @@ class LinkConnectionOperations:
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
         :param query_table_status_request: Query table status request. Is either a
-         QueryTableStatusRequest type or a IO type. Required.
-        :type query_table_status_request: ~azure.synapse.artifacts.models.QueryTableStatusRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         QueryTableStatusRequest type or a IO[bytes] type. Required.
+        :type query_table_status_request: ~azure.synapse.artifacts.models.QueryTableStatusRequest or
+         IO[bytes]
         :return: LinkConnectionQueryTableStatus or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionQueryTableStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1054,7 +1038,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -1071,7 +1054,7 @@ class LinkConnectionOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("LinkConnectionQueryTableStatus", pipeline_response)
+        deserialized = self._deserialize("LinkConnectionQueryTableStatus", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1088,12 +1071,11 @@ class LinkConnectionOperations:
         :type link_connection_name: str
         :param sas_token: Landing zone's sas token. Default value is None.
         :type sas_token: ~azure.synapse.artifacts.models.SecureString
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1119,7 +1101,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -1146,12 +1127,11 @@ class LinkConnectionOperations:
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1171,7 +1151,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -1200,12 +1179,11 @@ class LinkConnectionOperations:
 
         :param link_connection_name: The link connection name. Required.
         :type link_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1225,7 +1203,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }

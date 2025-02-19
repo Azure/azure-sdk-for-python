@@ -4,10 +4,11 @@
 
 ### Features Added
 
-  - Model Dataset has a new parameter schema
-  - Model LinkedService parameter AzureFileStorageLinkedService support MI auth
-  - Model LinkedService parameter AzureTableStorageLinkedService support MI auth
-  - Model LinkedService parameter DynamicsCrmLinkedService has a new properties credential
+  - Model AzureFileStorageLinkedService has a new parameter service_endpoint
+  - Model AzureFileStorageLinkedService has a new parameter credential
+  - Model AzureTableStorageLinkedService has a new parameter service_endpoint
+  - Model AzureTableStorageLinkedService has a new parameter credential
+  - Model DynamicsCrmLinkedService has a new properties credential
   - Model LinkedService parameter DynamicsLinkedService has a new properties domain
   - Model LinkedService parameter GreenplumLinkedService has some new connection properties
   - Model LinkedService parameter MySqlLinkedService has some new properties
@@ -35,6 +36,11 @@
 
   - Model LinkedService parameter PostgreSqlV2LinkedService has a new required properties authentication_type
   - Model LinkedService parameter SapOdpLinkedService update properties sncMode
+  - Model LinkedService parameter AzureSqlDWLinkedService update required properties
+  - Model LinkedService parameter SqlServerLinkedService update required properties
+  - Model LinkedService parameter AmazonRdsForSqlServerLinkedService update required properties
+  - Model LinkedService parameter AzureSqlDatabaseLinkedService update required properties
+  - Model LinkedService parameter AzureSqlMILinkedService update required properties
 
 ## 0.19.0 (2024-06-04)
 

@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
+import sys
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 
+from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -18,20 +19,24 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._vendor import _convert_request
+from ..._serialization import Deserializer, Serializer
 from ...operations._pipeline_run_operations import (
     build_cancel_pipeline_run_request,
     build_get_pipeline_run_request,
     build_query_activity_runs_request,
     build_query_pipeline_runs_by_workspace_request,
 )
+from .._configuration import ArtifactsClientConfiguration
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -50,10 +55,10 @@ class PipelineRunOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ArtifactsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
     async def query_pipeline_runs_by_workspace(
@@ -66,7 +71,6 @@ class PipelineRunOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PipelineRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.PipelineRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -74,16 +78,15 @@ class PipelineRunOperations:
 
     @overload
     async def query_pipeline_runs_by_workspace(
-        self, filter_parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, filter_parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PipelineRunsQueryResponse:
         """Query pipeline runs in the workspace based on input filter conditions.
 
         :param filter_parameters: Parameters to filter the pipeline run. Required.
-        :type filter_parameters: IO
+        :type filter_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PipelineRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.PipelineRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -91,22 +94,18 @@ class PipelineRunOperations:
 
     @distributed_trace_async
     async def query_pipeline_runs_by_workspace(
-        self, filter_parameters: Union[_models.RunFilterParameters, IO], **kwargs: Any
+        self, filter_parameters: Union[_models.RunFilterParameters, IO[bytes]], **kwargs: Any
     ) -> _models.PipelineRunsQueryResponse:
         """Query pipeline runs in the workspace based on input filter conditions.
 
         :param filter_parameters: Parameters to filter the pipeline run. Is either a
-         RunFilterParameters type or a IO type. Required.
-        :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         RunFilterParameters type or a IO[bytes] type. Required.
+        :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters or IO[bytes]
         :return: PipelineRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.PipelineRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -137,7 +136,6 @@ class PipelineRunOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -154,7 +152,7 @@ class PipelineRunOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("PipelineRunsQueryResponse", pipeline_response)
+        deserialized = self._deserialize("PipelineRunsQueryResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -167,12 +165,11 @@ class PipelineRunOperations:
 
         :param run_id: The pipeline run identifier. Required.
         :type run_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PipelineRun or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.PipelineRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -192,7 +189,6 @@ class PipelineRunOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -209,7 +205,7 @@ class PipelineRunOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("PipelineRun", pipeline_response)
+        deserialized = self._deserialize("PipelineRun", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -237,7 +233,6 @@ class PipelineRunOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActivityRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.ActivityRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -248,7 +243,7 @@ class PipelineRunOperations:
         self,
         pipeline_name: str,
         run_id: str,
-        filter_parameters: IO,
+        filter_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -260,11 +255,10 @@ class PipelineRunOperations:
         :param run_id: The pipeline run identifier. Required.
         :type run_id: str
         :param filter_parameters: Parameters to filter the activity runs. Required.
-        :type filter_parameters: IO
+        :type filter_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActivityRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.ActivityRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -272,7 +266,11 @@ class PipelineRunOperations:
 
     @distributed_trace_async
     async def query_activity_runs(
-        self, pipeline_name: str, run_id: str, filter_parameters: Union[_models.RunFilterParameters, IO], **kwargs: Any
+        self,
+        pipeline_name: str,
+        run_id: str,
+        filter_parameters: Union[_models.RunFilterParameters, IO[bytes]],
+        **kwargs: Any
     ) -> _models.ActivityRunsQueryResponse:
         """Query activity runs based on input filter conditions.
 
@@ -281,17 +279,13 @@ class PipelineRunOperations:
         :param run_id: The pipeline run identifier. Required.
         :type run_id: str
         :param filter_parameters: Parameters to filter the activity runs. Is either a
-         RunFilterParameters type or a IO type. Required.
-        :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         RunFilterParameters type or a IO[bytes] type. Required.
+        :type filter_parameters: ~azure.synapse.artifacts.models.RunFilterParameters or IO[bytes]
         :return: ActivityRunsQueryResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.ActivityRunsQueryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -324,7 +318,6 @@ class PipelineRunOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -341,7 +334,7 @@ class PipelineRunOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("ActivityRunsQueryResponse", pipeline_response)
+        deserialized = self._deserialize("ActivityRunsQueryResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -349,9 +342,7 @@ class PipelineRunOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def cancel_pipeline_run(  # pylint: disable=inconsistent-return-statements
-        self, run_id: str, is_recursive: Optional[bool] = None, **kwargs: Any
-    ) -> None:
+    async def cancel_pipeline_run(self, run_id: str, is_recursive: Optional[bool] = None, **kwargs: Any) -> None:
         """Cancel a pipeline run by its run ID.
 
         :param run_id: The pipeline run identifier. Required.
@@ -359,12 +350,11 @@ class PipelineRunOperations:
         :param is_recursive: If true, cancel all the Child pipelines that are triggered by the current
          pipeline. Default value is None.
         :type is_recursive: bool
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -385,7 +375,6 @@ class PipelineRunOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }

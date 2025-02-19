@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,33 +7,35 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
 
+from azure.core import PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._serialization import Serializer
-from .._vendor import _convert_request
+from .._configuration import ArtifactsClientConfiguration
+from .._serialization import Deserializer, Serializer
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -263,16 +264,15 @@ class PipelineOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ArtifactsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def get_pipelines_by_workspace(self, **kwargs: Any) -> Iterable["_models.PipelineResource"]:
         """Lists pipelines.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PipelineResource or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.PipelineResource]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -283,7 +283,7 @@ class PipelineOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[_models.PipelineListResponse] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -299,7 +299,6 @@ class PipelineOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -309,7 +308,6 @@ class PipelineOperations:
 
             else:
                 _request = HttpRequest("GET", next_link)
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -346,11 +344,11 @@ class PipelineOperations:
     def _create_or_update_pipeline_initial(
         self,
         pipeline_name: str,
-        pipeline: Union[_models.PipelineResource, IO],
+        pipeline: Union[_models.PipelineResource, IO[bytes]],
         if_match: Optional[str] = None,
         **kwargs: Any
-    ) -> Optional[_models.PipelineResource]:
-        error_map = {
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -363,7 +361,7 @@ class PipelineOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.PipelineResource]] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -383,13 +381,13 @@ class PipelineOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -397,12 +395,14 @@ class PipelineOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("PipelineResource", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -431,14 +431,6 @@ class PipelineOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either PipelineResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.PipelineResource]
@@ -449,7 +441,7 @@ class PipelineOperations:
     def begin_create_or_update_pipeline(
         self,
         pipeline_name: str,
-        pipeline: IO,
+        pipeline: IO[bytes],
         if_match: Optional[str] = None,
         *,
         content_type: str = "application/json",
@@ -460,21 +452,13 @@ class PipelineOperations:
         :param pipeline_name: The pipeline name. Required.
         :type pipeline_name: str
         :param pipeline: Pipeline resource definition. Required.
-        :type pipeline: IO
+        :type pipeline: IO[bytes]
         :param if_match: ETag of the pipeline entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either PipelineResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.PipelineResource]
@@ -485,7 +469,7 @@ class PipelineOperations:
     def begin_create_or_update_pipeline(
         self,
         pipeline_name: str,
-        pipeline: Union[_models.PipelineResource, IO],
+        pipeline: Union[_models.PipelineResource, IO[bytes]],
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> LROPoller[_models.PipelineResource]:
@@ -493,23 +477,12 @@ class PipelineOperations:
 
         :param pipeline_name: The pipeline name. Required.
         :type pipeline_name: str
-        :param pipeline: Pipeline resource definition. Is either a PipelineResource type or a IO type.
-         Required.
-        :type pipeline: ~azure.synapse.artifacts.models.PipelineResource or IO
+        :param pipeline: Pipeline resource definition. Is either a PipelineResource type or a IO[bytes]
+         type. Required.
+        :type pipeline: ~azure.synapse.artifacts.models.PipelineResource or IO[bytes]
         :param if_match: ETag of the pipeline entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either PipelineResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.PipelineResource]
@@ -536,10 +509,11 @@ class PipelineOperations:
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("PipelineResource", pipeline_response)
+            deserialized = self._deserialize("PipelineResource", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -557,13 +531,15 @@ class PipelineOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.PipelineResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.PipelineResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get_pipeline(
@@ -577,12 +553,11 @@ class PipelineOperations:
          ETag matches the existing entity tag, or if * was provided, then no content will be returned.
          Default value is None.
         :type if_none_match: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PipelineResource or None or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.PipelineResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -603,7 +578,6 @@ class PipelineOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -622,17 +596,15 @@ class PipelineOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize("PipelineResource", pipeline_response)
+            deserialized = self._deserialize("PipelineResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    def _delete_pipeline_initial(  # pylint: disable=inconsistent-return-statements
-        self, pipeline_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
+    def _delete_pipeline_initial(self, pipeline_name: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -644,7 +616,7 @@ class PipelineOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_pipeline_request(
             pipeline_name=pipeline_name,
@@ -652,13 +624,13 @@ class PipelineOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -666,11 +638,19 @@ class PipelineOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_delete_pipeline(self, pipeline_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -678,14 +658,6 @@ class PipelineOperations:
 
         :param pipeline_name: The pipeline name. Required.
         :type pipeline_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -699,7 +671,7 @@ class PipelineOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._delete_pipeline_initial(  # type: ignore
+            raw_result = self._delete_pipeline_initial(
                 pipeline_name=pipeline_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
@@ -707,6 +679,7 @@ class PipelineOperations:
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -726,18 +699,18 @@ class PipelineOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    def _rename_pipeline_initial(  # pylint: disable=inconsistent-return-statements
+    def _rename_pipeline_initial(
         self, pipeline_name: str, new_name: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        error_map = {
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -750,7 +723,7 @@ class PipelineOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
         _json = self._serialize.body(_request, "ArtifactRenameRequest")
@@ -763,13 +736,13 @@ class PipelineOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -777,11 +750,19 @@ class PipelineOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_rename_pipeline(
@@ -793,14 +774,6 @@ class PipelineOperations:
         :type pipeline_name: str
         :param new_name: New name of the artifact. Default value is None.
         :type new_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -815,7 +788,7 @@ class PipelineOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._rename_pipeline_initial(  # type: ignore
+            raw_result = self._rename_pipeline_initial(
                 pipeline_name=pipeline_name,
                 new_name=new_name,
                 api_version=api_version,
@@ -825,6 +798,7 @@ class PipelineOperations:
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -844,13 +818,13 @@ class PipelineOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @overload
     def create_pipeline_run(
@@ -884,7 +858,6 @@ class PipelineOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateRunResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.CreateRunResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -897,7 +870,7 @@ class PipelineOperations:
         reference_pipeline_run_id: Optional[str] = None,
         is_recovery: Optional[bool] = None,
         start_activity_name: Optional[str] = None,
-        parameters: Optional[IO] = None,
+        parameters: Optional[IO[bytes]] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -918,11 +891,10 @@ class PipelineOperations:
         :type start_activity_name: str
         :param parameters: Parameters of the pipeline run. These parameters will be used only if the
          runId is not specified. Default value is None.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CreateRunResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.CreateRunResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -935,7 +907,7 @@ class PipelineOperations:
         reference_pipeline_run_id: Optional[str] = None,
         is_recovery: Optional[bool] = None,
         start_activity_name: Optional[str] = None,
-        parameters: Optional[Union[Dict[str, JSON], IO]] = None,
+        parameters: Optional[Union[Dict[str, JSON], IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.CreateRunResponse:
         """Creates a run of a pipeline.
@@ -953,17 +925,14 @@ class PipelineOperations:
          specified, all activities will run. Default value is None.
         :type start_activity_name: str
         :param parameters: Parameters of the pipeline run. These parameters will be used only if the
-         runId is not specified. Is either a {str: JSON} type or a IO type. Default value is None.
-        :type parameters: dict[str, JSON] or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         runId is not specified. Is either a {str: JSON} type or a IO[bytes] type. Default value is
+         None.
+        :type parameters: dict[str, JSON] or IO[bytes]
         :return: CreateRunResponse or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.CreateRunResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1001,7 +970,6 @@ class PipelineOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -1018,7 +986,7 @@ class PipelineOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("CreateRunResponse", pipeline_response)
+        deserialized = self._deserialize("CreateRunResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
