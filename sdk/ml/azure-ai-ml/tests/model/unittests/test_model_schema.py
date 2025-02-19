@@ -37,6 +37,18 @@ class TestModelSchema:
         model = load_model(path)
         assert model.stage == "Production"
 
+    def test_deserialize_with_system_metadata(self) -> None:
+        path = Path("./tests/test_configs/model/model_with_system_metadata.yml")
+        model = load_model(path)
+        assert model._system_metadata
+        assert model._system_metadata["publisher"] == "Contoso"
+        assert model._system_metadata["license"] == "MIT License"
+
+        model_version_resource = model._to_rest_object()
+        assert model_version_resource.properties.system_metadata
+        assert model_version_resource.properties.system_metadata["publisher"] == "Contoso"
+        assert model_version_resource.properties.system_metadata["license"] == "MIT License"
+
     def test_ipp_model(self) -> None:
         rest_ipp_model = {
             "id": "azureml://registries/fake_registry/models/fake_ipp_model/versions/611575",
