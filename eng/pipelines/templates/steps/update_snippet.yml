@@ -13,28 +13,30 @@ steps:
   - pwsh: |
       $failed = $false
 
-      foreach($targetedPackage in "$(TargetingString)".split(',')) {
-        $pkgInfo = Get-ChildItem -Path "${{ parameters.PackageInfoFolder }}" -Recurse -Filter "$targetedPackage.json" `
-          | Get-Content -Raw `
-          | ConvertFrom-Json
+      if ("$(TargetingString)" -ne "null") {
+        foreach($targetedPackage in "$(TargetingString)".split(',')) {
+          $pkgInfo = Get-ChildItem -Path "${{ parameters.PackageInfoFolder }}" -Recurse -Filter "$targetedPackage.json" `
+            | Get-Content -Raw `
+            | ConvertFrom-Json
 
-        if ($pkgInfo) {
-          python tools/azure-sdk-tools/ci_tools/snippet_update/snippet_updater.py "$(Build.SourcesDirectory)/sdk/$($pkgInfo.ServiceDirectory)/$targetedPackage"
-        }
-        else {
-          Write-Error "Unable to obtain package info for $targetedPackage."
-          $failed = $true
+          if ($pkgInfo) {
+            python tools/azure-sdk-tools/ci_tools/snippet_update/snippet_updater.py "$(Build.SourcesDirectory)/sdk/$($pkgInfo.ServiceDirectory)/$targetedPackage"
+          }
+          else {
+            Write-Error "Unable to obtain package info for $targetedPackage."
+            $failed = $true
+          }
+
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "Failed to update snippets for $targetedPackage."
+            $failed = $true
+          }
         }
 
-        if ($LASTEXITCODE -ne 0) {
-          Write-Error "Failed to update snippets for $targetedPackage."
-          $failed = $true
+        if ($failed) {
+          Write-Error "At least one snippet update failed. Check above output for details."
+          exit 1
         }
-      }
-
-      if ($failed) {
-        Write-Error "At least one snippet update failed. Check above output for details."
-        exit 1
       }
     displayName: Update Snippets
     condition: and(succeededOrFailed(), ne(variables['Skip.UpdateSnippet'],'true'))
