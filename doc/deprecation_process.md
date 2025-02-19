@@ -240,7 +240,7 @@ More detailed instructions on updating the CSV file can be found [here](https://
 
 If the service is retired and customers should not expect to receive any future updates, including security fixes or maintenance, [your project can be marked as archived](https://blog.pypi.org/posts/2025-01-30-archival/). Before doing so, publish a final release with any necessary updates to the README/CHANGELOG/docs to warn customers that the project will not receive further updates.
 
-To archive your project, reach out to Scott Beddall (scbedd). You cannot complete this step yourself.
+To archive your project, reach out to Laurent Mazuel (lmazuel). You cannot complete this step yourself.
 
 Note: Project archival is not deletion. Archiving a project does not remove it from the index, and does not prevent users from installing it.
 
