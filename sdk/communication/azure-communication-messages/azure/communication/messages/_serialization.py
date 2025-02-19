@@ -227,7 +227,7 @@ except ImportError:  # Python 2.7
         :param datetime.timedelta offset: offset in timedelta format
         """
 
-        def __init__(self, offset):
+        def __init__(self, offset) -> None:
             self.__offset = offset
 
         def utcoffset(self, dt):
@@ -310,7 +310,7 @@ def _create_xml_node(tag, prefix=None, ns=None):
     return ET.Element(tag)
 
 
-class Model(object):
+class Model:
     """Mixin for all client request body/response body models to support
     serialization and deserialization.
     """
@@ -507,7 +507,6 @@ class Model(object):
     def _classify(cls, response, objects):
         """Check the class _subtype_map for any child classes.
         We want to ignore any inherited _subtype_maps.
-        Remove the polymorphic key from the initial data.
 
         :param dict response: The initial data
         :param dict objects: The class objects
@@ -519,7 +518,7 @@ class Model(object):
 
             if not isinstance(response, ET.Element):
                 rest_api_response_key = cls._get_rest_key_parts(subtype_key)[-1]
-                subtype_value = response.pop(rest_api_response_key, None) or response.pop(subtype_key, None)
+                subtype_value = response.get(rest_api_response_key, None) or response.get(subtype_key, None)
             else:
                 subtype_value = xml_key_extractor(subtype_key, cls._attribute_map[subtype_key], response)
             if subtype_value:
@@ -564,7 +563,7 @@ def _decode_attribute_map_key(key):
     return key.replace("\\.", ".")
 
 
-class Serializer(object):  # pylint: disable=too-many-public-methods
+class Serializer:  # pylint: disable=too-many-public-methods
     """Request object model serializer."""
 
     basic_types = {str: "str", int: "int", bool: "bool", float: "float"}
@@ -599,7 +598,7 @@ class Serializer(object):  # pylint: disable=too-many-public-methods
         "multiple": lambda x, y: x % y != 0,
     }
 
-    def __init__(self, classes: Optional[Mapping[str, type]] = None):
+    def __init__(self, classes: Optional[Mapping[str, type]] = None) -> None:
         self.serialize_type = {
             "iso-8601": Serializer.serialize_iso,
             "rfc-1123": Serializer.serialize_rfc,
@@ -1442,7 +1441,7 @@ def xml_key_extractor(attr, attr_desc, data):  # pylint: disable=unused-argument
     return children[0]
 
 
-class Deserializer(object):
+class Deserializer:
     """Response object model deserializer.
 
     :param dict classes: Class type dictionary for deserializing complex types.
@@ -1453,7 +1452,7 @@ class Deserializer(object):
 
     valid_date = re.compile(r"\d{4}[-]\d{2}[-]\d{2}T\d{2}:\d{2}:\d{2}\.?\d*Z?[-+]?[\d{2}]?:?[\d{2}]?")
 
-    def __init__(self, classes: Optional[Mapping[str, type]] = None):
+    def __init__(self, classes: Optional[Mapping[str, type]] = None) -> None:
         self.deserialize_type = {
             "iso-8601": Deserializer.deserialize_iso,
             "rfc-1123": Deserializer.deserialize_rfc,
@@ -1684,17 +1683,21 @@ class Deserializer(object):
             subtype = getattr(response, "_subtype_map", {})
             try:
                 readonly = [
-                    k for k, v in response._validation.items() if v.get("readonly")  # pylint: disable=protected-access
+                    k
+                    for k, v in response._validation.items()  # pylint: disable=protected-access  # type: ignore
+                    if v.get("readonly")
                 ]
                 const = [
-                    k for k, v in response._validation.items() if v.get("constant")  # pylint: disable=protected-access
+                    k
+                    for k, v in response._validation.items()  # pylint: disable=protected-access  # type: ignore
+                    if v.get("constant")
                 ]
                 kwargs = {k: v for k, v in attrs.items() if k not in subtype and k not in readonly + const}
                 response_obj = response(**kwargs)
                 for attr in readonly:
                     setattr(response_obj, attr, attrs.get(attr))
                 if additional_properties:
-                    response_obj.additional_properties = additional_properties
+                    response_obj.additional_properties = additional_properties  # type: ignore
                 return response_obj
             except TypeError as err:
                 msg = "Unable to deserialize {} into model {}. ".format(kwargs, response)  # type: ignore

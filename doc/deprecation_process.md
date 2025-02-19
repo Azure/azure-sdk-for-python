@@ -36,38 +36,30 @@ A disclaimer should be added indicating end-of-life date (EOLDate) of the packag
   - The link to the migration guide should be a link in the format `https://aka.ms/azsdk/python/migrate/my-new-package`. To create this aka.ms link, follow the "How to create aka.ms links" section [here](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/233/Azure-SDK-AKA.ms-Links?anchor=how-to-create-aka.ms-links).
     - **NOTE**: You may decide to postpone or skip writing a migration guide based on downloads numbers (found on [pypistats](https://pypistats.org/), [pepy.tech](https://www.pepy.tech/), etc.) and internal knowledge of the usage of the package.
 
-Replace ALL existing text with a disclaimer in the following format.
+The disclaimer should be added at the very top of the README.md before any other text in the following format.
 
   - If a replacement package and migration guide exist:
 
     ```md
-    # Microsoft Azure SDK for Python
-    
-    This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/). Refer to the migration guide (https://aka.ms/azsdk/python/migrate/my-new-package) for guidance on upgrading.
+    **NOTE**: This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/). Refer to the migration guide (https://aka.ms/azsdk/python/migrate/my-new-package) for guidance on upgrading.
     ```
 
   - If a migration guide is not provided:
 
     ```md
-    # Microsoft Azure SDK for Python
-    
-    This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/).
+    **NOTE**: This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/).
     ```
 
   - If a replacement package does not exist:
 
     ```md
-    # Microsoft Azure SDK for Python
-    
-    This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>.
+    **NOTE**: This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>.
     ```
 
   - If a new service has replaced the service, and existing customers should be directed to the new service's Rest API docs/repo:
 
     ```md
-    # Microsoft Azure SDK for Python
-    
-    This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. Refer to the samples in the [My New Service repo](https://github.com/microsoft/my-new-service/tree/main) instead.
+    **NOTE**: This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. Refer to the samples in the [My New Service repo](https://github.com/microsoft/my-new-service/tree/main) instead.
     
     For additional support, open a new issue in the [Issues](https://github.com/microsoft/my-new-service/issues) section of the My New Service repo.
     ```
@@ -243,6 +235,14 @@ The Microsoft Learn API reference docs for your package will be updated to Legac
 Example of deprecated MS Learn API reference docs for Text Analytics [here](https://learn.microsoft.com/python/api/overview/azure/cognitiveservices-language-textanalytics-readme?view=azure-python-previous).
 
 More detailed instructions on updating the CSV file can be found [here](https://eng.ms/docs/products/azure-developer-experience/develop/sdk-deprecation).
+
+## Archive the project in PyPI
+
+If the service is retired and customers should not expect to receive any future updates, including security fixes or maintenance, [your project can be marked as archived](https://blog.pypi.org/posts/2025-01-30-archival/). Before doing so, publish a final release with any necessary updates to the README/CHANGELOG/docs to warn customers that the project will not receive further updates.
+
+To archive your project, reach out to Laurent Mazuel (lmazuel). You cannot complete this step yourself.
+
+Note: Project archival is not deletion. Archiving a project does not remove it from the index, and does not prevent users from installing it.
 
 ## Update overview/conceptual documentation that points to deprecated packages
 
