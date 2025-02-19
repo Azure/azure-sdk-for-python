@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
+import sys
 from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 
+from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -19,14 +20,13 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._vendor import _convert_request
+from ..._serialization import Deserializer, Serializer
 from ...operations._link_connection_operations import (
     build_create_or_update_request,
     build_delete_request,
@@ -42,7 +42,12 @@ from ...operations._link_connection_operations import (
     build_stop_request,
     build_update_landing_zone_credential_request,
 )
+from .._configuration import ArtifactsClientConfiguration
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -61,10 +66,10 @@ class LinkConnectionOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ArtifactsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def list_by_workspace(self, **kwargs: Any) -> AsyncIterable["_models.LinkConnectionResource"]:
@@ -82,7 +87,7 @@ class LinkConnectionOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[_models.LinkConnectionListResponse] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -98,7 +103,6 @@ class LinkConnectionOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -108,7 +112,6 @@ class LinkConnectionOperations:
 
             else:
                 _request = HttpRequest("GET", next_link)
-                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -206,7 +209,7 @@ class LinkConnectionOperations:
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -238,7 +241,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -255,7 +257,7 @@ class LinkConnectionOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("LinkConnectionResource", pipeline_response)
+        deserialized = self._deserialize("LinkConnectionResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -272,7 +274,7 @@ class LinkConnectionOperations:
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -292,7 +294,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -309,7 +310,7 @@ class LinkConnectionOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("LinkConnectionResource", pipeline_response)
+        deserialized = self._deserialize("LinkConnectionResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -317,9 +318,7 @@ class LinkConnectionOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, link_connection_name: str, **kwargs: Any
-    ) -> None:
+    async def delete(self, link_connection_name: str, **kwargs: Any) -> None:
         """Delete a link connection.
 
         :param link_connection_name: The link connection name. Required.
@@ -328,7 +327,7 @@ class LinkConnectionOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -348,7 +347,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -369,7 +367,7 @@ class LinkConnectionOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def edit_tables(  # pylint: disable=inconsistent-return-statements
+    async def edit_tables(
         self, link_connection_name: str, link_tables: Optional[List[_models.LinkTableRequest]] = None, **kwargs: Any
     ) -> None:
         """Edit tables for a link connection.
@@ -382,7 +380,7 @@ class LinkConnectionOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -408,7 +406,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -429,9 +426,7 @@ class LinkConnectionOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def start(  # pylint: disable=inconsistent-return-statements
-        self, link_connection_name: str, **kwargs: Any
-    ) -> None:
+    async def start(self, link_connection_name: str, **kwargs: Any) -> None:
         """Start a link connection. It may take a few minutes from Starting to Running, monitor the status
         with LinkConnection_GetDetailedStatus.
 
@@ -441,7 +436,7 @@ class LinkConnectionOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -461,7 +456,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -482,9 +476,7 @@ class LinkConnectionOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def stop(  # pylint: disable=inconsistent-return-statements
-        self, link_connection_name: str, **kwargs: Any
-    ) -> None:
+    async def stop(self, link_connection_name: str, **kwargs: Any) -> None:
         """Stop a link connection. It may take a few minutes from Stopping to stopped, monitor the status
         with LinkConnection_GetDetailedStatus.
 
@@ -494,7 +486,7 @@ class LinkConnectionOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -514,7 +506,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -546,7 +537,7 @@ class LinkConnectionOperations:
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionDetailedStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -566,7 +557,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -583,7 +573,7 @@ class LinkConnectionOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("LinkConnectionDetailedStatus", pipeline_response)
+        deserialized = self._deserialize("LinkConnectionDetailedStatus", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -600,7 +590,7 @@ class LinkConnectionOperations:
         :rtype: ~azure.synapse.artifacts.models.LinkTableListResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -620,7 +610,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -637,7 +626,7 @@ class LinkConnectionOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("LinkTableListResponse", pipeline_response)
+        deserialized = self._deserialize("LinkTableListResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -709,7 +698,7 @@ class LinkConnectionOperations:
         :rtype: ~azure.synapse.artifacts.models.LinkConnectionQueryTableStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -741,7 +730,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -758,7 +746,7 @@ class LinkConnectionOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize("LinkConnectionQueryTableStatus", pipeline_response)
+        deserialized = self._deserialize("LinkConnectionQueryTableStatus", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -766,7 +754,7 @@ class LinkConnectionOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def update_landing_zone_credential(  # pylint: disable=inconsistent-return-statements
+    async def update_landing_zone_credential(
         self, link_connection_name: str, sas_token: Optional[_models.SecureString] = None, **kwargs: Any
     ) -> None:
         """Update landing zone credential of a link connection.
@@ -779,7 +767,7 @@ class LinkConnectionOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -805,7 +793,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -826,9 +813,7 @@ class LinkConnectionOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def pause(  # pylint: disable=inconsistent-return-statements
-        self, link_connection_name: str, **kwargs: Any
-    ) -> None:
+    async def pause(self, link_connection_name: str, **kwargs: Any) -> None:
         """Pause a link connection. It may take a few minutes from Pausing to Paused, monitor the status
         with LinkConnection_GetDetailedStatus.
 
@@ -838,7 +823,7 @@ class LinkConnectionOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -858,7 +843,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -879,9 +863,7 @@ class LinkConnectionOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def resume(  # pylint: disable=inconsistent-return-statements
-        self, link_connection_name: str, **kwargs: Any
-    ) -> None:
+    async def resume(self, link_connection_name: str, **kwargs: Any) -> None:
         """Resume a link connection. It may take a few minutes from Resuming to Running, monitor the
         status with LinkConnection_GetDetailedStatus.
 
@@ -891,7 +873,7 @@ class LinkConnectionOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -911,7 +893,6 @@ class LinkConnectionOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }

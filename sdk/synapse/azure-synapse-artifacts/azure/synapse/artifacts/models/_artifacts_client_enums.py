@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -48,6 +49,13 @@ class AmazonRdsForOraclePartitionOption(str, Enum, metaclass=CaseInsensitiveEnum
     DYNAMIC_RANGE = "DynamicRange"
 
 
+class AmazonRdsForSqlServerAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    WINDOWS = "Windows"
+
+
 class AvroCompressionCodec(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AvroCompressionCodec."""
 
@@ -75,6 +83,33 @@ class AzureSearchIndexWriteBehaviorType(str, Enum, metaclass=CaseInsensitiveEnum
 
     MERGE = "Merge"
     UPLOAD = "Upload"
+
+
+class AzureSqlDatabaseAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+
+
+class AzureSqlDWAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+
+
+class AzureSqlMIAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
 
 
 class AzureStorageAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -258,6 +293,7 @@ class DynamicsAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OFFICE365 = "Office365"
     IFD = "Ifd"
     AAD_SERVICE_PRINCIPAL = "AADServicePrincipal"
+    ACTIVE_DIRECTORY = "Active Directory"
 
 
 class DynamicsDeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -312,6 +348,7 @@ class ExpressionV2Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FIELD = "Field"
     UNARY = "Unary"
     BINARY = "Binary"
+    N_ARY = "NAry"
 
 
 class FtpAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -344,6 +381,12 @@ class GoogleBigQueryV2AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnu
 
     SERVICE_AUTHENTICATION = "ServiceAuthentication"
     USER_AUTHENTICATION = "UserAuthentication"
+
+
+class GreenplumAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication type to use. Type: string. Only used for V2."""
+
+    BASIC = "Basic"
 
 
 class HBaseAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -573,6 +616,12 @@ class ODataAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WINDOWS = "Windows"
     AAD_SERVICE_PRINCIPAL = "AadServicePrincipal"
     MANAGED_SERVICE_IDENTITY = "ManagedServiceIdentity"
+
+
+class OracleAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Authentication type for connecting to the Oracle database. Only used for Version 2.0."""
+
+    BASIC = "Basic"
 
 
 class OraclePartitionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -980,6 +1029,14 @@ class SqlScriptType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the SQL script."""
 
     SQL_QUERY = "SqlQuery"
+
+
+class SqlServerAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type used for authentication. Type: string."""
+
+    SQL = "SQL"
+    WINDOWS = "Windows"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
 
 
 class SsisLogLocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
