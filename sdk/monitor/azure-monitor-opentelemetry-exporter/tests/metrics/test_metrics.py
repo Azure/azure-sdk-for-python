@@ -428,6 +428,11 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.properties["Request.Success"], "False")
         self.assertEqual(envelope.data.base_data.properties.get("request/resultCode"), "0")
 
+        # Synthetic
+        point.attributes["user_agent.synthetic.type"] = "bot"
+        envelope = exporter._point_to_envelope(point, "http.server.duration", resource)
+        self.assertEqual(envelope.data.base_data.properties["operation/synthetic"], "True")
+
         # Stable
         point.attributes = {
             "http.response.status_code": 200,

@@ -25,6 +25,7 @@ from opentelemetry.sdk.metrics.export import (
 )
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
+from opentelemetry.semconv._incubating.attributes.user_agent_attributes import USER_AGENT_SYNTHETIC_TYPE
 from opentelemetry.semconv.attributes.http_attributes import HTTP_RESPONSE_STATUS_CODE
 from opentelemetry.semconv.metrics import MetricInstruments
 from opentelemetry.semconv.metrics.http_metrics import (
@@ -246,14 +247,14 @@ def _handle_std_metric_envelope(
         target, _ = trace_utils._get_target_and_path_for_http_dependency(attributes)
         properties["dependency/target"] = target  # type: ignore
         properties["dependency/resultCode"] = str(status_code)
-        # TODO: operation/synthetic
         properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"]  # type: ignore
         properties["cloud/roleName"] = tags["ai.cloud.role"]  # type: ignore
     elif name in (HTTP_SERVER_REQUEST_DURATION, MetricInstruments.HTTP_SERVER_DURATION):
         properties["_MS.MetricId"] = "requests/duration"
         properties["_MS.IsAutocollected"] = "True"
         properties["request/resultCode"] = str(status_code)
-        # TODO: operation/synthetic
+        if attributes.get(USER_AGENT_SYNTHETIC_TYPE):
+            properties["operation/synthetic"] = "True"
         properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"]  # type: ignore
         properties["cloud/roleName"] = tags["ai.cloud.role"]  # type: ignore
         properties["Request.Success"] = str(_is_status_code_success(status_code))  # type: ignore
