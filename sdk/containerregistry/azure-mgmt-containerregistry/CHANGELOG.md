@@ -1,6 +1,6 @@
 # Release History
 
-## 11.0.0 (2024-12-16)
+## 11.0.0 (2024-02-19)
 
 ### Features Added
 
