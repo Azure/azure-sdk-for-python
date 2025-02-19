@@ -207,7 +207,7 @@ Email operations will throw an exception if the request to the server fails. The
 from azure.core.exceptions import HttpResponseError
 
 try:
-    response = email_client.send(message)
+    response = client.send(message)
 except HttpResponseError as ex:
     print('Exception:')
     print(ex)
