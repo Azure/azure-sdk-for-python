@@ -10,20 +10,14 @@ import datetime
 import functools
 import json
 import logging
-import functools
-import datetime
 import os
 import pytest
 import sys
 import io
-import asyncio
 import time
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.core.pipeline.transport import RequestsTransport
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
-from azure.core.exceptions import AzureError, ServiceRequestError, HttpResponseError
-from azure.identity import DefaultAzureCredential
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.projects.models import (
     AzureFunctionTool,
@@ -43,6 +37,8 @@ from azure.ai.projects.models import (
     ResponseFormatJsonSchema,
     ResponseFormatJsonSchemaType,
     RunAdditionalFieldList,
+    RunStepDeltaChunk,
+    RunStepDeltaToolCallObject,
     RunStepFileSearchToolCall,
     RunStepFileSearchToolCallResult,
     RunStepFileSearchToolCallResults,
@@ -2202,20 +2198,32 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         await client.close()
 
     @agentClientPreparer()
-    @pytest.mark.skip("Failing with Http Response Errors.")
     @recorded_by_proxy_async
     async def test_create_vector_store_azure(self, **kwargs):
         """Test the agent with vector store creation."""
-        await self._do_test_create_vector_store(**kwargs)
+        await self._do_test_create_vector_store(streaming=False, **kwargs)
 
     @agentClientPreparer()
     @pytest.mark.skip("File ID issues with sanitization.")
     @recorded_by_proxy_async
     async def test_create_vector_store_file_id(self, **kwargs):
         """Test the agent with vector store creation."""
-        await self._do_test_create_vector_store(file_path=self._get_data_file(), **kwargs)
+        await self._do_test_create_vector_store(streaming=False, file_path=self._get_data_file(), **kwargs)
 
-    async def _do_test_create_vector_store(self, **kwargs):
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_vector_store_azure_streaming(self, **kwargs):
+        """Test the agent with vector store creation."""
+        await self._do_test_create_vector_store(streaming=True, **kwargs)
+
+    @agentClientPreparer()
+    @pytest.mark.skip("File ID issues with sanitization.")
+    @recorded_by_proxy_async
+    async def test_create_vector_store_file_id_streaming(self, **kwargs):
+        """Test the agent with vector store creation."""
+        await self._do_test_create_vector_store(streaming=True, file_path=self._get_data_file(), **kwargs)
+
+    async def _do_test_create_vector_store(self, streaming, **kwargs):
         """Test the agent with vector store creation."""
         # create client
         ai_client = self.create_client(**kwargs)
@@ -2236,7 +2244,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             file_ids=file_ids, data_sources=ds, name="my_vectorstore"
         )
         assert vector_store.id
-        await self._test_file_search(ai_client, vector_store, file_id)
+        await self._test_file_search(ai_client, vector_store, file_id, streaming)
         await ai_client.close()
 
     @agentClientPreparer()
@@ -2244,16 +2252,28 @@ class TestAgentClientAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_create_vector_store_add_file_file_id(self, **kwargs):
         """Test adding single file to vector store withn file ID."""
-        await self._do_test_create_vector_store_add_file(file_path=self._get_data_file(), **kwargs)
+        await self._do_test_create_vector_store_add_file(streaming=False, file_path=self._get_data_file(), **kwargs)
 
     @agentClientPreparer()
-    @pytest.mark.skip("Failing with Http Response Errors.")
     @recorded_by_proxy_async
     async def test_create_vector_store_add_file_azure(self, **kwargs):
         """Test adding single file to vector store with azure asset ID."""
-        await self._do_test_create_vector_store_add_file(**kwargs)
+        await self._do_test_create_vector_store_add_file(streaming=False, **kwargs)
 
-    async def _do_test_create_vector_store_add_file(self, **kwargs):
+    @agentClientPreparer()
+    @pytest.mark.skip("File ID issues with sanitization.")
+    @recorded_by_proxy_async
+    async def test_create_vector_store_add_file_file_id_streaming(self, **kwargs):
+        """Test adding single file to vector store withn file ID."""
+        await self._do_test_create_vector_store_add_file(streaming=True, file_path=self._get_data_file(), **kwargs)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_vector_store_add_file_azure_streaming(self, **kwargs):
+        """Test adding single file to vector store with azure asset ID."""
+        await self._do_test_create_vector_store_add_file(streaming=True, **kwargs)
+
+    async def _do_test_create_vector_store_add_file(self, streaming, **kwargs):
         """Test adding single file to vector store."""
         # create client
         ai_client = self.create_client(**kwargs)
@@ -2273,7 +2293,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             vector_store_id=vector_store.id, data_source=ds, file_id=file_id
         )
         assert vector_store_file.id
-        await self._test_file_search(ai_client, vector_store, file_id)
+        await self._test_file_search(ai_client, vector_store, file_id, streaming)
         await ai_client.close()
 
     @agentClientPreparer()
@@ -2281,16 +2301,28 @@ class TestAgentClientAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_create_vector_store_batch_file_ids(self, **kwargs):
         """Test adding multiple files to vector store with file IDs."""
-        await self._do_test_create_vector_store_batch(file_path=self._get_data_file(), **kwargs)
+        await self._do_test_create_vector_store_batch(streaming=False, file_path=self._get_data_file(), **kwargs)
 
     @agentClientPreparer()
-    @pytest.mark.skip("Failing with Http Response Errors.")
     @recorded_by_proxy_async
     async def test_create_vector_store_batch_azure(self, **kwargs):
         """Test adding multiple files to vector store with azure asset IDs."""
-        await self._do_test_create_vector_store_batch(**kwargs)
+        await self._do_test_create_vector_store_batch(streaming=False, **kwargs)
 
-    async def _do_test_create_vector_store_batch(self, **kwargs):
+    @agentClientPreparer()
+    @pytest.mark.skip("File ID issues with sanitization.")
+    @recorded_by_proxy_async
+    async def test_create_vector_store_batch_file_ids_streaming(self, **kwargs):
+        """Test adding multiple files to vector store with file IDs."""
+        await self._do_test_create_vector_store_batch(streaming=True, file_path=self._get_data_file(), **kwargs)
+
+    @agentClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_vector_store_batch_azure_streaming(self, **kwargs):
+        """Test adding multiple files to vector store with azure asset IDs."""
+        await self._do_test_create_vector_store_batch(streaming=True, **kwargs)
+
+    async def _do_test_create_vector_store_batch(self, streaming, **kwargs):
         """Test the agent with vector store creation."""
         # create client
         ai_client = self.create_client(**kwargs)
@@ -2314,13 +2346,13 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             vector_store_id=vector_store.id, data_sources=ds, file_ids=file_ids
         )
         assert vector_store_file_batch.id
-        await self._test_file_search(ai_client, vector_store, file_id)
+        await self._test_file_search(ai_client, vector_store, file_id, streaming)
 
-    async def _test_file_search(self, ai_client: AIProjectClient, vector_store: VectorStore, file_id: str) -> None:
+    async def _test_file_search(self, ai_client: AIProjectClient, vector_store: VectorStore, file_id: str, streaming: bool) -> None:
         """Test the file search"""
         file_search = FileSearchTool(vector_store_ids=[vector_store.id])
         agent = await ai_client.agents.create_agent(
-            model="gpt-4o",
+            model="gpt-4",
             name="my-assistant",
             instructions="Hello, you are helpful assistant and can search information from uploaded files",
             tools=file_search.definitions,
@@ -2335,9 +2367,27 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        if streaming:
+            thread_run = None
+            async with await ai_client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
+                async for _, event_data, _ in stream:
+                    if isinstance(event_data, ThreadRun):
+                        thread_run = event_data
+                    elif (
+                        isinstance(event_data, RunStepDeltaChunk)
+                        and isinstance(event_data.delta.step_details, RunStepDeltaToolCallObject)
+                        and event_data.delta.step_details.tool_calls
+                    ):
+                        assert isinstance(
+                            event_data.delta.step_details.tool_calls[0].file_search, RunStepFileSearchToolCallResults
+                        )
+            assert thread_run is not None
+            run = await ai_client.agents.get_run(thread_id=thread_run.thread_id, run_id=thread_run.id)
+            assert run is not None
+        else:
+            run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
         await ai_client.agents.delete_vector_store(vector_store.id)
-        assert run.status == "completed"
+        assert run.status == "completed", f"Error in run: {run.last_error}"
         messages = await ai_client.agents.list_messages(thread_id=thread.id)
         assert len(messages)
         await self._remove_file_maybe(file_id, ai_client)
