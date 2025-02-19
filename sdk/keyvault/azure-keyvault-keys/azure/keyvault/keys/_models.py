@@ -80,7 +80,7 @@ class KeyProperties(object):
         return f"<KeyProperties [{self.id}]>"[:1024]
 
     @classmethod
-    def _from_key_bundle(cls, key_bundle: "_models.KeyBundle") -> "KeyProperties":
+    def _from_key_bundle(cls, key_bundle: Union["_models.KeyBundle", "_models.DeletedKeyBundle"]) -> "KeyProperties":
         # pylint:disable=line-too-long
         # release_policy was added in 7.3-preview
         release_policy = None
@@ -102,7 +102,7 @@ class KeyProperties(object):
         )
 
     @classmethod
-    def _from_key_item(cls, key_item: "_models.KeyItem") -> "KeyProperties":
+    def _from_key_item(cls, key_item: Union["_models.KeyItem", "_models.DeletedKeyItem"]) -> "KeyProperties":
         return cls(
             key_id=key_item.kid,  # type: ignore
             attributes=key_item.attributes,
@@ -358,7 +358,9 @@ class KeyRotationPolicy(object):
         lifetime_actions = (
             []
             if policy.lifetime_actions is None
-            else [KeyRotationLifetimeAction._from_generated(action) for action in policy.lifetime_actions]  # pylint:disable=protected-access
+            else [
+                KeyRotationLifetimeAction._from_generated(action) for action in policy.lifetime_actions
+            ]  # pylint:disable=protected-access
         )
         if policy.attributes:
             return cls(
