@@ -413,9 +413,6 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
-        :keyword interrupt_call_media_operation: If set play can barge into other existing
-         queued-up/currently-processing requests. This is applicable only when play_to set to all.
-        :paramtype interrupt_call_media_operation: bool
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -650,7 +647,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword initial_silence_timeout: Time to wait for first input after prompt in seconds (if any).
         :paramtype initial_silence_timeout: int
-        :type play_prompt: ~azure.communication.callautomation.FileSource or
+        :keyword play_prompt: The source of the audio to be played for recognition.
+        :paramtype play_prompt: ~azure.communication.callautomation.FileSource or
          ~azure.communication.callautomation.TextSource or
          ~azure.communication.callautomation.SsmlSource or         
          list[~azure.communication.callautomation.FileSource] or
