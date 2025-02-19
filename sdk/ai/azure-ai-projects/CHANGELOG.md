@@ -10,6 +10,7 @@
 
 * Fixed a bug on deserialization of RunStepDeltaFileSearchToolCall [GitHub issue 48333](https://github.com/Azure/azure-sdk-for-net/issues/48333)
 
+
 ## 1.0.0b6 (2025-02-14)
 
 ### Features added
