@@ -34,18 +34,6 @@ class AdvancedFilterOperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IS_NOT_NULL = "IsNotNull"
 
 
-class AlternativeAuthenticationNameSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Alternative authentication name sources related to client authentication settings for namespace
-    resource.
-    """
-
-    CLIENT_CERTIFICATE_SUBJECT = "ClientCertificateSubject"
-    CLIENT_CERTIFICATE_DNS = "ClientCertificateDns"
-    CLIENT_CERTIFICATE_URI = "ClientCertificateUri"
-    CLIENT_CERTIFICATE_IP = "ClientCertificateIp"
-    CLIENT_CERTIFICATE_EMAIL = "ClientCertificateEmail"
-
-
 class CaCertificateProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the CA Certificate resource."""
 
@@ -68,14 +56,12 @@ class ChannelProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     FAILED = "Failed"
     IDLE_DUE_TO_MIRRORED_PARTNER_TOPIC_DELETION = "IdleDueToMirroredPartnerTopicDeletion"
-    IDLE_DUE_TO_MIRRORED_PARTNER_DESTINATION_DELETION = "IdleDueToMirroredPartnerDestinationDeletion"
 
 
 class ChannelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the event channel which represents the direction flow of events."""
 
     PARTNER_TOPIC = "PartnerTopic"
-    PARTNER_DESTINATION = "PartnerDestination"
 
 
 class ClientCertificateValidationScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -149,13 +135,6 @@ class CustomDomainValidationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ERROR_RETRIEVING_DNS_RECORD = "ErrorRetrievingDnsRecord"
 
 
-class CustomJwtAuthenticationManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of managed identity used. Can be either 'SystemAssigned' or 'UserAssigned'."""
-
-    SYSTEM_ASSIGNED = "SystemAssigned"
-    USER_ASSIGNED = "UserAssigned"
-
-
 class DataResidencyBoundary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Data Residency Boundary of the resource."""
 
@@ -221,7 +200,6 @@ class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVICE_BUS_QUEUE = "ServiceBusQueue"
     SERVICE_BUS_TOPIC = "ServiceBusTopic"
     AZURE_FUNCTION = "AzureFunction"
-    PARTNER_DESTINATION = "PartnerDestination"
     MONITOR_ALERT = "MonitorAlert"
     NAMESPACE_TOPIC = "NamespaceTopic"
 
@@ -365,65 +343,6 @@ class NamespaceTopicProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMe
     UPDATED_FAILED = "UpdatedFailed"
 
 
-class NetworkSecurityPerimeterAssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Network security perimeter access mode."""
-
-    LEARNING = "Learning"
-    ENFORCED = "Enforced"
-    AUDIT = "Audit"
-
-
-class NetworkSecurityPerimeterConfigProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state to reflect configuration state and indicate status of nsp profile
-    configuration retrieval.
-    """
-
-    CREATING = "Creating"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    FAILED = "Failed"
-    DELETED = "Deleted"
-    ACCEPTED = "Accepted"
-
-
-class NetworkSecurityPerimeterConfigurationIssueSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning issue severity."""
-
-    WARNING = "Warning"
-    ERROR = "Error"
-
-
-class NetworkSecurityPerimeterConfigurationIssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning issue type."""
-
-    MISSING_PERIMETER_CONFIGURATION = "MissingPerimeterConfiguration"
-    MISSING_IDENTITY_CONFIGURATION = "MissingIdentityConfiguration"
-    CONFIGURATION_PROPAGATION_FAILURE = "ConfigurationPropagationFailure"
-    OTHER = "Other"
-
-
-class NetworkSecurityPerimeterProfileAccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """NSP access rule direction."""
-
-    INBOUND = "Inbound"
-    OUTBOUND = "Outbound"
-
-
-class NetworkSecurityPerimeterResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """NetworkSecurityPerimeterResourceType."""
-
-    TOPICS = "topics"
-    DOMAINS = "domains"
-
-
-class PartnerClientAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of client authentication."""
-
-    AZURE_AD = "AzureAD"
-
-
 class PartnerConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the partner configuration."""
 
@@ -433,31 +352,6 @@ class PartnerConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitive
     SUCCEEDED = "Succeeded"
     CANCELED = "Canceled"
     FAILED = "Failed"
-
-
-class PartnerDestinationActivationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Activation state of the partner destination."""
-
-    NEVER_ACTIVATED = "NeverActivated"
-    ACTIVATED = "Activated"
-
-
-class PartnerDestinationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of the partner destination."""
-
-    CREATING = "Creating"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    FAILED = "Failed"
-    IDLE_DUE_TO_MIRRORED_CHANNEL_RESOURCE_DELETION = "IdleDueToMirroredChannelResourceDeletion"
-
-
-class PartnerEndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the endpoint for the partner destination."""
-
-    WEB_HOOK = "WebHook"
 
 
 class PartnerNamespaceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -559,7 +453,6 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
-    SECURED_BY_PERIMETER = "SecuredByPerimeter"
 
 
 class PublisherType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -573,13 +466,6 @@ class ReadinessState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NEVER_ACTIVATED = "NeverActivated"
     ACTIVATED = "Activated"
-
-
-class ResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Kind of the resource."""
-
-    AZURE = "Azure"
-    AZURE_ARC = "AzureArc"
 
 
 class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -606,13 +492,6 @@ class RoutingIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
-
-
-class Sku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Sku name of the resource. The possible values are: Basic or Premium."""
-
-    BASIC = "Basic"
-    PREMIUM = "Premium"
 
 
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):

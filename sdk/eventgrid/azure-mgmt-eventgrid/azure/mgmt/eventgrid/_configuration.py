@@ -14,11 +14,10 @@ from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLo
 from ._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class EventGridManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class EventGridManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for EventGridManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -29,13 +28,13 @@ class EventGridManagementClientConfiguration:  # pylint: disable=too-many-instan
     :param subscription_id: Subscription credentials that uniquely identify a Microsoft Azure
      subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2024-06-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2025-02-15". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-06-01-preview")
+        api_version: str = kwargs.pop("api_version", "2025-02-15")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

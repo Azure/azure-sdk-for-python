@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.eventgrid import EventGridManagementClient
@@ -29,7 +27,7 @@ from azure.mgmt.eventgrid import EventGridManagementClient
 def main():
     client = EventGridManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="8f6b6269-84f2-4d09-9e31-1127efcd1e40",
+        subscription_id="5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
     )
 
     response = client.partner_topic_event_subscriptions.begin_update(
@@ -49,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/eventgrid/resource-manager/Microsoft.EventGrid/preview/2024-06-01-preview/examples/PartnerTopicEventSubscriptions_Update.json
+# x-ms-original-file: specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2025-02-15/examples/PartnerTopicEventSubscriptions_Update.json
 if __name__ == "__main__":
     main()

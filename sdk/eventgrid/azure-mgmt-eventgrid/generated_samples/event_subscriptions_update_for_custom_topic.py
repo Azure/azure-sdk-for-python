@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.eventgrid import EventGridManagementClient
@@ -33,7 +31,7 @@ def main():
     )
 
     response = client.event_subscriptions.begin_update(
-        scope="subscriptions/8f6b6269-84f2-4d09-9e31-1127efcd1e40/resourceGroups/examplerg/providers/Microsoft.EventGrid/topics/exampletopic2",
+        scope="subscriptions/5b4b650e-28b9-4790-b3ab-ddbd88d727c4/resourceGroups/examplerg/providers/Microsoft.EventGrid/topics/exampletopic2",
         event_subscription_name="examplesubscription1",
         event_subscription_update_parameters={
             "destination": {"endpointType": "WebHook", "properties": {"endpointUrl": "https://requestb.in/15ksip71"}},
@@ -48,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/eventgrid/resource-manager/Microsoft.EventGrid/preview/2024-06-01-preview/examples/EventSubscriptions_UpdateForCustomTopic.json
+# x-ms-original-file: specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2025-02-15/examples/EventSubscriptions_UpdateForCustomTopic.json
 if __name__ == "__main__":
     main()
