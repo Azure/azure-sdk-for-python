@@ -1,10 +1,10 @@
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 # TEST SCENARIO COVERAGE
@@ -21,16 +21,15 @@ import unittest
 import azure.mgmt.databoxedge
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
+
 
 class MgmtDataBoxEdgeTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtDataBoxEdgeTest, self).setUp()
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.databoxedge.DataBoxEdgeManagementClient
-        )
-    
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.databoxedge.DataBoxEdgeManagementClient)
+
     @unittest.skip("skip test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_databoxedge(self, resource_group):
@@ -54,13 +53,7 @@ class MgmtDataBoxEdgeTest(AzureMgmtTestCase):
         SECURITY_SETTING_NAME = "securitysettingname"
 
         # DataBoxEdgeDevicePut[put]
-        BODY = {
-          "location": "eastus",
-          "sku": {
-            "name": "Edge",
-            "tier": "Standard"
-          }
-        }
+        BODY = {"location": "eastus", "sku": {"name": "Edge", "tier": "Standard"}}
         result = self.mgmt_client.devices.create_or_update(DATA_BOX_EDGE_DEVICE_NAME, BODY, resource_group.name)
         result = result.result()
 
@@ -318,12 +311,7 @@ class MgmtDataBoxEdgeTest(AzureMgmtTestCase):
         """
 
         # DataBoxEdgeDevicePatch[patch]
-        BODY = {
-          "tags": {
-            "key1": "value1",
-            "key2": "value2"
-          }
-        }
+        BODY = {"tags": {"key1": "value1", "key2": "value2"}}
         result = self.mgmt_client.devices.update(DATA_BOX_EDGE_DEVICE_NAME, BODY, resource_group.name)
 
         """
@@ -361,6 +349,6 @@ class MgmtDataBoxEdgeTest(AzureMgmtTestCase):
         result = result.result()
 
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()
