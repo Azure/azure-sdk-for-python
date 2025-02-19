@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -15,21 +15,25 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._registries_operations import build_get_build_source_upload_url_request, build_schedule_run_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -55,9 +59,13 @@ class RegistriesOperations:
         self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     async def _schedule_run_initial(
-        self, resource_group_name: str, registry_name: str, run_request: Union[_models.RunRequest, IO], **kwargs: Any
-    ) -> Optional[_models.Run]:
-        error_map = {
+        self,
+        resource_group_name: str,
+        registry_name: str,
+        run_request: Union[_models.RunRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -70,7 +78,7 @@ class RegistriesOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-04-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.Run]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -80,7 +88,7 @@ class RegistriesOperations:
         else:
             _json = self._serialize.body(run_request, "RunRequest")
 
-        request = build_schedule_run_request(
+        _request = build_schedule_run_request(
             resource_group_name=resource_group_name,
             registry_name=registry_name,
             subscription_id=self._config.subscription_id,
@@ -88,36 +96,33 @@ class RegistriesOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._schedule_run_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("Run", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _schedule_run_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/scheduleRun"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_schedule_run(
@@ -141,14 +146,6 @@ class RegistriesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Run or the result of cls(response)
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerregistry.v2019_04_01.models.Run]
@@ -160,7 +157,7 @@ class RegistriesOperations:
         self,
         resource_group_name: str,
         registry_name: str,
-        run_request: IO,
+        run_request: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -173,18 +170,10 @@ class RegistriesOperations:
         :param registry_name: The name of the container registry. Required.
         :type registry_name: str
         :param run_request: The parameters of a run that needs to scheduled. Required.
-        :type run_request: IO
+        :type run_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Run or the result of cls(response)
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerregistry.v2019_04_01.models.Run]
@@ -193,7 +182,11 @@ class RegistriesOperations:
 
     @distributed_trace_async
     async def begin_schedule_run(
-        self, resource_group_name: str, registry_name: str, run_request: Union[_models.RunRequest, IO], **kwargs: Any
+        self,
+        resource_group_name: str,
+        registry_name: str,
+        run_request: Union[_models.RunRequest, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.Run]:
         """Schedules a new run based on the request parameters and add it to the run queue.
 
@@ -203,19 +196,8 @@ class RegistriesOperations:
         :param registry_name: The name of the container registry. Required.
         :type registry_name: str
         :param run_request: The parameters of a run that needs to scheduled. Is either a RunRequest
-         type or a IO type. Required.
-        :type run_request: ~azure.mgmt.containerregistry.v2019_04_01.models.RunRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         type or a IO[bytes] type. Required.
+        :type run_request: ~azure.mgmt.containerregistry.v2019_04_01.models.RunRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either Run or the result of cls(response)
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerregistry.v2019_04_01.models.Run]
@@ -242,12 +224,13 @@ class RegistriesOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("Run", pipeline_response)
+            deserialized = self._deserialize("Run", pipeline_response.http_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -257,17 +240,15 @@ class RegistriesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.Run].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_schedule_run.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/scheduleRun"
-    }
+        return AsyncLROPoller[_models.Run](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def get_build_source_upload_url(
@@ -280,12 +261,11 @@ class RegistriesOperations:
         :type resource_group_name: str
         :param registry_name: The name of the container registry. Required.
         :type registry_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SourceUploadDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.containerregistry.v2019_04_01.models.SourceUploadDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -299,21 +279,19 @@ class RegistriesOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2019-04-01"))
         cls: ClsType[_models.SourceUploadDefinition] = kwargs.pop("cls", None)
 
-        request = build_get_build_source_upload_url_request(
+        _request = build_get_build_source_upload_url_request(
             resource_group_name=resource_group_name,
             registry_name=registry_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_build_source_upload_url.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -322,13 +300,9 @@ class RegistriesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SourceUploadDefinition", pipeline_response)
+        deserialized = self._deserialize("SourceUploadDefinition", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_build_source_upload_url.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/listBuildSourceUploadUrl"
-    }
+        return deserialized  # type: ignore
