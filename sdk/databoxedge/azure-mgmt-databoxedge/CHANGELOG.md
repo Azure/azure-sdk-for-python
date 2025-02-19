@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.0 (2025-02-19)
+
+### Features Added
+
+  - Model DataBoxEdgeSku has a new parameter capabilities
+
 ## 2.0.0b1 (2023-02-13)
 
 ### Features Added
