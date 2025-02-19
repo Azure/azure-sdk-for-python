@@ -38,7 +38,7 @@ parameters:
   - name: release_azure_ai_formrecognizer
     displayName: 'azure-ai-formrecognizer'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_ai_language_conversations
     displayName: 'azure-ai-language-conversations'
     type: boolean
@@ -50,7 +50,7 @@ parameters:
   - name: release_azure_ai_metricsadvisor
     displayName: 'azure-ai-metricsadvisor'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_ai_ml
     displayName: 'azure-ai-ml'
     type: boolean
