@@ -196,8 +196,9 @@ def add_sanitizers(
         add_body_key_sanitizer(json_path="$..userTenantId", value=ZERO_GUID)
         add_body_key_sanitizer(json_path="$..upn", value="Sanitized")
 
-        # remove the stainless retry header since it is causing some unnecessary mismatches in recordings
+        # remove the stainless retry header and read timeout since it is causing some unnecessary mismatches in recordings
         add_batch_sanitizers({Sanitizer.REMOVE_HEADER: [{"headers": "x-stainless-retry-count"}]})
+        add_batch_sanitizers({Sanitizer.REMOVE_HEADER: [{"headers": "x-stainless-read-timeout"}]})
 
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
