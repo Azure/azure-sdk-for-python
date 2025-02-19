@@ -9,7 +9,7 @@ This preview package for Python includes ADLS Gen2 specific API support made ava
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake/azure/storage/filedatalake)
 | [Package (PyPi)](https://pypi.org/project/azure-storage-file-datalake/)
 | [Package (Conda)](https://anaconda.org/microsoft/azure-storage/)
-| [API reference documentation](https://aka.ms/azsdk-python-storage-filedatalake-ref)
+| [API reference documentation](https://learn.microsoft.com/python/api/azure-storage-file-datalake/azure.storage.filedatalake?view=azure-python)
 | [Product documentation](https://learn.microsoft.com/azure/storage/)
 | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake/samples)
 
