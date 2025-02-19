@@ -327,9 +327,20 @@ def _get_model(module_name: str, model_name: typing.Union[str, typing.ForwardRef
     models = {k: v for k, v in sys.modules[module_name].__dict__.items() if isinstance(v, type)}
     module_end = module_name.rsplit(".", 1)[0]
     models.update({k: v for k, v in sys.modules[module_end].__dict__.items() if isinstance(v, type)})
-    name_str = getattr(model_name, "__forward_arg__", model_name) if model_name else ""
+    
+    # Get the actual name string from the ForwardRef if that's what we received
+    if isinstance(model_name, typing.ForwardRef):
+        name_str = typing.cast(str, getattr(model_name, "__forward_arg__", ""))
+    else:
+        name_str = typing.cast(str, model_name) if model_name else ""
+    
     if isinstance(name_str, str):
         name_str = name_str.split(".")[-1]
+        
+    # Look up the model class by name
+    if not isinstance(name_str, str):
+        raise ValueError("Model name must be a string or ForwardRef")
+    
     if name_str not in models:
         return name_str
     return models[name_str]
