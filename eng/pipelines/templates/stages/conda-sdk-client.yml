@@ -15,12 +15,12 @@ parameters:
     displayName: 'azure-core'
     type: boolean
     default: true
-  - name: release_azure_healthinsights
-    displayName: 'azure-healthinsights'
-    type: boolean
-    default: true
   - name: release_azure_identity
     displayName: 'azure-identity'
+    type: boolean
+    default: true
+  - name: release_azure_healthinsights
+    displayName: 'azure-healthinsights'
     type: boolean
     default: true
   - name: release_azure_storage
