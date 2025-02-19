@@ -390,6 +390,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         loop: bool = False,
         operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
+        interrupt_hold_audio : bool = False,
         **kwargs
     ) -> None:
         """Play media to specific participant(s) in this call.
@@ -413,6 +414,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
+        :keyword interrupt_hold_audio: If set, hold audio will be interrupted, then this request will be
+         played, and then the hold audio will be resumed.
+        :paramtype interrupt_hold_audio: bool
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -503,6 +507,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             loop=loop,
             operation_context=operation_context,
             operation_callback_url=operation_callback_url,
+            interrupt_call_media_operation=kwargs.get("interrupt_call_media_operation", False),
+            interrupt_hold_audio=kwargs.get("interrupt_hold_audio", False),
             **kwargs,
         )
 
