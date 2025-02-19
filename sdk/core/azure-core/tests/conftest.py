@@ -31,8 +31,16 @@ import subprocess
 import random
 import platform
 import urllib
+from typing import Generator
+
+from azure.core.settings import settings
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+
 from rest_client import MockRestClient
-import sys
+from tracing_common import FakeSpan
 
 
 def is_port_available(port_num):
@@ -98,3 +106,34 @@ def testserver():
 @pytest.fixture
 def client(port):
     return MockRestClient(port)
+
+
+@pytest.fixture
+def tracing_implementation():
+    FakeSpan.CONTEXT = []
+    settings.tracing_implementation.set_value(FakeSpan)
+    yield
+    settings.tracing_implementation.set_value(None)
+
+
+class TracingTestHelper:
+    def __init__(self, tracer, exporter):
+        self.tracer = tracer
+        self.exporter = exporter
+
+
+@pytest.fixture(scope="session", autouse=True)
+def enable_otel_tracing():
+    provider = TracerProvider()
+    trace.set_tracer_provider(provider)
+
+
+@pytest.fixture(scope="function")
+def tracing_helper() -> Generator[TracingTestHelper, None, None]:
+    settings.tracing_enabled = True
+    settings.tracing_implementation = None
+    span_exporter = InMemorySpanExporter()
+    processor = SimpleSpanProcessor(span_exporter)
+    trace.get_tracer_provider().add_span_processor(processor)
+    yield TracingTestHelper(trace.get_tracer(__name__), span_exporter)
+    settings.tracing_enabled = None
