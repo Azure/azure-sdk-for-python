@@ -25,7 +25,6 @@ from opentelemetry.sdk.metrics.export import (
 )
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
-from opentelemetry.semconv._incubating.attributes.user_agent_attributes import USER_AGENT_SYNTHETIC_TYPE
 from opentelemetry.semconv.attributes.http_attributes import HTTP_RESPONSE_STATUS_CODE
 from opentelemetry.semconv.metrics import MetricInstruments
 from opentelemetry.semconv.metrics.http_metrics import (
@@ -253,7 +252,8 @@ def _handle_std_metric_envelope(
         properties["_MS.MetricId"] = "requests/duration"
         properties["_MS.IsAutocollected"] = "True"
         properties["request/resultCode"] = str(status_code)
-        if attributes.get(USER_AGENT_SYNTHETIC_TYPE):
+        # TODO: Change to symbol once released in upstream
+        if attributes.get("user_agent.synthetic.type"):
             properties["operation/synthetic"] = "True"
         properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"]  # type: ignore
         properties["cloud/roleName"] = tags["ai.cloud.role"]  # type: ignore
