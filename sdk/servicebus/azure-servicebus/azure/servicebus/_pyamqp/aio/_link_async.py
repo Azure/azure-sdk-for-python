@@ -96,6 +96,8 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._on_link_state_change = kwargs.get("on_link_state_change")
         self._on_attach = kwargs.get("on_attach")
         self._error: Optional[AMQPLinkError] = None
+        self._drain_state = False
+        self._received_drain_response = False
         self.total_link_credit = self.link_credit
 
     async def __aenter__(self) -> "Link":
@@ -208,7 +210,11 @@ class Link:  # pylint: disable=too-many-instance-attributes
             "echo": kwargs.get("echo"),
             "properties": kwargs.get("properties"),
         }
-        await self._session._outgoing_flow(flow_frame)  # pylint: disable=protected-access
+        self._received_drain_response = False
+        # If we aren't still in a drain - for prefetch purposes, we were sending out a flow before receiving a drain
+        if not self._drain_state:
+            await self._session._outgoing_flow(flow_frame) # pylint: disable=protected-access
+            self._drain_state = kwargs.get("drain", False)
 
     async def _incoming_flow(self, frame):
         pass
@@ -223,6 +229,9 @@ class Link:  # pylint: disable=too-many-instance-attributes
         await self._session._outgoing_detach(detach_frame)  # pylint: disable=protected-access
         if close:
             self._is_closed = True
+            # self.links.pop(self.name, None)
+            # self._input_handles.pop(self.remote_handle, None)
+            # self._output_handles.pop(self.handle, None)
 
     async def _incoming_detach(self, frame) -> None:
         if self.network_trace:
