@@ -19,7 +19,7 @@ import enum
 import email.utils
 from datetime import datetime, date, time, timedelta, timezone
 from json import JSONEncoder
-from typing_extensions import Self, ForwardRef
+from typing_extensions import Self
 import isodate
 from azure.core.exceptions import DeserializationError
 from azure.core import CaseInsensitiveEnumMeta
@@ -323,17 +323,16 @@ def _get_type_alias_type(module_name: str, alias_name: str):
     return types[alias_name]
 
 
-def _get_model(module_name: str, model_name: typing.Union[str, ForwardRef]):
+def _get_model(module_name: str, model_name: typing.Union[str, typing.ForwardRef]) -> typing.Any:
     models = {k: v for k, v in sys.modules[module_name].__dict__.items() if isinstance(v, type)}
     module_end = module_name.rsplit(".", 1)[0]
     models.update({k: v for k, v in sys.modules[module_end].__dict__.items() if isinstance(v, type)})
-    if isinstance(model_name, ForwardRef):
-        model_name = model_name.__forward_arg__
-    if isinstance(model_name, str):
-        model_name = model_name.split(".")[-1]
-    if model_name not in models:
-        return model_name
-    return models[model_name]
+    name_str = getattr(model_name, "__forward_arg__", model_name) if model_name else ""
+    if isinstance(name_str, str):
+        name_str = name_str.split(".")[-1]
+    if name_str not in models:
+        return name_str
+    return models[name_str]
 
 
 _UNSET = object()
@@ -434,7 +433,7 @@ def _serialize(o, format: typing.Optional[str] = None):  # pylint: disable=too-m
     if isinstance(o, dict):
         return {k: _serialize(v, format) for k, v in o.items()}
     if isinstance(o, set):
-        return {_serialize(x, format) for x in o}
+        return list(_serialize(x, format) for x in o)  # Convert to list to avoid hashability issues
     if isinstance(o, tuple):
         return tuple(_serialize(x, format) for x in o)
     if isinstance(o, (bytes, bytearray)):
