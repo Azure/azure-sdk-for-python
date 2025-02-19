@@ -326,7 +326,7 @@ def dev_connections(
 @pytest.fixture(scope="session")
 def mock_model_config() -> AzureOpenAIModelConfiguration:
     return AzureOpenAIModelConfiguration(
-        azure_endpoint="https://Sanitized.openai.azure.com",
+        azure_endpoint="https://Sanitized.cognitiveservices.azure.com",
         api_key="aoai-api-key",
         api_version="2024-08-01-preview",
         azure_deployment="aoai-deployment",
