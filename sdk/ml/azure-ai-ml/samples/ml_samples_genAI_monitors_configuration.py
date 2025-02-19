@@ -61,7 +61,7 @@ ml_client = MLClient(
 class GenAIMonitoringSamples(object):
     def ml_gen_ai_monitor_default(self):
         # [START default_monitoring]
-        spark_compute = ServerlessSparkCompute(instance_type="standard_e4s_v3", runtime_version="3.3")
+        spark_compute = ServerlessSparkCompute(instance_type="standard_e4s_v3", runtime_version="3.4")
         monitoring_target = MonitoringTarget(
             ml_task=MonitorTargetTasks.QUESTION_ANSWERING,
             endpoint_deployment_id=f"azureml:{endpoint_name}:{deployment_name}",
@@ -79,7 +79,7 @@ class GenAIMonitoringSamples(object):
 
     def ml_gen_ai_monitor_advance(self):
         # [START advance_monitoring]
-        spark_compute = ServerlessSparkCompute(instance_type="standard_e4s_v3", runtime_version="3.3")
+        spark_compute = ServerlessSparkCompute(instance_type="standard_e4s_v3", runtime_version="3.4")
         monitoring_target = MonitoringTarget(
             ml_task=MonitorTargetTasks.QUESTION_ANSWERING,
             endpoint_deployment_id=f"azureml:{endpoint_name}:{deployment_name}",

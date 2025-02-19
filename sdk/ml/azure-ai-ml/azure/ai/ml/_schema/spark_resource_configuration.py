@@ -14,10 +14,7 @@ class SparkResourceConfigurationSchema(metaclass=PatchedSchemaMeta):
     """Schema for SparkResourceConfiguration."""
 
     instance_type = fields.Str(metadata={"description": "Optional type of VM used as supported by the compute target."})
-    runtime_version = NumberVersionField(
-        upper_bound="3.5",
-        lower_bound="3.3",
-    )
+    runtime_version = NumberVersionField()
 
     @post_load
     def make(self, data, **kwargs):
@@ -51,7 +48,5 @@ class SparkResourceConfigurationForNodeSchema(SparkResourceConfigurationSchema):
         metadata={"description": "Optional type of VM used as supported by the compute target."},
     )
     runtime_version = NumberVersionField(
-        upper_bound="3.5",
-        lower_bound="3.3",
         required=True,
     )
