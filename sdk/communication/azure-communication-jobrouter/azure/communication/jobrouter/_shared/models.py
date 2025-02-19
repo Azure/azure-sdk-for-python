@@ -11,6 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
+
     def __getattribute__(cls, item):
         if item.upper() == "MICROSOFT_BOT":
             warnings.warn(
