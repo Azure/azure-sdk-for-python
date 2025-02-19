@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Deprecated `UsernamePasswordCredential`. This credential does not support multifactor authentication (MFA) which is required by Microsoft Entra ID for most authentication scenarios. ([#39785](https://github.com/Azure/azure-sdk-for-python/pull/39785))
+
 ## 1.20.0 (2025-02-11)
 
 ### Features Added

@@ -229,3 +229,8 @@ def test_claims_challenge(get_token_method):
         assert msal_app.acquire_token_silent_with_error.call_count == 1
         args, kwargs = msal_app.acquire_token_silent_with_error.call_args
         assert kwargs["claims_challenge"] == expected_claims
+
+
+def test_deprecation_warning():
+    with pytest.deprecated_call():
+        UsernamePasswordCredential("client-id", "username", "password")

@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import Any, Dict
+import warnings
 
 from .._internal import InteractiveCredential, wrap_exceptions
 
@@ -59,6 +60,12 @@ class UsernamePasswordCredential(InteractiveCredential):
     """
 
     def __init__(self, client_id: str, username: str, password: str, **kwargs: Any) -> None:
+        warnings.warn(
+            f"{self.__class__.__name__} is deprecated. Please use a more secure credential. See "
+            "https://aka.ms/azsdk/identity/mfa for details.",
+            category=DeprecationWarning,
+            stacklevel=2,
+        )
         # The base class will accept an AuthenticationRecord, allowing this credential to authenticate silently the
         # first time it's asked for a token. However, we want to ensure this first authentication is not silent, to
         # validate the given password. This class therefore doesn't document the authentication_record argument, and we
