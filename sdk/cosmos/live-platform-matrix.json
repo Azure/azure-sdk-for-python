@@ -27,13 +27,13 @@
     },
     {
       "MacTestConfig": {
-        "macos311_query": {
+        "macos311_search_query": {
           "OSVmImage": "env:MACVMIMAGE",
           "Pool": "env:MACPOOL",
           "PythonVersion": "3.11",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosQuery"
+          "TestMarkArgument": "cosmosSearchQuery"
         }
       }
     },
@@ -46,8 +46,7 @@
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosQuery"
-        },
-        "TestMarkArgument": "cosmosQuery"
+        }
       }
     },
     {

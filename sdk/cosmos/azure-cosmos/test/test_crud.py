@@ -1821,7 +1821,14 @@ class TestCRUDOperations(unittest.TestCase):
                 container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
                 container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
 
-
+    async def test_read_timeout_async(self):
+        connection_policy = documents.ConnectionPolicy()
+        # making timeout 0 ms to make sure it will throw
+        connection_policy.DBAReadTimeout = 0.000000000001
+        with self.assertRaises(ServiceResponseError):
+            # this will make a get database account call
+            with cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=connection_policy):
+                print('initialization')
 
     def test_client_request_timeout_when_connection_retry_configuration_specified(self):
         connection_policy = documents.ConnectionPolicy()

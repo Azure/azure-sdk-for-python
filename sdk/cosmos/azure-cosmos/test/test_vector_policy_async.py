@@ -8,17 +8,19 @@ import pytest
 
 import azure.cosmos.exceptions as exceptions
 import test_config
+from azure.cosmos import CosmosClient as CosmosSyncClient
 from azure.cosmos import PartitionKey
-from azure.cosmos.aio import CosmosClient, DatabaseProxy
+from azure.cosmos.aio import CosmosClient
 
-@pytest.mark.cosmosQuery
+
+@pytest.mark.cosmosSearchQuery
 class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
 
     client: CosmosClient = None
-    created_database: DatabaseProxy = None
+    cosmos_sync_client: CosmosSyncClient = None
 
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
 
@@ -30,21 +32,27 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
+        cls.cosmos_sync_client = CosmosSyncClient(cls.host, cls.masterKey)
+        cls.test_db = cls.cosmos_sync_client.create_database(str(uuid.uuid4()))
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.cosmos_sync_client.delete_database(cls.test_db.id)
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
-        self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
-        self.test_db = await self.client.create_database(str(uuid.uuid4()))
+        self.test_db = self.client.get_database_client(self.test_db.id)
 
-    async def tearDown(self):
-        await self.client.delete_database(self.test_db.id)
+    async def asyncTearDown(self):
         await self.client.close()
 
     async def test_create_vector_embedding_container_async(self):
         indexing_policy = {
             "vectorIndexes": [
                 {"path": "/vector1", "type": "flat"},
-                {"path": "/vector2", "type": "quantizedFlat", "quantizationByteSize": 64},
+
+                {"path": "/vector2", "type": "quantizedFlat", "quantizationByteSize": 64, "vectorIndexShardKey": ["/city"]},
+
                 {"path": "/vector3", "type": "diskANN", "quantizationByteSize": 8, "indexingSearchListSize": 50}
             ]
         }
@@ -90,7 +98,15 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                     "dataType": "float32",
                     "dimensions": 256,
                     "distanceFunction": "euclidean"
-                }]}
+                },
+                {
+                    "path": "/vector2",
+                    "dataType": "int8",
+                    "dimensions": 200,
+                    "distanceFunction": "dotproduct"
+                }
+            ]
+        }
 
         # Pass a vector indexing policy without embedding policy
         indexing_policy = {
@@ -128,7 +144,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         # Pass a vector indexing policy with non-matching path
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector2", "type": "flat"}]
+                {"path": "/vector3", "type": "flat"}]
         }
         try:
             await self.test_db.create_container(
@@ -140,7 +156,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Container creation should have failed for index mismatch.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "vector2 not matching in Embedding's path" in e.http_error_message
+            assert "vector3 not matching in Embedding's path" in e.http_error_message
 
         # Pass a vector indexing policy with wrong quantizationByteSize value
         indexing_policy = {
@@ -157,7 +173,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             pytest.fail("Container creation should have failed for value mismatch.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "QuantizationByteSize value :: 0 is out of range. The allowed range is between 1 and 256." \
+            assert "The Vector Indexing Policy parameter QuantizationByteSize value :: 0 is out of range. The allowed range is between 1 and 256." \
                    in e.http_error_message
 
         # Pass a vector indexing policy with wrong indexingSearchListSize value
@@ -176,6 +192,41 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
             assert "IndexingSearchListSize value :: 5 is out of range. The allowed range is between 25 and 500." \
+                   in e.http_error_message
+
+        # Pass a vector indexing policy with wrong vectorIndexShardKey value
+        indexing_policy = {
+            "vectorIndexes": [
+                {"path": "/vector2", "type": "diskANN", "vectorIndexShardKey": ["country"]}]
+        }
+        try:
+            await self.test_db.create_container(
+                id='vector_container',
+                partition_key=PartitionKey(path="/id"),
+                indexing_policy=indexing_policy,
+                vector_embedding_policy=vector_embedding_policy
+            )
+            pytest.fail("Container creation should have failed for value mismatch.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert "The Vector Indexing Policy has an invalid Shard Path: country." in e.http_error_message
+
+        # Pass a vector indexing policy with too many shard paths
+        indexing_policy = {
+            "vectorIndexes": [
+                {"path": "/vector2", "type": "diskANN", "vectorIndexShardKey": ["/country", "/city", "/zipcode"]}]
+        }
+        try:
+            await self.test_db.create_container(
+                id='vector_container',
+                partition_key=PartitionKey(path="/id"),
+                indexing_policy=indexing_policy,
+                vector_embedding_policy=vector_embedding_policy
+            )
+            pytest.fail("Container creation should have failed for value mismatch.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert "The number of shard paths defined in the Vector Indexing Policy: 3 exceeds the maximum: 1." \
                    in e.http_error_message
 
     async def test_fail_replace_vector_indexing_policy_async(self):

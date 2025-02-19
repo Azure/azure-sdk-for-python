@@ -15,11 +15,10 @@ import hybrid_search_data
 from azure.cosmos import http_constants, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
-@pytest.mark.cosmosQuery
+@pytest.mark.cosmosSearchQuery
 class TestFullTextHybridSearchQuery(unittest.TestCase):
     """Test to check full text search and hybrid search queries behavior."""
 
-    created_db: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
     config = test_config.TestConfig
     host = config.host
@@ -38,12 +37,9 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
                 "tests.")
 
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
-
-    def setUp(self):
-        self.test_db = self.client.create_database(str(uuid.uuid4()))
-        self.test_container = self.test_db.create_container(
-            id="FTS" + self.TEST_CONTAINER_ID,
+        cls.test_db = cls.client.create_database(str(uuid.uuid4()))
+        cls.test_container = cls.test_db.create_container(
+            id="FTS" + cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/id"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_1_PARTITION,
             indexing_policy=test_config.get_full_text_indexing_policy(path="/text"),
@@ -51,14 +47,15 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         data = hybrid_search_data.get_full_text_items()
         for index, item in enumerate(data.get("items")):
             item['id'] = str(index)
-            self.test_container.create_item(item)
+            cls.test_container.create_item(item)
         # Need to give the container time to index all the recently added items - 10 minutes seems to work
         time.sleep(10 * 60)
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         try:
-            self.test_db.delete_container(self.test_container.id)
-            self.client.delete_database(self.test_db.id)
+            cls.test_db.delete_container(cls.test_container.id)
+            cls.client.delete_database(cls.test_db.id)
         except exceptions.CosmosHttpResponseError:
             pass
 

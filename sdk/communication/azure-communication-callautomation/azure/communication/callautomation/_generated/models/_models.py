@@ -840,20 +840,34 @@ class CallIntelligenceOptions(_serialization.Model):
     :ivar cognitive_services_endpoint: The identifier of the Cognitive Service resource assigned to
      this call.
     :vartype cognitive_services_endpoint: str
+    :ivar backup_cognitive_services_endpoint: A backup identifier of the Cognitive Service resource
+     assigned to this call.
+    :vartype backup_cognitive_services_endpoint: str
     """
 
     _attribute_map = {
         "cognitive_services_endpoint": {"key": "cognitiveServicesEndpoint", "type": "str"},
+        "backup_cognitive_services_endpoint": {"key": "backupCognitiveServicesEndpoint", "type": "str"},
     }
 
-    def __init__(self, *, cognitive_services_endpoint: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        cognitive_services_endpoint: Optional[str] = None,
+        backup_cognitive_services_endpoint: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cognitive_services_endpoint: The identifier of the Cognitive Service resource assigned
          to this call.
         :paramtype cognitive_services_endpoint: str
+        :keyword backup_cognitive_services_endpoint: A backup identifier of the Cognitive Service
+         resource assigned to this call.
+        :paramtype backup_cognitive_services_endpoint: str
         """
         super().__init__(**kwargs)
         self.cognitive_services_endpoint = cognitive_services_endpoint
+        self.backup_cognitive_services_endpoint = backup_cognitive_services_endpoint
 
 
 class CallLocator(_serialization.Model):
@@ -865,8 +879,8 @@ class CallLocator(_serialization.Model):
     :vartype server_call_id: str
     :ivar room_id: The Acs room id. (Not supported for Start Recording).
     :vartype room_id: str
-    :ivar kind: The call locator kind. Known values are: "unknown", "groupCallLocator",
-     "serverCallLocator", and "roomCallLocator".
+    :ivar kind: The call locator kind. Known values are: "groupCallLocator", "serverCallLocator",
+     and "roomCallLocator".
     :vartype kind: str or ~azure.communication.callautomation.models.CallLocatorKind
     """
 
@@ -893,7 +907,7 @@ class CallLocator(_serialization.Model):
         :paramtype server_call_id: str
         :keyword room_id: The Acs room id. (Not supported for Start Recording).
         :paramtype room_id: str
-        :keyword kind: The call locator kind. Known values are: "unknown", "groupCallLocator",
+        :keyword kind: The call locator kind. Known values are: "groupCallLocator",
          "serverCallLocator", and "roomCallLocator".
         :paramtype kind: str or ~azure.communication.callautomation.models.CallLocatorKind
         """

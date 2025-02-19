@@ -1,3 +1,7 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
 import pytest
 from azure.ai.ml.entities import ModelBatchDeployment
 from azure.ai.ml.entities._load_functions import load_model_batch_deployment

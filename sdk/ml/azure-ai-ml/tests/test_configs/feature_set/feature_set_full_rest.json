@@ -1,0 +1,58 @@
+{
+    "name": "feature_set_full_rest",
+    "id": "/subscriptions/sub-id/resourceGroups/some-rg/providers/Microsoft.MachineLearningServices/workspaces/some-ws/feature_set/feature_set_full_rest/versions/1",
+    "properties": {
+        "description": "Feature set for testing",
+        "entities": [
+            "azureml:test:1",
+            "azureml:test:2"
+        ],
+        "provisioningState": "Succeeded",
+        "specification": {
+            "path": "./tests/test_configs/feature_set"
+        },
+        "tags": {
+            "tag1": "value1",
+            "tag2": "value2"
+        },
+        "stage": "Production",
+        "materializationSettings": {
+            "notification": {
+                "emailOn": [
+                    "JobCompleted",
+                    "JobFailed"
+                ],
+                "email": [
+                    "fake@email.com",
+                    "test@email.com"
+                ]
+            },
+            "resource": {
+                "instanceType": "standard_e8s_v3"
+            },
+            "schedule": {
+                "frequency": "Minute",
+                "interval": 5,
+                "schedule": {
+                    "hours": [
+                        12
+                    ],
+                    "minutes": [
+                        5
+                    ],
+                    "weekDays": [
+                        "Sunday"
+                    ]
+                }
+            },
+            "sparkConfiguration": {
+                "spark.executor.instances": 2,
+                "spark.executor.memory": "4g",
+                "spark.executor.cores": 2,
+                "spark.driver.memory": "4g",
+                "spark.driver.cores": 2
+            },
+            "storeType": "Offline"
+        }
+    }
+}

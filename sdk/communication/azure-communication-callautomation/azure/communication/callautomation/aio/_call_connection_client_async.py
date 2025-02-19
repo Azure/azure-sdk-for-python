@@ -660,7 +660,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :keyword initial_silence_timeout: Time to wait for first input after prompt in seconds (if any).
         :paramtype initial_silence_timeout: int
         :keyword play_prompt: The source of the audio to be played for recognition.
-        :type play_prompt: ~azure.communication.callautomation.FileSource or
+        :paramtype play_prompt: ~azure.communication.callautomation.FileSource or
          ~azure.communication.callautomation.TextSource or
          ~azure.communication.callautomation.SsmlSource or         
          list[~azure.communication.callautomation.FileSource] or
