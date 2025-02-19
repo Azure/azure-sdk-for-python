@@ -1,5 +1,251 @@
 # Release History
 
+## 11.0.0 (2025-03-24)
+
+### Features Added
+
+  - Client `EventGridManagementClient` added operation group `ca_certificates`
+  - Client `EventGridManagementClient` added operation group `client_groups`
+  - Client `EventGridManagementClient` added operation group `clients`
+  - Client `EventGridManagementClient` added operation group `namespace_topic_event_subscriptions`
+  - Client `EventGridManagementClient` added operation group `namespaces`
+  - Client `EventGridManagementClient` added operation group `namespace_topics`
+  - Client `EventGridManagementClient` added operation group `permission_bindings`
+  - Client `EventGridManagementClient` added operation group `topic_spaces`
+  - Model `Domain` added property `minimum_tls_version_allowed`
+  - Model `Domain` added property `event_type_info`
+  - Model `DomainUpdateParameters` added property `minimum_tls_version_allowed`
+  - Model `DomainUpdateParameters` added property `event_type_info`
+  - Enum `EndpointType` added member `MONITOR_ALERT`
+  - Enum `EndpointType` added member `NAMESPACE_TOPIC`
+  - Model `PartnerNamespace` added property `minimum_tls_version_allowed`
+  - Model `PartnerNamespaceUpdateParameters` added property `minimum_tls_version_allowed`
+  - Enum `PrivateEndpointConnectionsParentType` added member `NAMESPACES`
+  - Model `Topic` added property `event_type_info`
+  - Model `Topic` added property `minimum_tls_version_allowed`
+  - Model `TopicTypeInfo` added property `are_regional_and_global_sources_supported`
+  - Model `TopicTypeInfo` added property `additional_enforced_permissions`
+  - Model `TopicUpdateParameters` added property `minimum_tls_version_allowed`
+  - Model `TopicUpdateParameters` added property `event_type_info`
+  - Model `WebHookEventSubscriptionDestination` added property `minimum_tls_version_allowed`
+  - Added model `BoolEqualsFilter`
+  - Added model `CaCertificate`
+  - Added enum `CaCertificateProvisioningState`
+  - Added model `CaCertificatesListResult`
+  - Added client `Client`
+  - Added model `ClientCertificateAuthentication`
+  - Added enum `ClientCertificateValidationScheme`
+  - Added model `ClientGroup`
+  - Added enum `ClientGroupProvisioningState`
+  - Added model `ClientGroupsListResult`
+  - Added enum `ClientProvisioningState`
+  - Added enum `ClientState`
+  - Added model `ClientsListResult`
+  - Added model `CustomDomainConfiguration`
+  - Added model `CustomDomainIdentity`
+  - Added enum `CustomDomainIdentityType`
+  - Added model `CustomDomainOwnershipValidationResult`
+  - Added enum `CustomDomainValidationState`
+  - Added model `DeliveryConfiguration`
+  - Added enum `DeliveryMode`
+  - Added enum `DeliverySchema`
+  - Added model `DynamicRoutingEnrichment`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added enum `EventInputSchema`
+  - Added model `Filter`
+  - Added enum `FilterOperatorType`
+  - Added model `FiltersConfiguration`
+  - Added model `IsNotNullFilter`
+  - Added model `IsNullOrUndefinedFilter`
+  - Added model `MonitorAlertEventSubscriptionDestination`
+  - Added enum `MonitorAlertSeverity`
+  - Added model `Namespace`
+  - Added enum `NamespaceProvisioningState`
+  - Added model `NamespaceRegenerateKeyRequest`
+  - Added model `NamespaceSharedAccessKeys`
+  - Added model `NamespaceSku`
+  - Added model `NamespaceTopic`
+  - Added model `NamespaceTopicEventSubscriptionDestination`
+  - Added enum `NamespaceTopicProvisioningState`
+  - Added model `NamespaceTopicUpdateParameters`
+  - Added model `NamespaceTopicsListResult`
+  - Added model `NamespaceUpdateParameters`
+  - Added model `NamespacesListResult`
+  - Added model `NumberGreaterThanFilter`
+  - Added model `NumberGreaterThanOrEqualsFilter`
+  - Added model `NumberInFilter`
+  - Added model `NumberInRangeFilter`
+  - Added model `NumberLessThanFilter`
+  - Added model `NumberLessThanOrEqualsFilter`
+  - Added model `NumberNotInFilter`
+  - Added model `NumberNotInRangeFilter`
+  - Added model `PermissionBinding`
+  - Added enum `PermissionBindingProvisioningState`
+  - Added model `PermissionBindingsListResult`
+  - Added enum `PermissionType`
+  - Added enum `PublisherType`
+  - Added model `PushInfo`
+  - Added model `QueueInfo`
+  - Added model `RoutingEnrichments`
+  - Added model `RoutingIdentityInfo`
+  - Added enum `RoutingIdentityType`
+  - Added enum `SkuName`
+  - Added model `StaticRoutingEnrichment`
+  - Added enum `StaticRoutingEnrichmentType`
+  - Added model `StaticStringRoutingEnrichment`
+  - Added model `StringBeginsWithFilter`
+  - Added model `StringContainsFilter`
+  - Added model `StringEndsWithFilter`
+  - Added model `StringInFilter`
+  - Added model `StringNotBeginsWithFilter`
+  - Added model `StringNotContainsFilter`
+  - Added model `StringNotEndsWithFilter`
+  - Added model `StringNotInFilter`
+  - Added model `Subscription`
+  - Added model `SubscriptionFullUrl`
+  - Added enum `SubscriptionProvisioningState`
+  - Added model `SubscriptionUpdateParameters`
+  - Added model `SubscriptionsListResult`
+  - Added enum `TlsVersion`
+  - Added model `TopicSpace`
+  - Added enum `TopicSpaceProvisioningState`
+  - Added model `TopicSpacesConfiguration`
+  - Added enum `TopicSpacesConfigurationState`
+  - Added model `TopicSpacesListResult`
+  - Added model `TopicTypeAdditionalEnforcedPermission`
+  - Added model `TopicsConfiguration`
+  - Added model `UpdateTopicSpacesConfigurationInfo`
+  - Added model `UpdateTopicsConfigurationInfo`
+  - Model `ChannelsOperations` added parameter `kwargs` in method `__init__`
+  - Model `DomainEventSubscriptionsOperations` added parameter `kwargs` in method `__init__`
+  - Model `DomainTopicEventSubscriptionsOperations` added parameter `kwargs` in method `__init__`
+  - Model `DomainTopicsOperations` added parameter `kwargs` in method `__init__`
+  - Model `DomainsOperations` added parameter `kwargs` in method `__init__`
+  - Model `EventSubscriptionsOperations` added parameter `kwargs` in method `__init__`
+  - Model `ExtensionTopicsOperations` added parameter `kwargs` in method `__init__`
+  - Model `Operations` added parameter `kwargs` in method `__init__`
+  - Model `PartnerConfigurationsOperations` added parameter `kwargs` in method `__init__`
+  - Model `PartnerNamespacesOperations` added parameter `kwargs` in method `__init__`
+  - Model `PartnerRegistrationsOperations` added parameter `kwargs` in method `__init__`
+  - Model `PartnerTopicEventSubscriptionsOperations` added parameter `kwargs` in method `__init__`
+  - Model `PartnerTopicsOperations` added parameter `kwargs` in method `__init__`
+  - Model `PrivateEndpointConnectionsOperations` added parameter `kwargs` in method `__init__`
+  - Model `PrivateLinkResourcesOperations` added parameter `kwargs` in method `__init__`
+  - Model `SystemTopicEventSubscriptionsOperations` added parameter `kwargs` in method `__init__`
+  - Model `SystemTopicsOperations` added parameter `kwargs` in method `__init__`
+  - Model `TopicEventSubscriptionsOperations` added parameter `kwargs` in method `__init__`
+  - Model `TopicTypesOperations` added parameter `kwargs` in method `__init__`
+  - Model `TopicsOperations` added parameter `kwargs` in method `__init__`
+  - Model `VerifiedPartnersOperations` added parameter `kwargs` in method `__init__`
+  - Added model `CaCertificatesOperations`
+  - Added model `ClientGroupsOperations`
+  - Added model `ClientsOperations`
+  - Added model `NamespaceTopicEventSubscriptionsOperations`
+  - Added model `NamespaceTopicsOperations`
+  - Added model `NamespacesOperations`
+  - Added model `PermissionBindingsOperations`
+  - Added model `TopicSpacesOperations`
+  - Method `ChannelsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, partner_namespace_name: str, channel_name: str, channel_info: Channel, content_type: str)`
+  - Method `ChannelsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, partner_namespace_name: str, channel_name: str, channel_info: IO[bytes], content_type: str)`
+  - Method `ChannelsOperations.update` has a new overload `def update(self: None, resource_group_name: str, partner_namespace_name: str, channel_name: str, channel_update_parameters: ChannelUpdateParameters, content_type: str)`
+  - Method `ChannelsOperations.update` has a new overload `def update(self: None, resource_group_name: str, partner_namespace_name: str, channel_name: str, channel_update_parameters: IO[bytes], content_type: str)`
+  - Method `DomainEventSubscriptionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, domain_name: str, event_subscription_name: str, event_subscription_info: EventSubscription, content_type: str)`
+  - Method `DomainEventSubscriptionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, domain_name: str, event_subscription_name: str, event_subscription_info: IO[bytes], content_type: str)`
+  - Method `DomainEventSubscriptionsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, domain_name: str, event_subscription_name: str, event_subscription_update_parameters: EventSubscriptionUpdateParameters, content_type: str)`
+  - Method `DomainEventSubscriptionsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, domain_name: str, event_subscription_name: str, event_subscription_update_parameters: IO[bytes], content_type: str)`
+  - Method `DomainTopicEventSubscriptionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, domain_name: str, topic_name: str, event_subscription_name: str, event_subscription_info: EventSubscription, content_type: str)`
+  - Method `DomainTopicEventSubscriptionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, domain_name: str, topic_name: str, event_subscription_name: str, event_subscription_info: IO[bytes], content_type: str)`
+  - Method `DomainTopicEventSubscriptionsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, domain_name: str, topic_name: str, event_subscription_name: str, event_subscription_update_parameters: EventSubscriptionUpdateParameters, content_type: str)`
+  - Method `DomainTopicEventSubscriptionsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, domain_name: str, topic_name: str, event_subscription_name: str, event_subscription_update_parameters: IO[bytes], content_type: str)`
+  - Method `DomainsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, domain_name: str, domain_info: Domain, content_type: str)`
+  - Method `DomainsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, domain_name: str, domain_info: IO[bytes], content_type: str)`
+  - Method `DomainsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, domain_name: str, domain_update_parameters: DomainUpdateParameters, content_type: str)`
+  - Method `DomainsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, domain_name: str, domain_update_parameters: IO[bytes], content_type: str)`
+  - Method `DomainsOperations.regenerate_key` has a new overload `def regenerate_key(self: None, resource_group_name: str, domain_name: str, regenerate_key_request: DomainRegenerateKeyRequest, content_type: str)`
+  - Method `DomainsOperations.regenerate_key` has a new overload `def regenerate_key(self: None, resource_group_name: str, domain_name: str, regenerate_key_request: IO[bytes], content_type: str)`
+  - Method `EventSubscriptionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, scope: str, event_subscription_name: str, event_subscription_info: EventSubscription, content_type: str)`
+  - Method `EventSubscriptionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, scope: str, event_subscription_name: str, event_subscription_info: IO[bytes], content_type: str)`
+  - Method `EventSubscriptionsOperations.begin_update` has a new overload `def begin_update(self: None, scope: str, event_subscription_name: str, event_subscription_update_parameters: EventSubscriptionUpdateParameters, content_type: str)`
+  - Method `EventSubscriptionsOperations.begin_update` has a new overload `def begin_update(self: None, scope: str, event_subscription_name: str, event_subscription_update_parameters: IO[bytes], content_type: str)`
+  - Method `PartnerConfigurationsOperations.authorize_partner` has a new overload `def authorize_partner(self: None, resource_group_name: str, partner_info: Partner, content_type: str)`
+  - Method `PartnerConfigurationsOperations.authorize_partner` has a new overload `def authorize_partner(self: None, resource_group_name: str, partner_info: IO[bytes], content_type: str)`
+  - Method `PartnerConfigurationsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, partner_configuration_info: PartnerConfiguration, content_type: str)`
+  - Method `PartnerConfigurationsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, partner_configuration_info: IO[bytes], content_type: str)`
+  - Method `PartnerConfigurationsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, partner_configuration_update_parameters: PartnerConfigurationUpdateParameters, content_type: str)`
+  - Method `PartnerConfigurationsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, partner_configuration_update_parameters: IO[bytes], content_type: str)`
+  - Method `PartnerConfigurationsOperations.unauthorize_partner` has a new overload `def unauthorize_partner(self: None, resource_group_name: str, partner_info: Partner, content_type: str)`
+  - Method `PartnerConfigurationsOperations.unauthorize_partner` has a new overload `def unauthorize_partner(self: None, resource_group_name: str, partner_info: IO[bytes], content_type: str)`
+  - Method `PartnerNamespacesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, partner_namespace_name: str, partner_namespace_info: PartnerNamespace, content_type: str)`
+  - Method `PartnerNamespacesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, partner_namespace_name: str, partner_namespace_info: IO[bytes], content_type: str)`
+  - Method `PartnerNamespacesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, partner_namespace_name: str, partner_namespace_update_parameters: PartnerNamespaceUpdateParameters, content_type: str)`
+  - Method `PartnerNamespacesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, partner_namespace_name: str, partner_namespace_update_parameters: IO[bytes], content_type: str)`
+  - Method `PartnerNamespacesOperations.regenerate_key` has a new overload `def regenerate_key(self: None, resource_group_name: str, partner_namespace_name: str, regenerate_key_request: PartnerNamespaceRegenerateKeyRequest, content_type: str)`
+  - Method `PartnerNamespacesOperations.regenerate_key` has a new overload `def regenerate_key(self: None, resource_group_name: str, partner_namespace_name: str, regenerate_key_request: IO[bytes], content_type: str)`
+  - Method `PartnerRegistrationsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, partner_registration_name: str, partner_registration_info: PartnerRegistration, content_type: str)`
+  - Method `PartnerRegistrationsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, partner_registration_name: str, partner_registration_info: IO[bytes], content_type: str)`
+  - Method `PartnerRegistrationsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, partner_registration_name: str, partner_registration_update_parameters: PartnerRegistrationUpdateParameters, content_type: str)`
+  - Method `PartnerRegistrationsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, partner_registration_name: str, partner_registration_update_parameters: IO[bytes], content_type: str)`
+  - Method `PartnerTopicEventSubscriptionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, partner_topic_name: str, event_subscription_name: str, event_subscription_info: EventSubscription, content_type: str)`
+  - Method `PartnerTopicEventSubscriptionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, partner_topic_name: str, event_subscription_name: str, event_subscription_info: IO[bytes], content_type: str)`
+  - Method `PartnerTopicEventSubscriptionsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, partner_topic_name: str, event_subscription_name: str, event_subscription_update_parameters: EventSubscriptionUpdateParameters, content_type: str)`
+  - Method `PartnerTopicEventSubscriptionsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, partner_topic_name: str, event_subscription_name: str, event_subscription_update_parameters: IO[bytes], content_type: str)`
+  - Method `PartnerTopicsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, partner_topic_name: str, partner_topic_info: PartnerTopic, content_type: str)`
+  - Method `PartnerTopicsOperations.create_or_update` has a new overload `def create_or_update(self: None, resource_group_name: str, partner_topic_name: str, partner_topic_info: IO[bytes], content_type: str)`
+  - Method `PartnerTopicsOperations.update` has a new overload `def update(self: None, resource_group_name: str, partner_topic_name: str, partner_topic_update_parameters: PartnerTopicUpdateParameters, content_type: str)`
+  - Method `PartnerTopicsOperations.update` has a new overload `def update(self: None, resource_group_name: str, partner_topic_name: str, partner_topic_update_parameters: IO[bytes], content_type: str)`
+  - Method `PrivateEndpointConnectionsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, parent_type: Union[str, PrivateEndpointConnectionsParentType], parent_name: str, private_endpoint_connection_name: str, private_endpoint_connection: PrivateEndpointConnection, content_type: str)`
+  - Method `PrivateEndpointConnectionsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, parent_type: Union[str, PrivateEndpointConnectionsParentType], parent_name: str, private_endpoint_connection_name: str, private_endpoint_connection: IO[bytes], content_type: str)`
+  - Method `SystemTopicEventSubscriptionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, system_topic_name: str, event_subscription_name: str, event_subscription_info: EventSubscription, content_type: str)`
+  - Method `SystemTopicEventSubscriptionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, system_topic_name: str, event_subscription_name: str, event_subscription_info: IO[bytes], content_type: str)`
+  - Method `SystemTopicEventSubscriptionsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, system_topic_name: str, event_subscription_name: str, event_subscription_update_parameters: EventSubscriptionUpdateParameters, content_type: str)`
+  - Method `SystemTopicEventSubscriptionsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, system_topic_name: str, event_subscription_name: str, event_subscription_update_parameters: IO[bytes], content_type: str)`
+  - Method `SystemTopicsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, system_topic_name: str, system_topic_info: SystemTopic, content_type: str)`
+  - Method `SystemTopicsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, system_topic_name: str, system_topic_info: IO[bytes], content_type: str)`
+  - Method `SystemTopicsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, system_topic_name: str, system_topic_update_parameters: SystemTopicUpdateParameters, content_type: str)`
+  - Method `SystemTopicsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, system_topic_name: str, system_topic_update_parameters: IO[bytes], content_type: str)`
+  - Method `TopicEventSubscriptionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, topic_name: str, event_subscription_name: str, event_subscription_info: EventSubscription, content_type: str)`
+  - Method `TopicEventSubscriptionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, topic_name: str, event_subscription_name: str, event_subscription_info: IO[bytes], content_type: str)`
+  - Method `TopicEventSubscriptionsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, topic_name: str, event_subscription_name: str, event_subscription_update_parameters: EventSubscriptionUpdateParameters, content_type: str)`
+  - Method `TopicEventSubscriptionsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, topic_name: str, event_subscription_name: str, event_subscription_update_parameters: IO[bytes], content_type: str)`
+  - Method `TopicsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, topic_name: str, topic_info: Topic, content_type: str)`
+  - Method `TopicsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, topic_name: str, topic_info: IO[bytes], content_type: str)`
+  - Method `TopicsOperations.begin_regenerate_key` has a new overload `def begin_regenerate_key(self: None, resource_group_name: str, topic_name: str, regenerate_key_request: TopicRegenerateKeyRequest, content_type: str)`
+  - Method `TopicsOperations.begin_regenerate_key` has a new overload `def begin_regenerate_key(self: None, resource_group_name: str, topic_name: str, regenerate_key_request: IO[bytes], content_type: str)`
+  - Method `TopicsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, topic_name: str, topic_update_parameters: TopicUpdateParameters, content_type: str)`
+  - Method `TopicsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, topic_name: str, topic_update_parameters: IO[bytes], content_type: str)`
+  - Method `CaCertificatesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, namespace_name: str, ca_certificate_name: str, ca_certificate_info: CaCertificate, content_type: str)`
+  - Method `CaCertificatesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, namespace_name: str, ca_certificate_name: str, ca_certificate_info: IO[bytes], content_type: str)`
+  - Method `ClientGroupsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, namespace_name: str, client_group_name: str, client_group_info: ClientGroup, content_type: str)`
+  - Method `ClientGroupsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, namespace_name: str, client_group_name: str, client_group_info: IO[bytes], content_type: str)`
+  - Method `ClientsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, namespace_name: str, client_name: str, client_info: Client, content_type: str)`
+  - Method `ClientsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, namespace_name: str, client_name: str, client_info: IO[bytes], content_type: str)`
+  - Method `NamespaceTopicEventSubscriptionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, namespace_name: str, topic_name: str, event_subscription_name: str, event_subscription_info: Subscription, content_type: str)`
+  - Method `NamespaceTopicEventSubscriptionsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, namespace_name: str, topic_name: str, event_subscription_name: str, event_subscription_info: IO[bytes], content_type: str)`
+  - Method `NamespaceTopicEventSubscriptionsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, namespace_name: str, topic_name: str, event_subscription_name: str, event_subscription_update_parameters: SubscriptionUpdateParameters, content_type: str)`
+  - Method `NamespaceTopicEventSubscriptionsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, namespace_name: str, topic_name: str, event_subscription_name: str, event_subscription_update_parameters: IO[bytes], content_type: str)`
+  - Method `NamespaceTopicsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, namespace_name: str, topic_name: str, namespace_topic_info: NamespaceTopic, content_type: str)`
+  - Method `NamespaceTopicsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, namespace_name: str, topic_name: str, namespace_topic_info: IO[bytes], content_type: str)`
+  - Method `NamespaceTopicsOperations.begin_regenerate_key` has a new overload `def begin_regenerate_key(self: None, resource_group_name: str, namespace_name: str, topic_name: str, regenerate_key_request: TopicRegenerateKeyRequest, content_type: str)`
+  - Method `NamespaceTopicsOperations.begin_regenerate_key` has a new overload `def begin_regenerate_key(self: None, resource_group_name: str, namespace_name: str, topic_name: str, regenerate_key_request: IO[bytes], content_type: str)`
+  - Method `NamespaceTopicsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, namespace_name: str, topic_name: str, namespace_topic_update_parameters: NamespaceTopicUpdateParameters, content_type: str)`
+  - Method `NamespaceTopicsOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, namespace_name: str, topic_name: str, namespace_topic_update_parameters: IO[bytes], content_type: str)`
+  - Method `NamespacesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, namespace_name: str, namespace_info: Namespace, content_type: str)`
+  - Method `NamespacesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, namespace_name: str, namespace_info: IO[bytes], content_type: str)`
+  - Method `NamespacesOperations.begin_regenerate_key` has a new overload `def begin_regenerate_key(self: None, resource_group_name: str, namespace_name: str, regenerate_key_request: NamespaceRegenerateKeyRequest, content_type: str)`
+  - Method `NamespacesOperations.begin_regenerate_key` has a new overload `def begin_regenerate_key(self: None, resource_group_name: str, namespace_name: str, regenerate_key_request: IO[bytes], content_type: str)`
+  - Method `NamespacesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, namespace_name: str, namespace_update_parameters: NamespaceUpdateParameters, content_type: str)`
+  - Method `NamespacesOperations.begin_update` has a new overload `def begin_update(self: None, resource_group_name: str, namespace_name: str, namespace_update_parameters: IO[bytes], content_type: str)`
+  - Method `PermissionBindingsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, namespace_name: str, permission_binding_name: str, permission_binding_info: PermissionBinding, content_type: str)`
+  - Method `PermissionBindingsOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, namespace_name: str, permission_binding_name: str, permission_binding_info: IO[bytes], content_type: str)`
+  - Method `TopicSpacesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, namespace_name: str, topic_space_name: str, topic_space_info: TopicSpace, content_type: str)`
+  - Method `TopicSpacesOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_group_name: str, namespace_name: str, topic_space_name: str, topic_space_info: IO[bytes], content_type: str)`
+
+### Breaking Changes
+
+  - Deleted or renamed function `patch_sdk`
+
 ## 10.3.0b4 (2024-04-29)
 
 ### Features Added
