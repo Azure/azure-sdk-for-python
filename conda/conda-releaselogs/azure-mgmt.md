@@ -41,7 +41,7 @@
 - azure-mgmt-consumption-10.0.0
 - azure-mgmt-containerinstance-10.1.0
 - azure-mgmt-containerregistry-10.3.0
-- azure-mgmt-containerservice-34.0.0
+- azure-mgmt-containerservice-34.1.0
 - azure-mgmt-containerservicefleet-3.0.0
 - azure-mgmt-cosmosdb-9.7.0
 - azure-mgmt-costmanagement-4.0.1
@@ -162,7 +162,7 @@
 - azure-mgmt-sphere-1.0.0
 - azure-mgmt-sql-3.0.1
 - azure-mgmt-standbypool-1.0.0
-- azure-mgmt-storage-22.0.0
+- azure-mgmt-storage-22.1.0
 - azure-mgmt-storagecache-2.0.0
 - azure-mgmt-storagemover-2.1.0
 - azure-mgmt-storagepool-1.0.0
