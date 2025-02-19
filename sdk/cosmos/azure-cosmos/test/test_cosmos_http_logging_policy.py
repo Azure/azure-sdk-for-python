@@ -77,7 +77,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         messages_response = self.mock_handler_default.messages[4].message.split("\n")
         assert messages_request[1] == "Request method: 'GET'"
         assert 'Request headers:' in messages_request[2]
-        assert messages_request[13] == 'No body was attached to the request'
+        assert messages_request[14] == 'No body was attached to the request'
         assert messages_response[0] == 'Response status: 200'
         assert 'Response headers:' in messages_response[1]
 

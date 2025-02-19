@@ -19,6 +19,72 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class ContentItem(_model_base.Model):
+    """An abstract representation of a structured content item within a chat message.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ImageContentItem, AudioContentItem, TextContentItem
+
+    :ivar type: The discriminated object type. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type")
+    """The discriminated object type. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AudioContentItem(ContentItem, discriminator="input_audio"):
+    """A structured chat content item containing an audio content.
+
+    :ivar type: The discriminated object type: always 'input_audio' for this type. Required.
+     Default value is "input_audio".
+    :vartype type: str
+    :ivar input_audio: The details of the input audio. Required.
+    :vartype input_audio: ~azure.ai.inference.models.InputAudio
+    """
+
+    type: Literal["input_audio"] = rest_discriminator(name="type")  # type: ignore
+    """The discriminated object type: always 'input_audio' for this type. Required. Default value is
+     \"input_audio\"."""
+    input_audio: "_models.InputAudio" = rest_field()
+    """The details of the input audio. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        input_audio: "_models.InputAudio",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="input_audio", **kwargs)
+
+
 class ChatChoice(_model_base.Model):
     """The representation of a single prompt completion as part of an overall chat completions
     request.
@@ -685,38 +751,6 @@ class CompletionsUsage(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ContentItem(_model_base.Model):
-    """An abstract representation of a structured content item within a chat message.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ImageContentItem, TextContentItem
-
-    :ivar type: The discriminated object type. Required. Default value is None.
-    :vartype type: str
-    """
-
-    __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
-    """The discriminated object type. Required. Default value is None."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class EmbeddingItem(_model_base.Model):
     """Representation of a single embeddings relatedness comparison.
 
@@ -1021,6 +1055,40 @@ class ImageUrl(_model_base.Model):
         *,
         url: str,
         detail: Optional[Union[str, "_models.ImageDetailLevel"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InputAudio(_model_base.Model):
+    """The details of an audio chat message content part.
+
+    :ivar data: Base64 encoded audio data. Required.
+    :vartype data: str
+    :ivar format: The audio format of the audio content. Required. Known values are: "wav" and
+     "mp3".
+    :vartype format: str or ~azure.ai.inference.models.AudioContentFormat
+    """
+
+    data: str = rest_field()
+    """Base64 encoded audio data. Required."""
+    format: Union[str, "_models.AudioContentFormat"] = rest_field()
+    """The audio format of the audio content. Required. Known values are: \"wav\" and \"mp3\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: str,
+        format: Union[str, "_models.AudioContentFormat"],
     ) -> None: ...
 
     @overload

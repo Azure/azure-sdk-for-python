@@ -25,7 +25,7 @@ def get_test_item():
     return item
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestUserConfigs(unittest.TestCase):
 
     def test_invalid_connection_retry_configuration(self):

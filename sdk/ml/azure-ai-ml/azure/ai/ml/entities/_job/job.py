@@ -17,16 +17,10 @@ from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, JobService
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
-    JobType as RestJobType_20240101Preview,
-)
+from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101Preview
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
-from azure.ai.ml.constants._common import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-    CommonYamlFields,
-)
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.job import JobServices, JobType
 from azure.ai.ml.entities._mixins import TelemetryMixin
@@ -76,8 +70,6 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     :type services: Optional[dict[str, ~azure.ai.ml.entities.JobService]]
     :param compute: Information about the compute resources associated with the job.
     :type compute: Optional[str]
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
     """
 
     def __init__(

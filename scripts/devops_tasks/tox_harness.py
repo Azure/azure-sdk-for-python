@@ -260,7 +260,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
         tox_execution_array = [sys.executable, "-m", "tox"]
 
         if parsed_args.tenvparallel:
-            tox_execution_array.extend(["run-parallel", "-p", "all"])
+            tox_execution_array.extend(["run-parallel", "-p", parsed_args.tenvparallel])
         else:
             tox_execution_array.append("run")
 

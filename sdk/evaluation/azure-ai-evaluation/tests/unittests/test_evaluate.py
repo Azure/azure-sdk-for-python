@@ -24,7 +24,7 @@ from azure.ai.evaluation import (
     SelfHarmEvaluator,
     HateUnfairnessEvaluator,
 )
-from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, AggregationType
+from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, _AggregationType
 from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_metrics,
     _apply_target_to_data,
@@ -385,18 +385,31 @@ class TestEvaluate:
             assert "else2" in new_data_df.columns
             assert new_data_df["else2"][0] == "Another column 1"
 
-    def test_evaluate_invalid_evaluator_config(self, mock_model_config, evaluate_test_data_jsonl_file):
+    @pytest.mark.parametrize(
+        "column_mapping",
+        [
+            {"query": "${foo.query}"},
+            {"query": "${data.query"},
+            {"query": "data.query", "response": "target.response"},
+            {"query": "${data.query}", "response": "${target.response.one}"},
+        ]
+    )
+    def test_evaluate_invalid_column_mapping(self, mock_model_config, evaluate_test_data_jsonl_file, column_mapping):
         # Invalid source reference
         with pytest.raises(EvaluationException) as exc_info:
             evaluate(
                 data=evaluate_test_data_jsonl_file,
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
-                evaluator_config={"g": {"column_mapping": {"query": "${foo.query}"}}},
+                evaluator_config={
+                    "g": {
+                        "column_mapping": column_mapping,
+                    }
+                }
             )
 
         assert (
-            "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
-            in exc_info.value.args[0]
+                "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
+                in exc_info.value.args[0]
         )
 
     def test_renaming_column(self):
@@ -717,21 +730,21 @@ class TestEvaluate:
 
         # test maxing
         counting_eval.reset()
-        counting_eval._set_conversation_aggregation_type(AggregationType.MAX)
+        counting_eval._set_conversation_aggregation_type(_AggregationType.MAX)
         results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
         assert results["rows"][0]["outputs.count.response"] == 2
         assert results["rows"][1]["outputs.count.response"] == 4
 
         # test minimizing
         counting_eval.reset()
-        counting_eval._set_conversation_aggregation_type(AggregationType.MIN)
+        counting_eval._set_conversation_aggregation_type(_AggregationType.MIN)
         results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
         assert results["rows"][0]["outputs.count.response"] == 1
         assert results["rows"][1]["outputs.count.response"] == 3
 
         # test sum
         counting_eval.reset()
-        counting_eval._set_conversation_aggregation_type(AggregationType.SUM)
+        counting_eval._set_conversation_aggregation_type(_AggregationType.SUM)
         results = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
         assert results["rows"][0]["outputs.count.response"] == 3
         assert results["rows"][1]["outputs.count.response"] == 7
@@ -763,20 +776,20 @@ class TestEvaluate:
         fake_project = {"subscription_id": "123", "resource_group_name": "123", "project_name": "123"}
         eval1 = ViolenceEvaluator(None, fake_project)
         # Test builtins
-        assert eval1._get_conversation_aggregator_type() == AggregationType.MAX
-        eval1._set_conversation_aggregation_type(AggregationType.SUM)
-        assert eval1._get_conversation_aggregator_type() == AggregationType.SUM
-        eval1._set_conversation_aggregation_type(AggregationType.MAX)
-        assert eval1._get_conversation_aggregator_type() == AggregationType.MAX
-        eval1._set_conversation_aggregation_type(AggregationType.MIN)
-        assert eval1._get_conversation_aggregator_type() == AggregationType.MIN
+        assert eval1._get_conversation_aggregator_type() == _AggregationType.MAX
+        eval1._set_conversation_aggregation_type(_AggregationType.SUM)
+        assert eval1._get_conversation_aggregator_type() == _AggregationType.SUM
+        eval1._set_conversation_aggregation_type(_AggregationType.MAX)
+        assert eval1._get_conversation_aggregator_type() == _AggregationType.MAX
+        eval1._set_conversation_aggregation_type(_AggregationType.MIN)
+        assert eval1._get_conversation_aggregator_type() == _AggregationType.MIN
 
         # test custom
         def custom_aggregator(values):
             return sum(values) + 1
 
         eval1._set_conversation_aggregator(custom_aggregator)
-        assert eval1._get_conversation_aggregator_type() == AggregationType.CUSTOM
+        assert eval1._get_conversation_aggregator_type() == _AggregationType.CUSTOM
 
     @pytest.mark.parametrize("use_async", ["true", "false"])  # Strings intended
     def test_aggregation_serialization(self, evaluate_test_data_conversion_jsonl_file, use_async):
@@ -792,11 +805,11 @@ class TestEvaluate:
 
         os.environ["AI_EVALS_BATCH_USE_ASYNC"] = use_async
         _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
-        counting_eval._set_conversation_aggregation_type(AggregationType.MIN)
+        counting_eval._set_conversation_aggregation_type(_AggregationType.MIN)
         _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
-        counting_eval._set_conversation_aggregation_type(AggregationType.SUM)
+        counting_eval._set_conversation_aggregation_type(_AggregationType.SUM)
         _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
-        counting_eval._set_conversation_aggregation_type(AggregationType.MAX)
+        counting_eval._set_conversation_aggregation_type(_AggregationType.MAX)
         _ = evaluate(data=evaluate_test_data_conversion_jsonl_file, evaluators=evaluators)
         if use_async == "true":
             counting_eval._set_conversation_aggregator(custom_aggregator)
