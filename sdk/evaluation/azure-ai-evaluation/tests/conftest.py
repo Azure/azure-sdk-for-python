@@ -1,3 +1,5 @@
+from copy import copy, deepcopy
+import re
 from .__openai_patcher import TestProxyConfig, TestProxyHttpxClientBase  # isort: split
 
 import os
@@ -7,9 +9,8 @@ import time
 from datetime import datetime, timedelta
 import jwt
 from logging import Logger
-from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Final, Optional
+from typing import Any, Dict, Final, Generator, Mapping, Optional
 from unittest.mock import patch
 
 import pytest
@@ -21,7 +22,6 @@ from devtools_testutils import (
     is_live,
     remove_batch_sanitizers,
     add_remove_header_sanitizer,
-    Sanitizer,
 )
 from devtools_testutils.config import PROXY_URL
 from devtools_testutils.fake_credentials import FakeTokenCredential
@@ -210,7 +210,7 @@ def add_sanitizers(
 
 
 @pytest.fixture
-def redirect_asyncio_requests_traffic() -> Generator:
+def redirect_asyncio_requests_traffic() -> Generator[None, Any, None]:
     """Redirects requests sent through AsyncioRequestsTransport to the test proxy.
 
     .. note::
@@ -296,37 +296,36 @@ def recorded_test(recorded_test, redirect_openai_requests, redirect_asyncio_requ
 
 
 @pytest.fixture(scope="session")
-def connection_file() -> Optional[Dict[str, Any]]:
+def connection_file() -> Dict[str, Any]:
     if not CONNECTION_FILE.exists():
-        return None
+        return {}
 
     with open(CONNECTION_FILE) as f:
         return json.load(f)
 
 
-@pytest.fixture(scope="session")
-def dev_connections(
-    mock_project_scope: dict,
-    mock_model_config: AzureOpenAIModelConfiguration,
-    connection_file: Optional[Dict[str, Any]],
-) -> Dict[str, Any]:
-    if not is_live():
-        return {
-            "azure_ai_project_scope": {"value": mock_project_scope},
-            "azure_openai_model_config": {
-                "value": mock_model_config,
-            },
-        }
+def get_config(connection_file: Mapping[str, Any], key: str, defaults: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    if is_live():
+        assert key in connection_file, f"Connection '{key}' not found in dev connections."
 
-    assert connection_file is not None, f"Connections file was not found at {CONNECTION_FILE}"
+    config = deepcopy(connection_file.get(key, {}).get("value", {}))
 
-    return connection_file
+    for k, v in (defaults or {}).items():
+        config.setdefault(k, v)
+
+    return config
 
 
 @pytest.fixture(scope="session")
-def mock_model_config() -> AzureOpenAIModelConfiguration:
+def mock_model_config(connection_file: Mapping[str, Any]) -> AzureOpenAIModelConfiguration:
+    config = get_config(connection_file, KEY_AZURE_MODEL_CONFIG, {})
+    sanitized_endpoint = re.sub(
+        r"([^:]+://)[^\.]+(.*)", r"\1Sanitized\2",
+        config.get("azure_endpoint", "")
+    )
+
     return AzureOpenAIModelConfiguration(
-        azure_endpoint="https://Sanitized.cognitiveservices.azure.com",
+        azure_endpoint=sanitized_endpoint or "https://Sanitized.cognitiveservices.azure.com",
         api_key="aoai-api-key",
         api_version="2024-08-01-preview",
         azure_deployment="aoai-deployment",
@@ -343,24 +342,26 @@ def mock_project_scope() -> Dict[str, str]:
     }
 
 
-@pytest.fixture
-def model_config(dev_connections: Dict[str, Any]) -> AzureOpenAIModelConfiguration:
-    conn_name = "azure_openai_model_config"
+KEY_AZURE_MODEL_CONFIG = "azure_openai_model_config"
+KEY_OPENAI_MODEL_CONFIG = "openai_model_config"
+KEY_AZURE_PROJECT_SCOPE = "azure_ai_project_scope"
 
-    if conn_name not in dev_connections:
-        raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
 
-    model_config = AzureOpenAIModelConfiguration(**dev_connections[conn_name]["value"])
+@pytest.fixture(scope="session")
+def model_config(connection_file: Dict[str, Any], mock_model_config: AzureOpenAIModelConfiguration) -> AzureOpenAIModelConfiguration:
+    if not is_live():
+        return mock_model_config
 
+    config = get_config(connection_file, KEY_AZURE_MODEL_CONFIG)
+    model_config = AzureOpenAIModelConfiguration(**config)
     AzureOpenAIModelConfiguration.__repr__ = lambda self: "<sensitive data redacted>"
 
     return model_config
 
 
 @pytest.fixture
-def non_azure_openai_model_config(dev_connections: Dict[str, Any]) -> OpenAIModelConfiguration:
+def non_azure_openai_model_config(connection_file: Mapping[str, Any]) -> OpenAIModelConfiguration:
     """Requires the following in your local connections.json file. If not present, ask around the team.
-
 
         "openai_model_config": {
             "value": {
@@ -371,26 +372,21 @@ def non_azure_openai_model_config(dev_connections: Dict[str, Any]) -> OpenAIMode
         }
     }
     """
-    conn_name = "openai_model_config"
-
-    if conn_name not in dev_connections:
-        raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
-
-    model_config = OpenAIModelConfiguration(**dev_connections[conn_name]["value"])
-
+    config = get_config(connection_file, KEY_OPENAI_MODEL_CONFIG, {
+        "api_key": "openai-api-key",
+        "model": "gpt-35-turbo",
+        "base_url": "https://api.openai.com/v1",
+    })
+    model_config = OpenAIModelConfiguration(**config)
     OpenAIModelConfiguration.__repr__ = lambda self: "<sensitive data redacted>"
 
     return model_config
 
 
 @pytest.fixture
-def project_scope(request, dev_connections: Dict[str, Any]) -> dict:
-    conn_name = "azure_ai_project_scope"
-
-    if conn_name not in dev_connections:
-        raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
-
-    return dev_connections[conn_name]["value"]
+def project_scope(connection_file: Mapping[str, Any], mock_project_scope: Dict[str, Any]) -> Dict[str, Any]:
+    config = get_config(connection_file, KEY_AZURE_PROJECT_SCOPE) if is_live() else mock_project_scope
+    return config
 
 
 @pytest.fixture
