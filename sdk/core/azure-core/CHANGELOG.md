@@ -5,24 +5,22 @@
 ### Features Added
 
 - Added native OpenTelemetry tracing to Azure Core which enables users to use OpenTelemetry to trace Azure SDK operations without needing to install a plugin. #39563
-    - A new `Instrumentation` class was added, allowing SDK developers to pass in various metadata to the OpenTelemetry tracer and spans.
-    - `OpenTelemetryTracer` and `OpenTelemetrySpan` classes were added to the `azure.core.tracing.opentelemetry` namespace.
+    - To enable native OpenTelemetry tracing, users need to:
+        1. Have `opentelemetry-api` installed.
+        2. Ensure that `settings.tracing_implementation` is not set.
+        3. Ensure that `settings.tracing_enabled` is set to `True`.
+    - If `setting.tracing_implementation` is set, the tracing plugin will be used instead of the native tracing.
+    - If `settings.tracing_enabled` is set to `False`, tracing will be disabled.
+    - The `OpenTelemetryTracer` class was added to the `azure.core.tracing.opentelemetry` module. This is a wrapper around the OpenTelemetry tracer that is used to create spans for Azure SDK operations.
+    - Added a `get_tracer` method to the new `azure.core.instrumentation` module. This method returns an instance of the `OpenTelemetryTracer` class.
     - A `TracingOptions` TypedDict class was added to define the options that SDK users can use to configure tracing per-operation. These options include the ability to enable or disable tracing and set additional attributes on spans.
-    - The `tracing_enabled` setting on the global `settings` object is now respected and can be used to enable or disable native tracing for all SDKs.
-        - If `setting.tracing_implementation` is set, it will take precedence over the native core tracing.
-    - The `DistributedTracingPolicy` and `distributed_trace`/`distributed_trace_async` decorators now uses the OpenTelemetry tracer if it is available and enabled.
+        - Example usage: `client.method(tracing_options={"enabled": True, "attributes": {"foo": "bar"}})`
+    - The `DistributedTracingPolicy` and `distributed_trace`/`distributed_trace_async` decorators now uses the OpenTelemetry tracer if it is available and native tracing is enabled.
+        - SDK clients can define an `_instrumentation_config` class variable to configure the OpenTelemetry tracer used in method span creation. Possible configuration options are `library_name`, `library_version`, `schema_url`, and `attributes`.
+        - `DistributedTracingPolicy` now accepts a `instrumentation_config` keyword argument to configure the OpenTelemetry tracer used in HTTP span creation.
 
 ### Breaking Changes
 
-- Inside `DistributedTracingPolicy`, some tracing modifications have been made to converge with the OpenTelemetry stable HTTP semantic conventions. #39563
-    - The **span name** for HTTP requests will now be set to just the HTTP method by default (previously the path was included).
-    - The following span attributes were renamed:
-        - `http.method` -> `http.request.method`
-        - `http.url` -> `url.full`
-        - `http.status_code` -> `http.response.status_code`
-        - `http.user_agent` -> `user_agent.original`
-        - `net.peer.name` -> `server.address`
-        - `net.peer.port` -> `server.port`
 - Removed automatic tracing enablement for the OpenTelemetry plugin if `opentelemetry` was imported. #39563
 
 ### Bugs Fixed

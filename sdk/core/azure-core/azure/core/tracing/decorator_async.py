@@ -24,23 +24,26 @@
 #
 # --------------------------------------------------------------------------
 """The decorator to apply if you want the given function traced."""
-
+from contextvars import ContextVar
 import functools
 
 from typing import Awaitable, Callable, Any, TypeVar, overload, Optional, Mapping, TYPE_CHECKING
 from typing_extensions import ParamSpec
 from .common import change_context, get_function_and_class_name
 from ._models import SpanKind as _SpanKind
-from ..instrumentation import default_instrumentation
+from ..instrumentation import get_tracer
 from ..settings import settings
 
 if TYPE_CHECKING:
     from ._models import TracingOptions
-    from ..instrumentation import Instrumentation
 
 
 P = ParamSpec("P")
 T = TypeVar("T")
+
+
+# This context variable is used to determine if we are already in the span context of a decorated function.
+_in_span_context = ContextVar("in_span_context", default=False)
 
 
 @overload
@@ -54,7 +57,6 @@ def distributed_trace_async(
     name_of_span: Optional[str] = None,
     kind: Optional[_SpanKind] = None,
     tracing_attributes: Optional[Mapping[str, Any]] = None,
-    instrumentation: Optional["Instrumentation"] = None,
     **kwargs: Any,
 ) -> Callable[[Callable[P, Awaitable[T]]], Callable[P, Awaitable[T]]]:
     pass
@@ -66,7 +68,6 @@ def distributed_trace_async(  # pylint: disable=unused-argument
     name_of_span: Optional[str] = None,
     kind: Optional[_SpanKind] = None,
     tracing_attributes: Optional[Mapping[str, Any]] = None,
-    instrumentation: Optional["Instrumentation"] = None,
     **kwargs: Any,
 ) -> Any:
     """Decorator to apply to function to get traced automatically.
@@ -88,8 +89,6 @@ def distributed_trace_async(  # pylint: disable=unused-argument
     :paramtype kind: ~azure.core.tracing.SpanKind
     :keyword tracing_attributes: Attributes to add to the span.
     :paramtype tracing_attributes: Mapping[str, Any] or None
-    :keyword instrumentation: The instrumentation instance to use. If not provided, a default one will be used.
-    :paramtype instrumentation: ~azure.core.instrumentation.Instrumentation
     :return: The decorated function
     :rtype: Any
     """
@@ -104,17 +103,19 @@ def distributed_trace_async(  # pylint: disable=unused-argument
             merge_span = kwargs.pop("merge_span", False)
             passed_in_parent = kwargs.pop("parent_span", None)
 
+            # If we are already in the span context of a decorated function, don't trace.
+            if _in_span_context.get():
+                return await func(*args, **kwargs)
+
             # This will be popped in the pipeline or transport runner.
             tracing_options: TracingOptions = kwargs.get("tracing_options", {})
             tracing_enabled = settings.tracing_enabled()
 
             # User can explicitly disable tracing for this request.
             user_enabled = tracing_options.get("enabled")
-            if user_enabled is False:
-                return await func(*args, **kwargs)
 
             # If tracing is disabled globally and user didn't explicitly enable it, don't trace.
-            if not tracing_enabled and user_enabled is None:
+            if user_enabled is False or (not tracing_enabled and user_enabled is None):
                 return await func(*args, **kwargs)
 
             # Merge span is parameter is set, but only if no explicit parent are passed
@@ -138,17 +139,30 @@ def distributed_trace_async(  # pylint: disable=unused-argument
                         return await func(*args, **kwargs)
             else:
                 # Native path
-                method_tracer = (
-                    instrumentation.get_tracer() if instrumentation else default_instrumentation.get_tracer()
-                )
+                config = {}
+                if args and hasattr(args[0], "_instrumentation_config"):
+                    config = args[0]._instrumentation_config  # pylint: disable=protected-access
+                method_tracer = get_tracer(**config)
                 if not method_tracer:
                     return await func(*args, **kwargs)
-                with method_tracer.start_span(
-                    name=name,
-                    kind=kind,
-                    attributes=span_attributes,
-                ):
-                    return await func(*args, **kwargs)
+
+                span_suppression_token = _in_span_context.set(True)
+                try:
+                    with method_tracer.start_as_current_span(
+                        name=name,
+                        kind=kind,
+                        attributes=span_attributes,
+                    ) as span:
+                        try:
+                            return await func(*args, **kwargs)
+                        except Exception as err:  # pylint: disable=broad-except
+                            ex_type = type(err)
+                            module = ex_type.__module__ if ex_type.__module__ != "builtins" else ""
+                            error_type = f"{module}.{ex_type.__qualname__}" if module else ex_type.__qualname__
+                            span.set_attribute("error.type", error_type)
+                            raise
+                finally:
+                    _in_span_context.reset(span_suppression_token)
 
         return wrapper_use_tracer
 

@@ -3,16 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """The tests for decorators.py and common.py"""
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from unittest import mock
 
 import time
 
 import pytest
-from azure.core.instrumentation import Instrumentation
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
@@ -25,15 +20,14 @@ from tracing_common import FakeSpan
 from utils import HTTP_REQUESTS
 
 
-custom_instrumentation = Instrumentation(
-    library_name="my-library",
-    library_version="1.0.0",
-    schema_url="https://test.schema",
-    attributes={"namespace": "Sample.Namespace"},
-)
-
-
 class MockClient:
+
+    _instrumentation_config = {
+        "library_name": "my-library",
+        "library_version": "1.0.0",
+        "schema_url": "https://test.schema",
+        "attributes": {"az.namespace": "Sample.Namespace"},
+    }
 
     def __init__(self, http_request, policies=None, assert_current_span=False):
         time.sleep(0.001)
@@ -93,7 +87,7 @@ class MockClient:
     def raising_exception(self, **kwargs):
         raise ValueError("Something went horribly wrong here")
 
-    @distributed_trace(instrumentation=custom_instrumentation)
+    @distributed_trace
     def method_with_custom_tracer(self):
         time.sleep(0.001)
 
@@ -224,6 +218,26 @@ class TestDecorator(object):
         assert parent.children[0].status == "Something went horribly wrong here"
         assert parent.children[1].name == "MockClient.get_foo"
 
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_decorated_method_with_tracing_options(self, tracing_implementation, http_request):
+        """Test that a decorated method can respect tracing options."""
+        with FakeSpan(name="parent") as parent:
+            client = MockClient(http_request)
+            client.method_with_kwargs(tracing_options={"enabled": True, "attributes": {"custom_key": "custom_value"}})
+
+        assert len(parent.children) == 1
+        assert parent.children[0].name == "MockClient.method_with_kwargs"
+        assert parent.children[0].attributes.get("custom_key") == "custom_value"
+
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_decorated_method_with_tracing_disabled(self, tracing_implementation, http_request):
+        """Test that a decorated method isn't traced if tracing is disabled on a per-operation basis."""
+        with FakeSpan(name="parent") as parent:
+            client = MockClient(http_request)
+            client.method_with_kwargs(tracing_options={"enabled": False})
+
+        assert len(parent.children) == 0
+
 
 class TestDecoratorNativeTracing:
 
@@ -232,26 +246,24 @@ class TestDecoratorNativeTracing:
         """Test that an exception is recorded as an error event."""
         client = MockClient(http_request)
         settings.tracing_enabled = True
-        with tracing_helper.tracer.start_as_current_span("Root"):
-            try:
-                client.raising_exception()
-            except ValueError:
-                pass
-            client.get_foo()
+        try:
+            client.raising_exception()
+        except ValueError:
+            pass
+        client.get_foo()
 
-            finished_spans = tracing_helper.exporter.get_finished_spans()
-            assert len(finished_spans) == 2
-            assert finished_spans[0].name == "MockClient.raising_exception"
-            assert finished_spans[0].status.status_code == OtelStatusCode.ERROR
-            assert "Something went horribly wrong here" in finished_spans[0].status.description
-            assert finished_spans[0].events[0].name == "exception"
-            assert (
-                finished_spans[0].events[0].attributes.get("exception.message") == "Something went horribly wrong here"
-            )
-            assert finished_spans[0].attributes.get("error.type") == "ValueError"
+        finished_spans = tracing_helper.exporter.get_finished_spans()
 
-            assert finished_spans[1].name == "MockClient.get_foo"
-            assert finished_spans[1].status.status_code == OtelStatusCode.UNSET
+        assert len(finished_spans) == 2
+        assert finished_spans[0].name == "MockClient.raising_exception"
+        assert finished_spans[0].status.status_code == OtelStatusCode.ERROR
+        assert "Something went horribly wrong here" in finished_spans[0].status.description
+        assert finished_spans[0].events[0].name == "exception"
+        assert finished_spans[0].events[0].attributes.get("exception.message") == "Something went horribly wrong here"
+        assert finished_spans[0].attributes.get("error.type") == "ValueError"
+
+        assert finished_spans[1].name == "MockClient.get_foo"
+        assert finished_spans[1].status.status_code == OtelStatusCode.UNSET
 
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
     def test_decorator_nested_calls(self, tracing_helper, http_request):
@@ -279,7 +291,7 @@ class TestDecoratorNativeTracing:
             assert finished_spans[0].instrumentation_scope.schema_url == "https://test.schema"
             assert finished_spans[0].instrumentation_scope.name == "my-library"
             assert finished_spans[0].instrumentation_scope.version == "1.0.0"
-            assert finished_spans[0].instrumentation_scope.attributes.get("namespace") == "Sample.Namespace"
+            assert finished_spans[0].instrumentation_scope.attributes.get("az.namespace") == "Sample.Namespace"
 
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
     def test_decorated_method_with_tracing_options(self, tracing_helper, http_request):
@@ -315,3 +327,18 @@ class TestDecoratorNativeTracing:
 
             finished_spans = tracing_helper.exporter.get_finished_spans()
             assert len(finished_spans) == 0
+
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    def test_tracing_impl_takes_precedence(self, tracing_implementation, http_request):
+        """Test that a tracing implementation takes precedence over the native tracing."""
+        client = MockClient(http_request)
+        settings.tracing_enabled = True
+
+        assert settings.tracing_implementation() is FakeSpan
+        assert settings.tracing_enabled
+
+        with FakeSpan(name="parent") as parent:
+            client.get_foo()
+            assert len(parent.children) == 1
+            assert parent.children[0].name == "MockClient.get_foo"
+            assert parent.children[0].kind == SpanKind.INTERNAL

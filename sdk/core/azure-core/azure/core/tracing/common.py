@@ -29,7 +29,7 @@ from typing import Any, Optional, Callable, Type, Generator
 import warnings
 
 from ._abstract_span import AbstractSpan
-from ..instrumentation import default_instrumentation
+from ..instrumentation import get_tracer
 from ..settings import settings
 
 
@@ -110,7 +110,7 @@ def with_current_context(func: Callable) -> Any:
     if span_impl_type:
         return span_impl_type.with_current_context(func)
 
-    tracer = default_instrumentation.get_tracer()
+    tracer = get_tracer()
     if not tracer:
         return func
     return tracer.with_current_context(func)

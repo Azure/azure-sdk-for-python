@@ -5,46 +5,40 @@
 # -------------------------------------------------------------------------
 """Tests for the OpenTelemetry tracer and span classes."""
 from concurrent.futures import ThreadPoolExecutor, wait
+import sys
 import threading
-from unittest.mock import patch
 
-from azure.core.instrumentation import Instrumentation, default_instrumentation
-from azure.core.tracing._models import SpanKind, Link, StatusCode
-from azure.core.tracing.opentelemetry import OpenTelemetrySpan
+import pytest
+from azure.core.instrumentation import get_tracer
+from azure.core.tracing._models import SpanKind, Link
 from azure.core.tracing.opentelemetry import OpenTelemetryTracer
 from azure.core.tracing.common import with_current_context
-from azure.core.exceptions import ClientAuthenticationError
 from azure.core.settings import settings
 
-from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.trace import (
     Tracer as OtelTracer,
     Span as OtelSpan,
-    SpanKind as OtelSpanKind,
     StatusCode as OtelStatusCode,
     NonRecordingSpan,
     format_span_id,
     format_trace_id,
 )
-import requests
-import pytest
 
 
-def test_instrumentation(tracing_helper):
+def test_tracer(tracing_helper):
     """Test basic usage of a Instrumentation."""
-    instrumentation = Instrumentation(
+    tracer = get_tracer(
         library_name="my-library",
         library_version="1.0.0",
         schema_url="https://test.schema",
         attributes={"namespace": "Sample.Namespace"},
     )
 
-    tracer = instrumentation.get_tracer()
     assert isinstance(tracer, OpenTelemetryTracer)
     assert isinstance(tracer._tracer, OtelTracer)
 
-    with tracer.start_span("test_span") as span:
-        assert isinstance(span, OpenTelemetrySpan)
+    with tracer.start_as_current_span("test_span") as span:
+        assert isinstance(span, OtelSpan)
         span.set_attribute("foo", "bar")
 
     finished_spans = tracing_helper.exporter.get_finished_spans()
@@ -60,23 +54,23 @@ def test_instrumentation(tracing_helper):
 
 def test_default_instrumentation():
     """Test that the default tracer manager returns an OpenTelemetryTracer."""
-    tracer = default_instrumentation.get_tracer()
+    tracer = get_tracer()
 
     assert isinstance(tracer, OpenTelemetryTracer)
     assert isinstance(tracer._tracer, OtelTracer)
 
 
 def test_start_span_with_links(tracing_helper):
-    tracer = default_instrumentation.get_tracer()
+    tracer = get_tracer()
     assert tracer
 
     trace_context_headers = {}
-    with tracer.start_span(name="foo-span") as span:
+    with tracer.start_as_current_span(name="foo-span") as span:
         trace_context_headers = tracer.get_trace_context()
 
     link = Link(headers=trace_context_headers, attributes={"foo": "bar"})
 
-    with tracer.start_span(name="bar-span", links=[link]) as span:
+    with tracer.start_as_current_span(name="bar-span", links=[link]) as span:
         pass
 
     finished_spans = tracing_helper.exporter.get_finished_spans()
@@ -89,10 +83,10 @@ def test_start_span_with_links(tracing_helper):
 
 
 def test_start_span_with_attributes(tracing_helper):
-    tracer = default_instrumentation.get_tracer()
+    tracer = get_tracer()
     assert tracer
 
-    with tracer.start_span(name="foo-span", attributes={"foo": "bar", "biz": 123}) as span:
+    with tracer.start_as_current_span(name="foo-span", attributes={"foo": "bar", "biz": 123}) as span:
         pass
 
     finished_spans = tracing_helper.exporter.get_finished_spans()
@@ -101,206 +95,35 @@ def test_start_span_with_attributes(tracing_helper):
     assert finished_spans[0].attributes["biz"] == 123
 
 
-def test_error_type_attribute_builtin_error():
-    tracer = default_instrumentation.get_tracer()
-    assert tracer
-
-    with pytest.raises(ValueError):
-        with tracer.start_span("span") as span:
-            raise ValueError("This is a test error")
-
-    assert span.span_instance.attributes.get("error.type") == "ValueError"
-
-
-def test_error_type_attribute_azure_error():
-    tracer = default_instrumentation.get_tracer()
-    assert tracer
-
-    with pytest.raises(ClientAuthenticationError):
-        with tracer.start_span("span") as span:
-            raise ClientAuthenticationError("This is a test error")
-
-    assert span.span_instance.attributes.get("error.type") == "azure.core.exceptions.ClientAuthenticationError"
-
-
 def test_tracer_get_current_span():
     """Test that the tracer can get the current OpenTelemetry span instance."""
-    tracer = default_instrumentation.get_tracer()
+    tracer = get_tracer()
     assert tracer
 
-    with tracer.start_span("test_span") as span:
-        with tracer.start_span("test_span2", kind=SpanKind.CLIENT) as span2:
+    with tracer.start_as_current_span("test_span") as span:
+        with tracer.start_as_current_span("test_span2", kind=SpanKind.CLIENT) as span2:
             current_span = tracer.get_current_span()
-            assert current_span.span_instance == span2.span_instance
+            assert current_span == span2
 
         current_span = tracer.get_current_span()
-        assert current_span.span_instance == span.span_instance
+        assert current_span == span
 
     current_span = tracer.get_current_span()
-    assert isinstance(current_span.span_instance, NonRecordingSpan)
-
-
-def test_tracer_get_current_span_nested():
-    tracer = default_instrumentation.get_tracer()
-    assert tracer
-
-    with tracer.start_span(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
-        with tracer.start_span(name="inner-span", kind=SpanKind.INTERNAL) as inner_span:
-            assert isinstance(inner_span.span_instance, NonRecordingSpan)
-            # get_current_span should return the last non-suppressed parent span.
-            assert tracer.get_current_span().span_instance == outer_span.span_instance
-            # Calling from class instead of instance should yield the same result.
-            assert tracer.get_current_span().span_instance == outer_span.span_instance
-
-            with tracer.start_span(name="inner-span", kind=SpanKind.CLIENT) as client_span_2:
-                with tracer.start_span(name="inner-span", kind=SpanKind.INTERNAL) as inner_span_2:
-                    assert isinstance(inner_span_2.span_instance, NonRecordingSpan)
-                    # get_current_span should return the last non-suppressed parent span.
-                    assert tracer.get_current_span().span_instance == client_span_2.span_instance
-                assert tracer.get_current_span().span_instance == client_span_2.span_instance
-
-            # After leaving scope of inner client span, get_current_span should return the outer span now.
-            assert tracer.get_current_span().span_instance == outer_span.span_instance
-
-
-def test_nested_span_suppression(tracing_helper):
-    tracer = default_instrumentation.get_tracer()
-    assert tracer
-
-    with tracer.start_span(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
-        assert isinstance(outer_span.span_instance, OtelSpan)
-        assert outer_span.span_instance.kind == OtelSpanKind.INTERNAL
-
-        with tracer.start_span(name="inner-span", kind=SpanKind.INTERNAL) as inner_span:
-            assert isinstance(inner_span.span_instance, NonRecordingSpan)
-
-        assert len(tracing_helper.exporter.get_finished_spans()) == 0
-    finished_spans = tracing_helper.exporter.get_finished_spans()
-
-    assert len(finished_spans) == 1
-    assert finished_spans[0].name == "outer-span"
-
-
-def test_nested_span_suppression_with_multiple_outer_spans(tracing_helper):
-    tracer = default_instrumentation.get_tracer()
-    assert tracer
-
-    with tracer.start_span(name="outer-span-1", kind=SpanKind.INTERNAL) as outer_span_1:
-        assert isinstance(outer_span_1.span_instance, OtelSpan)
-        assert outer_span_1.span_instance.kind == OtelSpanKind.INTERNAL
-
-        with tracer.start_span(name="inner-span-1", kind=SpanKind.INTERNAL) as inner_span_1:
-            assert isinstance(inner_span_1.span_instance, NonRecordingSpan)
-
-    assert len(tracing_helper.exporter.get_finished_spans()) == 1
-
-    with tracer.start_span(name="outer-span-2", kind=SpanKind.INTERNAL) as outer_span_2:
-        assert isinstance(outer_span_2.span_instance, OtelSpan)
-        assert outer_span_2.span_instance.kind == OtelSpanKind.INTERNAL
-
-        with tracer.start_span(name="inner-span-2", kind=SpanKind.INTERNAL) as inner_span_2:
-            assert isinstance(inner_span_2.span_instance, NonRecordingSpan)
-
-    finished_spans = tracing_helper.exporter.get_finished_spans()
-    assert len(finished_spans) == 2
-
-    assert finished_spans[0].name == "outer-span-1"
-    assert finished_spans[1].name == "outer-span-2"
-
-
-def test_nested_span_suppression_with_nested_client(tracing_helper):
-    tracer = default_instrumentation.get_tracer()
-    assert tracer
-
-    with tracer.start_span(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
-        assert isinstance(outer_span.span_instance, OtelSpan)
-        assert outer_span.span_instance.kind == OtelSpanKind.INTERNAL
-
-        with tracer.start_span(name="inner-span", kind=SpanKind.INTERNAL) as inner_span:
-            assert isinstance(inner_span.span_instance, NonRecordingSpan)
-
-            with tracer.start_span(name="client-span", kind=SpanKind.CLIENT) as client_span:
-                assert isinstance(client_span.span_instance, OtelSpan)
-                assert client_span.span_instance.kind == OtelSpanKind.CLIENT
-                # Parent of this should be the unsuppressed outer span.
-                assert client_span.span_instance.parent is outer_span.span_instance.context
-            assert len(tracing_helper.exporter.get_finished_spans()) == 1
-
-    finished_spans = tracing_helper.exporter.get_finished_spans()
-    assert len(finished_spans) == 2
-    assert finished_spans[0].name == "client-span"
-    assert finished_spans[1].name == "outer-span"
-
-
-def test_nested_span_suppression_with_attributes():
-    tracer = default_instrumentation.get_tracer()
-    assert tracer
-
-    with tracer.start_span(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
-
-        with tracer.start_span(name="inner-span", kind=SpanKind.INTERNAL) as inner_span:
-            inner_span.set_attribute("foo", "bar")
-
-            # Attribute added on suppressed span should not be added to the parent span.
-            assert "foo" not in outer_span.span_instance.attributes
-
-            with tracer.start_span(name="client-span", kind=SpanKind.CLIENT) as client_span:
-                client_span.set_attribute("foo", "biz")
-                assert isinstance(client_span.span_instance, OtelSpan)
-                assert client_span.span_instance.kind == OtelSpanKind.CLIENT
-
-                # Attribute added on span.
-                assert "foo" in client_span.span_instance.attributes
-                assert client_span.span_instance.attributes["foo"] == "biz"
-
-
-def test_nested_span_suppression_deep_nested(tracing_helper):
-    tracer = default_instrumentation.get_tracer()
-    assert tracer
-
-    with tracer.start_span(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
-
-        with tracer.start_span(name="inner-span-1", kind=SpanKind.INTERNAL):
-            with tracer.start_span(name="inner-span-2", kind=SpanKind.INTERNAL):
-                with tracer.start_span(name="producer-span", kind=SpanKind.PRODUCER) as producer_span:
-                    assert producer_span.span_instance.parent is outer_span.span_instance.context
-                    with tracer.start_span(name="inner-span-3", kind=SpanKind.INTERNAL):
-                        with tracer.start_span(name="client-span", kind=SpanKind.CLIENT) as client_span:
-                            assert client_span.span_instance.parent is producer_span.span_instance.context
-
-    finished_spans = tracing_helper.exporter.get_finished_spans()
-    assert len(finished_spans) == 3
-    spans_names_list = [span.name for span in finished_spans]
-    assert spans_names_list == ["client-span", "producer-span", "outer-span"]
-
-
-def test_span_unsuppressed_unentered_context():
-    # Creating an INTERNAL span without entering the context should not suppress
-    # a subsequent INTERNAL span.
-
-    tracer = default_instrumentation.get_tracer()
-    assert tracer
-
-    span1 = tracer.start_span(name="span1", kind=SpanKind.INTERNAL)
-    with tracer.start_span(name="span2", kind=SpanKind.INTERNAL) as span2:
-        # This span is not nested in span1, so should not be suppressed.
-        assert not isinstance(span2.span_instance, NonRecordingSpan)
-        assert isinstance(span2.span_instance, OtelSpan)
-    span1.end()
+    assert isinstance(current_span, NonRecordingSpan)
 
 
 def test_end_span(tracing_helper):
-    tracer = default_instrumentation.get_tracer()
+    tracer = get_tracer()
     assert tracer
 
     span = tracer.start_span(name="foo-span", kind=SpanKind.INTERNAL)
-    assert span.span_instance.is_recording()
-    assert span.span_instance.start_time is not None
-    assert span.span_instance.end_time is None
+    assert span.is_recording()
+    assert span.start_time is not None
+    assert span.end_time is None
 
     span.end()
-    assert not span.span_instance.is_recording()
-    assert span.span_instance.end_time is not None
+    assert not span.is_recording()
+    assert span.end_time is not None
 
     finished_spans = tracing_helper.exporter.get_finished_spans()
     assert len(finished_spans) == 1
@@ -309,14 +132,14 @@ def test_end_span(tracing_helper):
 
 def test_get_trace_context():
     """Test that the tracer can get the trace context and it contains the traceparent header."""
-    tracer = default_instrumentation.get_tracer()
+    tracer = get_tracer()
     assert tracer
 
     assert not tracer.get_trace_context()
 
-    with tracer.start_span(name="foo-span") as span:
+    with tracer.start_as_current_span(name="foo-span") as span:
         trace_context = tracer.get_trace_context()
-        span_context = span.span_instance.get_span_context()
+        span_context = span.get_span_context()
         assert "traceparent" in trace_context
         assert trace_context["traceparent"].startswith("00-")
 
@@ -328,7 +151,7 @@ def test_with_current_context_util_function(tracing_helper):
 
     settings.tracing_enabled = True
     result = []
-    tracer = default_instrumentation.get_tracer()
+    tracer = get_tracer()
     assert tracer
 
     def get_span_from_thread(output):
@@ -341,24 +164,23 @@ def test_with_current_context_util_function(tracing_helper):
         thread.start()
         thread.join()
 
-        assert span is result[0].span_instance
+        assert span is result[0]
 
 
 def test_nest_span_with_thread_pool_executor(tracing_helper):
-    custom_instrumentation = Instrumentation(
+    tracer = get_tracer(
         library_name="my-library",
         library_version="1.0.0",
         schema_url="https://test.schema",
         attributes={"namespace": "Sample.Namespace"},
     )
-    tracer = custom_instrumentation.get_tracer()
     assert tracer
 
     def nest_spans():
-        with tracer.start_span(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
-            with tracer.start_span(name="inner-span", kind=SpanKind.INTERNAL) as inner_span:
-                assert isinstance(inner_span.span_instance, NonRecordingSpan)
-                assert tracer.get_current_span() == outer_span
+        with tracer.start_as_current_span(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
+            with tracer.start_as_current_span(name="inner-span", kind=SpanKind.INTERNAL) as inner_span:
+                assert isinstance(inner_span, OtelSpan)
+                assert tracer.get_current_span() == inner_span
 
     futures = []
     with ThreadPoolExecutor() as executor:
@@ -366,11 +188,11 @@ def test_nest_span_with_thread_pool_executor(tracing_helper):
             futures.append(executor.submit(tracer.with_current_context(nest_spans)))
     wait(futures)
 
-    # Each thread should produce 1 span, so we should have 3 spans plus the parent span.
+    # Each thread should produce 2 spans, so we should have 6 spans.
     finished_spans = tracing_helper.exporter.get_finished_spans()
-    assert len(finished_spans) == 3
+    assert len(finished_spans) == 6
     for span in finished_spans:
-        assert span.name == "outer-span"
+        assert "-span" in span.name
         assert span.instrumentation_scope.schema_url == "https://test.schema"
         assert span.instrumentation_scope.name == "my-library"
         assert span.instrumentation_scope.version == "1.0.0"
@@ -378,14 +200,14 @@ def test_nest_span_with_thread_pool_executor(tracing_helper):
 
 
 def test_set_span_status(tracing_helper):
-    tracer = default_instrumentation.get_tracer()
+    tracer = get_tracer()
     assert tracer
 
-    with tracer.start_span(name="foo-span") as span:
-        span.set_status(StatusCode.OK)
+    with tracer.start_as_current_span(name="foo-span") as span:
+        span.set_status(OtelStatusCode.OK)
 
-    with tracer.start_span(name="bar-span") as span:
-        span.set_status(StatusCode.ERROR, "This is an error")
+    with tracer.start_as_current_span(name="bar-span") as span:
+        span.set_status(OtelStatusCode.ERROR, "This is an error")
 
     finished_spans = tracing_helper.exporter.get_finished_spans()
     assert len(finished_spans) == 2
@@ -397,10 +219,10 @@ def test_set_span_status(tracing_helper):
 
 
 def test_add_event(tracing_helper):
-    tracer = default_instrumentation.get_tracer()
+    tracer = get_tracer()
     assert tracer
 
-    with tracer.start_span(name="foo-span") as span:
+    with tracer.start_as_current_span(name="foo-span") as span:
         span.add_event("test-event", attributes={"foo": "bar"})
 
     finished_spans = tracing_helper.exporter.get_finished_spans()
@@ -408,3 +230,96 @@ def test_add_event(tracing_helper):
     assert len(finished_spans[0].events) == 1
     assert finished_spans[0].events[0].name == "test-event"
     assert finished_spans[0].events[0].attributes["foo"] == "bar"
+
+
+def test_span_exception(tracing_helper):
+    tracer = get_tracer()
+    assert tracer
+
+    with pytest.raises(ValueError):
+        with tracer.start_as_current_span(name="foo-span") as span:
+            raise ValueError("This is an error")
+    finished_spans = tracing_helper.exporter.get_finished_spans()
+
+    assert len(finished_spans) == 1
+    assert len(finished_spans[0].events) == 1
+    assert finished_spans[0].events[0].name == "exception"
+    assert finished_spans[0].events[0].attributes["exception.type"] == "ValueError"
+    assert finished_spans[0].events[0].attributes["exception.message"] == "This is an error"
+    assert finished_spans[0].status.status_code == OtelStatusCode.ERROR
+
+
+def test_span_exception_without_current_context(tracing_helper):
+    tracer = get_tracer()
+    assert tracer
+
+    span = tracer.start_span(name="foo-span")
+    assert span.is_recording()
+
+    with pytest.raises(ValueError):
+        with span:
+            raise ValueError("This is an error")
+
+    finished_spans = tracing_helper.exporter.get_finished_spans()
+    assert len(finished_spans) == 1
+    assert len(finished_spans[0].events) == 1
+    assert finished_spans[0].events[0].name == "exception"
+    assert finished_spans[0].events[0].attributes["exception.type"] == "ValueError"
+    assert finished_spans[0].events[0].attributes["exception.message"] == "This is an error"
+    assert finished_spans[0].status.status_code == OtelStatusCode.ERROR
+
+
+def test_span_exception_exit(tracing_helper):
+
+    tracer = get_tracer()
+    assert tracer
+
+    span = tracer.start_span(name="foo-span")
+    assert span.is_recording()
+    try:
+        raise ValueError("This is an error")
+    except ValueError as e:
+        exc_info = sys.exc_info()
+        span.__exit__(*exc_info)
+
+    finished_spans = tracing_helper.exporter.get_finished_spans()
+
+    assert len(finished_spans) == 1
+    assert len(finished_spans[0].events) == 1
+    assert finished_spans[0].events[0].name == "exception"
+    assert finished_spans[0].events[0].attributes["exception.type"] == "ValueError"
+    assert finished_spans[0].events[0].attributes["exception.message"] == "This is an error"
+    assert finished_spans[0].status.status_code == OtelStatusCode.ERROR
+
+
+def test_tracer_caching():
+    """Test that get_tracer caches the OpenTelemetryTracer."""
+    tracer1 = get_tracer()
+    tracer2 = get_tracer()
+
+    assert tracer1 is tracer2
+
+
+def test_tracer_caching_different_args():
+    """Test that get_tracer caches the OpenTelemetryTracer."""
+    tracer1 = get_tracer(
+        library_name="my-library",
+        library_version="1.0.0",
+        schema_url="https://test.schema",
+        attributes={"namespace": "Sample.Namespace"},
+    )
+    tracer2 = get_tracer(
+        library_name="my-library",
+        library_version="1.0.0",
+        schema_url="https://test.schema",
+        attributes={"namespace": "Sample.Namespace"},
+    )
+    tracer3 = get_tracer(
+        library_name="my-library-2",
+        library_version="2.0.0",
+        schema_url="https://test.schema",
+        attributes={"namespace": "Sample.Namespace"},
+    )
+
+    assert tracer1 is tracer2
+    assert tracer1 is not tracer3

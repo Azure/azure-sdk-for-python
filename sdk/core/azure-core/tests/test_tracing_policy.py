@@ -8,11 +8,12 @@ import time
 import urllib
 from unittest import mock
 
-from azure.core.instrumentation import Instrumentation
 from azure.core.pipeline import Pipeline, PipelineResponse, PipelineRequest, PipelineContext
 from azure.core.pipeline.policies import DistributedTracingPolicy, UserAgentPolicy, RetryPolicy
 from azure.core.pipeline.transport import HttpTransport, RequestsTransport
 from azure.core.settings import settings
+from azure.core.tracing._models import SpanKind
+from azure.core.tracing._abstract_span import HttpSpanMixin
 import pytest
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
@@ -53,25 +54,25 @@ class TestTracingPolicyPluginImplementation:
 
         # Check on_response
         network_span = root_span.children[0]
-        assert network_span.name == "GET"
-        assert network_span.attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
-        assert network_span.attributes.get(policy._URL_FULL) == "http://localhost/temp?query=query"
-        assert network_span.attributes.get(policy._SERVER_ADDRESS) == "localhost"
-        assert network_span.attributes.get(policy._USER_AGENT_ORIGINAL) is None
-        assert network_span.attributes.get(policy._RESPONSE_ID_ATTR) == "some request id"
-        assert network_span.attributes.get(policy._REQUEST_ID_ATTR) == "some client request id"
-        assert network_span.attributes.get(policy._HTTP_RESPONSE_STATUS_CODE) == 202
+        assert network_span.name == "/temp"
+        assert network_span.attributes.get(HttpSpanMixin._HTTP_METHOD) == "GET"
+        assert network_span.attributes.get(HttpSpanMixin._HTTP_URL) == "http://localhost/temp?query=query"
+        assert network_span.attributes.get(HttpSpanMixin._NET_PEER_NAME) == "localhost"
+        assert network_span.attributes.get(HttpSpanMixin._HTTP_USER_AGENT) is None
+        assert network_span.attributes.get(policy._RESPONSE_ID) == "some request id"
+        assert network_span.attributes.get(policy._REQUEST_ID) == "some client request id"
+        assert network_span.attributes.get(HttpSpanMixin._HTTP_STATUS_CODE) == 202
         assert policy._ERROR_TYPE not in network_span.attributes
 
         # Check on_exception
         network_span = root_span.children[1]
-        assert network_span.name == "GET"
-        assert network_span.attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
-        assert network_span.attributes.get(policy._URL_FULL) == "http://localhost/temp?query=query"
-        assert network_span.attributes.get(policy._REQUEST_ID_ATTR) == "some client request id"
-        assert network_span.attributes.get(policy._USER_AGENT_ORIGINAL) is None
-        assert network_span.attributes.get(policy._RESPONSE_ID_ATTR) == None
-        assert network_span.attributes.get(policy._HTTP_RESPONSE_STATUS_CODE) == 504
+        assert network_span.name == "/temp"
+        assert network_span.attributes.get(HttpSpanMixin._HTTP_METHOD) == "GET"
+        assert network_span.attributes.get(HttpSpanMixin._HTTP_URL) == "http://localhost/temp?query=query"
+        assert network_span.attributes.get(policy._REQUEST_ID) == "some client request id"
+        assert network_span.attributes.get(HttpSpanMixin._HTTP_USER_AGENT) is None
+        assert network_span.attributes.get(policy._RESPONSE_ID) == None
+        assert network_span.attributes.get(HttpSpanMixin._HTTP_STATUS_CODE) == 504
         assert network_span.attributes.get(policy._ERROR_TYPE)
 
     @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
@@ -91,7 +92,7 @@ class TestTracingPolicyPluginImplementation:
 
             policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
             network_span = root_span.children[0]
-            assert network_span.name == "GET"
+            assert network_span.name == "/temp"
             assert network_span.attributes.get(policy._ERROR_TYPE) == "403"
 
     @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
@@ -212,22 +213,22 @@ class TestTracingPolicyPluginImplementation:
                 user_agent.on_response(pipeline_request, pipeline_response)
 
             network_span = root_span.children[0]
-            assert network_span.name == "GET"
-            assert network_span.attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
-            assert network_span.attributes.get(policy._URL_FULL) == "http://localhost"
-            assert network_span.attributes.get(policy._USER_AGENT_ORIGINAL).endswith("mytools")
-            assert network_span.attributes.get(policy._RESPONSE_ID_ATTR) == "some request id"
-            assert network_span.attributes.get(policy._REQUEST_ID_ATTR) == "some client request id"
-            assert network_span.attributes.get(policy._HTTP_RESPONSE_STATUS_CODE) == 202
+            assert network_span.name == "/"
+            assert network_span.attributes.get(HttpSpanMixin._HTTP_METHOD) == "GET"
+            assert network_span.attributes.get(HttpSpanMixin._HTTP_URL) == "http://localhost"
+            assert network_span.attributes.get(HttpSpanMixin._HTTP_USER_AGENT).endswith("mytools")
+            assert network_span.attributes.get(policy._RESPONSE_ID) == "some request id"
+            assert network_span.attributes.get(policy._REQUEST_ID) == "some client request id"
+            assert network_span.attributes.get(HttpSpanMixin._HTTP_STATUS_CODE) == 202
 
             network_span = root_span.children[1]
-            assert network_span.name == "GET"
-            assert network_span.attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
-            assert network_span.attributes.get(policy._URL_FULL) == "http://localhost"
-            assert network_span.attributes.get(policy._USER_AGENT_ORIGINAL).endswith("mytools")
-            assert network_span.attributes.get(policy._REQUEST_ID_ATTR) == "some client request id"
-            assert network_span.attributes.get(policy._RESPONSE_ID_ATTR) is None
-            assert network_span.attributes.get(policy._HTTP_RESPONSE_STATUS_CODE) == 504
+            assert network_span.name == "/"
+            assert network_span.attributes.get(HttpSpanMixin._HTTP_METHOD) == "GET"
+            assert network_span.attributes.get(HttpSpanMixin._HTTP_URL) == "http://localhost"
+            assert network_span.attributes.get(HttpSpanMixin._HTTP_USER_AGENT).endswith("mytools")
+            assert network_span.attributes.get(policy._REQUEST_ID) == "some client request id"
+            assert network_span.attributes.get(policy._RESPONSE_ID) is None
+            assert network_span.attributes.get(HttpSpanMixin._HTTP_STATUS_CODE) == 504
             # Exception should propagate status for Opencensus
             assert network_span.status == "Transport trouble"
 
@@ -309,6 +310,50 @@ class TestTracingPolicyPluginImplementation:
         network_span = root_span.children[1]
         assert network_span.name == "operation level name"
 
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+    def test_distributed_tracing_policy_with_tracing_options(self, tracing_implementation, http_request, http_response):
+        """Test policy when tracing options are provided."""
+        settings.tracing_enabled = False
+        with FakeSpan(name="parent") as root_span:
+            policy = DistributedTracingPolicy()
+
+            request = http_request("GET", "http://localhost/temp?query=query")
+            pipeline_request = PipelineRequest(request, PipelineContext(None))
+            pipeline_request.context.options["tracing_options"] = {
+                "enabled": True,
+                "attributes": {"custom_key": "custom_value"},
+            }
+
+            policy.on_request(pipeline_request)
+            response = create_http_response(http_response, request, None)
+            response.headers = request.headers
+            response.status_code = 202
+            policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+
+        assert len(root_span.children) == 1
+        network_span = root_span.children[0]
+        assert network_span.attributes.get("custom_key") == "custom_value"
+
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+    def test_distributed_tracing_policy_with_tracing_disabled(
+        self, tracing_implementation, http_request, http_response
+    ):
+        """Test policy when tracing is disabled through user options."""
+        with FakeSpan(name="parent") as root_span:
+            policy = DistributedTracingPolicy()
+
+            request = http_request("GET", "http://localhost/temp?query=query")
+            pipeline_request = PipelineRequest(request, PipelineContext(None))
+            pipeline_request.context.options["tracing_options"] = {"enabled": False}
+
+            policy.on_request(pipeline_request)
+            response = create_http_response(http_response, request, None)
+            response.headers = request.headers
+            response.status_code = 202
+            policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+
+        assert len(root_span.children) == 0
+
 
 class TestTracingPolicyNativeTracing:
     """Test the distributed tracing policy with the native core tracer."""
@@ -335,7 +380,7 @@ class TestTracingPolicyNativeTracing:
 
         finished_spans = tracing_helper.exporter.get_finished_spans()
         assert len(finished_spans) == 2
-        assert finished_spans[0].name == "GET"
+        assert finished_spans[0].name == "/temp"
         assert finished_spans[0].parent is root_span.get_span_context()
 
         assert finished_spans[0].attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
@@ -362,20 +407,23 @@ class TestTracingPolicyNativeTracing:
             policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
 
         finished_spans = tracing_helper.exporter.get_finished_spans()
-        assert finished_spans[0].name == "GET"
+        assert finished_spans[0].name == "/temp"
         assert finished_spans[0].attributes.get("error.type") == "403"
 
     @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
-    def test_distributed_tracing_policy_custom_instrumentation(self, tracing_helper, http_request, http_response):
+    def test_distributed_tracing_policy_custom_instrumentation_config(
+        self, tracing_helper, http_request, http_response
+    ):
         """Test policy when a custom tracer provider is provided."""
-        custom_instrumentation = Instrumentation(
-            library_name="my-library",
-            library_version="1.0.0",
-            schema_url="https://test.schema",
-            attributes={"namespace": "Sample.Namespace"},
-        )
+        config = {
+            "library_name": "my-library",
+            "library_version": "1.0.0",
+            "schema_url": "https://test.schema",
+            "attributes": {"az.namespace": "Sample.Namespace"},
+        }
+
         with tracing_helper.tracer.start_as_current_span("Root"):
-            policy = DistributedTracingPolicy(instrumentation=custom_instrumentation)
+            policy = DistributedTracingPolicy(instrumentation_config=config)
 
             request = http_request("GET", "http://localhost/temp?query=query")
             pipeline_request = PipelineRequest(request, PipelineContext(None))
@@ -388,12 +436,12 @@ class TestTracingPolicyNativeTracing:
             policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
 
         finished_spans = tracing_helper.exporter.get_finished_spans()
-        assert finished_spans[0].name == "GET"
+        assert finished_spans[0].name == "/temp"
         assert finished_spans[0].attributes.get(policy._ERROR_TYPE) == "403"
         assert finished_spans[0].instrumentation_scope.schema_url == "https://test.schema"
         assert finished_spans[0].instrumentation_scope.name == "my-library"
         assert finished_spans[0].instrumentation_scope.version == "1.0.0"
-        assert finished_spans[0].instrumentation_scope.attributes.get("namespace") == "Sample.Namespace"
+        assert finished_spans[0].instrumentation_scope.attributes.get("az.namespace") == "Sample.Namespace"
 
     @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
     def test_distributed_tracing_policy_exception(self, caplog, tracing_helper, http_request, http_response):
@@ -451,7 +499,7 @@ class TestTracingPolicyNativeTracing:
 
         finished_spans = tracing_helper.exporter.get_finished_spans()
         assert len(finished_spans) == 2
-        assert finished_spans[0].name == "GET"
+        assert finished_spans[0].name == "/temp"
         assert finished_spans[0].parent is root_span.get_span_context()
 
         assert finished_spans[0].attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
@@ -535,7 +583,7 @@ class TestTracingPolicyNativeTracing:
         finished_spans = tracing_helper.exporter.get_finished_spans()
         assert len(finished_spans) == 2
 
-        assert finished_spans[0].name == "GET"
+        assert finished_spans[0].name == "/temp"
         assert finished_spans[0].parent is root_span.get_span_context()
 
         assert finished_spans[0].attributes.get(policy._HTTP_REQUEST_METHOD) == "GET"
@@ -586,3 +634,30 @@ class TestTracingPolicyNativeTracing:
         assert finished_spans[0].attributes.get(policy._HTTP_RESPONSE_STATUS_CODE) == 200
 
         requests_instrumentor.uninstrument()
+
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+    def test_tracing_impl_takes_precedence(self, tracing_implementation, http_request, http_response):
+        """Test that a tracing implementation takes precedence over the native tracing."""
+        settings.tracing_enabled = True
+
+        assert settings.tracing_implementation() is FakeSpan
+        assert settings.tracing_enabled
+
+        with FakeSpan(name="parent") as root_span:
+            policy = DistributedTracingPolicy()
+
+            request = http_request("GET", "http://localhost/temp?query=query")
+
+            pipeline_request = PipelineRequest(request, PipelineContext(None))
+            policy.on_request(pipeline_request)
+
+            response = create_http_response(http_response, request, None)
+            response.headers = request.headers
+            response.status_code = 202
+
+            policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+
+        assert len(root_span.children) == 1
+        network_span = root_span.children[0]
+        assert network_span.name == "/temp"
+        assert network_span.kind == SpanKind.CLIENT
