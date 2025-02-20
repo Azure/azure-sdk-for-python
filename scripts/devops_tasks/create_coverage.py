@@ -26,7 +26,7 @@ def run_coverage(coverage_file: str) -> None:
     cov = coverage.Coverage(data_file=coverage_file)
     cov.load()
     total = cov.report()
-    print(f"The total coverage for {coverage_file} is {total}%")
+    logging.info(f"The total coverage for {coverage_file} is {total}%")
 
 
 def collect_tox_coverage_files():

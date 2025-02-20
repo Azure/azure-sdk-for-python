@@ -77,6 +77,13 @@ def collect_tox_coverage_files(targeted_packages):
     for package_dir in [package for package in targeted_packages]:
         coverage_file = os.path.join(package_dir, ".coverage")
         if os.path.isfile(coverage_file):
+            try:
+                cov = coverage.Coverage(data_file=coverage_file)
+                cov.load()
+                report = cov.report()
+                logging.info("Coverage before moving file out of tox dir and as I collect it is{:.2f}%".format(report))
+            except Exception as e:
+                logging.error(e)
             destination_file = os.path.join(root_coverage_dir, ".coverage_{}".format(os.path.basename(package_dir)))
             shutil.copyfile(coverage_file, destination_file)
             coverage_files.append(destination_file)
