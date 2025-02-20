@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+* Bumped minimum dependency on `azure-core` to `>=1.30.0`
+* Bumped minimum dependency on `azure-appconfiguration` to `>=1.6.1`
+
 ## 2.0.0 (2025-01-06)
 
 ### Features Added

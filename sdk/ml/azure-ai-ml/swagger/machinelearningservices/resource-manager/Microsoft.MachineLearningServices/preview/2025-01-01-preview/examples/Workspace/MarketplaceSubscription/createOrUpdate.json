@@ -1,0 +1,68 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "name": "string",
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "properties": {
+        "modelId": "string"
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "modelId": "string",
+          "marketplacePlan": {
+            "publisherId": "string",
+            "offerId": "string",
+            "planId": "string"
+          },
+          "marketplaceSubscriptionStatus": "Suspended",
+          "provisioningState": "Failed"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999+00:08",
+          "createdBy": "string",
+          "createdByType": "Key",
+          "lastModifiedAt": "2020-01-01T12:34:56.999+00:08",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "ManagedIdentity"
+        }
+      }
+    },
+    "201": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "modelId": "string",
+          "marketplacePlan": {
+            "publisherId": "string",
+            "offerId": "string",
+            "planId": "string"
+          },
+          "marketplaceSubscriptionStatus": "Suspended",
+          "provisioningState": "Failed"
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999+00:08",
+          "createdBy": "string",
+          "createdByType": "ManagedIdentity",
+          "lastModifiedAt": "2020-01-01T12:34:56.999+00:08",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "ManagedIdentity"
+        }
+      }
+    }
+  }
+}
