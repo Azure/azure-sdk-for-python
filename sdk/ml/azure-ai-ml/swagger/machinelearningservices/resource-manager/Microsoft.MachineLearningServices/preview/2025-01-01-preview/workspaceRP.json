@@ -5330,6 +5330,12 @@
       "description": "Managed Network settings for a machine learning workspace.",
       "type": "object",
       "properties": {
+        "firewallPublicIpAddress": {
+          "type": "string",
+          "description": "Public IP address assigned to the Azure Firewall.",
+          "readOnly": true,
+          "x-nullable": true
+        },
         "firewallSku": {
           "description": "Firewall Sku used for FQDN Rules",
           "$ref": "#/definitions/FirewallSku"

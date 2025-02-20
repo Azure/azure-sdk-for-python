@@ -15271,6 +15271,14 @@
           },
           "x-nullable": true
         },
+        "threadStorageConnections": {
+          "description": "List of Thread storage connections.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-nullable": true
+        },
         "vectorStoreConnections": {
           "description": "List of VectorStore connections.",
           "type": "array",

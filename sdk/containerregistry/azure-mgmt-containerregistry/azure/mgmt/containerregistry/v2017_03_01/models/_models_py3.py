@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -12,7 +11,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from ... import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -133,7 +131,7 @@ class OperationListResult(_serialization.Model):
 class RegenerateCredentialParameters(_serialization.Model):
     """The parameters used to regenerate the login credential.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Specifies name of the password which should be regenerated -- password or
      password2. Required. Known values are: "password" and "password2".
@@ -163,7 +161,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource ID.
     :vartype id: str
@@ -209,12 +207,12 @@ class Resource(_serialization.Model):
         self.tags = tags
 
 
-class Registry(Resource):  # pylint: disable=too-many-instance-attributes
+class Registry(Resource):
     """An object that represents a container registry.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The resource ID.
     :vartype id: str
@@ -305,7 +303,7 @@ class Registry(Resource):  # pylint: disable=too-many-instance-attributes
 class RegistryCreateParameters(_serialization.Model):
     """The parameters for creating a container registry.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar tags: The tags for the container registry.
     :vartype tags: dict[str, str]
@@ -435,7 +433,7 @@ class RegistryNameCheckRequest(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the container registry. Required.
     :vartype name: str
@@ -583,7 +581,7 @@ class Sku(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The SKU name of the container registry. Required for registry creation. Allowed
      value: Basic. Required.
@@ -616,7 +614,7 @@ class Sku(_serialization.Model):
 class StorageAccountParameters(_serialization.Model):
     """The parameters of a storage account for a container registry.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the storage account. Required.
     :vartype name: str
