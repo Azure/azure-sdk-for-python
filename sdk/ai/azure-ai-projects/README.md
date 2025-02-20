@@ -891,7 +891,7 @@ Here is an example of `create_run` and poll until the run is completed:
 <!-- SNIPPET:sample_agents_basics.create_run -->
 
 ```python
-run = project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
 
 # Poll the run as long as run status is queued or in progress
 while run.status in ["queued", "in_progress", "requires_action"]:
@@ -909,7 +909,7 @@ Here is an example:
 <!-- SNIPPET:sample_agents_run_with_toolset.create_and_process_run -->
 
 ```python
-run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
 ```
 
 <!-- END SNIPPET -->
@@ -921,7 +921,7 @@ Here is an example of streaming:
 <!-- SNIPPET:sample_agents_stream_iteration.iterate_stream -->
 
 ```python
-with project_client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
+with project_client.agents.create_stream(thread_id=thread.id, agent_id=agent.id) as stream:
 
     for event_type, event_data, _ in stream:
 
@@ -987,7 +987,7 @@ class MyEventHandler(AgentEventHandler[str]):
 
 ```python
 with project_client.agents.create_stream(
-    thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+    thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
 ) as stream:
     for event_type, event_data, func_return in stream:
         print(f"Received data.")

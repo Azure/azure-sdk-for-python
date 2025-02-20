@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,11 +5,11 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with an event handler and toolset from
-    the Azure Agents service using a synchronous client.
+    This sample demonstrates how to use agent operations with an event handler and
+    the Bing grounding tool from the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_stream_eventhandler_with_functions.py
+    python sample_agents_stream_eventhandler_with_bing_grounding.py
 
     Before running the sample:
 
@@ -21,35 +20,47 @@ USAGE:
        Azure AI Foundry project.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
        the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) BING_CONNECTION_NAME - The connection name of the Bing connection, as found in the "Connected resources" tab
+       in your Azure AI Foundry project.
 """
-from typing import Any
-
+"""
+import sys
+import logging
+logger = logging.getLogger("azure")
+logger.setLevel(logging.DEBUG)
+logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+"""
 import os
+from azure.identity import DefaultAzureCredential
+from typing import Any
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AgentEventHandler,
-    FunctionTool,
     MessageDeltaChunk,
-    RequiredFunctionToolCall,
     RunStep,
-    SubmitToolOutputsAction,
     ThreadMessage,
     ThreadRun,
-    ToolOutput,
+    AgentEventHandler,
+    BingGroundingTool,
 )
-from azure.identity import DefaultAzureCredential
 from user_functions import user_functions
 
 project_client = AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]  # , logging_enable=True
 )
 
+# TODO: Move into "with project_client" block
+bing_connection = project_client.connections.get(connection_name=os.environ["BING_CONNECTION_NAME"])
+conn_id = bing_connection.id
 
+print(conn_id)
+
+# Initialize agent bing tool and add the connection id
+bing = BingGroundingTool(connection_id=conn_id)
+
+
+# When using FunctionTool with ToolSet in agent creation, the tool call events are handled inside the create_stream
+# method and functions gets automatically called by default.
 class MyEventHandler(AgentEventHandler):
-
-    def __init__(self, functions: FunctionTool) -> None:
-        super().__init__()
-        self.functions = functions
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         print(f"Text delta received: {delta.text}")
@@ -62,31 +73,6 @@ class MyEventHandler(AgentEventHandler):
 
         if run.status == "failed":
             print(f"Run failed. Error: {run.last_error}")
-
-        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
-            tool_calls = run.required_action.submit_tool_outputs.tool_calls
-
-            tool_outputs = []
-            for tool_call in tool_calls:
-                if isinstance(tool_call, RequiredFunctionToolCall):
-                    try:
-                        output = functions.execute(tool_call)
-                        tool_outputs.append(
-                            ToolOutput(
-                                tool_call_id=tool_call.id,
-                                output=output,
-                            )
-                        )
-                    except Exception as e:
-                        print(f"Error executing tool_call {tool_call.id}: {e}")
-
-            print(f"Tool outputs: {tool_outputs}")
-            if tool_outputs:
-                # Once we receive 'requires_action' status, the next event will be DONE.
-                # Here we associate our existing event handler to the next stream.
-                project_client.agents.submit_tool_outputs_to_stream(
-                    thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=self
-                )
 
     def on_run_step(self, step: "RunStep") -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
@@ -103,16 +89,12 @@ class MyEventHandler(AgentEventHandler):
 
 with project_client:
 
-    # [START create_agent_with_function_tool]
-    functions = FunctionTool(user_functions)
-
     agent = project_client.agents.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are a helpful assistant",
-        tools=functions.definitions,
+        tools=bing.definitions,
     )
-    # [END create_agent_with_function_tool]
     print(f"Created agent, ID: {agent.id}")
 
     thread = project_client.agents.create_thread()
@@ -121,12 +103,12 @@ with project_client:
     message = project_client.agents.create_message(
         thread_id=thread.id,
         role="user",
-        content="Hello, send an email with the datetime and weather information in New York? Also let me know the details.",
+        content="How does wikipedia explain Euler's Identity?",
     )
     print(f"Created message, message ID {message.id}")
 
     with project_client.agents.create_stream(
-        thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler(functions)
+        thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
     ) as stream:
         stream.until_done()
 

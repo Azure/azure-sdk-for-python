@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -274,7 +274,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
         thread = client.agents.create_thread()
         message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        run = client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
 
         while run.status in ["queued", "in_progress", "requires_action"]:
             # wait for a second
@@ -428,7 +428,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
         thread = client.agents.create_thread()
         message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        run = client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
 
         while run.status in ["queued", "in_progress", "requires_action"]:
             # wait for a second
@@ -610,7 +610,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         )
 
         with client.agents.create_stream(
-            thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+            thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
         ) as stream:
             stream.until_done()
 
@@ -838,7 +838,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         )
 
         with client.agents.create_stream(
-            thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+            thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
         ) as stream:
             stream.until_done()
 
