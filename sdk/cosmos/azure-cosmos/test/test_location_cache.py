@@ -16,10 +16,10 @@ location1_name = "location1"
 location2_name = "location2"
 location3_name = "location3"
 location4_name = "location4"
-location1_endpoint = "https://location1.documents.azure.com"
-location2_endpoint = "https://location2.documents.azure.com"
-location3_endpoint = "https://location3.documents.azure.com"
-location4_endpoint = "https://location4.documents.azure.com"
+location1_endpoint = "https://default-location1.documents.azure.com"
+location2_endpoint = "https://default-location2.documents.azure.com"
+location3_endpoint = "https://default-location3.documents.azure.com"
+location4_endpoint = "https://default-location4.documents.azure.com"
 refresh_time_interval_in_ms = 1000
 
 
