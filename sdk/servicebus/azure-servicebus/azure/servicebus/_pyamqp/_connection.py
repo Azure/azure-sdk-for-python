@@ -500,7 +500,9 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         self._send_frame(0, close_frame)
 
     def _incoming_close(self, channel: int, frame: Tuple[Any, ...]) -> None:
-        """Process incoming Open frame to finish the connection negotiation.
+        """Process incoming Open frame to finish the connection negotiation. All properties
+         not marked "Required" may be excluded from the frame. i.e. The length of the frame may
+         be 0.
 
         The incoming frame format is::
 
@@ -533,8 +535,11 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         self._outgoing_close(error=close_error)
         self._disconnect()
 
-        if frame[0]:
-            self._error = AMQPConnectionError(condition=frame[0][0], description=frame[0][1], info=frame[0][2])
+        if len(frame) > 0 and frame[0]:
+            condition = frame[0][0]
+            description = frame[0][1] if len(frame[0]) > 1 else None
+            info = frame[0][2] if len(frame[0]) > 2 else None
+            self._error = AMQPConnectionError(condition=condition, description=description, info=info)
             _LOGGER.warning("Connection closed with error: %r", frame[0], extra=self._network_trace_params)
 
     def _incoming_begin(self, channel: int, frame: Tuple[Any, ...]) -> None:
