@@ -534,7 +534,7 @@ class TestChatCompletionsClientAsync(ModelClientTestBase):
                 sdk.models.UserMessage(
                     content=[
                         sdk.models.TextContentItem(text="Please translate this audio snippet to spanish."),
-                        sdk.models.AudioContentItem(
+                        sdk.models.AudioDataContentItem(
                             input_audio=sdk.models.InputAudio.load(
                                 audio_file=audio_file_path, audio_format=sdk.models.AudioContentFormat.MP3
                             )
