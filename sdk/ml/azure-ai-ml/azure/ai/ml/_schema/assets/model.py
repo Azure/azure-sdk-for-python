@@ -43,6 +43,7 @@ class ModelSchema(PathAwareSchema):
     latest_version = fields.Str(dump_only=True)
     datastore = fields.Str(metadata={"description": "Name of the datastore to upload to."}, required=False)
     intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema, required=False), dump_only=True)
+    system_metadata = fields.Dict()
 
     @pre_dump
     def validate(self, data, **kwargs):
