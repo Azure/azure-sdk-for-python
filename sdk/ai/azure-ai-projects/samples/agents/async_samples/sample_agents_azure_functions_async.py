@@ -79,7 +79,6 @@ async def main():
             # Create a message
             message = await project_client.agents.create_message(
                 thread_id=thread.id,
-                role="user",
                 content="What is the most prevalent element in the universe? What would foo say?",
             )
             print(f"Created message, message ID: {message.id}")

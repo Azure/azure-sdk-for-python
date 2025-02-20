@@ -72,9 +72,7 @@ async def main() -> None:
             thread = await project_client.agents.create_thread()
             print(f"Created thread, thread ID {thread.id}")
 
-            message = await project_client.agents.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a joke"
-            )
+            message = await project_client.agents.create_message(thread_id=thread.id, content="Hello, tell me a joke")
             print(f"Created message, message ID {message.id}")
 
             async with await project_client.agents.create_stream(

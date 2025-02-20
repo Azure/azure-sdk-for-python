@@ -54,7 +54,6 @@ async def main() -> None:
             attachment = MessageAttachment(file_id=file.id, tools=FileSearchTool().definitions)
             message = await project_client.agents.create_message(
                 thread_id=thread.id,
-                role="user",
                 content="What feature does Smart Eyewear offer?",
                 attachments=[attachment],
             )
