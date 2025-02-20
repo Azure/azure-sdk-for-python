@@ -5238,6 +5238,8 @@ class CapabilityHostProperties(ResourceBase):
      ~azure.mgmt.machinelearningservices.models.CapabilityHostProvisioningState
     :ivar storage_connections: List of Storage connections.
     :vartype storage_connections: list[str]
+    :ivar thread_storage_connections: List of Thread storage connections.
+    :vartype thread_storage_connections: list[str]
     :ivar vector_store_connections: List of VectorStore connections.
     :vartype vector_store_connections: list[str]
     """
@@ -5255,6 +5257,7 @@ class CapabilityHostProperties(ResourceBase):
         'customer_subnet': {'key': 'customerSubnet', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'storage_connections': {'key': 'storageConnections', 'type': '[str]'},
+        'thread_storage_connections': {'key': 'threadStorageConnections', 'type': '[str]'},
         'vector_store_connections': {'key': 'vectorStoreConnections', 'type': '[str]'},
     }
 
@@ -5278,6 +5281,8 @@ class CapabilityHostProperties(ResourceBase):
         :paramtype customer_subnet: str
         :keyword storage_connections: List of Storage connections.
         :paramtype storage_connections: list[str]
+        :keyword thread_storage_connections: List of Thread storage connections.
+        :paramtype thread_storage_connections: list[str]
         :keyword vector_store_connections: List of VectorStore connections.
         :paramtype vector_store_connections: list[str]
         """
@@ -5287,6 +5292,7 @@ class CapabilityHostProperties(ResourceBase):
         self.customer_subnet = kwargs.get('customer_subnet', None)
         self.provisioning_state = None
         self.storage_connections = kwargs.get('storage_connections', None)
+        self.thread_storage_connections = kwargs.get('thread_storage_connections', None)
         self.vector_store_connections = kwargs.get('vector_store_connections', None)
 
 
@@ -20686,6 +20692,8 @@ class ManagedNetworkSettings(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar firewall_public_ip_address: Public IP address assigned to the Azure Firewall.
+    :vartype firewall_public_ip_address: str
     :ivar firewall_sku: Firewall Sku used for FQDN Rules. Possible values include: "Standard",
      "Basic".
     :vartype firewall_sku: str or ~azure.mgmt.machinelearningservices.models.FirewallSku
@@ -20705,11 +20713,13 @@ class ManagedNetworkSettings(msrest.serialization.Model):
     """
 
     _validation = {
+        'firewall_public_ip_address': {'readonly': True},
         'network_id': {'readonly': True},
         'changeable_isolation_modes': {'readonly': True},
     }
 
     _attribute_map = {
+        'firewall_public_ip_address': {'key': 'firewallPublicIpAddress', 'type': 'str'},
         'firewall_sku': {'key': 'firewallSku', 'type': 'str'},
         'isolation_mode': {'key': 'isolationMode', 'type': 'str'},
         'network_id': {'key': 'networkId', 'type': 'str'},
@@ -20737,6 +20747,7 @@ class ManagedNetworkSettings(msrest.serialization.Model):
         :paramtype status: ~azure.mgmt.machinelearningservices.models.ManagedNetworkProvisionStatus
         """
         super(ManagedNetworkSettings, self).__init__(**kwargs)
+        self.firewall_public_ip_address = None
         self.firewall_sku = kwargs.get('firewall_sku', None)
         self.isolation_mode = kwargs.get('isolation_mode', None)
         self.network_id = None
