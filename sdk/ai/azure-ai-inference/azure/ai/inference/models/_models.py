@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,7 +30,7 @@ class ContentItem(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The discriminated object type. Required. Default value is None."""
 
     @overload
@@ -61,10 +61,10 @@ class AudioContentItem(ContentItem, discriminator="input_audio"):
     :vartype input_audio: ~azure.ai.inference.models.InputAudio
     """
 
-    type: Literal["input_audio"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["input_audio"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminated object type: always 'input_audio' for this type. Required. Default value is
      \"input_audio\"."""
-    input_audio: "_models.InputAudio" = rest_field()
+    input_audio: "_models.InputAudio" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The details of the input audio. Required."""
 
     @overload
@@ -101,12 +101,14 @@ class ChatChoice(_model_base.Model):
     :vartype message: ~azure.ai.inference.models.ChatResponseMessage
     """
 
-    index: int = rest_field()
+    index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ordered index associated with this chat completions choice. Required."""
-    finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field()
+    finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The reason that this chat completions choice completed its generated. Required. Known values
      are: \"stop\", \"length\", \"content_filter\", and \"tool_calls\"."""
-    message: "_models.ChatResponseMessage" = rest_field()
+    message: "_models.ChatResponseMessage" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The chat message for a given chat completions prompt. Required."""
 
     @overload
@@ -153,18 +155,20 @@ class ChatCompletions(_model_base.Model):
     :vartype usage: ~azure.ai.inference.models.CompletionsUsage
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A unique identifier associated with this chat completions response. Required."""
-    created: datetime.datetime = rest_field(format="unix-timestamp")
+    created: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The first timestamp associated with generation activity for this completions response,
      represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required."""
-    model: str = rest_field()
+    model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The model used for the chat completion. Required."""
-    choices: List["_models.ChatChoice"] = rest_field()
+    choices: List["_models.ChatChoice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The collection of completions choices associated with this completions response.
      Generally, ``n`` choices are generated per provided prompt with a default value of 1.
      Token limits and other settings may limit the number of choices generated. Required."""
-    usage: "_models.CompletionsUsage" = rest_field()
+    usage: "_models.CompletionsUsage" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Usage information for tokens processed and generated as part of this completions operation.
      Required."""
 
@@ -201,10 +205,12 @@ class ChatCompletionsNamedToolChoice(_model_base.Model):
     :vartype function: ~azure.ai.inference.models.ChatCompletionsNamedToolChoiceFunction
     """
 
-    type: Literal["function"] = rest_field()
+    type: Literal["function"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of the tool. Currently, only ``function`` is supported. Required. Default value is
      \"function\"."""
-    function: "_models.ChatCompletionsNamedToolChoiceFunction" = rest_field()
+    function: "_models.ChatCompletionsNamedToolChoiceFunction" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The function that should be called. Required."""
 
     @overload
@@ -234,7 +240,7 @@ class ChatCompletionsNamedToolChoiceFunction(_model_base.Model):
     :vartype name: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function that should be called. Required."""
 
     @overload
@@ -242,6 +248,198 @@ class ChatCompletionsNamedToolChoiceFunction(_model_base.Model):
         self,
         *,
         name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChatCompletionsOptions(_model_base.Model):
+    """The configuration information for a chat completions request.
+    Completions support a wide variety of tasks and generate text that continues from or
+    "completes"
+    provided prompt data.
+
+    :ivar messages: The collection of context messages associated with this chat completions
+     request.
+     Typical usage begins with a chat message for the System role that provides instructions for
+     the behavior of the assistant, followed by alternating messages between the User and
+     Assistant roles. Required.
+    :vartype messages: list[~azure.ai.inference.models._models.ChatRequestMessage]
+    :ivar frequency_penalty: A value that influences the probability of generated tokens appearing
+     based on their cumulative
+     frequency in generated text.
+     Positive values will make tokens less likely to appear as their frequency increases and
+     decrease the likelihood of the model repeating the same statements verbatim.
+     Supported range is [-2, 2].
+    :vartype frequency_penalty: float
+    :ivar stream: A value indicating whether chat completions should be streamed for this request.
+    :vartype stream: bool
+    :ivar presence_penalty: A value that influences the probability of generated tokens appearing
+     based on their existing
+     presence in generated text.
+     Positive values will make tokens less likely to appear when they already exist and increase the
+     model's likelihood to output new topics.
+     Supported range is [-2, 2].
+    :vartype presence_penalty: float
+    :ivar temperature: The sampling temperature to use that controls the apparent creativity of
+     generated completions.
+     Higher values will make output more random while lower values will make results more focused
+     and deterministic.
+     It is not recommended to modify temperature and top_p for the same completions request as the
+     interaction of these two settings is difficult to predict.
+     Supported range is [0, 1].
+    :vartype temperature: float
+    :ivar top_p: An alternative to sampling with temperature called nucleus sampling. This value
+     causes the
+     model to consider the results of tokens with the provided probability mass. As an example, a
+     value of 0.15 will cause only the tokens comprising the top 15% of probability mass to be
+     considered.
+     It is not recommended to modify temperature and top_p for the same completions request as the
+     interaction of these two settings is difficult to predict.
+     Supported range is [0, 1].
+    :vartype top_p: float
+    :ivar max_tokens: The maximum number of tokens to generate.
+    :vartype max_tokens: int
+    :ivar response_format: An object specifying the format that the model must output.
+
+     Setting to ``{ "type": "json_schema", "json_schema": {...} }`` enables Structured Outputs which
+     ensures the model will match your supplied JSON schema.
+
+     Setting to ``{ "type": "json_object" }`` enables JSON mode, which ensures the message the model
+     generates is valid JSON.
+
+     **Important:** when using JSON mode, you **must** also instruct the model to produce JSON
+     yourself via a system or user message. Without this, the model may generate an unending stream
+     of whitespace until the generation reaches the token limit, resulting in a long-running and
+     seemingly "stuck" request. Also note that the message content may be partially cut off if
+     ``finish_reason="length"``\\ , which indicates the generation exceeded ``max_tokens`` or the
+     conversation exceeded the max context length.
+    :vartype response_format: ~azure.ai.inference.models._models.ChatCompletionsResponseFormat
+    :ivar stop: A collection of textual sequences that will end completions generation.
+    :vartype stop: list[str]
+    :ivar tools: A list of tools the model may request to call. Currently, only functions are
+     supported as a tool. The model
+     may response with a function call request and provide the input arguments in JSON format for
+     that function.
+    :vartype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
+    :ivar tool_choice: If specified, the model will configure which of the provided tools it can
+     use for the chat completions response. Is either a Union[str,
+     "_models.ChatCompletionsToolChoicePreset"] type or a ChatCompletionsNamedToolChoice type.
+    :vartype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolChoicePreset or
+     ~azure.ai.inference.models.ChatCompletionsNamedToolChoice
+    :ivar seed: If specified, the system will make a best effort to sample deterministically such
+     that repeated requests with the
+     same seed and parameters should return the same result. Determinism is not guaranteed.
+    :vartype seed: int
+    :ivar model: ID of the specific AI model to use, if more than one model is available on the
+     endpoint.
+    :vartype model: str
+    """
+
+    messages: List["_models._models.ChatRequestMessage"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The collection of context messages associated with this chat completions request.
+     Typical usage begins with a chat message for the System role that provides instructions for
+     the behavior of the assistant, followed by alternating messages between the User and
+     Assistant roles. Required."""
+    frequency_penalty: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A value that influences the probability of generated tokens appearing based on their cumulative
+     frequency in generated text.
+     Positive values will make tokens less likely to appear as their frequency increases and
+     decrease the likelihood of the model repeating the same statements verbatim.
+     Supported range is [-2, 2]."""
+    stream: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A value indicating whether chat completions should be streamed for this request."""
+    presence_penalty: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A value that influences the probability of generated tokens appearing based on their existing
+     presence in generated text.
+     Positive values will make tokens less likely to appear when they already exist and increase the
+     model's likelihood to output new topics.
+     Supported range is [-2, 2]."""
+    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The sampling temperature to use that controls the apparent creativity of generated completions.
+     Higher values will make output more random while lower values will make results more focused
+     and deterministic.
+     It is not recommended to modify temperature and top_p for the same completions request as the
+     interaction of these two settings is difficult to predict.
+     Supported range is [0, 1]."""
+    top_p: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An alternative to sampling with temperature called nucleus sampling. This value causes the
+     model to consider the results of tokens with the provided probability mass. As an example, a
+     value of 0.15 will cause only the tokens comprising the top 15% of probability mass to be
+     considered.
+     It is not recommended to modify temperature and top_p for the same completions request as the
+     interaction of these two settings is difficult to predict.
+     Supported range is [0, 1]."""
+    max_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The maximum number of tokens to generate."""
+    response_format: Optional["_models._models.ChatCompletionsResponseFormat"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An object specifying the format that the model must output.
+     
+     Setting to ``{ \"type\": \"json_schema\", \"json_schema\": {...} }`` enables Structured Outputs
+     which ensures the model will match your supplied JSON schema.
+     
+     Setting to ``{ \"type\": \"json_object\" }`` enables JSON mode, which ensures the message the
+     model generates is valid JSON.
+     
+     **Important:** when using JSON mode, you **must** also instruct the model to produce JSON
+     yourself via a system or user message. Without this, the model may generate an unending stream
+     of whitespace until the generation reaches the token limit, resulting in a long-running and
+     seemingly \"stuck\" request. Also note that the message content may be partially cut off if
+     ``finish_reason=\"length\"``\\ , which indicates the generation exceeded ``max_tokens`` or the
+     conversation exceeded the max context length."""
+    stop: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A collection of textual sequences that will end completions generation."""
+    tools: Optional[List["_models.ChatCompletionsToolDefinition"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of tools the model may request to call. Currently, only functions are supported as a
+     tool. The model
+     may response with a function call request and provide the input arguments in JSON format for
+     that function."""
+    tool_choice: Optional[
+        Union[str, "_models.ChatCompletionsToolChoicePreset", "_models.ChatCompletionsNamedToolChoice"]
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """If specified, the model will configure which of the provided tools it can use for the chat
+     completions response. Is either a Union[str, \"_models.ChatCompletionsToolChoicePreset\"] type
+     or a ChatCompletionsNamedToolChoice type."""
+    seed: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """If specified, the system will make a best effort to sample deterministically such that repeated
+     requests with the
+     same seed and parameters should return the same result. Determinism is not guaranteed."""
+    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """ID of the specific AI model to use, if more than one model is available on the endpoint."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        messages: List["_models._models.ChatRequestMessage"],
+        frequency_penalty: Optional[float] = None,
+        stream: Optional[bool] = None,
+        presence_penalty: Optional[float] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        response_format: Optional["_models._models.ChatCompletionsResponseFormat"] = None,
+        stop: Optional[List[str]] = None,
+        tools: Optional[List["_models.ChatCompletionsToolDefinition"]] = None,
+        tool_choice: Optional[
+            Union[str, "_models.ChatCompletionsToolChoicePreset", "_models.ChatCompletionsNamedToolChoice"]
+        ] = None,
+        seed: Optional[int] = None,
+        model: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -272,7 +470,7 @@ class ChatCompletionsResponseFormat(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The response format type to use for chat completions. Required. Default value is None."""
 
     @overload
@@ -304,7 +502,7 @@ class ChatCompletionsResponseFormatJsonObject(ChatCompletionsResponseFormat, dis
     :vartype type: str
     """
 
-    type: Literal["json_object"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["json_object"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Response format type: always 'json_object' for this object. Required. Default value is
      \"json_object\"."""
 
@@ -337,10 +535,10 @@ class ChatCompletionsResponseFormatJsonSchema(ChatCompletionsResponseFormat, dis
     :vartype json_schema: ~azure.ai.inference.models.JsonSchemaFormat
     """
 
-    type: Literal["json_schema"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["json_schema"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of response format being defined: ``json_schema``. Required. Default value is
      \"json_schema\"."""
-    json_schema: "_models.JsonSchemaFormat" = rest_field()
+    json_schema: "_models.JsonSchemaFormat" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The definition of the required JSON schema in the response, and associated metadata. Required."""
 
     @overload
@@ -370,7 +568,7 @@ class ChatCompletionsResponseFormatText(ChatCompletionsResponseFormat, discrimin
     :vartype type: str
     """
 
-    type: Literal["text"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["text"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Response format type: always 'text' for this object. Required. Default value is \"text\"."""
 
     @overload
@@ -392,6 +590,7 @@ class ChatCompletionsResponseFormatText(ChatCompletionsResponseFormat, discrimin
 class ChatCompletionsToolCall(_model_base.Model):
     """A function tool call requested by the AI model.
 
+
     :ivar id: The ID of the tool call. Required.
     :vartype id: str
     :ivar type: The type of tool call. Currently, only ``function`` is supported. Required. Default
@@ -401,12 +600,12 @@ class ChatCompletionsToolCall(_model_base.Model):
     :vartype function: ~azure.ai.inference.models.FunctionCall
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the tool call. Required."""
-    type: Literal["function"] = rest_field()
+    type: Literal["function"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of tool call. Currently, only ``function`` is supported. Required. Default value is
      \"function\"."""
-    function: "_models.FunctionCall" = rest_field()
+    function: "_models.FunctionCall" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The details of the function call requested by the AI model. Required."""
 
     @overload
@@ -439,10 +638,10 @@ class ChatCompletionsToolDefinition(_model_base.Model):
     :vartype function: ~azure.ai.inference.models.FunctionDefinition
     """
 
-    type: Literal["function"] = rest_field()
+    type: Literal["function"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of the tool. Currently, only ``function`` is supported. Required. Default value is
      \"function\"."""
-    function: "_models.FunctionDefinition" = rest_field()
+    function: "_models.FunctionDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The function definition details for the function tool. Required."""
 
     @overload
@@ -477,7 +676,7 @@ class ChatRequestMessage(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    role: str = rest_discriminator(name="role")
+    role: str = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])
     """The chat role associated with this message. Required. Known values are: \"system\", \"user\",
      \"assistant\", \"tool\", and \"developer\"."""
 
@@ -514,12 +713,14 @@ class ChatRequestAssistantMessage(ChatRequestMessage, discriminator="assistant")
     :vartype tool_calls: list[~azure.ai.inference.models.ChatCompletionsToolCall]
     """
 
-    role: Literal[ChatRole.ASSISTANT] = rest_discriminator(name="role")  # type: ignore
+    role: Literal[ChatRole.ASSISTANT] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The chat role associated with this message, which is always 'assistant' for assistant messages.
      Required. The role that provides responses to system-instructed, user-prompted input."""
-    content: Optional[str] = rest_field()
+    content: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The content of the message."""
-    tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = rest_field()
+    tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The tool calls that must be resolved and have their outputs appended to subsequent input
      messages for the chat
      completions request to resolve as configured."""
@@ -544,7 +745,7 @@ class ChatRequestAssistantMessage(ChatRequestMessage, discriminator="assistant")
 
 
 class ChatRequestDeveloperMessage(ChatRequestMessage, discriminator="developer"):
-    """A request chat message containing system instructions that influence how the model will
+    """A request chat message containing developer instructions that influence how the model will
     generate a chat completions
     response. Some AI models support a developer message instead of a system message.
 
@@ -556,11 +757,11 @@ class ChatRequestDeveloperMessage(ChatRequestMessage, discriminator="developer")
     :vartype content: str
     """
 
-    role: Literal[ChatRole.DEVELOPER] = rest_discriminator(name="role")  # type: ignore
+    role: Literal[ChatRole.DEVELOPER] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The chat role associated with this message, which is always 'developer' for developer messages.
      Required. The role that instructs or sets the behavior of the assistant. Some AI models support
      this role instead of the 'system' role."""
-    content: str = rest_field()
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The contents of the developer message. Required."""
 
     @overload
@@ -593,10 +794,10 @@ class ChatRequestSystemMessage(ChatRequestMessage, discriminator="system"):
     :vartype content: str
     """
 
-    role: Literal[ChatRole.SYSTEM] = rest_discriminator(name="role")  # type: ignore
+    role: Literal[ChatRole.SYSTEM] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The chat role associated with this message, which is always 'system' for system messages.
      Required. The role that instructs or sets the behavior of the assistant."""
-    content: str = rest_field()
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The contents of the system message. Required."""
 
     @overload
@@ -630,12 +831,12 @@ class ChatRequestToolMessage(ChatRequestMessage, discriminator="tool"):
     :vartype tool_call_id: str
     """
 
-    role: Literal[ChatRole.TOOL] = rest_discriminator(name="role")  # type: ignore
+    role: Literal[ChatRole.TOOL] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The chat role associated with this message, which is always 'tool' for tool messages. Required.
      The role that represents extension tool activity within a chat completions operation."""
-    content: Optional[str] = rest_field()
+    content: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The content of the message."""
-    tool_call_id: str = rest_field()
+    tool_call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the tool call resolved by the provided content. Required."""
 
     @overload
@@ -668,10 +869,12 @@ class ChatRequestUserMessage(ChatRequestMessage, discriminator="user"):
     :vartype content: str or list[~azure.ai.inference.models.ContentItem]
     """
 
-    role: Literal[ChatRole.USER] = rest_discriminator(name="role")  # type: ignore
+    role: Literal[ChatRole.USER] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The chat role associated with this message, which is always 'user' for user messages. Required.
      The role that provides input for chat completions."""
-    content: Union["str", List["_models.ContentItem"]] = rest_field()
+    content: Union["str", List["_models.ContentItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The contents of the user message, with available input types varying by selected model.
      Required. Is either a str type or a [ContentItem] type."""
 
@@ -708,12 +911,14 @@ class ChatResponseMessage(_model_base.Model):
     :vartype tool_calls: list[~azure.ai.inference.models.ChatCompletionsToolCall]
     """
 
-    role: Union[str, "_models.ChatRole"] = rest_field()
+    role: Union[str, "_models.ChatRole"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The chat role associated with the message. Required. Known values are: \"system\", \"user\",
      \"assistant\", \"tool\", and \"developer\"."""
-    content: str = rest_field()
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The content of the message. Required."""
-    tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = rest_field()
+    tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The tool calls that must be resolved and have their outputs appended to subsequent input
      messages for the chat
      completions request to resolve as configured."""
@@ -755,11 +960,11 @@ class CompletionsUsage(_model_base.Model):
     :vartype total_tokens: int
     """
 
-    completion_tokens: int = rest_field()
+    completion_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of tokens generated across all completions emissions. Required."""
-    prompt_tokens: int = rest_field()
+    prompt_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of tokens in the provided prompts for the completions request. Required."""
-    total_tokens: int = rest_field()
+    total_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The total number of tokens processed for the completions request and response. Required."""
 
     @overload
@@ -795,11 +1000,11 @@ class EmbeddingItem(_model_base.Model):
     :vartype index: int
     """
 
-    embedding: Union["str", List[float]] = rest_field()
+    embedding: Union["str", List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of embedding values for the input prompt. These represent a measurement of the
      vector-based relatedness of the provided input. Or a base64 encoded string of the embedding
      vector. Required. Is either a str type or a [float] type."""
-    index: int = rest_field()
+    index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Index of the prompt to which the EmbeddingItem corresponds. Required."""
 
     @overload
@@ -808,6 +1013,74 @@ class EmbeddingItem(_model_base.Model):
         *,
         embedding: Union[str, List[float]],
         index: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EmbeddingsOptions(_model_base.Model):
+    """The configuration information for an embeddings request.
+
+    :ivar input: Input text to embed, encoded as a string or array of tokens.
+     To embed multiple inputs in a single request, pass an array
+     of strings or array of token arrays. Required.
+    :vartype input: list[str]
+    :ivar dimensions: Optional. The number of dimensions the resulting output embeddings should
+     have.
+     Passing null causes the model to use its default value.
+     Returns a 422 error if the model doesn't support the value or parameter.
+    :vartype dimensions: int
+    :ivar encoding_format: Optional. The desired format for the returned embeddings. Known values
+     are: "base64", "binary", "float", "int8", "ubinary", and "uint8".
+    :vartype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
+    :ivar input_type: Optional. The type of the input.
+     Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+     "text", "query", and "document".
+    :vartype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
+    :ivar model: ID of the specific AI model to use, if more than one model is available on the
+     endpoint.
+    :vartype model: str
+    """
+
+    input: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Input text to embed, encoded as a string or array of tokens.
+     To embed multiple inputs in a single request, pass an array
+     of strings or array of token arrays. Required."""
+    dimensions: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional. The number of dimensions the resulting output embeddings should have.
+     Passing null causes the model to use its default value.
+     Returns a 422 error if the model doesn't support the value or parameter."""
+    encoding_format: Optional[Union[str, "_models.EmbeddingEncodingFormat"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. The desired format for the returned embeddings. Known values are: \"base64\",
+     \"binary\", \"float\", \"int8\", \"ubinary\", and \"uint8\"."""
+    input_type: Optional[Union[str, "_models.EmbeddingInputType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. The type of the input.
+     Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+     \"text\", \"query\", and \"document\"."""
+    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """ID of the specific AI model to use, if more than one model is available on the endpoint."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        input: List[str],
+        dimensions: Optional[int] = None,
+        encoding_format: Optional[Union[str, "_models.EmbeddingEncodingFormat"]] = None,
+        input_type: Optional[Union[str, "_models.EmbeddingInputType"]] = None,
+        model: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -838,13 +1111,13 @@ class EmbeddingsResult(_model_base.Model):
     :vartype model: str
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for the embeddings result. Required."""
-    data: List["_models.EmbeddingItem"] = rest_field()
+    data: List["_models.EmbeddingItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Embedding values for the prompts submitted in the request. Required."""
-    usage: "_models.EmbeddingsUsage" = rest_field()
+    usage: "_models.EmbeddingsUsage" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Usage counts for tokens input using the embeddings API. Required."""
-    model: str = rest_field()
+    model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The model ID used to generate this result. Required."""
 
     @overload
@@ -880,9 +1153,9 @@ class EmbeddingsUsage(_model_base.Model):
     :vartype total_tokens: int
     """
 
-    prompt_tokens: int = rest_field()
+    prompt_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of tokens in the request. Required."""
-    total_tokens: int = rest_field()
+    total_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Total number of tokens transacted in this request/response. Should equal the
      number of tokens in the request. Required."""
 
@@ -919,9 +1192,9 @@ class FunctionCall(_model_base.Model):
     :vartype arguments: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function to call. Required."""
-    arguments: str = rest_field()
+    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The arguments to call the function with, as generated by the model in JSON format.
      Note that the model does not always generate valid JSON, and may hallucinate parameters
      not defined by your function schema. Validate the arguments in your code before calling
@@ -960,13 +1233,13 @@ class FunctionDefinition(_model_base.Model):
     :vartype parameters: any
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the function to be called. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A description of what the function does. The model will use this description when selecting the
      function and
      interpreting its parameters."""
-    parameters: Optional[Any] = rest_field()
+    parameters: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The parameters the function accepts, described as a JSON Schema object."""
 
     @overload
@@ -1000,10 +1273,10 @@ class ImageContentItem(ContentItem, discriminator="image_url"):
     :vartype image_url: ~azure.ai.inference.models.ImageUrl
     """
 
-    type: Literal["image_url"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["image_url"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminated object type: always 'image_url' for this type. Required. Default value is
      \"image_url\"."""
-    image_url: "_models.ImageUrl" = rest_field()
+    image_url: "_models.ImageUrl" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An internet location, which must be accessible to the model,from which the image may be
      retrieved. Required."""
 
@@ -1036,10 +1309,10 @@ class ImageEmbeddingInput(_model_base.Model):
     :vartype text: str
     """
 
-    image: str = rest_field()
+    image: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The input image encoded in base64 string as a data URL. Example:
      ``data:image/{format};base64,{data}``. Required."""
-    text: Optional[str] = rest_field()
+    text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional. The text input to feed into the model (like DINO, CLIP).
      Returns a 422 error if the model doesn't support the value or parameter."""
 
@@ -1049,6 +1322,77 @@ class ImageEmbeddingInput(_model_base.Model):
         *,
         image: str,
         text: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ImageEmbeddingsOptions(_model_base.Model):
+    """The configuration information for an image embeddings request.
+
+    :ivar input: Input image to embed. To embed multiple inputs in a single request, pass an array.
+     The input must not exceed the max input tokens for the model. Required.
+    :vartype input: list[~azure.ai.inference.models.ImageEmbeddingInput]
+    :ivar dimensions: Optional. The number of dimensions the resulting output embeddings should
+     have.
+     Passing null causes the model to use its default value.
+     Returns a 422 error if the model doesn't support the value or parameter.
+    :vartype dimensions: int
+    :ivar encoding_format: Optional. The number of dimensions the resulting output embeddings
+     should have.
+     Passing null causes the model to use its default value.
+     Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+     "base64", "binary", "float", "int8", "ubinary", and "uint8".
+    :vartype encoding_format: str or ~azure.ai.inference.models.EmbeddingEncodingFormat
+    :ivar input_type: Optional. The type of the input.
+     Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+     "text", "query", and "document".
+    :vartype input_type: str or ~azure.ai.inference.models.EmbeddingInputType
+    :ivar model: ID of the specific AI model to use, if more than one model is available on the
+     endpoint.
+    :vartype model: str
+    """
+
+    input: List["_models.ImageEmbeddingInput"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Input image to embed. To embed multiple inputs in a single request, pass an array.
+     The input must not exceed the max input tokens for the model. Required."""
+    dimensions: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional. The number of dimensions the resulting output embeddings should have.
+     Passing null causes the model to use its default value.
+     Returns a 422 error if the model doesn't support the value or parameter."""
+    encoding_format: Optional[Union[str, "_models.EmbeddingEncodingFormat"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. The number of dimensions the resulting output embeddings should have.
+     Passing null causes the model to use its default value.
+     Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+     \"base64\", \"binary\", \"float\", \"int8\", \"ubinary\", and \"uint8\"."""
+    input_type: Optional[Union[str, "_models.EmbeddingInputType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. The type of the input.
+     Returns a 422 error if the model doesn't support the value or parameter. Known values are:
+     \"text\", \"query\", and \"document\"."""
+    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """ID of the specific AI model to use, if more than one model is available on the endpoint."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        input: List["_models.ImageEmbeddingInput"],
+        dimensions: Optional[int] = None,
+        encoding_format: Optional[Union[str, "_models.EmbeddingEncodingFormat"]] = None,
+        input_type: Optional[Union[str, "_models.EmbeddingInputType"]] = None,
+        model: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1073,9 +1417,11 @@ class ImageUrl(_model_base.Model):
     :vartype detail: str or ~azure.ai.inference.models.ImageDetailLevel
     """
 
-    url: str = rest_field()
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The URL of the image. Required."""
-    detail: Optional[Union[str, "_models.ImageDetailLevel"]] = rest_field()
+    detail: Optional[Union[str, "_models.ImageDetailLevel"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The evaluation quality setting to use, which controls relative prioritization of speed, token
      consumption, and
      accuracy. Known values are: \"auto\", \"low\", and \"high\"."""
@@ -1109,9 +1455,11 @@ class InputAudio(_model_base.Model):
     :vartype format: str or ~azure.ai.inference.models.AudioContentFormat
     """
 
-    data: str = rest_field()
+    data: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Base64 encoded audio data. Required."""
-    format: Union[str, "_models.AudioContentFormat"] = rest_field()
+    format: Union[str, "_models.AudioContentFormat"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The audio format of the audio content. Required. Known values are: \"wav\" and \"mp3\"."""
 
     @overload
@@ -1157,17 +1505,17 @@ class JsonSchemaFormat(_model_base.Model):
     :vartype strict: bool
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A name that labels this JSON schema. Must be a-z, A-Z, 0-9, or contain underscores and dashes,
      with a maximum length of 64. Required."""
-    schema: Dict[str, Any] = rest_field()
+    schema: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The definition of the JSON schema. See https://json-schema.org/overview/what-is-jsonschema.
      Note that AI models usually only support a subset of the keywords defined by JSON schema.
      Consult your AI model documentation to determine what is supported. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A description of the response format, used by the AI model to determine how to generate
      responses in this format."""
-    strict: Optional[bool] = rest_field()
+    strict: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """If set to true, the service will error out if the provided JSON schema contains keywords
      not supported by the AI model. An example of such keyword may be ``maxLength`` for JSON type
      ``string``.
@@ -1210,13 +1558,13 @@ class ModelInfo(_model_base.Model):
     :vartype model_provider_name: str
     """
 
-    model_name: str = rest_field()
+    model_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the AI model. For example: ``Phi21``. Required."""
-    model_type: Union[str, "_models.ModelType"] = rest_field()
+    model_type: Union[str, "_models.ModelType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of the AI model. A Unique identifier for the profile. Required. Known values are:
      \"embeddings\", \"image_generation\", \"text_generation\", \"image_embeddings\",
      \"audio_generation\", and \"chat_completion\"."""
-    model_provider_name: str = rest_field()
+    model_provider_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The model provider name. For example: ``Microsoft Research``. Required."""
 
     @overload
@@ -1255,12 +1603,16 @@ class StreamingChatChoiceUpdate(_model_base.Model):
     :vartype delta: ~azure.ai.inference.models.StreamingChatResponseMessageUpdate
     """
 
-    index: int = rest_field()
+    index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ordered index associated with this chat completions choice. Required."""
-    finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field()
+    finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The reason that this chat completions choice completed its generated. Required. Known values
      are: \"stop\", \"length\", \"content_filter\", and \"tool_calls\"."""
-    delta: "_models.StreamingChatResponseMessageUpdate" = rest_field()
+    delta: "_models.StreamingChatResponseMessageUpdate" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An update to the chat message for a given chat completions prompt. Required."""
 
     @overload
@@ -1310,18 +1662,22 @@ class StreamingChatCompletionsUpdate(_model_base.Model):
     :vartype usage: ~azure.ai.inference.models.CompletionsUsage
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A unique identifier associated with this chat completions response. Required."""
-    created: datetime.datetime = rest_field(format="unix-timestamp")
+    created: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
     """The first timestamp associated with generation activity for this completions response,
      represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required."""
-    model: str = rest_field()
+    model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The model used for the chat completion. Required."""
-    choices: List["_models.StreamingChatChoiceUpdate"] = rest_field()
+    choices: List["_models.StreamingChatChoiceUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An update to the collection of completion choices associated with this completions response.
      Generally, ``n`` choices are generated per provided prompt with a default value of 1.
      Token limits and other settings may limit the number of choices generated. Required."""
-    usage: Optional["_models.CompletionsUsage"] = rest_field()
+    usage: Optional["_models.CompletionsUsage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Usage information for tokens processed and generated as part of this completions operation."""
 
     @overload
@@ -1360,12 +1716,16 @@ class StreamingChatResponseMessageUpdate(_model_base.Model):
     :vartype tool_calls: list[~azure.ai.inference.models.StreamingChatResponseToolCallUpdate]
     """
 
-    role: Optional[Union[str, "_models.ChatRole"]] = rest_field()
+    role: Optional[Union[str, "_models.ChatRole"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The chat role associated with the message. If present, should always be 'assistant'. Known
      values are: \"system\", \"user\", \"assistant\", \"tool\", and \"developer\"."""
-    content: Optional[str] = rest_field()
+    content: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The content of the message."""
-    tool_calls: Optional[List["_models.StreamingChatResponseToolCallUpdate"]] = rest_field()
+    tool_calls: Optional[List["_models.StreamingChatResponseToolCallUpdate"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The tool calls that must be resolved and have their outputs appended to subsequent input
      messages for the chat
      completions request to resolve as configured."""
@@ -1400,9 +1760,9 @@ class StreamingChatResponseToolCallUpdate(_model_base.Model):
     :vartype function: ~azure.ai.inference.models.FunctionCall
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the tool call. Required."""
-    function: "_models.FunctionCall" = rest_field()
+    function: "_models.FunctionCall" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Updates to the function call requested by the AI model. Required."""
 
     @overload
@@ -1434,10 +1794,10 @@ class TextContentItem(ContentItem, discriminator="text"):
     :vartype text: str
     """
 
-    type: Literal["text"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["text"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminated object type: always 'text' for this type. Required. Default value is
      \"text\"."""
-    text: str = rest_field()
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The content of the message. Required."""
 
     @overload
