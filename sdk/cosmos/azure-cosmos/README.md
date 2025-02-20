@@ -110,6 +110,25 @@ Always ensure that the managed identity you use for AAD authentication has `read
 More information on how to set up AAD authentication: [Set up RBAC for AAD authentication](https://learn.microsoft.com/azure/cosmos-db/how-to-setup-rbac) <br>
 More information on allowed operations for AAD authenticated clients: [RBAC Permission Model](https://aka.ms/cosmos-native-rbac)
 
+### Preferred Locations 
+To enable multi-region support in CosmosClient, set the preferredLocations parameter. 
+By default, all writes and reads go to the dedicated write region unless specified otherwise.
+The preferredLocations parameter accepts a list of regions for read requests.
+Requests are sent to the first region in the list, and if it fails, they move to the next region.
+
+For example, to set West US as the read region, and Central US as the backup read region, the code would look like this:
+```python
+from azure.cosmos import CosmosClient
+
+import os
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+client = CosmosClient(URL, credential=KEY, preferred_locations=["West US", "Central US"])
+```
+Also note that If all regions listed in preferred locations fail, read requests are sent to the main write region. 
+For example if the write region is set to East US, then `preferred_locations=["West US", "Central US"]`
+is equivalent to `preferred_locations=["West US", "Central US", "East US"]` since the client will send all requests to the write region if the preferred locations fail.
+
 ## Key concepts
 
 Once you've initialized a [CosmosClient][ref_cosmosclient], you can interact with the primary resource types in Cosmos DB:
