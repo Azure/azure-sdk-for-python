@@ -33,11 +33,11 @@ from ..rest import HttpResponse, AsyncHttpResponse
 from .decoders import StreamDecoder, AsyncStreamDecoder
 
 
-ReturnType = TypeVar("ReturnType")
+ReturnType_co = TypeVar("ReturnType_co", covariant=True)
 
 
-class Stream(Iterator[ReturnType]):
-    """Stream class for streaming JSONL or Server-Sent Events (SSE).
+class Stream(Iterator[ReturnType_co]):
+    """Stream class for streaming JSONL.
 
     :keyword response: The response object.
     :paramtype response: ~corehttp.rest.HttpResponse
@@ -45,7 +45,7 @@ class Stream(Iterator[ReturnType]):
     :paramtype decoder: ~corehttp.streaming.decoders.StreamDecoder
     :keyword deserialization_callback: A callback that takes JSON and returns a deserialized object.
     :paramtype deserialization_callback: Callable[[Any], ReturnType]
-    :keyword terminal_event: A terminal event that indicates the end of the SSE stream.
+    :keyword terminal_event: A terminal event that indicates the end of the stream.
     :paramtype terminal_event: Optional[str]
     """
 
@@ -54,7 +54,7 @@ class Stream(Iterator[ReturnType]):
         *,
         response: HttpResponse,
         decoder: StreamDecoder,
-        deserialization_callback: Callable[[Any], ReturnType],
+        deserialization_callback: Callable[[Any], ReturnType_co],
         terminal_event: Optional[str] = None,
     ) -> None:
         self._response = response
@@ -63,18 +63,18 @@ class Stream(Iterator[ReturnType]):
         self._terminal_event = terminal_event
         self._iterator = self._iter_results()
 
-    def __next__(self) -> ReturnType:
+    def __next__(self) -> ReturnType_co:
         return self._iterator.__next__()
 
-    def __iter__(self) -> Iterator[ReturnType]:
+    def __iter__(self) -> Iterator[ReturnType_co]:
         yield from self._iterator
 
-    def _iter_results(self) -> Iterator[ReturnType]:
+    def _iter_results(self) -> Iterator[ReturnType_co]:
         for event in self._decoder.iter_events(self._response.iter_bytes()):
-            if event.data == self._terminal_event:
+            if event == self._terminal_event:
                 break
 
-            result = self._deserialization_callback(event.json())
+            result = self._deserialization_callback(event)
             yield result
 
     def __exit__(
@@ -92,8 +92,8 @@ class Stream(Iterator[ReturnType]):
         self._response.close()
 
 
-class AsyncStream(AsyncIterator[ReturnType]):
-    """AsyncStream class for asynchronously streaming JSONL or Server-Sent Events (SSE).
+class AsyncStream(AsyncIterator[ReturnType_co]):
+    """AsyncStream class for asynchronously streaming JSONL.
 
     :keyword response: The response object.
     :paramtype response: ~corehttp.rest.AsyncHttpResponse
@@ -101,7 +101,7 @@ class AsyncStream(AsyncIterator[ReturnType]):
     :paramtype decoder: ~corehttp.streaming.decoders.AsyncStreamDecoder
     :keyword deserialization_callback: A callback that takes JSON and returns a deserialized object.
     :paramtype deserialization_callback: Callable[[Any], ReturnType]
-    :keyword terminal_event: A terminal event that indicates the end of the SSE stream.
+    :keyword terminal_event: A terminal event that indicates the end of the stream.
     :paramtype terminal_event: Optional[str]
     """
 
@@ -110,7 +110,7 @@ class AsyncStream(AsyncIterator[ReturnType]):
         *,
         response: AsyncHttpResponse,
         decoder: AsyncStreamDecoder,
-        deserialization_callback: Callable[[Any], ReturnType],
+        deserialization_callback: Callable[[Any], ReturnType_co],
         terminal_event: Optional[str] = None,
     ) -> None:
         self._response = response
@@ -119,19 +119,19 @@ class AsyncStream(AsyncIterator[ReturnType]):
         self._terminal_event = terminal_event
         self._iterator = self._iter_results()
 
-    async def __anext__(self) -> ReturnType:
+    async def __anext__(self) -> ReturnType_co:
         return await self._iterator.__anext__()
 
-    async def __aiter__(self) -> AsyncIterator[ReturnType]:  # pylint: disable=invalid-overridden-method
+    async def __aiter__(self) -> AsyncIterator[ReturnType_co]:  # pylint: disable=invalid-overridden-method
         async for item in self._iterator:
             yield item
 
-    async def _iter_results(self) -> AsyncIterator[ReturnType]:
+    async def _iter_results(self) -> AsyncIterator[ReturnType_co]:
         async for event in self._decoder.aiter_events(self._response.iter_bytes()):
-            if event.data == self._terminal_event:
+            if event == self._terminal_event:
                 break
 
-            result = self._deserialization_callback(event.json())
+            result = self._deserialization_callback(event)
             yield result
 
     async def __aexit__(
