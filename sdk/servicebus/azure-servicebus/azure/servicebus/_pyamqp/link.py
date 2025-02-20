@@ -167,18 +167,53 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._session._outgoing_attach(attach_frame)  # pylint: disable=protected-access
 
     def _incoming_attach(self, frame) -> None:
+        """Process incoming Attach frame to finish the link negotiation.
+         All properties not marked "Required" may be excluded from the frame. i.e. The length of the frame may
+         be less than 14. Note: If any properties are included, no prior properties may be excluded. Instead, they
+         may be set to None to indicate that the property is not present.
+
+        The incoming frame format is::
+
+            - frame[0]: name (str). Required.
+            - frame[1]: handle (int). Required.
+            - frame[2]: role (bool). Required.
+            - frame[3]: snd_settle_mode (Optional[int])
+            - frame[4]: rcv_settle_mode (Optional[int])
+            - frame[5]: source (Optional[Source])
+            - frame[6]: target (Optional[Target])
+            - frame[7]: unsettled (Optional[Dict])
+            - frame[8]: incomplete_unsettled (Optional[bool])
+            - frame[9]: initial_delivery_count (Optional[int])
+            - frame[10]: max_message_size (Optional[int])
+            - frame[11]: offered_capabilities (Optional[List[bytes]])
+            - frame[12]: desired_capabilities (Optional[List[bytes]])
+            - frame[13]: properties (Optional[Dict[bytes, bytes]])
+
+        :param frame: The incoming Attach frame.
+        :type frame: Tuple[Any, ...]
+        :rtype: None
+        """
         if self.network_trace:
             _LOGGER.debug("<- %r", AttachFrame(*frame), extra=self.network_trace_params)
         if self._is_closed:
             raise ValueError("Invalid link")
-        if not frame[5] or not frame[6]:
+        if len(frame) < 7 or not frame[5] or not frame[6]:
             _LOGGER.info("Cannot get source or target. Detaching link", extra=self.network_trace_params)
             self._set_state(LinkState.DETACHED)
             raise ValueError("Invalid link")
         self.remote_handle = frame[1]  # handle
-        self.remote_max_message_size = frame[10]  # max_message_size
-        self.offered_capabilities = frame[11]  # offered_capabilities
-        self.remote_properties = frame[13]  # incoming map of properties about the link
+        try:
+            self.remote_max_message_size = frame[10]  # max_message_size
+        except IndexError:
+            self.remote_max_message_size = None
+        try:
+            self.offered_capabilities = frame[11]  # offered_capabilities
+        except IndexError:
+            self.offered_capabilities = None
+        try:
+            self.remote_properties = frame[13]  # incoming map of properties about the link
+        except IndexError:
+            self.remote_properties = None
         if self.state == LinkState.DETACHED:
             self._set_state(LinkState.ATTACH_RCVD)
         elif self.state == LinkState.ATTACH_SENT:
@@ -220,6 +255,18 @@ class Link:  # pylint: disable=too-many-instance-attributes
             self._is_closed = True
 
     def _incoming_detach(self, frame) -> None:
+        """Process incoming Detach frame to handle link detachment.
+
+        The incoming frame format is::
+
+            - frame[0]: handle (int). Required.
+            - frame[1]: closed (bool). Required.
+            - frame[2]: error (Optional[Tuple[str, Optional[str], Optional[Dict[str, Any]]]])
+
+        :param frame: The incoming Detach frame.
+        :type frame: Tuple[Any, ...]
+        :rtype: None
+        """
         if self.network_trace:
             _LOGGER.debug("<- %r", DetachFrame(*frame), extra=self.network_trace_params)
         if self.state == LinkState.ATTACHED:
@@ -230,7 +277,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
             self._outgoing_attach()
             self._outgoing_detach(close=True)
         # TODO: on_detach_hook
-        if frame[2]:  # error
+        if len(frame) > 2 and frame[2]:  # error
             # frame[2][0] is condition, frame[2][1] is description, frame[2][2] is info
             error_cls = AMQPLinkRedirect if frame[2][0] == ErrorCondition.LinkRedirect else AMQPLinkError
             self._error = error_cls(condition=frame[2][0], description=frame[2][1], info=frame[2][2])

@@ -400,13 +400,16 @@ class Connection:  # pylint:disable=too-many-instance-attributes
 
     def _incoming_open(self, channel: int, frame) -> None:
         """Process incoming Open frame to finish the connection negotiation.
+         All properties not marked "Required" may be excluded from the frame. i.e. The length of the frame may
+         be less than 10. Note: If any properties are included, no prior properties may be excluded. Instead, they
+         may be set to None to indicate that the property is not present.
 
         The incoming frame format is::
 
-            - frame[0]: container_id (str)
-            - frame[1]: hostname (str)
-            - frame[2]: max_frame_size (int)
-            - frame[3]: channel_max (int)
+            - frame[0]: container_id (str). Required.
+            - frame[1]: hostname (Optional[str])
+            - frame[2]: max_frame_size (Optional[int])
+            - frame[3]: channel_max (Optional[int])
             - frame[4]: idle_timeout (Optional[int])
             - frame[5]: outgoing_locales (Optional[List[bytes]])
             - frame[6]: incoming_locales (Optional[List[bytes]])
@@ -433,27 +436,45 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         if self.state == ConnectionState.OPENED:
             _LOGGER.error("OPEN frame received in the OPENED state.", extra=self._network_trace_params)
             self.close()
-        if frame[4]:
-            self._remote_idle_timeout = cast(float, frame[4] / 1000)  # Convert to seconds
-            self._remote_idle_timeout_send_frame = self._idle_timeout_empty_frame_send_ratio * self._remote_idle_timeout
+        try:
+            if frame[4]:
+                self._remote_idle_timeout = cast(float, frame[4] / 1000)  # Convert to seconds
+                self._remote_idle_timeout_send_frame = self._idle_timeout_empty_frame_send_ratio * self._remote_idle_timeout
+        except IndexError:
+            # Optional idle_timeout field not present in frame.
+            pass
 
-        if frame[2] < 512:
-            # Max frame size is less than supported minimum.
-            # If any of the values in the received open frame are invalid then the connection shall be closed.
-            # The error amqp:invalid-field shall be set in the error.condition field of the CLOSE frame.
-            self.close(
-                error=AMQPError(
-                    condition=ErrorCondition.InvalidField,
-                    description="Failed parsing OPEN frame: Max frame size is less than supported minimum.",
+        try:
+            if frame[2] < 512:
+                # Max frame size is less than supported minimum.
+                # If any of the values in the received open frame are invalid then the connection shall be closed.
+                # The error amqp:invalid-field shall be set in the error.condition field of the CLOSE frame.
+                self.close(
+                    error=AMQPError(
+                        condition=ErrorCondition.InvalidField,
+                        description="Failed parsing OPEN frame: Max frame size is less than supported minimum.",
+                    )
                 )
-            )
-            _LOGGER.error(
-                "Failed parsing OPEN frame: Max frame size is less than supported minimum.",
-                extra=self._network_trace_params,
-            )
-            return
-        self._remote_max_frame_size = frame[2]
-        self._remote_properties = frame[9]
+                _LOGGER.error(
+                    "Failed parsing OPEN frame: Max frame size is less than supported minimum.",
+                    extra=self._network_trace_params,
+                )
+                return
+        except IndexError:
+            # Optional max_frame_size field not present in frame. Peer does not impose any specific limit and
+            # MUST NOT send frames larger than partner can handle.
+            pass
+
+        try:
+            self._remote_max_frame_size = frame[2]
+        except IndexError:
+            self._remote_max_frame_size = None
+
+        try:
+            self._remote_properties = frame[9] if len(frame) > 9 else None
+        except IndexError:
+            self._remote_properties = None
+
         if self.state == ConnectionState.OPEN_SENT:
             self._set_state(ConnectionState.OPENED)
         elif self.state == ConnectionState.HDR_EXCH:
@@ -518,13 +539,16 @@ class Connection:  # pylint:disable=too-many-instance-attributes
 
     def _incoming_begin(self, channel: int, frame: Tuple[Any, ...]) -> None:
         """Process incoming Begin frame to finish negotiating a new session.
+         All properties not marked "Required" may be excluded from the frame. i.e. The length of the frame may
+         be less than 8. Note: If any properties are included, no prior properties may be excluded. Instead, they
+         may be set to None to indicate that the property is not present.
 
         The incoming frame format is::
 
             - frame[0]: remote_channel (int)
-            - frame[1]: next_outgoing_id (int)
-            - frame[2]: incoming_window (int)
-            - frame[3]: outgoing_window (int)
+            - frame[1]: next_outgoing_id (int). Required.
+            - frame[2]: incoming_window (int). Required.
+            - frame[3]: outgoing_window (int). Required.
             - frame[4]: handle_max (int)
             - frame[5]: offered_capabilities (Optional[List[bytes]])
             - frame[6]: desired_capabilities (Optional[List[bytes]])
