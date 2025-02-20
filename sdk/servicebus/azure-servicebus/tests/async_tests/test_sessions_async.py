@@ -652,6 +652,9 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     async def test_async_session_by_servicebus_client_renew_client_locks(
         self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
     ):
+        if sys.platform.startswith("darwin"):
+            pytest.skip("Skipping for issue on MacOS.")
+
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = get_credential(is_async=True)
         async with ServiceBusClient(
