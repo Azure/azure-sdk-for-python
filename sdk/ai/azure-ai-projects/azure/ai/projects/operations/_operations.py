@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6813,7 +6813,6 @@ class TelemetryOperations:
     def _get_app_insights(
         self, app_insights_resource_url: str, **kwargs: Any
     ) -> _models._models.GetAppInsightsResponse:
-        # pylint: disable=line-too-long
         """Gets the properties of the specified Application Insights resource.
 
         :param app_insights_resource_url: The AppInsights Azure resource Url. It should have the
