@@ -27,10 +27,10 @@ import json
 import logging
 import sys
 from collections.abc import MutableMapping
-from typing import Callable
+from typing import Callable, Optional
 
 import aiohttp
-from azure.core.pipeline.transport import AioHttpTransport
+from azure.core.pipeline.transport import AioHttpTransport, AioHttpTransportResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -46,18 +46,16 @@ class FaultInjectionTransport(AioHttpTransport):
         self.responseTransformations = []
         super().__init__(session=session, loop=loop, session_owner=session_owner, **config)
 
-    def addFault(self, predicate: Callable[[HttpRequest], bool], faultFactory: Callable[[HttpRequest], asyncio.Task[Exception]]):
-        self.faults.append({"predicate": predicate, "apply": faultFactory})
+    def add_fault(self, predicate: Callable[[HttpRequest], bool], fault_factory: Callable[[HttpRequest], asyncio.Task[Exception]]):
+        self.faults.append({"predicate": predicate, "apply": fault_factory})
 
-    def addRequestTransformation(self, predicate: Callable[[HttpRequest], bool], requestTransformation: Callable[[HttpRequest], asyncio.Task[HttpRequest]]):
-        self.requestTransformations.append({"predicate": predicate, "apply": requestTransformation})
-
-    def add_response_transformation(self, predicate: Callable[[HttpRequest], bool], responseTransformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], asyncio.Task[AsyncHttpResponse]]):
+    def add_response_transformation(self, predicate: Callable[[HttpRequest], bool], response_transformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], asyncio.Task[AsyncHttpResponse]]):
         self.responseTransformations.append({
             "predicate": predicate, 
-            "apply": responseTransformation})    
+            "apply": response_transformation})
 
-    def firstItem(self, iterable, condition=lambda x: True):
+    @staticmethod
+    def __first_item(iterable, condition=lambda x: True):
         """
         Returns the first item in the `iterable` that satisfies the `condition`.
         
@@ -68,39 +66,41 @@ class FaultInjectionTransport(AioHttpTransport):
     async def send(self, request: HttpRequest, *, stream: bool = False, proxies: MutableMapping[str, str] | None = None, **config) -> AsyncHttpResponse:
         FaultInjectionTransport.logger.info("--> FaultInjectionTransport.Send {} {}".format(request.method, request.url))
         # find the first fault Factory with matching predicate if any
-        firstFaultFactory = self.firstItem(iter(self.faults), lambda f: f["predicate"](request))
-        if (firstFaultFactory != None):
+        first_fault_factory = FaultInjectionTransport.__first_item(iter(self.faults), lambda f: f["predicate"](request))
+        if first_fault_factory:
             FaultInjectionTransport.logger.info("--> FaultInjectionTransport.ApplyFaultInjection")
-            injectedError = await firstFaultFactory["apply"]()
-            FaultInjectionTransport.logger.info("Found to-be-injected error {}".format(injectedError))
-            raise injectedError
+            injected_error = await first_fault_factory["apply"](request)
+            FaultInjectionTransport.logger.info("Found to-be-injected error {}".format(injected_error))
+            raise injected_error
 
         # apply the chain of request transformations with matching predicates if any
-        matchingRequestTransformations = filter(lambda f: f["predicate"](f["predicate"]), iter(self.requestTransformations))
-        for currentTransformation in matchingRequestTransformations:
+        matching_request_transformations = filter(lambda f: f["predicate"](f["predicate"]), iter(self.requestTransformations))
+        for currentTransformation in matching_request_transformations:
             FaultInjectionTransport.logger.info("--> FaultInjectionTransport.ApplyRequestTransformation")
             request = await currentTransformation["apply"](request)
 
-        firstResponseTransformation = self.firstItem(iter(self.responseTransformations), lambda f: f["predicate"](request))
+        first_response_transformation = FaultInjectionTransport.__first_item(iter(self.responseTransformations), lambda f: f["predicate"](request))
 
         FaultInjectionTransport.logger.info("--> FaultInjectionTransport.BeforeGetResponseTask")
-        getResponseTask =  asyncio.create_task(super().send(request, stream=stream, proxies=proxies, **config))
+        get_response_task =  asyncio.create_task(super().send(request, stream=stream, proxies=proxies, **config))
         FaultInjectionTransport.logger.info("<-- FaultInjectionTransport.AfterGetResponseTask")
 
-        if (firstResponseTransformation != None):
+        if first_response_transformation:
             FaultInjectionTransport.logger.info(f"Invoking response transformation")
-            response = await firstResponseTransformation["apply"](request, lambda: getResponseTask)
+            response = await first_response_transformation["apply"](request, lambda: get_response_task)
+            response.headers["_request"] = request
             FaultInjectionTransport.logger.info(f"Received response transformation result with status code {response.status_code}")
             return response
         else:
             FaultInjectionTransport.logger.info(f"Sending request to {request.url}")
-            response = await getResponseTask
+            response = await get_response_task
+            response.headers["_request"] = request
             FaultInjectionTransport.logger.info(f"Received response with status code {response.status_code}")
             return response
 
     @staticmethod
-    def predicate_url_contains_id(r: HttpRequest, id: str) -> bool:
-        return id in r.url
+    def predicate_url_contains_id(r: HttpRequest, id_value: str) -> bool:
+        return id_value in r.url
 
     @staticmethod
     def print_call_stack():
@@ -111,42 +111,41 @@ class FaultInjectionTransport(AioHttpTransport):
             frame = frame.f_back
 
     @staticmethod
-    def predicate_req_payload_contains_id(r: HttpRequest, id: str):
+    def predicate_req_payload_contains_id(r: HttpRequest, id_value: str):
         if r.body is None:
             return False
 
-        return '"id":"{}"'.format(id) in r.body
+        return '"id":"{}"'.format(id_value) in r.body
 
     @staticmethod
-    def predicate_req_for_document_with_id(r: HttpRequest, id: str) -> bool:
-        return (FaultInjectionTransport.predicate_url_contains_id(r, id)
-                or FaultInjectionTransport.predicate_req_payload_contains_id(r, id))
+    def predicate_req_for_document_with_id(r: HttpRequest, id_value: str) -> bool:
+        return (FaultInjectionTransport.predicate_url_contains_id(r, id_value)
+                or FaultInjectionTransport.predicate_req_payload_contains_id(r, id_value))
 
     @staticmethod
     def predicate_is_database_account_call(r: HttpRequest) -> bool:
-        isDbAccountRead = (r.headers.get('x-ms-thinclient-proxy-resource-type') == 'databaseaccount'
+        is_db_account_read = (r.headers.get('x-ms-thinclient-proxy-resource-type') == 'databaseaccount'
                 and r.headers.get('x-ms-thinclient-proxy-operation-type') == 'Read')
 
-        return isDbAccountRead
+        return is_db_account_read
 
     @staticmethod
     def predicate_is_write_operation(r: HttpRequest, uri_prefix: str) -> bool:
-        isWriteDocumentOperation = (r.headers.get('x-ms-thinclient-proxy-resource-type') == 'docs'
+        is_write_document_operation = (r.headers.get('x-ms-thinclient-proxy-resource-type') == 'docs'
                 and r.headers.get('x-ms-thinclient-proxy-operation-type') != 'Read'
                 and r.headers.get('x-ms-thinclient-proxy-operation-type') != 'ReadFeed'
                 and r.headers.get('x-ms-thinclient-proxy-operation-type') != 'Query')
 
-        return isWriteDocumentOperation and uri_prefix in r.url
-
+        return is_write_document_operation and uri_prefix in r.url
 
     @staticmethod
-    async def throw_after_delay(delay_in_ms: int, error: Exception):
+    async def error_after_delay(delay_in_ms: int, error: Exception) -> Exception:
         await asyncio.sleep(delay_in_ms / 1000.0)
-        raise error
+        return error
 
     @staticmethod
-    async def throw_write_forbidden():
-        raise CosmosHttpResponseError(
+    async def error_write_forbidden() -> Exception:
+        return CosmosHttpResponseError(
             status_code=403,
             message="Injected error disallowing writes in this region.",
             response=None,
@@ -154,8 +153,11 @@ class FaultInjectionTransport(AioHttpTransport):
         )
 
     @staticmethod
-    async def transform_convert_emulator_to_single_master_read_multi_region_account(r: HttpRequest,
-                                     inner: Callable[[],asyncio.Task[AsyncHttpResponse]]) -> asyncio.Task[AsyncHttpResponse]:
+    async def transform_convert_emulator_to_single_master_read_multi_region_account(
+            additional_region: str,
+            artificial_uri: str,
+            r: HttpRequest,
+            inner: Callable[[],asyncio.Task[AsyncHttpResponse]]) -> asyncio.Task[AsyncHttpResponse]:
 
         response = await inner()
         if not FaultInjectionTransport.predicate_is_database_account_call(response.request):
@@ -166,6 +168,39 @@ class FaultInjectionTransport(AioHttpTransport):
         if response.status_code == 200 and data:
             data = data.decode("utf-8")
             result = json.loads(data)
-            result["readableLocations"].append({"name": "East US", "databaseAccountEndpoint" : "https://localhost:8888/"})
+            result["readableLocations"].append({"name": additional_region, "databaseAccountEndpoint" : artificial_uri})
             FaultInjectionTransport.logger.info("Transformed Account Topology: {}".format(result))
+            request: HttpRequest = response.request
+            return FaultInjectionTransport.MockHttpResponse(request, 200, result)
+
         return response
+
+    class MockHttpResponse(AioHttpTransportResponse):
+        def __init__(self, request: HttpRequest, status_code: int, content:Optional[dict[str, any]]):
+            self.request: HttpRequest = request
+            # This is actually never None, and set by all implementations after the call to
+            # __init__ of this class. This class is also a legacy impl, so it's risky to change it
+            # for low benefits The new "rest" implementation does define correctly status_code
+            # as non-optional.
+            self.status_code: int = status_code
+            self.headers: MutableMapping[str, str] = {}
+            self.reason: Optional[str] = None
+            self.content_type: Optional[str] = None
+            self.block_size: int = 4096  # Default to same as R
+            self.content: Optional[dict[str, any]] = None
+            self.json_text: Optional[str] = None
+            self.bytes: Optional[bytes] = None
+            if content:
+                self.content:Optional[dict[str, any]] = content
+                self.json_text:Optional[str] = json.dumps(content)
+                self.bytes:bytes = self.json_text.encode("utf-8")
+
+
+        def body(self) -> bytes:
+            return self.bytes
+
+        def text(self, encoding: Optional[str] = None) -> str:
+            return self.json_text
+
+        async def load_body(self) -> None:
+            return
