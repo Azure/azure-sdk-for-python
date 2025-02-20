@@ -24,6 +24,8 @@ from ci_tools.parsing import ParsedSetup
 from pkg_resources import parse_requirements, RequirementParseError
 import logging
 
+import coverage
+
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
@@ -44,6 +46,15 @@ def combine_coverage_files(targeted_packages):
         # for every individual coverage file, run coverage combine to combine path
         for package_dir in [package for package in targeted_packages]:
             coverage_file = os.path.join(package_dir, ".coverage")
+
+            try:
+                cov = coverage.Coverage(data_file=coverage_file, config_file=tox_ini_file)
+                cov.load()
+                report = cov.report()
+                logging.info("Total coverage before combine with rcfile and as I collect it is{:.2f}%".format(report))
+            except Exception as e:
+                logging.error(e)
+
             if os.path.isfile(coverage_file):
                 cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
                 # tox.ini file has coverage paths to combine
@@ -66,6 +77,13 @@ def collect_tox_coverage_files(targeted_packages):
     for package_dir in [package for package in targeted_packages]:
         coverage_file = os.path.join(package_dir, ".coverage")
         if os.path.isfile(coverage_file):
+            try:
+                cov = coverage.Coverage(data_file=coverage_file)
+                cov.load()
+                report = cov.report()
+                logging.info("Coverage before moving file out of tox dir and as I collect it is{:.2f}%".format(report))
+            except Exception as e:
+                logging.error(e)
             destination_file = os.path.join(root_coverage_dir, ".coverage_{}".format(os.path.basename(package_dir)))
             shutil.copyfile(coverage_file, destination_file)
             coverage_files.append(destination_file)
