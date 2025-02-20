@@ -34,6 +34,7 @@ from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options
 from ..permission import Permission
 
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 class UserProxy:
     """An interface to interact with a specific user.

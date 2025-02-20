@@ -44,7 +44,6 @@ class MyEventHandler(AsyncAgentEventHandler[str]):
         super().__init__()
         self.functions = functions
         self.project_client = project_client
-        super().__init__()
 
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         print(f"Text delta received: {delta.text}")
@@ -77,10 +76,9 @@ class MyEventHandler(AsyncAgentEventHandler[str]):
 
             print(f"Tool outputs: {tool_outputs}")
             if tool_outputs:
-                async with await self.project_client.agents.submit_tool_outputs_to_stream(
+                await self.project_client.agents.submit_tool_outputs_to_stream(
                     thread_id=run.thread_id, run_id=run.id, tool_outputs=tool_outputs, event_handler=self
-                ) as stream:
-                    await stream.until_done()
+                )
 
     async def on_run_step(self, step: "RunStep") -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")

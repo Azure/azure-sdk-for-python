@@ -179,8 +179,12 @@ class StressTestRunner:
             type=str,
             default="Error",
         )
+        # rotate logs by default, if you want to disable it, use --no-rotating-logs flag
+        parser.add_argument("--no-rotating-logs", action="store_true")
         self.args, _ = parser.parse_known_args()
 
+        # store rotating_logs in args for later use
+        self.rotating_logs = not self.args.no_rotating_logs
         if self.args.send_partition_key and self.args.send_partition_id:
             raise ValueError("Cannot set send_partition_key and send_partition_id at the same time.")
 
@@ -298,6 +302,7 @@ class StressTestRunner:
                 method_name,
                 level=self.debug_level,
                 print_console=self.args.print_console,
+                rotating_logs=self.rotating_logs,
             )
             test_method = globals()[method_name]
             self.running = True
@@ -401,7 +406,7 @@ class StressTestRunner:
             logdir = os.environ.get("DEBUG_SHARE")
             logfilepath = f"{logdir}/{log_filename}"
 
-            logger = get_logger(logfilepath, method_name, level=self.debug_level, print_console=self.args.print_console)
+            logger = get_logger(logfilepath, method_name, level=self.debug_level, print_console=self.args.print_console, rotating_logs=self.rotating_logs)
             test_method = globals()[method_name]
             self.running = True
 

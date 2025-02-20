@@ -667,7 +667,6 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         """
         self._swept = True
         # inputs & outputs are already built in source Command obj
-        # pylint: disable=abstract-class-instantiated
         inputs, inputs_search_space = Sweep._get_origin_inputs_and_search_space(self.inputs)
         if search_space:
             inputs_search_space.update(search_space)
@@ -929,6 +928,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
                 # use setattr here to make sure owner of input won't change
                 if not isinstance(original_output, str):
                     setattr(node.outputs, name, original_output._data)
+                    node._job_outputs[name] = original_output._data
             self._refine_optional_inputs_with_no_value(node, kwargs)
             # set default values: compute, environment_variables, outputs
             # won't copy name to be able to distinguish if a node's name is assigned by user

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access, unnecessary-comprehension
+# pylint: disable=protected-access
 
 import logging
 from abc import ABC

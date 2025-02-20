@@ -3,6 +3,8 @@
 
 import unittest
 
+import pytest
+
 import azure.cosmos.diagnostics as m
 
 _common = {
@@ -18,6 +20,7 @@ _headers = dict(zip(_common, _common))
 _headers['other'] = 'other'
 
 
+@pytest.mark.cosmosEmulator
 class TestOldDiagnostics(unittest.TestCase):
 
     def test_init(self):

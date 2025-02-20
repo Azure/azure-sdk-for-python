@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=protected-access, arguments-differ, signature-differs, broad-except
+# pylint: disable=protected-access, broad-except
 
 import calendar
 import decimal
@@ -507,7 +507,7 @@ class Model(_MyMutableMapping):
     def copy(self) -> "Model":
         return Model(self.__dict__)
 
-    def __new__(cls, *args: typing.Any, **kwargs: typing.Any) -> Self:  # pylint: disable=unused-argument
+    def __new__(cls, *args: typing.Any, **kwargs: typing.Any) -> Self:
         # we know the last three classes in mro are going to be 'Model', 'dict', and 'object'
         mros = cls.__mro__[:-3][::-1]  # ignore model, dict, and object parents, and reverse the mro order
         attr_to_rest_field: typing.Dict[str, _RestField] = {  # map attribute name to rest_field property
@@ -516,8 +516,8 @@ class Model(_MyMutableMapping):
         annotations = {
             k: v
             for mro_class in mros
-            if hasattr(mro_class, "__annotations__")  # pylint: disable=no-member
-            for k, v in mro_class.__annotations__.items()  # pylint: disable=no-member
+            if hasattr(mro_class, "__annotations__")
+            for k, v in mro_class.__annotations__.items()
         }
         for attr, rf in attr_to_rest_field.items():
             rf._module = cls.__module__
@@ -531,25 +531,23 @@ class Model(_MyMutableMapping):
 
     def __init_subclass__(cls, discriminator: typing.Optional[str] = None) -> None:
         for base in cls.__bases__:
-            if hasattr(base, "__mapping__"):  # pylint: disable=no-member
-                base.__mapping__[discriminator or cls.__name__] = cls  # type: ignore  # pylint: disable=no-member
+            if hasattr(base, "__mapping__"):
+                base.__mapping__[discriminator or cls.__name__] = cls  # type: ignore
 
     @classmethod
     def _get_discriminator(cls, exist_discriminators) -> typing.Optional[str]:
         for v in cls.__dict__.values():
-            if (
-                isinstance(v, _RestField) and v._is_discriminator and v._rest_name not in exist_discriminators
-            ):  # pylint: disable=protected-access
+            if isinstance(v, _RestField) and v._is_discriminator and v._rest_name not in exist_discriminators:
                 return v._rest_name  # pylint: disable=protected-access
         return None
 
     @classmethod
     def _deserialize(cls, data, exist_discriminators):
-        if not hasattr(cls, "__mapping__"):  # pylint: disable=no-member
+        if not hasattr(cls, "__mapping__"):
             return cls(data)
         discriminator = cls._get_discriminator(exist_discriminators)
         exist_discriminators.append(discriminator)
-        mapped_cls = cls.__mapping__.get(data.get(discriminator), cls)  # pyright: ignore # pylint: disable=no-member
+        mapped_cls = cls.__mapping__.get(data.get(discriminator), cls)  # pyright: ignore
         if mapped_cls == cls:
             return cls(data)
         return mapped_cls._deserialize(data, exist_discriminators)  # pylint: disable=protected-access
@@ -566,7 +564,10 @@ class Model(_MyMutableMapping):
         if exclude_readonly:
             readonly_props = [p._rest_name for p in self._attr_to_rest_field.values() if _is_readonly(p)]
         for k, v in self.items():
-            if exclude_readonly and k in readonly_props:  # pyright: ignore
+            if (
+                exclude_readonly
+                and k in readonly_props  # pyright: ignore # pylint: disable=possibly-used-before-assignment
+            ):
                 continue
             is_multipart_file_input = False
             try:
@@ -640,7 +641,7 @@ def _deserialize_sequence(
     return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)
 
 
-def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, R0912
+def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911
     annotation: typing.Any,
     module: typing.Optional[str],
     rf: typing.Optional["_RestField"] = None,

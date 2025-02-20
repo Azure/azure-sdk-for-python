@@ -26,6 +26,8 @@ import warnings
 from datetime import datetime
 from typing import Any, Dict, Tuple
 
+# pylint: disable=docstring-keyword-should-match-keyword-only
+
 CHANGE_FEED_MODES = ["LatestVersion", "AllVersionsAndDeletes"]
 
 def add_args_to_kwargs(

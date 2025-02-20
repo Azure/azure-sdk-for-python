@@ -1,5 +1,14 @@
 # Release History
 
+## 1.2.0 (2025-02-11)
+
+### Features Added
+- GA release of Number Insight.
+- API version `2025-02-11` is the default.
+
+## Other changes
+- Updated `search_operator_information` method signature to enforce `options` as a keyword-only argument.
+
 ## 1.2.0b2 (2024-03-01)
 
 ### Features Added
@@ -92,4 +101,4 @@
 <!-- LINKS -->
 
 [read_me]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-phonenumbers/README.md
-[documentation]: https://docs.microsoft.com/azure/communication-services/quickstarts/access-tokens?pivots=programming-language-python
+[documentation]: https://learn.microsoft.com/azure/communication-services/quickstarts/access-tokens?pivots=programming-language-python

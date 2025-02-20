@@ -1671,7 +1671,7 @@ class ExperimentQueryParams(msrest.serialization.Model):
     :ivar filter: Allows for filtering the collection of resources.
      The expression specified is evaluated for each resource in the collection, and only items
      where the expression evaluates to true are included in the response.
-     See https://docs.microsoft.com/en-us/azure/search/query-odata-filter-orderby-syntax for
+     See https://learn.microsoft.com/azure/search/query-odata-filter-orderby-syntax for
      details on the expression syntax.
     :vartype filter: str
     :ivar continuation_token: The continuation token to use for getting the next set of resources.
@@ -1710,7 +1710,7 @@ class ExperimentQueryParams(msrest.serialization.Model):
         :keyword filter: Allows for filtering the collection of resources.
          The expression specified is evaluated for each resource in the collection, and only items
          where the expression evaluates to true are included in the response.
-         See https://docs.microsoft.com/en-us/azure/search/query-odata-filter-orderby-syntax for
+         See https://learn.microsoft.com/azure/search/query-odata-filter-orderby-syntax for
          details on the expression syntax.
         :paramtype filter: str
         :keyword continuation_token: The continuation token to use for getting the next set of
@@ -3041,7 +3041,7 @@ class QueryParams(msrest.serialization.Model):
     :ivar filter: Allows for filtering the collection of resources.
      The expression specified is evaluated for each resource in the collection, and only items
      where the expression evaluates to true are included in the response.
-     See https://docs.microsoft.com/en-us/azure/search/query-odata-filter-orderby-syntax for
+     See https://learn.microsoft.com/azure/search/query-odata-filter-orderby-syntax for
      details on the expression syntax.
     :vartype filter: str
     :ivar continuation_token: The continuation token to use for getting the next set of resources.
@@ -3075,7 +3075,7 @@ class QueryParams(msrest.serialization.Model):
         :keyword filter: Allows for filtering the collection of resources.
          The expression specified is evaluated for each resource in the collection, and only items
          where the expression evaluates to true are included in the response.
-         See https://docs.microsoft.com/en-us/azure/search/query-odata-filter-orderby-syntax for
+         See https://learn.microsoft.com/azure/search/query-odata-filter-orderby-syntax for
          details on the expression syntax.
         :paramtype filter: str
         :keyword continuation_token: The continuation token to use for getting the next set of

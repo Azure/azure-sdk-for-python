@@ -67,9 +67,9 @@ def _upload_file_helper(
     timeout: Optional[int],
     max_concurrency: int,
     file_settings: "StorageConfiguration",
-    file_attributes: Union[str, "NTFSAttributes"] = "none",
-    file_creation_time: Optional[Union[str, datetime]] = "now",
-    file_last_write_time: Optional[Union[str, datetime]] = "now",
+    file_attributes: Optional[Union[str, "NTFSAttributes"]] = None,
+    file_creation_time: Optional[Union[str, datetime]] = None,
+    file_last_write_time: Optional[Union[str, datetime]] = None,
     file_permission: Optional[str] = None,
     file_permission_key: Optional[str] = None,
     progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
@@ -356,9 +356,9 @@ class ShareFileClient(StorageAccountHostsMixin):
     @distributed_trace
     def create_file(
         self, size: int,
-        file_attributes: Optional[Union[str, "NTFSAttributes"]] = "none",
-        file_creation_time: Optional[Union[str, datetime]] = "now",
-        file_last_write_time: Optional[Union[str, datetime]] = "now",
+        file_attributes: Optional[Union[str, "NTFSAttributes"]] = None,
+        file_creation_time: Optional[Union[str, datetime]] = None,
+        file_last_write_time: Optional[Union[str, datetime]] = None,
         file_permission: Optional[str] = None,
         permission_key: Optional[str] = None,
         **kwargs: Any
@@ -374,13 +374,13 @@ class ShareFileClient(StorageAccountHostsMixin):
             If not set, the default value would be "None" and the attributes will be set to "Archive".
             Here is an example for when the var type is str: 'Temporary|Archive'.
             file_attributes value is not case sensitive.
-        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
+        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes or None
         :param file_creation_time: Creation time for the file
             Default value: Now.
-        :type file_creation_time: str or ~datetime.datetime
+        :type file_creation_time: str or ~datetime.datetime or None
         :param file_last_write_time: Last write time for the file
             Default value: Now.
-        :type file_last_write_time: str or ~datetime.datetime
+        :type file_last_write_time: str or ~datetime.datetime or None
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -416,6 +416,12 @@ class ShareFileClient(StorageAccountHostsMixin):
             .. versionadded:: 12.1.0
 
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword str owner:
+            NFS only. The owner of the file.
+        :keyword str group:
+            NFS only. The owning group of the file.
+        :keyword str file_mode:
+            NFS only. The file mode of the file.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -450,13 +456,13 @@ class ShareFileClient(StorageAccountHostsMixin):
                 file_content_language=content_settings.content_language,
                 file_content_disposition=content_settings.content_disposition
             )
-        file_permission = _get_file_permission(file_permission, permission_key, 'Inherit')
+        file_permission = _get_file_permission(file_permission, permission_key, None)
         file_change_time = kwargs.pop('file_change_time', None)
         try:
             return cast(Dict[str, Any], self._client.file.create(
                 file_content_length=size,
                 metadata=metadata,
-                file_attributes=str(file_attributes),
+                file_attributes=str(file_attributes) if file_attributes is not None else file_attributes,
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_change_time=_datetime_to_str(file_change_time),
@@ -475,9 +481,9 @@ class ShareFileClient(StorageAccountHostsMixin):
     def upload_file(
         self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
         length: Optional[int] = None,
-        file_attributes: Union[str, "NTFSAttributes"] = "none",
-        file_creation_time: Optional[Union[str, datetime]] = "now",
-        file_last_write_time: Optional[Union[str, datetime]] = "now",
+        file_attributes: Optional[Union[str, "NTFSAttributes"]] = None,
+        file_creation_time: Optional[Union[str, datetime]] = None,
+        file_last_write_time: Optional[Union[str, datetime]] = None,
         file_permission: Optional[str] = None,
         permission_key: Optional[str] = None,
         **kwargs
@@ -657,7 +663,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
                 This parameter was introduced in API version '2019-07-07'.
 
-        :paramtype file_attributes: str or :class:`~azure.storage.fileshare.NTFSAttributes`
+        :paramtype file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
         :keyword file_creation_time:
             This value can be set to "source" to copy the creation time from the source file to the target file,
             or a datetime to set as creation time on the target file. This could also be a string in ISO 8601 format.
@@ -713,6 +719,26 @@ class ShareFileClient(StorageAccountHostsMixin):
             .. versionadded:: 12.1.0
 
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword str owner:
+            NFS only. The owner of the file.
+        :keyword str group:
+            NFS only. The owning group of the file.
+        :keyword str file_mode:
+            NFS only. The file mode of the file.
+        :keyword mode_copy_mode:
+            NFS only. Applicable only when the copy source is a File. Determines the copy behavior
+            of the mode bits of the file. Possible values are:
+
+            source - The mode on the destination file is copied from the source file.
+            override - The mode on the destination file is determined via the file_mode keyword.
+        :paramtype mode_copy_mode: Literal['source', 'override']
+        :keyword owner_copy_mode:
+            NFS only. Applicable only when the copy source is a File. Determines the copy behavior
+            of the owner and group of the file. Possible values are:
+
+            source - The owner and group on the destination file is copied from the source file.
+            override - The owner and group on the destination file is determined via the owner and group keywords.
+        :paramtype owner_copy_mode: Literal['source', 'override']
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -734,6 +760,11 @@ class ShareFileClient(StorageAccountHostsMixin):
         metadata = kwargs.pop('metadata', None)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         timeout = kwargs.pop('timeout', None)
+        owner = kwargs.pop('owner', None)
+        group = kwargs.pop('group', None)
+        file_mode = kwargs.pop('file_mode', None)
+        file_mode_copy_mode = kwargs.pop('mode_copy_mode', None)
+        file_owner_copy_mode = kwargs.pop('owner_copy_mode', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         kwargs.update(get_smb_properties(kwargs))
@@ -742,6 +773,11 @@ class ShareFileClient(StorageAccountHostsMixin):
                 source_url,
                 metadata=metadata,
                 lease_access_conditions=access_conditions,
+                owner=owner,
+                group=group,
+                file_mode=file_mode,
+                file_mode_copy_mode=file_mode_copy_mode,
+                file_owner_copy_mode=file_owner_copy_mode,
                 headers=headers,
                 cls=return_response_headers,
                 timeout=timeout,
@@ -1069,9 +1105,9 @@ class ShareFileClient(StorageAccountHostsMixin):
     @distributed_trace
     def set_http_headers(
         self, content_settings: "ContentSettings",
-        file_attributes: Union[str, "NTFSAttributes"] = "preserve",
-        file_creation_time: Optional[Union[str, datetime]] = "preserve",
-        file_last_write_time: Optional[Union[str, datetime]] = "preserve",
+        file_attributes: Optional[Union[str, "NTFSAttributes"]] = None,
+        file_creation_time: Optional[Union[str, datetime]] = None,
+        file_last_write_time: Optional[Union[str, datetime]] = None,
         file_permission: Optional[str] = None,
         permission_key: Optional[str] = None,
         **kwargs: Any
@@ -1085,13 +1121,13 @@ class ShareFileClient(StorageAccountHostsMixin):
             The file system attributes for files and directories.
             If not set, indicates preservation of existing values.
             Here is an example for when the var type is str: 'Temporary|Archive'
-        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes
+        :type file_attributes: str or ~azure.storage.fileshare.NTFSAttributes or None
         :param file_creation_time: Creation time for the file
             Default value: Preserve.
-        :type file_creation_time: str or ~datetime.datetime
+        :type file_creation_time: str or ~datetime.datetime or None
         :param file_last_write_time: Last write time for the file
             Default value: Preserve.
-        :type file_last_write_time: str or ~datetime.datetime
+        :type file_last_write_time: str or ~datetime.datetime or None
         :param file_permission: If specified the permission (security
             descriptor) shall be set for the directory/file. This header can be
             used if Permission size is <= 8KB, else x-ms-file-permission-key
@@ -1121,6 +1157,12 @@ class ShareFileClient(StorageAccountHostsMixin):
             .. versionadded:: 12.1.0
 
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword str owner:
+            NFS only. The owner of the file.
+        :keyword str group:
+            NFS only. The owning group of the file.
+        :keyword str file_mode:
+            NFS only. The file mode of the file.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -1141,13 +1183,13 @@ class ShareFileClient(StorageAccountHostsMixin):
             file_content_language=content_settings.content_language,
             file_content_disposition=content_settings.content_disposition
         )
-        file_permission = _get_file_permission(file_permission, permission_key, 'preserve')
+        file_permission = _get_file_permission(file_permission, permission_key, None)
         file_change_time = kwargs.pop('file_change_time', None)
         try:
             return cast(Dict[str, Any], self._client.file.set_http_headers(
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
-                file_attributes=str(file_attributes),
+                file_attributes=str(file_attributes) if file_attributes is not None else file_attributes,
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_change_time=_datetime_to_str(file_change_time),
@@ -1538,9 +1580,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         try:
             return cast(Dict[str, Any], self._client.file.set_http_headers(
                 file_content_length=size,
-                file_attributes="preserve",
-                file_creation_time="preserve",
-                file_last_write_time="preserve",
+                file_attributes=None,
+                file_creation_time=None,
+                file_last_write_time=None,
                 file_permission="preserve",
                 lease_access_conditions=access_conditions,
                 cls=return_response_headers,
@@ -1657,3 +1699,41 @@ class ShareFileClient(StorageAccountHostsMixin):
             'closed_handles_count': total_closed,
             'failed_handles_count': total_failed
         }
+
+    @distributed_trace
+    def create_hard_link(
+        self, target: str,
+        *,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
+        """NFS only. Create a hard link to the file specified by path.
+
+        :param str target:
+            Specifies the path of the target file to which the link will be created, up to 2 KiB in length.
+            It should be the full path of the target starting from the root. The target file must be in the
+            same share and the same storage account.
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`__.
+        :returns: File-updated property dict (ETag and last modified).
+        :rtype: dict[str, Any]
+        """
+        try:
+            return cast(Dict[str, Any], self._client.file.create_hard_link(
+                target_file=target,
+                lease_access_conditions=lease,
+                timeout=timeout,
+                cls=return_response_headers,
+                **kwargs
+            ))
+        except HttpResponseError as error:
+            process_storage_error(error)

@@ -322,7 +322,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         if not isinstance(self.component, Component):
             return validation_result
         for key, meta in self.component.inputs.items():
-            if key not in used_pipeline_inputs:
+            if key not in used_pipeline_inputs:  # pylint: disable=possibly-used-before-assignment
                 # Only validate inputs certainly used.
                 continue
             # raise error when required input with no default value not set
@@ -493,7 +493,6 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         """
         component = self._to_component(context, **kwargs)
 
-        # pylint: disable=abstract-class-instantiated
         return Pipeline(
             component=component,
             compute=self.compute,
@@ -538,7 +537,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             source = ComponentSource.REMOTE_WORKSPACE_JOB
             rest_component_jobs = {}
         # add _source on pipeline job.settings
-        if "_source" not in settings_dict:
+        if "_source" not in settings_dict:  # pylint: disable=possibly-used-before-assignment
             settings_dict.update({"_source": source})
 
         # TODO: Revisit this logic when multiple types of component jobs are supported
@@ -650,7 +649,6 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
                 path_first_occurrence[component_path] = node_name
 
         # use this instead of azure.ai.ml.entities._util.load_from_dict to avoid parsing
-        # pylint: disable=no-member
         loaded_schema = cls._create_schema_for_validation(context=context).load(data, **kwargs)
 
         # replace repeat component with first occurrence to reduce arm id resolution

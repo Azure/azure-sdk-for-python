@@ -11,7 +11,7 @@ products:
 
 These code samples show common scenario operations with the Azure Maps Search client library.
 
-Authenticate the client with a Azure Maps Search [API Key Credential](https://docs.microsoft.com/azure/azure-maps/how-to-manage-account-keys):
+Authenticate the client with a Azure Maps Search [API Key Credential](https://learn.microsoft.com/azure/azure-maps/how-to-manage-account-keys):
 
 Then for common Azure Maps Search operations:
 
@@ -51,9 +51,9 @@ Then for common Azure Maps Search operations:
 
 ## Next steps
 
-Check out the [API reference documentation](https://docs.microsoft.com/rest/api/maps/search)
+Check out the [API reference documentation](https://learn.microsoft.com/rest/api/maps/search)
 to learn more about what you can do with the Azure Maps Search client library.
 
 <!-- LINKS -->
 [azure_portal]: https://portal.azure.com
-[azure_cli]: https://docs.microsoft.com/cli/azure
+[azure_cli]: https://learn.microsoft.com/cli/azure

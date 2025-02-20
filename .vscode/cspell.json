@@ -33,6 +33,8 @@
     "sdk/batch/azure-batch/**",
     "sdk/ai/**/index/**",
     "sdk/ai/azure-ai-generative/tests/**",
+    "sdk/ai/azure-ai-inference/samples/hello_how_are_you.mp3",
+    "sdk/ai/azure-ai-inference/tests/hello_how_are_you.mp3",
     "sdk/ai/azure-ai-projects/samples/agents/nifty_500_quarterly_results.csv",
     "/sdk/ai/azure-ai-projects/samples/evaluations/async_samples/data/**",
     "/sdk/ai/azure-ai-projects/samples/evaluations/data/**",
@@ -114,6 +116,7 @@
     "sdk/monitor/azure-monitor-opentelemetry/samples/tracing/django/sample/db.sqlite3",
     "sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/django/sample/db.sqlite3",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
+    "sdk/openai/azure-openai/tests/assets/**",
     "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
     "sdk/translation/azure-ai-translation-text/tests/test_translation.py",
@@ -311,6 +314,7 @@
     "logz",
     "LPCWSTR",
     "Lucene",
+    "Mazuel",
     "mbps",
     "mday",
     "mibps",
@@ -1363,7 +1367,12 @@
         "prompty",
         "rdel",
         "ubinary",
-        "wday"
+        "wday",
+        "Hola",
+        "cómo",
+        "estás",
+        "logprobs",
+        "conver",
       ]
     },
     {

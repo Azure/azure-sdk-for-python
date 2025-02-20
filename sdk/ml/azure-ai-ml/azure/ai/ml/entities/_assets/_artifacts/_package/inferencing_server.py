@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,redefined-builtin,unused-argument
+# pylint: disable=protected-access,unused-argument
 
 from typing import Any, Optional
 

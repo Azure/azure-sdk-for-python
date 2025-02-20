@@ -20,6 +20,7 @@
 # SOFTWARE.
 
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 """Create, read, update and delete users in the Azure Cosmos DB SQL API service.
 """

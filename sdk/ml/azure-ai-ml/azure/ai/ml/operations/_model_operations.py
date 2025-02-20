@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,no-value-for-parameter,disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype,ungrouped-imports,line-too-long,too-many-statements
+# pylint: disable=protected-access,disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype,line-too-long,too-many-statements
 
 import re
 from contextlib import contextmanager
@@ -272,7 +272,7 @@ class ModelOperations(_ScopeDependentOperations):
                 if not result and self._registry_name:
                     result = self._get(name=str(model.name), version=model.version)
 
-            except Exception as e:  # pylint: disable=W0718
+            except Exception as e:
                 # service side raises an exception if we attempt to update an existing asset's path
                 if str(e) == ASSET_PATH_ERROR:
                     raise AssetPathException(
@@ -455,7 +455,7 @@ class ModelOperations(_ScopeDependentOperations):
         version: Optional[str] = None,
         label: Optional[str] = None,
         **kwargs: Any,
-    ) -> None:  # pylint:disable=unused-argument
+    ) -> None:
         """Archive a model asset.
 
         :param name: Name of model asset.
@@ -491,7 +491,7 @@ class ModelOperations(_ScopeDependentOperations):
         version: Optional[str] = None,
         label: Optional[str] = None,
         **kwargs: Any,
-    ) -> None:  # pylint:disable=unused-argument
+    ) -> None:
         """Restore an archived model asset.
 
         :param name: Name of model asset.

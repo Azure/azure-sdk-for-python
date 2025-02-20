@@ -81,8 +81,9 @@ def validate_subscription(subscription: str) -> None:
     """
     if not subscription or any(c not in VALID_SUBSCRIPTION_CHARACTERS for c in subscription):
         raise ValueError(
-            "Invalid subscription provided. You can locate your subscription by following the "
-            "instructions listed here: https://learn.microsoft.com/azure/azure-portal/get-subscription-tenant-id"
+            f"Subscription '{subscription}' contains invalid characters. If this is the name of a subscription, use "
+            "its ID instead. You can locate your subscription by following the instructions listed here: "
+            "https://learn.microsoft.com/azure/azure-portal/get-subscription-tenant-id"
         )
 
 
@@ -91,7 +92,7 @@ def resolve_tenant(
     tenant_id: Optional[str] = None,
     *,
     additionally_allowed_tenants: Optional[List[str]] = None,
-    **_
+    **_,
 ) -> str:
     """Returns the correct tenant for a token request given a credential's configuration.
 

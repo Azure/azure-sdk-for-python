@@ -1,8 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
-# pylint: disable=client-accepts-api-version-keyword
 import binascii
 import re
 
@@ -49,5 +47,5 @@ class VSCodeClient(object):
 
 
 def _encode_hex(path: str):
-    vscode_path = re.sub("\\s+", "", path)  # pylint: disable=specify-parameter-names-in-call
+    vscode_path = re.sub("\\s+", "", path)
     return binascii.hexlify(vscode_path.encode()).decode("ascii")

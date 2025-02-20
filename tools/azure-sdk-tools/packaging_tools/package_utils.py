@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, Tuple
 from pathlib import Path
 import logging
 from subprocess import check_call, CalledProcessError, getoutput
@@ -41,27 +41,35 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     return "\n".join(result[begin + 1 : end]).strip()
 
 
+def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[str, str]:
+    from pypi_tools.pypi import PyPIClient
+
+    try:
+        client = PyPIClient()
+        ordered_versions = client.get_ordered_versions(package_name)
+        last_release = ordered_versions[-1]
+        stable_releases = [x for x in ordered_versions if not x.is_prerelease]
+        last_stable_release = stable_releases[-1] if stable_releases else ""
+        if tag_is_stable:
+            last_version = str(last_stable_release) if last_stable_release else str(last_release)
+        else:
+            last_version = str(last_release)
+    except:
+        last_version = ""
+        last_stable_release = ""
+    return last_version, str(last_stable_release)
+
+
 def change_log_generate(
     package_name,
     last_version,
     tag_is_stable: bool = False,
     *,
+    last_stable_release: Optional[str] = None,
     prefolder: Optional[str] = None,
     is_multiapi: bool = False,
 ):
-    from pypi_tools.pypi import PyPIClient
-
-    client = PyPIClient()
-    try:
-        ordered_versions = client.get_ordered_versions(package_name)
-        last_release = ordered_versions[-1]
-        stable_releases = [x for x in ordered_versions if not x.is_prerelease]
-        last_stable_release = stable_releases[-1] if stable_releases else None
-        if tag_is_stable:
-            last_version[-1] = str(last_stable_release) if last_stable_release else str(last_release)
-        else:
-            last_version[-1] = str(last_release)
-    except:
+    if not last_version:
         return "### Other Changes\n\n  - Initial version"
 
     # try new changelog tool

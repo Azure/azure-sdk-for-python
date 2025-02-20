@@ -192,7 +192,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                     if http_response.status_code >= 400:
                         logger.info("Response error message: %r", _format_error(http_response.text()))
                 except Exception as err:  # pylint: disable=broad-except
-                    logger.warning("Failed to log request: %s", repr(err))
+                    logger.warning("Failed to log request: %s", repr(err)) # pylint: disable=do-not-log-exceptions
 
     # pylint: disable=unused-argument
     def _default_should_log(

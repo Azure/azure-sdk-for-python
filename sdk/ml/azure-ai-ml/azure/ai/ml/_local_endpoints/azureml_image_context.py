@@ -66,7 +66,8 @@ class AzureMlImageContext(object):
             },
         }
         self._environment = {
-            LocalEndpointConstants.ENVVAR_KEY_AZUREML_MODEL_DIR: docker_azureml_model_dir,  # ie. /var/azureml-app/azureml-models/  # pylint: disable=line-too-long
+            LocalEndpointConstants.ENVVAR_KEY_AZUREML_MODEL_DIR: docker_azureml_model_dir,
+            # ie. /var/azureml-app/azureml-models/
             LocalEndpointConstants.ENVVAR_KEY_AZUREML_INFERENCE_PYTHON_PATH: LocalEndpointConstants.CONDA_ENV_BIN_PATH,
         }
 
