@@ -350,8 +350,15 @@ class WebSocketProtocol(WebSocketMixin):
 
         self._conn_status = ConnectionStatus.CLOSED
         # shut down the socket
-        self._socket.shutdown(socket.SHUT_RDWR)
-        self._socket.close()
+        try:
+            self._socket.shutdown(socket.SHUT_RDWR)
+            self._socket.close()
+        except OSError as e:
+            # on macOS this can result in the following error:
+            # OSError: [Errno 57] Socket is not connected
+            # this can be ignored and is due to not handling SIGINT properly.
+            if e.errno != errno.ENOTCONN:
+                raise
 
 
 class AsyncWebSocketProtocol(WebSocketMixin):
