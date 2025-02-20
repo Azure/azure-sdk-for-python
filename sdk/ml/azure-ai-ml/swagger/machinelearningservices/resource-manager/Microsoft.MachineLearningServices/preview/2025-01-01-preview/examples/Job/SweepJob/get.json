@@ -1,0 +1,95 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "id": "string",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "tags": {
+            "string": "string"
+          },
+          "properties": {
+            "string": "string"
+          },
+          "displayName": "string",
+          "status": "NotStarted",
+          "experimentName": "string",
+          "services": {
+            "string": {
+              "jobServiceType": "string",
+              "port": 1,
+              "endpoint": "string",
+              "status": "string",
+              "errorMessage": "string",
+              "properties": {
+                "string": "string"
+              }
+            }
+          },
+          "computeId": "string",
+          "jobType": "Sweep",
+          "samplingAlgorithm": {
+            "samplingAlgorithmType": "Grid"
+          },
+          "limits": {
+            "jobLimitsType": "Sweep",
+            "maxTotalTrials": 1,
+            "maxConcurrentTrials": 1,
+            "trialTimeout": "PT1S"
+          },
+          "earlyTermination": {
+            "evaluationInterval": 1,
+            "delayEvaluation": 1,
+            "policyType": "MedianStopping"
+          },
+          "objective": {
+            "primaryMetric": "string",
+            "goal": "Minimize"
+          },
+          "trial": {
+            "codeId": "string",
+            "command": "string",
+            "environmentId": "string",
+            "environmentVariables": {
+              "string": "string"
+            },
+            "distribution": {
+              "distributionType": "Mpi",
+              "processCountPerInstance": 1
+            },
+            "resources": {
+              "instanceCount": 1,
+              "instanceType": "string",
+              "properties": {
+                "string": {
+                  "e6b6493e-7d5e-4db3-be1e-306ec641327e": null
+                }
+              }
+            }
+          },
+          "searchSpace": {
+            "string": {}
+          }
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999Z",
+          "createdBy": "string",
+          "createdByType": "User",
+          "lastModifiedAt": "2020-01-01T12:34:56.999Z",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "User"
+        }
+      }
+    }
+  }
+}
