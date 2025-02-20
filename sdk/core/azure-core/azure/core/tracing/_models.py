@@ -46,19 +46,6 @@ class SpanKind(Enum):
     """Indicates that the span is used internally in the application."""
 
 
-class StatusCode(Enum):
-    """Status codes used to describe the status of a span."""
-
-    UNSET = 0
-    """The default status code for when the status is not explicitly set."""
-
-    OK = 1
-    """The operation has been validated to have completed successfully."""
-
-    ERROR = 2
-    """The operation contains an error."""
-
-
 class Link:
     """Represents a reference from one span to another span.
 

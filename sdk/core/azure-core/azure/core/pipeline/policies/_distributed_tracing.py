@@ -46,7 +46,7 @@ if TYPE_CHECKING:
     from ...tracing._abstract_span import (
         AbstractSpan,
     )
-    from ...tracing.opentelemetry import OpenTelemetrySpan
+    from opentelemetry.trace import Span
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
@@ -77,6 +77,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     """
 
     TRACING_CONTEXT = "TRACING_CONTEXT"
+    _SUPPRESSION_TOKEN = "SUPPRESSION_TOKEN"
 
     # Current HTTP semantic conventions
     _HTTP_RESEND_COUNT = "http.request.resend_count"
@@ -137,7 +138,6 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
 
                 headers = span.to_header()
                 request.http_request.headers.update(headers)
-
                 request.context[self.TRACING_CONTEXT] = span
             else:
                 # Otherwise, use the core tracing.
@@ -147,19 +147,20 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
                 if not tracer:
                     return
 
-                core_span = tracer.start_span(
+                otel_span = tracer.start_span(
                     name=span_name,
                     kind=SpanKind.CLIENT,
                     attributes=span_attributes,
                 )
-                core_span._suppress_auto_http_instrumentation()  # pylint: disable=protected-access
 
                 trace_context_headers = tracer.get_trace_context()
                 request.http_request.headers.update(trace_context_headers)
-                request.context[self.TRACING_CONTEXT] = core_span
+                request.context[self.TRACING_CONTEXT] = otel_span
+
+                token = tracer._suppress_auto_http_instrumentation()  # pylint: disable=protected-access
+                request.context[self._SUPPRESSION_TOKEN] = token
 
         except Exception as err:  # pylint: disable=broad-except
-            print(err)
             _LOGGER.warning("Unable to start network span: %s", err)
 
     def end_span(
@@ -201,6 +202,15 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
             else:
                 end_func()
 
+            if request.context.get(self._SUPPRESSION_TOKEN):
+                tracer = (
+                    self.instrumentation.get_tracer() if self.instrumentation else default_instrumentation.get_tracer()
+                )
+                if tracer:
+                    tracer._detach_from_context(
+                        request.context.get(self._SUPPRESSION_TOKEN)
+                    )  # pylint: disable=protected-access
+
     def on_response(
         self,
         request: PipelineRequest[HTTPRequestType],
@@ -213,7 +223,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
 
     def _set_http_attributes(
         self,
-        span: Union["AbstractSpan", "OpenTelemetrySpan"],
+        span: Union["AbstractSpan", "Span"],
         request: Union[HttpRequest, LegacyHttpRequest],
         response: Optional[HTTPResponseType] = None,
     ) -> None:
@@ -221,7 +231,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         Add correct attributes for a http client span.
 
         :param span: The span to add attributes to.
-        :type span: ~azure.core.tracing.AbstractSpan or ~azure.core.tracing.opentelemetry.OpenTelemetrySpan
+        :type span: ~azure.core.tracing.AbstractSpan or ~opentelemetry.trace.Span
         :param request: The request made
         :type request: azure.core.rest.HttpRequest
         :param response: The response received from the server. Is None if no response received.

@@ -232,26 +232,24 @@ class TestDecoratorNativeTracing:
         """Test that an exception is recorded as an error event."""
         client = MockClient(http_request)
         settings.tracing_enabled = True
-        with tracing_helper.tracer.start_as_current_span("Root"):
-            try:
-                client.raising_exception()
-            except ValueError:
-                pass
-            client.get_foo()
+        try:
+            client.raising_exception()
+        except ValueError:
+            pass
+        client.get_foo()
 
-            finished_spans = tracing_helper.exporter.get_finished_spans()
-            assert len(finished_spans) == 2
-            assert finished_spans[0].name == "MockClient.raising_exception"
-            assert finished_spans[0].status.status_code == OtelStatusCode.ERROR
-            assert "Something went horribly wrong here" in finished_spans[0].status.description
-            assert finished_spans[0].events[0].name == "exception"
-            assert (
-                finished_spans[0].events[0].attributes.get("exception.message") == "Something went horribly wrong here"
-            )
-            assert finished_spans[0].attributes.get("error.type") == "ValueError"
+        finished_spans = tracing_helper.exporter.get_finished_spans()
 
-            assert finished_spans[1].name == "MockClient.get_foo"
-            assert finished_spans[1].status.status_code == OtelStatusCode.UNSET
+        assert len(finished_spans) == 2
+        assert finished_spans[0].name == "MockClient.raising_exception"
+        assert finished_spans[0].status.status_code == OtelStatusCode.ERROR
+        assert "Something went horribly wrong here" in finished_spans[0].status.description
+        assert finished_spans[0].events[0].name == "exception"
+        assert finished_spans[0].events[0].attributes.get("exception.message") == "Something went horribly wrong here"
+        assert finished_spans[0].attributes.get("error.type") == "ValueError"
+
+        assert finished_spans[1].name == "MockClient.get_foo"
+        assert finished_spans[1].status.status_code == OtelStatusCode.UNSET
 
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
     def test_decorator_nested_calls(self, tracing_helper, http_request):
