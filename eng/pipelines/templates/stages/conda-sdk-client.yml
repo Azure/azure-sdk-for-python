@@ -34,7 +34,7 @@ parameters:
   - name: release_azure_ai_evaluation
     displayName: 'azure-ai-evaluation'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_ai_formrecognizer
     displayName: 'azure-ai-formrecognizer'
     type: boolean
