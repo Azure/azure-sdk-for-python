@@ -64,7 +64,7 @@ TEST_BLOB_PREFIX = 'blob'
 class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
     # --Helpers-----------------------------------------------------------------
     async def _setup(self, storage_account_name, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key, retry_total=0)
         self.container_name = self.get_resource_name('utcontainer')
         self.source_container_name = self.get_resource_name('utcontainersource')
         self.byte_data = self.get_random_bytes(1024)
@@ -3510,4 +3510,49 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         blob_data = await (await blob_client.download_blob(validate_content=True)).read()
         assert blob_data == b"Hello Async World!"  # data is fixed by mock transport
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_download_blob_decompress(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        decompressed_data = b"hello from gzip"
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        await blob.upload_blob(data=compressed_data, content_settings=content_settings, overwrite=True)
+
+        downloaded = await blob.download_blob(decompress=True)
+        result = await downloaded.readall()
+        assert result == decompressed_data
+
+        downloaded = await blob.download_blob(decompress=False)
+        result = await downloaded.readall()
+        assert result == compressed_data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_download_blob_decompress_md5(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        decompressed_data = b"hello from gzip"
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        await blob.upload_blob(data=compressed_data, content_settings=content_settings, overwrite=True)
+        downloaded = await blob.download_blob(validate_content=True, decompress=False)
+        result = await downloaded.readall()
+        assert result == decompressed_data
 # ------------------------------------------------------------------------------
