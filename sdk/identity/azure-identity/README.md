@@ -305,7 +305,7 @@ variables:
 
 ### Username and password
 
-> **Warning**: Username and password authentication doesn't support multifactor authentication and is **deprecated**. For more details, see [Planning for mandatory multifactor authentication](https://aka.ms/azsdk/identity/mfa).
+> **Warning**: Username and password authentication doesn't support multifactor authentication (MFA) and is **deprecated**. For more details, see [Planning for mandatory MFA](https://aka.ms/azsdk/identity/mfa).
 
 |Variable name|Value
 |-|-
