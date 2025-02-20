@@ -472,8 +472,8 @@ class FileSystemClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: filesystem-updated property dict (ETag and last modified).
-        :rtype: Dict[str, Union[str, datetime]]
+        :returns: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, ~datetime.datetime]]
 
         .. admonition:: Example:
 
@@ -525,8 +525,8 @@ class FileSystemClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: File System-updated property dict (ETag and last modified).
-        :rtype: Dict[str, str] or Dict[str, ~datetime.datetime]
+        :returns: A dictionary of response headers.
+        :rtype: Dict[str, Union[str, ~datetime.datetime]]
         """
         return self._container_client.set_container_access_policy(
             cast(Dict[str, "BlobAccessPolicy"], signed_identifiers),

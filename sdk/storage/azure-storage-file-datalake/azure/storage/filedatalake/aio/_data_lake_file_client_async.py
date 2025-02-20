@@ -144,7 +144,7 @@ class DataLakeFileClient(PathClient):
         self, content_settings: Optional["ContentSettings"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Union[str, "datetime"]]:
+    ) -> Dict[str, Union[str, datetime]]:
         """
         Create a new file.
 
@@ -225,7 +225,7 @@ class DataLakeFileClient(PathClient):
             #other-client--per-operation-configuration>`_.
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
-        :returns: A response dict (ETag and last modified).
+        :returns: A dictionary of response headers.
         :rtype: Dict[str, Any]
 
         .. admonition:: Example:
@@ -287,7 +287,7 @@ class DataLakeFileClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: A response dict (ETag and last modified).
+        :returns: A dictionary of response headers.
         :rtype: Dict[str, Any]
 
         .. admonition:: Example:
@@ -367,7 +367,7 @@ class DataLakeFileClient(PathClient):
     @distributed_trace_async
     async def set_file_expiry(
         self, expiry_options: str,
-        expires_on: Optional[Union["datetime", int]] = None,
+        expires_on: Optional[Union[datetime, int]] = None,
         **kwargs: Any
     ) -> None:
         """Sets the time a file will expire and be deleted.
@@ -473,7 +473,7 @@ class DataLakeFileClient(PathClient):
             Defaults to 100*1024*1024, or 100MB.
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
-        :return: A response dict (ETag and last modified).
+        :return: A dictionary of response headers.
         :rtype: Dict[str, Any]
         """
         options = _upload_options(
@@ -534,7 +534,7 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
-        :returns: A response dict (ETag and last modified).
+        :returns: A dictionary of response headers.
         :rtype: Dict[str, Any]
 
         .. admonition:: Example:
@@ -631,7 +631,7 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
-        :returns: A response dict (ETag and last modified).
+        :returns: A dictionary of response headers.
         :rtype: Dict[str, Any]
 
         .. admonition:: Example:
