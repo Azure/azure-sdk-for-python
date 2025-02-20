@@ -18,7 +18,7 @@ USAGE:
 from typing import Iterable, Union, Any
 from functools import partial
 
-from azure.core.tracing.decorator import distributed_trace as core_distributed_trace
+from azure.core.tracing.decorator import distributed_trace
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.pipeline.policies import (
@@ -29,34 +29,29 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     DistributedTracingPolicy,
 )
-from azure.core.instrumentation import Instrumentation
-
-
-"""The below code is for library developers to demonstrate how to customize tracing for their library."""
-library_instrumentation = Instrumentation(
-    library_name="my-library",
-    library_version="1.0.0",
-    schema_url="https://opentelemetry.io/schemas/1.23.1",
-    attributes={"namespace": "Sample.Namespace"},
-)
-
-distributed_trace = partial(core_distributed_trace, instrumentation=library_instrumentation)
 
 
 class SampleClient:
     """Sample client to demonstrate how an SDK developer would add tracing to their client."""
+
+    _instrumentation_config = {
+        "library_name": "my-library",
+        "library_version": "1.0.0",
+        "schema_url": "https://opentelemetry.io/schemas/1.23.1",
+        "attributes": {"az.namespace": "Sample.Namespace"},
+    }
 
     def __init__(self, endpoint: str) -> None:
         policies: Iterable[Union[HTTPPolicy, SansIOHTTPPolicy]] = [
             HeadersPolicy(),
             UserAgentPolicy("myuseragent"),
             RetryPolicy(),
-            DistributedTracingPolicy(instrumentation=library_instrumentation),
+            DistributedTracingPolicy(instrumentation_config=self._instrumentation_config),
         ]
 
         self._client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(endpoint, policies=policies)
 
-    @distributed_trace()
+    @distributed_trace
     def sample_method(self, **kwargs: Any) -> HttpResponse:
         request = HttpRequest("GET", "https://bing.com")
         response = self._client.send_request(request, **kwargs)

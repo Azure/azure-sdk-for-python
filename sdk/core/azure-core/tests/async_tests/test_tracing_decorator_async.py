@@ -16,7 +16,7 @@ from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.settings import settings
-from azure.core.instrumentation import Instrumentation
+from azure.core.instrumentation import get_tracer
 from azure.core.tracing import SpanKind
 from azure.core.tracing.decorator_async import distributed_trace_async
 from opentelemetry.trace import StatusCode as OtelStatusCode
@@ -24,15 +24,15 @@ from opentelemetry.trace import StatusCode as OtelStatusCode
 from tracing_common import FakeSpan
 from utils import HTTP_REQUESTS
 
-custom_instrumentation = Instrumentation(
-    library_name="my-library",
-    library_version="1.0.0",
-    schema_url="https://test.schema",
-    attributes={"namespace": "Sample.Namespace"},
-)
-
 
 class MockClient:
+
+    _instrumentation_config = {
+        "library_name": "my-library",
+        "library_version": "1.0.0",
+        "schema_url": "https://test.schema",
+        "attributes": {"az.namespace": "Sample.Namespace"},
+    }
 
     def __init__(self, http_request, policies=None, assert_current_span=False):
         time.sleep(0.001)
@@ -92,7 +92,7 @@ class MockClient:
     async def raising_exception(self, **kwargs):
         raise ValueError("Something went horribly wrong here")
 
-    @distributed_trace_async(instrumentation=custom_instrumentation)
+    @distributed_trace_async
     async def method_with_custom_instrumentation(self):
         time.sleep(0.001)
 
@@ -220,6 +220,30 @@ class TestAsyncDecorator(object):
         assert parent.children[0].status == "Something went horribly wrong here"
         assert parent.children[1].name == "MockClient.get_foo"
 
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    async def test_decorated_method_with_tracing_options(self, tracing_implementation, http_request):
+        """Test that a decorated method can respect tracing options."""
+        with FakeSpan(name="parent") as parent:
+            client = MockClient(http_request)
+            await client.method_with_kwargs(
+                tracing_options={"enabled": True, "attributes": {"custom_key": "custom_value"}}
+            )
+
+        assert len(parent.children) == 1
+        assert parent.children[0].name == "MockClient.method_with_kwargs"
+        assert parent.children[0].attributes.get("custom_key") == "custom_value"
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    async def test_decorated_method_with_tracing_disabled(self, tracing_implementation, http_request):
+        """Test that a decorated method isn't traced if tracing is disabled on a per-operation basis."""
+        with FakeSpan(name="parent") as parent:
+            client = MockClient(http_request)
+            await client.method_with_kwargs(tracing_options={"enabled": False})
+
+        assert len(parent.children) == 0
+
 
 class TestAsyncDecoratorNativeTracing:
 
@@ -278,7 +302,7 @@ class TestAsyncDecoratorNativeTracing:
             assert finished_spans[0].instrumentation_scope.schema_url == "https://test.schema"
             assert finished_spans[0].instrumentation_scope.name == "my-library"
             assert finished_spans[0].instrumentation_scope.version == "1.0.0"
-            assert finished_spans[0].instrumentation_scope.attributes.get("namespace") == "Sample.Namespace"
+            assert finished_spans[0].instrumentation_scope.attributes.get("az.namespace") == "Sample.Namespace"
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -321,3 +345,19 @@ class TestAsyncDecoratorNativeTracing:
 
             finished_spans = tracing_helper.exporter.get_finished_spans()
             assert len(finished_spans) == 0
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+    async def test_tracing_impl_takes_precedence(self, tracing_implementation, http_request):
+        """Test that a tracing implementation takes precedence over the native tracing."""
+        client = MockClient(http_request)
+        settings.tracing_enabled = True
+
+        assert settings.tracing_implementation() is FakeSpan
+        assert settings.tracing_enabled
+
+        with FakeSpan(name="parent") as parent:
+            await client.get_foo()
+            assert len(parent.children) == 1
+            assert parent.children[0].name == "MockClient.get_foo"
+            assert parent.children[0].kind == SpanKind.INTERNAL
