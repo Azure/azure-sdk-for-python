@@ -126,7 +126,7 @@ class WebSocketProtocol(WebSocketMixin):
 
             self._receive_handshake()
         except socket.error as e:
-            raise ConnectionError('Could not send the handshake') from e
+            raise WebSocketConnectionError('Could not send the handshake') from e
 
     def _receive_handshake(self) -> None:
         if not self._socket:
@@ -428,7 +428,7 @@ class AsyncWebSocketProtocol(WebSocketMixin):
 
             await self._receive_handshake()
         except socket.error as exc:
-            raise ConnectionError('Could not send the handshake') from exc
+            raise WebSocketConnectionError('Could not send the handshake') from exc
 
     async def _receive_handshake(self) -> None:
         if not self._stream_reader:
