@@ -14,7 +14,8 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
-    AudioContentItem,
+    AudioDataContentItem,
+    AudioUrlContentItem,
     ChatChoice,
     ChatCompletions,
     ChatCompletionsNamedToolChoice,
@@ -33,6 +34,7 @@ from ._models import (  # type: ignore
     ImageEmbeddingInput,
     ImageUrl,
     InputAudio,
+    InputAudioUrl,
     JsonSchemaFormat,
     ModelInfo,
     StreamingChatChoiceUpdate,
@@ -57,7 +59,8 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AudioContentItem",
+    "AudioDataContentItem",
+    "AudioUrlContentItem",
     "ChatChoice",
     "ChatCompletions",
     "ChatCompletionsNamedToolChoice",
@@ -76,6 +79,7 @@ __all__ = [
     "ImageEmbeddingInput",
     "ImageUrl",
     "InputAudio",
+    "InputAudioUrl",
     "JsonSchemaFormat",
     "ModelInfo",
     "StreamingChatChoiceUpdate",
