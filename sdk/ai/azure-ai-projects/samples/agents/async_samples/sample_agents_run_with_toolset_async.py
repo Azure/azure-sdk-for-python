@@ -57,7 +57,6 @@ async def main() -> None:
             # Create message to thread
             message = await project_client.agents.create_message(
                 thread_id=thread.id,
-                role="user",
                 content="Hello, send an email with the datetime and weather information in New York?",
             )
             print(f"Created message, ID: {message.id}")

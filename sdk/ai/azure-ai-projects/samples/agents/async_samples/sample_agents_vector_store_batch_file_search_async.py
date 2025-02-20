@@ -66,7 +66,7 @@ async def main() -> None:
             print(f"Created thread, thread ID: {thread.id}")
 
             message = await project_client.agents.create_message(
-                thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?"
+                thread_id=thread.id, content="What feature does Smart Eyewear offer?"
             )
             print(f"Created message, message ID: {message.id}")
 
@@ -85,7 +85,7 @@ async def main() -> None:
             print(f"Created thread, thread ID: {thread.id}")
 
             message = await project_client.agents.create_message(
-                thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?"
+                thread_id=thread.id, content="What feature does Smart Eyewear offer?"
             )
             print(f"Created message, message ID: {message.id}")
 

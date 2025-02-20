@@ -806,7 +806,7 @@ To create a message for assistant to process, you pass `user` as `role` and a qu
 <!-- SNIPPET:sample_agents_basics.create_message -->
 
 ```python
-message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+message = project_client.agents.create_message(thread_id=thread.id, content="Hello, tell me a joke")
 ```
 
 <!-- END SNIPPET -->

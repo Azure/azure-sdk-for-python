@@ -646,9 +646,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create message
-            message = await client.agents.create_message(
-                thread_id=thread.id, role="user", content="Hello, tell me a joke"
-            )
+            message = await client.agents.create_message(thread_id=thread.id, content="Hello, tell me a joke")
             assert message.id
             print("Created message, message ID", message.id)
 

@@ -51,9 +51,7 @@ async def main() -> None:
             print(f"Created thread, ID: {thread.id}")
 
             # Create and send message
-            message = await project_client.agents.create_message(
-                thread_id=thread.id, role="user", content="Hello, what's the time?"
-            )
+            message = await project_client.agents.create_message(thread_id=thread.id, content="Hello, what's the time?")
             print(f"Created message, ID: {message.id}")
 
             # Create and run assistant task

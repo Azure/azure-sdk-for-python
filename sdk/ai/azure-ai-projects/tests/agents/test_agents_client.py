@@ -633,7 +633,7 @@ class TestAgentClient(AzureRecordedTestCase):
         if body:
             message = client.agents.create_message(thread_id=thread.id, body=body)
         else:
-            message = client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+            message = client.agents.create_message(thread_id=thread.id, content="Hello, tell me a joke")
         assert message.id
         print("Created message, message ID", message.id)
 

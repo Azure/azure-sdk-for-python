@@ -56,7 +56,7 @@ async def main():
             # Create a message with the attachment
             attachment = MessageAttachment(data_source=ds, tools=code_interpreter.definitions)
             message = await project_client.agents.create_message(
-                thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment]
+                thread_id=thread.id, content="What does the attachment say?", attachments=[attachment]
             )
             print(f"Created message, message ID: {message.id}")
 
