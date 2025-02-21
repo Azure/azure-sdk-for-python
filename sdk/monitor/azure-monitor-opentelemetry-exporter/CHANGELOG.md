@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Support for OpenTelemetry SemConv SESSION_ID propagation to Application Insights
+  ([#39630](https://github.com/Azure/azure-sdk-for-python/pull/39630))
 - Support AAD for sovereign clouds
   ([#39379](https://github.com/Azure/azure-sdk-for-python/pull/39379))
 - Support stable http semantic conventions for breeze exporter - REQUESTS
