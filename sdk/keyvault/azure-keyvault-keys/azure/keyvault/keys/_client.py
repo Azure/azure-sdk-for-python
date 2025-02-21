@@ -982,9 +982,8 @@ class KeyClient(KeyVaultClientBase):
             ]
 
         attributes = self._models.KeyRotationPolicyAttributes(expiry_time=kwargs.pop("expires_in", policy.expires_in))
-        new_policy = self._models.KeyRotationPolicy(lifetime_actions=lifetime_actions or [], attributes=attributes)
-        result = self._client.update_key_rotation_policy( key_name=key_name, key_rotation_policy=new_policy
-        )
+        new_policy = self._models.KeyRotationPolicy(lifetime_actions=actions or [], attributes=attributes)
+        result = self._client.update_key_rotation_policy(key_name=key_name, key_rotation_policy=new_policy)
         return KeyRotationPolicy._from_generated(result)
 
     def __enter__(self) -> "KeyClient":
