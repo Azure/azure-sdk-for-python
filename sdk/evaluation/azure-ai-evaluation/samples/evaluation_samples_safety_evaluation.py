@@ -48,6 +48,26 @@ class EvaluationSafetyEvaluationSamples(object):
         ))
         # [END default_safety_evaluation]
 
+        # [START default_safety_evaluation_model_target]
+        model_config = {
+            "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+        }
+
+        azure_ai_project = {
+            "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
+            "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP_NAME"),
+            "project_name": os.environ.get("AZURE_PROJECT_NAME"),
+        }
+
+        credential = DefaultAzureCredential()
+
+        safety_evaluation_default = _SafetyEvaluation(azure_ai_project=azure_ai_project, credential=credential)
+        safety_evaluation_default_results = asyncio.run(safety_evaluation_default(
+            target=model_config,
+        ))
+        # [END default_safety_evaluation_model_target]
+
         # [START content_safety_safety_evaluation]
 
         def test_target(query: str) -> str:
@@ -115,7 +135,7 @@ class EvaluationSafetyEvaluationSamples(object):
         safety_evaluation_content_safety_scenario_results = asyncio.run(safety_evaluation_content_safety_scenario(
             evaluators=[_SafetyEvaluator.CONTENT_SAFETY],
             target=test_target,
-            scenario=AdversarialScenario.ADVERSARIAL_SUMMARIZATION,,
+            scenario=AdversarialScenario.ADVERSARIAL_SUMMARIZATION,
             num_rows=3,
             output_path="evaluation_outputs_safety_scenario.jsonl",
         ))
