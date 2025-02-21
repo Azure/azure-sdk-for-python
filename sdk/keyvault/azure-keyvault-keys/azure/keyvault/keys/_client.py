@@ -938,7 +938,7 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def update_key_rotation_policy(
+    def update_key_rotation_policy(  # pylint: disable=unused-argument
         self,
         key_name: str,
         policy: KeyRotationPolicy,
@@ -980,7 +980,7 @@ class KeyClient(KeyVaultClientBase):
                 for action in actions
             ]
 
-        attributes = self._models.KeyRotationPolicyAttributes(expiry_time=kwargs.pop("expires_in", policy.expires_in))
+        attributes = self._models.KeyRotationPolicyAttributes(expiry_time=expires_in or policy.expires_in)
         new_policy = self._models.KeyRotationPolicy(lifetime_actions=actions or [], attributes=attributes)
         result = self._client.update_key_rotation_policy(key_name=key_name, key_rotation_policy=new_policy)
         return KeyRotationPolicy._from_generated(result)

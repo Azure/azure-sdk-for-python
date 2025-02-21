@@ -359,8 +359,8 @@ class KeyRotationPolicy(object):
             []
             if policy.lifetime_actions is None
             else [
-                KeyRotationLifetimeAction._from_generated(action) for action in policy.lifetime_actions
-            ]  # pylint:disable=protected-access
+                KeyRotationLifetimeAction._from_generated(action) for action in policy.lifetime_actions  # pylint:disable=protected-access
+            ]
         )
         if policy.attributes:
             return cls(
