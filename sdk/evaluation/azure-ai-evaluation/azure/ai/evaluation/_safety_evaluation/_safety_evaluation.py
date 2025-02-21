@@ -574,7 +574,7 @@ class _SafetyEvaluation:
         evaluation_result['studio_url'] = evaluation_result_dict['jailbreak']['studio_url'] + '\t' + evaluation_result_dict['regular']['studio_url']
         return evaluation_result
     
-    async def _get_all_prompts(self, scenario: AdversarialScenario) -> List[str]:
+    async def _get_all_prompts(self, scenario: AdversarialScenario, num_turns: int = 3) -> List[str]:
         templates = await self.adversarial_template_handler._get_content_harm_template_collections(
                 scenario.value
             )
@@ -590,13 +590,24 @@ class _SafetyEvaluation:
             return filled_text
 
         all_prompts = []
+        count = 0
         for param_group in zipped_parameters:
             for _, parameter in zip(templates, param_group):
                 filled_template = fill_template(parameter['conversation_starter'], parameter)
                 all_prompts.append(filled_template)
+                count += 1
+                if count >= num_turns:
+                    break
+            if count >= num_turns:
+                break
         return all_prompts
     
-    async def _pyrit(self, target: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration], scenario: AdversarialScenario) -> str:
+    async def _pyrit(
+            self, 
+            target: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration], 
+            scenario: AdversarialScenario,
+            num_turns: int = 1,
+        ) -> str:
         chat_target: OpenAIChatTarget = None
         if "azure_deployment" in target and "azure_endpoint" in target: # Azure OpenAI
             api_key = target.get("api_key", None)
@@ -607,7 +618,7 @@ class _SafetyEvaluation:
         else:
             chat_target = OpenAIChatTarget(deployment=target["model"], endpoint=target.get("base_url", None), key=target["api_key"], is_azure_target=False)
         
-        all_prompts_list = await self._get_all_prompts(scenario)
+        all_prompts_list = await self._get_all_prompts(scenario, num_turns=num_turns)
 
         orchestrator = PromptSendingOrchestrator(objective_target=chat_target)
         await orchestrator.send_prompts_async(prompt_list=all_prompts_list)
@@ -647,7 +658,6 @@ class _SafetyEvaluation:
         data_path = "pyrit_outputs.jsonl"
         with Path(data_path).open("w") as f:
             f.writelines(json_lines)
-
         return data_path
 
     async def __call__(
@@ -711,7 +721,7 @@ class _SafetyEvaluation:
 
         if not isinstance(target, Callable) and isinstance(adversarial_scenario, AdversarialScenario):
             self.logger.info(f"Running Pyrit with inputs target={target}, scenario={scenario}") 
-            data_path = await self._pyrit(target, adversarial_scenario)
+            data_path = await self._pyrit(target, adversarial_scenario, num_turns=num_turns)
 
         ## Get evaluators
         evaluators_dict = self._get_evaluators(evaluators)
