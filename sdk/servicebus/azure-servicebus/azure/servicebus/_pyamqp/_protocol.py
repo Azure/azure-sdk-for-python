@@ -125,6 +125,8 @@ class WebSocketProtocol(WebSocketMixin):
             self._conn_status = ConnectionStatus.CONNECTING
 
             self._receive_handshake()
+        except ssl.SSLError as sslex:
+            raise sslex from None
         except socket.error as e:
             raise WebSocketConnectionError('Could not send the handshake') from e
 
