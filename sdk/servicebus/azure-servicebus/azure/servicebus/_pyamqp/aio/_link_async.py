@@ -289,7 +289,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
         if kwargs.get("drain"):
             self.current_link_credit = 0
             _LOGGER.debug("There is sufficient credit but we want to drain the link", extra=self.network_trace_params)
-            self._outgoing_flow(**kwargs)
+            await self._outgoing_flow(**kwargs)
 
         # If the link credit to flow is greater than 0 (i.e the desired link credit
         # is greater than the current link credit on the wire), then we will send a
