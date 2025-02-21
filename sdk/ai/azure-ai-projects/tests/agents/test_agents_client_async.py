@@ -2348,7 +2348,9 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         assert vector_store_file_batch.id
         await self._test_file_search(ai_client, vector_store, file_id, streaming)
 
-    async def _test_file_search(self, ai_client: AIProjectClient, vector_store: VectorStore, file_id: str, streaming: bool) -> None:
+    async def _test_file_search(
+        self, ai_client: AIProjectClient, vector_store: VectorStore, file_id: str, streaming: bool
+    ) -> None:
         """Test the file search"""
         file_search = FileSearchTool(vector_store_ids=[vector_store.id])
         agent = await ai_client.agents.create_agent(
