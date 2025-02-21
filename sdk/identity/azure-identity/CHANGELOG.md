@@ -25,6 +25,7 @@
 ### Other Changes
 
 - `AzureCliCredential` and `AzureDeveloperCliCredential` will now call their corresponding executables directly instead of going through the shell. ([#38606](https://github.com/Azure/azure-sdk-for-python/pull/38606))
+- `ManagedIdentityCredential` will now log the configured user-assigned identity if one is set. ([#39621](https://github.com/Azure/azure-sdk-for-python/pull/39621))
 
 ## 1.19.0 (2024-10-08)
 
