@@ -71,7 +71,8 @@ setup(
         "azure-identity>=1.16.0",
         "azure-core>=1.30.2",
         "nltk>=3.9.1",
-        "azure-storage-blob>=12.10.0"
+        "azure-storage-blob>=12.10.0",
+        "pyrit>=0.5.2"
     ],
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
