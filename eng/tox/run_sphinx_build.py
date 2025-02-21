@@ -23,7 +23,7 @@ import io
 import shutil
 
 from ci_tools.parsing import ParsedSetup
-
+from ci_tools.variables import in_analyze_weekly
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -68,6 +68,9 @@ def sphinx_build(target_dir, output_dir, fail_on_warning):
                 args.working_directory, e.returncode
             )
         )
+        if in_analyze_weekly():
+            from gh_tools.vnext_issue_creator import create_vnext_issue
+            create_vnext_issue(os.path.basename(args.package_root), "sphinx")
         exit(1)
 
 if __name__ == "__main__":
