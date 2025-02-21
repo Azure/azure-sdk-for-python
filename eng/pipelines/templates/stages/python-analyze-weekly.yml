@@ -91,22 +91,22 @@ stages:
               GH_TOKEN: $(azuresdk-github-pat)
 
           - task: UsePythonVersion@0
-            displayName: 'Use Python 3.11 for docs generation'
+            displayName: 'Use Python 3.13 for docs generation'
             inputs:
-              versionSpec: '3.11'
+              versionSpec: '3.13'
 
           - script: |
               python -m pip install -r eng/ci_tools.txt
             displayName: 'Prep Environment'
 
           - task: PythonScript@0
-            displayName: 'Generate Docs'
+            displayName: 'Generate Docs Next'
             continueOnError: true
             inputs:
               scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
               arguments: >-
                 ${{ parameters.BuildTargetingString }}
                 --service="${{ parameters.ServiceDirectory }}"
-                --toxenv="sphinx"
+                --toxenv="next-sphinx"
             env:
               GH_TOKEN: $(azuresdk-github-pat)
