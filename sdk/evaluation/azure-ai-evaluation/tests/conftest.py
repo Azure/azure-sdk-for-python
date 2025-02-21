@@ -304,7 +304,9 @@ def connection_file() -> Dict[str, Any]:
         return json.load(f)
 
 
-def get_config(connection_file: Mapping[str, Any], key: str, defaults: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+def get_config(
+    connection_file: Mapping[str, Any], key: str, defaults: Optional[Dict[str, Any]] = None
+) -> Dict[str, Any]:
     if is_live():
         assert key in connection_file, f"Connection '{key}' not found in dev connections."
 
@@ -319,10 +321,7 @@ def get_config(connection_file: Mapping[str, Any], key: str, defaults: Optional[
 @pytest.fixture(scope="session")
 def mock_model_config(connection_file: Mapping[str, Any]) -> AzureOpenAIModelConfiguration:
     config = get_config(connection_file, KEY_AZURE_MODEL_CONFIG, {})
-    sanitized_endpoint = re.sub(
-        r"([^:]+://)[^\.]+(.*)", r"\1Sanitized\2",
-        config.get("azure_endpoint", "")
-    )
+    sanitized_endpoint = re.sub(r"([^:]+://)[^\.]+(.*)", r"\1Sanitized\2", config.get("azure_endpoint", ""))
 
     return AzureOpenAIModelConfiguration(
         azure_endpoint=sanitized_endpoint or "https://Sanitized.cognitiveservices.azure.com",
@@ -348,7 +347,9 @@ KEY_AZURE_PROJECT_SCOPE = "azure_ai_project_scope"
 
 
 @pytest.fixture(scope="session")
-def model_config(connection_file: Dict[str, Any], mock_model_config: AzureOpenAIModelConfiguration) -> AzureOpenAIModelConfiguration:
+def model_config(
+    connection_file: Dict[str, Any], mock_model_config: AzureOpenAIModelConfiguration
+) -> AzureOpenAIModelConfiguration:
     if not is_live():
         return mock_model_config
 
@@ -372,11 +373,15 @@ def non_azure_openai_model_config(connection_file: Mapping[str, Any]) -> OpenAIM
         }
     }
     """
-    config = get_config(connection_file, KEY_OPENAI_MODEL_CONFIG, {
-        "api_key": "openai-api-key",
-        "model": "gpt-35-turbo",
-        "base_url": "https://api.openai.com/v1",
-    })
+    config = get_config(
+        connection_file,
+        KEY_OPENAI_MODEL_CONFIG,
+        {
+            "api_key": "openai-api-key",
+            "model": "gpt-35-turbo",
+            "base_url": "https://api.openai.com/v1",
+        },
+    )
     model_config = OpenAIModelConfiguration(**config)
     OpenAIModelConfiguration.__repr__ = lambda self: "<sensitive data redacted>"
 
@@ -391,10 +396,7 @@ def project_scope(connection_file: Mapping[str, Any], mock_project_scope: Dict[s
 
 @pytest.fixture
 def datastore_project_scopes(connection_file, project_scope, mock_project_scope) -> Dict[str, Any]:
-    keys = {
-        "none": "azure_ai_entra_id_project_scope",
-        "private": "azure_ai_private_connection_project_scope"
-    }
+    keys = {"none": "azure_ai_entra_id_project_scope", "private": "azure_ai_private_connection_project_scope"}
 
     scopes: Dict[str, Any] = {
         "sas": project_scope,

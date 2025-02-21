@@ -124,17 +124,12 @@ class AsyncPrompty:
     def __init__(
         self,
         path: Union[str, PathLike],
-        model: Optional[Mapping[str, Any]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
-        # prompty file path
         path = Path(path)
         configs, self._template = self._parse_prompty(path)
         configs = resolve_references(configs, base_path=path.parent)
         configs = update_dict_recursively(configs, resolve_references(kwargs, base_path=path.parent))
-        configs["model"] = update_dict_recursively(
-            configs.get("model", {}), resolve_references(model or {}, base_path=path.parent)
-        )
 
         if configs["model"].get("api") == "completion":
             raise InvalidInputError(
@@ -297,7 +292,7 @@ class AsyncPrompty:
 
         return await format_llm_response(
             response=response,
-            is_first_choice=self._data.get("model", {}).get("response", None) != "all",
+            is_first_choice=self._data.get("model", {}).get("response", "first").lower() == "first",
             response_format=params.get("response_format", {}),
             outputs=self._outputs,
         )

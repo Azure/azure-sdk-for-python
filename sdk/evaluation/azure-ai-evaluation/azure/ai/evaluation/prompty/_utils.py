@@ -501,19 +501,20 @@ async def format_llm_response(
     def format_choice(item: str) -> Union[str, Mapping[str, Any]]:
         # response_format is one of text or json_object.
         # https://platform.openai.com/docs/api-reference/chat/create#chat-create-response_format
-        if is_json_format:
-            result_dict = json.loads(item)
-            if not outputs:
-                return result_dict
-            # return the keys in outputs
-            output_results = {}
-            for key in outputs:
-                if key not in result_dict:
-                    raise InvalidInputError(f"Cannot find {key} in response {list(result_dict.keys())}")
-                output_results[key] = result_dict[key]
-            return output_results
-        # Return text format response
-        return item
+        if not is_json_format:
+            return item
+
+        result_dict = json.loads(item)
+        if not outputs:
+            return result_dict
+
+        # return the keys in outputs
+        output_results = {}
+        for key in outputs:
+            if key not in result_dict:
+                raise InvalidInputError(f"Cannot find '{key}' in response {list(result_dict.keys())}")
+            output_results[key] = result_dict[key]
+        return output_results
 
     async def format_stream(llm_response: AsyncStream[ChatCompletionChunk]) -> AsyncGenerator[str, None]:
         cur_index = None

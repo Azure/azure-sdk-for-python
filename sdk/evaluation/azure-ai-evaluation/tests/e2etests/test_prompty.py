@@ -2,36 +2,49 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from copy import deepcopy
 import pytest
 import re
+from collections import defaultdict
 from os import path
 from pathlib import Path
-from typing import Any, Final, Mapping, cast
+from typing import Any, AsyncGenerator, DefaultDict, Dict, Final, Mapping, Optional, cast
 
-from azure.ai.evaluation.prompty import AsyncPrompty
+from openai.types.chat import ChatCompletion
+
+from azure.ai.evaluation.prompty import AsyncPrompty, InvalidInputError
 from azure.ai.evaluation import AzureOpenAIModelConfiguration
 
 
 PROMPTY_TEST_DIR: Final[Path] = Path(path.dirname(__file__), "data").resolve()
 EVALUATOR_ROOT_DIR: Final[Path] = Path(path.dirname(__file__), "../../azure/ai/evaluation/_evaluators").resolve()
+BASIC_PROMPTY: Final[Path] = PROMPTY_TEST_DIR / "basic.prompty"
+IMAGE_PROMPTY: Final[Path] = PROMPTY_TEST_DIR / "image.prompty"
+JSON_PROMPTY: Final[Path] = PROMPTY_TEST_DIR / "json.prompty"
+COHERENCE_PROMPTY: Final[Path] = EVALUATOR_ROOT_DIR / "_coherence" / "coherence.prompty"
+
+
+def recursive_defaultdict():
+    return defaultdict(recursive_defaultdict)
 
 
 @pytest.fixture()
-def azure_model_config(model_config: AzureOpenAIModelConfiguration) -> Mapping[str, Any]:
-    cloned = deepcopy(model_config)
-    cloned.setdefault("type", "azure_openai")
-    return {"configuration": cloned}
+def prompty_config(model_config: AzureOpenAIModelConfiguration) -> DefaultDict[str, Any]:
+    cloned_model: Dict[str, Any] = defaultdict(recursive_defaultdict)
+    cloned_model.update({"type": "azure_openai", **model_config})
+
+    config: DefaultDict[str, Any] = defaultdict(recursive_defaultdict)
+    config["model"]["configuration"] = cloned_model
+    return config
 
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
 class TestPrompty:
-    def test_load_basic(self, azure_model_config: Mapping[str, Any]):
+    def test_load_basic(self, prompty_config: Dict[str, Any]):
         expected_prompt: Final[str] = (
             "[{'role': 'system', 'content': 'You are an AI assistant who helps people find information.\\nAs the assistant, you answer questions briefly, succinctly,\\nand in a personable manner using markdown and even add some personal flair with appropriate emojis.\\n\\n# Safety\\n- You **should always** reference factual statements to search results based on [relevant documents]\\n- Search results based on [relevant documents] may be incomplete or irrelevant. You do not make assumptions\\n# Customer\\nYou are helping Bob Doh to find answers to their questions.\\nUse their name to address them in your responses.'}, {'role': 'user', 'content': 'What is the answer?'}]"
         )
 
-        prompty = AsyncPrompty(PROMPTY_TEST_DIR / "basic.prompty", azure_model_config)
+        prompty = AsyncPrompty(BASIC_PROMPTY, **prompty_config)
         assert prompty
         assert isinstance(prompty, AsyncPrompty)
         assert prompty.name == "Basic Prompt"
@@ -41,8 +54,8 @@ class TestPrompty:
         rendered = prompty.render(firstName="Bob", question="What is the answer?")
         assert str(rendered) == expected_prompt
 
-    def test_load_images(self, azure_model_config: Mapping[str, Any]):
-        prompty = AsyncPrompty(PROMPTY_TEST_DIR / "image.prompty", azure_model_config)
+    def test_load_images(self, prompty_config: Dict[str, Any]):
+        prompty = AsyncPrompty(IMAGE_PROMPTY, **prompty_config)
         assert prompty
         assert isinstance(prompty, AsyncPrompty)
         assert prompty.name == "Basic Prompt with Image"
@@ -66,9 +79,8 @@ class TestPrompty:
         assert rendered[1]["content"][1]["image_url"]["detail"] == "auto"
 
     @pytest.mark.asyncio
-    async def test_first_match_text(self, azure_model_config: Mapping[str, Any]):
-        prompty = AsyncPrompty(EVALUATOR_ROOT_DIR / "_coherence" / "coherence.prompty", azure_model_config)
-
+    async def test_first_match_text(self, prompty_config: Dict[str, Any]):
+        prompty = AsyncPrompty(COHERENCE_PROMPTY, **prompty_config)
         result = await prompty(query="What is the capital of France?", response="France capital Paris")
 
         # We expect an output string that contains <S0>chain of thoughts</S0> <S1>explanation<S1> <S2>int_score</S2>
@@ -85,8 +97,91 @@ class TestPrompty:
         assert score >= 0 and score <= 5
 
     @pytest.mark.asyncio
-    async def test_first_match_image(self, azure_model_config: Mapping[str, Any]):
-        prompty = AsyncPrompty(PROMPTY_TEST_DIR / "image.prompty", azure_model_config)
+    async def test_first_match_image(self, prompty_config: Dict[str, Any]):
+        prompty = AsyncPrompty(IMAGE_PROMPTY, **prompty_config)
         result = await prompty(image="image1.jpg", question="What is this a picture of?")
         assert isinstance(result, str)
         assert "apple" in result.lower()
+
+    @pytest.mark.asyncio
+    async def test_first_match_text_streaming(self, prompty_config: Dict[str, Any]):
+        prompty_config["model"]["parameters"]["stream"] = True
+        prompty = AsyncPrompty(BASIC_PROMPTY, **prompty_config)
+        result = await prompty(firstName="Bob", question="What is the capital of France?")
+
+        assert isinstance(result, AsyncGenerator)
+        combined = ""
+        async for chunk in result:
+            assert isinstance(chunk, str)
+            combined += chunk
+
+        assert "Paris" in combined
+        assert "Bob" in combined
+
+    @pytest.mark.asyncio
+    async def test_first_match_image_streaming(self, prompty_config: Dict[str, Any]):
+        prompty_config["model"]["parameters"]["stream"] = True
+        prompty = AsyncPrompty(IMAGE_PROMPTY, **prompty_config)
+        result = await prompty(image="image1.jpg", question="What is this a picture of?")
+
+        assert isinstance(result, AsyncGenerator)
+        combined = ""
+        async for chunk in result:
+            assert isinstance(chunk, str)
+            combined += chunk
+
+        assert "apple" in combined
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "outputs",
+        [
+            {},
+            {"firstName": {"type": "str"}, "answer": {"type": "str"}},
+        ],
+    )
+    async def test_first_match_text_json(self, prompty_config: Dict[str, Any], outputs: Mapping[str, Any]):
+        prompty_config["outputs"] = outputs
+        prompty = AsyncPrompty(JSON_PROMPTY, **prompty_config)
+        result = await prompty(question="What is the capital of France?")
+
+        assert isinstance(result, Mapping)
+        assert "firstName" in result
+        assert result["firstName"] == "John"
+        assert "answer" in result
+        assert "Paris" in result["answer"]
+
+        if outputs:
+            # Should ahve only first name, and answer
+            assert "lastName" not in result
+        else:
+            assert "lastName" in result
+            assert result["lastName"] == "Doh"
+
+    @pytest.mark.asyncio
+    async def test_first_match_text_json_missing(self, prompty_config: Dict[str, Any]):
+        prompty_config["outputs"] = {"does_not_exist": {"type": "str"}}
+        prompty = AsyncPrompty(JSON_PROMPTY, **prompty_config)
+        with pytest.raises(InvalidInputError) as ex:
+            await prompty(question="What is the capital of France?")
+        assert "does_not_exist" in ex.value.message
+
+    @pytest.mark.asyncio
+    async def test_first_match_text_json_streaming(self, prompty_config: Dict[str, Any]):
+        prompty_config["model"]["parameters"]["stream"] = True
+        prompty = AsyncPrompty(JSON_PROMPTY, **prompty_config)
+        result = await prompty(question="What is the capital of France?", firstName="Barbra", lastName="Streisand")
+        assert isinstance(result, Mapping)
+        assert result["firstName"] == "Barbra"
+        assert result["lastName"] == "Streisand"
+        assert "Paris" in result["answer"]
+
+    @pytest.mark.asyncio
+    async def test_full_text(self, prompty_config: Dict[str, Any]):
+        prompty_config["model"]["response"] = "full"
+        prompty = AsyncPrompty(BASIC_PROMPTY, **prompty_config)
+        result = await prompty(firstName="Bob", question="What is the capital of France?")
+        assert isinstance(result, ChatCompletion)
+        response: str = result.choices[0].message.content or ""
+        assert "Bob" in response
+        assert "Paris" in response
