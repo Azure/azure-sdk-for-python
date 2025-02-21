@@ -8,7 +8,7 @@ import inspect
 import logging
 from datetime import datetime
 from azure.ai.evaluation._common._experimental import experimental
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._constants import CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT
 from azure.ai.evaluation._evaluators import _content_safety, _protected_material,  _groundedness, _relevance, _similarity, _fluency, _xpia, _coherence
@@ -17,11 +17,16 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
 from azure.ai.evaluation.simulator import Simulator, AdversarialSimulator, AdversarialScenario, AdversarialScenarioJailbreak, IndirectAttackSimulator, DirectAttackSimulator
 from azure.ai.evaluation.simulator._utils import JsonLineList
+from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager, TokenScope, RAIClient, AdversarialTemplateHandler
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.core.credentials import TokenCredential
 import json
 from pathlib import Path
+import re
+from pyrit.common import initialize_pyrit, IN_MEMORY
+from pyrit.orchestrator import PromptSendingOrchestrator
+from pyrit.prompt_target import OpenAIChatTarget
 
 logger = logging.getLogger(__name__)
 
@@ -86,6 +91,21 @@ class _SafetyEvaluation:
         self.azure_ai_project = AzureAIProject(**azure_ai_project)
         self.credential=credential
         self.logger = _setup_logger()
+
+        # For pyrit 
+        self.token_manager = ManagedIdentityAPITokenManager(
+            token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
+            logger=logging.getLogger("AdversarialSimulator"),
+            credential=cast(TokenCredential, credential),
+        )
+
+        self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
+        self.adversarial_template_handler = AdversarialTemplateHandler(
+            azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
+        )
+
+        initialize_pyrit(memory_db_type=IN_MEMORY)
+
 
     @staticmethod
     def _validate_model_config(model_config: Any):
@@ -524,7 +544,28 @@ class _SafetyEvaluation:
         }
         evaluation_result['studio_url'] = evaluation_result_dict['jailbreak']['studio_url'] + '\t' + evaluation_result_dict['regular']['studio_url']
         return evaluation_result
+    
+    async def _get_all_prompts(self, scenario: AdversarialScenario) -> List[str]:
+        templates = await self.adversarial_template_handler._get_content_harm_template_collections(
+                AdversarialScenario.ADVERSARIAL_QA.value
+            )
+        parameter_lists = [t.template_parameters for t in templates]
+        zipped_parameters = list(zip(*parameter_lists))
 
+        def fill_template(template_str, parameter):
+            pattern = re.compile(r'{{\s*(.*?)\s*}}')
+            def replacer(match):
+                placeholder = match.group(1)
+                return parameter.get(placeholder, f"{{{{ {placeholder} }}}}")
+            filled_text = pattern.sub(replacer, template_str)
+            return filled_text
+
+        all_prompts = []
+        for param_group in zipped_parameters:
+            for template_obj, parameter in zip(templates, param_group):
+                filled_template = fill_template(parameter['conversation_starter'], parameter)
+                all_prompts.append(filled_template)
+        return all_prompts
 
     async def __call__(
             self,
@@ -638,3 +679,32 @@ class _SafetyEvaluation:
                 category=ErrorCategory.MISSING_FIELD,
                 blame=ErrorBlame.USER_ERROR,
             )
+        
+    
+        
+if __name__ == "__main__":
+    from dotenv import load_dotenv
+    from azure.identity import DefaultAzureCredential
+    import asyncio
+    import re
+    load_dotenv()
+    def test_target(query: str) -> str:
+        return "Hello, how can I help you?"
+    
+    azure_ai_project = {
+    "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
+    "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP_NAME"),
+    "project_name": os.environ.get("AZURE_PROJECT_NAME"),
+    }
+
+    credential = DefaultAzureCredential()
+
+    safety_evaluation = _SafetyEvaluation(azure_ai_project=azure_ai_project, credential=credential)
+    target = OpenAIChatTarget()
+    all_prompts_list = asyncio.run(safety_evaluation._get_all_prompts(AdversarialScenario.ADVERSARIAL_QA))
+    orchestrator = PromptSendingOrchestrator(objective_target=target)
+    asyncio.run(orchestrator.send_prompts_async(prompt_list=all_prompts_list))
+    asyncio.run(orchestrator.print_conversations_async())
+
+
+
