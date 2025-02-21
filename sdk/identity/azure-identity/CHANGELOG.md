@@ -1,12 +1,22 @@
 # Release History
 
-## 1.19.1 (Unreleased)
+## 1.20.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Deprecated `UsernamePasswordCredential`, as it doesn't support multifactor authentication (MFA). MFA will soon be enforced on all Microsoft Entra tenants. For more details, see [Planning for mandatory MFA](https://aka.ms/mfaforazure). ([#39785](https://github.com/Azure/azure-sdk-for-python/pull/39785))
+
+## 1.20.0 (2025-02-11)
 
 ### Features Added
 
 - Added `subscription` parameter to `AzureCliCredential` to specify the subscription to use when authenticating with the Azure CLI. ([#37994](https://github.com/Azure/azure-sdk-for-python/pull/37994))
-
-### Breaking Changes
 
 ### Bugs Fixed
 

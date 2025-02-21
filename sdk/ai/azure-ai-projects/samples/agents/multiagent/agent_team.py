@@ -4,9 +4,17 @@
 # ------------------------------------
 import os
 import yaml  # type: ignore
-from typing import Any, Dict, Optional, Set, List
+from azure.core.settings import settings  # type: ignore
+
+from opentelemetry import trace
+from opentelemetry.trace import StatusCode, Span  # noqa: F401 # pylint: disable=unused-import
+from opentelemetry.trace import Span
+from azure.core.tracing import AbstractSpan
+from typing import Any, Dict, Optional, Set, Tuple, List
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import FunctionTool, ToolSet, MessageRole, Agent
+from azure.ai.projects.models import FunctionTool, ToolSet, MessageRole, Agent, AgentThread
+
+tracer = trace.get_tracer(__name__)
 
 
 class _AgentTeamMember:
@@ -32,7 +40,7 @@ class _AgentTeamMember:
         self.can_delegate = can_delegate
 
 
-class _AgentTask:
+class AgentTask:
     """
     Encapsulates a task for an agent to perform.
 
@@ -57,11 +65,13 @@ class AgentTeam:
     _teams: Dict[str, "AgentTeam"] = {}
 
     _project_client: AIProjectClient
-    _thread_id: str = ""
+    _agent_thread: Optional[AgentThread] = None
     _team_leader: Optional[_AgentTeamMember] = None
     _members: List[_AgentTeamMember] = []
-    _tasks: List[_AgentTask] = []
+    _tasks: List[AgentTask] = []
     _team_name: str = ""
+    _current_request_span: Optional[Span] = None
+    _current_task_span: Optional[Span] = None
 
     def __init__(self, team_name: str, project_client: AIProjectClient):
         """
@@ -146,7 +156,26 @@ class AgentTeam:
         )
         self._members.append(member)
 
-    def _add_task(self, task: _AgentTask) -> None:
+    def set_team_leader(self, model: str, name: str, instructions: str, toolset: Optional[ToolSet] = None) -> None:
+        """
+        Set the team leader for this AgentTeam.
+
+        If team leader has not been set prior to the call to assemble_team,
+        then a default team leader will be set.
+
+        :param model: The model name (e.g. GPT-4) for the agent.
+        :param name: The name of the team leader.
+        :param instructions: The instructions for the team leader. These instructions
+                             are not modified by the implementation, so all required
+                             information about other team members and how to pass tasks
+                             to them should be included.
+        :param toolset: An optional ToolSet to configure specific tools (functions, etc.)
+                        for the team leader.
+        """
+        member = _AgentTeamMember(model=model, name=name, instructions=instructions, toolset=toolset)
+        self._team_leader = member
+
+    def add_task(self, task: AgentTask) -> None:
         """
         Add a new task to the team's task list.
 
@@ -154,31 +183,13 @@ class AgentTeam:
         """
         self._tasks.append(task)
 
-    def create_team_leader(self, model: str, name: str, instructions: str, toolset: Optional[ToolSet] = None) -> None:
+    def _create_team_leader(self) -> None:
         """
-        Add a new agent (team member) to this AgentTeam.
-
-        If team leader has not been created prior to the call to assemble_team,
-        then default team leader will be created automatically.
-
-        :param model: The model name (e.g. GPT-4) for the agent.
-        :param name: The name of the team leader agent being.
-        :param instructions: The initial instructions/personality for the agent.
-        :param toolset: An optional ToolSet to configure specific tools (functions, etc.) for the agent.
+        Create the team leader agent.
         """
         assert self._project_client is not None, "project_client must not be None"
-        assert self._team_leader is None, "team leader has already been created"
-        # List all agents (will be empty at this moment if you haven't added any, or you can append after they're added)
-        for member in self._members:
-            instructions += f"- {member.name}: {member.instructions}\n"
+        assert self._team_leader is not None, "team leader has not been added"
 
-        self._team_leader = _AgentTeamMember(
-            model=model,
-            name=name,
-            instructions=instructions,
-            toolset=toolset,
-            can_delegate=True,
-        )
         self._team_leader.agent_instance = self._project_client.agents.create_agent(
             model=self._team_leader.model,
             name=self._team_leader.name,
@@ -186,18 +197,23 @@ class AgentTeam:
             toolset=self._team_leader.toolset,
         )
 
-    def _create_team_leader(self):
+    def _set_default_team_leader(self):
         """
-        Create and initialize the default 'TeamLeader' agent with awareness of all other agents.
+        Set the default 'TeamLeader' agent with awareness of all other agents.
         """
         toolset = ToolSet()
         toolset.add(default_function_tool)
         instructions = self.TEAM_LEADER_INSTRUCTIONS.format(agent_name="TeamLeader", team_name=self.team_name) + "\n"
-        self.create_team_leader(
+        # List all agents (will be empty at this moment if you haven't added any, or you can append after they're added)
+        for member in self._members:
+            instructions += f"- {member.name}: {member.instructions}\n"
+
+        self._team_leader = _AgentTeamMember(
             model=self.TEAM_LEADER_MODEL,
             name="TeamLeader",
             instructions=instructions,
             toolset=toolset,
+            can_delegate=True,
         )
 
     def assemble_team(self):
@@ -208,7 +224,9 @@ class AgentTeam:
         assert self._project_client is not None, "project_client must not be None"
 
         if self._team_leader is None:
-            self._create_team_leader()
+            self._set_default_team_leader()
+
+        self._create_team_leader()
 
         for member in self._members:
             if member is self._team_leader:
@@ -252,6 +270,16 @@ class AgentTeam:
                 self._project_client.agents.delete_agent(member.agent_instance.id)
         AgentTeam._remove_team(self.team_name)
 
+    def _add_task_completion_event(
+        self,
+        span: Span,
+        result: str,
+    ) -> None:
+
+        attributes: Dict[str, Any] = {}
+        attributes["agent_team.task.result"] = result
+        span.add_event(name=f"agent_team.task_completed", attributes=attributes)
+
     def process_request(self, request: str) -> None:
         """
         Handle a user's request by creating a team and delegating tasks to
@@ -261,43 +289,69 @@ class AgentTeam:
         """
         assert self._project_client is not None, "project client must not be None"
         assert self._team_leader is not None, "team leader must not be None"
-        thread = self._project_client.agents.create_thread()
-        print(f"Created thread with ID: {thread.id}")
-        self._thread_id = thread.id
-        team_leader_request = self.TEAM_LEADER_INITIAL_REQUEST.format(original_request=request)
-        self._add_task(_AgentTask(self._team_leader.name, team_leader_request, "user"))
-        while self._tasks:
-            task = self._tasks.pop(0)
-            print(
-                f"Starting task for agent '{task.recipient}'. "
-                f"Requestor: '{task.requestor}'. "
-                f"Task description: '{task.task_description}'."
-            )
-            message = self._project_client.agents.create_message(
-                thread_id=self._thread_id,
-                role="user",
-                content=task.task_description,
-            )
-            print(f"Created message with ID: {message.id} for task in thread {self._thread_id}")
-            agent = self._get_member_by_name(task.recipient)
-            if agent and agent.agent_instance:
-                run = self._project_client.agents.create_and_process_run(
-                    thread_id=self._thread_id, assistant_id=agent.agent_instance.id
-                )
-                print(f"Created and processed run for agent '{agent.name}', run ID: {run.id}")
-                messages = self._project_client.agents.list_messages(thread_id=self._thread_id)
-                text_message = messages.get_last_text_message_by_role(role=MessageRole.AGENT)
-                if text_message and text_message.text:
-                    print(f"Agent '{agent.name}' completed task. " f"Outcome: {text_message.text.value}")
 
-            # If no tasks remain AND the recipient is not the TeamLeader,
-            # let the TeamLeader see if more delegation is needed.
-            if not self._tasks and not task.recipient == "TeamLeader":
-                team_leader_request = self.TEAM_LEADER_TASK_COMPLETENESS_CHECK_INSTRUCTIONS
-                task = _AgentTask(
-                    recipient=self._team_leader.name, task_description=team_leader_request, requestor="user"
-                )
-                self._add_task(task)
+        if self._agent_thread is None:
+            self._agent_thread = self._project_client.agents.create_thread()
+            print(f"Created thread with ID: {self._agent_thread.id}")
+
+        with tracer.start_as_current_span("agent_team_request") as current_request_span:
+            self._current_request_span = current_request_span
+            if self._current_request_span is not None:
+                self._current_request_span.set_attribute("agent_team.name", self.team_name)
+            team_leader_request = self.TEAM_LEADER_INITIAL_REQUEST.format(original_request=request)
+            _create_task(
+                team_name=self.team_name,
+                recipient=self._team_leader.name,
+                request=team_leader_request,
+                requestor="user",
+            )
+            while self._tasks:
+                task = self._tasks.pop(0)
+                with tracer.start_as_current_span("agent_team_task") as current_task_span:
+                    self._current_task_span = current_task_span
+                    if self._current_task_span is not None:
+                        self._current_task_span.set_attribute("agent_team.name", self.team_name)
+                        self._current_task_span.set_attribute("agent_team.task.recipient", task.recipient)
+                        self._current_task_span.set_attribute("agent_team.task.requestor", task.requestor)
+                        self._current_task_span.set_attribute("agent_team.task.description", task.task_description)
+                    print(
+                        f"Starting task for agent '{task.recipient}'. "
+                        f"Requestor: '{task.requestor}'. "
+                        f"Task description: '{task.task_description}'."
+                    )
+                    message = self._project_client.agents.create_message(
+                        thread_id=self._agent_thread.id,
+                        role="user",
+                        content=task.task_description,
+                    )
+                    print(f"Created message with ID: {message.id} for task in thread {self._agent_thread.id}")
+                    agent = self._get_member_by_name(task.recipient)
+                    if agent and agent.agent_instance:
+                        run = self._project_client.agents.create_and_process_run(
+                            thread_id=self._agent_thread.id, assistant_id=agent.agent_instance.id
+                        )
+                        print(f"Created and processed run for agent '{agent.name}', run ID: {run.id}")
+                        messages = self._project_client.agents.list_messages(thread_id=self._agent_thread.id)
+                        text_message = messages.get_last_text_message_by_role(role=MessageRole.AGENT)
+                        if text_message and text_message.text:
+                            print(f"Agent '{agent.name}' completed task. " f"Outcome: {text_message.text.value}")
+                            if self._current_task_span is not None:
+                                self._add_task_completion_event(self._current_task_span, result=text_message.text.value)
+
+                    # If no tasks remain AND the recipient is not the TeamLeader,
+                    # let the TeamLeader see if more delegation is needed.
+                    if not self._tasks and not task.recipient == "TeamLeader":
+                        team_leader_request = self.TEAM_LEADER_TASK_COMPLETENESS_CHECK_INSTRUCTIONS
+                        _create_task(
+                            team_name=self.team_name,
+                            recipient=self._team_leader.name,
+                            request=team_leader_request,
+                            requestor="user",
+                        )
+                    # self._current_task_span.end()
+                    self._current_task_span = None
+            # self._current_request_span.end()
+            self._current_request_span = None
 
     def _get_member_by_name(self, name) -> Optional[_AgentTeamMember]:
         """
@@ -313,6 +367,34 @@ class AgentTeam:
                 return member
         return None
 
+    """
+    Requests another agent in the team to complete a task.
+
+    :param span (Span): The event will be added to this span
+    :param team_name (str): The name of the team.
+    :param recipient (str): The name of the agent that is being requested to complete the task.
+    :param request (str): A description of the to complete. This can also be a question.
+    :param requestor (str): The name of the agent who is requesting the task.
+    :return: True if the task was successfully received, False otherwise.
+    :rtype: str
+    """
+
+
+def _add_create_task_event(
+    span: Span,
+    team_name: str,
+    requestor: str,
+    recipient: str,
+    request: str,
+) -> None:
+
+    attributes: Dict[str, Any] = {}
+    attributes["agent_team.task.team_name"] = team_name
+    attributes["agent_team.task.requestor"] = requestor
+    attributes["agent_team.task.recipient"] = recipient
+    attributes["agent_team.task.description"] = request
+    span.add_event(name=f"agent_team.create_task", attributes=attributes)
+
 
 def _create_task(team_name: str, recipient: str, request: str, requestor: str) -> str:
     """
@@ -325,14 +407,24 @@ def _create_task(team_name: str, recipient: str, request: str, requestor: str) -
     :return: True if the task was successfully received, False otherwise.
     :rtype: str
     """
-    task = _AgentTask(recipient=recipient, task_description=request, requestor=requestor)
+    task = AgentTask(recipient=recipient, task_description=request, requestor=requestor)
     team: Optional[AgentTeam] = None
     try:
         team = AgentTeam.get_team(team_name)
+        span: Optional[Span] = None
+        if team._current_task_span is not None:
+            span = team._current_task_span
+        elif team._current_request_span is not None:
+            span = team._current_request_span
+
+        if span is not None:
+            _add_create_task_event(
+                span=span, team_name=team_name, requestor=requestor, recipient=recipient, request=request
+            )
     except:
         pass
     if team is not None:
-        team._add_task(task)
+        team.add_task(task)
         return "True"
     return "False"
 
