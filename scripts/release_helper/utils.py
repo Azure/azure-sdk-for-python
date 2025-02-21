@@ -62,7 +62,7 @@ def get_python_release_pipeline(output_folder):
                                       creds=BasicAuthentication(os.getenv('PIPELINE_TOKEN'), ''))
     pipelines = pipeline_client.list_pipelines(project='internal')
     for pipeline in pipelines:
-        if re.findall('^python - \w*$', pipeline.name):
+        if re.findall(r'^python - \w*$', pipeline.name):
             key = pipeline.name.replace('python - ', '')
             if key == output_folder:
                 pipeline_url = 'https://dev.azure.com/azure-sdk/internal/_build?definitionId={}'.format(pipeline.id)
