@@ -1329,7 +1329,7 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAsyncAgentEventHandler[T]"], Awaitable[None]]] = (
             None
         )
-        self.buffer: Optional[str] = None
+        self.buffer: Optional[bytes] = None
 
     def initialize(
         self,
@@ -1342,29 +1342,29 @@ class BaseAsyncAgentEventHandler(AsyncIterator[T]):
         self.submit_tool_outputs = submit_tool_outputs
 
     async def __anext__(self) -> T:
-        self.buffer = "" if self.buffer is None else self.buffer
+        self.buffer = b"" if self.buffer is None else self.buffer
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
 
-        if not "\n\n" in self.buffer:
+        if not b"\n\n" in self.buffer:
             async for chunk in self.response_iterator:
-                self.buffer += chunk.decode("utf-8")
-                if "\n\n" in self.buffer:
+                self.buffer += chunk
+                if b"\n\n" in self.buffer:
                     break
 
-        if self.buffer == "":
+        if self.buffer == b"":
             raise StopAsyncIteration()
 
-        event_str = ""
-        if "\n\n" in self.buffer:
-            event_end_index = self.buffer.index("\n\n")
-            event_str = self.buffer[:event_end_index]
+        event_bytes = b""
+        if b"\n\n" in self.buffer:
+            event_end_index = self.buffer.index(b"\n\n")
+            event_bytes = self.buffer[:event_end_index]
             self.buffer = self.buffer[event_end_index:].lstrip()
         else:
-            event_str = self.buffer
-            self.buffer = ""
+            event_bytes = self.buffer
+            self.buffer = b""
 
-        return await self._process_event(event_str)
+        return await self._process_event(event_bytes.decode("utf-8"))
 
     async def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")
@@ -1386,7 +1386,7 @@ class BaseAgentEventHandler(Iterator[T]):
     def __init__(self) -> None:
         self.response_iterator: Optional[Iterator[bytes]] = None
         self.submit_tool_outputs: Optional[Callable[[ThreadRun, "BaseAgentEventHandler[T]"], None]] = None
-        self.buffer: Optional[str] = None
+        self.buffer: Optional[bytes] = None
 
     def initialize(
         self,
@@ -1399,29 +1399,29 @@ class BaseAgentEventHandler(Iterator[T]):
         self.submit_tool_outputs = submit_tool_outputs
 
     def __next__(self) -> T:
-        self.buffer = "" if self.buffer is None else self.buffer
+        self.buffer = b"" if self.buffer is None else self.buffer
         if self.response_iterator is None:
             raise ValueError("The response handler was not initialized.")
 
-        if not "\n\n" in self.buffer:
+        if not b"\n\n" in self.buffer:
             for chunk in self.response_iterator:
-                self.buffer += chunk.decode("utf-8")
-                if "\n\n" in self.buffer:
+                self.buffer += chunk
+                if b"\n\n" in self.buffer:
                     break
 
-        if self.buffer == "":
+        if self.buffer == b"":
             raise StopIteration()
 
-        event_str = ""
-        if "\n\n" in self.buffer:
-            event_end_index = self.buffer.index("\n\n")
-            event_str = self.buffer[:event_end_index]
+        event_bytes = b""
+        if b"\n\n" in self.buffer:
+            event_end_index = self.buffer.index(b"\n\n")
+            event_bytes = self.buffer[:event_end_index]
             self.buffer = self.buffer[event_end_index:].lstrip()
         else:
-            event_str = self.buffer
-            self.buffer = ""
+            event_bytes = self.buffer
+            self.buffer = b""
 
-        return self._process_event(event_str)
+        return self._process_event(event_bytes.decode("utf-8"))
 
     def _process_event(self, event_data_str: str) -> T:
         raise NotImplementedError("This method needs to be implemented.")
