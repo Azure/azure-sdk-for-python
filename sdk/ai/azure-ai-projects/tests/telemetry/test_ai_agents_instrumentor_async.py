@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -133,7 +134,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
         thread = await client.agents.create_thread()
         message = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-        run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
 
         while run.status in ["queued", "in_progress", "requires_action"]:
             # wait for a second
@@ -286,7 +287,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         agent = await client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
         thread = await client.agents.create_thread()
         message = await client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-        run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
 
         while run.status in ["queued", "in_progress", "requires_action"]:
             # wait for a second
@@ -468,7 +469,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         )
 
         async with await client.agents.create_stream(
-            thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+            thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
         ) as stream:
             await stream.until_done()
 
@@ -696,7 +697,7 @@ class TestAiAgentsInstrumentor(AzureRecordedTestCase):
         )
 
         async with await client.agents.create_stream(
-            thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+            thread_id=thread.id, agent_id=agent.id, event_handler=MyEventHandler()
         ) as stream:
             await stream.until_done()
 

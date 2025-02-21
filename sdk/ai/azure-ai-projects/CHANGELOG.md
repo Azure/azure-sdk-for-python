@@ -10,6 +10,8 @@
 
 * Fixed a bug on deserialization of RunStepDeltaFileSearchToolCall returned during agent streaming run [GitHub issue 48333](https://github.com/Azure/azure-sdk-for-net/issues/48333)
 
+### Breaking Changes
+
 
 ## 1.0.0b6 (2025-02-14)
 

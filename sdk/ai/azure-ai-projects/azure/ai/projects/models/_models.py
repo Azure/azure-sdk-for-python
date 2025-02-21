@@ -1807,7 +1807,7 @@ class InternalConnectionProperties(_model_base.Model):
      "ApiKey", "AAD", "SAS", and "None".
     :vartype auth_type: str or ~azure.ai.projects.models.AuthenticationType
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", and "API Key".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -1821,7 +1821,7 @@ class InternalConnectionProperties(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\",
-     \"AzureBlob\", \"AIServices\", and \"CognitiveSearch\"."""
+     \"AzureBlob\", \"AIServices\", \"CognitiveSearch\", and \"API Key\"."""
     target: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The connection URL to be used for this service. Required."""
 
@@ -1851,7 +1851,7 @@ class InternalConnectionPropertiesAADAuth(InternalConnectionProperties, discrimi
 
 
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", and "API Key".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -1888,7 +1888,7 @@ class InternalConnectionPropertiesApiKeyAuth(InternalConnectionProperties, discr
 
 
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", and "API Key".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -1930,7 +1930,7 @@ class InternalConnectionPropertiesNoAuth(InternalConnectionProperties, discrimin
 
 
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", and "API Key".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -1965,7 +1965,7 @@ class InternalConnectionPropertiesSASAuth(InternalConnectionProperties, discrimi
 
 
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", "AzureBlob", "AIServices", and "CognitiveSearch".
+     "Serverless", "AzureBlob", "AIServices", "CognitiveSearch", and "API Key".
     :vartype category: str or ~azure.ai.projects.models.ConnectionType
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -2302,7 +2302,8 @@ class MessageDeltaTextAnnotation(_model_base.Model):
     """The abstract base representation of a streamed text content part's text annotation.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    MessageDeltaTextFileCitationAnnotation, MessageDeltaTextFilePathAnnotation
+    MessageDeltaTextFileCitationAnnotation, MessageDeltaTextFilePathAnnotation,
+    MessageDeltaTextUrlCitationAnnotation
 
 
     :ivar index: The index of the annotation within a text content part. Required.
@@ -2583,6 +2584,90 @@ class MessageDeltaTextFilePathAnnotationObject(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class MessageDeltaTextUrlCitationAnnotation(MessageDeltaTextAnnotation, discriminator="url_citation"):
+    """A citation within the message that points to a specific URL associated with the message.
+    Generated when the agent uses tools such as 'bing_grounding' to search the Internet.
+
+
+    :ivar index: The index of the annotation within a text content part. Required.
+    :vartype index: int
+    :ivar type: The object type, which is always 'url_citation'. Required. Default value is
+     "url_citation".
+    :vartype type: str
+    :ivar url_citation: The details of the URL citation. Required.
+    :vartype url_citation: ~azure.ai.projects.models.MessageDeltaTextUrlCitationDetails
+    :ivar start_index: The first text index associated with this text annotation.
+    :vartype start_index: int
+    :ivar end_index: The last text index associated with this text annotation.
+    :vartype end_index: int
+    """
+
+    type: Literal["url_citation"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'url_citation'. Required. Default value is \"url_citation\"."""
+    url_citation: "_models.MessageDeltaTextUrlCitationDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the URL citation. Required."""
+    start_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The first text index associated with this text annotation."""
+    end_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The last text index associated with this text annotation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        url_citation: "_models.MessageDeltaTextUrlCitationDetails",
+        start_index: Optional[int] = None,
+        end_index: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="url_citation", **kwargs)
+
+
+class MessageDeltaTextUrlCitationDetails(_model_base.Model):
+    """A representation of a URL citation, as used in text thread message content.
+
+
+    :ivar url: The URL associated with this citation. Required.
+    :vartype url: str
+    :ivar title: The title of the URL.
+    :vartype title: str
+    """
+
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL associated with this citation. Required."""
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The title of the URL."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: str,
+        title: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class MessageImageFileContent(MessageContent, discriminator="image_file"):
     """A representation of image file content in a thread message.
 
@@ -2687,7 +2772,8 @@ class MessageTextAnnotation(_model_base.Model):
     """An abstract representation of an annotation to text thread message content.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation
+    MessageTextFileCitationAnnotation, MessageTextFilePathAnnotation,
+    MessageTextUrlCitationAnnotation
 
 
     :ivar type: The object type. Required. Default value is None.
@@ -2946,6 +3032,90 @@ class MessageTextFilePathDetails(_model_base.Model):
         self,
         *,
         file_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MessageTextUrlCitationAnnotation(MessageTextAnnotation, discriminator="url_citation"):
+    """A citation within the message that points to a specific URL associated with the message.
+    Generated when the agent uses tools such as 'bing_grounding' to search the Internet.
+
+
+    :ivar text: The textual content associated with this text annotation item. Required.
+    :vartype text: str
+    :ivar type: The object type, which is always 'url_citation'. Required. Default value is
+     "url_citation".
+    :vartype type: str
+    :ivar url_citation: The details of the URL citation. Required.
+    :vartype url_citation: ~azure.ai.projects.models.MessageTextUrlCitationDetails
+    :ivar start_index: The first text index associated with this text annotation.
+    :vartype start_index: int
+    :ivar end_index: The last text index associated with this text annotation.
+    :vartype end_index: int
+    """
+
+    type: Literal["url_citation"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'url_citation'. Required. Default value is \"url_citation\"."""
+    url_citation: "_models.MessageTextUrlCitationDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The details of the URL citation. Required."""
+    start_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The first text index associated with this text annotation."""
+    end_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The last text index associated with this text annotation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+        url_citation: "_models.MessageTextUrlCitationDetails",
+        start_index: Optional[int] = None,
+        end_index: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, type="url_citation", **kwargs)
+
+
+class MessageTextUrlCitationDetails(_model_base.Model):
+    """A representation of a URL citation, as used in text thread message content.
+
+
+    :ivar url: The URL associated with this citation. Required.
+    :vartype url: str
+    :ivar title: The title of the URL.
+    :vartype title: str
+    """
+
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL associated with this citation. Required."""
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The title of the URL."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        url: str,
+        title: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -4083,8 +4253,8 @@ class RunStep(_model_base.Model):
     :ivar type: The type of run step, which can be either message_creation or tool_calls. Required.
      Known values are: "message_creation" and "tool_calls".
     :vartype type: str or ~azure.ai.projects.models.RunStepType
-    :ivar assistant_id: The ID of the agent associated with the run step. Required.
-    :vartype assistant_id: str
+    :ivar agent_id: The ID of the agent associated with the run step. Required.
+    :vartype agent_id: str
     :ivar thread_id: The ID of the thread that was run. Required.
     :vartype thread_id: str
     :ivar run_id: The ID of the run that this run step is a part of. Required.
@@ -4127,7 +4297,7 @@ class RunStep(_model_base.Model):
     type: Union[str, "_models.RunStepType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of run step, which can be either message_creation or tool_calls. Required. Known
      values are: \"message_creation\" and \"tool_calls\"."""
-    assistant_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    agent_id: str = rest_field(name="assistant_id", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the agent associated with the run step. Required."""
     thread_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the thread that was run. Required."""
@@ -4176,7 +4346,7 @@ class RunStep(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         type: Union[str, "_models.RunStepType"],
-        assistant_id: str,
+        agent_id: str,
         thread_id: str,
         run_id: str,
         status: Union[str, "_models.RunStepStatus"],
@@ -5872,8 +6042,8 @@ class ThreadMessage(_model_base.Model):
     :vartype role: str or ~azure.ai.projects.models.MessageRole
     :ivar content: The list of content items associated with the agent thread message. Required.
     :vartype content: list[~azure.ai.projects.models.MessageContent]
-    :ivar assistant_id: If applicable, the ID of the agent that authored this message. Required.
-    :vartype assistant_id: str
+    :ivar agent_id: If applicable, the ID of the agent that authored this message. Required.
+    :vartype agent_id: str
     :ivar run_id: If applicable, the ID of the run associated with the authoring of this message.
      Required.
     :vartype run_id: str
@@ -5917,7 +6087,7 @@ class ThreadMessage(_model_base.Model):
      \"assistant\"."""
     content: List["_models.MessageContent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of content items associated with the agent thread message. Required."""
-    assistant_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    agent_id: str = rest_field(name="assistant_id", visibility=["read", "create", "update", "delete", "query"])
     """If applicable, the ID of the agent that authored this message. Required."""
     run_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """If applicable, the ID of the run associated with the authoring of this message. Required."""
@@ -5943,7 +6113,7 @@ class ThreadMessage(_model_base.Model):
         incomplete_at: datetime.datetime,
         role: Union[str, "_models.MessageRole"],
         content: List["_models.MessageContent"],
-        assistant_id: str,
+        agent_id: str,
         run_id: str,
         attachments: List["_models.MessageAttachment"],
         metadata: Dict[str, str],
@@ -6045,9 +6215,9 @@ class ThreadRun(_model_base.Model):
     :vartype object: str
     :ivar thread_id: The ID of the thread associated with this run. Required.
     :vartype thread_id: str
-    :ivar assistant_id: The ID of the agent associated with the thread this run was performed
-     against. Required.
-    :vartype assistant_id: str
+    :ivar agent_id: The ID of the agent associated with the thread this run was performed against.
+     Required.
+    :vartype agent_id: str
     :ivar status: The status of the agent thread run. Required. Known values are: "queued",
      "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", and
      "expired".
@@ -6127,7 +6297,7 @@ class ThreadRun(_model_base.Model):
     """The object type, which is always 'thread.run'. Required. Default value is \"thread.run\"."""
     thread_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the thread associated with this run. Required."""
-    assistant_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    agent_id: str = rest_field(name="assistant_id", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the agent associated with the thread this run was performed against. Required."""
     status: Union[str, "_models.RunStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The status of the agent thread run. Required. Known values are: \"queued\", \"in_progress\",
@@ -6219,7 +6389,7 @@ class ThreadRun(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         thread_id: str,
-        assistant_id: str,
+        agent_id: str,
         status: Union[str, "_models.RunStatus"],
         last_error: "_models.RunError",
         model: str,

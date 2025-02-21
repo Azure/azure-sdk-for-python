@@ -900,7 +900,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @overload
     async def update_agent(  # pylint: disable=arguments-differ
         self,
-        assistant_id: str,
+        agent_id: str,
         *,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -917,8 +917,8 @@ class AgentsOperations(AgentsOperationsGenerated):
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -969,7 +969,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @overload
     async def update_agent(  # pylint: disable=arguments-differ
         self,
-        assistant_id: str,
+        agent_id: str,
         *,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -985,8 +985,8 @@ class AgentsOperations(AgentsOperationsGenerated):
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1030,12 +1030,12 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def update_agent(
-        self, assistant_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, agent_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1048,12 +1048,12 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def update_agent(
-        self, assistant_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, agent_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -1067,7 +1067,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @distributed_trace_async
     async def update_agent(
         self,
-        assistant_id: str,
+        agent_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         model: Optional[str] = None,
@@ -1086,8 +1086,8 @@ class AgentsOperations(AgentsOperationsGenerated):
     ) -> _models.Agent:
         """Modifies an existing agent.
 
-        :param assistant_id: The ID of the agent to modify. Required.
-        :type assistant_id: str
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword model: The ID of the model to use. Default value is None.
@@ -1146,12 +1146,12 @@ class AgentsOperations(AgentsOperationsGenerated):
             return await super().update_agent(body=body, **kwargs)
 
         if toolset is not None:
-            self._toolset[assistant_id] = toolset
+            self._toolset[agent_id] = toolset
             tools = toolset.definitions
             tool_resources = toolset.resources
 
         return await super().update_agent(
-            assistant_id=assistant_id,
+            agent_id=agent_id,
             model=model,
             name=name,
             description=description,
@@ -1192,7 +1192,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         thread_id: str,
         *,
-        assistant_id: str,
+        agent_id: str,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -1215,8 +1215,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param thread_id: Required.
         :type thread_id: str
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -1357,7 +1357,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        assistant_id: str = _Unset,
+        agent_id: str = _Unset,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -1381,8 +1381,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -1460,11 +1460,11 @@ class AgentsOperations(AgentsOperationsGenerated):
             content_type = kwargs.get("content_type", "application/json")
             response = super().create_run(thread_id, body, include=include, content_type=content_type, **kwargs)
 
-        elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
+        elif agent_id is not _Unset:  # Handle overload with keyword arguments.
             response = super().create_run(
                 thread_id,
                 include=include,
-                assistant_id=assistant_id,
+                agent_id=agent_id,
                 model=model,
                 instructions=instructions,
                 additional_instructions=additional_instructions,
@@ -1498,7 +1498,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         thread_id: str,
         *,
-        assistant_id: str,
+        agent_id: str,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -1521,8 +1521,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param thread_id: Required.
         :type thread_id: str
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -1603,7 +1603,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         # Create and initiate the run with additional parameters
         run = await self.create_run(
             thread_id=thread_id,
-            assistant_id=assistant_id,
+            agent_id=agent_id,
             include=include,
             model=model,
             instructions=instructions,
@@ -1640,7 +1640,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 # We need tool set only if we are executing local function. In case if
                 # the tool is azure_function we just need to wait when it will be finished.
                 if any(tool_call.type == "function" for tool_call in tool_calls):
-                    toolset = toolset or self._toolset.get(run.assistant_id)
+                    toolset = toolset or self._toolset.get(run.agent_id)
                     if toolset:
                         tool_outputs = await toolset.execute_tool_calls(tool_calls)
                     else:
@@ -1661,7 +1661,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         thread_id: str,
         *,
-        assistant_id: str,
+        agent_id: str,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -1685,8 +1685,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param thread_id: Required.
         :type thread_id: str
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -1770,7 +1770,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         thread_id: str,
         *,
-        assistant_id: str,
+        agent_id: str,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
         content_type: str = "application/json",
         model: Optional[str] = None,
@@ -1794,8 +1794,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param thread_id: Required.
         :type thread_id: str
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword include: A list of additional fields to include in the response.
          Currently the only supported value is
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
@@ -1950,7 +1950,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
-        assistant_id: str = _Unset,
+        agent_id: str = _Unset,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
@@ -1981,8 +1981,8 @@ class AgentsOperations(AgentsOperationsGenerated):
          ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
          content. Default value is None.
         :paramtype include: list[str or ~azure.ai.projects.models.RunAdditionalFieldList]
-        :keyword assistant_id: The ID of the agent that should run the thread. Required.
-        :paramtype assistant_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
         :keyword model: The overridden model name that the agent should use to run the thread. Default
          value is None.
         :paramtype model: str
@@ -2058,10 +2058,10 @@ class AgentsOperations(AgentsOperationsGenerated):
             content_type = kwargs.get("content_type", "application/json")
             response = super().create_run(thread_id, body, include=include, content_type=content_type, **kwargs)
 
-        elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
+        elif agent_id is not _Unset:  # Handle overload with keyword arguments.
             response = super().create_run(
                 thread_id,
-                assistant_id=assistant_id,
+                agent_id=agent_id,
                 include=include,
                 model=model,
                 instructions=instructions,
@@ -2334,7 +2334,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             # We need tool set only if we are executing local function. In case if
             # the tool is azure_function we just need to wait when it will be finished.
             if any(tool_call.type == "function" for tool_call in tool_calls):
-                toolset = self._toolset.get(run.assistant_id)
+                toolset = self._toolset.get(run.agent_id)
                 if toolset:
                     tool_outputs = await toolset.execute_tool_calls(tool_calls)
                 else:
@@ -3115,18 +3115,18 @@ class AgentsOperations(AgentsOperationsGenerated):
             raise
 
     @distributed_trace_async
-    async def delete_agent(self, assistant_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
+    async def delete_agent(self, agent_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
         """Deletes an agent.
 
-        :param assistant_id: Identifier of the agent. Required.
-        :type assistant_id: str
+        :param agent_id: Identifier of the agent. Required.
+        :type agent_id: str
         :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if assistant_id in self._toolset:
-            del self._toolset[assistant_id]
-        return await super().delete_agent(assistant_id, **kwargs)
+        if agent_id in self._toolset:
+            del self._toolset[agent_id]
+        return await super().delete_agent(agent_id, **kwargs)
 
 
 class _SyncCredentialWrapper(TokenCredential):

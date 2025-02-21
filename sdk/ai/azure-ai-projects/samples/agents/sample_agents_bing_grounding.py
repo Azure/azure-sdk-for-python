@@ -20,10 +20,13 @@ USAGE:
        Azure AI Foundry project.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
        the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) BING_CONNECTION_NAME - The connection name of the Bing connection, as found in the 
+       "Connected resources" tab in your Azure AI Foundry project.
 """
 
 import os
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import MessageRole, MessageTextUrlCitationAnnotation
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import BingGroundingTool
 
@@ -62,13 +65,13 @@ with project_client:
     # Create message to thread
     message = project_client.agents.create_message(
         thread_id=thread.id,
-        role="user",
+        role=MessageRole.USER,
         content="How does wikipedia explain Euler's Identity?",
     )
     print(f"Created message, ID: {message.id}")
 
     # Create and process agent run in thread with tools
-    run = project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+    run = project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
     print(f"Run finished with status: {run.status}")
 
     if run.status == "failed":
@@ -78,6 +81,13 @@ with project_client:
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
 
-    # Fetch and log all messages
-    messages = project_client.agents.list_messages(thread_id=thread.id)
-    print(f"Messages: {messages}")
+    # Print the Agent's response message with optional citation
+    response_message = project_client.agents.list_messages(thread_id=thread.id).get_last_text_message_by_role(
+        MessageRole.AGENT
+    )
+    if response_message:
+        print(f"Agent response: {response_message.text.value}")
+        if response_message.text.annotations:
+            for annotation in response_message.text.annotations:
+                if isinstance(annotation, MessageTextUrlCitationAnnotation):
+                    print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")
