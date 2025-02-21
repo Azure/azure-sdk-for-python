@@ -5,8 +5,8 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with an event handler and
-    the Bing grounding tool from the Azure Agents service using a synchronous client.
+    This sample demonstrates how to use Agent operations with an event handler and
+    the Bing grounding tool. It uses a synchronous client.
 
 USAGE:
     python sample_agents_stream_eventhandler_with_bing_grounding.py
@@ -23,16 +23,10 @@ USAGE:
     3) BING_CONNECTION_NAME - The connection name of the Bing connection, as found in the "Connected resources" tab
        in your Azure AI Foundry project.
 """
-"""
-import sys
-import logging
-logger = logging.getLogger("azure")
-logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-"""
+
 import os
-from azure.identity import DefaultAzureCredential
 from typing import Any
+from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     MessageDeltaChunk,
@@ -41,21 +35,11 @@ from azure.ai.projects.models import (
     ThreadRun,
     AgentEventHandler,
     BingGroundingTool,
+    MessageRole,
+    MessageDeltaTextUrlCitationAnnotation,
+    MessageTextUrlCitationAnnotation,
+    MessageDeltaTextContent,
 )
-from user_functions import user_functions
-
-project_client = AIProjectClient.from_connection_string(
-    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]  # , logging_enable=True
-)
-
-# TODO: Move into "with project_client" block
-bing_connection = project_client.connections.get(connection_name=os.environ["BING_CONNECTION_NAME"])
-conn_id = bing_connection.id
-
-print(conn_id)
-
-# Initialize agent bing tool and add the connection id
-bing = BingGroundingTool(connection_id=conn_id)
 
 
 # When using FunctionTool with ToolSet in agent creation, the tool call events are handled inside the create_stream
@@ -64,6 +48,14 @@ class MyEventHandler(AgentEventHandler):
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         print(f"Text delta received: {delta.text}")
+        if delta.delta.content and isinstance(delta.delta.content[0], MessageDeltaTextContent):
+            delta_text_content = delta.delta.content[0]
+            if delta_text_content.text and delta_text_content.text.annotations:
+                for annotation in delta_text_content.text.annotations:
+                    if isinstance(annotation, MessageDeltaTextUrlCitationAnnotation):
+                        print(
+                            f"URL citation delta received: [{annotation.url_citation.title}]({annotation.url_citation.url})"
+                        )
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
         print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
@@ -87,7 +79,17 @@ class MyEventHandler(AgentEventHandler):
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
 
+project_client = AIProjectClient.from_connection_string(
+    credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
+)
+
 with project_client:
+
+    bing_connection = project_client.connections.get(connection_name=os.environ["BING_CONNECTION_NAME"])
+    print(f"Bing Connection ID: {bing_connection.id}")
+
+    # Initialize agent bing tool and add the connection id
+    bing = BingGroundingTool(connection_id=bing_connection.id)
 
     agent = project_client.agents.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -102,7 +104,7 @@ with project_client:
 
     message = project_client.agents.create_message(
         thread_id=thread.id,
-        role="user",
+        role=MessageRole.USER,
         content="How does wikipedia explain Euler's Identity?",
     )
     print(f"Created message, message ID {message.id}")
@@ -115,5 +117,12 @@ with project_client:
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
 
-    messages = project_client.agents.list_messages(thread_id=thread.id)
-    print(f"Messages: {messages}")
+    response_message = project_client.agents.list_messages(thread_id=thread.id).get_last_text_message_by_role(
+        MessageRole.AGENT
+    )
+    if response_message:
+        print(f"Agent response: {response_message.text.value}")
+        if response_message.text.annotations:
+            for annotation in response_message.text.annotations:
+                if isinstance(annotation, MessageTextUrlCitationAnnotation):
+                    print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")

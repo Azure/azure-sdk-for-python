@@ -81,11 +81,13 @@ with project_client:
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
 
-    # Print Agent response to the user prompt
-    message = project_client.agents.list_messages(thread_id=thread.id).get_last_text_message_by_role(MessageRole.AGENT)
-    if message:
-        print(f"Agent response: {message.text.value}")
-        if message.text.annotations and isinstance(message.text.annotations[0], MessageTextUrlCitationAnnotation):
-            print(
-                f"URL Citation: [{message.text.annotations[0].url_citation.title}]({message.text.annotations[0].url_citation.url})"
-            )
+    # Print the Agent's response message with optional citation
+    response_message = project_client.agents.list_messages(thread_id=thread.id).get_last_text_message_by_role(
+        MessageRole.AGENT
+    )
+    if response_message:
+        print(f"Agent response: {response_message.text.value}")
+        if response_message.text.annotations:
+            for annotation in response_message.text.annotations:
+                if isinstance(annotation, MessageTextUrlCitationAnnotation):
+                    print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")

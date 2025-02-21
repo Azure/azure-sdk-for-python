@@ -5,11 +5,11 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with toolset and iteration in streaming from
-    the Azure Agents service using a synchronous client.
+    This sample demonstrates how to use Agent operations with the Bing grounding
+    tool, and iteration in streaming. It uses a synchronous client.
 
 USAGE:
-    python sample_agents_stream_iteration_with_toolset.py
+    python sample_agents_stream_iteration_with_bing_grounding.py
 
     Before running the sample:
 
@@ -20,6 +20,8 @@ USAGE:
        Azure AI Foundry project.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
        the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) BING_CONNECTION_NAME - The connection name of the Bing connection, as found in the "Connected resources" tab
+       in your Azure AI Foundry project.
 """
 
 import os
@@ -30,32 +32,37 @@ from azure.ai.projects.models import (
     RunStep,
     ThreadMessage,
     ThreadRun,
+    BingGroundingTool,
+    MessageRole,
+    MessageTextUrlCitationAnnotation,
+    MessageDeltaTextContent,
+    MessageDeltaTextUrlCitationAnnotation,
 )
-from azure.ai.projects.models import FunctionTool, ToolSet
 from azure.identity import DefaultAzureCredential
-from user_functions import user_functions
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(), conn_str=os.environ["PROJECT_CONNECTION_STRING"]
 )
 
-functions = FunctionTool(user_functions)
-toolset = ToolSet()
-toolset.add(functions)
-
 with project_client:
+    bing_connection = project_client.connections.get(connection_name=os.environ["BING_CONNECTION_NAME"])
+    bing = BingGroundingTool(connection_id=bing_connection.id)
+    print(f"Bing Connection ID: {bing_connection.id}")
+
     agent = project_client.agents.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-assistant",
         instructions="You are a helpful assistant",
-        toolset=toolset,
+        tools=bing.definitions,
     )
     print(f"Created agent, agent ID: {agent.id}")
 
     thread = project_client.agents.create_thread()
     print(f"Created thread, thread ID {thread.id}")
 
-    message = project_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
+    message = project_client.agents.create_message(
+        thread_id=thread.id, role=MessageRole.USER, content="How does wikipedia explain Euler's Identity?"
+    )
     print(f"Created message, message ID {message.id}")
 
     with project_client.agents.create_stream(thread_id=thread.id, agent_id=agent.id) as stream:
@@ -64,6 +71,14 @@ with project_client:
 
             if isinstance(event_data, MessageDeltaChunk):
                 print(f"Text delta received: {event_data.text}")
+                if event_data.delta.content and isinstance(event_data.delta.content[0], MessageDeltaTextContent):
+                    delta_text_content = event_data.delta.content[0]
+                    if delta_text_content.text and delta_text_content.text.annotations:
+                        for annotation in delta_text_content.text.annotations:
+                            if isinstance(annotation, MessageDeltaTextUrlCitationAnnotation):
+                                print(
+                                    f"URL citation delta received: [{annotation.url_citation.title}]({annotation.url_citation.url})"
+                                )
 
             elif isinstance(event_data, RunStepDeltaChunk):
                 print(f"RunStepDeltaChunk received. ID: {event_data.id}.")
@@ -92,5 +107,12 @@ with project_client:
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
 
-    messages = project_client.agents.list_messages(thread_id=thread.id)
-    print(f"Messages: {messages}")
+    response_message = project_client.agents.list_messages(thread_id=thread.id).get_last_text_message_by_role(
+        MessageRole.AGENT
+    )
+    if response_message:
+        print(f"Agent response: {response_message.text.value}")
+        if response_message.text.annotations:
+            for annotation in response_message.text.annotations:
+                if isinstance(annotation, MessageTextUrlCitationAnnotation):
+                    print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")
