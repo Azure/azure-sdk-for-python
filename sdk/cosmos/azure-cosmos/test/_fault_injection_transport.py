@@ -33,6 +33,7 @@ import aiohttp
 from azure.core.pipeline.transport import AioHttpTransport, AioHttpTransportResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 
+import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
@@ -153,9 +154,9 @@ class FaultInjectionTransport(AioHttpTransport):
         )
 
     @staticmethod
-    async def transform_convert_emulator_to_single_master_read_multi_region_account(
-            additional_region: str,
-            artificial_uri: str,
+    async def transform_topology_swr_mrr(
+            write_region_name: str,
+            read_region_name: str,
             r: HttpRequest,
             inner: Callable[[],asyncio.Task[AsyncHttpResponse]]) -> asyncio.Task[AsyncHttpResponse]:
 
@@ -168,7 +169,11 @@ class FaultInjectionTransport(AioHttpTransport):
         if response.status_code == 200 and data:
             data = data.decode("utf-8")
             result = json.loads(data)
-            result["readableLocations"].append({"name": additional_region, "databaseAccountEndpoint" : artificial_uri})
+            readable_locations = result["readableLocations"]
+            writable_locations = result["writableLocations"]
+            readable_locations[0]["name"] = write_region_name
+            writable_locations[0]["name"] = write_region_name
+            readable_locations.append({"name": read_region_name, "databaseAccountEndpoint" : test_config.TestConfig.local_host})
             FaultInjectionTransport.logger.info("Transformed Account Topology: {}".format(result))
             request: HttpRequest = response.request
             return FaultInjectionTransport.MockHttpResponse(request, 200, result)

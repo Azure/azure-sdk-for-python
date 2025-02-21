@@ -127,25 +127,26 @@ class TestFaultInjectionTransportAsync:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
     async def test_succeeds_with_multiple_endpoints(self, setup):
-        localhost_uri: str = test_config.TestConfig.local_host
-        alternate_localhost_uri: str = localhost_uri.replace("localhost", "127.0.0.1")
+        expected_read_region_uri: str = test_config.TestConfig.local_host
+        expected_write_region_uri: str = expected_read_region_uri.replace("localhost", "127.0.0.1")
         custom_transport = FaultInjectionTransport()
-        is_get_account_predicate: Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransport.predicate_is_database_account_call(r)
-        is_write_operation_predicate: Callable[[HttpRequest], bool] = lambda \
-            r: FaultInjectionTransport.predicate_is_write_operation(r, localhost_uri)
-
-        # Emulator uses "South Central US" with Uri https://127.0.0.1:8888
-
-        emulator_as_multi_region_sm_account_transformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], AsyncHttpResponse] = \
-            lambda r, inner: FaultInjectionTransport.transform_convert_emulator_to_single_master_read_multi_region_account(
-                additional_region="East US",
-                artificial_uri=localhost_uri,
-                r=r,
-                inner=inner)
+        # Inject rule to disallow writes in the read-only region
+        is_write_operation_in_read_region_predicate: Callable[[HttpRequest], bool] = lambda \
+            r: FaultInjectionTransport.predicate_is_write_operation(r, expected_read_region_uri)
 
         custom_transport.add_fault(
-            is_write_operation_predicate,
+            is_write_operation_in_read_region_predicate,
             lambda r: asyncio.create_task(FaultInjectionTransport.error_write_forbidden()))
+
+        # Inject topology transformation that would make Emulator look like a single write region
+        # account with two read regions
+        is_get_account_predicate: Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransport.predicate_is_database_account_call(r)
+        emulator_as_multi_region_sm_account_transformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], AsyncHttpResponse] = \
+            lambda r, inner: FaultInjectionTransport.transform_topology_swr_mrr(
+                write_region_name="Write Region",
+                read_region_name="Read Region",
+                r=r,
+                inner=inner)
         custom_transport.add_response_transformation(
             is_get_account_predicate,
             emulator_as_multi_region_sm_account_transformation)
@@ -158,21 +159,21 @@ class TestFaultInjectionTransportAsync:
 
         initialized_objects = self.setup_method_with_custom_transport(
             custom_transport,
-            preferred_locations=["East US", "South Central US"])
+            preferred_locations=["Read Region", "Write Region"])
         try:
             container: ContainerProxy = initialized_objects["col"]
 
             created_document = await container.create_item(body=document_definition)
             request: HttpRequest = created_document.get_response_headers()["_request"]
             # Validate the response comes from "South Central US" (the write region)
-            assert request.url.startswith(alternate_localhost_uri)
+            assert request.url.startswith(expected_write_region_uri)
             start:float = time.perf_counter()
 
             while (time.perf_counter() - start) < 2:
                 read_document = await container.read_item(id_value, partition_key=id_value)
                 request: HttpRequest = read_document.get_response_headers()["_request"]
                 # Validate the response comes from "East US" (the most preferred read-only region)
-                assert request.url.startswith(localhost_uri)
+                assert request.url.startswith(expected_read_region_uri)
 
         finally:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
