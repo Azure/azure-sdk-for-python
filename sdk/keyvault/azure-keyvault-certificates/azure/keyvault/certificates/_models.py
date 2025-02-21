@@ -513,9 +513,9 @@ class CertificateOperation(object):
             status=certificate_operation_bundle.status,
             status_details=certificate_operation_bundle.status_details,
             error=(
-                CertificateOperationError._from_error_bundle(
+                CertificateOperationError._from_error_bundle(  # pylint: disable=protected-access
                     certificate_operation_bundle.error
-                )  # pylint: disable=protected-access
+                )
                 if certificate_operation_bundle.error
                 else None
             ),
