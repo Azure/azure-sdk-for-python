@@ -151,7 +151,7 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure AI Services"""
     AZURE_AI_SEARCH = "CognitiveSearch"
     """Azure AI Search"""
-    API_KEY = "API Key"
+    API_KEY = "ApiKey"
     """Generic connection that uses API Key authentication"""
 
 

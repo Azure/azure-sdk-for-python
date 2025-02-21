@@ -51,10 +51,10 @@ class MyEventHandler(AgentEventHandler):
         if delta.delta.content and isinstance(delta.delta.content[0], MessageDeltaTextContent):
             delta_text_content = delta.delta.content[0]
             if delta_text_content.text and delta_text_content.text.annotations:
-                for annotation in delta_text_content.text.annotations:
-                    if isinstance(annotation, MessageDeltaTextUrlCitationAnnotation):
+                for delta_annotation in delta_text_content.text.annotations:
+                    if isinstance(delta_annotation, MessageDeltaTextUrlCitationAnnotation):
                         print(
-                            f"URL citation delta received: [{annotation.url_citation.title}]({annotation.url_citation.url})"
+                            f"URL citation delta received: [{delta_annotation.url_citation.title}]({delta_annotation.url_citation.url})"
                         )
 
     def on_thread_message(self, message: "ThreadMessage") -> None:

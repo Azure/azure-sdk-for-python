@@ -4,14 +4,21 @@
 
 ### Features added
 
+* Add support for parsing URL citations in Agent text messages. See new classes `MessageTextUrlCitationAnnotation` and `MessageDeltaTextUrlCitationAnnotation`.
+* Add enum value `ConnectionType.API_KEY` to support enumeration of generic connections that uses API Key authentication.
+
 ### Sample updates
+
+* Updated sample `sample_agents_bing_grounding.py` with printout of URL citation.
+* Added new samples `sample_agents_stream_eventhandler_with_bing_grounding.py` and `sample_agents_stream_iteration_with_bing_grounding.py` with printout of URL citation.
 
 ### Bugs Fixed
 
-* Fixed a bug on deserialization of RunStepDeltaFileSearchToolCall returned during agent streaming run [GitHub issue 48333](https://github.com/Azure/azure-sdk-for-net/issues/48333)
+* Fixed a bug on deserialization of RunStepDeltaFileSearchToolCall returned during Agent streaming run [GitHub issue 48333](https://github.com/Azure/azure-sdk-for-net/issues/48333)
 
 ### Breaking Changes
 
+* Input argument `assistant_id` was renamed to `agent_id` in all Agent methods to align with the "Agent" terminology. Similarly, all `assistant_id` properties on classes were renamed.
 
 ## 1.0.0b6 (2025-02-14)
 
