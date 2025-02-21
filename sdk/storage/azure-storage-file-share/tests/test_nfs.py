@@ -90,6 +90,26 @@ class TestStorageFileNFS(StorageRecordedTestCase):
     # --Test cases for NFS ----------------------------------------------
     @FileSharePreparer()
     @recorded_by_proxy
+    def test_create_hard_link_error(self, **kwargs: Any):
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
+
+        self._setup(premium_storage_file_account_name)
+
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_name = self._get_directory_name()
+        directory_client = share_client.create_directory(directory_name)
+        source_file_name = self._get_file_name()
+        source_file_client = directory_client.get_file_client(source_file_name)
+        hard_link_file_name = self._get_file_name()
+        hard_link_file_client = directory_client.get_file_client(hard_link_file_name)
+
+        with pytest.raises(ResourceNotFoundError) as e:
+            hard_link_file_client.create_hard_link(target=source_file_client.url)
+
+        assert 'ParentNotFound' in e.value.args[0]
+
+    @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_directory_and_set_directory_properties(self, **kwargs: Any):
         premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
 
@@ -252,23 +272,3 @@ class TestStorageFileNFS(StorageRecordedTestCase):
 
         assert 'file_attributes' not in resp
         assert 'file_response_key' not in resp
-
-    @FileSharePreparer()
-    @recorded_by_proxy
-    def test_create_hard_link_error(self, **kwargs: Any):
-        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
-
-        self._setup(premium_storage_file_account_name)
-
-        share_client = self.fsc.get_share_client(self.share_name)
-        directory_name = self._get_directory_name()
-        directory_client = share_client.create_directory(directory_name)
-        source_file_name = self._get_file_name()
-        source_file_client = directory_client.get_file_client(source_file_name)
-        hard_link_file_name = self._get_file_name()
-        hard_link_file_client = directory_client.get_file_client(hard_link_file_name)
-
-        with pytest.raises(ResourceNotFoundError) as e:
-            hard_link_file_client.create_hard_link(target=source_file_client.url)
-
-        assert 'ParentNotFound' in e.value.args[0]
