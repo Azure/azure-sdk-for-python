@@ -72,8 +72,10 @@ setup(
         "azure-core>=1.30.2",
         "nltk>=3.9.1",
         "azure-storage-blob>=12.10.0",
-        "pyrit>=0.5.2"
     ],
+    extras_require={
+        "pyrit": ["git+https://github.com/Azure/PyRIT.git#egg=pyrit"]
+    },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
         "Source": "https://github.com/Azure/azure-sdk-for-python",
