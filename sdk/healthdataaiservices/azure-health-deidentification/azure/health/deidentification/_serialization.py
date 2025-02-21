@@ -1585,10 +1585,20 @@ class Deserializer(object):
         if callable(response):
             subtype = getattr(response, "_subtype_map", {})
             try:
-                readonly = [k for k, v in response._validation.items() if v.get("readonly")]
-                const = [k for k, v in response._validation.items() if v.get("constant")]
+                if isinstance(response, type):
+                    readonly = [k for k, v in response._validation.items() if v.get("readonly")]
+                else:
+                    readonly = []
+                if isinstance(response, type):
+                    const = [k for k, v in response._validation.items() if v.get("constant")]
+                else:
+                    const = []
                 kwargs = {k: v for k, v in attrs.items() if k not in subtype and k not in readonly + const}
-                response_obj = response(**kwargs)
+                if isinstance(response, type) and issubclass(response, Model):
+                    response_obj = response(**kwargs)
+                else:
+                    raise TypeError("Response is not a subclass of Model")
+
                 for attr in readonly:
                     setattr(response_obj, attr, attrs.get(attr))
                 if additional_properties:
