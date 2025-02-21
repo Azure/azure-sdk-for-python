@@ -2860,9 +2860,7 @@ class TestAgentClient(AzureRecordedTestCase):
 
             if use_stream:
                 run = None
-                with ai_client.agents.create_stream(
-                    thread_id=thread.id, agent_id=agent.id, include=include
-                ) as stream:
+                with ai_client.agents.create_stream(thread_id=thread.id, agent_id=agent.id, include=include) as stream:
                     for event_type, event_data, _ in stream:
                         if isinstance(event_data, ThreadRun):
                             run = event_data
@@ -2870,9 +2868,7 @@ class TestAgentClient(AzureRecordedTestCase):
                             print("Stream completed.")
                             break
             else:
-                run = ai_client.agents.create_and_process_run(
-                    thread_id=thread.id, agent_id=agent.id, include=include
-                )
+                run = ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id, include=include)
                 assert run.status == RunStatus.COMPLETED
             assert run is not None
             steps = ai_client.agents.list_run_steps(thread_id=thread.id, run_id=run.id, include=include)

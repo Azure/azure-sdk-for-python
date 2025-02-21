@@ -26,6 +26,7 @@ USAGE:
 
 import os
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import MessageRole, MessageTextUrlCitationAnnotation
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import BingGroundingTool
 
@@ -64,7 +65,7 @@ with project_client:
     # Create message to thread
     message = project_client.agents.create_message(
         thread_id=thread.id,
-        role="user",
+        role=MessageRole.USER,
         content="How does wikipedia explain Euler's Identity?",
     )
     print(f"Created message, ID: {message.id}")
@@ -80,6 +81,11 @@ with project_client:
     project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
 
-    # Fetch and log all messages
-    messages = project_client.agents.list_messages(thread_id=thread.id)
-    print(f"Messages: {messages}")
+    # Print Agent response to the user prompt
+    message = project_client.agents.list_messages(thread_id=thread.id).get_last_text_message_by_role(MessageRole.AGENT)
+    if message:
+        print(f"Agent response: {message.text.value}")
+        if message.text.annotations and isinstance(message.text.annotations[0], MessageTextUrlCitationAnnotation):
+            print(
+                f"URL Citation: [{message.text.annotations[0].url_citation.title}]({message.text.annotations[0].url_citation.url})"
+            )
