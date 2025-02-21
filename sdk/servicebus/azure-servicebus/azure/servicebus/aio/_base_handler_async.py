@@ -183,7 +183,9 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             # and the diversity of session failure modes, that motivates us to disallow this.
             if self._session and self._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):
                 self._session._lock_lost = True
-                await self._close_handler()
+                if self._amqp_transport.KIND == "uamqp":
+                    # Close handler on uamqp session lock lost
+                    await self._close_handler()
                 raise error
         except AttributeError:
             pass
@@ -202,21 +204,24 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             raise ValueError(
                 "The handler has already been shutdown. Please use ServiceBusClient to create a new instance."
             )
-        # The following client validation is for two purposes in a session receiver:
-        # 1. self._session._lock_lost is set when a session receiver encounters a connection error,
-        # once there's a connection error, we don't retry on the session entity and simply raise SessionlockLostError.
-        # 2. self._session._lock_expired is a hot fix as client validation for session lock expiration.
-        # Because currently uamqp doesn't have the ability to detect remote session lock lost.
-        # Usually the service would send a detach frame once a session lock gets expired, however, in the edge case
-        # when we drain messages in a queue and try to settle messages after lock expiration,
-        # we are not able to receive the detach frame by calling uamqp connection.work(),
-        # Eventually this should be a fix in the uamqp library.
-        # see issue: https://github.com/Azure/azure-uamqp-python/issues/183
-        try:
-            if self._session and (self._session._lock_lost or self._session._lock_expired):
-                raise SessionLockLostError(error=self._session.auto_renew_error)
-        except AttributeError:
-            pass
+        # # The following client validation is for two purposes in a session receiver:
+        # # 1. self._session._lock_lost is set when a session receiver encounters a connection error,
+        # # once there's a connection error, we don't retry on the session entity and simply raise SessionlockLostError.
+        # # 2. self._session._lock_expired is a hot fix as client validation for session lock expiration.
+        # # Because currently uamqp doesn't have the ability to detect remote session lock lost.
+        # # Usually the service would send a detach frame once a session lock gets expired, however, in the edge case
+        # # when we drain messages in a queue and try to settle messages after lock expiration,
+        # # we are not able to receive the detach frame by calling uamqp connection.work(),
+        # # Eventually this should be a fix in the uamqp library.
+        # # see issue: https://github.com/Azure/azure-uamqp-python/issues/183
+        if self._amqp_transport.KIND == "uamqp":
+            try:
+                if self._session and (
+                    self._session._lock_lost or self._session._lock_expired
+                ):
+                    raise SessionLockLostError(error=self._session.auto_renew_error)
+            except AttributeError:
+                pass
 
     async def _do_retryable_operation(self, operation: Callable, timeout: Optional[float] = None, **kwargs: Any) -> Any:
         require_last_exception = kwargs.pop("require_last_exception", False)
