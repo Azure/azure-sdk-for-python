@@ -24,7 +24,7 @@ from azure.core.credentials import TokenCredential
 import json
 from pathlib import Path
 import re
-from pyrit.common import initialize_pyrit, IN_MEMORY
+from pyrit.common import initialize_pyrit, DUCK_DB
 from pyrit.orchestrator import PromptSendingOrchestrator
 from pyrit.prompt_target import OpenAIChatTarget
 
@@ -104,7 +104,7 @@ class _SafetyEvaluation:
             azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
         )
 
-        initialize_pyrit(memory_db_type=IN_MEMORY)
+        initialize_pyrit(memory_db_type=DUCK_DB)
 
 
     @staticmethod
@@ -446,11 +446,27 @@ class _SafetyEvaluation:
         if ret_type is tuple: 
             return True
         return False
+    
+    @staticmethod
+    def _check_target_returns_str(target: Callable) -> bool:
+        '''
+        Checks if the target function returns a string.
+
+        :param target: The target function to check.
+        :type target: Callable
+        '''
+        sig = inspect.signature(target)
+        ret_type = sig.return_annotation
+        if ret_type == inspect.Signature.empty:
+            return False
+        if ret_type is str:
+            return True
+        return False
 
     def _validate_inputs(
             self,
             evaluators: List[_SafetyEvaluator],
-            target: Callable,
+            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
             num_turns: int = 1,
             scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
             source_text: Optional[str] = None,
@@ -467,10 +483,23 @@ class _SafetyEvaluation:
         :type scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]
         :param source_text: The source text to use as grounding document in the evaluation.
         :type source_text: Optional[str]
-        '''       
-        if _SafetyEvaluator.GROUNDEDNESS in evaluators and not (self._check_target_returns_context(target) or source_text):
-            self.logger.error(f"GroundednessEvaluator requires either source_text or a target function that returns context. Source text: {source_text}, _check_target_returns_context: {self._check_target_returns_context(target)}")
-            msg = "GroundednessEvaluator requires either source_text or a target function that returns context"
+        ''' 
+        if not callable(target):
+            self._validate_model_config(target)
+        elif not self._check_target_returns_str(target):
+            self.logger.error(f"Target function {target} does not return a string.")
+            msg = f"Target function {target} does not return a string."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.UNKNOWN,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+
+        if _SafetyEvaluator.GROUNDEDNESS in evaluators and not source_text:
+            self.logger.error(f"GroundednessEvaluator requires  source_text. Source text: {source_text}")
+            msg = "GroundednessEvaluator requires source_text"
             raise EvaluationException(
                 message=msg,
                 internal_message=msg,
@@ -547,7 +576,7 @@ class _SafetyEvaluation:
     
     async def _get_all_prompts(self, scenario: AdversarialScenario) -> List[str]:
         templates = await self.adversarial_template_handler._get_content_harm_template_collections(
-                AdversarialScenario.ADVERSARIAL_QA.value
+                scenario.value
             )
         parameter_lists = [t.template_parameters for t in templates]
         zipped_parameters = list(zip(*parameter_lists))
@@ -562,14 +591,68 @@ class _SafetyEvaluation:
 
         all_prompts = []
         for param_group in zipped_parameters:
-            for template_obj, parameter in zip(templates, param_group):
+            for _, parameter in zip(templates, param_group):
                 filled_template = fill_template(parameter['conversation_starter'], parameter)
                 all_prompts.append(filled_template)
         return all_prompts
+    
+    async def _pyrit(self, target: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration], scenario: AdversarialScenario) -> str:
+        chat_target: OpenAIChatTarget = None
+        if "azure_deployment" in target and "azure_endpoint" in target: # Azure OpenAI
+            api_key = target.get("api_key", None)
+            if not api_key:
+                chat_target = OpenAIChatTarget(deployment_name=target["azure_deployment"], endpoint=target["azure_endpoint"], use_aad_auth=True)
+            else: 
+                chat_target = OpenAIChatTarget(deployment_name=target["azure_deployment"], endpoint=target["azure_endpoint"], api_key=api_key)
+        else:
+            chat_target = OpenAIChatTarget(deployment=target["model"], endpoint=target.get("base_url", None), key=target["api_key"], is_azure_target=False)
+        
+        all_prompts_list = await self._get_all_prompts(scenario)
+
+        orchestrator = PromptSendingOrchestrator(objective_target=chat_target)
+        await orchestrator.send_prompts_async(prompt_list=all_prompts_list)
+        memory = orchestrator.get_memory()
+
+        # Get conversations as a List[List[ChatMessage]]
+        conversations = []
+        conversation_id = None
+        current_conversation = []
+        for item in memory:
+            if conversation_id == None or conversation_id == item.conversation_id:
+                conversation_id = item.conversation_id
+                current_conversation.append(item.to_chat_message())
+            else:
+                conversations.append(current_conversation)
+                current_conversation = [item.to_chat_message()]
+                conversation_id = item.conversation_id
+
+        #Convert to json lines
+        json_lines = ""
+        for conversation in conversations: # each conversation is a List[ChatMessage]
+            user_message = None
+            assistant_message = None
+            for message in conversation: # each message is a ChatMessage
+                if message.role == "user":
+                    user_message = message.content
+                elif message.role == "assistant":
+                    assistant_message = message.content
+
+                if user_message and assistant_message:
+                    json_lines += (
+                                json.dumps({"query": user_message, "response": assistant_message, "category": None})
+                                + "\n"
+                            )
+                    user_message = assistant_message = None
+        
+        data_path = "pyrit_outputs.jsonl"
+        with Path(data_path).open("w") as f:
+            f.writelines(json_lines)
+
+        return data_path
 
     async def __call__(
             self,
-            target: Callable,
+            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
             evaluators: List[_SafetyEvaluator] = [],
             evaluation_name: Optional[str] = None,
             num_turns : int = 1,
@@ -624,12 +707,17 @@ class _SafetyEvaluation:
 
         # Get scenario
         adversarial_scenario = self._get_scenario(evaluators, num_turns=num_turns, scenario=scenario)
+        self.logger.info(f"Using scenario: {adversarial_scenario}")
+
+        if not isinstance(target, Callable) and isinstance(adversarial_scenario, AdversarialScenario):
+            self.logger.info(f"Running Pyrit with inputs target={target}, scenario={scenario}") 
+            data_path = await self._pyrit(target, adversarial_scenario)
 
         ## Get evaluators
         evaluators_dict = self._get_evaluators(evaluators)
 
         ## If `data_path` is not provided, run simulator
-        if data_path is None and jailbreak_data_path is None:
+        if data_path is None and jailbreak_data_path is None and isinstance(target, Callable):
             self.logger.info(f"No data_path provided. Running simulator.")
             data_paths = await self._simulate(
                 target=target,
@@ -679,32 +767,6 @@ class _SafetyEvaluation:
                 category=ErrorCategory.MISSING_FIELD,
                 blame=ErrorBlame.USER_ERROR,
             )
-        
-    
-        
-if __name__ == "__main__":
-    from dotenv import load_dotenv
-    from azure.identity import DefaultAzureCredential
-    import asyncio
-    import re
-    load_dotenv()
-    def test_target(query: str) -> str:
-        return "Hello, how can I help you?"
-    
-    azure_ai_project = {
-    "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
-    "resource_group_name": os.environ.get("AZURE_RESOURCE_GROUP_NAME"),
-    "project_name": os.environ.get("AZURE_PROJECT_NAME"),
-    }
-
-    credential = DefaultAzureCredential()
-
-    safety_evaluation = _SafetyEvaluation(azure_ai_project=azure_ai_project, credential=credential)
-    target = OpenAIChatTarget()
-    all_prompts_list = asyncio.run(safety_evaluation._get_all_prompts(AdversarialScenario.ADVERSARIAL_QA))
-    orchestrator = PromptSendingOrchestrator(objective_target=target)
-    asyncio.run(orchestrator.send_prompts_async(prompt_list=all_prompts_list))
-    asyncio.run(orchestrator.print_conversations_async())
 
 
 
