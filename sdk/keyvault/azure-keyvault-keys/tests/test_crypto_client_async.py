@@ -173,7 +173,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_encrypt_and_decrypt(self, key_client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = await self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
@@ -216,7 +215,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_wrap_and_unwrap(self, key_client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         key_name = self.get_resource_name("keywrap")
 
         created_key = await self._create_rsa_key(key_client, key_name, hardware_protected=is_hsm)
@@ -302,7 +300,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_encrypt_local(self, key_client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         """Encrypt locally, decrypt with Key Vault"""
         key_name = self.get_resource_name("encrypt-local")
         key = await self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
@@ -321,7 +318,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_encrypt_local_from_jwk(self, key_client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         """Encrypt locally, decrypt with Key Vault"""
         key_name = self.get_resource_name("encrypt-local")
         key = await self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
@@ -403,7 +399,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_wrap_local(self, key_client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         """Wrap locally, unwrap with Key Vault"""
         key_name = self.get_resource_name("wrap-local")
         key = await self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
@@ -421,7 +416,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_wrap_local_from_jwk(self, key_client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         """Wrap locally, unwrap with Key Vault"""
         key_name = self.get_resource_name("wrap-local")
         key = await self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)

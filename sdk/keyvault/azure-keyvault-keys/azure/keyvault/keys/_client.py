@@ -184,8 +184,7 @@ class KeyClient(KeyVaultClientBase):
             release_policy=policy,
         )
 
-        bundle = self._client.create_key( key_name=name, parameters=parameters, **kwargs
-        )
+        bundle = self._client.create_key(key_name=name, parameters=parameters, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace

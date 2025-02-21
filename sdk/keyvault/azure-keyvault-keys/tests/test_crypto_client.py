@@ -174,7 +174,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @recorded_by_proxy
     def test_ec_key_id(self, key_client, is_hsm, **kwargs):
         """When initialized with a key ID, the client should retrieve the key and perform public operations locally"""
-        set_bodiless_matcher()
         key = self._create_ec_key(key_client, self.get_resource_name("eckey"), hardware_protected=is_hsm)
 
         crypto_client = self.create_crypto_client(key.id, api_version=key_client.api_version)
@@ -208,7 +207,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_encrypt_and_decrypt(self, key_client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
@@ -227,7 +225,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_encrypt_and_decrypt_with_managed_key(self, key_client, **kwargs):
-        set_bodiless_matcher()
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = self._import_test_key(key_client, key_name)
@@ -259,7 +256,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_encrypt_and_decrypt_with_managed_key_no_get(self, key_client, **kwargs):
-        set_bodiless_matcher()
         key_name = self.get_resource_name("keycrypt")
 
         imported_key = self._import_test_key(key_client, key_name)
@@ -362,7 +358,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_wrap_and_unwrap(self, key_client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         key_name = self.get_resource_name("keywrap")
 
         created_key = self._create_rsa_key(key_client, key_name, hardware_protected=is_hsm)
@@ -445,7 +440,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_encrypt_local(self, key_client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         """Encrypt locally, decrypt with Key Vault"""
         key_name = self.get_resource_name("encrypt-local")
         key = self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
@@ -463,7 +457,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_encrypt_local_from_jwk(self, key_client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         """Encrypt locally, decrypt with Key Vault"""
         key_name = self.get_resource_name("encrypt-local")
         key = self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
@@ -542,7 +535,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_wrap_local(self, key_client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         """Wrap locally, unwrap with Key Vault"""
         key_name = self.get_resource_name("wrap-local")
         key = self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
@@ -560,7 +552,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
     @recorded_by_proxy
     def test_wrap_local_from_jwk(self, key_client, is_hsm, **kwargs):
         """Wrap locally, unwrap with Key Vault"""
-        set_bodiless_matcher()
         key_name = self.get_resource_name("wrap-local")
         key = self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(key, api_version=key_client.api_version)
