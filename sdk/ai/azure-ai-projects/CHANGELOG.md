@@ -9,16 +9,17 @@
 
 ### Sample updates
 
-* Updated sample `sample_agents_bing_grounding.py` with printout of URL citation.
-* Added new samples `sample_agents_stream_eventhandler_with_bing_grounding.py` and `sample_agents_stream_iteration_with_bing_grounding.py` with printout of URL citation.
+* Update sample `sample_agents_bing_grounding.py` with printout of URL citation.
+* Add new samples `sample_agents_stream_eventhandler_with_bing_grounding.py` and `sample_agents_stream_iteration_with_bing_grounding.py` with printout of URL citation.
 
 ### Bugs Fixed
 
-* Fixed a bug on deserialization of RunStepDeltaFileSearchToolCall returned during Agent streaming run [GitHub issue 48333](https://github.com/Azure/azure-sdk-for-net/issues/48333)
+* Fix a bug in deserialization of `RunStepDeltaFileSearchToolCall` returned during Agent streaming (see [GitHub issue 48333](https://github.com/Azure/azure-sdk-for-net/issues/48333)).
+* Fix for Exception raised while parsing Agent streaming response, in some rare cases, for multibyte UTF-8 languages like Chinese.
 
 ### Breaking Changes
 
-* Input argument `assistant_id` was renamed to `agent_id` in all Agent methods to align with the "Agent" terminology. Similarly, all `assistant_id` properties on classes were renamed.
+* Rename input argument `assistant_id` to `agent_id` in all Agent methods to align with the "Agent" terminology. Similarly, rename all `assistant_id` properties on classes.
 
 ## 1.0.0b6 (2025-02-14)
 
