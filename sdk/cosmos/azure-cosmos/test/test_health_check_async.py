@@ -54,7 +54,7 @@ class TestHealthCheckAsync:
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
-    async def test_health_check_success_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
+    async def test_health_check_success_startup_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
 
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
@@ -85,7 +85,7 @@ class TestHealthCheckAsync:
         await client.close()
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
-    async def test_health_check_failure_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
+    async def test_health_check_failure_startup_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
 
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         regions = [REGION_1, REGION_2]
@@ -95,7 +95,7 @@ class TestHealthCheckAsync:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
             # this will setup the location cache
             client.client_connection._global_endpoint_manager.refresh_needed = True
-            await client.client_connection._global_endpoint_manager._refresh_endpoint_list(None)
+            await client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
         expected_endpoints = []

@@ -118,7 +118,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             if self.location_cache.should_refresh_endpoints() or self.refresh_needed:
                 self.refresh_needed = False
                 self.last_refresh_time = self.location_cache.current_time_millis()
-                if self.startup:
+                if not self.startup:
                     # this will perform getDatabaseAccount calls to check endpoint health
                     self._endpoints_health_check(**kwargs)
                 else:
