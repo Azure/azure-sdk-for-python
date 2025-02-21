@@ -160,3 +160,86 @@ class TestCommandJobEntity:
         )
 
         assert expected_job._to_dict() == node._to_job()._to_dict()
+
+    def test_parent_job_serialization(self) -> None:
+        inputs = {
+            "uri": Input(
+                type=AssetTypes.URI_FILE, path="azureml://datastores/workspaceblobstore/paths/python/data.csv"
+            ),
+            "data_asset": Input(path="test-data:1"),
+            "local_data": Input(path="./tests/test_configs/data/"),
+        }
+        command_job = command(
+            name="builder-command-job",
+            description="description",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            inputs=inputs,
+            command="echo ${{inputs.uri}} ${{inputs.data_asset}} ${{inputs.local_data}}",
+            display_name="builder-command-job-display",
+            compute="testCompute",
+            experiment_name="mfe-test1-dataset",
+            tags={"tag1": "value1"},
+            properties={"prop1": "value1"},
+            distribution=MpiDistribution(),
+            environment_variables={"EVN1": "VAR1"},
+            outputs={"best_model": {}},
+            instance_count=2,
+            instance_type="STANDARD_BLA",
+            locations=["westus"],
+            timeout=300,
+            code="./",
+            queue_settings=QueueSettings(job_tier="standard", priorty="medium"),
+            parent_job_name="parent-job",
+        )
+
+        job_prop = command_job._to_job()
+        assert job_prop.parent_job_name == "parent-job"
+
+    def test_multiple_docker_args_job_serialization(self) -> None:
+        inputs = {
+            "uri": Input(
+                type=AssetTypes.URI_FILE, path="azureml://datastores/workspaceblobstore/paths/python/data.csv"
+            ),
+            "data_asset": Input(path="test-data:1"),
+            "local_data": Input(path="./tests/test_configs/data/"),
+        }
+        command_job = command(
+            name="builder-command-job",
+            description="description",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            command="ls",
+            compute="testCompute",
+            distribution=MpiDistribution(process_count_per_instance=2),
+            locations=["westus"],
+            docker_args=["--shm-size=1g", "--ipc=host"],
+        )
+        job_prop = command_job._to_job()._to_rest_object().properties
+        from_rest_job = Job._from_rest_object(command_job._to_job()._to_rest_object())
+        assert hasattr(job_prop.resources, "locations") == False
+        assert job_prop.resources.docker_args_list == ["--shm-size=1g", "--ipc=host"]
+        assert isinstance(job_prop.resources.docker_args_list, list)
+        assert from_rest_job.resources.docker_args == ["--shm-size=1g", "--ipc=host"]
+
+    def test_single_docker_args_job_serialization(self) -> None:
+        inputs = {
+            "uri": Input(
+                type=AssetTypes.URI_FILE, path="azureml://datastores/workspaceblobstore/paths/python/data.csv"
+            ),
+            "data_asset": Input(path="test-data:1"),
+            "local_data": Input(path="./tests/test_configs/data/"),
+        }
+        command_job = command(
+            name="builder-command-job",
+            description="description",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            command="ls",
+            compute="testCompute",
+            distribution=MpiDistribution(process_count_per_instance=2),
+            locations=["westus"],
+            docker_args="--shm-size=1g",
+        )
+        job_prop = command_job._to_job()._to_rest_object().properties
+        from_rest_job = Job._from_rest_object(command_job._to_job()._to_rest_object())
+        assert job_prop.resources.locations == ["westus"]
+        assert hasattr(job_prop.resources, "docker_args_list") == False
+        assert from_rest_job.resources.docker_args == "--shm-size=1g"
