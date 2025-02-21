@@ -401,7 +401,8 @@ class LoadTestConfiguration(_model_base.Model):
      not required to upload.
     :vartype quick_start_test: bool
     :ivar optional_load_test_config: Configuration for quick load test.
-    :vartype optional_load_test_config: ~azure.developer.loadtesting.models.OptionalLoadTestConfig
+    :vartype optional_load_test_config:
+     ~azure.developer.loadtesting.models.OptionalLoadTestConfiguration
     :ivar regional_load_test_config: Region distribution configuration for the load test.
     :vartype regional_load_test_config:
      list[~azure.developer.loadtesting.models.RegionalConfiguration]
@@ -418,7 +419,9 @@ class LoadTestConfiguration(_model_base.Model):
     quick_start_test: Optional[bool] = rest_field(name="quickStartTest")
     """If true, optionalLoadTestConfig is required and JMX script for the load test is
      not required to upload."""
-    optional_load_test_config: Optional["_models.OptionalLoadTestConfig"] = rest_field(name="optionalLoadTestConfig")
+    optional_load_test_config: Optional["_models.OptionalLoadTestConfiguration"] = rest_field(
+        name="optionalLoadTestConfig"
+    )
     """Configuration for quick load test."""
     regional_load_test_config: Optional[List["_models.RegionalConfiguration"]] = rest_field(
         name="regionalLoadTestConfig"
@@ -432,7 +435,7 @@ class LoadTestConfiguration(_model_base.Model):
         engine_instances: Optional[int] = None,
         split_all_cs_vs: Optional[bool] = None,
         quick_start_test: Optional[bool] = None,
-        optional_load_test_config: Optional["_models.OptionalLoadTestConfig"] = None,
+        optional_load_test_config: Optional["_models.OptionalLoadTestConfiguration"] = None,
         regional_load_test_config: Optional[List["_models.RegionalConfiguration"]] = None,
     ) -> None: ...
 
@@ -483,7 +486,7 @@ class MetricDefinition(_model_base.Model):
     """Metric definition.
 
     :ivar dimensions: List of dimensions.
-    :vartype dimensions: list[~azure.developer.loadtesting.models.NameAndDesc]
+    :vartype dimensions: list[~azure.developer.loadtesting.models.NameAndDescription]
     :ivar description: The metric description.
     :vartype description: str
     :ivar name: The metric name.
@@ -494,7 +497,7 @@ class MetricDefinition(_model_base.Model):
      values for display. Known values are: "Average", "Count", "None", "Total", "Percentile75",
      "Percentile90", "Percentile95", "Percentile96", "Percentile97", "Percentile98", "Percentile99",
      "Percentile999", and "Percentile9999".
-    :vartype primary_aggregation_type: str or ~azure.developer.loadtesting.models.AggregationType
+    :vartype primary_aggregation_type: str or ~azure.developer.loadtesting.models.Aggregation
     :ivar supported_aggregation_types: The collection of what all aggregation types are supported.
     :vartype supported_aggregation_types: list[str]
     :ivar unit: The unit of the metric. Known values are: "NotSpecified", "Percent", "Count",
@@ -506,7 +509,7 @@ class MetricDefinition(_model_base.Model):
     :vartype metric_availabilities: list[~azure.developer.loadtesting.models.MetricAvailability]
     """
 
-    dimensions: Optional[List["_models.NameAndDesc"]] = rest_field()
+    dimensions: Optional[List["_models.NameAndDescription"]] = rest_field()
     """List of dimensions."""
     description: Optional[str] = rest_field()
     """The metric description."""
@@ -514,9 +517,7 @@ class MetricDefinition(_model_base.Model):
     """The metric name."""
     namespace: Optional[str] = rest_field()
     """The namespace the metric belongs to."""
-    primary_aggregation_type: Optional[Union[str, "_models.AggregationType"]] = rest_field(
-        name="primaryAggregationType"
-    )
+    primary_aggregation_type: Optional[Union[str, "_models.Aggregation"]] = rest_field(name="primaryAggregationType")
     """The primary aggregation type value defining how to use the values for display. Known values
      are: \"Average\", \"Count\", \"None\", \"Total\", \"Percentile75\", \"Percentile90\",
      \"Percentile95\", \"Percentile96\", \"Percentile97\", \"Percentile98\", \"Percentile99\",
@@ -534,11 +535,11 @@ class MetricDefinition(_model_base.Model):
     def __init__(
         self,
         *,
-        dimensions: Optional[List["_models.NameAndDesc"]] = None,
+        dimensions: Optional[List["_models.NameAndDescription"]] = None,
         description: Optional[str] = None,
         name: Optional[str] = None,
         namespace: Optional[str] = None,
-        primary_aggregation_type: Optional[Union[str, "_models.AggregationType"]] = None,
+        primary_aggregation_type: Optional[Union[str, "_models.Aggregation"]] = None,
         supported_aggregation_types: Optional[List[str]] = None,
         unit: Optional[Union[str, "_models.MetricUnit"]] = None,
         metric_availabilities: Optional[List["_models.MetricAvailability"]] = None,
@@ -713,7 +714,7 @@ class MetricValue(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class NameAndDesc(_model_base.Model):
+class NameAndDescription(_model_base.Model):
     """The name and description.
 
     :ivar description: The description.
@@ -746,7 +747,7 @@ class NameAndDesc(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OptionalLoadTestConfig(_model_base.Model):
+class OptionalLoadTestConfiguration(_model_base.Model):
     """Configuration for quick load test.
 
     :ivar endpoint_url: Test URL. Provide the complete HTTP URL. For example,
@@ -1390,7 +1391,7 @@ class TestFileInfo(_model_base.Model):
     :ivar validation_status: Validation status of the file. Known values are: "NOT_VALIDATED",
      "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
      "VALIDATION_NOT_REQUIRED".
-    :vartype validation_status: str or ~azure.developer.loadtesting.models.FileStatus
+    :vartype validation_status: str or ~azure.developer.loadtesting.models.FileValidationStatus
     :ivar validation_failure_details: Validation failure error details.
     :vartype validation_failure_details: str
     """
@@ -1406,7 +1407,7 @@ class TestFileInfo(_model_base.Model):
         name="expireDateTime", visibility=["read"], format="rfc3339"
     )
     """Expiry time of the file (RFC 3339 literal format)."""
-    validation_status: Optional[Union[str, "_models.FileStatus"]] = rest_field(
+    validation_status: Optional[Union[str, "_models.FileValidationStatus"]] = rest_field(
         name="validationStatus", visibility=["read"]
     )
     """Validation status of the file. Known values are: \"NOT_VALIDATED\", \"VALIDATION_SUCCESS\",
@@ -1439,11 +1440,11 @@ class TestInputArtifacts(_model_base.Model):
 
     :ivar config_file_info: File info.
     :vartype config_file_info: ~azure.developer.loadtesting.models.TestFileInfo
-    :ivar test_script_file_info: File info.
+    :ivar test_script_file_info: The test script file for the test run.
     :vartype test_script_file_info: ~azure.developer.loadtesting.models.TestFileInfo
-    :ivar user_prop_file_info: File info.
+    :ivar user_prop_file_info: The user properties file.
     :vartype user_prop_file_info: ~azure.developer.loadtesting.models.TestFileInfo
-    :ivar input_artifacts_zip_file_info: File info.
+    :ivar input_artifacts_zip_file_info: The zip file with all input artifacts.
     :vartype input_artifacts_zip_file_info: ~azure.developer.loadtesting.models.TestFileInfo
     :ivar url_test_config_file_info: The config json file for url based test.
     :vartype url_test_config_file_info: ~azure.developer.loadtesting.models.TestFileInfo
@@ -1454,11 +1455,11 @@ class TestInputArtifacts(_model_base.Model):
     config_file_info: Optional["_models.TestFileInfo"] = rest_field(name="configFileInfo")
     """File info."""
     test_script_file_info: Optional["_models.TestFileInfo"] = rest_field(name="testScriptFileInfo")
-    """File info."""
+    """The test script file for the test run."""
     user_prop_file_info: Optional["_models.TestFileInfo"] = rest_field(name="userPropFileInfo")
-    """File info."""
+    """The user properties file."""
     input_artifacts_zip_file_info: Optional["_models.TestFileInfo"] = rest_field(name="inputArtifactsZipFileInfo")
-    """File info."""
+    """The zip file with all input artifacts."""
     url_test_config_file_info: Optional["_models.TestFileInfo"] = rest_field(name="urlTestConfigFileInfo")
     """The config json file for url based test."""
     additional_file_info: Optional[List["_models.TestFileInfo"]] = rest_field(
@@ -1789,7 +1790,7 @@ class TestRun(_model_base.Model):
      "PROVISIONED", "CONFIGURING", "CONFIGURED", "EXECUTING", "EXECUTED", "DEPROVISIONING",
      "DEPROVISIONED", "DONE", "CANCELLING", "CANCELLED", "FAILED", "VALIDATION_SUCCESS", and
      "VALIDATION_FAILURE".
-    :vartype status: str or ~azure.developer.loadtesting.models.Status
+    :vartype status: str or ~azure.developer.loadtesting.models.TestRunStatus
     :ivar start_date_time: The test run start DateTime(RFC 3339 literal format).
     :vartype start_date_time: ~datetime.datetime
     :ivar end_date_time: The test run end DateTime(RFC 3339 literal format).
@@ -1863,7 +1864,9 @@ class TestRun(_model_base.Model):
      Load Testing. For example, East US should be passed as \"eastus\".
      The region name must match one of the strings in the \"Name\" column returned from running the
      \"az account list-locations -o table\" Azure CLI command."""
-    load_test_configuration: Optional["_models.LoadTestConfiguration"] = rest_field(name="loadTestConfiguration")
+    load_test_configuration: Optional["_models.LoadTestConfiguration"] = rest_field(
+        name="loadTestConfiguration", visibility=["read"]
+    )
     """The load test configuration."""
     test_artifacts: Optional["_models.TestRunArtifacts"] = rest_field(name="testArtifacts", visibility=["read"])
     """Collection of test run artifacts."""
@@ -1878,7 +1881,7 @@ class TestRun(_model_base.Model):
     """Associated test Id."""
     description: Optional[str] = rest_field()
     """The test run description."""
-    status: Optional[Union[str, "_models.Status"]] = rest_field(visibility=["read"])
+    status: Optional[Union[str, "_models.TestRunStatus"]] = rest_field(visibility=["read"])
     """The test run status. Known values are: \"ACCEPTED\", \"NOTSTARTED\", \"PROVISIONING\",
      \"PROVISIONED\", \"CONFIGURING\", \"CONFIGURED\", \"EXECUTING\", \"EXECUTED\",
      \"DEPROVISIONING\", \"DEPROVISIONED\", \"DONE\", \"CANCELLING\", \"CANCELLED\", \"FAILED\",
@@ -1935,7 +1938,6 @@ class TestRun(_model_base.Model):
         secrets: Optional[Dict[str, "_models.Secret"]] = None,
         certificate: Optional["_models.CertificateMetadata"] = None,
         environment_variables: Optional[Dict[str, str]] = None,
-        load_test_configuration: Optional["_models.LoadTestConfiguration"] = None,
         display_name: Optional[str] = None,
         test_id: Optional[str] = None,
         description: Optional[str] = None,
@@ -2056,14 +2058,14 @@ class TestRunDetail(_model_base.Model):
      "PROVISIONING", "PROVISIONED", "CONFIGURING", "CONFIGURED", "EXECUTING", "EXECUTED",
      "DEPROVISIONING", "DEPROVISIONED", "DONE", "CANCELLING", "CANCELLED", "FAILED",
      "VALIDATION_SUCCESS", and "VALIDATION_FAILURE".
-    :vartype status: str or ~azure.developer.loadtesting.models.Status
+    :vartype status: str or ~azure.developer.loadtesting.models.TestRunStatus
     :ivar configuration_id: ID of the configuration on which the test ran. Required.
     :vartype configuration_id: str
     :ivar properties: Key value pair of extra properties associated with the test run. Required.
     :vartype properties: dict[str, str]
     """
 
-    status: Union[str, "_models.Status"] = rest_field()
+    status: Union[str, "_models.TestRunStatus"] = rest_field()
     """Status of the test run. Required. Known values are: \"ACCEPTED\", \"NOTSTARTED\",
      \"PROVISIONING\", \"PROVISIONED\", \"CONFIGURING\", \"CONFIGURED\", \"EXECUTING\",
      \"EXECUTED\", \"DEPROVISIONING\", \"DEPROVISIONED\", \"DONE\", \"CANCELLING\", \"CANCELLED\",
@@ -2077,7 +2079,7 @@ class TestRunDetail(_model_base.Model):
     def __init__(
         self,
         *,
-        status: Union[str, "_models.Status"],
+        status: Union[str, "_models.TestRunStatus"],
         configuration_id: str,
         properties: Dict[str, str],
     ) -> None: ...
@@ -2111,7 +2113,7 @@ class TestRunFileInfo(_model_base.Model):
     :ivar validation_status: Validation status of the file. Known values are: "NOT_VALIDATED",
      "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
      "VALIDATION_NOT_REQUIRED".
-    :vartype validation_status: str or ~azure.developer.loadtesting.models.FileStatus
+    :vartype validation_status: str or ~azure.developer.loadtesting.models.FileValidationStatus
     :ivar validation_failure_details: Validation failure error details.
     :vartype validation_failure_details: str
     """
@@ -2127,7 +2129,7 @@ class TestRunFileInfo(_model_base.Model):
         name="expireDateTime", visibility=["read"], format="rfc3339"
     )
     """Expiry time of the file (RFC 3339 literal format)."""
-    validation_status: Optional[Union[str, "_models.FileStatus"]] = rest_field(
+    validation_status: Optional[Union[str, "_models.FileValidationStatus"]] = rest_field(
         name="validationStatus", visibility=["read"]
     )
     """Validation status of the file. Known values are: \"NOT_VALIDATED\", \"VALIDATION_SUCCESS\",
@@ -2160,11 +2162,11 @@ class TestRunInputArtifacts(_model_base.Model):
 
     :ivar config_file_info: File info.
     :vartype config_file_info: ~azure.developer.loadtesting.models.TestRunFileInfo
-    :ivar test_script_file_info: File info.
+    :ivar test_script_file_info: The test script file for the test run.
     :vartype test_script_file_info: ~azure.developer.loadtesting.models.TestRunFileInfo
-    :ivar user_prop_file_info: File info.
+    :ivar user_prop_file_info: The user properties file.
     :vartype user_prop_file_info: ~azure.developer.loadtesting.models.TestRunFileInfo
-    :ivar input_artifacts_zip_file_info: File info.
+    :ivar input_artifacts_zip_file_info: The zip file for all input artifacts.
     :vartype input_artifacts_zip_file_info: ~azure.developer.loadtesting.models.TestRunFileInfo
     :ivar url_test_config_file_info: The config json file for url based test.
     :vartype url_test_config_file_info: ~azure.developer.loadtesting.models.TestRunFileInfo
@@ -2175,11 +2177,11 @@ class TestRunInputArtifacts(_model_base.Model):
     config_file_info: Optional["_models.TestRunFileInfo"] = rest_field(name="configFileInfo")
     """File info."""
     test_script_file_info: Optional["_models.TestRunFileInfo"] = rest_field(name="testScriptFileInfo")
-    """File info."""
+    """The test script file for the test run."""
     user_prop_file_info: Optional["_models.TestRunFileInfo"] = rest_field(name="userPropFileInfo")
-    """File info."""
+    """The user properties file."""
     input_artifacts_zip_file_info: Optional["_models.TestRunFileInfo"] = rest_field(name="inputArtifactsZipFileInfo")
-    """File info."""
+    """The zip file for all input artifacts."""
     url_test_config_file_info: Optional["_models.TestRunFileInfo"] = rest_field(name="urlTestConfigFileInfo")
     """The config json file for url based test."""
     additional_file_info: Optional[List["_models.TestRunFileInfo"]] = rest_field(
@@ -2212,9 +2214,9 @@ class TestRunInputArtifacts(_model_base.Model):
 class TestRunOutputArtifacts(_model_base.Model):
     """The output artifacts for the test run.
 
-    :ivar result_file_info: File info.
+    :ivar result_file_info: The test run results file.
     :vartype result_file_info: ~azure.developer.loadtesting.models.TestRunFileInfo
-    :ivar logs_file_info: File info.
+    :ivar logs_file_info: The test run report with metrics.
     :vartype logs_file_info: ~azure.developer.loadtesting.models.TestRunFileInfo
     :ivar artifacts_container_info: The container for test run artifacts.
     :vartype artifacts_container_info: ~azure.developer.loadtesting.models.ArtifactsContainerInfo
@@ -2223,9 +2225,9 @@ class TestRunOutputArtifacts(_model_base.Model):
     """
 
     result_file_info: Optional["_models.TestRunFileInfo"] = rest_field(name="resultFileInfo")
-    """File info."""
+    """The test run results file."""
     logs_file_info: Optional["_models.TestRunFileInfo"] = rest_field(name="logsFileInfo")
-    """File info."""
+    """The test run report with metrics."""
     artifacts_container_info: Optional["_models.ArtifactsContainerInfo"] = rest_field(name="artifactsContainerInfo")
     """The container for test run artifacts."""
     report_file_info: Optional["_models.TestRunFileInfo"] = rest_field(name="reportFileInfo")
@@ -2252,7 +2254,7 @@ class TestRunOutputArtifacts(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TestRunServerMetricConfig(_model_base.Model):
+class TestRunServerMetricsConfiguration(_model_base.Model):
     """Test run server metrics configuration.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
@@ -2399,7 +2401,7 @@ class TestRunStatistics(_model_base.Model):
     """Send network bytes."""
 
 
-class TestServerMetricConfig(_model_base.Model):
+class TestServerMetricsConfiguration(_model_base.Model):
     """Test server metrics configuration.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.

@@ -1386,11 +1386,11 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
     def create_or_update_server_metrics_config(
         self,
         test_id: str,
-        body: _models.TestServerMetricConfig,
+        body: _models.TestServerMetricsConfiguration,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> _models.TestServerMetricConfig:
+    ) -> _models.TestServerMetricsConfiguration:
         """Configure server metrics for a test.
 
         Configure server metrics for a test.
@@ -1399,19 +1399,20 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
          numeric, underscore or hyphen characters. Required.
         :type test_id: str
         :param body: Server metric configuration model. Required.
-        :type body: ~azure.developer.loadtesting.models.TestServerMetricConfig
+        :type body: ~azure.developer.loadtesting.models.TestServerMetricsConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: TestServerMetricConfig. The TestServerMetricConfig is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestServerMetricConfig
+        :return: TestServerMetricsConfiguration. The TestServerMetricsConfiguration is compatible with
+         MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestServerMetricsConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_or_update_server_metrics_config(
         self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.TestServerMetricConfig:
+    ) -> _models.TestServerMetricsConfiguration:
         """Configure server metrics for a test.
 
         Configure server metrics for a test.
@@ -1424,15 +1425,16 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: TestServerMetricConfig. The TestServerMetricConfig is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestServerMetricConfig
+        :return: TestServerMetricsConfiguration. The TestServerMetricsConfiguration is compatible with
+         MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestServerMetricsConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_or_update_server_metrics_config(
         self, test_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.TestServerMetricConfig:
+    ) -> _models.TestServerMetricsConfiguration:
         """Configure server metrics for a test.
 
         Configure server metrics for a test.
@@ -1445,15 +1447,16 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: TestServerMetricConfig. The TestServerMetricConfig is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestServerMetricConfig
+        :return: TestServerMetricsConfiguration. The TestServerMetricsConfiguration is compatible with
+         MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestServerMetricsConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def create_or_update_server_metrics_config(
-        self, test_id: str, body: Union[_models.TestServerMetricConfig, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.TestServerMetricConfig:
+        self, test_id: str, body: Union[_models.TestServerMetricsConfiguration, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.TestServerMetricsConfiguration:
         """Configure server metrics for a test.
 
         Configure server metrics for a test.
@@ -1462,10 +1465,12 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
          numeric, underscore or hyphen characters. Required.
         :type test_id: str
         :param body: Server metric configuration model. Is one of the following types:
-         TestServerMetricConfig, JSON, IO[bytes] Required.
-        :type body: ~azure.developer.loadtesting.models.TestServerMetricConfig or JSON or IO[bytes]
-        :return: TestServerMetricConfig. The TestServerMetricConfig is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestServerMetricConfig
+         TestServerMetricsConfiguration, JSON, IO[bytes] Required.
+        :type body: ~azure.developer.loadtesting.models.TestServerMetricsConfiguration or JSON or
+         IO[bytes]
+        :return: TestServerMetricsConfiguration. The TestServerMetricsConfiguration is compatible with
+         MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestServerMetricsConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1480,7 +1485,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[_models.TestServerMetricConfig] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TestServerMetricsConfiguration] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -1521,7 +1526,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestServerMetricConfig, response.json())
+            deserialized = _deserialize(_models.TestServerMetricsConfiguration, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1592,7 +1597,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_server_metrics_config(self, test_id: str, **kwargs: Any) -> _models.TestServerMetricConfig:
+    def get_server_metrics_config(self, test_id: str, **kwargs: Any) -> _models.TestServerMetricsConfiguration:
         """List server metrics configuration for the given test.
 
         List server metrics configuration for the given test.
@@ -1600,8 +1605,9 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         :param test_id: Unique name for the load test, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
         :type test_id: str
-        :return: TestServerMetricConfig. The TestServerMetricConfig is compatible with MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestServerMetricConfig
+        :return: TestServerMetricsConfiguration. The TestServerMetricsConfiguration is compatible with
+         MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestServerMetricsConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1615,7 +1621,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestServerMetricConfig] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TestServerMetricsConfiguration] = kwargs.pop("cls", None)
 
         _request = build_load_test_administration_get_server_metrics_config_request(
             test_id=test_id,
@@ -1647,7 +1653,7 @@ class LoadTestAdministrationClientOperationsMixin(  # pylint: disable=name-too-l
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestServerMetricConfig, response.json())
+            deserialized = _deserialize(_models.TestServerMetricsConfiguration, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2846,11 +2852,11 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
     def create_or_update_server_metrics_config(
         self,
         test_run_id: str,
-        body: _models.TestRunServerMetricConfig,
+        body: _models.TestRunServerMetricsConfiguration,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> _models.TestRunServerMetricConfig:
+    ) -> _models.TestRunServerMetricsConfiguration:
         """Configure server metrics for a test run.
 
         Configure server metrics for a test run.
@@ -2859,20 +2865,20 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
          numeric, underscore or hyphen characters. Required.
         :type test_run_id: str
         :param body: Server metric configuration model. Required.
-        :type body: ~azure.developer.loadtesting.models.TestRunServerMetricConfig
+        :type body: ~azure.developer.loadtesting.models.TestRunServerMetricsConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: TestRunServerMetricConfig. The TestRunServerMetricConfig is compatible with
-         MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestRunServerMetricConfig
+        :return: TestRunServerMetricsConfiguration. The TestRunServerMetricsConfiguration is compatible
+         with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestRunServerMetricsConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_or_update_server_metrics_config(
         self, test_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.TestRunServerMetricConfig:
+    ) -> _models.TestRunServerMetricsConfiguration:
         """Configure server metrics for a test run.
 
         Configure server metrics for a test run.
@@ -2885,16 +2891,16 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: TestRunServerMetricConfig. The TestRunServerMetricConfig is compatible with
-         MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestRunServerMetricConfig
+        :return: TestRunServerMetricsConfiguration. The TestRunServerMetricsConfiguration is compatible
+         with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestRunServerMetricsConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_or_update_server_metrics_config(
         self, test_run_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.TestRunServerMetricConfig:
+    ) -> _models.TestRunServerMetricsConfiguration:
         """Configure server metrics for a test run.
 
         Configure server metrics for a test run.
@@ -2907,16 +2913,16 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: TestRunServerMetricConfig. The TestRunServerMetricConfig is compatible with
-         MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestRunServerMetricConfig
+        :return: TestRunServerMetricsConfiguration. The TestRunServerMetricsConfiguration is compatible
+         with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestRunServerMetricsConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def create_or_update_server_metrics_config(
-        self, test_run_id: str, body: Union[_models.TestRunServerMetricConfig, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.TestRunServerMetricConfig:
+        self, test_run_id: str, body: Union[_models.TestRunServerMetricsConfiguration, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.TestRunServerMetricsConfiguration:
         """Configure server metrics for a test run.
 
         Configure server metrics for a test run.
@@ -2925,11 +2931,12 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
          numeric, underscore or hyphen characters. Required.
         :type test_run_id: str
         :param body: Server metric configuration model. Is one of the following types:
-         TestRunServerMetricConfig, JSON, IO[bytes] Required.
-        :type body: ~azure.developer.loadtesting.models.TestRunServerMetricConfig or JSON or IO[bytes]
-        :return: TestRunServerMetricConfig. The TestRunServerMetricConfig is compatible with
-         MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestRunServerMetricConfig
+         TestRunServerMetricsConfiguration, JSON, IO[bytes] Required.
+        :type body: ~azure.developer.loadtesting.models.TestRunServerMetricsConfiguration or JSON or
+         IO[bytes]
+        :return: TestRunServerMetricsConfiguration. The TestRunServerMetricsConfiguration is compatible
+         with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestRunServerMetricsConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2944,7 +2951,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[_models.TestRunServerMetricConfig] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TestRunServerMetricsConfiguration] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -2985,7 +2992,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestRunServerMetricConfig, response.json())
+            deserialized = _deserialize(_models.TestRunServerMetricsConfiguration, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3111,7 +3118,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_server_metrics_config(self, test_run_id: str, **kwargs: Any) -> _models.TestRunServerMetricConfig:
+    def get_server_metrics_config(self, test_run_id: str, **kwargs: Any) -> _models.TestRunServerMetricsConfiguration:
         """Get associated server metrics configuration for the given test run.
 
         Get associated server metrics configuration for the given test run.
@@ -3119,9 +3126,9 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
         :type test_run_id: str
-        :return: TestRunServerMetricConfig. The TestRunServerMetricConfig is compatible with
-         MutableMapping
-        :rtype: ~azure.developer.loadtesting.models.TestRunServerMetricConfig
+        :return: TestRunServerMetricsConfiguration. The TestRunServerMetricsConfiguration is compatible
+         with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestRunServerMetricsConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3135,7 +3142,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TestRunServerMetricConfig] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TestRunServerMetricsConfiguration] = kwargs.pop("cls", None)
 
         _request = build_load_test_run_get_server_metrics_config_request(
             test_run_id=test_run_id,
@@ -3167,7 +3174,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TestRunServerMetricConfig, response.json())
+            deserialized = _deserialize(_models.TestRunServerMetricsConfiguration, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

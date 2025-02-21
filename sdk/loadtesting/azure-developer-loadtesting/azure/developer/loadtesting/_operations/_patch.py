@@ -114,12 +114,80 @@ class LoadTestAdministrationClientOperationsMixin(GeneratedAdministrationClientO
     def __init__(self, *args, **kwargs):
         super(LoadTestAdministrationClientOperationsMixin, self).__init__(*args, **kwargs)
 
-    @distributed_trace
+    @overload
     def begin_upload_test_file(
         self,
         test_id: str,
         file_name: str,
         body: bytes,
+        *,
+        file_type: Optional[Union[str, _models.FileType]] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.TestFileInfo]:
+        """Upload input file for a given test Id. File size can't be more than 50 MB.
+        Existing file with same name for the given test will be overwritten. File
+        should be provided in the request body as application/octet-stream.
+
+        Upload input file for a given test Id. File size can't be more than 50 MB.
+        Existing file with same name for the given test will be overwritten. File
+        should be provided in the request body as application/octet-stream.
+
+        :param test_id: Unique name for the load test, must contain only lower-case alphabetic,
+         numeric, underscore or hyphen characters. Required.
+        :type test_id: str
+        :param file_name: Unique name for test file with file extension like : App.jmx. Required.
+        :type file_name: str
+        :param body: The file content as application/octet-stream. Required.
+        :type body: bytes
+        :keyword file_type: File type. Known values are: "JMX_FILE", "USER_PROPERTIES",
+         "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT". Default value
+         is None.
+        :paramtype file_type: str or ~azure.developer.loadtesting.models.FileType
+        :return: TestFileInfo. The TestFileInfo is compatible with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestFileInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_upload_test_file(
+        self,
+        test_id: str,
+        file_name: str,
+        body: IO,
+        *,
+        file_type: Optional[Union[str, _models.FileType]] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.TestFileInfo]:
+        """Upload input file for a given test Id. File size can't be more than 50 MB.
+        Existing file with same name for the given test will be overwritten. File
+        should be provided in the request body as application/octet-stream.
+
+        Upload input file for a given test Id. File size can't be more than 50 MB.
+        Existing file with same name for the given test will be overwritten. File
+        should be provided in the request body as application/octet-stream.
+
+        :param test_id: Unique name for the load test, must contain only lower-case alphabetic,
+         numeric, underscore or hyphen characters. Required.
+        :type test_id: str
+        :param file_name: Unique name for test file with file extension like : App.jmx. Required.
+        :type file_name: str
+        :param body: The file content as application/octet-stream. Required.
+        :type body: bytes
+        :keyword file_type: File type. Known values are: "JMX_FILE", "USER_PROPERTIES",
+         "ADDITIONAL_ARTIFACTS", "ZIPPED_ARTIFACTS", "URL_TEST_CONFIG", and "TEST_SCRIPT". Default value
+         is None.
+        :paramtype file_type: str or ~azure.developer.loadtesting.models.FileType
+        :return: TestFileInfo. The TestFileInfo is compatible with MutableMapping
+        :rtype: ~azure.developer.loadtesting.models.TestFileInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_upload_test_file(
+        self,
+        test_id: str,
+        file_name: str,
+        body: Union[IO, bytes],
         *,
         file_type: Optional[Union[str, _models.FileType]] = None,
         **kwargs: Any

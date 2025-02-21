@@ -10,7 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class Aggregation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Aggregation type."""
 
     AVERAGE = "Average"
@@ -44,7 +44,7 @@ class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class CertificateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Types of certificates supported."""
 
-    AKV_CERT_URI = "AKV_CERT_URI"
+    KEY_VAULT_CERTIFICATE_URI = "AKV_CERT_URI"
     """If the certificate is stored in an Azure Key Vault."""
 
 
@@ -55,21 +55,6 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Entity was created by a user."""
     SCHEDULED_TRIGGER = "ScheduledTrigger"
     """Entity was created by a scheduled trigger."""
-
-
-class FileStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """File status."""
-
-    NOT_VALIDATED = "NOT_VALIDATED"
-    """File is not validated."""
-    VALIDATION_SUCCESS = "VALIDATION_SUCCESS"
-    """File is validated."""
-    VALIDATION_FAILURE = "VALIDATION_FAILURE"
-    """File validation is failed."""
-    VALIDATION_INITIATED = "VALIDATION_INITIATED"
-    """File validation is in progress."""
-    VALIDATION_NOT_REQUIRED = "VALIDATION_NOT_REQUIRED"
-    """Validation is not required."""
 
 
 class FileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -87,6 +72,21 @@ class FileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If the file is a JSON config file to define the requests for a URL test."""
     TEST_SCRIPT = "TEST_SCRIPT"
     """If the file is a test script."""
+
+
+class FileValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """File status."""
+
+    NOT_VALIDATED = "NOT_VALIDATED"
+    """File is not validated."""
+    VALIDATION_SUCCESS = "VALIDATION_SUCCESS"
+    """File is validated."""
+    VALIDATION_FAILURE = "VALIDATION_FAILURE"
+    """File validation is failed."""
+    VALIDATION_INITIATED = "VALIDATION_INITIATED"
+    """File validation is in progress."""
+    VALIDATION_NOT_REQUIRED = "VALIDATION_NOT_REQUIRED"
+    """Validation is not required."""
 
 
 class ManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -229,18 +229,48 @@ class ResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class SecretType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Types of secrets supported."""
 
-    AKV_SECRET_URI = "AKV_SECRET_URI"
+    KEY_VAULT_SECRET_URI = "AKV_SECRET_URI"
     """If the secret is stored in an Azure Key Vault."""
     SECRET_VALUE = "SECRET_VALUE"
     """If the secret value provided as plain text."""
 
 
-class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class TestKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Test kind."""
+
+    URL = "URL"
+    """URL Test"""
+    JMX = "JMX"
+    """JMX Test"""
+    LOCUST = "Locust"
+    """Locust Test"""
+
+
+class TestProfileRunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Test profile run status."""
+
+    ACCEPTED = "ACCEPTED"
+    """Test profile run request is accepted."""
+    NOT_STARTED = "NOTSTARTED"
+    """Test profile run is not yet started."""
+    EXECUTING = "EXECUTING"
+    """Test profile run has started executing."""
+    DONE = "DONE"
+    """Test profile run has completed successfully."""
+    CANCELLING = "CANCELLING"
+    """Test profile run is being cancelled."""
+    CANCELLED = "CANCELLED"
+    """Test profile run is cancelled."""
+    FAILED = "FAILED"
+    """Test profile run has failed."""
+
+
+class TestRunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Test run status."""
 
     ACCEPTED = "ACCEPTED"
     """Test run request is accepted."""
-    NOTSTARTED = "NOTSTARTED"
+    NOT_STARTED = "NOTSTARTED"
     """Test run is not yet started."""
     PROVISIONING = "PROVISIONING"
     """Test run is provisioning."""
@@ -270,36 +300,6 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Test run JMX file is validated."""
     VALIDATION_FAILURE = "VALIDATION_FAILURE"
     """Test run JMX file validation is failed."""
-
-
-class TestKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Test kind."""
-
-    URL = "URL"
-    """URL Test"""
-    JMX = "JMX"
-    """JMX Test"""
-    LOCUST = "Locust"
-    """Locust Test"""
-
-
-class TestProfileRunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Test profile run status."""
-
-    ACCEPTED = "ACCEPTED"
-    """Test profile run request is accepted."""
-    NOTSTARTED = "NOTSTARTED"
-    """Test profile run is not yet started."""
-    EXECUTING = "EXECUTING"
-    """Test profile run has started executing."""
-    DONE = "DONE"
-    """Test profile run has completed successfully."""
-    CANCELLING = "CANCELLING"
-    """Test profile run is being cancelled."""
-    CANCELLED = "CANCELLED"
-    """Test profile run is cancelled."""
-    FAILED = "FAILED"
-    """Test profile run has failed."""
 
 
 class TimeGrain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
