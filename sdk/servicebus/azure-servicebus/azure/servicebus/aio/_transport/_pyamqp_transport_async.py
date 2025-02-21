@@ -117,6 +117,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             http_proxy=config.http_proxy,
             socket_timeout=config.socket_timeout,
             use_tls=config.use_tls,
+            legacy_ws=config.legacy_ws,
             **kwargs,
         )
 
@@ -221,6 +222,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             on_attach=functools.partial(PyamqpTransportAsync.on_attach_async, receiver),
             socket_timeout=config.socket_timeout,
             use_tls=config.use_tls,
+            legacy_ws=config.legacy_ws,
             **kwargs,
         )
 

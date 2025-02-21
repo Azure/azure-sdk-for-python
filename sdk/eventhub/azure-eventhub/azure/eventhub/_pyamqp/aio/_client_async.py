@@ -251,6 +251,7 @@ class AMQPClientAsync(AMQPClientSync):
                 custom_endpoint_address=self._custom_endpoint_address,
                 socket_timeout=self._socket_timeout,
                 use_tls=self._use_tls,
+                legacy_ws=self._legacy_ws
             )
             await self._connection.open()
         if not self._session:

@@ -51,6 +51,7 @@ class Configuration:  # pylint:disable=too-many-instance-attributes
         self.http_proxy = http_proxy
         self.transport_type = TransportType.AmqpOverWebsocket if self.http_proxy else transport_type
         # if transport_type is not provided, it is None, we will default to Amqp
+        self.legacy_ws = kwargs.get("legacy_ws", False)
         self.transport_type = self.transport_type or TransportType.Amqp
         self.auth_timeout = auth_timeout
         self.prefetch = prefetch
