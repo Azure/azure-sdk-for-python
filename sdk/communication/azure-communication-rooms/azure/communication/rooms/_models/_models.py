@@ -19,6 +19,7 @@ class ParticipantRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PRESENTER = "Presenter"
     ATTENDEE = "Attendee"
     CONSUMER = "Consumer"
+    COLLABORATOR = "Collaborator"
 
 
 class RoomParticipant:
