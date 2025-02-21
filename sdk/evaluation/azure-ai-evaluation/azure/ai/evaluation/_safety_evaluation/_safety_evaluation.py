@@ -24,6 +24,7 @@ from azure.core.credentials import TokenCredential
 import json
 from pathlib import Path
 import re
+import itertools
 from pyrit.common import initialize_pyrit, DUCK_DB
 from pyrit.orchestrator import PromptSendingOrchestrator
 from pyrit.prompt_target import OpenAIChatTarget
@@ -625,35 +626,19 @@ class _SafetyEvaluation:
         memory = orchestrator.get_memory()
 
         # Get conversations as a List[List[ChatMessage]]
-        conversations = []
-        conversation_id = None
-        current_conversation = []
-        for item in memory:
-            if conversation_id == None or conversation_id == item.conversation_id:
-                conversation_id = item.conversation_id
-                current_conversation.append(item.to_chat_message())
-            else:
-                conversations.append(current_conversation)
-                current_conversation = [item.to_chat_message()]
-                conversation_id = item.conversation_id
-
+        
+        conversations = [[item.to_chat_message() for item in group] for conv_id, group in itertools.groupby(memory, key=lambda x: x.conversation_id)]
+        
+        # TODO: convert this to a helper
+        def message_to_dict(message: "ChatMessage"):
+            return {
+                "role": message.role,
+                "content": message.content,
+            }
         #Convert to json lines
         json_lines = ""
         for conversation in conversations: # each conversation is a List[ChatMessage]
-            user_message = None
-            assistant_message = None
-            for message in conversation: # each message is a ChatMessage
-                if message.role == "user":
-                    user_message = message.content
-                elif message.role == "assistant":
-                    assistant_message = message.content
-
-                if user_message and assistant_message:
-                    json_lines += (
-                                json.dumps({"query": user_message, "response": assistant_message, "category": None})
-                                + "\n"
-                            )
-                    user_message = assistant_message = None
+            json_lines += json.dumps({"conversation": {"messages": [message_to_dict(message) for message in conversation]}}) + "\n"
         
         data_path = "pyrit_outputs.jsonl"
         with Path(data_path).open("w") as f:
