@@ -29,7 +29,7 @@ async def main():
 
     outputs = await safety_eval(
         target=model_config,
-        num_turns=8,
+        num_rows=8,
     )
     print(outputs)
 

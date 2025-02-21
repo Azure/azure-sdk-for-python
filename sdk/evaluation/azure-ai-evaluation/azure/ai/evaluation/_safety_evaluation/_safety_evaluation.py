@@ -28,6 +28,7 @@ import itertools
 from pyrit.common import initialize_pyrit, DUCK_DB
 from pyrit.orchestrator import PromptSendingOrchestrator
 from pyrit.prompt_target import OpenAIChatTarget
+from pyrit.models import ChatMessage
 
 logger = logging.getLogger(__name__)
 
@@ -508,8 +509,8 @@ class _SafetyEvaluation:
                 category=ErrorCategory.MISSING_FIELD,
                 blame=ErrorBlame.USER_ERROR,
             )
-
-        if scenario and not _SafetyEvaluator.CONTENT_SAFETY in evaluators:
+        
+        if scenario and len(evaluators)>0 and not _SafetyEvaluator.CONTENT_SAFETY in evaluators:
             self.logger.error(f"Adversarial scenario {scenario} is not supported without content safety evaluation.")
             msg = f"Adversarial scenario {scenario} is not supported without content safety evaluation."
             raise EvaluationException(
@@ -520,7 +521,7 @@ class _SafetyEvaluation:
                 blame=ErrorBlame.USER_ERROR,
             )
     
-        if _SafetyEvaluator.CONTENT_SAFETY in evaluators and scenario and num_turns > 1:
+        if _SafetyEvaluator.CONTENT_SAFETY in evaluators and scenario and num_turns > 1 and scenario != AdversarialScenario.ADVERSARIAL_CONVERSATION:
             self.logger.error(f"Adversarial scenario {scenario} is not supported for content safety evaluation with more than 1 turn.")
             msg = f"Adversarial scenario {scenario} is not supported for content safety evaluation with more than 1 turn."
             raise EvaluationException(
@@ -575,7 +576,7 @@ class _SafetyEvaluation:
         evaluation_result['studio_url'] = evaluation_result_dict['jailbreak']['studio_url'] + '\t' + evaluation_result_dict['regular']['studio_url']
         return evaluation_result
     
-    async def _get_all_prompts(self, scenario: AdversarialScenario, num_turns: int = 3) -> List[str]:
+    async def _get_all_prompts(self, scenario: AdversarialScenario, num_rows: int = 3) -> List[str]:
         templates = await self.adversarial_template_handler._get_content_harm_template_collections(
                 scenario.value
             )
@@ -597,17 +598,23 @@ class _SafetyEvaluation:
                 filled_template = fill_template(parameter['conversation_starter'], parameter)
                 all_prompts.append(filled_template)
                 count += 1
-                if count >= num_turns:
+                if count >= num_rows:
                     break
-            if count >= num_turns:
+            if count >= num_rows:
                 break
         return all_prompts
+    
+    def message_to_dict(self, message: ChatMessage):
+        return {
+            "role": message.role,
+            "content": message.content,
+        }
     
     async def _pyrit(
             self, 
             target: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration], 
             scenario: AdversarialScenario,
-            num_turns: int = 1,
+            num_rows: int = 1,
         ) -> str:
         chat_target: OpenAIChatTarget = None
         if "azure_deployment" in target and "azure_endpoint" in target: # Azure OpenAI
@@ -619,26 +626,19 @@ class _SafetyEvaluation:
         else:
             chat_target = OpenAIChatTarget(deployment=target["model"], endpoint=target.get("base_url", None), key=target["api_key"], is_azure_target=False)
         
-        all_prompts_list = await self._get_all_prompts(scenario, num_turns=num_turns)
+        all_prompts_list = await self._get_all_prompts(scenario, num_rows=num_rows)
 
         orchestrator = PromptSendingOrchestrator(objective_target=chat_target)
         await orchestrator.send_prompts_async(prompt_list=all_prompts_list)
         memory = orchestrator.get_memory()
 
         # Get conversations as a List[List[ChatMessage]]
-        
         conversations = [[item.to_chat_message() for item in group] for conv_id, group in itertools.groupby(memory, key=lambda x: x.conversation_id)]
         
-        # TODO: convert this to a helper
-        def message_to_dict(message: "ChatMessage"):
-            return {
-                "role": message.role,
-                "content": message.content,
-            }
         #Convert to json lines
         json_lines = ""
         for conversation in conversations: # each conversation is a List[ChatMessage]
-            json_lines += json.dumps({"conversation": {"messages": [message_to_dict(message) for message in conversation]}}) + "\n"
+            json_lines += json.dumps({"conversation": {"messages": [self.message_to_dict(message) for message in conversation]}}) + "\n"
         
         data_path = "pyrit_outputs.jsonl"
         with Path(data_path).open("w") as f:
@@ -706,7 +706,7 @@ class _SafetyEvaluation:
 
         if not isinstance(target, Callable) and isinstance(adversarial_scenario, AdversarialScenario):
             self.logger.info(f"Running Pyrit with inputs target={target}, scenario={scenario}") 
-            data_path = await self._pyrit(target, adversarial_scenario, num_turns=num_turns)
+            data_path = await self._pyrit(target, adversarial_scenario, num_rows=num_rows)
 
         ## Get evaluators
         evaluators_dict = self._get_evaluators(evaluators)

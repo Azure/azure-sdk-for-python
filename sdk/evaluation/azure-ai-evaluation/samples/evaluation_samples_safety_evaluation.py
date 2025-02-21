@@ -49,6 +49,12 @@ class EvaluationSafetyEvaluationSamples(object):
         # [END default_safety_evaluation]
 
         # [START default_safety_evaluation_model_target]
+        """
+        please install the pyrit extra to run this example
+
+        cd azure-sdk-for-python/sdk/evaluation/azure-ai-evaluation
+        pip install -e ".[pyrit]"
+        """
         model_config = {
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
             "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
