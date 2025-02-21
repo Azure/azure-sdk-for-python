@@ -180,6 +180,37 @@ class FaultInjectionTransport(AioHttpTransport):
 
         return response
 
+    @staticmethod
+    async def transform_topology_mwr(
+            first_region_name: str,
+            second_region_name: str,
+            r: HttpRequest,
+            inner: Callable[[], asyncio.Task[AsyncHttpResponse]]) -> asyncio.Task[AsyncHttpResponse]:
+
+        response = await inner()
+        if not FaultInjectionTransport.predicate_is_database_account_call(response.request):
+            return response
+
+        await response.load_body()
+        data = response.body()
+        if response.status_code == 200 and data:
+            data = data.decode("utf-8")
+            result = json.loads(data)
+            readable_locations = result["readableLocations"]
+            writable_locations = result["writableLocations"]
+            readable_locations[0]["name"] = first_region_name
+            writable_locations[0]["name"] = first_region_name
+            readable_locations.append(
+                {"name": second_region_name, "databaseAccountEndpoint": test_config.TestConfig.local_host})
+            writable_locations.append(
+                {"name": second_region_name, "databaseAccountEndpoint": test_config.TestConfig.local_host})
+            result["enableMultipleWriteLocations"] = True
+            FaultInjectionTransport.logger.info("Transformed Account Topology: {}".format(result))
+            request: HttpRequest = response.request
+            return FaultInjectionTransport.MockHttpResponse(request, 200, result)
+
+        return response
+
     class MockHttpResponse(AioHttpTransportResponse):
         def __init__(self, request: HttpRequest, status_code: int, content:Optional[dict[str, any]]):
             self.request: HttpRequest = request

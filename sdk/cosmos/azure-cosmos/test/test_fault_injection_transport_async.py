@@ -126,7 +126,7 @@ class TestFaultInjectionTransportAsync:
         finally:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
 
-    async def test_succeeds_with_multiple_endpoints(self, setup):
+    async def test_swr_mrr_succeeds(self, setup):
         expected_read_region_uri: str = test_config.TestConfig.local_host
         expected_write_region_uri: str = expected_read_region_uri.replace("localhost", "127.0.0.1")
         custom_transport = FaultInjectionTransport()
@@ -174,6 +174,51 @@ class TestFaultInjectionTransportAsync:
                 request: HttpRequest = read_document.get_response_headers()["_request"]
                 # Validate the response comes from "East US" (the most preferred read-only region)
                 assert request.url.startswith(expected_read_region_uri)
+
+        finally:
+            TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+
+    async def test_mwr_succeeds(self, setup):
+        first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")
+        second_region_uri: str = test_config.TestConfig.local_host
+        custom_transport = FaultInjectionTransport()
+
+        # Inject topology transformation that would make Emulator look like a single write region
+        # account with two read regions
+        is_get_account_predicate: Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransport.predicate_is_database_account_call(r)
+        emulator_as_multi_write_region_account_transformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], AsyncHttpResponse] = \
+            lambda r, inner: FaultInjectionTransport.transform_topology_mwr(
+                first_region_name="First Region",
+                second_region_name="Second Region",
+                r=r,
+                inner=inner)
+        custom_transport.add_response_transformation(
+            is_get_account_predicate,
+            emulator_as_multi_write_region_account_transformation)
+
+        id_value: str = str(uuid.uuid4())
+        document_definition = {'id': id_value,
+                               'pk': id_value,
+                               'name': 'sample document',
+                               'key': 'value'}
+
+        initialized_objects = self.setup_method_with_custom_transport(
+            custom_transport,
+            preferred_locations=["First Region", "Second Region"])
+        try:
+            container: ContainerProxy = initialized_objects["col"]
+
+            created_document = await container.create_item(body=document_definition)
+            request: HttpRequest = created_document.get_response_headers()["_request"]
+            # Validate the response comes from "South Central US" (the write region)
+            assert request.url.startswith(first_region_uri)
+            start:float = time.perf_counter()
+
+            while (time.perf_counter() - start) < 2:
+                read_document = await container.read_item(id_value, partition_key=id_value)
+                request: HttpRequest = read_document.get_response_headers()["_request"]
+                # Validate the response comes from "East US" (the most preferred read-only region)
+                assert request.url.startswith(first_region_uri)
 
         finally:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
