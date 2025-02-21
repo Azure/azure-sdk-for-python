@@ -74,7 +74,7 @@ setup(
         "azure-storage-blob>=12.10.0",
     ],
     extras_require={
-        "pyrit": ["git+https://github.com/Azure/PyRIT.git#egg=pyrit"]
+        "pyrit": ["pyrit @ git+https://github.com/Azure/PyRIT.git"]
     },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
