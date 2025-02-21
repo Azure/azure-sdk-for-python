@@ -176,21 +176,25 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
                 shm_size=self.shm_size,
             )
         return RestJobResourceConfiguration(
+            locations=self.locations,
             instance_count=self.instance_count,
             instance_type=self.instance_type,
             max_instance_count=self.max_instance_count,
             properties=self.properties.as_dict() if isinstance(self.properties, Properties) else None,
-            docker_args=self.docker_args if isinstance(self.docker_args, str) else None,
+            docker_args=self.docker_args,
             shm_size=self.shm_size,
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: Optional[RestJobResourceConfiguration]) -> Optional["JobResourceConfiguration"]:
+    def _from_rest_object(
+        cls, obj: Optional[Union[RestJobResourceConfiguration, RestJobResourceConfiguration202501]]
+    ) -> Optional["JobResourceConfiguration"]:
         if obj is None:
             return None
         if isinstance(obj, dict):
             return cls(**obj)
         return JobResourceConfiguration(
+            locations=obj.locations if hasattr(obj, "locations") else None,
             instance_count=obj.instance_count,
             instance_type=obj.instance_type,
             max_instance_count=obj.max_instance_count if hasattr(obj, "max_instance_count") else None,
