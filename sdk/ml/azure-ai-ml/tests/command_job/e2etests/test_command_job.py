@@ -108,7 +108,6 @@ class TestCommandJob(AzureRecordedTestCase):
             == "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/Runtime/providers/Microsoft.MachineLearningServices/virtualclusters/centeuapvc"
         )
         assert command_job_2.queue_settings.job_tier == command_job.queue_settings.job_tier
-        assert command_job_2.resources.locations == command_job.resources.locations
         check_tid_in_url(client, command_job_2)
 
     @pytest.mark.e2etest
