@@ -199,7 +199,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
             instance_type=obj.instance_type,
             max_instance_count=obj.max_instance_count if hasattr(obj, "max_instance_count") else None,
             properties=obj.properties,
-            docker_args=obj.docker_args,
+            docker_args=obj.docker_args_list if hasattr(obj, "docker_args_list") else obj.docker_args,
             shm_size=obj.shm_size,
             deserialize_properties=True,
         )
