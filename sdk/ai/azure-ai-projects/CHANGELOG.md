@@ -1,5 +1,21 @@
 # Release History
 
+## 1.0.0b6 (2025-02-14)
+
+### Features added
+
+* Added `trace_function` decorator for conveniently tracing function calls in Agents using OpenTelemetry. Please see the README.md for updated documentation.
+
+### Sample updates
+
+* Added AzureLogicAppTool utility and Logic App sample under `samples/agents`, folder to make Azure Logic App integration with Agents easier.
+* Added better observability for Azure AI Search sample for Agents via improved run steps information from the service.
+* Added sample to demonstrate how to add custom attributes to telemetry span.
+
+### Bugs Fixed
+
+* Lowered the logging level of "Toolset is not available in the client" from `warning` to `debug` to prevent unnecessary log entries in agent application runs.
+
 ## 1.0.0b5 (2025-01-17)
 
 ### Features added

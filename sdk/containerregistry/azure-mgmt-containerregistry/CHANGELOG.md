@@ -1,5 +1,22 @@
 # Release History
 
+## 11.0.0 (2024-02-19)
+
+### Features Added
+
+  - Model ConnectedRegistry has a new parameter garbage_collection
+  - Model ConnectedRegistryUpdateParameters has a new parameter garbage_collection
+  - Model Registry has a new parameter auto_generated_domain_name_label_scope
+  - Model RegistryNameCheckRequest has a new parameter auto_generated_domain_name_label_scope
+  - Model RegistryNameCheckRequest has a new parameter resource_group_name
+  - Model RegistryNameStatus has a new parameter available_login_server_name
+
+### Breaking Changes
+
+  - Removed operation group BuildStepsOperations
+  - Removed operation group BuildTasksOperations
+  - Removed operation group BuildsOperations
+
 ## 10.3.0 (2023-11-20)
 
 ### Features Added

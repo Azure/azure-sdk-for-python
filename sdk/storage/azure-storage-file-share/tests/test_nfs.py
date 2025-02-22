@@ -263,14 +263,14 @@ class TestStorageFileNFS(StorageRecordedTestCase):
 
         share_client = self.fsc.get_share_client(self.share_name)
         directory_name = self._get_directory_name()
-        directory_client = share_client.create_directory(directory_name)
-        source_file_name = self._get_file_name()
+        directory_client = share_client.get_directory_client(directory_name)
+        source_file_name = self._get_file_name('file1')
         source_file_client = directory_client.get_file_client(source_file_name)
-        hard_link_file_name = self._get_file_name()
+        hard_link_file_name = self._get_file_name('file2')
         hard_link_file_client = directory_client.get_file_client(hard_link_file_name)
 
         with pytest.raises(ResourceNotFoundError) as e:
-            hard_link_file_client.create_hard_link(target=source_file_client.url)
+            hard_link_file_client.create_hard_link(target=f"{directory_name}/{source_file_name}")
 
         assert 'ParentNotFound' in e.value.args[0]
 
