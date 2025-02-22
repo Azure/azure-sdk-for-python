@@ -1,6 +1,12 @@
 # Release History
 
-## 5.14.0 (2025-02-11)
+## 5.14.1 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
+
+## 5.14.0 (2025-02-13)
 
 ### Features Added
 
@@ -8,10 +14,11 @@
 
 ### Bugs Fixed
 
-- Fix to handle websocket disconnect/close on aiohttp, as aiohttp raises a `TypeError` while asserting bytes. ([#32061](https://github.com/Azure/azure-sdk-for-python/pull/32061))
+- Fixed a bug where async websocket disconnects were not being retried properly.
 - Fixed a bug where pyAMQP was doubly retrying, causing latency on reconnect. ([#39037](https://github.com/Azure/azure-sdk-for-python/pull/39037))
-- Fix to handle large messages being sent twice due to incoming flow frames triggering a resend. ([#38067](https://github.com/Azure/azure-sdk-for-python/pull/38067))
+- Fixed a bug where handle partial frames being sent twice due to multiple threads trying to send from the same outgoing internal buffer for large messages. ([#38067](https://github.com/Azure/azure-sdk-for-python/pull/38067))
 - Missing await in sender async on pyAMQP. ([#39182](https://github.com/Azure/azure-sdk-for-python/pull/39182))
+- Fixed a bug where message IDs in management operation requests were not unique.
 
 ### Other Changes
 

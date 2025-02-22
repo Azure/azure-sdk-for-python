@@ -1,5 +1,13 @@
 # Release History
 
+## 34.1.0 (2025-02-19)
+
+### Features Added
+
+  - Model AgentPool has a new parameter message_of_the_day
+  - Model ManagedClusterAgentPoolProfile has a new parameter message_of_the_day
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter message_of_the_day
+
 ## 34.0.0 (2025-01-20)
 
 ### Features Added
