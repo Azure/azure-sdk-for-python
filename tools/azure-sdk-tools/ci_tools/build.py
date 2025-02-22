@@ -193,7 +193,7 @@ def create_package(
         pip_output = get_pip_list_output(sys.executable)
         necessary_install_requirements = [req for req in setup_parsed.requires if parse_require(req).key not in pip_output.keys()]
         run([sys.executable, "-m", "pip", "install", *necessary_install_requirements], cwd=setup_parsed.folder)
-        run([sys.executable, "-m", "build", f"-n{'s' if enable_sdist else ''}{'w' if enable_wheel else ''}", "-o", dist], cwd=setup_parsed.folder)
+        run([sys.executable, "-m", "build", f"-n{'s' if enable_sdist else ''}{'w' if enable_wheel else ''}", "-o", dist], cwd=setup_parsed.folder, check=True)
     else:
         if enable_wheel:
             if setup_parsed.ext_modules:
