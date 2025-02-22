@@ -31,7 +31,7 @@ from typing import Callable, Any, TypeVar, overload, Optional, Mapping, TYPE_CHE
 from typing_extensions import ParamSpec
 from .common import change_context
 from ..settings import settings
-from ..instrumentation import get_tracer
+from ..instrumentation import get_tracer as _get_tracer
 from ._models import SpanKind as _SpanKind
 
 if TYPE_CHECKING:
@@ -141,7 +141,7 @@ def distributed_trace(
                 config = {}
                 if args and hasattr(args[0], "_instrumentation_config"):
                     config = args[0]._instrumentation_config  # pylint: disable=protected-access
-                method_tracer = get_tracer(**config)
+                method_tracer = _get_tracer(**config)
                 if not method_tracer:
                     return func(*args, **kwargs)
 

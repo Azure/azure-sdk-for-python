@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from __future__ import annotations
 from enum import Enum
 from typing import Dict, Mapping, Optional, Union, Sequence, TypedDict
 

@@ -31,7 +31,7 @@ from typing import Awaitable, Callable, Any, TypeVar, overload, Optional, Mappin
 from typing_extensions import ParamSpec
 from .common import change_context, get_function_and_class_name
 from ._models import SpanKind as _SpanKind
-from ..instrumentation import get_tracer
+from ..instrumentation import get_tracer as _get_tracer
 from ..settings import settings
 
 if TYPE_CHECKING:
@@ -142,7 +142,7 @@ def distributed_trace_async(  # pylint: disable=unused-argument
                 config = {}
                 if args and hasattr(args[0], "_instrumentation_config"):
                     config = args[0]._instrumentation_config  # pylint: disable=protected-access
-                method_tracer = get_tracer(**config)
+                method_tracer = _get_tracer(**config)
                 if not method_tracer:
                     return await func(*args, **kwargs)
 
