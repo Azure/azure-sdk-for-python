@@ -84,8 +84,8 @@ class TestFaultInjectionTransportAsync:
             except Exception as closeError:    
                 logger.warning("Exception trying to delete database {}. {}".format(created_database.id, closeError))
 
-    def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, **kwargs):
-        client = CosmosClient(host, master_key, consistency_level="Session",
+    def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
+        client = CosmosClient(default_endpoint, master_key, consistency_level="Session",
                               connection_policy=connection_policy, transport=custom_transport,
                               logger=logger, enable_diagnostics_logging=True, **kwargs)
         db: DatabaseProxy = client.get_database_client(TEST_DATABASE_ID)
@@ -165,6 +165,67 @@ class TestFaultInjectionTransportAsync:
 
             created_document = await container.create_item(body=document_definition)
             request: HttpRequest = created_document.get_response_headers()["_request"]
+            # Validate the response comes from "Write Region" (the write region)
+            assert request.url.startswith(expected_write_region_uri)
+            start:float = time.perf_counter()
+
+            while (time.perf_counter() - start) < 2:
+                read_document = await container.read_item(id_value, partition_key=id_value)
+                request: HttpRequest = read_document.get_response_headers()["_request"]
+                # Validate the response comes from "Read Region" (the most preferred read-only region)
+                assert request.url.startswith(expected_read_region_uri)
+
+        finally:
+            TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+
+    async def test_swr_mrr_region_down_read_succeeds(self, setup):
+        expected_read_region_uri: str = test_config.TestConfig.local_host
+        expected_write_region_uri: str = expected_read_region_uri.replace("localhost", "127.0.0.1")
+        custom_transport = FaultInjectionTransport()
+        # Inject rule to disallow writes in the read-only region
+        is_write_operation_in_read_region_predicate: Callable[[HttpRequest], bool] = lambda \
+            r: FaultInjectionTransport.predicate_is_write_operation(r, expected_read_region_uri)
+
+        custom_transport.add_fault(
+            is_write_operation_in_read_region_predicate,
+            lambda r: asyncio.create_task(FaultInjectionTransport.error_write_forbidden()))
+
+        # Inject rule to simulate regional outage in "Read Region"
+        is_request_to_read_region: Callable[[HttpRequest], bool] = lambda \
+                r: FaultInjectionTransport.predicate_targets_region(r, expected_read_region_uri)
+
+        custom_transport.add_fault(
+            is_request_to_read_region,
+            lambda r: asyncio.create_task(FaultInjectionTransport.error_region_down()))
+
+        # Inject topology transformation that would make Emulator look like a single write region
+        # account with two read regions
+        is_get_account_predicate: Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransport.predicate_is_database_account_call(r)
+        emulator_as_multi_region_sm_account_transformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], AsyncHttpResponse] = \
+            lambda r, inner: FaultInjectionTransport.transform_topology_swr_mrr(
+                write_region_name="Write Region",
+                read_region_name="Read Region",
+                r=r,
+                inner=inner)
+        custom_transport.add_response_transformation(
+            is_get_account_predicate,
+            emulator_as_multi_region_sm_account_transformation)
+
+        id_value: str = str(uuid.uuid4())
+        document_definition = {'id': id_value,
+                               'pk': id_value,
+                               'name': 'sample document',
+                               'key': 'value'}
+
+        initialized_objects = self.setup_method_with_custom_transport(
+            custom_transport,
+            default_endpoint=expected_write_region_uri,
+            preferred_locations=["Read Region", "Write Region"])
+        try:
+            container: ContainerProxy = initialized_objects["col"]
+
+            created_document = await container.create_item(body=document_definition)
+            request: HttpRequest = created_document.get_response_headers()["_request"]
             # Validate the response comes from "South Central US" (the write region)
             assert request.url.startswith(expected_write_region_uri)
             start:float = time.perf_counter()
@@ -172,11 +233,78 @@ class TestFaultInjectionTransportAsync:
             while (time.perf_counter() - start) < 2:
                 read_document = await container.read_item(id_value, partition_key=id_value)
                 request: HttpRequest = read_document.get_response_headers()["_request"]
-                # Validate the response comes from "East US" (the most preferred read-only region)
-                assert request.url.startswith(expected_read_region_uri)
+                # Validate the response comes from "Write Region" ("Read Region" the most preferred read-only region is down)
+                assert request.url.startswith(expected_write_region_uri)
 
         finally:
             TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+
+    async def test_swr_mrr_region_down_envoy_read_succeeds(self, setup):
+        expected_read_region_uri: str = test_config.TestConfig.local_host
+        expected_write_region_uri: str = expected_read_region_uri.replace("localhost", "127.0.0.1")
+        custom_transport = FaultInjectionTransport()
+        # Inject rule to disallow writes in the read-only region
+        is_write_operation_in_read_region_predicate: Callable[[HttpRequest], bool] = lambda \
+            r: FaultInjectionTransport.predicate_is_write_operation(r, expected_read_region_uri)
+
+        custom_transport.add_fault(
+            is_write_operation_in_read_region_predicate,
+            lambda r: asyncio.create_task(FaultInjectionTransport.error_write_forbidden()))
+
+        # Inject rule to simulate regional outage in "Read Region"
+        is_request_to_read_region: Callable[[HttpRequest], bool] = lambda \
+                r: FaultInjectionTransport.predicate_targets_region(r, expected_read_region_uri) and \
+                    FaultInjectionTransport.predicate_is_document_operation(r)
+
+        custom_transport.add_fault(
+            is_request_to_read_region,
+            lambda r: asyncio.create_task(FaultInjectionTransport.error_after_delay(
+                35000,
+                CosmosHttpResponseError(
+                    status_code=502,
+                    message="Some random reverse proxy error."))))
+
+        # Inject topology transformation that would make Emulator look like a single write region
+        # account with two read regions
+        is_get_account_predicate: Callable[[HttpRequest], bool] = lambda r: FaultInjectionTransport.predicate_is_database_account_call(r)
+        emulator_as_multi_region_sm_account_transformation: Callable[[HttpRequest, Callable[[HttpRequest], asyncio.Task[AsyncHttpResponse]]], AsyncHttpResponse] = \
+            lambda r, inner: FaultInjectionTransport.transform_topology_swr_mrr(
+                write_region_name="Write Region",
+                read_region_name="Read Region",
+                r=r,
+                inner=inner)
+        custom_transport.add_response_transformation(
+            is_get_account_predicate,
+            emulator_as_multi_region_sm_account_transformation)
+
+        id_value: str = str(uuid.uuid4())
+        document_definition = {'id': id_value,
+                               'pk': id_value,
+                               'name': 'sample document',
+                               'key': 'value'}
+
+        initialized_objects = self.setup_method_with_custom_transport(
+            custom_transport,
+            default_endpoint=expected_write_region_uri,
+            preferred_locations=["Read Region", "Write Region"])
+        try:
+            container: ContainerProxy = initialized_objects["col"]
+
+            created_document = await container.create_item(body=document_definition)
+            request: HttpRequest = created_document.get_response_headers()["_request"]
+            # Validate the response comes from "South Central US" (the write region)
+            assert request.url.startswith(expected_write_region_uri)
+            start:float = time.perf_counter()
+
+            while (time.perf_counter() - start) < 2:
+                read_document = await container.read_item(id_value, partition_key=id_value)
+                request: HttpRequest = read_document.get_response_headers()["_request"]
+                # Validate the response comes from "Write Region" ("Read Region" the most preferred read-only region is down)
+                assert request.url.startswith(expected_write_region_uri)
+
+        finally:
+            TestFaultInjectionTransportAsync.cleanup_method(initialized_objects)
+
 
     async def test_mwr_succeeds(self, setup):
         first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")

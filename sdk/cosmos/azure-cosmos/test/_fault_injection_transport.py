@@ -35,7 +35,7 @@ from azure.core.rest import HttpRequest, AsyncHttpResponse
 
 import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
-
+from azure.core.exceptions import ServiceRequestError
 
 class FaultInjectionTransport(AioHttpTransport):
     logger = logging.getLogger('azure.cosmos.fault_injection_transport')
@@ -104,6 +104,10 @@ class FaultInjectionTransport(AioHttpTransport):
         return id_value in r.url
 
     @staticmethod
+    def predicate_targets_region(r: HttpRequest, region_endpoint: str) -> bool:
+        return r.url.startswith(region_endpoint)
+
+    @staticmethod
     def print_call_stack():
         print("Call stack:")
         frame = sys._getframe()
@@ -131,6 +135,12 @@ class FaultInjectionTransport(AioHttpTransport):
         return is_db_account_read
 
     @staticmethod
+    def predicate_is_document_operation(r: HttpRequest) -> bool:
+        is_document_operation = (r.headers.get('x-ms-thinclient-proxy-resource-type') == 'docs')
+
+        return is_document_operation
+
+    @staticmethod
     def predicate_is_write_operation(r: HttpRequest, uri_prefix: str) -> bool:
         is_write_document_operation = (r.headers.get('x-ms-thinclient-proxy-resource-type') == 'docs'
                 and r.headers.get('x-ms-thinclient-proxy-operation-type') != 'Read'
@@ -151,6 +161,12 @@ class FaultInjectionTransport(AioHttpTransport):
             message="Injected error disallowing writes in this region.",
             response=None,
             sub_status_code=3,
+        )
+
+    @staticmethod
+    async def error_region_down() -> Exception:
+        return ServiceRequestError(
+            message="Injected region down.",
         )
 
     @staticmethod
