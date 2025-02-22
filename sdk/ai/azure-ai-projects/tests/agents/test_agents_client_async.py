@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,line-too-long,useless-suppression
 # # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -962,7 +962,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -993,7 +993,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create run
             run = await client.agents.create_run(
-                thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
+                thread_id=thread.id, agent_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
             )
             assert run.id
             assert run.metadata == {"key1": "value1", "key2": "value2"}
@@ -1094,7 +1094,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -1137,7 +1137,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -1194,7 +1194,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         assert runs0.data.__len__() == 0
 
         # create run and check list
-        run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
         assert run.id
         print("Created run, run ID", run.id)
         runs1 = await client.agents.list_runs(thread_id=thread.id)
@@ -1202,7 +1202,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         assert runs1.data[0].id == run.id
 
         # create second run
-        run2 = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        run2 = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
         assert run2.id
         print("Created run, run ID", run2.id)
         runs2 = await client.agents.list_runs(thread_id=thread.id)
@@ -1236,7 +1236,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created thread, thread ID", thread.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -1276,7 +1276,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create run
             run = await client.agents.create_run(
-                thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
+                thread_id=thread.id, agent_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
             )
             assert run.id
             assert run.metadata == {"key1": "value1", "key2": "value2"}
@@ -1318,7 +1318,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create run
             run = await client.agents.create_run(
-                thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
+                thread_id=thread.id, agent_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
             )
             assert run.id
             assert run.metadata == {"key1": "value1", "key2": "value2"}
@@ -1361,7 +1361,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             # create run
             run = await client.agents.create_run(
-                thread_id=thread.id, assistant_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
+                thread_id=thread.id, agent_id=agent.id, metadata={"key1": "value1", "key2": "value2"}
             )
             assert run.id
             assert run.metadata == {"key1": "value1", "key2": "value2"}
@@ -1420,7 +1420,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -1512,7 +1512,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -1605,7 +1605,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -1695,7 +1695,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         print("Created message, message ID", message.id)
 
         # create run
-        run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
         assert run.id
         print("Created run, run ID", run.id)
 
@@ -1823,7 +1823,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
         if create_thread_run:
             run = await client.agents.create_thread_and_run(
-                assistant_id=agent.id,
+                agent_id=agent.id,
                 parallel_tool_calls=use_parallel_runs,
             )
             run = await self._wait_for_run(client, run)
@@ -1833,7 +1833,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
             run = await client.agents.create_and_process_run(
                 thread_id=thread.id,
-                assistant_id=agent.id,
+                agent_id=agent.id,
                 parallel_tool_calls=use_parallel_runs,
             )
         assert run.id
@@ -1870,7 +1870,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         print("Created message, message ID", message.id)
 
         # create run
-        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        run = client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
         assert run.id
         print("Created run, run ID", run.id)
 
@@ -1908,7 +1908,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created agent, agent ID", agent.id)
 
             # create thread and run
-            run = await client.agents.create_thread_and_run(assistant_id=agent.id)
+            run = await client.agents.create_thread_and_run(agent_id=agent.id)
             assert run.id
             assert run.thread_id
             print("Created run, run ID", run.id)
@@ -2095,7 +2095,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -2158,7 +2158,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             print("Created message, message ID", message.id)
 
             # create run
-            run = await client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
             assert run.id
             print("Created run, run ID", run.id)
 
@@ -2371,7 +2371,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
 
         if streaming:
             thread_run = None
-            async with await ai_client.agents.create_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
+            async with await ai_client.agents.create_stream(thread_id=thread.id, agent_id=agent.id) as stream:
                 async for _, event_data, _ in stream:
                     if isinstance(event_data, ThreadRun):
                         thread_run = event_data
@@ -2387,7 +2387,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             run = await ai_client.agents.get_run(thread_id=thread_run.thread_id, run_id=thread_run.id)
             assert run is not None
         else:
-            run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
         await ai_client.agents.delete_vector_store(vector_store.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
         messages = await ai_client.agents.list_messages(thread_id=thread.id)
@@ -2452,7 +2452,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
         assert run.id, "The run was not created."
         await self._remove_file_maybe(file_id, ai_client)
         await ai_client.agents.delete_agent(agent.id)
@@ -2502,7 +2502,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
         messages = await ai_client.agents.list_messages(thread.id)
         assert len(messages)
@@ -2565,7 +2565,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
         assert run.id, "The run was not created."
         await self._remove_file_maybe(file_id, ai_client)
         assert run.status == "completed", f"Error in run: {run.last_error}"
@@ -2629,7 +2629,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
         assert run.id, "The run was not created."
         await self._remove_file_maybe(file_id, ai_client)
         assert run.status == "completed", f"Error in run: {run.last_error}"
@@ -2679,7 +2679,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         )
         assert message.id, "The message was not created."
 
-        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
         messages = await ai_client.agents.list_messages(thread.id)
         assert len(messages)
@@ -2737,7 +2737,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
         thread = await ai_client.agents.create_thread(messages=[message])
         assert thread.id
 
-        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
         assert run.status == "completed", f"Error in run: {run.last_error}"
         messages = await ai_client.agents.list_messages(thread.id)
         assert len(messages)
@@ -2799,7 +2799,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             )
             assert message.id, "The message was not created."
 
-            run = await client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
             assert run.status == RunStatus.COMPLETED, f"The run is in {run.status} state."
 
             # Get messages from the thread
@@ -2839,7 +2839,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                 ThreadMessageOptions(role=MessageRole.USER, content="What is the impedance formula?"),
             ]
             run = await client.agents.create_run(
-                thread_id=thread.id, assistant_id=agent.id, additional_messages=additional_messages
+                thread_id=thread.id, agent_id=agent.id, additional_messages=additional_messages
             )
 
             # poll the run as long as run status is queued or in progress
@@ -2911,7 +2911,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             if use_stream:
                 run = None
                 async with await ai_client.agents.create_stream(
-                    thread_id=thread.id, assistant_id=agent.id, include=include
+                    thread_id=thread.id, agent_id=agent.id, include=include
                 ) as stream:
                     async for event_type, event_data, _ in stream:
                         if isinstance(event_data, ThreadRun):
@@ -2921,7 +2921,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
                             break
             else:
                 run = await ai_client.agents.create_and_process_run(
-                    thread_id=thread.id, assistant_id=agent.id, include=include
+                    thread_id=thread.id, agent_id=agent.id, include=include
                 )
                 assert run.status == RunStatus.COMPLETED
             assert run is not None
@@ -3005,7 +3005,7 @@ class TestAgentClientAsync(AzureRecordedTestCase):
             )
             assert message.id
 
-            run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await ai_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
 
             assert run.status == RunStatus.COMPLETED, run.last_error.message
 
