@@ -125,7 +125,56 @@ class TestCallMediaClient(unittest.TestCase):
             actual_play_request.play_sources[0].play_source_cache_id,
         )
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
-        self.assertEqual(expected_play_request.play_options, actual_play_request.play_options)
+        self.assertEqual(expected_play_request.play_options.loop, actual_play_request.play_options.loop)
+        self.assertEqual(expected_play_request.play_options.interrupt_call_media_operation, actual_play_request.play_options.interrupt_call_media_operation)
+
+    def test_play_file_to_all_via_play_back_compat_with_barge_in(self):
+        mock_play = Mock()
+        self.call_media_operations.play = mock_play
+        play_source = FileSource(url=self.url)
+
+        self.call_connection_client.play_media(play_source=play_source, interrupt_call_media_operation=True)
+
+        expected_play_request = PlayRequest(
+            play_sources=[play_source._to_generated()],
+            play_to=[],
+            play_options=PlayOptions(loop=False, interrupt_call_media_operation=True)
+        )
+        mock_play.assert_called_once()
+        actual_play_request = mock_play.call_args[0][1]
+
+        self.assertEqual(expected_play_request.play_sources[0].kind, actual_play_request.play_sources[0].kind)
+        self.assertEqual(expected_play_request.play_sources[0].file.uri, actual_play_request.play_sources[0].file.uri)
+        self.assertEqual(
+            expected_play_request.play_sources[0].play_source_cache_id,
+            actual_play_request.play_sources[0].play_source_cache_id,
+        )
+        self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
+        self.assertEqual(expected_play_request.play_options.interrupt_call_media_operation, actual_play_request.play_options.interrupt_call_media_operation)
+    
+    def test_play_file_play_interrupt_hold_audio(self):
+        mock_play = Mock()
+        self.call_media_operations.play = mock_play
+        play_source = FileSource(url=self.url)
+
+        self.call_connection_client.play_media(play_source=play_source, play_to=[self.target_user], interrupt_hold_audio=True)
+
+        expected_play_request = PlayRequest(
+            play_sources=[play_source._to_generated()],
+            play_to=[serialize_identifier(self.target_user)],
+            play_options=PlayOptions(loop=False, interrupt_hold_audio=True)
+        )
+        mock_play.assert_called_once()
+        actual_play_request = mock_play.call_args[0][1]
+
+        self.assertEqual(expected_play_request.play_sources[0].kind, actual_play_request.play_sources[0].kind)
+        self.assertEqual(expected_play_request.play_sources[0].file.uri, actual_play_request.play_sources[0].file.uri)
+        self.assertEqual(
+            expected_play_request.play_sources[0].play_source_cache_id,
+            actual_play_request.play_sources[0].play_source_cache_id,
+        )
+        self.assertEqual(expected_play_request.play_to[0]['raw_id'], actual_play_request.play_to[0]['raw_id'])
+        self.assertEqual(expected_play_request.play_options.interrupt_hold_audio, actual_play_request.play_options.interrupt_hold_audio)
 
     def test_play_file_to_all_back_compat_with_barge_in(self):
         mock_play = Mock()

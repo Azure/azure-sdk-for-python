@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.databoxedge import DataBoxEdgeManagementClient
 
 """
@@ -29,22 +30,21 @@ def main():
         subscription_id="4385cf00-2d3a-425a-832f-f4285b1c9dce",
     )
 
-    response = client.devices.begin_create_or_update_security_settings(
+    client.devices.begin_create_or_update_security_settings(
         device_name="testedgedevice",
         resource_group_name="AzureVM",
         security_settings={
             "properties": {
                 "deviceAdminPassword": {
                     "encryptionAlgorithm": "AES256",
-                    "encryptionCertThumbprint": "<encryptionThumprint>",
-                    "value": "<deviceAdminPassword>",
+                    "encryptionCertThumbprint": "7DCBDFC44ED968D232C9A998FC105B5C70E84BE0",
+                    "value": "<value>",
                 }
             }
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/stable/2022-03-01/examples/SecuritySettingsUpdatePost.json
+# x-ms-original-file: specification/databoxedge/resource-manager/Microsoft.DataBoxEdge/stable/2019-08-01/examples/SecuritySettingsUpdatePost.json
 if __name__ == "__main__":
     main()
