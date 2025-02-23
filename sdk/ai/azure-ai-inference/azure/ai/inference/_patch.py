@@ -301,6 +301,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         seed: Optional[int] = None,
         model: Optional[str] = None,
         model_extras: Optional[Dict[str, Any]] = None,
+        store: Optional[bool] = None,
         **kwargs: Any,
     ) -> None:
 
@@ -320,6 +321,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         self._seed = seed
         self._model = model
         self._model_extras = model_extras
+        self._store = store
 
         # For Key auth, we need to send these two auth HTTP request headers simultaneously:
         # 1. "Authorization: Bearer <key>"
@@ -356,6 +358,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         seed: Optional[int] = None,
         model: Optional[str] = None,
         model_extras: Optional[Dict[str, Any]] = None,
+        store: Optional[bool] = None,
         **kwargs: Any,
     ) -> _models.ChatCompletions: ...
 
@@ -379,6 +382,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         seed: Optional[int] = None,
         model: Optional[str] = None,
         model_extras: Optional[Dict[str, Any]] = None,
+        store: Optional[bool] = None,
         **kwargs: Any,
     ) -> Iterable[_models.StreamingChatCompletionsUpdate]: ...
 
@@ -402,6 +406,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         seed: Optional[int] = None,
         model: Optional[str] = None,
         model_extras: Optional[Dict[str, Any]] = None,
+        store: Optional[bool] = None,
         **kwargs: Any,
     ) -> Union[Iterable[_models.StreamingChatCompletionsUpdate], _models.ChatCompletions]:
         # pylint: disable=line-too-long
@@ -565,6 +570,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         seed: Optional[int] = None,
         model: Optional[str] = None,
         model_extras: Optional[Dict[str, Any]] = None,
+        store: Optional[bool] = None,
         **kwargs: Any,
     ) -> Union[Iterable[_models.StreamingChatCompletionsUpdate], _models.ChatCompletions]:
         # pylint: disable=line-too-long
@@ -694,6 +700,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
                 "tool_choice": tool_choice if tool_choice is not None else self._tool_choice,
                 "tools": tools if tools is not None else self._tools,
                 "top_p": top_p if top_p is not None else self._top_p,
+                "store": store if store is not None else self._store,
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
