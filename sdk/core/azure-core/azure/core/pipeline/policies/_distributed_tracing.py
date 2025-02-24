@@ -27,7 +27,7 @@
 import logging
 import sys
 import urllib.parse
-from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type, Mapping
+from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type, Mapping, Dict
 from types import TracebackType
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -176,37 +176,45 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
             return
 
         span = request.context[self.TRACING_CONTEXT]
+        if not span:
+            return
+
         http_request: Union[HttpRequest, LegacyHttpRequest] = request.http_request
-        if span is not None:
-            # Check if the span is from a plugin, and use the plugin's method to set attributes.
-            if hasattr(span, "set_http_attributes"):
-                span.set_http_attributes(request=http_request, response=response)
-            else:
-                self._set_http_attributes(span, request=http_request, response=response)
 
-            set_attribute_func = (
-                getattr(span, "add_attribute") if hasattr(span, "add_attribute") else getattr(span, "set_attribute")
-            )
-            end_func = getattr(span, "finish", None) or getattr(span, "end")
+        attributes: Dict[str, Any] = {}
+        if request.context.get("retry_count"):
+            attributes[self._HTTP_RESEND_COUNT] = request.context["retry_count"]
+        if http_request.headers.get(self._REQUEST_ID):
+            attributes[self._REQUEST_ID] = http_request.headers[self._REQUEST_ID]
+        if response and self._RESPONSE_ID in response.headers:
+            attributes[self._RESPONSE_ID] = response.headers[self._RESPONSE_ID]
 
-            if request.context.get("retry_count"):
-                set_attribute_func(self._HTTP_RESEND_COUNT, request.context["retry_count"])
-            request_id = http_request.headers.get(self._REQUEST_ID)
-            if request_id is not None:
-                set_attribute_func(self._REQUEST_ID, request_id)
-            if response and self._RESPONSE_ID in response.headers:
-                set_attribute_func(self._RESPONSE_ID, response.headers[self._RESPONSE_ID])
+        # We'll determine if the span is from a plugin or the core tracing library based on the presence of the
+        # `set_http_attributes` method.
+        if hasattr(span, "set_http_attributes"):
+            # Plugin-based tracing
+            span.set_http_attributes(request=http_request, response=response)
+            for key, value in attributes.items():
+                span.add_attribute(key, value)
             if exc_info:
                 span.__exit__(*exc_info)
             else:
-                end_func()
+                span.finish()
+        else:
+            # Native tracing
+            self._set_http_client_span_attributes(span, request=http_request, response=response)
+            span.set_attributes(attributes)
+            if exc_info:
+                span.__exit__(*exc_info)
+            else:
+                span.end()
 
-            if request.context.get(self._SUPPRESSION_TOKEN):
-                tracer = get_tracer()
-                if tracer:
-                    tracer._detach_from_context(  # pylint: disable=protected-access
-                        request.context.get(self._SUPPRESSION_TOKEN)
-                    )
+        if request.context.get(self._SUPPRESSION_TOKEN):
+            tracer = get_tracer()
+            if tracer:
+                tracer._detach_from_context(  # pylint: disable=protected-access
+                    request.context.get(self._SUPPRESSION_TOKEN)
+                )
 
     def on_response(
         self,
@@ -218,42 +226,41 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     def on_exception(self, request: PipelineRequest[HTTPRequestType]) -> None:
         self.end_span(request, exc_info=sys.exc_info())
 
-    def _set_http_attributes(
+    def _set_http_client_span_attributes(
         self,
-        span: Union["AbstractSpan", "Span"],
+        span: "Span",
         request: Union[HttpRequest, LegacyHttpRequest],
         response: Optional[HTTPResponseType] = None,
     ) -> None:
-        """
-        Add correct attributes for a http client span.
+        """Add attributes to an HTTP client span.
 
         :param span: The span to add attributes to.
-        :type span: ~azure.core.tracing.AbstractSpan or ~opentelemetry.trace.Span
+        :type span: ~opentelemetry.trace.Span
         :param request: The request made
         :type request: azure.core.rest.HttpRequest
         :param response: The response received from the server. Is None if no response received.
         :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
         """
-        set_attribute_func = (
-            getattr(span, "add_attribute") if hasattr(span, "add_attribute") else getattr(span, "set_attribute")
-        )
-
-        set_attribute_func(self._HTTP_REQUEST_METHOD, request.method)
-        set_attribute_func(self._URL_FULL, request.url)
+        attributes: Dict[str, Any] = {
+            self._HTTP_REQUEST_METHOD: request.method,
+            self._URL_FULL: request.url,
+        }
 
         parsed_url = urllib.parse.urlparse(request.url)
         if parsed_url.hostname:
-            set_attribute_func(self._SERVER_ADDRESS, parsed_url.hostname)
-        if parsed_url.port and parsed_url.port not in [80, 443]:
-            set_attribute_func(self._SERVER_PORT, parsed_url.port)
+            attributes[self._SERVER_ADDRESS] = parsed_url.hostname
+        if parsed_url.port:
+            attributes[self._SERVER_PORT] = parsed_url.port
 
         user_agent = request.headers.get("User-Agent")
         if user_agent:
-            set_attribute_func(self._USER_AGENT_ORIGINAL, user_agent)
+            attributes[self._USER_AGENT_ORIGINAL] = user_agent
         if response and response.status_code:
-            set_attribute_func(self._HTTP_RESPONSE_STATUS_CODE, response.status_code)
+            attributes[self._HTTP_RESPONSE_STATUS_CODE] = response.status_code
             if response.status_code >= 400:
-                set_attribute_func(self._ERROR_TYPE, str(response.status_code))
+                attributes[self._ERROR_TYPE] = str(response.status_code)
         else:
-            set_attribute_func(self._HTTP_RESPONSE_STATUS_CODE, 504)
-            set_attribute_func(self._ERROR_TYPE, "504")
+            attributes[self._HTTP_RESPONSE_STATUS_CODE] = 504
+            attributes[self._ERROR_TYPE] = "504"
+
+        span.set_attributes(attributes)
