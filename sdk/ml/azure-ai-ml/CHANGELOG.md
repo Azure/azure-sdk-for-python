@@ -4,6 +4,7 @@
 ### Bugs Fixed
   - #37464 - Allowing to update a component in register with anonymousEnvironment environment.
   - #39744 - Fixing a serialization issue in RecurrencePattern schedule.
+  - Fix environment archiving and restore
 
 ## 1.25.0 (2025-02-11)
 
