@@ -126,13 +126,18 @@ class _GlobalEndpointManager(object):
         """
         all_endpoints = [self.location_cache.read_regional_endpoints[0]]
         all_endpoints.extend(self.location_cache.write_regional_endpoints)
+        validated_endpoints = {}
         count = 0
         for endpoint in all_endpoints:
+            if (endpoint.get_current() in validated_endpoints):
+                continue
+
             count += 1
             if count > 3:
                 break
             try:
                 await self.client._GetDatabaseAccountCheck(endpoint.get_current(), **kwargs)
+                validated_endpoints[endpoint.get_current()] = ""
             except (exceptions.CosmosHttpResponseError, AzureError):
                 if endpoint in self.location_cache.read_regional_endpoints:
                     self.mark_endpoint_unavailable_for_read(endpoint.get_current(), False)
