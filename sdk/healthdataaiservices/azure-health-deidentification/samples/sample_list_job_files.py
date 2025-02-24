@@ -36,7 +36,6 @@ def sample_list_job_documents():
     from azure.core.polling import LROPoller
 
     endpoint = os.environ["AZURE_HEALTH_DEIDENTIFICATION_ENDPOINT"]
-    endpoint = endpoint.replace("https://", "")
 
     storage_location = os.environ["AZURE_STORAGE_ACCOUNT_LOCATION"]
     inputPrefix = os.environ["INPUT_PREFIX"]
@@ -53,13 +52,11 @@ def sample_list_job_documents():
             location=storage_location,
             prefix=inputPrefix,
         ),
-        target_location=TargetStorageLocation(
-            location=storage_location, prefix=outputPrefix
-        ),
+        target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix),
     )
 
     print(f"Creating job with name: {jobname}")
-    poller: LROPoller = client.begin_create_job(jobname, job)
+    poller: LROPoller = client.begin_deidentify_documents(jobname, job)
     poller.wait(timeout=60)
 
     job = poller.result()
