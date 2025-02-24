@@ -12,7 +12,7 @@ from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
-from ..._credentials.managed_identity import validate_identity_config
+from ..._credentials.managed_identity import validate_identity_config, SERVICE_FABRIC_ERROR_MESSAGE
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -55,6 +55,9 @@ class ManagedIdentityCredential(AsyncContextManager):
                 if os.environ.get(EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT):
                     _LOGGER.info("%s will use Service Fabric managed identity", self.__class__.__name__)
                     from .service_fabric import ServiceFabricCredential
+
+                    if client_id or identity_config:
+                        raise ValueError(SERVICE_FABRIC_ERROR_MESSAGE)
 
                     self._credential = ServiceFabricCredential(
                         client_id=client_id, identity_config=identity_config, **kwargs
