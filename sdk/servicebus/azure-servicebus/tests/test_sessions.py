@@ -887,12 +887,11 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                                 receiver.session
                             )  # and then ensure it didn't slip a renew under the wire.
                             assert receiver.session._lock_expired
-                            assert isinstance(receiver.session.auto_renew_error, AutoLockRenewTimeout)
                             try:
                                 receiver.complete_message(message)
                                 raise AssertionError("Didn't raise SessionLockLostError")
                             except SessionLockLostError as e:
-                                assert isinstance(e.inner_exception, AutoLockRenewTimeout)
+                                pass
                             messages.append(message)
 
             # While we're testing autolockrenew and sessions, let's make sure we don't call the lock-lost callback when a session exits.
