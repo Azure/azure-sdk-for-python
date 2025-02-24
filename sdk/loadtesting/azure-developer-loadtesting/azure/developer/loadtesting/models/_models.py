@@ -390,12 +390,12 @@ class LoadTestConfiguration(_model_base.Model):
     :ivar engine_instances: The number of engine instances to execute load test. Supported values
      are in range of 1-400. Required for creating a new test.
     :vartype engine_instances: int
-    :ivar split_all_cs_vs: If false, Azure Load Testing copies and processes your input files
+    :ivar split_all_csvs: If false, Azure Load Testing copies and processes your input files
      unmodified
      across all test engine instances. If true, Azure Load Testing splits the CSV
      input data evenly across all engine instances. If you provide multiple CSV
      files, each file will be split evenly.
-    :vartype split_all_cs_vs: bool
+    :vartype split_all_csvs: bool
     :ivar quick_start_test: If true, optionalLoadTestConfig is required and JMX script for the load
      test is
      not required to upload.
@@ -411,7 +411,7 @@ class LoadTestConfiguration(_model_base.Model):
     engine_instances: Optional[int] = rest_field(name="engineInstances")
     """The number of engine instances to execute load test. Supported values are in range of 1-400.
      Required for creating a new test."""
-    split_all_cs_vs: Optional[bool] = rest_field(name="splitAllCSVs")
+    split_all_csvs: Optional[bool] = rest_field(name="splitAllCSVs")
     """If false, Azure Load Testing copies and processes your input files unmodified
      across all test engine instances. If true, Azure Load Testing splits the CSV
      input data evenly across all engine instances. If you provide multiple CSV
@@ -433,7 +433,7 @@ class LoadTestConfiguration(_model_base.Model):
         self,
         *,
         engine_instances: Optional[int] = None,
-        split_all_cs_vs: Optional[bool] = None,
+        split_all_csvs: Optional[bool] = None,
         quick_start_test: Optional[bool] = None,
         optional_load_test_config: Optional["_models.OptionalLoadTestConfiguration"] = None,
         regional_load_test_config: Optional[List["_models.RegionalConfiguration"]] = None,
