@@ -1,21 +1,19 @@
 # Release History
 
-## 1.1.2b (Unreleased)
+## 1.2.0b1 (Unreleased)
 
 ### Features Added
 
 - Add and manage custom roles with the `update_user_defined_role`, `get_user_defined_role` and `delete_user_defined_role` methods
 - Add and manage ledger users with the `create_or_update_ledger_user`, `delete_ledger_user`, `get_ledger_user` and `list_ledger_users` methods
 - Add and manage programmable endpoints with the `create_user_defined_endpoint` and `get_user_defined_endpoint` methods
-
-### Breaking changes
-
-- Developers should opt to use the `*_ledger_user` methods over the `*_user` methods to manage users. The older APIs will be deprecated in the future.
+- A user can now be associated with more than one role
 
 ### Other Changes
 
 - A user can now be associated with more than one role
 - Replace legacy azure core http response import with the one from azure.core.rest
+- Developers should opt to use the `*_ledger_user` methods over the `*_user` methods to manage users. The older APIs will be deprecated in the future.
 
 ## 1.1.1 (2023-08-01)
 
