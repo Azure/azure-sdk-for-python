@@ -97,6 +97,7 @@ setup(
         "isodate>=0.6.1",
         "azure-core>=1.30.0",
         "typing-extensions>=4.12.2",
+        "prompty",
     ],
     python_requires=">=3.8",
 )
