@@ -15,6 +15,13 @@ from .._internal.decorators import log_get_token
 _LOGGER = logging.getLogger(__name__)
 
 
+SERVICE_FABRIC_ERROR_MESSAGE = (
+    "Specifying a client_id or identity_config is not supported by the Service Fabric managed identity environment. "
+    "The managed identity configuration is determined by the Service Fabric cluster resource configuration. "
+    "See https://aka.ms/servicefabricmi for more information."
+)
+
+
 def validate_identity_config(
     client_id: Optional[str], identity_config: Optional[Mapping[str, str]]
 ) -> Optional[Tuple[str, str]]:
@@ -84,9 +91,10 @@ class ManagedIdentityCredential:
                     managed_identity_type = "Service Fabric managed identity"
                     from .service_fabric import ServiceFabricCredential
 
-                    self._credential = ServiceFabricCredential(
-                        client_id=client_id, identity_config=identity_config, **kwargs
-                    )
+                    if client_id or identity_config:
+                        raise ValueError(SERVICE_FABRIC_ERROR_MESSAGE)
+
+                    self._credential = ServiceFabricCredential(**kwargs)
                 else:
                     managed_identity_type = "App Service managed identity"
                     from .app_service import AppServiceCredential

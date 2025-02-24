@@ -820,6 +820,27 @@ def test_service_fabric_tenant_id(get_token_method):
         assert abs(token.expires_on - expires_on) <= 1
 
 
+def test_service_fabric_with_client_id_error():
+    """ManagedIdentityCredential should raise ValueError if client_id is provided."""
+    endpoint = "http://localhost:42"
+    with mock.patch(
+        "os.environ",
+        {
+            EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
+            EnvironmentVariables.IDENTITY_HEADER: "secret",
+            EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: "thumbprint",
+        },
+    ):
+
+        ManagedIdentityCredential()
+
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential(client_id="client_id")
+
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential(identity_config={"resource_id": "resource_id"})
+
+
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 def test_token_exchange(tmpdir, get_token_method):
     exchange_token = "exchange-token"
