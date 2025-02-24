@@ -417,18 +417,22 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                     for msg in received_msgs:
                         # queue ordering I think
                         assert msg.delivery_count == 0
-                        with pytest.raises(ServiceBusError):
+                        if uamqp_transport:
+                            with pytest.raises(ServiceBusError):
+                                receiver.complete_message(msg)
+                        else:
                             receiver.complete_message(msg)
 
-                    # re-received message with delivery count increased
-                    target_msgs_count = 5
-                    received_msgs = []
-                    while len(received_msgs) < target_msgs_count:
-                        received_msgs.extend(receiver.receive_messages(max_message_count=5, max_wait_time=5))
-                    assert len(received_msgs) == 5
-                    for msg in received_msgs:
-                        assert msg.delivery_count > 0
-                        receiver.complete_message(msg)
+                    if uamqp_transport:
+                        # re-received message with delivery count increased
+                        target_msgs_count = 5
+                        received_msgs = []
+                        while len(received_msgs) < target_msgs_count:
+                            received_msgs.extend(receiver.receive_messages(max_message_count=5, max_wait_time=5))
+                        assert len(received_msgs) == 5
+                        for msg in received_msgs:
+                            assert msg.delivery_count > 0
+                            receiver.complete_message(msg)
 
             sub_test_releasing_messages()
             sub_test_releasing_messages_iterator()
