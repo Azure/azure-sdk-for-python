@@ -109,7 +109,7 @@ class MockStorageTransport(HttpTransport):
                 decompress=False
             )
         elif request.method == 'DELETE':
-            # delete_blob
+            # delete_file
             rest_response = RestRequestsTransportResponse(
                 request=request,
                 internal_response=MockHttpClientResponse(
