@@ -20,6 +20,7 @@ from azure.ai.evaluation.simulator._utils import JsonLineList
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager, TokenScope, RAIClient, AdversarialTemplateHandler
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation._safety_evaluation._callback_chat_target import CallbackChatTarget
 from azure.core.credentials import TokenCredential
 import json
 from pathlib import Path
@@ -28,7 +29,6 @@ import itertools
 from pyrit.common import initialize_pyrit, DUCK_DB
 from pyrit.orchestrator import PromptSendingOrchestrator
 from pyrit.prompt_target import OpenAIChatTarget
-from pyrit.prompt_target.callback_chat_target import CallbackChatTarget
 from pyrit.models import ChatMessage
 
 logger = logging.getLogger(__name__)
