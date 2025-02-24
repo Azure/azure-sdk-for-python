@@ -28,6 +28,7 @@ import itertools
 from pyrit.common import initialize_pyrit, DUCK_DB
 from pyrit.orchestrator import PromptSendingOrchestrator
 from pyrit.prompt_target import OpenAIChatTarget
+from pyrit.prompt_target.callback_chat_target import CallbackChatTarget
 from pyrit.models import ChatMessage
 
 logger = logging.getLogger(__name__)
@@ -604,7 +605,7 @@ class _SafetyEvaluation:
                 break
         return all_prompts
     
-    def message_to_dict(self, message: ChatMessage):
+    def _message_to_dict(self, message: ChatMessage):
         return {
             "role": message.role,
             "content": message.content,
@@ -612,19 +613,47 @@ class _SafetyEvaluation:
     
     async def _pyrit(
             self, 
-            target: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration], 
+            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration], 
             scenario: AdversarialScenario,
             num_rows: int = 1,
         ) -> str:
         chat_target: OpenAIChatTarget = None
-        if "azure_deployment" in target and "azure_endpoint" in target: # Azure OpenAI
-            api_key = target.get("api_key", None)
-            if not api_key:
-                chat_target = OpenAIChatTarget(deployment_name=target["azure_deployment"], endpoint=target["azure_endpoint"], use_aad_auth=True)
-            else: 
-                chat_target = OpenAIChatTarget(deployment_name=target["azure_deployment"], endpoint=target["azure_endpoint"], api_key=api_key)
+        if not isinstance(target, Callable):
+            if "azure_deployment" in target and "azure_endpoint" in target: # Azure OpenAI
+                api_key = target.get("api_key", None)
+                if not api_key:
+                    chat_target = OpenAIChatTarget(deployment_name=target["azure_deployment"], endpoint=target["azure_endpoint"], use_aad_auth=True)
+                else: 
+                    chat_target = OpenAIChatTarget(deployment_name=target["azure_deployment"], endpoint=target["azure_endpoint"], api_key=api_key)
+            else:
+                chat_target = OpenAIChatTarget(deployment=target["model"], endpoint=target.get("base_url", None), key=target["api_key"], is_azure_target=False)
         else:
-            chat_target = OpenAIChatTarget(deployment=target["model"], endpoint=target.get("base_url", None), key=target["api_key"], is_azure_target=False)
+            async def callback_target(
+                messages: List[Dict],
+                stream: bool = False,
+                session_state: Optional[str] = None,
+                context: Optional[Dict] = None
+            ) -> dict:
+                messages_list = [self._message_to_dict(chat_message) for chat_message in messages] # type: ignore
+                latest_message = messages_list[-1]
+                application_input = latest_message["content"]
+                try:
+                    response = target(query=application_input)
+                except Exception as e:
+                    response = f"Something went wrong {e!s}"
+
+                ## We format the response to follow the openAI chat protocol format
+                formatted_response = {
+                    "content": response,
+                    "role": "assistant",
+                    "context":{},
+                }
+                ## NOTE: In the future, instead of appending to messages we should just return `formatted_response`
+                messages_list.append(formatted_response) # type: ignore
+                return {"messages": messages_list, "stream": stream, "session_state": session_state, "context": {}}
+            
+
+            chat_target = CallbackChatTarget(callback=callback_target)
         
         all_prompts_list = await self._get_all_prompts(scenario, num_rows=num_rows)
 
@@ -638,7 +667,7 @@ class _SafetyEvaluation:
         #Convert to json lines
         json_lines = ""
         for conversation in conversations: # each conversation is a List[ChatMessage]
-            json_lines += json.dumps({"conversation": {"messages": [self.message_to_dict(message) for message in conversation]}}) + "\n"
+            json_lines += json.dumps({"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}) + "\n"
         
         data_path = "pyrit_outputs.jsonl"
         with Path(data_path).open("w") as f:
@@ -704,7 +733,7 @@ class _SafetyEvaluation:
         adversarial_scenario = self._get_scenario(evaluators, num_turns=num_turns, scenario=scenario)
         self.logger.info(f"Using scenario: {adversarial_scenario}")
 
-        if not isinstance(target, Callable) and isinstance(adversarial_scenario, AdversarialScenario):
+        if isinstance(adversarial_scenario, AdversarialScenario) and num_turns==1:
             self.logger.info(f"Running Pyrit with inputs target={target}, scenario={scenario}") 
             data_path = await self._pyrit(target, adversarial_scenario, num_rows=num_rows)
 
