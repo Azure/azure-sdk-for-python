@@ -26,9 +26,8 @@ USAGE:
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import MessageRole, MessageTextUrlCitationAnnotation
+from azure.ai.projects.models import MessageRole, BingGroundingTool
 from azure.identity import DefaultAzureCredential
-from azure.ai.projects.models import BingGroundingTool
 
 
 project_client = AIProjectClient.from_connection_string(
@@ -82,12 +81,11 @@ with project_client:
     print("Deleted agent")
 
     # Print the Agent's response message with optional citation
-    response_message = project_client.agents.list_messages(thread_id=thread.id).get_last_text_message_by_role(
+    response_message = project_client.agents.list_messages(thread_id=thread.id).get_last_message_by_role(
         MessageRole.AGENT
     )
     if response_message:
-        print(f"Agent response: {response_message.text.value}")
-        if response_message.text.annotations:
-            for annotation in response_message.text.annotations:
-                if isinstance(annotation, MessageTextUrlCitationAnnotation):
-                    print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")
+        for text_message in response_message.text_messages:
+            print(f"Agent response: {text_message.text.value}")
+        for annotation in response_message.url_citation_annotations:
+            print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")
