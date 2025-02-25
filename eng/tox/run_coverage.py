@@ -10,26 +10,9 @@ from typing import Optional
 from ci_tools.parsing import ParsedSetup, get_config_setting
 from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import is_check_enabled
-from coverage.exceptions import NoDataError
+from ci_tools.functions import get_total_coverage
 
 coveragerc_file = os.path.join(os.path.dirname(__file__), "tox.ini")
-
-def get_total_coverage(coverage_file: str, package_name: str, repo_root: str) -> Optional[float]:
-
-    cov = coverage.Coverage(data_file=coverage_file, config_file=coveragerc_file)
-    cov.load()
-    original = os.getcwd()
-    report = 0.0
-    try:
-        os.chdir(repo_root)
-        report = cov.report()
-    except NoDataError as e:
-        logging.warning(f"Package {package_name} did not generate any coverage output: {e}")
-    except Exception as e:
-        logging.error(f"An error occurred while generating the coverage report for {package_name}: {e}")
-    finally:
-        os.chdir(original)
-        return report
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -58,7 +41,7 @@ if __name__ == "__main__":
     possible_coverage_file = os.path.join(args.target_package, ".coverage")
 
     if os.path.exists(possible_coverage_file):
-        total_coverage = get_total_coverage(possible_coverage_file, pkg_details.name, args.repo_root)
+        total_coverage = get_total_coverage(possible_coverage_file, coveragerc_file, pkg_details.name, args.repo_root)
         if total_coverage is not None:
             # log the metric for reporting before doing anything else
             logging.info(f"Total coverage for {pkg_details.name} is {total_coverage:.2f}%")

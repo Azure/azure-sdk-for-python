@@ -5,6 +5,7 @@ import zipfile
 import tarfile
 import stat
 from ast import Not
+import coverage.exceptions
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse, InvalidVersion
 from pkg_resources import Requirement
@@ -693,6 +694,29 @@ def is_package_compatible(
                     return False
 
     return True
+
+
+def get_total_coverage(coverage_file: str, coverage_config_file: str, package_name: str, repo_root: Optional[str] = None) -> Optional[float]:
+    import coverage
+    from coverage.exceptions import NoDataError
+
+    cov = coverage.Coverage(data_file=coverage_file, config_file=coverage_config_file)
+    cov.load()
+    original = os.getcwd()
+    report = 0.0
+    try:
+        if repo_root:
+            os.chdir(repo_root)
+        logging.info(f"Running coverage report against \"{coverage_file}\" with \"{coverage_config_file}\" from \"{os.getcwd()}\".")
+        report = cov.report()
+    except NoDataError as e:
+        logging.warning(f"Package {package_name} did not generate any coverage output: {e}")
+    except Exception as e:
+        logging.error(f"An error occurred while generating the coverage report for {package_name}: {e}")
+    finally:
+        if repo_root:
+            os.chdir(original)
+        return report
 
 
 def resolve_compatible_package(package_name: str, immutable_requirements: List[Requirement]) -> Optional[str]:
