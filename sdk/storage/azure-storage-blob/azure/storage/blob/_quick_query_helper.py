@@ -5,7 +5,10 @@
 # --------------------------------------------------------------------------
 
 from io import BytesIO
-from typing import Any, Dict, Generator, IO, Iterable, Optional, Type, Union, TYPE_CHECKING
+from typing import (
+    Any, Dict, Generator, IO, Iterable, Optional, Type, Union,
+    TYPE_CHECKING
+)
 
 from ._shared.avro.avro_io import DatumReader
 from ._shared.avro.datafile import DataFileReader
@@ -14,11 +17,11 @@ if TYPE_CHECKING:
     from ._models import BlobQueryError
 
 
-class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
+class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
     """A streaming object to read query results."""
 
     name: str
-    """The name of the blob being quered."""
+    """The name of the blob being queried."""
     container: str
     """The name of the container where the blob is."""
     response_headers: Dict[str, Any]
@@ -50,7 +53,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         self._first_result = self._process_record(next(self._parsed_results))
         self._error_cls = error_cls
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self._size
 
     def _process_record(self, result: Dict[str, Any]) -> Optional[bytes]:
@@ -124,10 +127,8 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
                     yield record
 
 
-class QuickQueryStreamer(object):
-    """
-    File-like streaming iterator.
-    """
+class QuickQueryStreamer:
+    """File-like streaming iterator."""
 
     def __init__(self, generator):
         self.generator = generator
