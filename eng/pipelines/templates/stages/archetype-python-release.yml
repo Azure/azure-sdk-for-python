@@ -141,7 +141,7 @@ stages:
                           Get-ChildItem $esrpDirectory
                         displayName: Isolate files for ESRP Publish
 
-                      - task: EsrpRelease@7
+                      - task: EsrpRelease@9
                         displayName: 'Publish to ESRP'
                         inputs:
                           ConnectedServiceName: 'Azure SDK PME Managed Identity'

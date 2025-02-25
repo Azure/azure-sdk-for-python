@@ -53,7 +53,7 @@ extends:
               ArtifactName: 'artifacts-for-release'
               ArtifactPath: $(Artifacts)
 
-          - task: EsrpRelease@7
+          - task: EsrpRelease@9
             displayName: 'Publish via ESRP'
             inputs:
               ConnectedServiceName: 'Azure SDK PME Managed Identity'
