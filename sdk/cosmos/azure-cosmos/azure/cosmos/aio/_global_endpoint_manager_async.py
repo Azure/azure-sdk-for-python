@@ -101,7 +101,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             try:
                 await self.refresh_task
                 self.refresh_task = None
-            except Exception as exception:
+            except Exception as exception: #pylint: disable=broad-exception-caught
                 logger.warning("Exception in health check task: %s", exception)
         if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
@@ -129,8 +129,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     # in background
                     self.refresh_task = asyncio.create_task(self._endpoints_health_check(**kwargs))
                 else:
-                   # on startup do this in foreground
-                   await self._endpoints_health_check(**kwargs)
+                    # on startup do this in foreground
+                    await self._endpoints_health_check(**kwargs)
 
     async def _endpoints_health_check(self, **kwargs):
         """Gets the database account for each endpoint.
@@ -142,7 +142,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         endpoints_attempted.add(endpoint)
         self.location_cache.perform_on_database_account_read(database_account)
         # should use the regions in the order returned from gateway and only the ones specified in preferred locations
-        read_account_dual_endpoints_iterator = iter(self.location_cache.account_read_dual_endpoints_by_location.values())
+        read_account_dual_endpoints_iterator = iter(self.location_cache.account_read_dual_endpoints_by_location
+                                                    .values())
         first_read_dual_endpoint = None
         for read_dual_endpoint in read_account_dual_endpoints_iterator:
             if read_dual_endpoint in self.location_cache.read_dual_endpoints:
@@ -152,7 +153,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             dual_endpoints = [first_read_dual_endpoint]
         else:
             dual_endpoints = []
-        write_dual_endpoints = [endpoint for endpoint in self.location_cache.account_write_dual_endpoints_by_location.values()
+        write_dual_endpoints = [endpoint for endpoint in
+                                self.location_cache.account_write_dual_endpoints_by_location.values()
                                 if endpoint in self.location_cache.write_dual_endpoints]
         dual_endpoints.extend(write_dual_endpoints)
         success_count = 0

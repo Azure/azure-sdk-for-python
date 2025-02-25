@@ -31,12 +31,16 @@ class _TimeoutFailoverRetryPolicy(object):
         """
         if _OperationType.IsReadOnlyOperation(self.request.operation_type):
             self.global_endpoint_manager.consecutive_failures[EndpointOperationType.ReadType] += 1
-            if self.global_endpoint_manager.consecutive_failures[EndpointOperationType.ReadType] >= self.FAILOVER_THRESHOLD:
-                self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.request.location_endpoint_to_route, True)
+            if (self.global_endpoint_manager.consecutive_failures[EndpointOperationType.ReadType]
+                    >= self.FAILOVER_THRESHOLD):
+                self.global_endpoint_manager.mark_endpoint_unavailable_for_read(
+                    self.request.location_endpoint_to_route, True)
         else:
             self.global_endpoint_manager.consecutive_failures[EndpointOperationType.WriteType] += 1
-            if self.global_endpoint_manager.consecutive_failures[EndpointOperationType.WriteType] >= self.FAILOVER_THRESHOLD:
-                self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.request.location_endpoint_to_route, True)
+            if (self.global_endpoint_manager.consecutive_failures[EndpointOperationType.WriteType]
+                    >= self.FAILOVER_THRESHOLD):
+                self.global_endpoint_manager.mark_endpoint_unavailable_for_write(
+                    self.request.location_endpoint_to_route, True)
         # we don't retry on write operations for timeouts or any internal server errors
         if self.request and (not _OperationType.IsReadOnlyOperation(self.request.operation_type)):
             return False

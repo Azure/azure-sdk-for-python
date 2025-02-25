@@ -10,7 +10,7 @@ import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import _retry_utility, PartitionKey
-from azure.cosmos._location_cache import DualEndpoint
+from azure.cosmos._location_cache import DualEndpoint, EndpointOperationType
 
 COLLECTION = "created_collection"
 @pytest.fixture(scope="class")
@@ -79,8 +79,8 @@ class TestTimeoutRetryPolicy:
         created_document = setup[COLLECTION].create_item(body=document_definition)
         self.original_execute_function = _retry_utility.ExecuteFunction
         try:
-            # should retry once and then succeed
-            mf = self.MockExecuteFunction(self.original_execute_function, 5, error_code)
+            # should retry once and then fail
+            mf = self.MockExecuteFunction(self.original_execute_function, 2, error_code)
             _retry_utility.ExecuteFunction = mf
             setup[COLLECTION].read_item(item=created_document['id'],
                                               partition_key=created_document['pk'])
@@ -89,6 +89,53 @@ class TestTimeoutRetryPolicy:
             assert err.status_code == error_code
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
+
+    @pytest.mark.parametrize("error_code", error_codes())
+    def test_timeout_failover_retry_policy_for_consecutive_failures(self, setup, error_code):
+        # clear unavailability info from other tests
+        setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint.clear()
+        setup[COLLECTION].client_connection._global_endpoint_manager.consecutive_failures[EndpointOperationType.ReadType] = 0
+        setup[COLLECTION].client_connection._global_endpoint_manager.consecutive_failures[EndpointOperationType.WriteType] = 0
+        document_definition = {'id': 'failoverDoc-' + str(uuid.uuid4()),
+                               'pk': 'pk',
+                               'name': 'sample document',
+                               'key': 'value'}
+
+        created_document = setup[COLLECTION].create_item(body=document_definition)
+        self.original_execute_function = _retry_utility.ExecuteFunction
+        mf = self.MockExecuteFunction(self.original_execute_function, 5, error_code)
+        # Consecutive read failures should mark the endpoint as unavailable
+        for i in range(3):
+            try:
+                _retry_utility.ExecuteFunction = mf
+                setup[COLLECTION].read_item(item=created_document['id'],
+                                            partition_key=created_document['pk'])
+                if i != 2:
+                    pytest.fail("Exception was not raised.")
+            except exceptions.CosmosHttpResponseError as err:
+                assert err.status_code == error_code
+            finally:
+                _retry_utility.ExecuteFunction = self.original_execute_function
+        unavailable_info = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
+        assert len(unavailable_info) == 1
+        assert next(iter(unavailable_info.values()))['operationType'] == {'Read'}
+        unavailable_info.clear()
+
+        mf = self.MockExecuteFunction(self.original_execute_function, 5, error_code)
+        # consecutive write failures should mark the endpoint as unavailable
+        for i in range(5):
+            try:
+                _retry_utility.ExecuteFunction = mf
+                setup[COLLECTION].create_item(body=document_definition)
+                pytest.fail("Exception was not raised.")
+            except exceptions.CosmosHttpResponseError as err:
+                assert err.status_code == error_code
+            finally:
+                _retry_utility.ExecuteFunction = self.original_execute_function
+        unavailable_info = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
+        assert len(unavailable_info) == 1
+        assert next(iter(unavailable_info.values()))['operationType'] == {'Write'}
+        unavailable_info.clear()
 
     @pytest.mark.parametrize("error_code", error_codes())
     def test_timeout_failover_retry_policy_for_write_failure(self, setup, error_code):
@@ -141,8 +188,6 @@ class TestTimeoutRetryPolicy:
                                               partition_key=created_document['pk'])
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
-
-    # test verifying that after consecutive failures we mark an endpoint as unavailable for read and for write
 
     class MockExecuteFunction(object):
         def __init__(self, org_func, num_exceptions, status_code):
