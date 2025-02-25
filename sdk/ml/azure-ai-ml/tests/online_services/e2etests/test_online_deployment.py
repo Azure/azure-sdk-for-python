@@ -85,7 +85,7 @@ class TestOnlineDeployment(AzureRecordedTestCase):
             )
 
             environment = Environment(
-                conda_file="tests/test_configs/deployments/model-1/environment/conda.yaml",
+                conda_file="tests/test_configs/deployments/model-1/environment/conda.yml",
                 image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:latest"
             )
 
