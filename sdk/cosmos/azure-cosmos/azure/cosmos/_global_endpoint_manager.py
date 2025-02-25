@@ -54,7 +54,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             client.connection_policy.UseMultipleWriteLocations,
             self.refresh_time_interval_in_ms,
         )
-        self.startup = True
         self.refresh_needed = False
         self.refresh_lock = threading.RLock()
         self.last_refresh_time = 0
@@ -91,7 +90,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def force_refresh_on_startup(self, database_account):
         self.refresh_needed = True
         self.refresh_endpoint_list(database_account)
-        self.startup = False
 
     def update_location_cache(self):
         self.location_cache.update_location_cache()
@@ -118,11 +116,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             if self.location_cache.should_refresh_endpoints() or self.refresh_needed:
                 self.refresh_needed = False
                 self.last_refresh_time = self.location_cache.current_time_millis()
-                if not self.startup:
-                    # this will perform getDatabaseAccount calls to check endpoint health
-                    self._endpoints_health_check(**kwargs)
-                else:
-                    self._endpoints_health_check(**kwargs)
+                # this will perform getDatabaseAccount calls to check endpoint health
+                self._endpoints_health_check(**kwargs)
 
     def _GetDatabaseAccount(self, **kwargs):
         """Gets the database account.
@@ -166,18 +161,37 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         database_account, endpoint = self._GetDatabaseAccount(**kwargs)
         endpoints_attempted.add(endpoint)
         self.location_cache.perform_on_database_account_read(database_account)
-        # should use the regions in the order returned from gateway
-        first_read_region = next(iter(self.location_cache.account_read_dual_endpoints_by_location.values()))
-        dual_endpoints = [first_read_region]
-        dual_endpoints.extend(self.location_cache.account_write_dual_endpoints_by_location.values())
+        # should use the regions in the order returned from gateway and only the ones specified in preferred locations
+        read_account_dual_endpoints_iterator = iter(self.location_cache.account_read_dual_endpoints_by_location.values())
+        first_read_dual_endpoint = None
+        for read_dual_endpoint in read_account_dual_endpoints_iterator:
+            if read_dual_endpoint in self.location_cache.read_dual_endpoints:
+                first_read_dual_endpoint = read_dual_endpoint
+                break
+        if first_read_dual_endpoint:
+            dual_endpoints = [first_read_dual_endpoint]
+        else:
+            dual_endpoints = []
+        write_dual_endpoints = [endpoint for endpoint in self.location_cache.account_write_dual_endpoints_by_location.values()
+                                if endpoint in self.location_cache.write_dual_endpoints]
+        dual_endpoints.extend(write_dual_endpoints)
         success_count = 0
         for dual_endpoint in dual_endpoints:
             if dual_endpoint.get_primary() not in endpoints_attempted:
-                endpoints_attempted.add(dual_endpoint.get_primary())
                 if success_count >= 2:
                     break
+                endpoints_attempted.add(dual_endpoint.get_primary())
                 try:
-                    self.Client._GetDatabaseAccountCheck(dual_endpoint.get_primary(), **kwargs)
+                    if dual_endpoint.get_primary() in self.location_cache.location_unavailability_info_by_endpoint.keys():
+                        previous_dba_read_timeout = self.Client.connection_policy.DBAReadTimeout
+                        previous_dba_connection_timeout = self.Client.connection_policy.DBAConnectionTimeout
+                        self.Client.connection_policy.DBAReadTimeout = constants._Constants.UnavailableEndpointDBATimeouts
+                        self.Client.connection_policy.DBAConnectionTimeout = constants._Constants.UnavailableEndpointDBATimeouts
+                        self.Client._GetDatabaseAccountCheck(dual_endpoint.get_primary(), **kwargs)
+                        self.Client.connection_policy.DBAReadTimeout = previous_dba_read_timeout
+                        self.Client.connection_policy.DBAConnectionTimeout = previous_dba_connection_timeout
+                    else:
+                        self.Client._GetDatabaseAccountCheck(dual_endpoint.get_primary(), **kwargs)
                     success_count += 1
                     self.location_cache.mark_endpoint_available(dual_endpoint.get_primary())
                 except (exceptions.CosmosHttpResponseError, AzureError):
@@ -195,4 +209,14 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
-        return self.Client.GetDatabaseAccount(endpoint, **kwargs)
+        if endpoint in self.location_cache.location_unavailability_info_by_endpoint.keys():
+            previous_dba_read_timeout = self.Client.connection_policy.DBAReadTimeout
+            previous_dba_connection_timeout = self.Client.connection_policy.DBAConnectionTimeout
+            self.Client.connection_policy.DBAReadTimeout = constants._Constants.UnavailableEndpointDBATimeouts
+            self.Client.connection_policy.DBAConnectionTimeout = constants._Constants.UnavailableEndpointDBATimeouts
+            database_account = self.Client.GetDatabaseAccount(endpoint, **kwargs)
+            self.Client.connection_policy.DBAReadTimeout = previous_dba_read_timeout
+            self.Client.connection_policy.DBAConnectionTimeout = previous_dba_connection_timeout
+        else:
+            database_account = self.Client.GetDatabaseAccount(endpoint, **kwargs)
+        return database_account

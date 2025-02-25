@@ -142,6 +142,8 @@ class TestTimeoutRetryPolicy:
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
+    # test verifying that after consecutive failures we mark an endpoint as unavailable for read and for write
+
     class MockExecuteFunction(object):
         def __init__(self, org_func, num_exceptions, status_code):
             self.org_func = org_func

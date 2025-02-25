@@ -24,6 +24,7 @@ database service.
 """
 
 import asyncio # pylint: disable=do-not-import-asyncio
+import logging
 
 from azure.core.exceptions import AzureError
 
@@ -33,6 +34,8 @@ from .._location_cache import LocationCache, EndpointOperationType
 
 
 # pylint: disable=protected-access
+
+logger = logging.getLogger("azure.cosmos._GlobalEndpointManager")
 
 class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attributes
     """
@@ -95,7 +98,11 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
 
     async def refresh_endpoint_list(self, database_account, **kwargs):
         if self.refresh_task and self.refresh_task.done():
-            await self.refresh_task
+            try:
+                await self.refresh_task
+                self.refresh_task = None
+            except Exception as exception:
+                logger.warning("Exception in health check task: %s", exception)
         if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
         if self.refresh_needed:
@@ -134,16 +141,26 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         database_account, endpoint = await self._GetDatabaseAccount(**kwargs)
         endpoints_attempted.add(endpoint)
         self.location_cache.perform_on_database_account_read(database_account)
-        # should use the regions in the order returned from gateway
-        first_read_region = next(iter(self.location_cache.account_read_dual_endpoints_by_location.values()))
-        dual_endpoints = [first_read_region]
-        dual_endpoints.extend(self.location_cache.account_write_dual_endpoints_by_location.values())
+        # should use the regions in the order returned from gateway and only the ones specified in preferred locations
+        read_account_dual_endpoints_iterator = iter(self.location_cache.account_read_dual_endpoints_by_location.values())
+        first_read_dual_endpoint = None
+        for read_dual_endpoint in read_account_dual_endpoints_iterator:
+            if read_dual_endpoint in self.location_cache.read_dual_endpoints:
+                first_read_dual_endpoint = read_dual_endpoint
+                break
+        if first_read_dual_endpoint:
+            dual_endpoints = [first_read_dual_endpoint]
+        else:
+            dual_endpoints = []
+        write_dual_endpoints = [endpoint for endpoint in self.location_cache.account_write_dual_endpoints_by_location.values()
+                                if endpoint in self.location_cache.write_dual_endpoints]
+        dual_endpoints.extend(write_dual_endpoints)
         success_count = 0
         for dual_endpoint in dual_endpoints:
             if dual_endpoint.get_primary() not in endpoints_attempted:
-                endpoints_attempted.add(dual_endpoint.get_primary())
                 if success_count >= 2:
                     break
+                endpoints_attempted.add(dual_endpoint.get_primary())
                 try:
                     await self.client._GetDatabaseAccountCheck(dual_endpoint.get_primary(), **kwargs)
                     # health check continues until 2 successes or all endpoints are checked

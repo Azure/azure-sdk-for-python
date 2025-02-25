@@ -8,6 +8,7 @@ import pytest
 import pytest_asyncio
 import test_config
 from azure.cosmos import DatabaseAccount, _location_cache
+from azure.cosmos._constants import _Constants
 
 from azure.cosmos._location_cache import DualEndpoint
 from azure.cosmos.aio import CosmosClient, _global_endpoint_manager_async, _cosmos_client_connection_async
@@ -15,6 +16,7 @@ from azure.cosmos.aio import CosmosClient, _global_endpoint_manager_async, _cosm
 COLLECTION = "created_collection"
 REGION_1 = "East US"
 REGION_2 = "West US"
+REGIONS = [REGION_1, REGION_2]
 
 @pytest_asyncio.fixture()
 async def setup():
@@ -37,10 +39,10 @@ async def setup():
 def health_check():
     # preferred_location, use_write_global_endpoint, use_read_global_endpoint
     return [
-        ([REGION_1, REGION_2], True, True),
-        ([REGION_1, REGION_2], False, True),
-        ([REGION_1, REGION_2], True, False),
-        ([REGION_1, REGION_2], False, False)
+        (REGIONS, True, True),
+        (REGIONS, False, True),
+        (REGIONS, True, False),
+        (REGIONS, False, False)
     ]
 
 @pytest.mark.cosmosEmulator
@@ -58,10 +60,9 @@ class TestHealthCheckAsync:
 
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
-        regions = [REGION_1, REGION_2]
         mock_get_database_account_check = self.MockGetDatabaseAccountCheck()
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
-            self.MockGetDatabaseAccount(regions, use_write_global_endpoint, use_read_global_endpoint))
+            self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
         _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = mock_get_database_account_check
         try:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
@@ -76,6 +77,8 @@ class TestHealthCheckAsync:
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
         if use_write_global_endpoint and use_read_global_endpoint:
             assert mock_get_database_account_check.counter == 0
+        else:
+            assert mock_get_database_account_check.counter == 1
         endpoint = self.host if use_read_global_endpoint else locational_endpoint
         expected_dual_endpoints.append(DualEndpoint(endpoint, endpoint))
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
@@ -88,9 +91,8 @@ class TestHealthCheckAsync:
     async def test_health_check_failure_startup_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
 
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
-        regions = [REGION_1, REGION_2]
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
-            self.MockGetDatabaseAccount(regions, use_write_global_endpoint, use_read_global_endpoint))
+            self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
         try:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
             # this will setup the location cache
@@ -100,10 +102,9 @@ class TestHealthCheckAsync:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
         expected_endpoints = []
 
-        locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
         if not use_read_global_endpoint or not use_write_global_endpoint:
+            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
             expected_endpoints.append(locational_endpoint)
-
 
         unavailable_endpoint_info = client.client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
         assert len(unavailable_endpoint_info) == len(expected_endpoints)
@@ -116,6 +117,7 @@ class TestHealthCheckAsync:
         _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check = self.mock_health_check
         start_time = time.time()
         try:
+            setup[COLLECTION].client_connection._global_endpoint_manager.startup = False
             for i in range(5):
                 await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
         finally:
@@ -124,21 +126,95 @@ class TestHealthCheckAsync:
         duration = end_time - start_time
         assert duration < 2, f"Test took too long: {duration} seconds"
 
-    # make background task fail, it shouldn't fail the test
+    async def test_health_check_background_fail(self, setup):
+        self.original_health_check = _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check
+        _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check = self.mock_health_check_failure
+        _Constants.DefaultUnavailableLocationExpirationTime = 1000
+        try:
+            setup[COLLECTION].client_connection._global_endpoint_manager.startup = False
+            for i in range(20):
+                await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
+        finally:
+            _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check = self.original_health_check
+
+    @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
+    async def test_health_check_success(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
+        self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
+        self.original_preferred_locations = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations
+        setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = preferred_location
+        mock_get_database_account_check = self.MockGetDatabaseAccountCheck()
+        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
+            self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
+        _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = mock_get_database_account_check
+        _Constants.DefaultUnavailableLocationExpirationTime = 10 #ms
+
+        try:
+            setup[COLLECTION].client_connection._global_endpoint_manager.startup = False
+            for i in range(20):
+                await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
+        finally:
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+            _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
+            setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = self.original_preferred_locations
+        expected_dual_endpoints = []
+
+        locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
+        if use_write_global_endpoint and use_read_global_endpoint:
+            assert mock_get_database_account_check.counter == 0
+        else:
+            assert mock_get_database_account_check.counter > 0
+        endpoint = self.host if use_read_global_endpoint else locational_endpoint
+        expected_dual_endpoints.append(DualEndpoint(endpoint, endpoint))
+        locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
+        expected_dual_endpoints.append(DualEndpoint(locational_endpoint, locational_endpoint))
+        read_dual_endpoints = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.read_dual_endpoints
+        assert read_dual_endpoints == expected_dual_endpoints
+
+
+    @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
+    async def test_health_check_failure(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
+        self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
+            self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
+        self.original_preferred_locations = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations
+        setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = preferred_location
+        _Constants.DefaultUnavailableLocationExpirationTime = 10 # ms
+
+        try:
+            setup[COLLECTION].client_connection._global_endpoint_manager.startup = False
+            for i in range(20):
+                await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
+        finally:
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+            setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = self.original_preferred_locations
+        expected_endpoints = []
+
+        if not use_read_global_endpoint or not use_write_global_endpoint:
+            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
+            expected_endpoints.append(locational_endpoint)
+
+        unavailable_endpoint_info = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
+        assert len(unavailable_endpoint_info) == len(expected_endpoints)
+        for expected_dual_endpoint in expected_endpoints:
+            assert expected_dual_endpoint in unavailable_endpoint_info.keys()
 
     async def mock_health_check(self, **kwargs):
         await asyncio.sleep(100)
 
+    async def mock_health_check_failure(self, **kwargs):
+        await asyncio.sleep(1)
+        raise Exception("Mock health check failure")
+
     class MockGetDatabaseAccountCheck(object):
         def __init__(self):
             self.counter = 0
+            self.index = 0
 
         async def __call__(self, endpoint):
-            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(TestHealthCheckAsync.host, REGION_1)
+            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(TestHealthCheckAsync.host, REGIONS[self.index])
             assert endpoint == locational_endpoint
-
-            assert self.counter == 0
-
+            self.index -= 1
             self.counter += 1
 
     class MockGetDatabaseAccount(object):
