@@ -84,9 +84,11 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
 
     async def readall(self) -> Union[bytes, str]:
         """Return all query results.
+
         This operation is blocking until all data is downloaded.
         If encoding has been configured - this will be used to decode individual
         records are they are received.
+
         :returns: The query results.
         :rtype: Union[bytes, str]
         """
@@ -99,6 +101,7 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
 
     async def readinto(self, stream: IO) -> None:
         """Download the query result to a stream.
+
         :param IO stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream.
@@ -109,9 +112,11 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
 
     async def records(self) -> AsyncIterable[Union[bytes, str]]:
         """Returns a record generator for the query result.
+
         Records will be returned line by line.
         If encoding has been configured - this will be used to decode individual
         records are they are received.
+
         :returns: A record generator for the query result.
         :rtype: AsyncIterable[Union[bytes, str]]
         """
