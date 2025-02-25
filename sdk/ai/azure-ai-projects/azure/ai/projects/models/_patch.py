@@ -62,6 +62,7 @@ from ._models import (
     MessageImageFileContent,
     MessageTextContent,
     MessageTextFileCitationAnnotation,
+    MessageTextUrlCitationAnnotation,
     MessageTextFilePathAnnotation,
     MicrosoftFabricToolDefinition,
     OpenApiAuthDetails,
@@ -506,6 +507,22 @@ class ThreadMessage(ThreadMessageGenerated):
             if isinstance(content, MessageTextContent)
             for annotation in content.text.annotations
             if isinstance(annotation, MessageTextFilePathAnnotation)
+        ]
+
+    @property
+    def url_citation_annotations(self) -> List[MessageTextUrlCitationAnnotation]:
+        """Returns all URL citation annotations from text message annotations in the messages.
+
+        :rtype: List[MessageTextUrlCitationAnnotation]
+        """
+        if not self.content:
+            return []
+        return [
+            annotation
+            for content in self.content
+            if isinstance(content, MessageTextContent)
+            for annotation in content.text.annotations
+            if isinstance(annotation, MessageTextUrlCitationAnnotation)
         ]
 
 
