@@ -269,7 +269,9 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def reset_link_credit(handler, link_credit):
+    def reset_link_credit(
+        handler, link_credit, *, drain=False
+    ):
         """
         Resets the link credit on the link.
         :param ~uamqp.SendClient or ~pyamqp.SendClient handler: The handler.
@@ -354,3 +356,28 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
         :keyword int timeout: Timeout.
         :keyword Callable callback: Callback to process request response.
         """
+
+    @staticmethod
+    @abstractmethod
+    def receive_loop(
+        receiver,
+        amqp_receive_client,
+        max_message_count,
+        batch,
+        abs_timeout,
+        timeout,
+        **kwargs
+    ):
+        """TODO"""
+
+
+    @staticmethod
+    @abstractmethod
+    def _settle_message_with_retry(
+        receiver,
+        message,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
+    ):
+        """TODO"""
