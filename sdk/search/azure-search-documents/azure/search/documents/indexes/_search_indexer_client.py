@@ -457,7 +457,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         result = self._client.data_sources.list(**kwargs)
         assert result.data_sources is not None  # Hint for mypy
         # pylint:disable=protected-access
-        return [SearchIndexerDataSourceConnection._from_generated(x) for x in result.data_sources]
+        return [
+            cast(SearchIndexerDataSourceConnection, SearchIndexerDataSourceConnection._from_generated(x))
+            for x in result.data_sources
+        ]
 
     @distributed_trace
     def get_data_source_connection_names(self, **kwargs: Any) -> Sequence[str]:

@@ -113,7 +113,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         self._client = client
         self._initial_query = initial_query
         self._kwargs = kwargs
-        self._facets: Optional[Dict[str, List[MutableMapping[str, Any]]]] = None
+        self._facets: Optional[MutableMapping[str, List[MutableMapping[str, Any]]]] = None
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
     async def _get_next_cb(self, continuation_token):
@@ -130,7 +130,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         return continuation_token, results
 
     @_ensure_response
-    async def get_facets(self) -> Optional[Dict]:
+    async def get_facets(self) -> Optional[MutableMapping[str, Any]]:
         self.continuation_token = None
         response = cast(SearchDocumentsResult, self._response)
         facets = response.facets
