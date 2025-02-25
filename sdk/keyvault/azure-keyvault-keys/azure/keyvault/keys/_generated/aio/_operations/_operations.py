@@ -1439,7 +1439,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         stored in Azure Key Vault since it uses the private portion of the key. This operation requires
         the keys/decrypt permission. Microsoft recommends not to use CBC algorithms for decryption
         without first ensuring the integrity of the ciphertext using an HMAC, for example. See
-        https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more
+        https://learn.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more
         information.
 
         :param key_name: The name of the key. Required.
@@ -1475,7 +1475,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         stored in Azure Key Vault since it uses the private portion of the key. This operation requires
         the keys/decrypt permission. Microsoft recommends not to use CBC algorithms for decryption
         without first ensuring the integrity of the ciphertext using an HMAC, for example. See
-        https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more
+        https://learn.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more
         information.
 
         :param key_name: The name of the key. Required.
@@ -1511,7 +1511,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         stored in Azure Key Vault since it uses the private portion of the key. This operation requires
         the keys/decrypt permission. Microsoft recommends not to use CBC algorithms for decryption
         without first ensuring the integrity of the ciphertext using an HMAC, for example. See
-        https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more
+        https://learn.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more
         information.
 
         :param key_name: The name of the key. Required.
@@ -1545,7 +1545,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):  # pylint: disable=
         stored in Azure Key Vault since it uses the private portion of the key. This operation requires
         the keys/decrypt permission. Microsoft recommends not to use CBC algorithms for decryption
         without first ensuring the integrity of the ciphertext using an HMAC, for example. See
-        https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more
+        https://learn.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more
         information.
 
         :param key_name: The name of the key. Required.
