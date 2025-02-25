@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 
 class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
     """A streaming object to read query results."""
+
     name: str
     """The name of the blob being queried."""
     container: str
