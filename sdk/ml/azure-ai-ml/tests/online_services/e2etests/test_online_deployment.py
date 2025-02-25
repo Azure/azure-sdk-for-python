@@ -9,6 +9,11 @@ from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint,
 
 
 @pytest.mark.e2etest
+@pytest.mark.usefixtures(
+    "recorded_test",
+    "mock_asset_name",
+    "mock_component_hash",
+)
 @pytest.mark.production_experiences_test
 class TestOnlineDeployment(AzureRecordedTestCase):
     def test_online_deployment(

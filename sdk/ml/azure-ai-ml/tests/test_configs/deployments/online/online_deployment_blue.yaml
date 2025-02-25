@@ -5,17 +5,15 @@ endpoint_name: mit-test-1
 description: description for online deployment
 model:
     name: sklearn_regression_model
-    version: 10
-    path: ../model-1/model/sklearn_regression_model.pkl
+    path: ../model-1/model/
 code_configuration:
     code: ../model-1/onlinescoring/
     scoring_script: score.py
 environment:
     name: k8s-env
-    version: 3
-    image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:20230227.v1
+    image:  mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:latest
     conda_file: ../model-1/environment/conda.yml
-instance_type: cpuinstance
+instance_type: Standard_DS3_v2
 liveness_probe:
   initial_delay: 10
   period: 10
