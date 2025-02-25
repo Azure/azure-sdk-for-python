@@ -31,8 +31,7 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
     method will return these lines via a generator."""
 
     def __init__(
-        self,
-        name: str = None,  # type: ignore [assignment]
+        self, name: str = None,  # type: ignore [assignment]
         container: str = None,  # type: ignore [assignment]
         errors: Any = None,
         record_delimiter: str = '\n',
@@ -184,7 +183,7 @@ class QuickQueryStreamer:
         if relative_start < 0:
             raise ValueError("Buffer has dumped too much data")
         relative_end = relative_start + size
-        data = self._buf[relative_start: relative_end]
+        data = self._buf[relative_start:relative_end]
 
         # dump the extra data in buffer
         # buffer start--------------------16bytes----current read position
