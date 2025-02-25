@@ -716,6 +716,7 @@ def get_total_coverage(coverage_file: str, coverage_config_file: str, package_na
     finally:
         if repo_root:
             os.chdir(original)
+        logging.info(f"Total coverage {report} for package {package_name}")
         return report
 
 
