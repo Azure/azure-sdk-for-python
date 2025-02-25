@@ -15,7 +15,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosQuery
 class TestCrossPartitionTopOrderBy(unittest.TestCase):
     """Orderby Tests.
     """

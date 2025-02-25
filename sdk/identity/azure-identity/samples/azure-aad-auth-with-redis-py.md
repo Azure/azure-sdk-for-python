@@ -82,7 +82,6 @@ if __name__ == '__main__':
 - [Client Certificate Credential](https://aka.ms/azsdk/python/identity/certificatecredential)
 - [Client Secret Credential](https://aka.ms/azsdk/python/identity/clientsecretcredential)
 - [Managed Identity Credential](https://aka.ms/azsdk/python/identity/managedidentitycredential)
-- [Username Password Credential](https://aka.ms/azsdk/python/identity/usernamepasswordcredential)
 - [Azure CLI Credential](https://aka.ms/azsdk/python/identity/azclicredential)
 - [Interactive Browser Credential](https://aka.ms/azsdk/python/identity/interactivebrowsercredential)
 - [Device Code Credential](https://aka.ms/azsdk/python/identity/devicecodecredential)
@@ -188,7 +187,7 @@ To mitigate this error, navigate to your Azure Cache for Redis resource in the A
 
 ##### Managed Identity not working from Local Development Machine
 
-Managed identity does not work from a local development machine. To use managed identity, your code must be running 
-in an Azure VM (or another type of resource in Azure). To run locally with Entra ID authentication, you'll need to 
+Managed identity does not work from a local development machine. To use managed identity, your code must be running
+in an Azure VM (or another type of resource in Azure). To run locally with Entra ID authentication, you'll need to
 use a service principal or user account. This is a common source of confusion, so ensure that when developing locally,
 you configure your application to use a service principal or user credentials for authentication.

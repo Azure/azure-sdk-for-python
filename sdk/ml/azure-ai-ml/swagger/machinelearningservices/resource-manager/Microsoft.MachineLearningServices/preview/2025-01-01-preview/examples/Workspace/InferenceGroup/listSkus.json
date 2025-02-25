@@ -1,0 +1,35 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "poolName": "string",
+    "groupName": "string",
+    "api-version": "2025-01-01-preview",
+    "$skipToken": "string",
+    "count": 1
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "value": [
+          {
+            "resourceType": "string",
+            "sku": {
+              "name": "string",
+              "tier": "Free"
+            },
+            "capacity": {
+              "minimum": 1,
+              "maximum": 1,
+              "default": 1,
+              "scaleType": "Automatic"
+            }
+          }
+        ],
+        "nextLink": "string"
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+    "id": "/subscriptions/some-sub-id/resourceGroups/some-rs/providers/Microsoft.MachineLearningServices/workspaces/some-ws/onlineEndpoints/endpoint-20250204",
+    "name": "endpoint-20250204",
+    "type": "Microsoft.MachineLearningServices/workspaces/onlineEndpoints",
+    "properties": {
+        "description": "online endpoint creation",
+        "properties": {
+            "enforce_access_to_default_secret_stores": "True"
+        },
+        "scoringUri": "https://endpoint-20250204.eastus.inference.ml.azure.com/score",
+        "swaggerUri": "https://endpoint-20250204.eastus.inference.ml.azure.com/swagger.json",
+        "authMode": "Key",
+        "provisioningState": "Succeeded",
+        "compute": "compute-name",
+        "publicNetworkAccess": "Enabled",
+        "traffic": {
+            "blue":90,
+            "green":10
+        },
+        "mirrorTraffic": {
+            "blue":10
+        }
+    },
+    "systemData": {
+        "createdAt": "2025-02-04T06:55:53.5131853+00:00",
+        "createdBy": "Someone",
+        "lastModifiedAt": "2025-02-04T07:04:38.7119371+00:00"
+    },
+    "tags": {},
+    "location": "eastus",
+    "kind": "Managed",
+    "identity": {
+        "type": "SystemAssigned",
+        "principalId": "afd4cab2-some-id",
+        "tenantId": "72f988bf-some-id"
+    }
+}

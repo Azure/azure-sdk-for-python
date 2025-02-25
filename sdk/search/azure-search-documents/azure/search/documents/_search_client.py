@@ -690,7 +690,7 @@ class SearchClient(HeadersMixin):
         :return: List of IndexingResult
         :rtype:  list[IndexingResult]
 
-        :raises ~azure.search.documents.RequestEntityTooLargeError
+        :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
         """
         return self._index_documents_actions(actions=batch.actions, **kwargs)
 

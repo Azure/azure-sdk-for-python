@@ -8,6 +8,10 @@
   ([#39379](https://github.com/Azure/azure-sdk-for-python/pull/39379))
 - Support stable http semantic conventions for breeze exporter - REQUESTS
   ([#39208](https://github.com/Azure/azure-sdk-for-python/pull/39208))
+- Support stable http semantic conventions for breeze exporter - DEPENDENCIES
+  ([#39441](https://github.com/Azure/azure-sdk-for-python/pull/39441))
+  - Support stable http semantic conventions for standard metrics + synthetic type for server standard metrics
+  ([#39799](https://github.com/Azure/azure-sdk-for-python/pull/39799))
 
 ### Breaking Changes
 

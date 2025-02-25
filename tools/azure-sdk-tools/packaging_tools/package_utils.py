@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, Tuple
 from pathlib import Path
 import logging
 from subprocess import check_call, CalledProcessError, getoutput
@@ -41,42 +41,47 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     return "\n".join(result[begin + 1 : end]).strip()
 
 
+def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[str, str]:
+    from pypi_tools.pypi import PyPIClient
+
+    try:
+        client = PyPIClient()
+        ordered_versions = client.get_ordered_versions(package_name)
+        last_release = ordered_versions[-1]
+        stable_releases = [x for x in ordered_versions if not x.is_prerelease]
+        last_stable_release = stable_releases[-1] if stable_releases else ""
+        if tag_is_stable:
+            last_version = str(last_stable_release) if last_stable_release else str(last_release)
+        else:
+            last_version = str(last_release)
+    except:
+        last_version = ""
+        last_stable_release = ""
+    return last_version, str(last_stable_release)
+
+
 def change_log_generate(
     package_name,
     last_version,
     tag_is_stable: bool = False,
     *,
+    last_stable_release: Optional[str] = None,
     prefolder: Optional[str] = None,
     is_multiapi: bool = False,
 ):
-    from pypi_tools.pypi import PyPIClient
-
-    client = PyPIClient()
-    try:
-        ordered_versions = client.get_ordered_versions(package_name)
-        last_release = ordered_versions[-1]
-        stable_releases = [x for x in ordered_versions if not x.is_prerelease]
-        last_stable_release = stable_releases[-1] if stable_releases else None
-        if tag_is_stable:
-            last_version[-1] = str(last_stable_release) if last_stable_release else str(last_release)
-        else:
-            last_version[-1] = str(last_release)
-    except:
-        return ("### Other Changes\n\n  - Initial version", last_version)
+    if not last_version:
+        return "### Other Changes\n\n  - Initial version"
 
     # try new changelog tool
     if prefolder and not is_multiapi:
         try:
-            return (
-                change_log_new(str(Path(prefolder) / package_name), not (last_stable_release and tag_is_stable)),
-                last_version,
-            )
+            return change_log_new(str(Path(prefolder) / package_name), not (last_stable_release and tag_is_stable))
         except Exception as e:
             _LOGGER.warning(f"Failed to generate changelog with breaking_change_detector: {e}")
 
     # fallback to old changelog tool
     _LOGGER.info("Fallback to old changelog tool")
-    return (change_log_main(f"{package_name}:pypi", f"{package_name}:latest", tag_is_stable), last_version)
+    return change_log_main(f"{package_name}:pypi", f"{package_name}:latest", tag_is_stable)
 
 
 def extract_breaking_change(changelog):

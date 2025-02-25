@@ -134,8 +134,7 @@ steps:
 
   - template: /eng/pipelines/templates/steps/update_snippet.yml
     parameters:
-      ScanPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
-      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+      PackageInfoFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
   - template: ../steps/run_breaking_changes.yml
     parameters:
@@ -160,6 +159,16 @@ steps:
       ArtifactName: "packages_extended"
 
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
+
+  # the pip authenticate task sets PIP_INDEX_URL value to the internal feed URL
+  # we should reset it such that the next task uses public pypi
+  - pwsh: |
+      if (Test-Path "~/.pypirc") {
+        Remove-Item "~/.pypirc"
+      }
+
+      Write-Host "##vso[task.setvariable variable=PIP_INDEX_URL;]"
+    displayName: Reset PIP INDEX URL
 
   - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:

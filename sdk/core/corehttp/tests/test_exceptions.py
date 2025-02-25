@@ -73,6 +73,20 @@ class TestExceptions(object):
         assert isinstance(error.status_code, int)
 
     @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+    def test_httpresponse_error_with_model(self, port, transport):
+        request = HttpRequest("GET", url="http://localhost:{}/basic/string".format(port))
+        client = MockRestClient(port, transport=transport())
+        response = client.send_request(request, stream=False)
+        error = HttpResponseError(response=response, model=FakeErrorTwo())
+        assert error.message == "Operation returned an invalid status 'OK'"
+        assert error.response is not None
+        assert error.reason == "OK"
+        assert error.model
+        assert error.model.code == "FakeErrorTwo"
+        assert error.model.message == "A different fake error"
+        assert isinstance(error.status_code, int)
+
+    @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
     def test_malformed_json(self, port, transport):
         request = HttpRequest("GET", "/errors/malformed-json")
         client = MockRestClient(port, transport=transport())

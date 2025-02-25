@@ -310,12 +310,12 @@ For more information see the [Code of Conduct FAQ][coc_faq]
 or contact [opencode@microsoft.com][coc_contact] with any
 additional questions or comments.
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fcontainerregistry%2Fazure-containerregistry%2FREADME.png)
+
 
 <!-- LINKS -->
 [source]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/containerregistry/azure-containerregistry
 [package]: https://pypi.org/project/azure-containerregistry/
-[docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-containerregistry/1.0.0b1/index.html
+[docs]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-containerregistry/latest/index.html
 [rest_docs]: https://learn.microsoft.com/rest/api/containerregistry/
 [product_docs]:  https://learn.microsoft.com/azure/container-registry
 [pip_link]: https://pypi.org

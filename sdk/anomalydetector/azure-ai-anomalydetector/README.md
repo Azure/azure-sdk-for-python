@@ -212,13 +212,13 @@ else:
 
 To see how to use Anomaly Detector library to conduct Multivariate Anomaly Detection, see this [sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_multivariate_detect.py).
 
-To get more details of Anomaly Detector package, refer to this [azure.ai.anomalydetector package](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-anomalydetector/latest/azure.ai.anomalydetector.html#).
+To get more details of Anomaly Detector package, refer to this [azure.ai.anomalydetector package](https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-anomalydetector/latest/azure.ai.anomalydetector.html#).
 
 ## Troubleshooting
 
 ### General
 
-Anomaly Detector client library will raise exceptions defined in [Azure Core](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html#module-azure.core.exceptions).
+Anomaly Detector client library will raise exceptions defined in [Azure Core](https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#module-azure.core.exceptions).
 
 ### Logging
 
@@ -234,7 +234,7 @@ See full SDK logging documentation with examples [here](https://learn.microsoft.
 ### Optional Configuration
 
 Optional keyword arguments can be passed in at the client and per-operation level.
-The azure-core [reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html) describes available configurations for retries, logging, transport protocols, and more.
+The azure-core [reference documentation](https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html) describes available configurations for retries, logging, transport protocols, and more.
 
 ## Next steps
 

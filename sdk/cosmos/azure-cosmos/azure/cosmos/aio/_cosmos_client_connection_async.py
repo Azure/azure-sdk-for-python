@@ -25,6 +25,7 @@
 """
 import os
 from urllib.parse import urlparse
+import uuid
 from typing import (
     Callable, Dict, Any, Iterable, Mapping, Optional, List,
     Sequence, Tuple, Type, Union, cast
@@ -112,7 +113,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     _DefaultStringHashPrecision = 3
     _DefaultStringRangePrecision = -1
 
-    def __init__(
+    def __init__( # pylint: disable=too-many-statements
             self,
             url_connection: str,
             auth: CredentialDict,
@@ -134,6 +135,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The default consistency policy for client operations.
 
         """
+        self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
         self.master_key: Optional[str] = None
         self.resource_tokens: Optional[Mapping[str, Any]] = None
@@ -410,7 +412,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         initial_headers = dict(self.default_headers)
         headers = base.GetHeaders(self, initial_headers, "get", "", "", "",
-                                  documents._OperationType.Read, {})  # path  # id  # type
+                                  documents._OperationType.Read, {},
+                                  client_id=self.client_id)  # path  # id  # type
 
         request_params = _request_object.RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
 
@@ -442,6 +445,28 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
         )
         return database_account
+
+    async def _GetDatabaseAccountCheck(
+            self,
+            url_connection: Optional[str] = None,
+            **kwargs: Any
+    ):
+        """Gets database account info.
+
+        :param str url_connection: the endpoint used to get the database account
+        :return: The Database Account.
+        :rtype: documents.DatabaseAccount
+        """
+        if url_connection is None:
+            url_connection = self.url_connection
+
+        initial_headers = dict(self.default_headers)
+        headers = base.GetHeaders(self, initial_headers, "get", "", "", "",
+                                  documents._OperationType.Read, {},
+                                  client_id=self.client_id)  # path  # id  # type
+
+        request_params = _request_object.RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
+        await self.__Get("", request_params, headers, **kwargs)
 
     async def CreateDatabase(
         self,

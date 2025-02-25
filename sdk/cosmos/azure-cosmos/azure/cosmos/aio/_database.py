@@ -202,7 +202,7 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
+        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A callable invoked with the response metadata.
@@ -298,11 +298,11 @@ class DatabaseProxy(object):
         initial_headers: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
+        computed_properties: Optional[List[Dict[str, str]]] = None,
         analytical_storage_ttl: Optional[int] = None,
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
-        computed_properties: Optional[List[Dict[str, str]]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
@@ -327,7 +327,7 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
+        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A callable invoked with the response metadata.
@@ -335,7 +335,7 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
-        :keyword Dict[str, Any] vector_embedding_policy: **provisional** The vector embedding policy for the container.
+        :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container.
             Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
             data type, and is generated for a particular distance function.
         :keyword Dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
@@ -506,6 +506,7 @@ class DatabaseProxy(object):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
+        computed_properties: Optional[List[Dict[str, str]]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
@@ -532,6 +533,9 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
+            `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
@@ -573,6 +577,7 @@ class DatabaseProxy(object):
                 "defaultTtl": default_ttl,
                 "conflictResolutionPolicy": conflict_resolution_policy,
                 "analyticalStorageTtl": analytical_storage_ttl,
+                "computedProperties": computed_properties,
                 "fullTextPolicy": full_text_policy
             }.items()
             if value is not None

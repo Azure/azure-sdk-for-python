@@ -42,11 +42,11 @@
 # Service team
 ####
 
-# ServiceOwners: @luigiw @needuv @achauhan-scc @kingernupur @paulshealy1 @singankit
+# ServiceOwners: @luigiw @needuv @paulshealy1 @singankit
 # ServiceLabel: %AI
 
 # PRLabel: %AI
-/sdk/ai/                                                             @luigiw @needuv @achauhan-scc @kingernupur @paulshealy1 @singankit @dargilco @jhakulin @jayesh-tanna
+/sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit @dargilco @jhakulin
 
 # ServiceOwners: @luigiw @needuv @singankit
 # ServiceLabel: %Evaluation
@@ -317,7 +317,7 @@
 
 # ServiceLabel: %Purview
 # PRLabel: %Purview
-/sdk/purview/                                                        @yifan-zhou922
+/sdk/purview/                                                        @saxenarahulMs
 
 # ServiceLabel: %Recovery Services
 # ServiceOwners: @Daya-Patil @Sharmistha-Rai
@@ -367,7 +367,7 @@
 
 # ServiceLabel: %Health Deidentification
 # PRLabel: %Health Deidentification
-/sdk/healthdataaiservices/                                           @GrahamMThomas @alexathomases @Azure/healthdatadeidentification
+/sdk/healthdataaiservices/                                           @alexathomases @Azure/healthdatadeidentification
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Cognitive - Form Recognizer

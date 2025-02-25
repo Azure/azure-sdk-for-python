@@ -1,5 +1,14 @@
 # Release History
 
+## 2.0.0 (2025-02-19)
+
+### Features Added
+
+  - Model DataBoxEdgeSku has a new parameter capabilities
+  
+### Breaking Changes
+  - Removed subfolders of some unused Api-Versions for smaller package size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+  
 ## 2.0.0b1 (2023-02-13)
 
 ### Features Added
