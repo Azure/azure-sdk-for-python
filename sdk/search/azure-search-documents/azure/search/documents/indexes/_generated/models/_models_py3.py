@@ -6,9 +6,11 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union, MutableMapping
 
 from .. import _serialization
+
+JSON = MutableMapping[str, Any]
 
 if TYPE_CHECKING:
     from .. import models as _models

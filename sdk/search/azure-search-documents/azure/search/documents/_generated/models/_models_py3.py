@@ -5,9 +5,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union, MutableMapping
 
 from .. import _serialization
+
+JSON = MutableMapping[str, Any]
 
 if TYPE_CHECKING:
     from .. import models as _models
