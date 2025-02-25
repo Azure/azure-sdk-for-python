@@ -707,16 +707,16 @@ def get_total_coverage(coverage_file: str, coverage_config_file: str, package_na
     try:
         if repo_root:
             os.chdir(repo_root)
-        logging.info(f"Running coverage report against \"{coverage_file}\" with \"{coverage_config_file}\" from \"{os.getcwd()}\".")
+        print(f"Running coverage report against \"{coverage_file}\" with \"{coverage_config_file}\" from \"{os.getcwd()}\".")
         report = cov.report()
     except NoDataError as e:
-        logging.warning(f"Package {package_name} did not generate any coverage output: {e}")
+        print(f"Package {package_name} did not generate any coverage output: {e}")
     except Exception as e:
-        logging.error(f"An error occurred while generating the coverage report for {package_name}: {e}")
+        print(f"An error occurred while generating the coverage report for {package_name}: {e}")
     finally:
         if repo_root:
             os.chdir(original)
-        logging.info(f"Total coverage {report} for package {package_name}")
+        print(f"Total coverage {report} for package {package_name}")
         return report
 
 
