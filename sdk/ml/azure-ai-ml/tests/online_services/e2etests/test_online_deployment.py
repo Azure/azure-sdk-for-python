@@ -5,7 +5,7 @@ from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient, load_online_deployment, load_online_endpoint
 from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint, Model
+from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint, Model, CodeConfiguration, Environment
 
 
 @pytest.mark.e2etest
@@ -75,21 +75,31 @@ class TestOnlineDeployment(AzureRecordedTestCase):
             # create a blue deployment
             model = Model(
                 name="test-model",
-                version="4",
-                path="tests/test_configs/deployments/sklearn-diabetes/model",
-                type=AssetTypes.MLFLOW_MODEL,
+                path="tests/test_configs/deployments/model-1/model",
                 description="my sample mlflow model",
+            )
+
+            code_config = CodeConfiguration(
+                code="tests/test_configs/deployments/model-1/onlinescoring/",
+                scoring_script="score.py",
+            )
+
+            environment = Environment(
+                conda_file="tests/test_configs/deployments/model-1/environment/conda.yaml",
+                image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:latest"
             )
 
             blue_deployment = ManagedOnlineDeployment(
                 name=online_deployment_name,
                 endpoint_name=online_endpoint_name,
+                code_configuration=code_config,
+                environment=environment,
                 model=model,
-                instance_type="Standard_F4s_v2",
+                instance_type="Standard_DS3_v2",
                 instance_count=1,
             )
 
-            client.online_deployments.begin_create_or_update(blue_deployment).result()
+            client.online_deployments.begin_create_or_update(blue_deployment, skip_script_validation=True).result()
         except Exception as ex:
             raise ex
         finally:
