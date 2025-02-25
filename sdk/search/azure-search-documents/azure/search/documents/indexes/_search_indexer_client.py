@@ -526,7 +526,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             kwargs["select"] = ",".join(select)
         result = self._client.skillsets.list(**kwargs)
         assert result.skillsets is not None  # Hint for mypy
-        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets]
+        return [
+            cast(SearchIndexerSkillset, SearchIndexerSkillset._from_generated(skillset))
+            for skillset in result.skillsets
+        ]
 
     @distributed_trace
     def get_skillset_names(self, **kwargs: Any) -> List[str]:
