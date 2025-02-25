@@ -49,7 +49,7 @@ class VaultsOperations(_VaultsOperations):
         :type top: int
         :return: An iterator like instance of either Resource or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.keyvault.v2016_10_01.models.Resource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.keyvault.v2024_11_01.models.Resource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
