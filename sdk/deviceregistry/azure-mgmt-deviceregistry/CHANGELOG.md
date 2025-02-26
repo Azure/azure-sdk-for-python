@@ -1,11 +1,10 @@
 # Release History
 
-## 1.0.0b3 (2025-02-24)
+## 1.0.0 (2025-02-26)
 
 ### Features Added
 
   - Model `OperationStatusResult` added property `resource_id`
-  - Method `Operation.__init__` has a new overload `def __init__(self: None, display: Optional[_models.OperationDisplay])`
 
 ### Breaking Changes
 
@@ -37,17 +36,11 @@
   - Deleted or renamed model `SchemaVersionProperties`
   - Deleted or renamed model `SystemAssignedServiceIdentity`
   - Deleted or renamed model `SystemAssignedServiceIdentityType`
-  - Deleted or renamed model `DiscoveredAssetEndpointProfilesOperations`
-  - Deleted or renamed model `DiscoveredAssetsOperations`
-  - Deleted or renamed model `SchemaRegistriesOperations`
-  - Deleted or renamed model `SchemaVersionsOperations`
-  - Deleted or renamed model `SchemasOperations`
-
-## 1.0.0 (2025-02-26)
-
-### Features Added
-
-  - Model `OperationStatusResult` added property `resource_id`
+  - Deleted or renamed operation group `DiscoveredAssetEndpointProfilesOperations`
+  - Deleted or renamed operation group `DiscoveredAssetsOperations`
+  - Deleted or renamed operation group `SchemaRegistriesOperations`
+  - Deleted or renamed operation group `SchemaVersionsOperations`
+  - Deleted or renamed operation group `SchemasOperations`
 
 ## 1.0.0b2 (2024-12-16)
 
