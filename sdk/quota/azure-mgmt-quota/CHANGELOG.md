@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0 (2025-02-24)
+## 2.0.0 (2025-02-26)
 
 ### Features Added
 
@@ -81,7 +81,6 @@
 
 ### Breaking Changes
 
-  - Method `QuotaMgmtClient.__init__` inserted a `positional_or_keyword` parameter `subscription_id`
   - Model `QuotaRequestDetails` deleted or renamed its instance variable `provisioning_state`
   - Model `QuotaRequestDetails` deleted or renamed its instance variable `message`
   - Model `QuotaRequestDetails` deleted or renamed its instance variable `error`
