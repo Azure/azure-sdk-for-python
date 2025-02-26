@@ -137,7 +137,11 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
             else:
                 # Otherwise, use the core tracing.
                 config = self._instrumentation_config or {}
-                tracer = get_tracer(**config)
+                tracer = get_tracer(
+                    library_name=config.get("library_name"),
+                    library_version=config.get("library_version"),
+                    attributes=config.get("attributes"),
+                )
                 if not tracer:
                     return
 

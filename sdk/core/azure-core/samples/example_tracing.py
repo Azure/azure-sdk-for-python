@@ -16,7 +16,6 @@ USAGE:
     python example_tracing.py
 """
 from typing import Iterable, Union, Any
-from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core import PipelineClient
@@ -37,7 +36,6 @@ class SampleClient:
     _instrumentation_config = {
         "library_name": "my-library",
         "library_version": "1.0.0",
-        "schema_url": "https://opentelemetry.io/schemas/1.23.1",
         "attributes": {"az.namespace": "Sample.Namespace"},
     }
 

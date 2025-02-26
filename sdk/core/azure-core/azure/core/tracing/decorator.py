@@ -141,7 +141,12 @@ def distributed_trace(
                 config = {}
                 if args and hasattr(args[0], "_instrumentation_config"):
                     config = args[0]._instrumentation_config  # pylint: disable=protected-access
-                method_tracer = _get_tracer(**config)
+                method_tracer = _get_tracer(
+                    library_name=config.get("library_name"),
+                    library_version=config.get("library_version"),
+                    schema_url=config.get("schema_url"),
+                    attributes=config.get("attributes"),
+                )
                 if not method_tracer:
                     return func(*args, **kwargs)
 
