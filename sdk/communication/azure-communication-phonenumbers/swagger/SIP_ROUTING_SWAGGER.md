@@ -10,13 +10,13 @@ npm install -g autorest
 ### Generation
 ```ps
 cd <swagger-folder>
-autorest SWAGGER.md
+autorest ./SIP_ROUTING_SWAGGER.md
 ```
 
 ### Settings
 ``` yaml
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/communication/data-plane/SipRouting/readme.md
-tag: package-2023-03
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/8a218b1c6203d1ea118c3e0bcb4ae95bd44e1014/specification/communication/data-plane/SipRouting/readme.md
+tag: package-2024-11-15-preview
 output-folder: ../azure/communication/phonenumbers/siprouting/_generated
 namespace: azure.communication.phonenumbers.siprouting
 no-namespace-folders: true
