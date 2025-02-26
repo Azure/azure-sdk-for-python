@@ -98,6 +98,9 @@ traffic:
     return p
 
 
+@pytest.mark.skip(
+    reason="Tests failing in internal automation due to lack of quota. Cannot record or run in live mode."
+)
 @pytest.mark.e2etest
 @pytest.mark.production_experiences_test
 class TestOnlineEndpoint(AzureRecordedTestCase):
@@ -173,6 +176,7 @@ class TestOnlineEndpoint(AzureRecordedTestCase):
         finally:
             client.online_endpoints.begin_delete(name=mir_endpoint_name, no_wait=True)
 
+    @pytest.mark.skip("skip for now to run e2e in eastus2. will undo this once we go back to centraluseuap")
     @pytest.mark.e2etest
     def test_online_endpoint_submit(self, client: MLClient, location: str):
         # TODO: current e2e workspace has no k8s compute. So use the old sdk_vnext_cli workspace for testing temporarily.
@@ -219,6 +223,7 @@ class TestOnlineEndpoint(AzureRecordedTestCase):
 
         assert EMPTY_DIRECTORY_ERROR in str(e.value)
 
+    @pytest.mark.skip(reason="TODO: disable the mir test until we figured out a way to run it")
     @pytest.mark.e2etest
     def test_online_endpoint_mir_e2e(
         self,
