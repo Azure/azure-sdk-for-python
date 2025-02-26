@@ -136,8 +136,7 @@ def validate_and_format_range_headers(
     return range_header, range_validation
 
 
-def add_metadata_headers(metadata=None):
-    # type: (Optional[Dict[str, str]]) -> Dict[str, str]
+def add_metadata_headers(metadata: Optional[Dict[str, str]] = None) -> Dict[str, str]:
     headers = {}
     if metadata:
         for key, value in metadata.items():
