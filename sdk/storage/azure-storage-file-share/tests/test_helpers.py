@@ -68,7 +68,7 @@ class MockStorageTransport(HttpTransport):
             }
 
             if "x-ms-range-get-content-md5" in request.headers:
-                headers["Content-MD5"] = "7Qdih1MuhjZehB6Sv8UNjA=="
+                headers["Content-MD5"] = "7Qdih1MuhjZehB6Sv8UNjA=="  # cspell:disable-line
 
             rest_response = RestRequestsTransportResponse(
                 request=request,
