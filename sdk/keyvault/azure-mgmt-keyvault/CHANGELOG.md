@@ -1,6 +1,6 @@
 # Release History
 
-## 11.0.0 (2025-03-24)
+## 11.0.0 (2025-02-27)
 
 ### Breaking Changes
   - Removed subfolders of some unused Api-Versions for smaller package size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
