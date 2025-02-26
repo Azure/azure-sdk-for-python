@@ -12,9 +12,9 @@
   - Added model `EncryptionTransitionRequest`
   - Added model `GetKeyVaultStatusResponse`
   - Added model `KeyVaultPrivateEndpoint`
-  - Model `AccountsOperations` added method `begin_change_key_vault`
-  - Model `AccountsOperations` added method `begin_get_change_key_vault_information`
-  - Model `AccountsOperations` added method `begin_transition_to_cmk`
+  - Operation group `AccountsOperations` added method `begin_change_key_vault`
+  - Operation group `AccountsOperations` added method `begin_get_change_key_vault_information`
+  - Operation group `AccountsOperations` added method `begin_transition_to_cmk`
 
 ## 13.4.0b1 (2024-11-18)
 
