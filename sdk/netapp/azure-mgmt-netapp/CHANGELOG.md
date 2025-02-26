@@ -1,6 +1,6 @@
 # Release History
 
-## 13.4.0 (2025-02-24)
+## 13.4.0 (2025-02-26)
 
 ### Features Added
 
@@ -15,10 +15,6 @@
   - Model `AccountsOperations` added method `begin_change_key_vault`
   - Model `AccountsOperations` added method `begin_get_change_key_vault_information`
   - Model `AccountsOperations` added method `begin_transition_to_cmk`
-  - Method `AccountsOperations.begin_change_key_vault` has a new overload `def begin_change_key_vault(self: None, resource_group_name: str, account_name: str, body: Optional[ChangeKeyVault], content_type: str)`
-  - Method `AccountsOperations.begin_change_key_vault` has a new overload `def begin_change_key_vault(self: None, resource_group_name: str, account_name: str, body: Optional[IO[bytes]], content_type: str)`
-  - Method `AccountsOperations.begin_transition_to_cmk` has a new overload `def begin_transition_to_cmk(self: None, resource_group_name: str, account_name: str, body: Optional[EncryptionTransitionRequest], content_type: str)`
-  - Method `AccountsOperations.begin_transition_to_cmk` has a new overload `def begin_transition_to_cmk(self: None, resource_group_name: str, account_name: str, body: Optional[IO[bytes]], content_type: str)`
 
 ## 13.4.0b1 (2024-11-18)
 
