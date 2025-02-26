@@ -207,6 +207,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     async def close(self) -> None:
         """Close this instance of CosmosClient."""
+        await self.client_connection._global_endpoint_manager.close()
         await self.__aexit__()
 
     @classmethod

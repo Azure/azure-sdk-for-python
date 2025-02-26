@@ -25,6 +25,7 @@ database service.
 
 import asyncio # pylint: disable=do-not-import-asyncio
 import logging
+from asyncio import CancelledError
 from typing import Tuple
 
 from azure.core.exceptions import AzureError
@@ -103,7 +104,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             try:
                 await self.refresh_task
                 self.refresh_task = None
-            except Exception as exception: #pylint: disable=broad-exception-caught
+            except (Exception, CancelledError) as exception: #pylint: disable=broad-exception-caught
                 logger.exception("Health check task failed: %s", exception)
         if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
@@ -221,3 +222,12 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         :rtype: ~azure.cosmos.DatabaseAccount
         """
         return await self.client.GetDatabaseAccount(endpoint, **kwargs)
+
+    async def close(self):
+        # cleanup any running tasks
+        if self.refresh_task:
+            self.refresh_task.cancel()
+            try:
+                await self.refresh_task
+            except (Exception, CancelledError) : #pylint: disable=broad-exception-caught
+                pass
