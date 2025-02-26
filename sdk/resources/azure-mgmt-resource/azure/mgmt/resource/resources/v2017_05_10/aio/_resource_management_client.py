@@ -28,11 +28,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ResourceManagementClient:  # pylint: disable=client-accepts-api-version-keyword
+class ResourceManagementClient:
     """Provides operations for working with resources and resource groups.
 
     :ivar deployments: DeploymentsOperations operations
