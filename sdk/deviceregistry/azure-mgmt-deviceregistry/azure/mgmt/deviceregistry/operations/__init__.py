@@ -17,11 +17,6 @@ from ._operations import OperationStatusOperations  # type: ignore
 from ._operations import AssetsOperations  # type: ignore
 from ._operations import AssetEndpointProfilesOperations  # type: ignore
 from ._operations import BillingContainersOperations  # type: ignore
-from ._operations import DiscoveredAssetsOperations  # type: ignore
-from ._operations import DiscoveredAssetEndpointProfilesOperations  # type: ignore
-from ._operations import SchemaRegistriesOperations  # type: ignore
-from ._operations import SchemasOperations  # type: ignore
-from ._operations import SchemaVersionsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -33,11 +28,6 @@ __all__ = [
     "AssetsOperations",
     "AssetEndpointProfilesOperations",
     "BillingContainersOperations",
-    "DiscoveredAssetsOperations",
-    "DiscoveredAssetEndpointProfilesOperations",
-    "SchemaRegistriesOperations",
-    "SchemasOperations",
-    "SchemaVersionsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

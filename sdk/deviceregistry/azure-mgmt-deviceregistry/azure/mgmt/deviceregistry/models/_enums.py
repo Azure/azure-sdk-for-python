@@ -67,15 +67,6 @@ class EventObservabilityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Map as log to OpenTelemetry."""
 
 
-class Format(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the schema format."""
-
-    JSON_SCHEMA_DRAFT7 = "JsonSchema/draft-07"
-    """JSON Schema version draft 7 format"""
-    DELTA1_0 = "Delta/1.0"
-    """Delta format"""
-
-
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
@@ -102,22 +93,6 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource has been accepted by the server."""
     DELETING = "Deleting"
     """Resource is deleting."""
-
-
-class SchemaType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the schema type."""
-
-    MESSAGE_SCHEMA = "MessageSchema"
-    """Message Schema schema type"""
-
-
-class SystemAssignedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of managed service identity (either system assigned, or none)."""
-
-    NONE = "None"
-    """No managed system identity."""
-    SYSTEM_ASSIGNED = "SystemAssigned"
-    """System assigned managed system identity."""
 
 
 class TopicRetainType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
