@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -70,14 +71,14 @@ async def main() -> None:
             )
             print(f"Created message, message ID: {message.id}")
 
-            run = await project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
             print(f"Created run, run ID: {run.id}")
 
             file_search_tool.remove_vector_store(vector_store.id)
             print(f"Removed vector store from file search, vector store ID: {vector_store.id}")
 
             await project_client.agents.update_agent(
-                assistant_id=agent.id, tools=file_search_tool.definitions, tool_resources=file_search_tool.resources
+                agent_id=agent.id, tools=file_search_tool.definitions, tool_resources=file_search_tool.resources
             )
             print(f"Updated agent, agent ID: {agent.id}")
 
@@ -89,7 +90,7 @@ async def main() -> None:
             )
             print(f"Created message, message ID: {message.id}")
 
-            run = await project_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+            run = await project_client.agents.create_and_process_run(thread_id=thread.id, agent_id=agent.id)
             print(f"Created run, run ID: {run.id}")
 
             await project_client.agents.delete_file(file.id)
