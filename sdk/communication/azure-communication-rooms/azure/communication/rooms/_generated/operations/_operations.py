@@ -46,7 +46,7 @@ def build_rooms_create_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-07"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -73,7 +73,7 @@ def build_rooms_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-07"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -92,7 +92,7 @@ def build_rooms_get_request(room_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-07"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -117,7 +117,7 @@ def build_rooms_update_request(room_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-07"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -143,7 +143,7 @@ def build_rooms_delete_request(room_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-07"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -167,7 +167,7 @@ def build_participants_list_request(room_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-07"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -192,7 +192,7 @@ def build_participants_update_request(room_id: str, **kwargs: Any) -> HttpReques
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-07"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL

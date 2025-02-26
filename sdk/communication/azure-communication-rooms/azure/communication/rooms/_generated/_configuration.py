@@ -19,13 +19,13 @@ class AzureCommunicationRoomsServiceConfiguration:  # pylint: disable=too-many-i
 
     :param endpoint: The endpoint of the Azure Communication resource. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2025-03-07". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2025-03-13". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-03-07")
+        api_version: str = kwargs.pop("api_version", "2025-03-13")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
