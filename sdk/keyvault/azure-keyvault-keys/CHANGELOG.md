@@ -3,6 +3,7 @@
 ## 4.10.1 (Unreleased)
 
 ### Features Added
+- Added support for service API version `7.6-preview.2`
 
 ### Breaking Changes
 
