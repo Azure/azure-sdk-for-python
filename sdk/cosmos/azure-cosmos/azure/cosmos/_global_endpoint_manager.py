@@ -170,6 +170,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         read_account_dual_endpoints_iterator = iter(self.location_cache.account_read_dual_endpoints_by_location
                                                     .values())
         first_read_dual_endpoint = None
+        # find first read endpoint from gateway and in preferred locations
         for read_dual_endpoint in read_account_dual_endpoints_iterator:
             if read_dual_endpoint in self.location_cache.read_dual_endpoints:
                 first_read_dual_endpoint = read_dual_endpoint
@@ -178,6 +179,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             dual_endpoints = [first_read_dual_endpoint]
         else:
             dual_endpoints = []
+        # add write endpoints from gateway and in preferred locations
         write_dual_endpoints = [endpoint for endpoint in
                                 self.location_cache.account_write_dual_endpoints_by_location.values()
                                 if endpoint in self.location_cache.write_dual_endpoints]
