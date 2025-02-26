@@ -25,12 +25,14 @@ database service.
 
 import asyncio # pylint: disable=do-not-import-asyncio
 import logging
+from typing import Tuple
 
 from azure.core.exceptions import AzureError
+from azure.cosmos import DatabaseAccount
 
 from .. import _constants as constants
 from .. import exceptions
-from .._location_cache import LocationCache, EndpointOperationType
+from .._location_cache import LocationCache
 
 
 # pylint: disable=protected-access
@@ -62,7 +64,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.refresh_lock = asyncio.Lock()
         self.last_refresh_time = 0
         self._database_account_cache = None
-        self.consecutive_failures = {EndpointOperationType.ReadType: 0, EndpointOperationType.WriteType: 0}
+        self.consecutive_failures = {}
 
     def get_refresh_time_interval_in_ms_stub(self):
         return constants._Constants.DefaultUnavailableLocationExpirationTime
@@ -102,7 +104,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 await self.refresh_task
                 self.refresh_task = None
             except Exception as exception: #pylint: disable=broad-exception-caught
-                logger.warning("Exception in health check task: %s", exception)
+                logger.exception("Health check task failed: %s", exception)
         if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
         if self.refresh_needed:
@@ -160,12 +162,12 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         success_count = 0
         for dual_endpoint in dual_endpoints:
             if dual_endpoint.get_primary() not in endpoints_attempted:
+                # health check continues until 2 successes or all endpoints are checked
                 if success_count >= 2:
                     break
                 endpoints_attempted.add(dual_endpoint.get_primary())
                 try:
                     await self.client._GetDatabaseAccountCheck(dual_endpoint.get_primary(), **kwargs)
-                    # health check continues until 2 successes or all endpoints are checked
                     success_count += 1
                     self.location_cache.mark_endpoint_available(dual_endpoint.get_primary())
                 except (exceptions.CosmosHttpResponseError, AzureError):
@@ -175,14 +177,14 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                         self.mark_endpoint_unavailable_for_write(dual_endpoint.get_primary(), False)
         self.location_cache.update_location_cache()
 
-    async def _GetDatabaseAccount(self, **kwargs):
+    async def _GetDatabaseAccount(self, **kwargs) -> Tuple[DatabaseAccount, str]:
         """Gets the database account.
 
         First tries by using the default endpoint, and if that doesn't work,
         use the endpoints for the preferred locations in the order they are
         specified, to get the database account.
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
-        :rtype: ~azure.cosmos.DatabaseAccount
+        :rtype: tuple of (~azure.cosmos.DatabaseAccount, str)
         """
         try:
             database_account = await self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)

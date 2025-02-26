@@ -46,11 +46,16 @@ from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes, ResourceTy
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
 
 
-def reset_consecutive_failures(request_headers, global_endpoint_manager):
-    if _OperationType.IsReadOnlyOperation(request_headers.get(HttpHeaders.ThinClientProxyOperationType)):
-        global_endpoint_manager.consecutive_failures[EndpointOperationType.ReadType] = 0
+def reset_consecutive_failures(request_headers, global_endpoint_manager, *args):
+    endpoint = args[0].location_endpoint_to_route
+    if (_OperationType.IsReadOnlyOperation(request_headers.get(HttpHeaders.ThinClientProxyOperationType)) and
+            endpoint in global_endpoint_manager.consecutive_failures):
+        global_endpoint_manager.consecutive_failures[endpoint][EndpointOperationType.ReadType] = 0
+    elif endpoint in global_endpoint_manager.consecutive_failures:
+        global_endpoint_manager.consecutive_failures[endpoint][EndpointOperationType.WriteType] = 0
     else:
-        global_endpoint_manager.consecutive_failures[EndpointOperationType.WriteType] = 0
+        global_endpoint_manager.consecutive_failures[endpoint] = {EndpointOperationType.ReadType: 0,
+                                                                      EndpointOperationType.WriteType: 0}
 
 
 def Execute(client, global_endpoint_manager, function, *args, **kwargs):
@@ -113,7 +118,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             if args:
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
                 # after a success reset the consecutive failures
-                reset_consecutive_failures(request.headers, global_endpoint_manager)
+                reset_consecutive_failures(request.headers, global_endpoint_manager, *args)
             else:
                 result = ExecuteFunction(function, *args, **kwargs)
             if not client.last_response_headers:

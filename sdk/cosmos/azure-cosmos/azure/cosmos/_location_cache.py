@@ -41,9 +41,9 @@ class EndpointOperationType(object):
     WriteType = "Write"
 
 class DualEndpoint(object):
-    def __init__(self, c_endpoint: str, p_endpoint: str):
-        self.primary_endpoint = c_endpoint
-        self.alternate_endpoint = p_endpoint
+    def __init__(self, primary_endpoint: str, alternate_endpoint: str):
+        self.primary_endpoint = primary_endpoint
+        self.alternate_endpoint = alternate_endpoint
 
     def set_primary(self, endpoint: str):
         self.primary_endpoint = endpoint
@@ -62,7 +62,7 @@ class DualEndpoint(object):
                 and self.alternate_endpoint == other.alternate_endpoint)
 
     def __str__(self):
-        return "Current: " + self.primary_endpoint + " ,Previous: " + self.alternate_endpoint
+        return "Primary: " + self.primary_endpoint + " ,Alternate: " + self.alternate_endpoint
 
 def get_endpoints_by_location(new_locations,
                               old_endpoints_by_location,

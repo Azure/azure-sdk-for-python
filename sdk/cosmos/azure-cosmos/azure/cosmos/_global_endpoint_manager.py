@@ -24,12 +24,14 @@ database service.
 """
 
 import threading
+from typing import Tuple
 
 from azure.core.exceptions import AzureError
 
 from . import _constants as constants
 from . import exceptions
-from ._location_cache import LocationCache, EndpointOperationType
+from .documents import DatabaseAccount
+from ._location_cache import LocationCache
 
 
 # pylint: disable=protected-access
@@ -58,7 +60,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.refresh_lock = threading.RLock()
         self.last_refresh_time = 0
         self._database_account_cache = None
-        self.consecutive_failures = {EndpointOperationType.ReadType: 0, EndpointOperationType.WriteType: 0}
+        self.consecutive_failures = {}
 
     def get_refresh_time_interval_in_ms_stub(self):
         return constants._Constants.DefaultUnavailableLocationExpirationTime
@@ -119,14 +121,14 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 # this will perform getDatabaseAccount calls to check endpoint health
                 self._endpoints_health_check(**kwargs)
 
-    def _GetDatabaseAccount(self, **kwargs):
+    def _GetDatabaseAccount(self, **kwargs) -> Tuple[DatabaseAccount, str]:
         """Gets the database account.
 
         First tries by using the default endpoint, and if that doesn't work,
         use the endpoints for the preferred locations in the order they are
         specified, to get the database account.
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
-        :rtype: ~azure.cosmos.DatabaseAccount
+        :rtype: tuple of (~azure.cosmos.DatabaseAccount, str)
         """
         try:
             database_account = self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
@@ -139,6 +141,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         # until we get the database account and return None at the end, if we are not able
         # to get that info from any endpoints
         except (exceptions.CosmosHttpResponseError, AzureError):
+            # when atm is available, L: 145, 146 should be removed as the global endpoint shouldn't be used
+            # for dataplane operations anymore
             self.mark_endpoint_unavailable_for_read(self.DefaultEndpoint, False)
             self.mark_endpoint_unavailable_for_write(self.DefaultEndpoint, False)
             for location_name in self.PreferredLocations:
@@ -161,7 +165,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         database_account, endpoint = self._GetDatabaseAccount(**kwargs)
         endpoints_attempted.add(endpoint)
         self.location_cache.perform_on_database_account_read(database_account)
-        # should use the regions in the order returned from gateway and only the ones specified in preferred locations
+
+        # should use the endpoints in the order returned from gateway and only the ones specified in preferred locations
         read_account_dual_endpoints_iterator = iter(self.location_cache.account_read_dual_endpoints_by_location
                                                     .values())
         first_read_dual_endpoint = None
@@ -186,6 +191,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 try:
                     if (dual_endpoint.get_primary() in
                             self.location_cache.location_unavailability_info_by_endpoint):
+                        # if the endpoint is unavailable, we need to lower the timeouts to be more aggressive in the
+                        # health check. This helps reduce the time the health check is blocking all requests.
                         previous_dba_read_timeout = self.Client.connection_policy.DBAReadTimeout
                         previous_dba_connection_timeout = self.Client.connection_policy.DBAConnectionTimeout
                         self.Client.connection_policy.DBAReadTimeout = (constants._Constants
@@ -193,6 +200,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                         self.Client.connection_policy.DBAConnectionTimeout = (constants._Constants
                                                                               .UnavailableEndpointDBATimeouts)
                         self.Client._GetDatabaseAccountCheck(dual_endpoint.get_primary(), **kwargs)
+                        # after the health check for that endpoint setting the timeouts back to their original values
                         self.Client.connection_policy.DBAReadTimeout = previous_dba_read_timeout
                         self.Client.connection_policy.DBAConnectionTimeout = previous_dba_connection_timeout
                     else:

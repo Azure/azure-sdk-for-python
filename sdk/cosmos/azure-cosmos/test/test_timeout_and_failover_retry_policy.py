@@ -94,8 +94,7 @@ class TestTimeoutRetryPolicy:
     def test_timeout_failover_retry_policy_for_consecutive_failures(self, setup, error_code):
         # clear unavailability info from other tests
         setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint.clear()
-        setup[COLLECTION].client_connection._global_endpoint_manager.consecutive_failures[EndpointOperationType.ReadType] = 0
-        setup[COLLECTION].client_connection._global_endpoint_manager.consecutive_failures[EndpointOperationType.WriteType] = 0
+        setup[COLLECTION].client_connection._global_endpoint_manager.consecutive_failures.clear()
         document_definition = {'id': 'failoverDoc-' + str(uuid.uuid4()),
                                'pk': 'pk',
                                'name': 'sample document',
