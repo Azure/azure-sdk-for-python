@@ -20,9 +20,9 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_clusters_list_by_subscription(self, resource_group):
         response = self.client.clusters.list_by_subscription(
-            api_version="2024-06-01-preview",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_clusters_list_by_resource_group(self, resource_group):
         response = self.client.clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-06-01-preview",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,11 +41,11 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_clusters_get(self, resource_group):
         response = self.client.clusters.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_clusters_begin_create_or_update(self, resource_group):
         response = self.client.clusters.begin_create_or_update(
             resource_group_name=resource_group.name,
             cluster_name="str",
@@ -192,7 +192,7 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
                 },
                 "workloadResourceIds": ["str"],
             },
-            api_version="2024-06-01-preview",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -200,11 +200,11 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_clusters_begin_delete(self, resource_group):
         response = self.client.clusters.begin_delete(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -212,11 +212,11 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_clusters_begin_update(self, resource_group):
         response = self.client.clusters.begin_update(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -224,12 +224,12 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_continue_update_version(self, resource_group):
+    def test_clusters_begin_continue_update_version(self, resource_group):
         response = self.client.clusters.begin_continue_update_version(
             resource_group_name=resource_group.name,
             cluster_name="str",
             cluster_continue_update_version_parameters={"machineGroupTargetingMode": "AlphaByRack"},
-            api_version="2024-06-01-preview",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -237,11 +237,11 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_deploy(self, resource_group):
+    def test_clusters_begin_deploy(self, resource_group):
         response = self.client.clusters.begin_deploy(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -249,11 +249,11 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_scan_runtime(self, resource_group):
+    def test_clusters_begin_scan_runtime(self, resource_group):
         response = self.client.clusters.begin_scan_runtime(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -261,12 +261,12 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update_version(self, resource_group):
+    def test_clusters_begin_update_version(self, resource_group):
         response = self.client.clusters.begin_update_version(
             resource_group_name=resource_group.name,
             cluster_name="str",
             cluster_update_version_parameters={"targetClusterVersion": "str"},
-            api_version="2024-06-01-preview",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
