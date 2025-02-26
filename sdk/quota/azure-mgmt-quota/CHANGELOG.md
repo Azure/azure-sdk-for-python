@@ -71,23 +71,13 @@
   - Added model `SubscriptionQuotaDetails`
   - Added model `SubscriptionQuotaDetailsName`
   - Added model `SystemData`
-  - Added model `GroupQuotaLimitsOperations`
-  - Added model `GroupQuotaLimitsRequestOperations`
-  - Added model `GroupQuotaSubscriptionAllocationOperations`
-  - Added model `GroupQuotaSubscriptionAllocationRequestOperations`
-  - Added model `GroupQuotaSubscriptionRequestsOperations`
-  - Added model `GroupQuotaSubscriptionsOperations`
-  - Added model `GroupQuotasOperations`
-  - Method `QuotaOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, resource_name: str, scope: str, create_quota_request: IO[bytes], content_type: str)`
-  - Method `QuotaOperations.begin_update` has a new overload `def begin_update(self: None, resource_name: str, scope: str, create_quota_request: IO[bytes], content_type: str)`
-  - Method `GroupQuotaLimitsRequestOperations.begin_update` has a new overload `def begin_update(self: None, management_group_id: str, group_quota_name: str, resource_provider_name: str, location: str, group_quota_request: Optional[GroupQuotaLimitList], content_type: str)`
-  - Method `GroupQuotaLimitsRequestOperations.begin_update` has a new overload `def begin_update(self: None, management_group_id: str, group_quota_name: str, resource_provider_name: str, location: str, group_quota_request: Optional[IO[bytes]], content_type: str)`
-  - Method `GroupQuotaSubscriptionAllocationRequestOperations.begin_update` has a new overload `def begin_update(self: None, management_group_id: str, group_quota_name: str, resource_provider_name: str, location: str, allocate_quota_request: SubscriptionQuotaAllocationsList, content_type: str)`
-  - Method `GroupQuotaSubscriptionAllocationRequestOperations.begin_update` has a new overload `def begin_update(self: None, management_group_id: str, group_quota_name: str, resource_provider_name: str, location: str, allocate_quota_request: IO[bytes], content_type: str)`
-  - Method `GroupQuotasOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, management_group_id: str, group_quota_name: str, group_quota_put_request_body: Optional[GroupQuotasEntity], content_type: str)`
-  - Method `GroupQuotasOperations.begin_create_or_update` has a new overload `def begin_create_or_update(self: None, management_group_id: str, group_quota_name: str, group_quota_put_request_body: Optional[IO[bytes]], content_type: str)`
-  - Method `GroupQuotasOperations.begin_update` has a new overload `def begin_update(self: None, management_group_id: str, group_quota_name: str, group_quotas_patch_request_body: Optional[GroupQuotasEntityPatch], content_type: str)`
-  - Method `GroupQuotasOperations.begin_update` has a new overload `def begin_update(self: None, management_group_id: str, group_quota_name: str, group_quotas_patch_request_body: Optional[IO[bytes]], content_type: str)`
+  - Added operation group `GroupQuotaLimitsOperations`
+  - Added operation group `GroupQuotaLimitsRequestOperations`
+  - Added operation group `GroupQuotaSubscriptionAllocationOperations`
+  - Added operation group `GroupQuotaSubscriptionAllocationRequestOperations`
+  - Added operation group `GroupQuotaSubscriptionRequestsOperations`
+  - Added operation group `GroupQuotaSubscriptionsOperations`
+  - Added operation group `GroupQuotasOperations`
 
 ### Breaking Changes
 
