@@ -52,7 +52,7 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
         self._error_cls = error_cls
 
     async def _setup(self):
-        await self._parsed_results.init()
+        self._parsed_results = await self._parsed_results.init()
         first_result = await self._parsed_results.__anext__()
         self._first_result = self._process_record(first_result)  # pylint: disable=attribute-defined-outside-init
 
