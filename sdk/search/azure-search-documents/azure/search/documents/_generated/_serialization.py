@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -48,9 +48,7 @@ from typing import (
     IO,
     Mapping,
     Callable,
-    TypeVar,
     MutableMapping,
-    Type,
     List,
 )
 
@@ -61,13 +59,13 @@ except ImportError:
 import xml.etree.ElementTree as ET
 
 import isodate  # type: ignore
+from typing_extensions import Self
 
 from azure.core.exceptions import DeserializationError, SerializationError
 from azure.core.serialization import NULL as CoreNull
 
 _BOM = codecs.BOM_UTF8.decode(encoding="utf-8")
 
-ModelType = TypeVar("ModelType", bound="Model")
 JSON = MutableMapping[str, Any]
 
 
@@ -185,73 +183,7 @@ try:
 except NameError:
     _long_type = int
 
-
-class UTC(datetime.tzinfo):
-    """Time Zone info for handling UTC"""
-
-    def utcoffset(self, dt):
-        """UTF offset for UTC is 0.
-
-        :param datetime.datetime dt: The datetime
-        :returns: The offset
-        :rtype: datetime.timedelta
-        """
-        return datetime.timedelta(0)
-
-    def tzname(self, dt):
-        """Timestamp representation.
-
-        :param datetime.datetime dt: The datetime
-        :returns: The timestamp representation
-        :rtype: str
-        """
-        return "Z"
-
-    def dst(self, dt):
-        """No daylight saving for UTC.
-
-        :param datetime.datetime dt: The datetime
-        :returns: The daylight saving time
-        :rtype: datetime.timedelta
-        """
-        return datetime.timedelta(hours=1)
-
-
-try:
-    from datetime import timezone as _FixedOffset  # type: ignore
-except ImportError:  # Python 2.7
-
-    class _FixedOffset(datetime.tzinfo):  # type: ignore
-        """Fixed offset in minutes east from UTC.
-        Copy/pasted from Python doc
-        :param datetime.timedelta offset: offset in timedelta format
-        """
-
-        def __init__(self, offset) -> None:
-            self.__offset = offset
-
-        def utcoffset(self, dt):
-            return self.__offset
-
-        def tzname(self, dt):
-            return str(self.__offset.total_seconds() / 3600)
-
-        def __repr__(self):
-            return "<FixedOffset {}>".format(self.tzname(None))
-
-        def dst(self, dt):
-            return datetime.timedelta(0)
-
-        def __getinitargs__(self):
-            return (self.__offset,)
-
-
-try:
-    from datetime import timezone
-
-    TZ_UTC = timezone.utc
-except ImportError:
-    TZ_UTC = UTC()  # type: ignore
+TZ_UTC = datetime.timezone.utc
 
 _FLATTEN = re.compile(r"(?<!\\)\.")
 
@@ -310,7 +242,7 @@ def _create_xml_node(tag, prefix=None, ns=None):
     return ET.Element(tag)
 
 
-class Model(object):
+class Model:
     """Mixin for all client request body/response body models to support
     serialization and deserialization.
     """
@@ -450,25 +382,25 @@ class Model(object):
         return client_models
 
     @classmethod
-    def deserialize(cls: Type[ModelType], data: Any, content_type: Optional[str] = None) -> ModelType:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Self:
         """Parse a str using the RestAPI syntax and return a model.
 
         :param str data: A str using RestAPI structure. JSON by default.
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: An instance of this model
         :raises DeserializationError: if something went wrong
-        :rtype: ModelType
+        :rtype: Self
         """
         deserializer = Deserializer(cls._infer_class_models())
         return deserializer(cls.__name__, data, content_type=content_type)  # type: ignore
 
     @classmethod
     def from_dict(
-        cls: Type[ModelType],
+        cls,
         data: Any,
         key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> ModelType:
+    ) -> Self:
         """Parse a dict using given key extractor return a model.
 
         By default consider key
@@ -480,7 +412,7 @@ class Model(object):
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: An instance of this model
         :raises DeserializationError: if something went wrong
-        :rtype: ModelType
+        :rtype: Self
         """
         deserializer = Deserializer(cls._infer_class_models())
         deserializer.key_extractors = (  # type: ignore
@@ -563,7 +495,7 @@ def _decode_attribute_map_key(key):
     return key.replace("\\.", ".")
 
 
-class Serializer(object):  # pylint: disable=too-many-public-methods
+class Serializer:  # pylint: disable=too-many-public-methods
     """Request object model serializer."""
 
     basic_types = {str: "str", int: "int", bool: "bool", float: "float"}
@@ -1429,7 +1361,7 @@ def xml_key_extractor(attr, attr_desc, data):  # pylint: disable=unused-argument
         # Iter and wrapped, should have found one node only (the wrap one)
         if len(children) != 1:
             raise DeserializationError(
-                "Tried to deserialize an array not wrapped, and found several nodes '{}'. Maybe you should declare this array as wrapped?".format(  # pylint: disable=line-too-long
+                "Tried to deserialize an array not wrapped, and found several nodes '{}'. Maybe you should declare this array as wrapped?".format(
                     xml_name
                 )
             )
@@ -1441,7 +1373,7 @@ def xml_key_extractor(attr, attr_desc, data):  # pylint: disable=unused-argument
     return children[0]
 
 
-class Deserializer(object):
+class Deserializer:
     """Response object model deserializer.
 
     :param dict classes: Class type dictionary for deserializing complex types.
@@ -1683,17 +1615,21 @@ class Deserializer(object):
             subtype = getattr(response, "_subtype_map", {})
             try:
                 readonly = [
-                    k for k, v in response._validation.items() if v.get("readonly")  # pylint: disable=protected-access
+                    k
+                    for k, v in response._validation.items()  # pylint: disable=protected-access  # type: ignore
+                    if v.get("readonly")
                 ]
                 const = [
-                    k for k, v in response._validation.items() if v.get("constant")  # pylint: disable=protected-access
+                    k
+                    for k, v in response._validation.items()  # pylint: disable=protected-access  # type: ignore
+                    if v.get("constant")
                 ]
                 kwargs = {k: v for k, v in attrs.items() if k not in subtype and k not in readonly + const}
                 response_obj = response(**kwargs)
                 for attr in readonly:
                     setattr(response_obj, attr, attrs.get(attr))
                 if additional_properties:
-                    response_obj.additional_properties = additional_properties
+                    response_obj.additional_properties = additional_properties  # type: ignore
                 return response_obj
             except TypeError as err:
                 msg = "Unable to deserialize {} into model {}. ".format(kwargs, response)  # type: ignore
@@ -2047,7 +1983,7 @@ class Deserializer(object):
         try:
             parsed_date = email.utils.parsedate_tz(attr)  # type: ignore
             date_obj = datetime.datetime(
-                *parsed_date[:6], tzinfo=_FixedOffset(datetime.timedelta(minutes=(parsed_date[9] or 0) / 60))
+                *parsed_date[:6], tzinfo=datetime.timezone(datetime.timedelta(minutes=(parsed_date[9] or 0) / 60))
             )
             if not date_obj.tzinfo:
                 date_obj = date_obj.astimezone(tz=TZ_UTC)
