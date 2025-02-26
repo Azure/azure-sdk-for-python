@@ -1,0 +1,60 @@
+{% set name = "azure-ai-documentintelligence" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('DOCUMENTINTELLIGENCE_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - pip
+    - python
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - python
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.ai.documentintelligence
+    - azure.ai.documentintelligence.aio
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure AI Document Intelligence Client Library for Python"
+  description: |
+    Azure AI Document Intelligence (previously known as Form Recognizer) is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
+
+    - Layout - Extract content and structure (ex. words, selection marks, tables) from documents.
+    - Document - Analyze key-value pairs in addition to general layout from documents.
+    - Read - Read page information from documents.
+    - Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents, U.S. W-2 tax documents, among others) using prebuilt models.
+    - Custom - Build custom models from your own data to extract tailored field values in addition to general layout from documents.
+    - Classifiers - Build custom classification models that combine layout and language features to accurately detect and identify documents you process within your application.
+    - Add-on capabilities - Extract barcodes/QR codes, formulas, font/style, etc. or enable high resolution mode for large documents with optional parameters.
+
+    Please see https://aka.ms/azsdk/conda/releases/documentintelligence for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99
