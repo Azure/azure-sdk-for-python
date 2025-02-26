@@ -305,6 +305,7 @@ class BlockBlobOperations:
         copy_source_blob_properties: Optional[bool] = None,
         copy_source_authorization: Optional[str] = None,
         copy_source_tags: Optional[Union[str, _models.BlobCopySourceTags]] = None,
+        file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
         blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
@@ -367,6 +368,8 @@ class BlockBlobOperations:
          copied or replaced with the tags specified by x-ms-tags. Known values are: "REPLACE" and
          "COPY". Default value is None.
         :type copy_source_tags: str or ~azure.storage.blob.models.BlobCopySourceTags
+        :param file_request_intent: Valid value is backup. "backup" Default value is None.
+        :type file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :param blob_http_headers: Parameter group. Default value is None.
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -482,6 +485,7 @@ class BlockBlobOperations:
             copy_source_blob_properties=copy_source_blob_properties,
             copy_source_authorization=copy_source_authorization,
             copy_source_tags=copy_source_tags,
+            file_request_intent=file_request_intent,
             blob_type=blob_type,
             version=self._config.version,
             headers=_headers,
@@ -690,6 +694,7 @@ class BlockBlobOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         copy_source_authorization: Optional[str] = None,
+        file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -728,6 +733,8 @@ class BlockBlobOperations:
         :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
          OAuth access token to copy source. Default value is None.
         :type copy_source_authorization: str
+        :param file_request_intent: Valid value is backup. "backup" Default value is None.
+        :type file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param cpk_scope_info: Parameter group. Default value is None.
@@ -798,6 +805,7 @@ class BlockBlobOperations:
             source_if_none_match=_source_if_none_match,
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
+            file_request_intent=file_request_intent,
             comp=comp,
             version=self._config.version,
             headers=_headers,
