@@ -203,4 +203,3 @@ class TestMgmtKeyVault(AzureMgmtRecordedTestCase):
 
         # /Vaults/get/Retrieve a deleted vault[get]
         result = self.mgmt_client.vaults.get_deleted(location=LOCATION, vault_name=VAULT_NAME)
-
