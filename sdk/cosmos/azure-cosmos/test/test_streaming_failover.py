@@ -48,13 +48,13 @@ class TestStreamingFailOver(unittest.TestCase):
                                             connection_policy=connection_policy)
         self.original_get_database_account = client.client_connection.GetDatabaseAccount
         self.original_get_read_endpoints = (client.client_connection._global_endpoint_manager.location_cache
-                                            .get_read_endpoints())
+                                            .get_read_regional_endpoints())
         self.original_get_write_endpoints = (client.client_connection._global_endpoint_manager.location_cache
-                                             .get_write_endpoints())
+                                             .get_write_regional_endpoints())
         client.client_connection.GetDatabaseAccount = self.mock_get_database_account
-        client.client_connection._global_endpoint_manager.location_cache.get_read_endpoints = (
+        client.client_connection._global_endpoint_manager.location_cache.get_read_regional_endpoints = (
             self.mock_get_read_endpoints)
-        client.client_connection._global_endpoint_manager.location_cache.get_write_endpoints = (
+        client.client_connection._global_endpoint_manager.location_cache.get_write_regional_endpoints = (
             self.mock_get_write_endpoints)
         created_db = client.create_database_if_not_exists("streaming-db" + str(uuid.uuid4()))
         created_container = created_db.create_container("streaming-container" + str(uuid.uuid4()),
@@ -82,9 +82,9 @@ class TestStreamingFailOver(unittest.TestCase):
 
         cosmos_client_connection.CosmosClientConnection.GetDatabaseAccount = self.original_get_database_account
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        client.client_connection._global_endpoint_manager.location_cache.get_read_endpoints = (
+        client.client_connection._global_endpoint_manager.location_cache.get_read_regional_endpoints = (
             self.original_get_read_endpoints)
-        client.client_connection._global_endpoint_manager.location_cache.get_write_endpoints = (
+        client.client_connection._global_endpoint_manager.location_cache.get_write_regional_endpoints = (
             self.original_get_write_endpoints)
 
     def mock_get_database_account(self, url_connection=None):
@@ -134,8 +134,8 @@ class TestStreamingFailOver(unittest.TestCase):
         client = cosmos_client.CosmosClient(self.DEFAULT_ENDPOINT, self.MASTER_KEY,
                                             consistency_level=documents.ConsistencyLevel.Eventual,
                                             connection_policy=connection_policy)
-        client.client_connection.GetDatabaseAccount = self.mock_get_database_account
         self.original_get_database_account = client.client_connection.GetDatabaseAccount
+        client.client_connection.GetDatabaseAccount = self.mock_get_database_account
 
         endpoint_manager = global_endpoint_manager._GlobalEndpointManager(client.client_connection)
 

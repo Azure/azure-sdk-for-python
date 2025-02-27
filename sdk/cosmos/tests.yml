@@ -6,6 +6,11 @@ extends:
       CloudConfig:
         Public:
           ServiceConnection: azure-sdk-tests-cosmos
-      MaxParallel: 6
+      MatrixConfigs:
+        - Name: Cosmos_live_test
+          Path: sdk/cosmos/live-platform-matrix.json
+          Selection: all
+          GenerateVMJobs: true
+      MaxParallel: 8
       BuildTargetingString: azure-cosmos
       ServiceDirectory: cosmos

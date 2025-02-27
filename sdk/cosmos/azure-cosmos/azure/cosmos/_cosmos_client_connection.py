@@ -25,6 +25,7 @@
 """
 import os
 import urllib.parse
+import uuid
 from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast, Type
 from typing_extensions import TypedDict
 from urllib3.util.retry import Retry
@@ -109,7 +110,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     _DefaultStringHashPrecision = 3
     _DefaultStringRangePrecision = -1
 
-    def __init__(
+    def __init__( # pylint: disable=too-many-statements
         self,
         url_connection: str,
         auth: CredentialDict,
@@ -131,6 +132,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The default consistency policy for client operations.
 
         """
+        self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
         self.master_key: Optional[str] = None
         self.resource_tokens: Optional[Mapping[str, Any]] = None
@@ -2555,7 +2557,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             url_connection = self.url_connection
 
         headers = base.GetHeaders(self, self.default_headers, "get", "", "", "",
-                                  documents._OperationType.Read,{})
+                                  documents._OperationType.Read,{}, client_id=self.client_id)
         request_params = RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
         result, last_response_headers = self.__Get("", request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
@@ -2588,6 +2590,26 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if response_hook:
             response_hook(last_response_headers, result)
         return database_account
+
+    def _GetDatabaseAccountCheck(
+            self,
+            url_connection: Optional[str] = None,
+            **kwargs: Any
+    ):
+        """Gets database account info.
+
+        :param str url_connection: the endpoint used to get the database account
+        :return: The Database Account.
+        :rtype: documents.DatabaseAccount
+        """
+        if url_connection is None:
+            url_connection = self.url_connection
+
+        headers = base.GetHeaders(self, self.default_headers, "get", "", "", "",
+                                  documents._OperationType.Read,{}, client_id=self.client_id)
+        request_params = RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
+        self.__Get("", request_params, headers, **kwargs)
+
 
     def Create(
         self,

@@ -1,5 +1,37 @@
 ## Release History
 
+### 4.10.0b1 (2025-02-13)
+
+#### Features Added
+* Added ability to replace `computed_properties` through `replace_container` method. See [PR 39543](https://github.com/Azure/azure-sdk-for-python/pull/39543)
+
+#### Other Changes
+* Un-marked `computed_properties` keyword as **provisional**. See [PR 39543](https://github.com/Azure/azure-sdk-for-python/pull/39543)
+
+### 4.9.1b4 (2025-02-06)
+
+#### Bugs Fixed
+* Improved retry logic for read requests to failover on other regions in case of timeouts and any error codes >= 500. See [PR 39596](https://github.com/Azure/azure-sdk-for-python/pull/39596)
+* Fixed a regression where read operations were not retrying on timeouts. See [PR 39596](https://github.com/Azure/azure-sdk-for-python/pull/39596)
+* Updated default read timeout for `getDatabaseAccount` calls to 3 seconds. See [PR 39596](https://github.com/Azure/azure-sdk-for-python/pull/39596)
+
+### 4.9.1b3 (2025-02-04)
+
+#### Features Added
+* Improved retry logic by retrying alternative endpoint for writes within a region before performing a cross region retry. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* Added endpoint health check logic during database account calls. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+
+#### Bugs Fixed
+* Fixed unnecessary retries on the wrong region for timout retry policy. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* All client connection errors from aiohttp will be retried. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+
+#### Other Changes
+* Changed defaults for retry delays. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* Changed default connection timeout to be 5 seconds. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* Changed default read timeout to be 65 seconds. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* On database account calls send a client id header for load balancing. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* Removed aiohttp dependency. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+
 ### 4.9.1b2 (2025-01-24)
 
 #### Features Added

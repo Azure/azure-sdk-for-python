@@ -24,7 +24,6 @@ database service.
 """
 
 import threading
-from urllib.parse import urlparse
 
 from azure.core.exceptions import AzureError
 
@@ -64,25 +63,28 @@ class _GlobalEndpointManager(object):
         return constants._Constants.DefaultUnavailableLocationExpirationTime
 
     def get_write_endpoint(self):
-        return self.location_cache.get_write_endpoint()
+        return self.location_cache.get_write_regional_endpoint()
 
     def get_read_endpoint(self):
-        return self.location_cache.get_read_endpoint()
+        return self.location_cache.get_read_regional_endpoint()
+
+    def swap_regional_endpoint_values(self, request):
+        return self.location_cache.swap_regional_endpoint_values(request)
 
     def resolve_service_endpoint(self, request):
         return self.location_cache.resolve_service_endpoint(request)
 
-    def mark_endpoint_unavailable_for_read(self, endpoint):
-        self.location_cache.mark_endpoint_unavailable_for_read(endpoint)
+    def mark_endpoint_unavailable_for_read(self, endpoint, refresh_cache):
+        self.location_cache.mark_endpoint_unavailable_for_read(endpoint, refresh_cache)
 
-    def mark_endpoint_unavailable_for_write(self, endpoint):
-        self.location_cache.mark_endpoint_unavailable_for_write(endpoint)
+    def mark_endpoint_unavailable_for_write(self, endpoint, refresh_cache):
+        self.location_cache.mark_endpoint_unavailable_for_write(endpoint, refresh_cache)
 
-    def get_ordered_write_endpoints(self):
-        return self.location_cache.get_ordered_write_endpoints()
+    def get_ordered_write_locations(self):
+        return self.location_cache.get_ordered_write_locations()
 
-    def get_ordered_read_endpoints(self):
-        return self.location_cache.get_ordered_read_endpoints()
+    def get_ordered_read_locations(self):
+        return self.location_cache.get_ordered_read_locations()
 
     def can_use_multiple_write_locations(self, request):
         return self.location_cache.can_use_multiple_write_locations_for_request(request)
@@ -90,6 +92,9 @@ class _GlobalEndpointManager(object):
     def force_refresh(self, database_account):
         self.refresh_needed = True
         self.refresh_endpoint_list(database_account)
+
+    def update_location_cache(self):
+        self.location_cache.update_location_cache()
 
     def refresh_endpoint_list(self, database_account, **kwargs):
         if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
@@ -115,6 +120,8 @@ class _GlobalEndpointManager(object):
                 self.last_refresh_time = self.location_cache.current_time_millis()
                 database_account = self._GetDatabaseAccount(**kwargs)
                 self.location_cache.perform_on_database_account_read(database_account)
+                # this will perform getDatabaseAccount calls to check endpoint health
+                self._endpoints_health_check(**kwargs)
 
     def _GetDatabaseAccount(self, **kwargs):
         """Gets the database account.
@@ -137,7 +144,7 @@ class _GlobalEndpointManager(object):
         # to get that info from any endpoints
         except (exceptions.CosmosHttpResponseError, AzureError):
             for location_name in self.PreferredLocations:
-                locational_endpoint = _GlobalEndpointManager.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
+                locational_endpoint = LocationCache.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
                     database_account = self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
                     self._database_account_cache = database_account
@@ -145,6 +152,28 @@ class _GlobalEndpointManager(object):
                 except (exceptions.CosmosHttpResponseError, AzureError):
                     pass
             raise
+
+    def _endpoints_health_check(self, **kwargs):
+        """Gets the database account for each endpoint.
+
+        Validating if the endpoint is healthy else marking it as unavailable.
+        """
+        all_endpoints = [self.location_cache.read_regional_endpoints[0]]
+        all_endpoints.extend(self.location_cache.write_regional_endpoints)
+        count = 0
+        for endpoint in all_endpoints:
+            count += 1
+            if count > 3:
+                break
+            try:
+                self.Client._GetDatabaseAccountCheck(endpoint.get_current(), **kwargs)
+            except (exceptions.CosmosHttpResponseError, AzureError):
+                if endpoint in self.location_cache.read_regional_endpoints:
+                    self.mark_endpoint_unavailable_for_read(endpoint.get_current(), False)
+                if endpoint in self.location_cache.write_regional_endpoints:
+                    self.mark_endpoint_unavailable_for_write(endpoint.get_current(), False)
+                    endpoint.swap()
+        self.location_cache.update_location_cache()
 
     def _GetDatabaseAccountStub(self, endpoint, **kwargs):
         """Stub for getting database account from the client.
@@ -155,29 +184,3 @@ class _GlobalEndpointManager(object):
         :rtype: ~azure.cosmos.DatabaseAccount
         """
         return self.Client.GetDatabaseAccount(endpoint, **kwargs)
-
-    @staticmethod
-    def GetLocationalEndpoint(default_endpoint, location_name):
-        # For default_endpoint like 'https://contoso.documents.azure.com:443/' parse it to
-        # generate URL format. This default_endpoint should be global endpoint(and cannot
-        # be a locational endpoint) and we agreed to document that
-        endpoint_url = urlparse(default_endpoint)
-
-        # hostname attribute in endpoint_url will return 'contoso.documents.azure.com'
-        if endpoint_url.hostname is not None:
-            hostname_parts = str(endpoint_url.hostname).lower().split(".")
-            if hostname_parts is not None:
-                # global_database_account_name will return 'contoso'
-                global_database_account_name = hostname_parts[0]
-
-                # Prepare the locational_database_account_name as contoso-EastUS for location_name 'East US'
-                locational_database_account_name = global_database_account_name + "-" + location_name.replace(" ", "")
-
-                # Replace 'contoso' with 'contoso-EastUS' and return locational_endpoint
-                # as https://contoso-EastUS.documents.azure.com:443/
-                locational_endpoint = default_endpoint.lower().replace(
-                    global_database_account_name, locational_database_account_name, 1
-                )
-                return locational_endpoint
-
-        return None

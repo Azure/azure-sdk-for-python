@@ -49,8 +49,13 @@ def test_compute(data, initial, expected):
     actual = crc64.compute(data, initial)
     assert actual == expected
 
-def test_compute_chunks():
-    data = os.urandom(4 * 1024 * 1024)
+@pytest.mark.parametrize("size", [1024, 4 * 1024 * 1024, 1 * 1024 * 1024 * 1024, 3 * 1024 * 1024 * 1024])
+def test_compute_chunks(size):
+    data = b''
+    while len(data) < size:
+        length = min(size - len(data), 1 * 1024 * 1024 * 1024)
+        data += os.urandom(length)
+
     chunk_size = 1024 * 1024
     full_crc = crc64.compute(data, 0)
 
