@@ -106,3 +106,36 @@ class TestRealtime(AzureRecordedTestCase):
                     assert event.text
                 elif event.type == "response.done":
                     break
+
+    @configure
+    @pytest.mark.parametrize(
+        "api_type, api_version",
+        [(GPT_4_AZURE, "2024-10-01-preview")],
+    )
+    def test_realtime_text_deployment_name(self, client, api_type, api_version, **kwargs):
+        client = openai.AzureOpenAI(
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT),
+            api_key=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_KEY),
+            api_version=api_version,
+            azure_deployment="gpt-4o-realtime-preview-1001"
+        )
+        
+        with client.beta.realtime.connect(
+            model="invalid"
+        ) as connection:
+            connection.session.update(session={"modalities": ["text"]})
+            connection.conversation.item.create(
+                item={
+                    "type": "message",
+                    "role": "user",
+                    "content": [{"type": "input_text", "text": "Say hello!"}],
+                }
+            )
+            connection.response.create()
+            for event in connection:
+                if event.type == "response.text.delta":
+                    assert event.delta
+                elif event.type == "response.text.done":
+                    assert event.text
+                elif event.type == "response.done":
+                    break
