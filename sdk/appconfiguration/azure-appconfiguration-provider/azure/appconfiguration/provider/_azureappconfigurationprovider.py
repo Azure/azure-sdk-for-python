@@ -409,7 +409,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         is_failover_request = False
         replica_count = self._replica_client_manager.get_client_count() - 1
 
-        error_message = "Failed to load configuration settings. No Azure App Configuration stores successfully loaded from."
+        error_message = """
+        Failed to load configuration settings. No Azure App Configuration stores successfully loaded from.
+        """
         exception: Exception = RuntimeError(error_message)
 
         while client := self._replica_client_manager.get_next_active_client():
