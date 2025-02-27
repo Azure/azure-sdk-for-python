@@ -64,6 +64,12 @@ def get_formatted_template(data: dict, annotation_task: str) -> str:
             "context": data.get("context", ""),
         }
         return json.dumps(as_dict)
+    if annotation_task == Tasks.CODE_VULNERABILITY:
+        as_dict = {
+            "context": data.get("query", ""),
+            "completion": data.get("response", "")
+        }
+        return json.dumps(as_dict)
     as_dict = {
         "query": html.escape(data.get("query", "")),
         "response": html.escape(data.get("response", "")),
@@ -274,6 +280,7 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
         EvaluationMetrics.PROTECTED_MATERIAL,
         _InternalEvaluationMetrics.ECI,
         EvaluationMetrics.XPIA,
+        EvaluationMetrics.CODE_VULNERABILITY,
     }:
         result = {}
         if not batch_response or len(batch_response[0]) == 0:
@@ -313,6 +320,13 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
             result[metric_display_name + "_information_gathering"] = (
                 parsed_response["information_gathering"] if "information_gathering" in parsed_response else math.nan
             )
+        if metric_name == EvaluationMetrics.CODE_VULNERABILITY:
+            # Add all attributes under the metadata.
+            metadata = {}
+            for key, value in parsed_response.items():
+                if key not in {"label", "reasoning", "version"}:
+                    metadata[key.replace("-", "_")] = value
+            result[metric_display_name + "_metadata"] = metadata
         return result
     return _parse_content_harm_response(batch_response, metric_name, metric_display_name)
 
