@@ -1,4 +1,3 @@
-$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
 name: blue
 type: kubernetes
 endpoint_name: mit-test-1
