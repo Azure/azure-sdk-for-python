@@ -164,11 +164,11 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         _set_statsbeat_custom_events_feature()
         envelope.name = "Microsoft.ApplicationInsights.Event"
         event_name = ""
-        if log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME):
-            event_name = str(log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME))
+        if log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME):  # type: ignore
+            event_name = str(log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME))  # type: ignore
         else:
             event_name = _map_body_to_message(log_record.body)
-        data = TelemetryEventData(
+        data = TelemetryEventData(  # type: ignore
             name=event_name,
             properties=properties,
         )

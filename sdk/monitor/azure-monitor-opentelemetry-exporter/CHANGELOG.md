@@ -5,7 +5,7 @@
 ### Features Added
 
 - Support sending `customEvent` telemetry through special `microsoft` marker
-  ([#39379](https://github.com/Azure/azure-sdk-for-python/pull/39379))
+  ([#39886](https://github.com/Azure/azure-sdk-for-python/pull/39886))
 
 ### Breaking Changes
 
