@@ -13,14 +13,11 @@ try:
     tenantId = os.environ["PURVIEW_TENANT_ID"]
     clientId = os.environ["PURVIEW_CLIENT_ID"]
     clientSecret = os.environ["PURVIEW_CLIENT_SECRET"]
-    authority = os.environ["AUTHORITY_HOST"] #e.g"https://login.microsoftonline.com/"
+    authority = os.environ["AUTHORITY_HOST"]  # e.g"https://login.microsoftonline.com/"
 except KeyError:
     LOG.error("Missing environment variable - please set if before running the example")
     exit()
 
-credential = ClientSecretCredential(tenantId, clientId, clientSecret,authority = authority)
+credential = ClientSecretCredential(tenantId, clientId, clientSecret, authority=authority)
 client = DataMapClient(endpoint=endpoint, credential=credential)
 response = client.type_definition.get()
-
-
-

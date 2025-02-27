@@ -85,6 +85,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
     ) -> None:
         self.job_name = kwargs.pop("job_name", None)
         self._intellectual_property = kwargs.pop("intellectual_property", None)
+        self._system_metadata = kwargs.pop("system_metadata", None)
         super().__init__(
             name=name,
             version=version,
@@ -129,6 +130,9 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         rest_model_version: ModelVersionProperties = model_rest_object.properties
         arm_id = AMLVersionedArmId(arm_id=model_rest_object.id)
         model_stage = rest_model_version.stage if hasattr(rest_model_version, "stage") else None
+        model_system_metadata = (
+            rest_model_version.system_metadata if hasattr(rest_model_version, "system_metadata") else None
+        )
         if hasattr(rest_model_version, "flavors"):
             flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
         model = Model(
@@ -150,6 +154,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
                 if rest_model_version.intellectual_property
                 else None
             ),
+            system_metadata=model_system_metadata,
         )
         return model
 
@@ -182,6 +187,8 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             stage=self.stage,
             is_anonymous=self._is_anonymous,
         )
+        model_version.system_metadata = self._system_metadata if hasattr(self, "_system_metadata") else None
+
         model_version_resource = ModelVersion(properties=model_version)
 
         return model_version_resource

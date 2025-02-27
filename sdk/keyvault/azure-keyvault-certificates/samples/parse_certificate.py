@@ -77,16 +77,13 @@ print(f"Certificate secret with name '{certificate_secret.name}' was found.")
 # in place of load_key_and_certificates.
 cert_bytes = base64.b64decode(certificate_secret.value)
 private_key, public_certificate, additional_certificates = pkcs12.load_key_and_certificates(
-    data=cert_bytes,
-    password=None
+    data=cert_bytes, password=None
 )
 print(f"Certificate with name '{certificate_secret.name}' was parsed.")
 
 # Now we can clean up the vault by deleting, then purging, the certificate.
 print("\n.. Delete certificate")
-delete_operation_poller = certificate_client.begin_delete_certificate(
-    certificate_name=cert_name
-)
+delete_operation_poller = certificate_client.begin_delete_certificate(certificate_name=cert_name)
 deleted_certificate = delete_operation_poller.result()
 assert deleted_certificate.name
 delete_operation_poller.wait()

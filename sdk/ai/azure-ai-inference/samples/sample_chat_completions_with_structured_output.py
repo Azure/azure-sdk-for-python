@@ -28,7 +28,7 @@ USAGE:
         where `your-unique-resource-name` is your globally unique AOAI resource name,
         and `your-deployment-name` is your AI Model deployment name.
         For example: https://your-unique-host.openai.azure.com/openai/deployments/gpt-4o
-    2) AZURE_OPENAI_CHAT_KEY - Your model key (a 32-character string). Keep it secret. This
+    2) AZURE_OPENAI_CHAT_KEY - Your model key. Keep it secret. This
         is only required for key authentication.
 
     Update `api_version` (the AOAI REST API version) as needed, based on the model documents.

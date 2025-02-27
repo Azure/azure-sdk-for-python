@@ -13,7 +13,6 @@ from conftest import (
     GPT_4_AZURE,
     GPT_4_OPENAI,
     configure,
-    PREVIEW,
 )
 
 
@@ -23,7 +22,7 @@ class TestRealtime(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")],
+        [(GPT_4_AZURE, "2024-10-01-preview"), (GPT_4_OPENAI, "v1")],
     )
     def test_realtime_text(self, client, api_type, api_version, **kwargs):
         with client.beta.realtime.connect(
@@ -49,7 +48,7 @@ class TestRealtime(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(GPT_4_AZURE, PREVIEW)],
+        [(GPT_4_AZURE, "2024-10-01-preview")],
     )
     def test_realtime_text_api_key(self, client, api_type, api_version, **kwargs):
         client = openai.AzureOpenAI(
@@ -80,7 +79,7 @@ class TestRealtime(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(GPT_4_AZURE, PREVIEW)],
+        [(GPT_4_AZURE, "2024-10-01-preview")],
     )
     def test_realtime_text_ad_token(self, client, api_type, api_version, **kwargs):
         client = openai.AzureOpenAI(

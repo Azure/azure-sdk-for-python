@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0 (2025-02-26)
+
+### Features Added
+
+  - Model `OperationStatusResult` added property `resource_id`
+
 ## 1.0.0b2 (2024-12-16)
 
 ### Features Added

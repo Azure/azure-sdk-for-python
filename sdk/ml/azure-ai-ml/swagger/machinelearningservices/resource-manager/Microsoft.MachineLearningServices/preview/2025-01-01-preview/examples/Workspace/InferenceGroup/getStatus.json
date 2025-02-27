@@ -1,0 +1,26 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "poolName": "string",
+    "groupName": "string",
+    "api-version": "2025-01-01-preview"
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "requestedCapacity": 1,
+        "actualCapacityInfo": {
+          "total": 1,
+          "succeeded": 1,
+          "failed": 1,
+          "outdatedSucceeded": 1,
+          "outdatedFailed": 1
+        },
+        "endpointCount": 1
+      }
+    }
+  }
+}

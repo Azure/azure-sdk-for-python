@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +7,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -42,7 +41,7 @@ from .._vendor import SubscriptionClientMixinABC
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -82,7 +81,7 @@ class Operations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-06-01"))
         cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -182,7 +181,7 @@ class SubscriptionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-06-01"))
         cls: ClsType[_models.LocationListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -252,7 +251,7 @@ class SubscriptionsOperations:
         :rtype: ~azure.mgmt.resource.subscriptions.v2016_06_01.models.Subscription
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -307,7 +306,7 @@ class SubscriptionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-06-01"))
         cls: ClsType[_models.SubscriptionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -423,7 +422,7 @@ class SubscriptionsOperations:
         :rtype: ~azure.mgmt.resource.subscriptions.v2016_06_01.models.CheckZonePeersResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -499,6 +498,7 @@ class TenantsOperations:
 
     @distributed_trace
     def list(self, **kwargs: Any) -> AsyncIterable["_models.TenantIdDescription"]:
+        # pylint: disable=line-too-long
         """Gets the tenants for your account.
 
         :return: An iterator like instance of either TenantIdDescription or the result of cls(response)
@@ -512,7 +512,7 @@ class TenantsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2016-06-01"))
         cls: ClsType[_models.TenantListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -645,7 +645,7 @@ class SubscriptionClientOperationsMixin(SubscriptionClientMixinABC):
         :rtype: ~azure.mgmt.resource.subscriptions.v2016_06_01.models.CheckResourceNameResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

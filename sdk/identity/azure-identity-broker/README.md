@@ -115,6 +115,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [entra_id]: https://learn.microsoft.com/entra/identity/
 [ibc]: https://learn.microsoft.com/python/api/azure-identity/azure.identity.interactivebrowsercredential?view=azure-python
 [pip]: https://pypi.org/project/pip
-[ref_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-identity-broker/latest/index.html
+[ref_docs]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-identity-broker/latest/index.html
 [source_code]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity-broker
 [troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md
