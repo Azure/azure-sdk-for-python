@@ -3,9 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the distributed tracing policy in an async pipeline."""
-from unittest import mock
 import pytest
-
 
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import AsyncRetryPolicy, DistributedTracingPolicy
@@ -13,7 +11,6 @@ from azure.core.pipeline.transport import (
     HttpResponse,
     AsyncHttpTransport,
 )
-from azure.core.settings import settings
 
 from tracing_common import FakeSpan
 from utils import HTTP_REQUESTS
@@ -64,9 +61,6 @@ async def test_span_retry_attributes_plugin_tracing(tracing_implementation, http
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_span_retry_attributes_native_tracing(tracing_helper, http_request):
     """Test that the retry count is added to the span attributes with native tracing."""
-
-    settings.tracing_enabled = True
-
     http_request = http_request("GET", "http://localhost/")
     retry_policy = AsyncRetryPolicy(retry_total=2)
     distributed_tracing_policy = DistributedTracingPolicy()

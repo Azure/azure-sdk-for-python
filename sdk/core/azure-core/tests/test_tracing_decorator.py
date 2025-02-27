@@ -245,7 +245,6 @@ class TestDecoratorNativeTracing:
     def test_decorator_raise_exception(self, tracing_helper, http_request):
         """Test that an exception is recorded as an error event."""
         client = MockClient(http_request)
-        settings.tracing_enabled = True
         try:
             client.raising_exception()
         except ValueError:
@@ -269,7 +268,6 @@ class TestDecoratorNativeTracing:
     def test_decorator_nested_calls(self, tracing_helper, http_request):
         """Test that only a span corresponding to the outermost method is created."""
         client = MockClient(http_request)
-        settings.tracing_enabled = True
         with tracing_helper.tracer.start_as_current_span("Root"):
             client.nested_calls()
 
@@ -281,7 +279,6 @@ class TestDecoratorNativeTracing:
     def test_decorator_custom_tracer(self, tracing_helper, http_request):
         """Test that a custom tracer can be used."""
         client = MockClient(http_request)
-        settings.tracing_enabled = True
         with tracing_helper.tracer.start_as_current_span("Root"):
             client.method_with_custom_tracer()
 
@@ -310,7 +307,6 @@ class TestDecoratorNativeTracing:
     def test_decorated_method_with_tracing_disabled(self, tracing_helper, http_request):
         """Test that a decorated method isn't traced if tracing is disabled on a per-operation basis."""
         client = MockClient(http_request)
-        settings.tracing_enabled = True
         with tracing_helper.tracer.start_as_current_span("Root"):
             client.method_with_kwargs(tracing_options={"enabled": False, "attributes": {"custom_key": "custom_value"}})
 
@@ -332,7 +328,6 @@ class TestDecoratorNativeTracing:
     def test_tracing_impl_takes_precedence(self, tracing_implementation, http_request):
         """Test that a tracing implementation takes precedence over the native tracing."""
         client = MockClient(http_request)
-        settings.tracing_enabled = True
 
         assert settings.tracing_implementation() is FakeSpan
         assert settings.tracing_enabled

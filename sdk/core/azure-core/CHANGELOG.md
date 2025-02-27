@@ -12,7 +12,7 @@
     - If `setting.tracing_implementation` is set, the tracing plugin will be used instead of the native tracing.
     - If `settings.tracing_enabled` is set to `False`, tracing will be disabled.
     - The `OpenTelemetryTracer` class was added to the `azure.core.tracing.opentelemetry` module. This is a wrapper around the OpenTelemetry tracer that is used to create spans for Azure SDK operations.
-    - Added a `get_tracer` method to the new `azure.core.instrumentation` module. This method returns an instance of the `OpenTelemetryTracer` class.
+    - Added a `get_tracer` method to the new `azure.core.instrumentation` module. This method returns an instance of the `OpenTelemetryTracer` class if OpenTelemetry is available.
     - A `TracingOptions` TypedDict class was added to define the options that SDK users can use to configure tracing per-operation. These options include the ability to enable or disable tracing and set additional attributes on spans.
         - Example usage: `client.method(tracing_options={"enabled": True, "attributes": {"foo": "bar"}})`
     - The `DistributedTracingPolicy` and `distributed_trace`/`distributed_trace_async` decorators now uses the OpenTelemetry tracer if it is available and native tracing is enabled.

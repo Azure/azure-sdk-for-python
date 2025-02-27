@@ -6,10 +6,7 @@ from typing import Optional, Union, Mapping, TYPE_CHECKING
 from functools import lru_cache
 
 if TYPE_CHECKING:
-    try:
-        from .tracing.opentelemetry import OpenTelemetryTracer
-    except ImportError:
-        pass
+    from .tracing.opentelemetry import OpenTelemetryTracer
 
 
 def _get_tracer_impl():
@@ -52,7 +49,7 @@ def get_tracer(
     """Get the OpenTelemetry tracer instance if available.
 
     If OpenTelemetry is not available, this method will return None. This method caches
-
+    the tracer instance for each unique set of parameters.
 
     :keyword library_name: The name of the library to use in the tracer.
     :paramtype library_name: str

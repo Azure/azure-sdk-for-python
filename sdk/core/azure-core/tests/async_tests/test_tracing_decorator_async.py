@@ -16,7 +16,6 @@ from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.settings import settings
-from azure.core.instrumentation import get_tracer
 from azure.core.tracing import SpanKind
 from azure.core.tracing.decorator_async import distributed_trace_async
 from opentelemetry.trace import StatusCode as OtelStatusCode
@@ -252,7 +251,6 @@ class TestAsyncDecoratorNativeTracing:
     async def test_decorator_raise_exception(self, tracing_helper, http_request):
         """Test that an exception is recorded as an error event."""
         client = MockClient(http_request)
-        settings.tracing_enabled = True
         with tracing_helper.tracer.start_as_current_span("Root"):
             try:
                 await client.raising_exception()
@@ -279,7 +277,6 @@ class TestAsyncDecoratorNativeTracing:
     async def test_decorator_nested_calls(self, tracing_helper, http_request):
         """Test that only a span corresponding to the outermost method is created."""
         client = MockClient(http_request)
-        settings.tracing_enabled = True
         with tracing_helper.tracer.start_as_current_span("Root"):
             await client.nested_calls()
 
@@ -292,7 +289,6 @@ class TestAsyncDecoratorNativeTracing:
     async def test_decorator_custom_instrumentation(self, tracing_helper, http_request):
         """Test that a custom tracer provider can be used."""
         client = MockClient(http_request)
-        settings.tracing_enabled = True
         with tracing_helper.tracer.start_as_current_span("Root"):
             await client.method_with_custom_instrumentation()
 
@@ -325,7 +321,6 @@ class TestAsyncDecoratorNativeTracing:
     async def test_decorated_method_with_tracing_disabled(self, tracing_helper, http_request):
         """Test that a decorated method isn't traced if tracing is disabled on a per-operation basis."""
         client = MockClient(http_request)
-        settings.tracing_enabled = True
         with tracing_helper.tracer.start_as_current_span("Root"):
             await client.method_with_kwargs(
                 tracing_options={"enabled": False, "attributes": {"custom_key": "custom_value"}}
@@ -351,7 +346,6 @@ class TestAsyncDecoratorNativeTracing:
     async def test_tracing_impl_takes_precedence(self, tracing_implementation, http_request):
         """Test that a tracing implementation takes precedence over the native tracing."""
         client = MockClient(http_request)
-        settings.tracing_enabled = True
 
         assert settings.tracing_implementation() is FakeSpan
         assert settings.tracing_enabled

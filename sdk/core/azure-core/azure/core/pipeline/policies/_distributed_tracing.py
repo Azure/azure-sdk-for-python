@@ -43,9 +43,6 @@ from azure.core.instrumentation import get_tracer
 from azure.core.tracing._models import TracingOptions
 
 if TYPE_CHECKING:
-    from ...tracing._abstract_span import (
-        AbstractSpan,
-    )
     from opentelemetry.trace import Span
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
@@ -213,12 +210,11 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
             else:
                 span.end()
 
-        if request.context.get(self._SUPPRESSION_TOKEN):
+        suppression_token = request.context.get(self._SUPPRESSION_TOKEN)
+        if suppression_token:
             tracer = get_tracer()
             if tracer:
-                tracer._detach_from_context(  # pylint: disable=protected-access
-                    request.context.get(self._SUPPRESSION_TOKEN)
-                )
+                tracer._detach_from_context(suppression_token)  # pylint: disable=protected-access
 
     def on_response(
         self,
@@ -241,7 +237,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         :param span: The span to add attributes to.
         :type span: ~opentelemetry.trace.Span
         :param request: The request made
-        :type request: azure.core.rest.HttpRequest
+        :type request: ~azure.core.rest.HttpRequest
         :param response: The response received from the server. Is None if no response received.
         :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
         """

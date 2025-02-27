@@ -13,7 +13,6 @@ from azure.core.instrumentation import get_tracer
 from azure.core.tracing._models import SpanKind, Link
 from azure.core.tracing.opentelemetry import OpenTelemetryTracer
 from azure.core.tracing.common import with_current_context
-from azure.core.settings import settings
 
 from opentelemetry.trace import (
     Tracer as OtelTracer,
@@ -148,8 +147,6 @@ def test_get_trace_context():
 
 
 def test_with_current_context_util_function(tracing_helper):
-
-    settings.tracing_enabled = True
     result = []
     tracer = get_tracer()
     assert tracer

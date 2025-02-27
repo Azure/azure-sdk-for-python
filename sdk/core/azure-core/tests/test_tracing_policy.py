@@ -17,8 +17,6 @@ from azure.core.tracing._abstract_span import HttpSpanMixin
 import pytest
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
-# import requests
-
 from utils import HTTP_RESPONSES, HTTP_REQUESTS, create_http_response, request_and_responses_product
 from tracing_common import FakeSpan
 
@@ -418,7 +416,6 @@ class TestTracingPolicyNativeTracing:
         config = {
             "library_name": "my-library",
             "library_version": "1.0.0",
-            "schema_url": "https://test.schema",
             "attributes": {"az.namespace": "Sample.Namespace"},
         }
 
@@ -438,7 +435,6 @@ class TestTracingPolicyNativeTracing:
         finished_spans = tracing_helper.exporter.get_finished_spans()
         assert finished_spans[0].name == "/temp"
         assert finished_spans[0].attributes.get(policy._ERROR_TYPE) == "403"
-        assert finished_spans[0].instrumentation_scope.schema_url == "https://test.schema"
         assert finished_spans[0].instrumentation_scope.name == "my-library"
         assert finished_spans[0].instrumentation_scope.version == "1.0.0"
         assert finished_spans[0].instrumentation_scope.attributes.get("az.namespace") == "Sample.Namespace"
