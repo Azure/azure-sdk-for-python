@@ -39,7 +39,7 @@ from .. import exceptions
 from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 from .._retry_utility import (_configure_timeout, _has_read_retryable_headers,
                               _handle_service_response_retries, _handle_service_request_retries,
-                              _has_database_account_header, reset_consecutive_failures)
+                              _has_database_account_header)
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 

@@ -150,8 +150,8 @@ class TestHealthCheckAsync:
 
         try:
             setup[COLLECTION].client_connection._global_endpoint_manager.startup = False
+            setup[COLLECTION].client_connection._global_endpoint_manager.refresh_needed = True
             for i in range(2):
-                setup[COLLECTION].client_connection._global_endpoint_manager.refresh_needed = True
                 await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
@@ -182,9 +182,11 @@ class TestHealthCheckAsync:
 
         try:
             setup[COLLECTION].client_connection._global_endpoint_manager.startup = False
+            setup[COLLECTION].client_connection._global_endpoint_manager.refresh_needed = True
             for i in range(2):
-                setup[COLLECTION].client_connection._global_endpoint_manager.refresh_needed = True
                 await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
+                # wait for background task to finish
+                await asyncio.sleep(1)
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = self.original_preferred_locations
