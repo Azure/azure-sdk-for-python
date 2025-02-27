@@ -8,6 +8,7 @@ from ast import Not
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse, InvalidVersion
 from pkg_resources import Requirement
+import io
 
 from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER, str_to_bool
 from ci_tools.parsing import ParsedSetup, get_config_setting, get_pyproject
@@ -706,6 +707,11 @@ def get_total_coverage(coverage_file: str, coverage_config_file: str, package_na
     cov = coverage.Coverage(data_file=coverage_file, config_file=coverage_config_file)
     cov.load()
     original = os.getcwd()
+    output = io.StringIO()
+
+    old_stdout = sys.stdout
+    sys.stdout = output
+
     report = 0.0
     try:
         if repo_root:
@@ -719,6 +725,7 @@ def get_total_coverage(coverage_file: str, coverage_config_file: str, package_na
     finally:
         if repo_root:
             os.chdir(original)
+        sys.stdout = old_stdout
         logging.info(f"Total coverage {report} for package {package_name}")
         return report
 
