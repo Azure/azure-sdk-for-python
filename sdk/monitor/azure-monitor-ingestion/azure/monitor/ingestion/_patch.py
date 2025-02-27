@@ -6,8 +6,14 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from typing import Any, TYPE_CHECKING
+
 from ._client import LogsIngestionClient as GeneratedClient
 from ._models import LogsUploadError
+from ._version import SDK_MONIKER
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 
 class LogsIngestionClient(GeneratedClient):
@@ -40,6 +46,10 @@ class LogsIngestionClient(GeneratedClient):
             :dedent: 4
             :caption: Creating the LogsIngestionClient for use with a sovereign cloud (i.e. non-public cloud).
     """
+
+    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
+        kwargs.setdefault("sdk_moniker", SDK_MONIKER)
+        super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
 
 __all__ = ["LogsIngestionClient", "LogsUploadError"]
