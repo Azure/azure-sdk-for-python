@@ -22,7 +22,7 @@
 """Interact with databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Mapping, Optional, Union
+from typing import Any, Dict, List, Mapping, Optional, Union, Callable
 
 import warnings
 from azure.core import MatchConditions
@@ -41,13 +41,13 @@ from ._user import UserProxy
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
 
-# pylint: disable=docstring-keyword-should-match-keyword-only
 
 __all__ = ("DatabaseProxy",)
 
 
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 def _get_database_link(database_or_id: Union[str, 'DatabaseProxy', Mapping[str, Any]]) -> str:
     if isinstance(database_or_id, str):
@@ -408,6 +408,7 @@ class DatabaseProxy(object):
         session_token: Optional[str] = None,
         max_item_count: Optional[int] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the containers in the database.
@@ -416,7 +417,7 @@ class DatabaseProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of container properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
 
@@ -430,7 +431,6 @@ class DatabaseProxy(object):
                 :caption: List all containers in the database:
                 :name: list_containers
         """
-        response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
             kwargs['session_token'] = session_token
         if initial_headers is not None:
@@ -455,6 +455,7 @@ class DatabaseProxy(object):
         session_token: Optional[str] = None,
         max_item_count: Optional[int] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the properties for containers in the current database.
@@ -467,11 +468,10 @@ class DatabaseProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of container properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
             kwargs['session_token'] = session_token
         if initial_headers is not None:
@@ -692,18 +692,18 @@ class DatabaseProxy(object):
         self,
         *,
         max_item_count: Optional[int] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the users in the container.
 
         :keyword int max_item_count: Max number of users to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of user properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
         feed_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -721,6 +721,7 @@ class DatabaseProxy(object):
         *,
         parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all users matching the given `query`.
@@ -732,12 +733,11 @@ class DatabaseProxy(object):
         :paramtype parameters: Optional[List[Dict[str, Any]]]
         :keyword int max_item_count: Max number of users to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of user properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
         feed_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -834,19 +834,22 @@ class DatabaseProxy(object):
         )
 
     @distributed_trace_async
-    async def get_throughput(self, **kwargs: Any) -> ThroughputProperties:
+    async def get_throughput(
+            self,
+            *,
+            response_hook: Optional[Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]] = None,
+            **kwargs: Any) -> ThroughputProperties:
         """Get the ThroughputProperties object for this database.
 
         If no ThroughputProperties already exists for the database, an exception is raised.
 
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], List[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the database
             or the throughput properties could not be retrieved.
         :returns: ThroughputProperties for the database.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
-        response_hook = kwargs.pop('response_hook', None)
         properties = await self._get_properties()
         link = properties["_self"]
         query_spec = {
