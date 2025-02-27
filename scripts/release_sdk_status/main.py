@@ -313,7 +313,7 @@ def read_file(file_name):
 def find_test_path(line: str) -> str:
     line = line.strip('\n') + '\n'
     try:
-        return re.findall('output-folder: \\$\\(python-sdks-folder\\)/(.*?)\n', line)[0]
+        return re.findall(r'output-folder: \$\(python-sdks-folder\)/(.*?)\n', line)[0]
     except:
         FAILED_RESULT.append('[Fail to find sdk path] ' + line)
         return ''
