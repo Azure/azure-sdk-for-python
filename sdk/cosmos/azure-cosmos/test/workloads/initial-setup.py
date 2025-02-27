@@ -2,6 +2,7 @@ import os
 import sys
 
 from azure.cosmos import PartitionKey
+from test.workloads.workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS
 
 sys.path.append(r"./")
 
@@ -13,21 +14,15 @@ from datetime import datetime
 
 import logging
 
-# Replace with your Cosmos DB details
-preferred_locations = []
-COSMOS_URI = ""
-COSMOS_KEY = ""
-
-
-async def write_item_concurrently_initial(container, num_upserts, initial):
+async def write_item_concurrently_initial(container, num_upserts):
     tasks = []
-    for i in range(initial, initial + num_upserts):
+    for i in range(num_upserts):
         tasks.append(container.upsert_item({"id": "Simon-" + str(i), "pk": "pk-" + str(i)}))
     await asyncio.gather(*tasks)
 
 
 async def run_workload(client_id: str):
-    async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=preferred_locations,
+    async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,
                            enable_diagnostics_logging=True, logger=logger,
                            user_agent=str(client_id) + "-" + datetime.now().strftime("%Y%m%d-%H%M%S")) as client:
         db = await client.create_database_if_not_exists("SimonDB")
@@ -35,9 +30,7 @@ async def run_workload(client_id: str):
         time.sleep(1)
 
         try:
-            for i in range(0, 10000, 10001):
-                await write_item_concurrently_initial(cont, 10000, i)  # Number of concurrent upserts
-                time.sleep(1)
+            await write_item_concurrently_initial(cont, 10001)  # Number of concurrent upserts
         except Exception as e:
             logger.error(e)
             raise e

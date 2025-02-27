@@ -2,11 +2,11 @@ import os
 import random
 import sys
 
-from test.workloads.workload_configs import PREFERRED_LOCATIONS, COSMOS_URI, COSMOS_KEY
+from test.workloads.workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS
 
 sys.path.append(r"./")
 
-from azure.cosmos.aio import CosmosClient as AsyncClient
+from azure.cosmos import CosmosClient
 import asyncio
 
 import time
@@ -14,22 +14,39 @@ from datetime import datetime
 
 import logging
 
-# Replace with your Cosmos DB details
 
 def get_random_item():
     random_int = random.randint(1, 10000)
     return {"id": "Simon-" + str(random_int), "pk": "pk-" + str(random_int)}
 
 
-async def upsert_item_concurrently(container, num_upserts):
-    tasks = []
+def upsert_item(container, num_upserts):
     for _ in range(num_upserts):
-        tasks.append(container.upsert_item(get_random_item()))
-    await asyncio.gather(*tasks)
+        container.upsert_item(get_random_item())
 
 
-async def run_workload(client_id):
-    async with AsyncClient(COSMOS_URI, COSMOS_KEY,
+def read_item(container, num_upserts):
+    for _ in range(num_upserts):
+        item = get_random_item()
+        container.read_item(item["id"], item["pk"])
+
+
+def query_items(container, num_queries):
+    for _ in range(num_queries):
+        perform_query(container)
+
+
+def perform_query(container):
+    random_item = get_random_item()
+    results = container.query_items(query="SELECT * FROM c where c.id=@id and c.pk=@pk",
+                                    parameters=[{"name": "@id", "value": random_item["id"]},
+                                                {"name": "@pk", "value": random_item["pk"]}],
+                                    partition_key=random_item["pk"])
+    items = [item for item in results]
+
+
+def run_workload(client_id):
+    with CosmosClient(COSMOS_URI, COSMOS_KEY,
                            enable_diagnostics_logging=True, logger=logger,
                            user_agent=str(client_id) + "-" + datetime.now().strftime(
                                "%Y%m%d-%H%M%S"), preferred_locations=PREFERRED_LOCATIONS) as client:
@@ -39,7 +56,10 @@ async def run_workload(client_id):
 
         while True:
             try:
-                await upsert_item_concurrently(cont, 5)
+                upsert_item(cont, 5)
+                read_item(cont, 5)
+                time.sleep(1)
+                query_items(cont, 2)
             except Exception as e:
                 logger.error(e)
                 raise e
@@ -52,4 +72,4 @@ if __name__ == "__main__":
     file_handler = logging.FileHandler("log-" + first_name + "-" + datetime.now().strftime("%Y%m%d-%H%M%S") + '.log')
     logger.setLevel(logging.DEBUG)
     logger.addHandler(file_handler)
-    asyncio.run(run_workload(first_name))
+    run_workload(first_name)

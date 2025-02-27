@@ -3,18 +3,13 @@
 
 import collections
 import os
-import time
-import unittest
 import uuid
 
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
-from azure.cosmos import (ContainerProxy, DatabaseProxy, documents, exceptions, ConnectionRetryPolicy,
-                          http_constants, _retry_utility)
-from azure.cosmos.aio import _retry_utility_async
-from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
-from azure.core.pipeline.policies import AsyncRetryPolicy, RetryPolicy
+from azure.cosmos import ContainerProxy, DatabaseProxy, documents, exceptions, ConnectionRetryPolicy
+from azure.core.exceptions import ServiceRequestError
 from devtools_testutils.azure_recorded_testcase import get_credential
 from devtools_testutils.helpers import is_live
 
@@ -98,15 +93,6 @@ class TestConfig(object):
                 raise e
 
     @classmethod
-    def try_delete_database_with_id(cls, client, database_id):
-        # type: (CosmosClient, str) -> None
-        try:
-            client.delete_database(database_id)
-        except exceptions.CosmosHttpResponseError as e:
-            if e.status_code != StatusCodes.NOT_FOUND:
-                raise e
-
-    @classmethod
     async def _validate_distinct_on_different_types_and_field_orders(cls, collection, query, expected_results):
         query_iterable = collection.query_items(query)
         results = [item async for item in query_iterable]
@@ -173,48 +159,6 @@ class TestConfig(object):
     async def _validate_offset_limit(cls, created_collection, query, results):
         query_iterable = created_collection.query_items(query=query)
         assert list(map(lambda doc: doc['pk'], [item async for item in query_iterable])) == results
-
-    @staticmethod
-    def trigger_split(container, throughput):
-        print("Triggering a split in session token helpers")
-        container.replace_throughput(throughput)
-        print("changed offer to 11k")
-        print("--------------------------------")
-        print("Waiting for split to complete")
-        start_time = time.time()
-
-        while True:
-            offer = container.get_throughput()
-            if offer.properties['content'].get('isOfferReplacePending', False):
-                if time.time() - start_time > 60 * 25:  # timeout test at 25 minutes
-                    unittest.skip("Partition split didn't complete in time.")
-                else:
-                    print("Waiting for split to complete")
-                    time.sleep(60)
-            else:
-                break
-        print("Split in session token helpers has completed")
-
-    @staticmethod
-    async def trigger_split_async(container, throughput):
-        print("Triggering a split in session token helpers")
-        await container.replace_throughput(throughput)
-        print("changed offer to 11k")
-        print("--------------------------------")
-        print("Waiting for split to complete")
-        start_time = time.time()
-
-        while True:
-            offer = await container.get_throughput()
-            if offer.properties['content'].get('isOfferReplacePending', False):
-                if time.time() - start_time > 60 * 25:  # timeout test at 25 minutes
-                    unittest.skip("Partition split didn't complete in time.")
-                else:
-                    print("Waiting for split to complete")
-                    time.sleep(60)
-            else:
-                break
-        print("Split in session token helpers has completed")
 
 
 def get_vector_indexing_policy(embedding_type):
@@ -288,152 +232,37 @@ class FakeHttpResponse:
         return None
 
 
-class MockConnectionRetryPolicy(RetryPolicy):
-    def __init__(self, resource_type, error, **kwargs):
-        self.resource_type = resource_type
-        self.error = error
-        self.counter = 0
-        self.request_endpoints = []
+class MockConnectionRetryPolicy(ConnectionRetryPolicy):
+    """Mocks the ConnectionRetryPolicy, adding a counter to see retries happening.
+    """
+    def __init__(self, **kwargs):
         clean_kwargs = {k: v for k, v in kwargs.items() if v is not None}
-        super().__init__(**clean_kwargs)
+        super(MockConnectionRetryPolicy, self).__init__(**clean_kwargs)
+        self.count = 0
 
     def send(self, request):
-        self.counter = 0
-        absolute_timeout = request.context.options.pop('timeout', None)
-
-        retry_active = True
-        response = None
-        retry_settings = self.configure_retries(request.context.options)
-        while retry_active:
-            start_time = time.time()
-            try:
-                # raise the passed in exception for the passed in resource + operation combination
-                if request.http_request.headers.get(http_constants.HttpHeaders.ThinClientProxyResourceType) == self.resource_type:
-                    self.request_endpoints.append(request.http_request.url)
-                    raise self.error
-                response = self.next.send(request)
-                break
-            except ServiceRequestError as err:
-                # the request ran into a socket timeout or failed to establish a new connection
-                # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
-                # This logic is based on the _retry.py file from azure-core
-                if retry_settings['connect'] > 0:
-                    self.counter += 1
-                    retry_active = self.increment(retry_settings, response=request, error=err)
-                    if retry_active:
-                        self.sleep(retry_settings, request.context.transport)
-                        continue
-                raise err
-            except ServiceResponseError as err:
-                # Only read operations can be safely retried with ServiceResponseError
-                if not _retry_utility._has_read_retryable_headers(request.http_request.headers):
-                    raise err
-                # This logic is based on the _retry.py file from azure-core
-                if retry_settings['read'] > 0:
-                    self.counter += 1
-                    retry_active = self.increment(retry_settings, response=request, error=err)
-                    if retry_active:
-                        self.sleep(retry_settings, request.context.transport)
-                        continue
-                raise err
-            except AzureError as err:
-                if self._is_method_retryable(retry_settings, request.http_request):
-                    retry_active = self.increment(retry_settings, response=request, error=err)
-                    if retry_active:
-                        self.sleep(retry_settings, request.context.transport)
-                        continue
-                raise err
-            finally:
-                end_time = time.time()
-                if absolute_timeout:
-                    absolute_timeout -= (end_time - start_time)
-
-        self.update_context(response.context, retry_settings)
-        return response
-
-class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
-
-    def __init__(self, resource_type, error, **kwargs):
-        self.resource_type = resource_type
-        self.error = error
-        self.counter = 0
-        self.request_endpoints = []
-        clean_kwargs = {k: v for k, v in kwargs.items() if v is not None}
-        super(MockConnectionRetryPolicyAsync, self).__init__(**clean_kwargs)
-
-    async def send(self, request):
-        """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
-        Also enforces an absolute client-side timeout that spans multiple retry attempts.
-
-        :param request: The PipelineRequest object
-        :type request: ~azure.core.pipeline.PipelineRequest
-        :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
-        :rtype: ~azure.core.pipeline.PipelineResponse
-        :raises ~azure.core.exceptions.AzureError: Maximum retries exceeded.
-        :raises ~azure.cosmos.exceptions.CosmosClientTimeoutError: Specified timeout exceeded.
-        :raises ~azure.core.exceptions.ClientAuthenticationError: Authentication failed.
+        """Mocks the response for the policy. ServiceRequestError handling logic was left in exactly as it is in
+        the SDK in order to test it.
         """
-        absolute_timeout = request.context.options.pop('timeout', None)
-        per_request_timeout = request.context.options.pop('connection_timeout', 0)
-        self.counter = 0
-        retry_error = None
         retry_active = True
         response = None
         retry_settings = self.configure_retries(request.context.options)
         while retry_active:
-            start_time = time.time()
             try:
-                # raise the passed in exception for the passed in resource + operation combination
-                if request.http_request.headers.get(
-                        http_constants.HttpHeaders.ThinClientProxyResourceType) == self.resource_type:
-                    self.request_endpoints.append(request.http_request.url)
-                    raise self.error
-                _retry_utility._configure_timeout(request, absolute_timeout, per_request_timeout)
-                response = await self.next.send(request)
-                break
-            except exceptions.CosmosClientTimeoutError as timeout_error:
-                timeout_error.inner_exception = retry_error
-                timeout_error.response = response
-                timeout_error.history = retry_settings['history']
-                raise
+                response = self.mock_send()
             except ServiceRequestError as err:
-                retry_error = err
                 # the request ran into a socket timeout or failed to establish a new connection
-                # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
+                # since request wasn't sent, we retry up to however many connection retries are configured (default 3)
                 if retry_settings['connect'] > 0:
-                    self.counter += 1
-                    retry_active = self.increment(retry_settings, response=request, error=err)
-                    print("Basic Retry in retry utility: ", retry_active)
-                    if retry_active:
-                        await self.sleep(retry_settings, request.context.transport)
-                        continue
-                raise err
-            except ServiceResponseError as err:
-                retry_error = err
-                # Since this is ClientConnectionError, it is safe to be retried on both read and write requests
-                from aiohttp.client_exceptions import (
-                    ClientConnectionError)  # pylint: disable=networking-import-outside-azure-core-transport
-                if isinstance(err.inner_exception, ClientConnectionError) or _retry_utility_async._has_read_retryable_headers(request.http_request.headers):
-                    # This logic is based on the _retry.py file from azure-core
-                    if retry_settings['read'] > 0:
-                        self.counter += 1
-                        retry_active = self.increment(retry_settings, response=request, error=err)
-                        if retry_active:
-                            await self.sleep(retry_settings, request.context.transport)
-                            continue
-                raise err
-            except AzureError as err:
-                retry_error = err
-                if self._is_method_retryable(retry_settings, request.http_request):
+                    self.count += 1
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
-                        await self.sleep(retry_settings, request.context.transport)
+                        self.sleep(retry_settings, request.context.transport)
                         continue
                 raise err
-            finally:
-                end_time = time.time()
-                if absolute_timeout:
-                    absolute_timeout -= (end_time - start_time)
 
         self.update_context(response.context, retry_settings)
         return response
+
+    def mock_send(self):
+        raise ServiceRequestError("mock-service")

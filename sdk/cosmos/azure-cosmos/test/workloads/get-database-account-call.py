@@ -1,6 +1,8 @@
 import os
 import sys
 
+from test.workloads.workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS
+
 sys.path.append(r"./")
 
 from azure.cosmos.aio import CosmosClient as AsyncClient
@@ -12,13 +14,9 @@ from datetime import datetime
 import logging
 
 # Replace with your Cosmos DB details
-preferred_locations = []
-COSMOS_URI = ""
-COSMOS_KEY = ""
-
 
 async def run_workload(client_id: str):
-    async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=preferred_locations,
+    async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,
                            enable_diagnostics_logging=True, logger=logger,
                            user_agent=client_id + "-" + datetime.now().strftime(
                                "%Y%m%d-%H%M%S")) as client:

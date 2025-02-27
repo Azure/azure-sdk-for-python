@@ -4,6 +4,8 @@ import sys
 
 import aiohttp
 
+from test.workloads.workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS
+
 sys.path.append(r"./")
 
 from azure.cosmos.aio import CosmosClient as AsyncClient
@@ -17,10 +19,6 @@ import logging
 
 # Replace with your Cosmos DB details
 os.environ["HTTP_PROXY"] = "http://0.0.0.0:5100"
-preferred_locations = []
-COSMOS_URI = ""
-COSMOS_KEY = ""
-
 
 def get_random_item():
     random_int = random.randint(1, 10000)
@@ -55,7 +53,7 @@ async def run_workload(client_id):
     async with aiohttp.ClientSession(trust_env=True) as proxied_aio_http_session:
 
         transport = AioHttpTransport(session=proxied_aio_http_session, session_owner=False)
-        async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=preferred_locations,
+        async with AsyncClient(COSMOS_URI, COSMOS_KEY, preferred_locations=PREFERRED_LOCATIONS,
                                enable_diagnostics_logging=True, logger=logger, transport=transport,
                                user_agent=str(client_id) + "-" + datetime.now().strftime(
                                    "%Y%m%d-%H%M%S")) as client:
