@@ -143,55 +143,6 @@ class TestTimeoutRetryPolicyAsync:
         finally:
             _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
-    @pytest.mark.parametrize("error_code", error_codes())
-    async def test_timeout_failover_retry_policy_for_consecutive_failures_async(self, setup, error_code):
-        # clear unavailability info from other tests
-        setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint.clear()
-        setup[COLLECTION].client_connection._global_endpoint_manager.consecutive_failures.clear()
-        document_definition = {'id': 'failoverDoc-' + str(uuid.uuid4()),
-                               'pk': 'pk',
-                               'name': 'sample document',
-                               'key': 'value'}
-
-        created_document = await setup[COLLECTION].create_item(body=document_definition)
-        self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
-        mf = self.MockExecuteFunction(self.original_execute_function, 5, error_code)
-        # Consecutive read failures should mark the endpoint as unavailable
-        for i in range(3):
-            try:
-                _retry_utility_async.ExecuteFunctionAsync = mf
-                await setup[COLLECTION].read_item(item=created_document['id'],
-                                            partition_key=created_document['pk'])
-                if i != 2:
-                    pytest.fail("Exception was not raised.")
-            except exceptions.CosmosHttpResponseError as err:
-                assert err.status_code == error_code
-            finally:
-                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
-        unavailable_info = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
-        assert len(unavailable_info) == 1
-        assert next(iter(unavailable_info.values()))['operationType'] == {'Read'}
-        unavailable_info.clear()
-
-        mf = self.MockExecuteFunction(self.original_execute_function, 5, error_code)
-        # consecutive write failures should mark the endpoint as unavailable
-        for i in range(5):
-            try:
-                _retry_utility_async.ExecuteFunctionAsync = mf
-                await setup[COLLECTION].create_item(body=document_definition)
-                pytest.fail("Exception was not raised.")
-            except exceptions.CosmosHttpResponseError as err:
-                assert err.status_code == error_code
-            finally:
-                _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
-        unavailable_info = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
-        assert len(unavailable_info) == 1
-        assert next(iter(unavailable_info.values()))['operationType'] == {'Write'}
-        unavailable_info.clear()
-
-
-
-
     class MockExecuteFunction(object):
         def __init__(self, org_func, num_exceptions, status_code):
             self.org_func = org_func

@@ -102,8 +102,6 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         try:
             if args:
                 result = await ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)
-                # after a success reset the consecutive failures
-                reset_consecutive_failures(request.headers, global_endpoint_manager, *args)
             else:
                 result = await ExecuteFunctionAsync(function, *args, **kwargs)
             if not client.last_response_headers:

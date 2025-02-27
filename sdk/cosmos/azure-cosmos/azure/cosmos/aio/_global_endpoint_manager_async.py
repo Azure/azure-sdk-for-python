@@ -65,7 +65,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.refresh_lock = asyncio.Lock()
         self.last_refresh_time = 0
         self._database_account_cache = None
-        self.consecutive_failures = {}
 
     def get_refresh_time_interval_in_ms_stub(self):
         return constants._Constants.DefaultUnavailableLocationExpirationTime
