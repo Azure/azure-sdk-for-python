@@ -1,8 +1,12 @@
 # Release History
 
-## 0.0.0(it should be stable) (2025-02-23)
+## 21.1.1 (2025-02-23)
 
+### Other Changes
 
+  - Fix for parameter `next_allowed_quota_downgrade_time` of model `FileShare` and `FileShareItem` to be of type `datetime` instead of `str`
+  - Fix for parameter `next_allowed_provisioned_iops_downgrade_time` of model `FileShare` and `FileShareItem` to be of type `datetime` instead of `str`
+  - Fix for parameter `next_allowed_provisioned_bandwidth_downgrade_time` of model `FileShare` and `FileShareItem` to be of type `datetime` instead of `str`
 
 ## 22.1.0 (2025-02-19)
 
