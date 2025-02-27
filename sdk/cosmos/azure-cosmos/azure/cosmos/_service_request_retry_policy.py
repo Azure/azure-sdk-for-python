@@ -16,7 +16,7 @@ class ServiceRequestRetryPolicy(object):
     def __init__(self, connection_policy, global_endpoint_manager, *args):
         self.args = args
         self.global_endpoint_manager = global_endpoint_manager
-        self.total_retries = len(self.global_endpoint_manager.location_cache.read_dual_endpoints)
+        self.total_retries = len(self.global_endpoint_manager.location_cache.read_regional_routing_contexts)
         self.total_in_region_retries = 1
         self.in_region_retry_count = 0
         self.failover_retry_count = 0
@@ -25,9 +25,9 @@ class ServiceRequestRetryPolicy(object):
         self.logger = logging.getLogger("azure.cosmos.ServiceRequestRetryPolicy")
         if self.request:
             if _OperationType.IsReadOnlyOperation(self.request.operation_type):
-                self.total_retries = len(self.global_endpoint_manager.location_cache.read_dual_endpoints)
+                self.total_retries = len(self.global_endpoint_manager.location_cache.read_regional_routing_contexts)
             else:
-                self.total_retries = len(self.global_endpoint_manager.location_cache.write_dual_endpoints)
+                self.total_retries = len(self.global_endpoint_manager.location_cache.write_regional_routing_contexts)
 
     def ShouldRetry(self):
         """Returns true if the request should retry based on preferred regions and retries already done.

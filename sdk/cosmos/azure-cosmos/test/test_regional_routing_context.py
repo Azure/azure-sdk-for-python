@@ -7,17 +7,17 @@ import pytest
 
 import test_config
 from azure.cosmos import (CosmosClient, DatabaseAccount, _global_endpoint_manager)
-from azure.cosmos._location_cache import DualEndpoint
+from azure.cosmos._location_cache import RegionalRoutingContext
 
 
 @pytest.mark.cosmosEmulator
-class TestDualEndpoints(unittest.TestCase):
+class TestRegionalRoutingContext(unittest.TestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     REGION1 = "West US"
     REGION2 = "East US"
     REGION3 = "West US 2"
-    DUAL_ENDPOINT = DualEndpoint(host, "something_different")
+    REGIONAL_ROUTING_CONTEXT = RegionalRoutingContext(host, "something_different")
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
 
@@ -42,17 +42,17 @@ class TestDualEndpoints(unittest.TestCase):
         # Mock the GetDatabaseAccountStub to return the regional endpoints
 
         original_read_endpoint = (mocked_client.client_connection._global_endpoint_manager
-                                  .location_cache.get_read_dual_endpoint())
+                                  .location_cache.get_read_regional_routing_context())
         try:
             container.create_item(body={"id": str(uuid.uuid4())})
         finally:
             # Check for if there was a swap
             self.assertEqual(original_read_endpoint,
                              mocked_client.client_connection._global_endpoint_manager
-                             .location_cache.get_read_dual_endpoint())
-            self.assertEqual(self.DUAL_ENDPOINT.get_primary(),
+                             .location_cache.get_read_regional_routing_context())
+            self.assertEqual(self.REGIONAL_ROUTING_CONTEXT.get_primary(),
                              mocked_client.client_connection._global_endpoint_manager
-                             .location_cache.get_write_dual_endpoint())
+                             .location_cache.get_write_regional_routing_context())
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = original_get_database_account_stub
 
     def MockGetDatabaseAccountStub(self, endpoint):

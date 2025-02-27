@@ -7,18 +7,18 @@ import pytest
 
 import test_config
 from azure.cosmos import DatabaseAccount
-from azure.cosmos._location_cache import DualEndpoint
+from azure.cosmos._location_cache import RegionalRoutingContext
 from azure.cosmos.aio import CosmosClient, _global_endpoint_manager_async
 
 
 @pytest.mark.cosmosEmulator
-class TestDualEndpointsAsync(unittest.IsolatedAsyncioTestCase):
+class TestRegionalRoutingContextAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     REGION1 = "West US"
     REGION2 = "East US"
     REGION3 = "West US 2"
-    DUAL_ENDPOINT = DualEndpoint(host, "something_different")
+    REGIONAL_ROUTING_CONTEXT = RegionalRoutingContext(host, "something_different")
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
 
@@ -48,18 +48,18 @@ class TestDualEndpointsAsync(unittest.IsolatedAsyncioTestCase):
         # Mock the GetDatabaseAccountStub to return the regional endpoints
 
         original_read_endpoint = (mocked_client.client_connection._global_endpoint_manager
-                                  .location_cache.get_read_dual_endpoint())
+                                  .location_cache.get_read_regional_routing_context())
         try:
             await container.create_item(body={"id": str(uuid.uuid4())})
         finally:
             # Check for if there was a swap
             self.assertEqual(original_read_endpoint,
                              mocked_client.client_connection._global_endpoint_manager
-                             .location_cache.get_read_dual_endpoint())
+                             .location_cache.get_read_regional_routing_context())
             # return it
-            self.assertEqual(self.DUAL_ENDPOINT.get_primary(),
+            self.assertEqual(self.REGIONAL_ROUTING_CONTEXT.get_primary(),
                              mocked_client.client_connection._global_endpoint_manager
-                             .location_cache.get_write_dual_endpoint())
+                             .location_cache.get_write_regional_routing_context())
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = original_get_database_account_stub
             await mocked_client.close()
 

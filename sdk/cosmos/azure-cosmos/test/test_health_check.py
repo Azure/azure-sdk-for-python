@@ -7,7 +7,7 @@ import test_config
 from azure.cosmos import DatabaseAccount, _location_cache, CosmosClient, _global_endpoint_manager, \
     _cosmos_client_connection
 
-from azure.cosmos._location_cache import DualEndpoint
+from azure.cosmos._location_cache import RegionalRoutingContext
 
 COLLECTION = "created_collection"
 REGION_1 = "East US"
@@ -66,7 +66,7 @@ class TestHealthCheck:
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
-        expected_dual_endpoints = []
+        expected_regional_routing_contexts = []
 
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
         if use_write_global_endpoint and use_read_global_endpoint:
@@ -74,11 +74,11 @@ class TestHealthCheck:
         else:
             assert mock_get_database_account_check.counter == 1
         endpoint = self.host if use_read_global_endpoint else locational_endpoint
-        expected_dual_endpoints.append(DualEndpoint(endpoint, endpoint))
+        expected_regional_routing_contexts.append(RegionalRoutingContext(endpoint, endpoint))
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
-        expected_dual_endpoints.append(DualEndpoint(locational_endpoint, locational_endpoint))
-        read_dual_endpoints = client.client_connection._global_endpoint_manager.location_cache.read_dual_endpoints
-        assert read_dual_endpoints == expected_dual_endpoints
+        expected_regional_routing_contexts.append(RegionalRoutingContext(locational_endpoint, locational_endpoint))
+        read_regional_routing_contexts = client.client_connection._global_endpoint_manager.location_cache.read_regional_routing_contexts
+        assert read_regional_routing_contexts == expected_regional_routing_contexts
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
     def test_health_check_failure(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
@@ -101,8 +101,8 @@ class TestHealthCheck:
 
         unavailable_endpoint_info = client.client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
         assert len(unavailable_endpoint_info) == len(expected_endpoints)
-        for expected_dual_endpoint in expected_endpoints:
-            assert expected_dual_endpoint in unavailable_endpoint_info.keys()
+        for expected_regional_routing_contexts in expected_endpoints:
+            assert expected_regional_routing_contexts in unavailable_endpoint_info.keys()
 
     def test_health_check_timeouts_on_unavailable_endpoints(self, setup):
         self.original_getDatabaseAccountStub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub

@@ -40,7 +40,7 @@ class EndpointOperationType(object):
     ReadType = "Read"
     WriteType = "Write"
 
-class DualEndpoint(object):
+class RegionalRoutingContext(object):
     def __init__(self, primary_endpoint: str, alternate_endpoint: str):
         self.primary_endpoint = primary_endpoint
         self.alternate_endpoint = alternate_endpoint
@@ -92,7 +92,7 @@ def get_endpoints_by_location(new_locations,
                         regional_object.set_primary(region_uri)
                 # This is the bootstrapping condition
                 else:
-                    regional_object = DualEndpoint(region_uri, region_uri)
+                    regional_object = RegionalRoutingContext(region_uri, region_uri)
                     # if it is for writes, then we update the previous to default_endpoint
                     if writes and not use_multiple_write_locations:
                         # if region_uri is different than global endpoint set global endpoint
@@ -126,17 +126,17 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         refresh_time_interval_in_ms,
     ):
         self.preferred_locations = preferred_locations
-        self.default_dual_endpoint = DualEndpoint(default_endpoint, default_endpoint)
+        self.default_regional_routing_context = RegionalRoutingContext(default_endpoint, default_endpoint)
         self.enable_endpoint_discovery = enable_endpoint_discovery
         self.use_multiple_write_locations = use_multiple_write_locations
         self.enable_multiple_writable_locations = False
-        self.write_dual_endpoints = [self.default_dual_endpoint]
-        self.read_dual_endpoints = [self.default_dual_endpoint]
+        self.write_regional_routing_contexts = [self.default_regional_routing_context]
+        self.read_regional_routing_contexts = [self.default_regional_routing_context]
         self.location_unavailability_info_by_endpoint = {}
         self.refresh_time_interval_in_ms = refresh_time_interval_in_ms
         self.last_cache_update_time_stamp = 0
-        self.account_read_dual_endpoints_by_location = {}
-        self.account_write_dual_endpoints_by_location = {}
+        self.account_read_regional_routing_contexts_by_location = {} # pylint: disable=name-too-long
+        self.account_write_regional_routing_contexts_by_location = {} # pylint: disable=name-too-long
         self.account_write_locations = []
         self.account_read_locations = []
 
@@ -147,19 +147,19 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         ):
             self.update_location_cache()
 
-    def get_write_dual_endpoints(self):
+    def get_write_regional_routing_contexts(self):
         self.check_and_update_cache()
-        return self.write_dual_endpoints
+        return self.write_regional_routing_contexts
 
-    def get_read_dual_endpoints(self):
+    def get_read_regional_routing_contexts(self):
         self.check_and_update_cache()
-        return self.read_dual_endpoints
+        return self.read_regional_routing_contexts
 
-    def get_write_dual_endpoint(self):
-        return self.get_write_dual_endpoints()[0].get_primary()
+    def get_write_regional_routing_context(self):
+        return self.get_write_regional_routing_contexts()[0].get_primary()
 
-    def get_read_dual_endpoint(self):
-        return self.get_read_dual_endpoints()[0].get_primary()
+    def get_read_regional_routing_context(self):
+        return self.get_read_regional_routing_contexts()[0].get_primary()
 
     def mark_endpoint_unavailable_for_read(self, endpoint, refresh_cache):
         self.mark_endpoint_unavailable(endpoint, EndpointOperationType.ReadType, refresh_cache)
@@ -199,9 +199,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             if self.enable_endpoint_discovery and self.account_write_locations:
                 location_index = min(location_index % 2, len(self.account_write_locations) - 1)
                 write_location = self.account_write_locations[location_index]
-                if (self.account_write_locations
-                        and write_location in self.account_write_dual_endpoints_by_location):
-                    write_regional_endpoint = self.account_write_dual_endpoints_by_location[write_location]
+                if (self.account_write_regional_routing_contexts_by_location
+                        and write_location in self.account_write_regional_routing_contexts_by_location):
+                    write_regional_endpoint = self.account_write_regional_routing_contexts_by_location[write_location]
                     if (
                             request.last_routed_location_endpoint_within_region is not None
                             and request.last_routed_location_endpoint_within_region
@@ -211,12 +211,13 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     ):
                         return write_regional_endpoint.get_alternate()
                     return write_regional_endpoint.get_primary()
-                return self.default_dual_endpoint.get_primary()
+            # if endpoint discovery is off for reads it should use passed in endpoint
+            return self.default_regional_routing_context.get_primary()
 
         regional_endpoints = (
-            self.get_write_dual_endpoints()
+            self.get_write_regional_routing_contexts()
             if documents._OperationType.IsWriteOperation(request.operation_type)
-            else self.get_read_dual_endpoints()
+            else self.get_read_regional_routing_contexts()
         )
         regional_endpoint = regional_endpoints[location_index % len(regional_endpoints)]
         if (
@@ -238,12 +239,13 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             should_refresh = self.use_multiple_write_locations and not self.enable_multiple_writable_locations
 
             if (most_preferred_location and most_preferred_location in
-                    self.account_read_dual_endpoints_by_location):
-                if (self.account_read_dual_endpoints_by_location
-                        and most_preferred_location in self.account_read_dual_endpoints_by_location):
+                    self.account_read_regional_routing_contexts_by_location):
+                if (self.account_read_regional_routing_contexts_by_location
+                        and most_preferred_location in self.account_read_regional_routing_contexts_by_location):
                     most_preferred_read_endpoint = (
-                        self.account_read_dual_endpoints_by_location)[most_preferred_location]
-                    if most_preferred_read_endpoint and most_preferred_read_endpoint != self.read_dual_endpoints[0]:
+                        self.account_read_regional_routing_contexts_by_location)[most_preferred_location]
+                    if (most_preferred_read_endpoint and
+                            most_preferred_read_endpoint != self.read_regional_routing_contexts[0]):
                         # For reads, we can always refresh in background as we can alternate to
                         # other available read endpoints
                         return True
@@ -251,7 +253,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     return True
 
             if not self.can_use_multiple_write_locations():
-                if self.is_location_unavailable(self.write_dual_endpoints[0],
+                if self.is_location_unavailable(self.write_regional_routing_contexts[0],
                                                 EndpointOperationType.WriteType):
                     # same logic as other
                     # Since most preferred write endpoint is unavailable, we can only refresh in background if
@@ -259,11 +261,11 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     return True
                 return should_refresh
             if (most_preferred_location and
-                    most_preferred_location in self.account_write_dual_endpoints_by_location):
+                    most_preferred_location in self.account_write_regional_routing_contexts_by_location):
                 most_preferred_write_regional_endpoint = (
-                    self.account_write_dual_endpoints_by_location)[most_preferred_location]
+                    self.account_write_regional_routing_contexts_by_location)[most_preferred_location]
                 if most_preferred_write_regional_endpoint:
-                    should_refresh |= most_preferred_write_regional_endpoint != self.write_dual_endpoints[0]
+                    should_refresh |= most_preferred_write_regional_endpoint != self.write_regional_routing_contexts[0]
                     return should_refresh
                 return True
             return should_refresh
@@ -285,7 +287,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
         self.location_unavailability_info_by_endpoint = new_location_unavailability_info
 
-    def is_location_unavailable(self, endpoint: DualEndpoint, operation_type: str):
+    def is_location_unavailable(self, endpoint: RegionalRoutingContext, operation_type: str):
         # For writes only mark it unavailable if both are down
         if not _OperationType.IsReadOnlyOperation(operation_type):
             return (self.is_endpoint_unavailable_internal(endpoint.get_primary(), operation_type)
@@ -353,40 +355,40 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         self.clear_stale_endpoint_unavailability_info()
         if self.enable_endpoint_discovery:
             if read_locations:
-                (self.account_read_dual_endpoints_by_location,
+                (self.account_read_regional_routing_contexts_by_location,
                  self.account_read_locations) = get_endpoints_by_location(
                     read_locations,
-                    self.account_read_dual_endpoints_by_location,
-                    self.default_dual_endpoint,
+                    self.account_read_regional_routing_contexts_by_location,
+                    self.default_regional_routing_context,
                     False,
                     self.use_multiple_write_locations
                 )
 
             if write_locations:
-                (self.account_write_dual_endpoints_by_location,
+                (self.account_write_regional_routing_contexts_by_location,
                  self.account_write_locations) = get_endpoints_by_location(
                     write_locations,
-                    self.account_write_dual_endpoints_by_location,
-                    self.default_dual_endpoint,
+                    self.account_write_regional_routing_contexts_by_location,
+                    self.default_regional_routing_context,
                     True,
                     self.use_multiple_write_locations,
                 )
 
-        self.write_dual_endpoints = self.get_preferred_dual_endpoints(
-            self.account_write_dual_endpoints_by_location,
+        self.write_regional_routing_contexts = self.get_preferred_regional_routing_contexts(
+            self.account_write_regional_routing_contexts_by_location,
             self.account_write_locations,
             EndpointOperationType.WriteType,
-            self.default_dual_endpoint,
+            self.default_regional_routing_context,
         )
-        self.read_dual_endpoints = self.get_preferred_dual_endpoints(
-            self.account_read_dual_endpoints_by_location,
+        self.read_regional_routing_contexts = self.get_preferred_regional_routing_contexts(
+            self.account_read_regional_routing_contexts_by_location,
             self.account_read_locations,
             EndpointOperationType.ReadType,
-            self.write_dual_endpoints[0],
+            self.write_regional_routing_contexts[0],
         )
         self.last_cache_update_timestamp = self.current_time_millis()  # pylint: disable=attribute-defined-outside-init
 
-    def get_preferred_dual_endpoints(
+    def get_preferred_regional_routing_contexts(
         self, endpoints_by_location, orderedLocations, expected_available_operation, fallback_endpoint
     ):
         regional_endpoints = []

@@ -9,7 +9,7 @@ from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 import test_config
 from azure.cosmos import (CosmosClient, _retry_utility, DatabaseAccount, _global_endpoint_manager,
                           _location_cache)
-from azure.cosmos._location_cache import DualEndpoint
+from azure.cosmos._location_cache import RegionalRoutingContext
 
 
 @pytest.mark.cosmosEmulator
@@ -23,7 +23,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
     REGION1 = "West US"
     REGION2 = "East US"
     REGION3 = "West US 2"
-    REGIONAL_ENDPOINT = DualEndpoint(host, host)
+    REGIONAL_ENDPOINT = RegionalRoutingContext(host, host)
 
     @classmethod
     def setUpClass(cls):
@@ -52,8 +52,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
         original_location_cache.available_read_regional_endpoints_by_locations = {self.REGION1: self.REGIONAL_ENDPOINT,
                                                                                   self.REGION2: self.REGIONAL_ENDPOINT,
                                                                                   self.REGION3: self.REGIONAL_ENDPOINT}
-        original_location_cache.read_dual_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
-                                                       self.REGIONAL_ENDPOINT]
+        original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
+                                                                  self.REGIONAL_ENDPOINT]
         try:
             # Mock the function to return the ServiceRequestException we retry
             mf = self.MockExecuteServiceRequestException()
@@ -67,7 +67,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
 
         # Now we change the location cache to have only 1 preferred read region
         original_location_cache.account_read_locations = [self.REGION1]
-        original_location_cache.read_dual_endpoints = [self.REGIONAL_ENDPOINT]
+        original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT]
         try:
             # Reset the function to reset the counter
             mf = self.MockExecuteServiceRequestException()
@@ -81,7 +81,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
 
         # Now we try it out with a write request
         original_location_cache.account_write_locations = [self.REGION1, self.REGION2]
-        original_location_cache.write_dual_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
+        original_location_cache.write_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
         original_location_cache.available_write_regional_endpoints_by_locations = {self.REGION1: self.REGIONAL_ENDPOINT,
                                                                                    self.REGION2: self.REGIONAL_ENDPOINT}
         try:
@@ -111,8 +111,8 @@ class TestServiceRetryPolicies(unittest.TestCase):
         original_location_cache.available_read_regional_endpoints_by_locations = {self.REGION1: self.REGIONAL_ENDPOINT,
                                                                                   self.REGION2: self.REGIONAL_ENDPOINT,
                                                                                   self.REGION3: self.REGIONAL_ENDPOINT}
-        original_location_cache.read_dual_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
-                                                       self.REGIONAL_ENDPOINT]
+        original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
+                                                                  self.REGIONAL_ENDPOINT]
         try:
             # Mock the function to return the ServiceResponseException we retry
             mf = self.MockExecuteServiceResponseException(Exception)
@@ -126,7 +126,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
 
         # Now we change the location cache to have only 1 preferred read region
         original_location_cache.account_read_locations = [self.REGION1]
-        original_location_cache.read_dual_endpoints = [self.REGIONAL_ENDPOINT]
+        original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT]
         try:
             # Reset the function to reset the counter
             mf = self.MockExecuteServiceResponseException(Exception)
@@ -140,7 +140,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
 
         # Now we try it out with a write request
         original_location_cache.account_write_locations = [self.REGION1, self.REGION2]
-        original_location_cache.write_dual_endpoints = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
+        original_location_cache.write_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
         original_location_cache.available_write_regional_endpoints_by_locations = {self.REGION1: self.REGIONAL_ENDPOINT,
                                                                                    self.REGION2: self.REGIONAL_ENDPOINT}
         try:

@@ -101,14 +101,14 @@ class TestLocationCache(unittest.TestCase):
         lc.perform_on_database_account_read(db_acc)
 
         # check read endpoints without preferred locations
-        read_regions = lc.get_read_dual_endpoints()
+        read_regions = lc.get_read_regional_routing_contexts()
         assert len(read_regions) == 1
         assert read_regions[0].get_primary() == location1_endpoint
 
         # check read endpoints with preferred locations
         lc = refresh_location_cache([location1_name, location2_name, location4_name], False)
         lc.perform_on_database_account_read(db_acc)
-        read_regions = lc.get_read_dual_endpoints()
+        read_regions = lc.get_read_regional_routing_contexts()
         assert len(read_regions) == len(db_acc.ReadableLocations)
         for read_region in db_acc.ReadableLocations:
             found_endpoint = False
@@ -119,7 +119,7 @@ class TestLocationCache(unittest.TestCase):
             assert found_endpoint
 
         # check write endpoints
-        write_regions = lc.get_write_dual_endpoints()
+        write_regions = lc.get_write_regional_routing_contexts()
         assert len(write_regions) == len(db_acc.WritableLocations)
         for write_region in db_acc.WritableLocations:
             found_endpoint = False
