@@ -6,15 +6,15 @@
 
 from io import BytesIO
 from typing import (
-    Any, Dict, Generator, IO, Iterable, Optional, Type, Union,
+    Any, AsyncGenerator, AsyncIterable, Dict, IO, Optional, Type, Union,
     TYPE_CHECKING
 )
 
-from ._shared.avro.avro_io import DatumReader
-from ._shared.avro.datafile import DataFileReader
+from .._shared.avro.avro_io_async import AsyncDatumReader
+from .._shared.avro.datafile_async import AsyncDataFileReader
 
 if TYPE_CHECKING:
-    from ._models import BlobQueryError
+    from .._models import BlobQueryError
 
 
 class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
@@ -25,10 +25,10 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
     container: str
     """The name of the container where the blob is."""
     response_headers: Dict[str, Any]
-    """The response_headers of the quick query request."""
+    """The response headers of the quick query request."""
     record_delimiter: str
     """The delimiter used to separate lines, or records with the data. The `records`
-    method will return these lines via a generator."""
+        method will return these lines via a generator."""
 
     def __init__(
         self, name: str = None,  # type: ignore [assignment]
@@ -48,9 +48,13 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
         self._bytes_processed = 0
         self._errors = errors
         self._encoding = encoding
-        self._parsed_results = DataFileReader(QuickQueryStreamer(response), DatumReader())
-        self._first_result = self._process_record(next(self._parsed_results))
+        self._parsed_results = AsyncDataFileReader(QuickQueryStreamer(response), AsyncDatumReader())
         self._error_cls = error_cls
+
+    async def _setup(self):
+        self._parsed_results = await self._parsed_results.init()
+        first_result = await self._parsed_results.__anext__()
+        self._first_result = self._process_record(first_result)  # pylint: disable=attribute-defined-outside-init
 
     def __len__(self) -> int:
         return self._size
@@ -71,15 +75,15 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
                 self._errors(error)
         return None
 
-    def _iter_stream(self) -> Generator[bytes, None, None]:
+    async def _aiter_stream(self) -> AsyncGenerator[bytes, None]:
         if self._first_result is not None:
             yield self._first_result
-        for next_result in self._parsed_results:
+        async for next_result in self._parsed_results:
             processed_result = self._process_record(next_result)
             if processed_result is not None:
                 yield processed_result
 
-    def readall(self) -> Union[bytes, str]:
+    async def readall(self) -> Union[bytes, str]:
         """Return all query results.
 
         This operation is blocking until all data is downloaded.
@@ -90,13 +94,13 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
         :rtype: Union[bytes, str]
         """
         stream = BytesIO()
-        self.readinto(stream)
+        await self.readinto(stream)
         data = stream.getvalue()
         if self._encoding:
             return data.decode(self._encoding)
         return data
 
-    def readinto(self, stream: IO) -> None:
+    async def readinto(self, stream: IO) -> None:
         """Download the query result to a stream.
 
         :param IO stream:
@@ -104,10 +108,10 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
             or any writable stream.
         :returns: None
         """
-        for record in self._iter_stream():
+        async for record in self._aiter_stream():
             stream.write(record)
 
-    def records(self) -> Iterable[Union[bytes, str]]:
+    async def records(self) -> AsyncIterable[Union[bytes, str]]:
         """Returns a record generator for the query result.
 
         Records will be returned line by line.
@@ -115,10 +119,10 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
         records are they are received.
 
         :returns: A record generator for the query result.
-        :rtype: Iterable[Union[bytes, str]]
+        :rtype: AsyncIterable[Union[bytes, str]]
         """
         delimiter = self.record_delimiter.encode('utf-8')
-        for record_chunk in self._iter_stream():
+        async for record_chunk in self._aiter_stream():
             for record in record_chunk.split(delimiter):
                 if self._encoding:
                     yield record.decode(self._encoding)
@@ -131,7 +135,7 @@ class QuickQueryStreamer:
 
     def __init__(self, generator):
         self.generator = generator
-        self.iterator = iter(generator)
+        self.iterator = generator.__aiter__()
         self._buf = b""
         self._point = 0
         self._download_offset = 0
@@ -141,37 +145,37 @@ class QuickQueryStreamer:
     def __len__(self):
         return self.file_length
 
-    def __iter__(self):
+    def __aiter__(self):
         return self.iterator
 
     @staticmethod
     def seekable():
         return True
 
-    def __next__(self):
-        next_part = next(self.iterator)
+    async def __anext__(self):
+        next_part = await anext(self.iterator)
         self._download_offset += len(next_part)
         return next_part
 
     def tell(self):
         return self._point
 
-    def seek(self, offset, whence=0):
+    async def seek(self, offset, whence=0):
         if whence == 0:
             self._point = offset
         elif whence == 1:
             self._point += offset
         else:
-            raise ValueError("whence must be 0, or 1")
-        if self._point < 0:    # pylint: disable=consider-using-max-builtin
-            self._point = 0  # XXX is this right?
+            raise ValueError("whence must be 0 or 1")
+        if self._point < 0:  # pylint: disable=consider-using-max-builtin
+            self._point = 0
 
-    def read(self, size):
+    async def read(self, size):
         try:
             # keep reading from the generator until the buffer of this stream has enough data to read
             while self._point + size > self._download_offset:
-                self._buf += self.__next__()
-        except StopIteration:
+                self._buf += await self.__anext__()
+        except StopAsyncIteration:
             self.file_length = self._download_offset
 
         start_point = self._point
