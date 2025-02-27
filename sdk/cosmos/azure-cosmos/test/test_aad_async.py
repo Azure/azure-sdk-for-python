@@ -86,7 +86,7 @@ class CosmosEmulatorCredential(object):
 
 
 @pytest.mark.cosmosEmulator
-class TestAADAsync(unittest.TestCase):
+class TestAADAsync(unittest.IsolatedAsyncioTestCase):
     client: CosmosClient = None
     database: DatabaseProxy = None
     container: ContainerProxy = None
