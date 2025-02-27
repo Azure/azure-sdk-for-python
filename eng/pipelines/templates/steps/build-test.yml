@@ -218,6 +218,6 @@ steps:
   - task: PublishCodeCoverageResults@2
     displayName: 'Publish Code Coverage to DevOps'
     continueOnError: true
-    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
     inputs:
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
