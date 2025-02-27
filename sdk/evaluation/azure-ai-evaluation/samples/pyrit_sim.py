@@ -35,6 +35,7 @@ async def main():
     outputs = await safety_eval_callback_target(
         target=test_target_fn,
         num_rows=8,
+        attack_budget=[_AttackBudget.LOW]
     )
 
     print(outputs)

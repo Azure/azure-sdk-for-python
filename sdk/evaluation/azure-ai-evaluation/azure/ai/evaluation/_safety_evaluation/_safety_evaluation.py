@@ -21,6 +21,10 @@ from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenMa
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._safety_evaluation._callback_chat_target import CallbackChatTarget
+from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
+from pyrit.orchestrator import ManyShotJailbreakOrchestrator, SkeletonKeyOrchestrator, Orchestrator
+from pyrit.prompt_converter import PromptConverter, MathPromptConverter, TenseConverter, Base64Converter, FlipConverter
+from pyrit.prompt_target import PromptChatTarget
 from azure.core.credentials import TokenCredential
 import json
 from pathlib import Path
@@ -65,6 +69,13 @@ class _SafetyEvaluator(Enum):
     COHERENCE = "coherence"
     INDIRECT_ATTACK = "indirect_attack"
     DIRECT_ATTACK = "direct_attack"
+
+@experimental
+class _AttackBudget(Enum):
+    """Budget levels for attacks."""
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
 
 @experimental
 class _SafetyEvaluation:
@@ -611,12 +622,72 @@ class _SafetyEvaluation:
             "content": message.content,
         }
     
+    def _get_converters_for_budget(self, attack_budget) -> List:
+        converters = []
+        if _AttackBudget.LOW in attack_budget:
+            converters.extend([Base64Converter(), FlipConverter()])
+        return converters
+    
+    async def _many_shot_orchestrator(self, chat_target: PromptChatTarget, all_prompts: List[str]) -> Orchestrator:
+            orchestrator = ManyShotJailbreakOrchestrator(
+                objective_target=chat_target,
+            )
+            await orchestrator.send_prompts_async(prompt_list=all_prompts)
+            return orchestrator
+    
+    async def _skeleton_key_orchestrator(self, chat_target: PromptChatTarget, all_prompts: List[str], converters: PromptConverter) -> List[Orchestrator]:
+        orchestrators = []
+        for converter in converters:
+            orchestrator = SkeletonKeyOrchestrator(
+                prompt_target=chat_target,
+                prompt_converters=[converter]
+            )
+            await orchestrator.send_skeleton_key_with_prompts_async(prompt_list=all_prompts)
+            orchestrators.append(orchestrator)
+        return orchestrators
+            
+    
+    async def _call_orchestrators_for_budget(self, attack_budget: List[_AttackBudget], converters: PromptConverter, chat_target: PromptChatTarget, all_prompts: List[str]) -> List[Union[str, os.PathLike]]:
+        output_data_paths = []
+        if _AttackBudget.LOW in attack_budget:
+            # run many-shot orchestrator (does not handle converters)
+            # TODO: Many shot is flaky for some reason, ignoring for now 
+            # many_shot_orchestrator = await self._many_shot_orchestrator(chat_target, all_prompts)
+            # ouptut_path = "many_shot_outputs.jsonl"
+            # ouptut_path = self._write_pyrit_outputs_to_file(many_shot_orchestrator, ouptut_path)
+            # output_data_paths.append(ouptut_path)
+            # run skeleton key orchestrator for each converter
+            skeleton_key_orchestrators = await self._skeleton_key_orchestrator(chat_target, all_prompts, converters)
+            for converter in converters:
+                skeleton_key_orchestrator = skeleton_key_orchestrators.pop(0)
+                converter_name = converter.get_identifier()["__type__"]
+                ouptut_path = f"skeleton_key_outputs_{converter_name}.jsonl"
+                ouptut_path = self._write_pyrit_outputs_to_file(skeleton_key_orchestrator, ouptut_path)
+                output_data_paths.append(ouptut_path)
+        return output_data_paths
+    
+    def _write_pyrit_outputs_to_file(self, orchestrator: Orchestrator, output_path: Union[str, os.PathLike]) -> Union[str, os.PathLike]:
+        memory = orchestrator.get_memory()
+
+        # Get conversations as a List[List[ChatMessage]]
+        conversations = [[item.to_chat_message() for item in group] for conv_id, group in itertools.groupby(memory, key=lambda x: x.conversation_id)]
+        
+        #Convert to json lines
+        json_lines = ""
+        for conversation in conversations: # each conversation is a List[ChatMessage]
+            json_lines += json.dumps({"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}) + "\n"
+
+        with Path(output_path).open("w") as f:
+            f.writelines(json_lines)
+        return output_path
+    
     async def _pyrit(
             self, 
             target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration], 
             scenario: AdversarialScenario,
             num_rows: int = 1,
-        ) -> str:
+            attack_budget: List[_AttackBudget] = []
+        ) ->  List[Union[str, os.PathLike]]:
         chat_target: OpenAIChatTarget = None
         if not isinstance(target, Callable):
             if "azure_deployment" in target and "azure_endpoint" in target: # Azure OpenAI
@@ -657,22 +728,21 @@ class _SafetyEvaluation:
         
         all_prompts_list = await self._get_all_prompts(scenario, num_rows=num_rows)
 
-        orchestrator = PromptSendingOrchestrator(objective_target=chat_target)
-        await orchestrator.send_prompts_async(prompt_list=all_prompts_list)
-        memory = orchestrator.get_memory()
+        # If user provided budget levels, get predefined strategies
+        if attack_budget:
+            self.logger.info(f"Configuring PyRIT based on attack budget: {attack_budget}")
+            converters = self._get_converters_for_budget(attack_budget)
+            data_paths = await self._call_orchestrators_for_budget(attack_budget, converters, chat_target, all_prompts_list)
+            return data_paths
+        # TODO: Implement handling for pyrit strategies beyond budget levels
+        else: 
+            orchestrator = PromptSendingOrchestrator(objective_target=chat_target)
+            await orchestrator.send_prompts_async(prompt_list=all_prompts_list)
 
-        # Get conversations as a List[List[ChatMessage]]
-        conversations = [[item.to_chat_message() for item in group] for conv_id, group in itertools.groupby(memory, key=lambda x: x.conversation_id)]
+            output_path = "pyrit_outputs.jsonl"
+            return [self._write_pyrit_outputs_to_file(orchestrator, output_path)]
+
         
-        #Convert to json lines
-        json_lines = ""
-        for conversation in conversations: # each conversation is a List[ChatMessage]
-            json_lines += json.dumps({"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}) + "\n"
-        
-        data_path = "pyrit_outputs.jsonl"
-        with Path(data_path).open("w") as f:
-            f.writelines(json_lines)
-        return data_path
 
     async def __call__(
             self,
@@ -682,6 +752,7 @@ class _SafetyEvaluation:
             num_turns : int = 1,
             num_rows: int = 5,
             scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
+            attack_budget: List[_AttackBudget] = [],
             conversation_turns : List[List[Union[str, Dict[str, Any]]]] = [],
             tasks: List[str] = [],
             data_only: bool = False,
@@ -705,6 +776,8 @@ class _SafetyEvaluation:
         :type num_rows: int
         :param scenario: The adversarial scenario to simulate. 
         :type scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]
+        :param attack_budget: A list of budget levels for attacks (e.g., ['low', 'medium', 'high']). The operation will choose appropriate PyRIT orchestrators based on these budgets.
+        :type attack_budget: List[_AttackBudget]
         :param conversation_turns: Predefined conversation turns to simulate.
         :type conversation_turns: List[List[Union[str, Dict[str, Any]]]]
         :param tasks A list of user tasks, each represented as a list of strings. Text should be relevant for the tasks and facilitate the simulation. One example is to use text to provide context for the tasks.
@@ -721,7 +794,7 @@ class _SafetyEvaluation:
         :type output_path: Optional[Union[str, os.PathLike]]
         '''
         ## Log inputs 
-        self.logger.info(f"User inputs: evaluators{evaluators}, evaluation_name={evaluation_name}, num_turns={num_turns}, num_rows={num_rows}, conversation_turns={conversation_turns}, tasks={tasks}, source_text={source_text}, data_path={data_path}, jailbreak_data_path={jailbreak_data_path}, output_path={output_path}")
+        self.logger.info(f"User inputs: evaluators{evaluators}, evaluation_name={evaluation_name}, num_turns={num_turns}, num_rows={num_rows}, scenario={scenario},attack_budget={attack_budget},conversation_turns={conversation_turns}, tasks={tasks}, source_text={source_text}, data_path={data_path}, jailbreak_data_path={jailbreak_data_path}, output_path={output_path}")
 
         ## Validate arguments
         self._validate_inputs(
@@ -736,15 +809,17 @@ class _SafetyEvaluation:
         adversarial_scenario = self._get_scenario(evaluators, num_turns=num_turns, scenario=scenario)
         self.logger.info(f"Using scenario: {adversarial_scenario}")
 
+        data_path_list = None
         if isinstance(adversarial_scenario, AdversarialScenario) and num_turns==1:
-            self.logger.info(f"Running Pyrit with inputs target={target}, scenario={scenario}") 
-            data_path = await self._pyrit(target, adversarial_scenario, num_rows=num_rows)
+            self.logger.info(f"Running Pyrit with inputs target={target}, scenario={scenario}, attack_budget={attack_budget}, num_rows={num_rows}") 
+            data_path_list = await self._pyrit(target, adversarial_scenario, num_rows, attack_budget)
+            return EvaluationResult(rows=[], metrics={}, studio_url="")
 
         ## Get evaluators
         evaluators_dict = self._get_evaluators(evaluators)
 
         ## If `data_path` is not provided, run simulator
-        if data_path is None and jailbreak_data_path is None and isinstance(target, Callable):
+        if not data_path_list and data_path is None and jailbreak_data_path is None and isinstance(target, Callable):
             self.logger.info(f"No data_path provided. Running simulator.")
             data_paths = await self._simulate(
                 target=target,
