@@ -4,9 +4,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient, load_online_deployment, load_online_endpoint
-from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint, Model, CodeConfiguration, Environment
-from azure.ai.ml.entities import TargetUtilizationScaleSettings
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures(
