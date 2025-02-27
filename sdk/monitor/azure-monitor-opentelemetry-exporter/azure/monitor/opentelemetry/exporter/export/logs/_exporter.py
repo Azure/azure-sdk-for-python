@@ -154,7 +154,6 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
             has_full_stack=has_full_stack,
             stack=str(stack_trace)[:32768],
         )
-        
         data = TelemetryExceptionData(  # type: ignore
             severity_level=severity_level,  # type: ignore
             properties=properties,
