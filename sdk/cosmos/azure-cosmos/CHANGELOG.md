@@ -1,14 +1,24 @@
 ## Release History
 
-### 4.9.1b5 (Unreleased)
+### 4.10.0b2 (Unreleased)
 
 #### Features Added
 
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug preventing health check in some scenarios. See [PR 39647](https://github.com/Azure/azure-sdk-for-python/pull/39647)
 
 #### Other Changes
+* Moved endpoint health check to the background. See [PR 39647](https://github.com/Azure/azure-sdk-for-python/pull/39647)
+
+### 4.10.0b1 (2025-02-13)
+
+#### Features Added
+* Added ability to replace `computed_properties` through `replace_container` method. See [PR 39543](https://github.com/Azure/azure-sdk-for-python/pull/39543)
+
+#### Other Changes
+* Un-marked `computed_properties` keyword as **provisional**. See [PR 39543](https://github.com/Azure/azure-sdk-for-python/pull/39543)
 
 ### 4.9.1b4 (2025-02-06)
 

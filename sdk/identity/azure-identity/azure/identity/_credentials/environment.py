@@ -46,6 +46,9 @@ class EnvironmentCredential:
         when no value is given.
 
     User with username and password:
+      **Deprecated**: Username and password authentication doesn't support multifactor authentication (MFA).
+      For more details on Microsoft Entra MFA enforcement, see https://aka.ms/azsdk/identity/mfa.
+
       - **AZURE_CLIENT_ID**: the application's client ID
       - **AZURE_USERNAME**: a username (usually an email address)
       - **AZURE_PASSWORD**: that user's password

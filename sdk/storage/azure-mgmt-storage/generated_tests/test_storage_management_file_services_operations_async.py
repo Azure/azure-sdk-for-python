@@ -25,7 +25,7 @@ class TestStorageManagementFileServicesOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.file_services.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2023-05-01",
+            api_version="2024-01-01",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestStorageManagementFileServicesOperationsAsync(AzureMgmtRecordedTestCase
                 "sku": {"name": "str", "tier": "str"},
                 "type": "str",
             },
-            api_version="2023-05-01",
+            api_version="2024-01-01",
             file_services_name="default",
         )
 
@@ -77,8 +77,35 @@ class TestStorageManagementFileServicesOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.file_services.get_service_properties(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2023-05-01",
+            api_version="2024-01-01",
             file_services_name="default",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_file_services_list_service_usages(self, resource_group):
+        response = self.client.file_services.list_service_usages(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            api_version="2024-01-01",
+            file_services_name="default",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_file_services_get_service_usage(self, resource_group):
+        response = await self.client.file_services.get_service_usage(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            api_version="2024-01-01",
+            file_services_name="default",
+            file_service_usages_name="default",
         )
 
         # please add some check logic here by yourself

@@ -15,7 +15,8 @@ class _TimeoutFailoverRetryPolicy(object):
 
         self.global_endpoint_manager = global_endpoint_manager
         # If an account only has 1 region, then we still want to retry once on the same region
-        self._max_retry_attempt_count = len(self.global_endpoint_manager.location_cache.read_regional_endpoints) + 1
+        self._max_retry_attempt_count = (len(self.global_endpoint_manager.location_cache.read_regional_routing_contexts)
+                                         + 1)
         self.retry_count = 0
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
