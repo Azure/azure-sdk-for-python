@@ -10,7 +10,6 @@ from ci_tools.variables import in_ci
 from azure.ai.evaluation import (
     F1ScoreEvaluator,
     FluencyEvaluator,
-    GroundednessEvaluator,
     evaluate,
 )
 from azure.ai.evaluation._common.math import list_mean_nan_safe

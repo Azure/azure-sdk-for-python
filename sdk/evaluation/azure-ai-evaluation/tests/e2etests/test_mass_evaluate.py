@@ -27,6 +27,7 @@ from azure.ai.evaluation import (
     IndirectAttackEvaluator,
     RetrievalEvaluator,
     SexualEvaluator,
+    CodeVulnerabilityEvaluator,
     RougeType,
     evaluate,
 )
@@ -74,7 +75,6 @@ class TestMassEvaluate:
     - Multi-modal inputs: This one has some parameters for the different types of multi-modal inputs.
     """
     
-    @pytest.mark.skipif(not is_live(), reason="Skip in playback due to inconsistency in evaluation results.")
     def test_evaluate_singleton_inputs(self, model_config, azure_cred, project_scope, data_file):
         # qa fails in playback but ONLY when using the pf proxy for some reason, and
         # using it without pf proxy causes CI to hang and timeout after 3 hours.
@@ -95,6 +95,7 @@ class TestMassEvaluate:
             "indirect_attack": IndirectAttackEvaluator(azure_cred, project_scope),
             "eci": ECIEvaluator(azure_cred, project_scope),
             "content_safety": ContentSafetyEvaluator(azure_cred, project_scope),
+            "code_vulnerability": CodeVulnerabilityEvaluator(azure_cred, project_scope),
         }
 
         # run the evaluation
@@ -105,7 +106,7 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
-        assert len(row_result_df.keys()) == 63
+        assert len(row_result_df.keys()) == 66
         assert len(row_result_df["inputs.query"]) == 3
         assert len(row_result_df["inputs.context"]) == 3
         assert len(row_result_df["inputs.response"]) == 3
@@ -169,8 +170,11 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.qa.relevance_reason"]) == 3
         assert len(row_result_df["outputs.qa.similarity"]) == 3
         assert len(row_result_df["outputs.qa.gpt_similarity"]) == 3
+        assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_label"]) == 3
+        assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_reason"]) == 3
+        assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_metadata"]) == 3
 
-        assert len(metrics.keys()) == 39
+        assert len(metrics.keys()) == 40
         assert metrics["f1_score.f1_score"] >= 0
         assert metrics["gleu.gleu_score"] >= 0
         assert metrics["bleu.bleu_score"] >= 0
@@ -210,6 +214,7 @@ class TestMassEvaluate:
         assert metrics["qa.gpt_relevance"] >= 0
         assert metrics["qa.similarity"] >= 0
         assert metrics["qa.gpt_similarity"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_defect_rate"] >= 0
 
     def test_evaluate_conversation(self, model_config, data_convo_file, azure_cred, project_scope):
         evaluators = {
