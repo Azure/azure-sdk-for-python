@@ -282,7 +282,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata. Note that due to the nature of combining
+            calls to build the results, this function may be called with a either single dict or iterable of dicts
         :paramtype response_hook:
             Callable[[Mapping[str, Any], Union[Dict[str, Any], ItemPaged[Dict[str, Any]]]],None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
@@ -358,7 +359,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata. Note that due to the nature of combining
+            calls to build the results, this function may be called with a either single dict or iterable of dicts
         :type response_hook:
             Callable[[Mapping[str, Any], Union[Dict[str, Any], ItemPaged[Dict[str, Any]]]], None]
         :returns: An Iterable of items (dicts).
@@ -586,7 +588,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata. Note that due to the nature of combining
+            calls to build the results, this function may be called with a either single dict or iterable of dicts
         :paramtype response_hook:
             Callable[[Mapping[str, Any], Union[Dict[str, Any], ItemPaged[Dict[str, Any]]]], None]
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query

@@ -275,7 +275,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :returns: A DatabaseProxy instance representing the new database.
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
@@ -403,7 +403,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[Dict[str, str]]
         """
@@ -451,7 +451,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[Dict[str, str]]
         """
@@ -512,7 +512,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str]], None]
+        :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
