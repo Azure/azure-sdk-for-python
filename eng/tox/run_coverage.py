@@ -12,6 +12,7 @@ from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.functions import get_total_coverage
 
+logging.basicConfig(level=logging.INFO)
 coveragerc_file = os.path.join(os.path.dirname(__file__), "tox.ini")
 
 if __name__ == "__main__":
@@ -42,9 +43,9 @@ if __name__ == "__main__":
 
     if os.path.exists(possible_coverage_file):
         total_coverage = get_total_coverage(possible_coverage_file, coveragerc_file, pkg_details.name, args.repo_root)
+
         if total_coverage is not None:
             # log the metric for reporting before doing anything else
-            logging.info(f"Total coverage for {pkg_details.name} is {total_coverage:.2f}%")
             if in_ci():
                 metric_obj = {}
                 metric_obj["value"] = total_coverage / 100
