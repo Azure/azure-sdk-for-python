@@ -35,27 +35,6 @@ test_tools_path = os.path.join(root_dir, "eng", "test_tools.txt")
 dependency_tools_path = os.path.join(root_dir, "eng", "dependency_tools.txt")
 
 
-def combine_coverage_files(targeted_packages):
-    # find tox.ini file. tox.ini is used to combine coverage paths to generate formatted report
-    tox_ini_file = os.path.join(root_dir, "eng", "tox", "tox.ini")
-    config_file_flag = "--rcfile={}".format(tox_ini_file)
-
-    if os.path.isfile(tox_ini_file):
-        # for every individual coverage file, run coverage combine to combine path
-        for package_dir in [package for package in targeted_packages]:
-            coverage_file = os.path.join(package_dir, ".coverage")
-            if os.path.isfile(coverage_file):
-                cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
-                # tox.ini file has coverage paths to combine
-                # Pas tox.ini as coverage config file
-                cov_cmd_array.extend([config_file_flag, coverage_file])
-                run_check_call(cov_cmd_array, package_dir)
-    else:
-        # not a hard error at this point
-        # this combine step is required only for modules if report has package name starts with .tox
-        logging.error("tox.ini is not found in path {}".format(root_dir))
-
-
 def collect_tox_coverage_files(targeted_packages):
     root_coverage_dir = os.path.join(root_dir, "_coverage/")
 
