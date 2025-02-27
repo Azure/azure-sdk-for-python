@@ -1740,7 +1740,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             process_storage_error(error)
 
     @distributed_trace_async
-    async def create_symbolic_link(
+    async def symlink_to(
         self, target: str,
         *,
         metadata: Optional[Dict[str, str]] = None,
@@ -1794,7 +1794,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_symbolic_link(
+    async def get_symlink(
         self,
         *,
         timeout: Optional[int] = None,

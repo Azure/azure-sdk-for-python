@@ -1739,7 +1739,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def create_symbolic_link(
+    def symlink_to(
         self, target: str,
         *,
         metadata: Optional[Dict[str, str]] = None,
@@ -1751,7 +1751,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
-        """NFS only. Create a symbolic link to the specified file.
+        """NFS only. Creates a symbolic link to the specified file.
 
         :param str target:
             Specifies the file path the symbolic link will point to. The file path can be either relative or absolute.
@@ -1793,7 +1793,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_symbolic_link(
+    def get_symlink(
         self,
         *,
         timeout: Optional[int] = None,
