@@ -19,7 +19,7 @@ from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import filter_tox_environment_string
 from ci_tools.ci_interactions import output_ci_warning
 from ci_tools.scenario.generation import replace_dev_reqs
-from ci_tools.functions import cleanup_directory
+from ci_tools.functions import cleanup_directory, get_total_coverage
 from ci_tools.parsing import ParsedSetup
 from pkg_resources import parse_requirements, RequirementParseError
 import logging
@@ -30,6 +30,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 coverage_dir = os.path.join(root_dir, "_coverage/")
+tox_ini_file = os.path.join(root_dir, "eng", "tox", "tox.ini")
 pool_size = multiprocessing.cpu_count() * 2
 DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, "eng/tox/tox.ini")
 IGNORED_TOX_INIS = ["azure-cosmos"]
@@ -39,21 +40,14 @@ dependency_tools_path = os.path.join(root_dir, "eng", "dependency_tools.txt")
 
 def combine_coverage_files(targeted_packages):
     # find tox.ini file. tox.ini is used to combine coverage paths to generate formatted report
-    tox_ini_file = os.path.join(root_dir, "eng", "tox", "tox.ini")
     config_file_flag = "--rcfile={}".format(tox_ini_file)
 
     if os.path.isfile(tox_ini_file):
         # for every individual coverage file, run coverage combine to combine path
         for package_dir in [package for package in targeted_packages]:
             coverage_file = os.path.join(package_dir, ".coverage")
-
-            try:
-                cov = coverage.Coverage(data_file=coverage_file, config_file=tox_ini_file)
-                cov.load()
-                report = cov.report()
-                logging.info("Total coverage before combine with rcfile and as I collect it is{:.2f}%".format(report))
-            except Exception as e:
-                logging.error(e)
+            report = get_total_coverage(coverage_file, tox_ini_file, os.path.basename(package_dir), root_dir)
+            logging.info("Total coverage before combine with rcfile and as I collect it is{:.2f}%".format(report))
 
             if os.path.isfile(coverage_file):
                 cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
@@ -77,13 +71,8 @@ def collect_tox_coverage_files(targeted_packages):
     for package_dir in [package for package in targeted_packages]:
         coverage_file = os.path.join(package_dir, ".coverage")
         if os.path.isfile(coverage_file):
-            try:
-                cov = coverage.Coverage(data_file=coverage_file)
-                cov.load()
-                report = cov.report()
-                logging.info("Coverage before moving file out of tox dir and as I collect it is{:.2f}%".format(report))
-            except Exception as e:
-                logging.error(e)
+            report = get_total_coverage(coverage_file, tox_ini_file, os.path.basename(package_dir), root_dir)
+            logging.info("Coverage before moving file out of tox dir and as I collect it is{:.2f}%".format(report))
             destination_file = os.path.join(root_coverage_dir, ".coverage_{}".format(os.path.basename(package_dir)))
             shutil.copyfile(coverage_file, destination_file)
             coverage_files.append(destination_file)

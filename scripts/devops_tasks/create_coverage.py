@@ -94,5 +94,5 @@ if __name__ == "__main__":
     generate_coverage_xml()
     create_coverage_report()
 
-    if os.path.exists(coverage_xml):
-        fix_coverage_xml(coverage_xml)
+    # if os.path.exists(coverage_xml):
+    #     fix_coverage_xml(coverage_xml)
