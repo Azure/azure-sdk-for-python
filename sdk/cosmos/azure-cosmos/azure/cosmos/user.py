@@ -28,7 +28,6 @@ from typing import Any, Dict, List, Mapping, Union, Optional, Callable
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.utils import CaseInsensitiveDict
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
@@ -94,14 +93,14 @@ class UserProxy:
             self,
             max_item_count: Optional[int] = None,
             *,
-            response_hook: Optional[Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List all permission for the user.
 
         :param int max_item_count: Max number of permissions to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of permissions (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -127,7 +126,7 @@ class UserProxy:
         parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
         *,
-        response_hook: Optional[Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Return all permissions matching the given `query`.
@@ -137,7 +136,7 @@ class UserProxy:
         :type parameters: List[Dict[str, Any]]
         :param int max_item_count: Max number of permissions to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of permissions (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """

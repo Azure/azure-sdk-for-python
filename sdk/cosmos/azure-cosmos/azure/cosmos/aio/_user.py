@@ -29,7 +29,6 @@ from typing import Any, Dict, List, Mapping, Union, Optional, Callable
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.utils import CaseInsensitiveDict
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options
@@ -98,14 +97,14 @@ class UserProxy:
         self,
         *,
         max_item_count: Optional[int] = None,
-        response_hook: Optional[Callable[[CaseInsensitiveDict, AsyncItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all permission for the user.
 
         :keyword int max_item_count: Max number of permissions to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[CaseInsensitiveDict, AsyncItemPaged[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of permissions (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -127,7 +126,7 @@ class UserProxy:
         *,
         parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
-        response_hook: Optional[Callable[[CaseInsensitiveDict, AsyncItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all permissions matching the given `query`.
@@ -137,7 +136,7 @@ class UserProxy:
         :paramtype parameters: Optional[List[Dict[str, Any]]]
         :keyword int max_item_count: Max number of permissions to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[CaseInsensitiveDict, AsyncItemPaged[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of permissions (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """

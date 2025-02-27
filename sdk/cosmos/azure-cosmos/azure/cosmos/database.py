@@ -27,7 +27,6 @@ from typing import Any, Dict, List, Union, Optional, Mapping, Callable
 import warnings
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.utils import CaseInsensitiveDict
 from azure.core.paging import ItemPaged
 from azure.cosmos.partition_key import PartitionKey
 
@@ -454,7 +453,7 @@ class DatabaseProxy(object):
         *,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        response_hook: Optional[Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List the containers in the database.
@@ -463,7 +462,7 @@ class DatabaseProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[Dict[str, Any]]
 
@@ -507,7 +506,7 @@ class DatabaseProxy(object):
         *,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        response_hook: Optional[Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List the properties for containers in the current database.
@@ -519,7 +518,7 @@ class DatabaseProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -652,14 +651,14 @@ class DatabaseProxy(object):
             self,
             max_item_count: Optional[int] = None,
             *,
-            response_hook: Optional[Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List all the users in the container.
 
         :param int max_item_count: Max number of users to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of user properties (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -681,7 +680,7 @@ class DatabaseProxy(object):
         parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
         *,
-        response_hook: Optional[Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Return all users matching the given `query`.
@@ -691,7 +690,7 @@ class DatabaseProxy(object):
         :type parameters: List[Dict[str, Any]]
         :param int max_item_count: Max number of users to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[CaseInsensitiveDict, ItemPaged[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of user properties (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -850,14 +849,14 @@ class DatabaseProxy(object):
     def get_throughput(
             self,
             *,
-            response_hook: Optional[Callable[[CaseInsensitiveDict, List[Dict[str, Any]]], None]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]] = None,
             **kwargs: Any) -> ThroughputProperties:
         """Get the ThroughputProperties object for this database.
 
         If no ThroughputProperties already exist for the database, an exception is raised.
 
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[CaseInsensitiveDict, List[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]
         :returns: ThroughputProperties for the database.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
             the throughput properties could not be retrieved.

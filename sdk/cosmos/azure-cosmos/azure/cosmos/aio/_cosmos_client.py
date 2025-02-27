@@ -31,7 +31,6 @@ from azure.core.pipeline.policies import RetryMode
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos.offer import ThroughputProperties
 
 from ..cosmos_client import _parse_connection_str
@@ -373,7 +372,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         max_item_count: Optional[int] = None,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        response_hook: Optional[Callable[[CaseInsensitiveDict], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the databases in a Cosmos DB SQL database account.
@@ -382,7 +381,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[CaseInsensitiveDict], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any]], None]
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
@@ -408,7 +407,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         max_item_count: Optional[int] = None,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        response_hook: Optional[Callable[[CaseInsensitiveDict], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Query the databases in a Cosmos DB SQL database account.
@@ -421,7 +420,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[CaseInsensitiveDict], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any]], None]
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
@@ -450,7 +449,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         initial_headers: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
-        response_hook: Optional[Callable[[CaseInsensitiveDict], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         **kwargs: Any
     ) -> None:
         """Delete the database with the given ID (name).
@@ -465,7 +464,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[CaseInsensitiveDict], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
@@ -488,13 +487,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     async def _get_database_account(
             self,
             *,
-            response_hook: Optional[Callable[[CaseInsensitiveDict], None]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
             **kwargs: Any
     ) -> DatabaseAccount:
         """Retrieve the database account information.
 
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[CaseInsensitiveDict], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any]], None]
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
