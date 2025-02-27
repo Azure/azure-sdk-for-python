@@ -1,5 +1,48 @@
 # Release History
 
+## 1.0.0 (2025-02-24)
+
+### Features Added
+
+  - Model `OperationStatusResult` added property `resource_id`
+  - Method `Operation.__init__` has a new overload `def __init__(self: None, display: Optional[_models.OperationDisplay])`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `DeviceRegistryMgmtClient.discovered_assets`
+  - Deleted or renamed client operation group `DeviceRegistryMgmtClient.discovered_asset_endpoint_profiles`
+  - Deleted or renamed client operation group `DeviceRegistryMgmtClient.schema_registries`
+  - Deleted or renamed client operation group `DeviceRegistryMgmtClient.schemas`
+  - Deleted or renamed client operation group `DeviceRegistryMgmtClient.schema_versions`
+  - Deleted or renamed model `DiscoveredAsset`
+  - Deleted or renamed model `DiscoveredAssetEndpointProfile`
+  - Deleted or renamed model `DiscoveredAssetEndpointProfileProperties`
+  - Deleted or renamed model `DiscoveredAssetEndpointProfileUpdate`
+  - Deleted or renamed model `DiscoveredAssetEndpointProfileUpdateProperties`
+  - Deleted or renamed model `DiscoveredAssetProperties`
+  - Deleted or renamed model `DiscoveredAssetUpdate`
+  - Deleted or renamed model `DiscoveredAssetUpdateProperties`
+  - Deleted or renamed model `DiscoveredDataPoint`
+  - Deleted or renamed model `DiscoveredDataset`
+  - Deleted or renamed model `DiscoveredEvent`
+  - Deleted or renamed model `Format`
+  - Deleted or renamed model `Schema`
+  - Deleted or renamed model `SchemaProperties`
+  - Deleted or renamed model `SchemaRegistry`
+  - Deleted or renamed model `SchemaRegistryProperties`
+  - Deleted or renamed model `SchemaRegistryUpdate`
+  - Deleted or renamed model `SchemaRegistryUpdateProperties`
+  - Deleted or renamed model `SchemaType`
+  - Deleted or renamed model `SchemaVersion`
+  - Deleted or renamed model `SchemaVersionProperties`
+  - Deleted or renamed model `SystemAssignedServiceIdentity`
+  - Deleted or renamed model `SystemAssignedServiceIdentityType`
+  - Deleted or renamed model `DiscoveredAssetEndpointProfilesOperations`
+  - Deleted or renamed model `DiscoveredAssetsOperations`
+  - Deleted or renamed model `SchemaRegistriesOperations`
+  - Deleted or renamed model `SchemaVersionsOperations`
+  - Deleted or renamed model `SchemasOperations`
+
 ## 1.0.0 (2025-02-26)
 
 ### Features Added
