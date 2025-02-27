@@ -1752,7 +1752,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
-        """NFS only. Create a symbolic link to the specified file.
+        """NFS only. Creates a symbolic link to the specified file.
 
         :param str target:
             Specifies the file path the symbolic link will point to. The file path can be either relative or absolute.
