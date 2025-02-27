@@ -1,0 +1,14 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "rg-1234",
+    "workspaceName": "testworkspace",
+    "privateEndpointConnectionName": "{privateEndpointConnectionName}",
+    "api-version": "2025-01-01-preview",
+    "monitor": "true"
+  },
+  "responses": {
+    "200": {},
+    "204": {}
+  }
+}

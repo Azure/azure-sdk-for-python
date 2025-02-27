@@ -597,7 +597,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         _validate_skillset(skillset)
         skillset_gen = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
 
-        result = self._client.skillsets.create(skillset_gen, **kwargs)
+        result = self._client.skillsets.create(skillset_gen, **kwargs)  # type: ignore
         return cast(SearchIndexerSkillset, SearchIndexerSkillset._from_generated(result))
 
     @distributed_trace
@@ -635,7 +635,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         result = self._client.skillsets.create_or_update(
             skillset_name=skillset.name,
-            skillset=skillset_gen,
+            skillset=skillset_gen,  # type: ignore
             prefer="return=representation",
             error_map=error_map,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,

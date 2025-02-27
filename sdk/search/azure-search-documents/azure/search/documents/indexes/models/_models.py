@@ -98,7 +98,7 @@ class SearchIndexerSkillset(_serialization.Model):
         self.e_tag = e_tag
         self.encryption_key = encryption_key
 
-    def _to_generated(self):
+    def _to_generated(self) -> _SearchIndexerSkillset:
         generated_skills = []
         for skill in self.skills:
             if hasattr(skill, "_to_generated"):
@@ -108,7 +108,7 @@ class SearchIndexerSkillset(_serialization.Model):
         assert len(generated_skills) == len(self.skills)
         encryption_key = getattr(self, "encryption_key", None)
         return _SearchIndexerSkillset(
-            name=getattr(self, "name", None),
+            name=getattr(self, "name", ""),
             description=getattr(self, "description", None),
             skills=generated_skills,
             cognitive_services_account=getattr(self, "cognitive_services_account", None),
@@ -1153,7 +1153,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         if not search_indexer_data_source:
             return None
         connection_string = (
-            search_indexer_data_source.credentials.connection_string if search_indexer_data_source.credentials else None
+            search_indexer_data_source.credentials.connection_string if search_indexer_data_source.credentials else ""
         )
         return cls(
             name=search_indexer_data_source.name,

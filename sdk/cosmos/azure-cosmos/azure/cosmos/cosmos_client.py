@@ -29,6 +29,7 @@ from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential
+from azure.core.pipeline.policies import RetryMode
 
 from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
 from ._base import build_options, _set_throughput_options
@@ -116,7 +117,7 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
     retry_options._max_retry_attempt_count = total_retries or retry_options._max_retry_attempt_count
     retry_options._fixed_retry_interval_in_milliseconds = kwargs.pop('retry_fixed_interval', None) or \
         retry_options._fixed_retry_interval_in_milliseconds
-    max_backoff = kwargs.pop('retry_backoff_max', None)
+    max_backoff = kwargs.pop('retry_backoff_max', policy.MaxBackoff)
     retry_options._max_wait_time_in_seconds = max_backoff or retry_options._max_wait_time_in_seconds
     policy.RetryOptions = retry_options
     connection_retry = kwargs.pop('connection_retry_policy', None)
@@ -132,8 +133,9 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
             retry_read=kwargs.pop('retry_read', None),
             retry_status=kwargs.pop('retry_status', None),
             retry_backoff_max=max_backoff,
+            retry_mode=kwargs.pop('retry_mode', RetryMode.Fixed),
             retry_on_status_codes=kwargs.pop('retry_on_status_codes', []),
-            retry_backoff_factor=kwargs.pop('retry_backoff_factor', 0.8),
+            retry_backoff_factor=kwargs.pop('retry_backoff_factor', 1),
         )
     policy.ConnectionRetryConfiguration = connection_retry
     policy.ResponsePayloadOnWriteDisabled = kwargs.pop('no_response_on_write', False)

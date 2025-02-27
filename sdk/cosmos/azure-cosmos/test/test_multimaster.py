@@ -26,11 +26,13 @@ class TestMultiMaster(unittest.TestCase):
         self.last_headers = []
         self.EnableMultipleWritableLocations = True
         self._validate_tentative_write_headers()
+        TestMultiMaster.connectionPolicy.UseMultipleWriteLocations = False
 
     def test_tentative_writes_header_not_present(self):
         self.last_headers = []
         self.EnableMultipleWritableLocations = False
         self._validate_tentative_write_headers()
+        TestMultiMaster.connectionPolicy.UseMultipleWriteLocations = False
 
     def _validate_tentative_write_headers(self):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction

@@ -50,14 +50,7 @@ class EndpointDiscoveryRetryPolicy(object):
         self.retry_after_in_milliseconds = EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
-        # clear previous location-based routing directive
-        if self.request:
-            self.request.clear_route_to_location()
 
-            # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
-            # This enables marking the endpoint unavailability on endpoint failover/unreachability
-            self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
-            self.request.route_to_location(self.location_endpoint)
 
     def ShouldRetry(self, exception):  # pylint: disable=unused-argument
         """Returns true if the request should retry based on the passed-in exception.
@@ -77,12 +70,16 @@ class EndpointDiscoveryRetryPolicy(object):
 
         self.failover_retry_count += 1
 
-        if self.location_endpoint:
+        if self.request.location_endpoint_to_route:
             if _OperationType.IsReadOnlyOperation(self.request.operation_type):
                 # Mark current read endpoint as unavailable
-                self.global_endpoint_manager.mark_endpoint_unavailable_for_read(self.location_endpoint)
+                self.global_endpoint_manager.mark_endpoint_unavailable_for_read(
+                    self.request.location_endpoint_to_route,
+                    True)
             else:
-                self.global_endpoint_manager.mark_endpoint_unavailable_for_write(self.location_endpoint)
+                self.global_endpoint_manager.mark_endpoint_unavailable_for_write(
+                    self.request.location_endpoint_to_route,
+                    True)
 
         # set the refresh_needed flag to ensure that endpoint list is
         # refreshed with new writable and readable locations

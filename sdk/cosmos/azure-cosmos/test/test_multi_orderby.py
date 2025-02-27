@@ -13,8 +13,7 @@ import test_config
 from azure.cosmos import DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
-
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosQuery
 class TestMultiOrderBy(unittest.TestCase):
     """Multi Orderby and Composite Indexes Tests.
     """

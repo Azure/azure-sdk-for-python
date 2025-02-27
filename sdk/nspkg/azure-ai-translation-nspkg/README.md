@@ -13,4 +13,3 @@ If you are looking to install the Azure client libraries, see the
 `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
 
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftextanalytics%2Fazure-ai-nspkg%2FREADME.png)
