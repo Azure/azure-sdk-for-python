@@ -2,7 +2,7 @@ import os
 import sys
 
 from azure.cosmos import PartitionKey
-from test.workloads.workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS
+from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS
 
 sys.path.append(r"./")
 

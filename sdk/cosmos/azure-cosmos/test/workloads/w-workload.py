@@ -2,7 +2,7 @@ import os
 import random
 import sys
 
-from test.workloads.workload_configs import PREFERRED_LOCATIONS, COSMOS_URI, COSMOS_KEY
+from workload_configs import PREFERRED_LOCATIONS, COSMOS_URI, COSMOS_KEY
 
 sys.path.append(r"./")
 
