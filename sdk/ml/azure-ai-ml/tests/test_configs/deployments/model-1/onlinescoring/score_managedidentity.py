@@ -37,9 +37,7 @@ def get_token_rest():
     # # otherwise system assigned identity deployment.
     client_id = os.environ.get("UAI_CLIENT_ID", None)
     if client_id is not None:
-        token_url = (
-            msi_endpoint + f"?clientid={client_id}&resource=https://storage.azure.com/"
-        )
+        token_url = msi_endpoint + f"?clientid={client_id}&resource=https://storage.azure.com/"
     else:
         token_url = msi_endpoint + f"?resource=https://storage.azure.com/"
 
@@ -61,9 +59,7 @@ def access_blob_storage_rest():
     storage_account = os.environ.get("STORAGE_ACCOUNT_NAME")
     storage_container = os.environ.get("STORAGE_CONTAINER_NAME")
     file_name = os.environ.get("FILE_NAME")
-    logging.info(
-        f"storage_account: {storage_account}, container: {storage_container}, filename: {file_name}"
-    )
+    logging.info(f"storage_account: {storage_account}, container: {storage_container}, filename: {file_name}")
     token = get_token_rest()
 
     blob_url = f"https://{storage_account}.blob.core.windows.net/{storage_container}/{file_name}?api-version=2019-04-01"
@@ -83,9 +79,7 @@ def init():
     # It is the path to the model folder (./azureml-models/$MODEL_NAME/$VERSION)
     # For multiple models, it points to the folder containing all deployed models (./azureml-models)
     # Please provide your model's folder name if there is one
-    model_path = os.path.join(
-        os.getenv("AZUREML_MODEL_DIR"), "model/sklearn_regression_model.pkl"
-    )
+    model_path = os.path.join(os.getenv("AZUREML_MODEL_DIR"), "model/sklearn_regression_model.pkl")
     # deserialize the model file back into a sklearn model
     model = joblib.load(model_path)
     logging.info("Model loaded")

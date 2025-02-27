@@ -115,6 +115,7 @@ class TestOnlineEndpoint(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_online_endpoint_submit(self, client: MLClient, location: str, rand_online_name: Callable[[], str]):
         import logging, sys
+
         logger = logging.getLogger("azure")
         logger.setLevel(logging.DEBUG)
         handler = logging.StreamHandler(stream=sys.stdout)
@@ -145,7 +146,7 @@ class TestOnlineEndpoint(AzureRecordedTestCase):
                 resources_being_deployed=deployed_resources,
                 wait=True,
             )
-            #assert client.online_endpoints.get(name=endpoint_name).name == endpoint_name
+            # assert client.online_endpoints.get(name=endpoint_name).name == endpoint_name
         except Exception as e:
             logging.error("Hit exception {}".format(e))
             assert False

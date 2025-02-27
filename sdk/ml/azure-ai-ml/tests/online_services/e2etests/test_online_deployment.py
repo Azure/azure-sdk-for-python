@@ -6,13 +6,9 @@ from devtools_testutils import AzureRecordedTestCase
 from azure.ai.ml import MLClient, load_online_deployment, load_online_endpoint
 from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint, Model, CodeConfiguration, Environment
 
+
 @pytest.mark.e2etest
-@pytest.mark.usefixtures(
-    "recorded_test",
-    "mock_asset_name",
-    "mock_component_hash",
-    "mock_code_hash"
-)
+@pytest.mark.usefixtures("recorded_test", "mock_asset_name", "mock_component_hash", "mock_code_hash")
 @pytest.mark.production_experiences_test
 class TestOnlineDeployment(AzureRecordedTestCase):
     def test_online_deployment_create(
@@ -53,7 +49,7 @@ class TestOnlineDeployment(AzureRecordedTestCase):
             raise ex
         finally:
             client.online_endpoints.begin_delete(name=endpoint.name)
-    
+
     def test_online_deployment_update(
         self, client: MLClient, rand_online_name: Callable[[], str], rand_online_deployment_name: Callable[[], str]
     ) -> None:
@@ -121,7 +117,7 @@ class TestOnlineDeployment(AzureRecordedTestCase):
 
             environment = Environment(
                 conda_file="tests/test_configs/deployments/model-1/environment/conda.yml",
-                image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:latest"
+                image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:latest",
             )
 
             blue_deployment = ManagedOnlineDeployment(
