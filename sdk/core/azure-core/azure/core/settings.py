@@ -30,7 +30,6 @@ from collections import namedtuple
 from enum import Enum
 import logging
 import os
-import sys
 from typing import (
     Type,
     Optional,
@@ -89,6 +88,24 @@ def convert_bool(value: Union[str, bool]) -> bool:
     if val in ["no", "0", "off", "false", "False"]:
         return False
     raise ValueError("Cannot convert {} to boolean value".format(value))
+
+
+def convert_tracing_enabled(value: Optional[Union[str, bool]]) -> bool:
+    """Convert tracing value to bool with regard to tracing implementation.
+
+    :param value: the value to convert
+    :type value: str or bool or None
+    :returns: A boolean value matching the intent of the input
+    :rtype: bool
+    :raises ValueError: If conversion to bool fails
+    """
+    if value is None:
+        # If tracing_enabled was not explicitly set to a boolean, determine tracing enablement
+        # based on tracing_implementation being set.
+        if settings.tracing_implementation():
+            return True
+        return False
+    return convert_bool(value)
 
 
 _levels = {
@@ -184,18 +201,6 @@ def _get_opentelemetry_span() -> Optional[Type[AbstractSpan]]:
         return None
 
 
-def _get_opencensus_span_if_opencensus_is_imported() -> Optional[Type[AbstractSpan]]:
-    if "opencensus" not in sys.modules:
-        return None
-    return _get_opencensus_span()
-
-
-def _get_opentelemetry_span_if_opentelemetry_is_imported() -> Optional[Type[AbstractSpan]]:
-    if "opentelemetry" not in sys.modules:
-        return None
-    return _get_opentelemetry_span()
-
-
 _tracing_implementation_dict: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]] = {
     "opencensus": _get_opencensus_span,
     "opentelemetry": _get_opentelemetry_span,
@@ -218,9 +223,7 @@ def convert_tracing_impl(value: Optional[Union[str, Type[AbstractSpan]]]) -> Opt
 
     """
     if value is None:
-        return (
-            _get_opentelemetry_span_if_opentelemetry_is_imported() or _get_opencensus_span_if_opencensus_is_imported()
-        )
+        return None
 
     if not isinstance(value, str):
         return value
@@ -504,11 +507,11 @@ class Settings:
         default=logging.INFO,
     )
 
-    tracing_enabled: PrioritizedSetting[Union[str, bool], bool] = PrioritizedSetting(
+    tracing_enabled: PrioritizedSetting[Optional[Union[str, bool]], bool] = PrioritizedSetting(
         "tracing_enabled",
         env_var="AZURE_TRACING_ENABLED",
-        convert=convert_bool,
-        default=False,
+        convert=convert_tracing_enabled,
+        default=None,
     )
 
     tracing_implementation: PrioritizedSetting[
