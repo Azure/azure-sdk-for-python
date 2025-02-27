@@ -6,9 +6,8 @@
 from io import IOBase, UnsupportedOperation
 from typing import Any, Dict, Optional
 
-from azure.core.pipeline.transport import AsyncHttpTransport
+from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport
 from azure.core.rest import HttpRequest
-from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 from aiohttp import ClientResponse
 
 
@@ -90,7 +89,7 @@ class MockStorageTransport(AsyncHttpTransport):
     This transport returns legacy http response objects from azure core and is 
     intended only to test our backwards compatibility support.
     """
-    async def send(self, request: HttpRequest, **kwargs: Any) -> RestAioHttpTransportResponse:
+    async def send(self, request: HttpRequest, **kwargs: Any) -> AioHttpTransportResponse:
         if request.method == 'GET':
             # download_blob
             headers = {
@@ -102,9 +101,9 @@ class MockStorageTransport(AsyncHttpTransport):
             if "x-ms-range-get-content-md5" in request.headers:
                 headers["Content-MD5"] = "I3pVbaOCUTom+G9F9uKFoA=="
 
-            rest_response = RestAioHttpTransportResponse(
+            rest_response = AioHttpTransportResponse(
                 request=request,
-                internal_response=MockAioHttpClientResponse(
+                aiohttp_response=MockAioHttpClientResponse(
                     request.url,
                     b"Hello Async World!",
                     headers,
@@ -113,9 +112,9 @@ class MockStorageTransport(AsyncHttpTransport):
             )
         elif request.method == 'HEAD':
             # get_blob_properties
-            rest_response = RestAioHttpTransportResponse(
+            rest_response = AioHttpTransportResponse(
                 request=request,
-                internal_response=MockAioHttpClientResponse(
+                aiohttp_response=MockAioHttpClientResponse(
                     request.url,
                     b"",
                     {
@@ -127,9 +126,9 @@ class MockStorageTransport(AsyncHttpTransport):
             )
         elif request.method == 'PUT':
             # upload_blob
-            rest_response = RestAioHttpTransportResponse(
+            rest_response = AioHttpTransportResponse(
                 request=request,
-                internal_response=MockAioHttpClientResponse(
+                aiohttp_response=MockAioHttpClientResponse(
                     request.url,
                     b"",
                     {
@@ -142,9 +141,9 @@ class MockStorageTransport(AsyncHttpTransport):
             )
         elif request.method == 'DELETE':
             # delete_blob
-            rest_response = RestAioHttpTransportResponse(
+            rest_response = AioHttpTransportResponse(
                 request=request,
-                internal_response=MockAioHttpClientResponse(
+                aiohttp_response=MockAioHttpClientResponse(
                     request.url,
                     b"",
                     {
@@ -158,7 +157,7 @@ class MockStorageTransport(AsyncHttpTransport):
         else:
             raise ValueError("The request is not accepted as part of MockStorageTransport.")
 
-        await rest_response.read()
+        await rest_response.load_body()
         return rest_response
 
     async def __aenter__(self):
