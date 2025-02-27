@@ -5,7 +5,6 @@ import zipfile
 import tarfile
 import stat
 from ast import Not
-import coverage.exceptions
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse, InvalidVersion
 from pkg_resources import Requirement
@@ -697,8 +696,12 @@ def is_package_compatible(
 
 
 def get_total_coverage(coverage_file: str, coverage_config_file: str, package_name: str, repo_root: Optional[str] = None) -> Optional[float]:
-    import coverage
-    from coverage.exceptions import NoDataError
+    try:
+        import coverage
+        from coverage.exceptions import NoDataError
+    except ImportError:
+        logging.error("Coverage is not installed.")
+        return None
 
     cov = coverage.Coverage(data_file=coverage_file, config_file=coverage_config_file)
     cov.load()
@@ -707,16 +710,16 @@ def get_total_coverage(coverage_file: str, coverage_config_file: str, package_na
     try:
         if repo_root:
             os.chdir(repo_root)
-        print(f"Running coverage report against \"{coverage_file}\" with \"{coverage_config_file}\" from \"{os.getcwd()}\".")
+        logging.info(f"Running coverage report against \"{coverage_file}\" with \"{coverage_config_file}\" from \"{os.getcwd()}\".")
         report = cov.report()
     except NoDataError as e:
-        print(f"Package {package_name} did not generate any coverage output: {e}")
+        logging.info(f"Package {package_name} did not generate any coverage output: {e}")
     except Exception as e:
-        print(f"An error occurred while generating the coverage report for {package_name}: {e}")
+        logging.error(f"An error occurred while generating the coverage report for {package_name}: {e}")
     finally:
         if repo_root:
             os.chdir(original)
-        print(f"Total coverage {report} for package {package_name}")
+        logging.info(f"Total coverage {report} for package {package_name}")
         return report
 
 

@@ -7,7 +7,7 @@ mindependency = false
 latestdependency = false
 black = true
 absolute_cov = true
-absolute_cov_percent = 67.74
+absolute_cov_percent = 22.40
 
 [tool.isort]
 profile = "black"

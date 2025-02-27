@@ -71,6 +71,6 @@ if __name__ == "__main__":
                     logging.error(
                         f"Coverage for {pkg_details.name} is below the threshold of {cov_threshold:.2f}% (actual: {total_coverage:.2f}%)"
                     )
-                    # exit(1)
+                    exit(1)
 
 

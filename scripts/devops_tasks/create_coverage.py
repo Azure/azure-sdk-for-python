@@ -15,9 +15,6 @@ from subprocess import run
 from code_cov_report import create_coverage_report
 from common_tasks import run_check_call
 
-from ci_tools.functions import get_total_coverage
-
-
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
@@ -40,13 +37,6 @@ def collect_tox_coverage_files():
     logging.info(".coverage files: {}".format(coverage_files))
 
     if len(coverage_files):
-        for coverage_file in coverage_files:
-            try:
-                logging.info("running coverage report on {}".format(coverage_file))
-                get_total_coverage(coverage_file, toxrc, os.path.basename(coverage_file))
-            except Exception as e:
-                logging.error("Ignoring issue running coverage report: {}".format(e))
-
         cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
         cov_cmd_array.extend(coverage_files)
 
@@ -63,7 +53,7 @@ def collect_tox_coverage_files():
 def generate_coverage_xml():
     if os.path.exists(coverage_dir):
         logging.info("Generating coverage XML")
-        commands = ["coverage", "xml", "-i"]
+        commands = ["coverage", "xml", "-i", "--rcFile", toxrc]
         run_check_call(commands, root_dir, always_exit=False)
     else:
         logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_dir))
@@ -94,5 +84,5 @@ if __name__ == "__main__":
     generate_coverage_xml()
     create_coverage_report()
 
-    # if os.path.exists(coverage_xml):
-    #     fix_coverage_xml(coverage_xml)
+    if os.path.exists(coverage_xml):
+        fix_coverage_xml(coverage_xml)
