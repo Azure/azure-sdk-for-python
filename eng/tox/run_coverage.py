@@ -40,6 +40,7 @@ if __name__ == "__main__":
 
     possible_coverage_file = os.path.join(args.target_package, ".coverage")
 
+    breakpoint()
     if os.path.exists(possible_coverage_file):
         total_coverage = get_total_coverage(possible_coverage_file, coveragerc_file, pkg_details.name, args.repo_root)
         if total_coverage is not None:
