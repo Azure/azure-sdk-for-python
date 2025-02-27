@@ -97,6 +97,7 @@ class OpenTelemetryTracer:
             kind=otel_kind,
             attributes=attributes,
             links=otel_links,
+            record_exception=False,
         )
 
         return otel_span
@@ -132,7 +133,7 @@ class OpenTelemetryTracer:
         :rtype: ~opentelemetry.trace.Span
         """
         span = self.start_span(name, kind=kind, attributes=attributes, links=links)
-        with trace.use_span(span, end_on_exit=True) as span:  # type: ignore[attr-defined]  # pylint: disable=not-context-manager
+        with trace.use_span(span, record_exception=False, end_on_exit=True) as span:  # type: ignore[attr-defined]  # pylint: disable=not-context-manager
             yield span
 
     def _parse_links(self, links: Optional[Sequence[_Link]]) -> Optional[Sequence[OpenTelemetryLink]]:

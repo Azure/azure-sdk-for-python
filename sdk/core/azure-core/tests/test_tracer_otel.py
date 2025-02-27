@@ -239,10 +239,6 @@ def test_span_exception(tracing_helper):
     finished_spans = tracing_helper.exporter.get_finished_spans()
 
     assert len(finished_spans) == 1
-    assert len(finished_spans[0].events) == 1
-    assert finished_spans[0].events[0].name == "exception"
-    assert finished_spans[0].events[0].attributes["exception.type"] == "ValueError"
-    assert finished_spans[0].events[0].attributes["exception.message"] == "This is an error"
     assert finished_spans[0].status.status_code == OtelStatusCode.ERROR
 
 
@@ -259,10 +255,6 @@ def test_span_exception_without_current_context(tracing_helper):
 
     finished_spans = tracing_helper.exporter.get_finished_spans()
     assert len(finished_spans) == 1
-    assert len(finished_spans[0].events) == 1
-    assert finished_spans[0].events[0].name == "exception"
-    assert finished_spans[0].events[0].attributes["exception.type"] == "ValueError"
-    assert finished_spans[0].events[0].attributes["exception.message"] == "This is an error"
     assert finished_spans[0].status.status_code == OtelStatusCode.ERROR
 
 
@@ -282,10 +274,6 @@ def test_span_exception_exit(tracing_helper):
     finished_spans = tracing_helper.exporter.get_finished_spans()
 
     assert len(finished_spans) == 1
-    assert len(finished_spans[0].events) == 1
-    assert finished_spans[0].events[0].name == "exception"
-    assert finished_spans[0].events[0].attributes["exception.type"] == "ValueError"
-    assert finished_spans[0].events[0].attributes["exception.message"] == "This is an error"
     assert finished_spans[0].status.status_code == OtelStatusCode.ERROR
 
 

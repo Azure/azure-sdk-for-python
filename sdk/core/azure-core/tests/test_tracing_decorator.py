@@ -257,8 +257,6 @@ class TestDecoratorNativeTracing:
         assert finished_spans[0].name == "MockClient.raising_exception"
         assert finished_spans[0].status.status_code == OtelStatusCode.ERROR
         assert "Something went horribly wrong here" in finished_spans[0].status.description
-        assert finished_spans[0].events[0].name == "exception"
-        assert finished_spans[0].events[0].attributes.get("exception.message") == "Something went horribly wrong here"
         assert finished_spans[0].attributes.get("error.type") == "ValueError"
 
         assert finished_spans[1].name == "MockClient.get_foo"
