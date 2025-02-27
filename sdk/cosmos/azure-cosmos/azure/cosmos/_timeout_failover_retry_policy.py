@@ -4,10 +4,12 @@
 """Internal class for timeout failover retry policy implementation in the Azure
 Cosmos database service.
 """
+from azure.cosmos._location_cache import EndpointOperationType
 from azure.cosmos.documents import _OperationType
 
 
 class _TimeoutFailoverRetryPolicy(object):
+    FAILOVER_THRESHOLD = 5
 
     def __init__(self, connection_policy, global_endpoint_manager, *args):
         self.retry_after_in_milliseconds = 500
@@ -27,6 +29,7 @@ class _TimeoutFailoverRetryPolicy(object):
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """
+        self.check_consecutive_failures()
         # we don't retry on write operations for timeouts or any internal server errors
         if self.request and (not _OperationType.IsReadOnlyOperation(self.request.operation_type)):
             return False
@@ -56,3 +59,31 @@ class _TimeoutFailoverRetryPolicy(object):
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
         # This enables marking the endpoint unavailability on endpoint failover/unreachability
         return self.global_endpoint_manager.resolve_service_endpoint(self.request)
+
+    # marks endpoints unavailable for consecutive write and read failures
+    def check_consecutive_failures(self):
+        # initialize endpoint information if not already done
+        if self.request.location_endpoint_to_route not in self.global_endpoint_manager.consecutive_failures:
+            self.global_endpoint_manager.consecutive_failures[self.request.location_endpoint_to_route] = {
+                EndpointOperationType.ReadType: 0,
+                EndpointOperationType.WriteType: 0
+            }
+
+        if _OperationType.IsReadOnlyOperation(self.request.operation_type):
+            self.global_endpoint_manager.consecutive_failures[self.request
+            .location_endpoint_to_route][EndpointOperationType.ReadType] += 1
+            # only mark unavailable until reaching a certain threshold of consecutive failures
+            if (self.global_endpoint_manager.consecutive_failures[self.request
+                    .location_endpoint_to_route][EndpointOperationType.ReadType]
+                    >= self.FAILOVER_THRESHOLD):
+                self.global_endpoint_manager.mark_endpoint_unavailable_for_read(
+                    self.request.location_endpoint_to_route, True)
+        else:
+            self.global_endpoint_manager.consecutive_failures[self.request
+            .location_endpoint_to_route][EndpointOperationType.WriteType] += 1
+            # only mark unavailable until reaching a certain threshold of consecutive failures
+            if (self.global_endpoint_manager.consecutive_failures[self.request
+                    .location_endpoint_to_route][EndpointOperationType.WriteType]
+                    >= self.FAILOVER_THRESHOLD):
+                self.global_endpoint_manager.mark_endpoint_unavailable_for_write(
+                    self.request.location_endpoint_to_route, True)

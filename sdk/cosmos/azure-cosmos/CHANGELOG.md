@@ -1,4 +1,14 @@
 ## Release History
+### 4.10.0b2 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+* Regions will now be marked unavailable for consecutive errors on 408 or >= 500 status codes. See [PR 39647](https://github.com/Azure/azure-sdk-for-python/pull/39647)
 
 ### 4.10.0b1 (2025-02-13)
 
