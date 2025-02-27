@@ -8,7 +8,7 @@ import inspect
 import logging
 from datetime import datetime
 from azure.ai.evaluation._common._experimental import experimental
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._constants import CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT
 from azure.ai.evaluation._evaluators import _content_safety, _protected_material,  _groundedness, _relevance, _similarity, _fluency, _xpia, _coherence
@@ -17,11 +17,19 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
 from azure.ai.evaluation.simulator import Simulator, AdversarialSimulator, AdversarialScenario, AdversarialScenarioJailbreak, IndirectAttackSimulator, DirectAttackSimulator
 from azure.ai.evaluation.simulator._utils import JsonLineList
+from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager, TokenScope, RAIClient, AdversarialTemplateHandler
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation._safety_evaluation._callback_chat_target import CallbackChatTarget
 from azure.core.credentials import TokenCredential
 import json
 from pathlib import Path
+import re
+import itertools
+from pyrit.common import initialize_pyrit, DUCK_DB
+from pyrit.orchestrator import PromptSendingOrchestrator
+from pyrit.prompt_target import OpenAIChatTarget
+from pyrit.models import ChatMessage
 
 logger = logging.getLogger(__name__)
 
@@ -86,6 +94,21 @@ class _SafetyEvaluation:
         self.azure_ai_project = AzureAIProject(**azure_ai_project)
         self.credential=credential
         self.logger = _setup_logger()
+
+        # For pyrit 
+        self.token_manager = ManagedIdentityAPITokenManager(
+            token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
+            logger=logging.getLogger("AdversarialSimulator"),
+            credential=cast(TokenCredential, credential),
+        )
+
+        self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
+        self.adversarial_template_handler = AdversarialTemplateHandler(
+            azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
+        )
+
+        initialize_pyrit(memory_db_type=DUCK_DB)
+
 
     @staticmethod
     def _validate_model_config(model_config: Any):
@@ -426,11 +449,27 @@ class _SafetyEvaluation:
         if ret_type is tuple: 
             return True
         return False
+    
+    @staticmethod
+    def _check_target_returns_str(target: Callable) -> bool:
+        '''
+        Checks if the target function returns a string.
+
+        :param target: The target function to check.
+        :type target: Callable
+        '''
+        sig = inspect.signature(target)
+        ret_type = sig.return_annotation
+        if ret_type == inspect.Signature.empty:
+            return False
+        if ret_type is str:
+            return True
+        return False
 
     def _validate_inputs(
             self,
             evaluators: List[_SafetyEvaluator],
-            target: Callable,
+            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
             num_turns: int = 1,
             scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
             source_text: Optional[str] = None,
@@ -447,10 +486,23 @@ class _SafetyEvaluation:
         :type scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]
         :param source_text: The source text to use as grounding document in the evaluation.
         :type source_text: Optional[str]
-        '''       
-        if _SafetyEvaluator.GROUNDEDNESS in evaluators and not (self._check_target_returns_context(target) or source_text):
-            self.logger.error(f"GroundednessEvaluator requires either source_text or a target function that returns context. Source text: {source_text}, _check_target_returns_context: {self._check_target_returns_context(target)}")
-            msg = "GroundednessEvaluator requires either source_text or a target function that returns context"
+        ''' 
+        if not callable(target):
+            self._validate_model_config(target)
+        elif not self._check_target_returns_str(target):
+            self.logger.error(f"Target function {target} does not return a string.")
+            msg = f"Target function {target} does not return a string."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.UNKNOWN,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+
+        if _SafetyEvaluator.GROUNDEDNESS in evaluators and not source_text:
+            self.logger.error(f"GroundednessEvaluator requires  source_text. Source text: {source_text}")
+            msg = "GroundednessEvaluator requires source_text"
             raise EvaluationException(
                 message=msg,
                 internal_message=msg,
@@ -458,8 +510,8 @@ class _SafetyEvaluation:
                 category=ErrorCategory.MISSING_FIELD,
                 blame=ErrorBlame.USER_ERROR,
             )
-
-        if scenario and not _SafetyEvaluator.CONTENT_SAFETY in evaluators:
+        
+        if scenario and len(evaluators)>0 and not _SafetyEvaluator.CONTENT_SAFETY in evaluators:
             self.logger.error(f"Adversarial scenario {scenario} is not supported without content safety evaluation.")
             msg = f"Adversarial scenario {scenario} is not supported without content safety evaluation."
             raise EvaluationException(
@@ -470,7 +522,7 @@ class _SafetyEvaluation:
                 blame=ErrorBlame.USER_ERROR,
             )
     
-        if _SafetyEvaluator.CONTENT_SAFETY in evaluators and scenario and num_turns > 1:
+        if _SafetyEvaluator.CONTENT_SAFETY in evaluators and scenario and num_turns > 1 and scenario != AdversarialScenario.ADVERSARIAL_CONVERSATION:
             self.logger.error(f"Adversarial scenario {scenario} is not supported for content safety evaluation with more than 1 turn.")
             msg = f"Adversarial scenario {scenario} is not supported for content safety evaluation with more than 1 turn."
             raise EvaluationException(
@@ -524,11 +576,107 @@ class _SafetyEvaluation:
         }
         evaluation_result['studio_url'] = evaluation_result_dict['jailbreak']['studio_url'] + '\t' + evaluation_result_dict['regular']['studio_url']
         return evaluation_result
+    
+    async def _get_all_prompts(self, scenario: AdversarialScenario, num_rows: int = 3) -> List[str]:
+        templates = await self.adversarial_template_handler._get_content_harm_template_collections(
+                scenario.value
+            )
+        parameter_lists = [t.template_parameters for t in templates]
+        zipped_parameters = list(zip(*parameter_lists))
 
+        def fill_template(template_str, parameter):
+            pattern = re.compile(r'{{\s*(.*?)\s*}}')
+            def replacer(match):
+                placeholder = match.group(1)
+                return parameter.get(placeholder, f"{{{{ {placeholder} }}}}")
+            filled_text = pattern.sub(replacer, template_str)
+            return filled_text
+
+        all_prompts = []
+        count = 0
+        for param_group in zipped_parameters:
+            for _, parameter in zip(templates, param_group):
+                filled_template = fill_template(parameter['conversation_starter'], parameter)
+                all_prompts.append(filled_template)
+                count += 1
+                if count >= num_rows:
+                    break
+            if count >= num_rows:
+                break
+        return all_prompts
+    
+    def _message_to_dict(self, message: ChatMessage):
+        return {
+            "role": message.role,
+            "content": message.content,
+        }
+    
+    async def _pyrit(
+            self, 
+            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration], 
+            scenario: AdversarialScenario,
+            num_rows: int = 1,
+        ) -> str:
+        chat_target: OpenAIChatTarget = None
+        if not isinstance(target, Callable):
+            if "azure_deployment" in target and "azure_endpoint" in target: # Azure OpenAI
+                api_key = target.get("api_key", None)
+                if not api_key:
+                    chat_target = OpenAIChatTarget(deployment_name=target["azure_deployment"], endpoint=target["azure_endpoint"], use_aad_auth=True)
+                else: 
+                    chat_target = OpenAIChatTarget(deployment_name=target["azure_deployment"], endpoint=target["azure_endpoint"], api_key=api_key)
+            else:
+                chat_target = OpenAIChatTarget(deployment=target["model"], endpoint=target.get("base_url", None), key=target["api_key"], is_azure_target=False)
+        else:
+            async def callback_target(
+                messages: List[Dict],
+                stream: bool = False,
+                session_state: Optional[str] = None,
+                context: Optional[Dict] = None
+            ) -> dict:
+                messages_list = [self._message_to_dict(chat_message) for chat_message in messages] # type: ignore
+                latest_message = messages_list[-1]
+                application_input = latest_message["content"]
+                try:
+                    response = target(query=application_input)
+                except Exception as e:
+                    response = f"Something went wrong {e!s}"
+
+                ## We format the response to follow the openAI chat protocol format
+                formatted_response = {
+                    "content": response,
+                    "role": "assistant",
+                    "context":{},
+                }
+                ## NOTE: In the future, instead of appending to messages we should just return `formatted_response`
+                messages_list.append(formatted_response) # type: ignore
+                return {"messages": messages_list, "stream": stream, "session_state": session_state, "context": {}}
+            
+
+            chat_target = CallbackChatTarget(callback=callback_target)
+        
+        all_prompts_list = await self._get_all_prompts(scenario, num_rows=num_rows)
+
+        orchestrator = PromptSendingOrchestrator(objective_target=chat_target)
+        await orchestrator.send_prompts_async(prompt_list=all_prompts_list)
+        memory = orchestrator.get_memory()
+
+        # Get conversations as a List[List[ChatMessage]]
+        conversations = [[item.to_chat_message() for item in group] for conv_id, group in itertools.groupby(memory, key=lambda x: x.conversation_id)]
+        
+        #Convert to json lines
+        json_lines = ""
+        for conversation in conversations: # each conversation is a List[ChatMessage]
+            json_lines += json.dumps({"conversation": {"messages": [self._message_to_dict(message) for message in conversation]}}) + "\n"
+        
+        data_path = "pyrit_outputs.jsonl"
+        with Path(data_path).open("w") as f:
+            f.writelines(json_lines)
+        return data_path
 
     async def __call__(
             self,
-            target: Callable,
+            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
             evaluators: List[_SafetyEvaluator] = [],
             evaluation_name: Optional[str] = None,
             num_turns : int = 1,
@@ -536,11 +684,12 @@ class _SafetyEvaluation:
             scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
             conversation_turns : List[List[Union[str, Dict[str, Any]]]] = [],
             tasks: List[str] = [],
+            data_only: bool = False,
             source_text: Optional[str] = None,
             data_path: Optional[Union[str, os.PathLike]] = None,
             jailbreak_data_path: Optional[Union[str, os.PathLike]] = None,
             output_path: Optional[Union[str, os.PathLike]] = None
-        ) -> Union[EvaluationResult, Dict[str, EvaluationResult]]:
+        ) -> Union[EvaluationResult, Dict[str, Union[str, os.PathLike]], str, os.PathLike]:
         '''
         Evaluates the target function based on the provided parameters.
         
@@ -560,6 +709,8 @@ class _SafetyEvaluation:
         :type conversation_turns: List[List[Union[str, Dict[str, Any]]]]
         :param tasks A list of user tasks, each represented as a list of strings. Text should be relevant for the tasks and facilitate the simulation. One example is to use text to provide context for the tasks.
         :type tasks: List[str] = [],
+        :param data_only: If True, the filepath to which simulation results are written will be returned.
+        :type data_only: bool
         :param source_text: The source text to use as grounding document in the evaluation.
         :type source_text: Optional[str]
         :param data_path: The path to the data file generated by the Simulator. If None, the Simulator will be run.
@@ -583,12 +734,17 @@ class _SafetyEvaluation:
 
         # Get scenario
         adversarial_scenario = self._get_scenario(evaluators, num_turns=num_turns, scenario=scenario)
+        self.logger.info(f"Using scenario: {adversarial_scenario}")
+
+        if isinstance(adversarial_scenario, AdversarialScenario) and num_turns==1:
+            self.logger.info(f"Running Pyrit with inputs target={target}, scenario={scenario}") 
+            data_path = await self._pyrit(target, adversarial_scenario, num_rows=num_rows)
 
         ## Get evaluators
         evaluators_dict = self._get_evaluators(evaluators)
 
         ## If `data_path` is not provided, run simulator
-        if data_path is None and jailbreak_data_path is None:
+        if data_path is None and jailbreak_data_path is None and isinstance(target, Callable):
             self.logger.info(f"No data_path provided. Running simulator.")
             data_paths = await self._simulate(
                 target=target,
@@ -602,6 +758,11 @@ class _SafetyEvaluation:
             )
             data_path = data_paths.get("regular", None)
             jailbreak_data_path = data_paths.get("jailbreak", None)
+
+        if data_only and data_path:
+            if jailbreak_data_path:
+                return {"regular": data_path, "jailbreak": jailbreak_data_path}
+            return data_path
 
         ## Run evaluation
         evaluation_results = {}
@@ -638,3 +799,6 @@ class _SafetyEvaluation:
                 category=ErrorCategory.MISSING_FIELD,
                 blame=ErrorBlame.USER_ERROR,
             )
+
+
+
