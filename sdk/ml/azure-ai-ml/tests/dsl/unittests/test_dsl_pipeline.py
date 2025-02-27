@@ -3406,7 +3406,7 @@ class TestDSLPipeline:
 
         pipeline6()
 
-        # case 3.4: predecessor from outer literal value
+        # case 3.3: predecessor from outer literal value
         @dsl.pipeline()
         def sub_pipeline_3(input1: Input, input2: Input):
             node1 = component_func(input1=input1, input2=input2)
