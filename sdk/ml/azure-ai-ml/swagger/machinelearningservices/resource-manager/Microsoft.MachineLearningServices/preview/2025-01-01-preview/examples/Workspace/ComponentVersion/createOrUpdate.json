@@ -1,0 +1,85 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "name": "string",
+    "version": "string",
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "properties": {
+        "description": "string",
+        "tags": {
+          "string": "string"
+        },
+        "properties": {
+          "string": "string"
+        },
+        "isAnonymous": false,
+        "componentSpec": {
+          "8ced901b-d826-477d-bfef-329da9672513": null
+        }
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "tags": {
+            "string": "string"
+          },
+          "properties": {
+            "string": "string"
+          },
+          "isAnonymous": false,
+          "componentSpec": {
+            "2de2e74e-457d-4447-a581-933abc2b9d96": null
+          }
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999Z",
+          "createdBy": "string",
+          "createdByType": "User",
+          "lastModifiedAt": "2020-01-01T12:34:56.999Z",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "User"
+        }
+      }
+    },
+    "201": {
+      "headers": {},
+      "body": {
+        "id": "string",
+        "name": "string",
+        "type": "string",
+        "properties": {
+          "description": "string",
+          "tags": {
+            "string": "string"
+          },
+          "properties": {
+            "string": "string"
+          },
+          "isAnonymous": false,
+          "componentSpec": {
+            "a6c1349d-5e45-48da-92c3-3ce176cb30e9": null
+          }
+        },
+        "systemData": {
+          "createdAt": "2020-01-01T12:34:56.999Z",
+          "createdBy": "string",
+          "createdByType": "User",
+          "lastModifiedAt": "2020-01-01T12:34:56.999Z",
+          "lastModifiedBy": "string",
+          "lastModifiedByType": "User"
+        }
+      }
+    }
+  }
+}
