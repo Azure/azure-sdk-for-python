@@ -11,6 +11,7 @@ from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint,
     "recorded_test",
     "mock_asset_name",
     "mock_component_hash",
+    "mock_code_hash"
 )
 @pytest.mark.production_experiences_test
 class TestOnlineDeployment(AzureRecordedTestCase):
