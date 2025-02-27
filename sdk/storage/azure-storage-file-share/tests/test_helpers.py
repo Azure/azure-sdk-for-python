@@ -7,9 +7,8 @@
 from typing import Any, Dict, Optional
 from typing_extensions import Self
 
-from azure.core.pipeline.transport import HttpTransport
-from azure.core.rest import HttpRequest, HttpResponse
-from azure.core.pipeline.transport._requests_basic import RequestsTransportResponse
+from azure.core.pipeline.transport import HttpTransport, RequestsTransportResponse
+from azure.core.rest import HttpRequest
 from requests import Response
 from urllib3 import HTTPResponse
 
