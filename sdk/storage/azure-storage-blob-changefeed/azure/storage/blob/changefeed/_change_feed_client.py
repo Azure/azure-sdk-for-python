@@ -13,7 +13,7 @@ from typing_extensions import Self
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from azure.storage.blob._blob_service_client import BlobServiceClient  # pylint: disable=no-name-in-module
+from azure.storage.blob._blob_service_client import BlobServiceClient
 from azure.storage.blob._shared.base_client import parse_connection_str
 from ._models import ChangeFeedPaged
 
