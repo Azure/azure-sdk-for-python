@@ -9,7 +9,7 @@ from typing_extensions import Self
 
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.rest import HttpRequest, HttpResponse
-from azure.core.rest._requests_basic import RestRequestsTransportResponse
+from azure.core.pipeline.transport._requests_basic import RequestsTransportResponse
 from requests import Response
 from urllib3 import HTTPResponse
 
@@ -58,7 +58,7 @@ class MockStorageTransport(HttpTransport):
     This transport returns legacy http response objects from azure core and is
     intended only to test our backwards compatibility support.
     """
-    def send(self, request: HttpRequest, **kwargs: Any) -> RestRequestsTransportResponse:
+    def send(self, request: HttpRequest, **kwargs: Any) -> RequestsTransportResponse:
         if request.method == 'GET':
             # download_file
             headers = {
@@ -70,34 +70,32 @@ class MockStorageTransport(HttpTransport):
             if "x-ms-range-get-content-md5" in request.headers:
                 headers["Content-MD5"] = "7Qdih1MuhjZehB6Sv8UNjA=="  # cspell:disable-line
 
-            rest_response = RestRequestsTransportResponse(
+            rest_response = RequestsTransportResponse(
                 request=request,
-                internal_response=MockHttpClientResponse(
+                requests_response=MockHttpClientResponse(
                     request.url,
                     b"Hello World!",
                     headers,
-                ),
-                decompress=False
+                )
             )
         elif request.method == 'HEAD':
             # get_file_properties
-            rest_response = RestRequestsTransportResponse(
+            rest_response = RequestsTransportResponse(
                 request=request,
-                internal_response=MockHttpClientResponse(
+                requests_response=MockHttpClientResponse(
                     request.url,
                     b"",
                     {
                         "Content-Type": "application/octet-stream",
                         "Content-Length": "1024",
                     },
-                ),
-                decompress=False
+                )
             )
         elif request.method == 'PUT':
             # upload_file
-            rest_response = RestRequestsTransportResponse(
+            rest_response = RequestsTransportResponse(
                 request=request,
-                internal_response=MockHttpClientResponse(
+                requests_response=MockHttpClientResponse(
                     request.url,
                     b"",
                     {
@@ -105,12 +103,11 @@ class MockStorageTransport(HttpTransport):
                     },
                     201,
                     "Created"
-                ),
-                decompress=False
+                )
             )
         elif request.method == 'DELETE':
             # delete_file
-            rest_response = RestRequestsTransportResponse(
+            rest_response = RequestsTransportResponse(
                 request=request,
                 internal_response=MockHttpClientResponse(
                     request.url,
@@ -120,8 +117,7 @@ class MockStorageTransport(HttpTransport):
                     },
                     202,
                     "Accepted"
-                ),
-                decompress=False
+                )
             )
         else:
             raise ValueError("The request is not accepted as part of MockStorageTransport.")
