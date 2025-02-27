@@ -38,7 +38,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         task_collection: List[_models.BatchTaskCreateContent],
         concurrencies: int = 0,
         *,
-        time_out_in_seconds: Optional[int] = None,
+        timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.BatchTaskAddCollectionResult:
@@ -67,9 +67,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         and greater than 0, will start additional coroutines to submit requests and wait for them to finish.
         Otherwise will submit create_task_collection requests sequentially on main thread
         :type concurrency: int
-        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
+        :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype time_out_in_seconds: int
+        :paramtype timeout: int
         :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -84,7 +84,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.batch.custom.CreateTasksError
         """
 
-        kwargs.update({"time_out_in_seconds": time_out_in_seconds, "ocpdate": ocpdate})
+        kwargs.update({"timeout": timeout, "ocpdate": ocpdate})
 
         results_queue = collections.deque()
         task_workflow_manager = _TaskWorkflowManager(
@@ -119,7 +119,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         node_id: str,
         file_path: str,
         *,
-        time_out_in_seconds: Optional[int] = None,
+        timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -134,9 +134,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type node_id: str
         :param file_path: The path to the file or directory that you want to delete. Required.
         :type file_path: str
-        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
+        :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype time_out_in_seconds: int
+        :paramtype timeout: int
         :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -164,7 +164,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [pool_id, node_id, file_path]
         kwargs.update(
             {
-                "time_out_in_seconds": time_out_in_seconds,
+                "timeout": timeout,
                 "ocpdate": ocpdate,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
@@ -180,7 +180,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         node_id: str,
         file_path: str,
         *,
-        time_out_in_seconds: Optional[int] = None,
+        timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -194,9 +194,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type node_id: str
         :param file_path: The path to the file or directory that you want to delete. Required.
         :type file_path: str
-        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
+        :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype time_out_in_seconds: int
+        :paramtype timeout: int
         :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -221,7 +221,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [pool_id, node_id, file_path]
         kwargs.update(
             {
-                "time_out_in_seconds": time_out_in_seconds,
+                "timeout": timeout,
                 "ocpdate": ocpdate,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
@@ -243,7 +243,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         task_id: str,
         file_path: str,
         *,
-        time_out_in_seconds: Optional[int] = None,
+        timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -257,9 +257,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the content of. Required.
         :type file_path: str
-        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
+        :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype time_out_in_seconds: int
+        :paramtype timeout: int
         :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -284,7 +284,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [job_id, task_id, file_path]
         kwargs.update(
             {
-                "time_out_in_seconds": time_out_in_seconds,
+                "timeout": timeout,
                 "ocpdate": ocpdate,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
@@ -306,7 +306,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         task_id: str,
         file_path: str,
         *,
-        time_out_in_seconds: Optional[int] = None,
+        timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -321,9 +321,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the content of. Required.
         :type file_path: str
-        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
+        :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype time_out_in_seconds: int
+        :paramtype timeout: int
         :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -352,7 +352,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [job_id, task_id, file_path]
         kwargs.update(
             {
-                "time_out_in_seconds": time_out_in_seconds,
+                "timeout": timeout,
                 "ocpdate": ocpdate,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
@@ -368,7 +368,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         node_id: str,
         parameters: Optional[_models.BatchNodeDisableSchedulingOption] = None,
         *,
-        time_out_in_seconds: Optional[int] = None,
+        timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -385,10 +385,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param parameters: The options to use for disabling scheduling on the Compute Node. Default
         value is None.
         :type parameters: ~azure.batch.models.BatchNodeDisableSchedulingContent
-        :keyword time_out_in_seconds: The maximum time that the server can spend processing the
+        :keyword timeout: The maximum time that the server can spend processing the
         request, in seconds. The default is 30 seconds. If the value is larger than 30, the default
         will be used instead.". Default value is None.
-        :paramtype time_out_in_seconds: int
+        :paramtype timeout: int
         :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
         current system clock time; set it explicitly if you are calling the REST API
         directly. Default value is None.
@@ -411,7 +411,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [pool_id, node_id, content]
         kwargs.update(
             {
-                "time_out_in_seconds": time_out_in_seconds,
+                "timeout": timeout,
                 "ocpdate": ocpdate,
             }
         )
@@ -423,7 +423,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         *,
         auto_scale_formula: Optional[str] = None,
         auto_scale_evaluation_interval: Optional[datetime.timedelta] = None,
-        time_out_in_seconds: Optional[int] = None,
+        timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -445,10 +445,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type pool_id: str
         :param content: The options to use for enabling automatic scaling. Required.
         :type content: ~azure.batch.models.BatchPoolEnableAutoScaleContent
-        :keyword time_out_in_seconds: The maximum time that the server can spend processing the
+        :keyword timeout: The maximum time that the server can spend processing the
          request, in seconds. The default is 30 seconds. If the value is larger than 30, the default
          will be used instead.". Default value is None.
-        :paramtype time_out_in_seconds: int
+        :paramtype timeout: int
         :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -501,7 +501,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [pool_id, content]
         kwargs.update(
             {
-                "time_out_in_seconds": time_out_in_seconds,
+                "timeout": timeout,
                 "ocpdate": ocpdate,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
@@ -516,7 +516,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         job_id: str,
         reason: Optional[str] = None,
         *,
-        time_out_in_seconds: Optional[int] = None,
+        timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -538,10 +538,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type job_id: str
         :param parameters: The options to use for terminating the Job. Default value is None.
         :type parameters: ~azure.batch.models.BatchJobTerminateContent
-        :keyword time_out_in_seconds: The maximum time that the server can spend processing the
+        :keyword timeout: The maximum time that the server can spend processing the
          request, in seconds. The default is 30 seconds. If the value is larger than 30, the default
          will be used instead.". Default value is None.
-        :paramtype time_out_in_seconds: int
+        :paramtype timeout: int
         :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -580,7 +580,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [job_id, content]
         kwargs.update(
             {
-                "time_out_in_seconds": time_out_in_seconds,
+                "timeout": timeout,
                 "ocpdate": ocpdate,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
