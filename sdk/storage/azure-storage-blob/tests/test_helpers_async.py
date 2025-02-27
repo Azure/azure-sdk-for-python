@@ -6,7 +6,7 @@
 from io import IOBase, UnsupportedOperation
 from typing import Any, Dict, Optional
 
-from azure.core.pipeline.transport import AsyncHttpTransport, AioHttpTransportResponse
+from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport
 from azure.core.rest import HttpRequest
 from aiohttp import ClientResponse
 
