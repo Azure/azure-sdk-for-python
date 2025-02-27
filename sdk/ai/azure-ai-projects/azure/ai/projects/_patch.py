@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union, Optional
 from typing_extensions import Self
 
 from azure.core import PipelineClient
@@ -55,6 +55,8 @@ class AIProjectClient(
         kwargs1 = kwargs.copy()
         kwargs2 = kwargs.copy()
         kwargs3 = kwargs.copy()
+
+        self._user_agent: Optional[str] = kwargs.get("user_agent", None)
 
         # For getting AppInsights connection string from the AppInsights resource.
         # The AppInsights resource URL is not known at this point. We need to get it from the

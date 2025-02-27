@@ -21,11 +21,10 @@ from ._configuration import DeploymentStacksClientConfiguration
 from .operations import DeploymentStacksOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class DeploymentStacksClient:  # pylint: disable=client-accepts-api-version-keyword
+class DeploymentStacksClient:
     """The APIs listed in this specification can be used to manage deployment stack resources through
     the Azure Resource Manager.
 

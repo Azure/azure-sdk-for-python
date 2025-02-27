@@ -268,7 +268,7 @@ class _AIAgentsInstrumentorPreview:
             attrs[GEN_AI_MESSAGE_ID] = message_id
 
         if message_status:
-            attrs[GEN_AI_MESSAGE_STATUS] = message_status
+            attrs[GEN_AI_MESSAGE_STATUS] = self._status_to_string(message_status)
 
         if usage:
             attrs[GEN_AI_USAGE_INPUT_TOKENS] = usage.prompt_tokens
@@ -287,7 +287,7 @@ class _AIAgentsInstrumentorPreview:
                     content_details = {"value": self._get_field(typed_content, "value")}
                     annotations = self._get_field(typed_content, "annotations")
                     if annotations:
-                        content_details["annotations"] = annotations
+                        content_details["annotations"] = [a.as_dict() for a in annotations]
                     content_body[content.type] = content_details
 
         self._add_message_event(
@@ -386,6 +386,9 @@ class _AIAgentsInstrumentorPreview:
 
         return role
 
+    def _status_to_string(self, status: Any) -> str:
+        return status.value if hasattr(status, "value") else status
+
     def _add_tool_assistant_message_event(self, span, step: RunStep) -> None:
         # do we want a new event for it ?
         tool_calls = [
@@ -418,7 +421,7 @@ class _AIAgentsInstrumentorPreview:
 
     def set_end_run(self, span: "AbstractSpan", run: Optional[ThreadRun]) -> None:
         if run and span and span.span_instance.is_recording:
-            span.add_attribute(GEN_AI_THREAD_RUN_STATUS, run.status)
+            span.add_attribute(GEN_AI_THREAD_RUN_STATUS, self._status_to_string(run.status))
             span.add_attribute(GEN_AI_RESPONSE_MODEL, run.model)
             if run and run.usage:
                 span.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, run.usage.prompt_tokens)
@@ -897,7 +900,7 @@ class _AIAgentsInstrumentorPreview:
             try:
                 result = await function(*args, **kwargs)
                 if span.span_instance.is_recording:
-                    span.add_attribute(GEN_AI_THREAD_RUN_STATUS, result.status)
+                    span.add_attribute(GEN_AI_THREAD_RUN_STATUS, self._status_to_string(result.status))
                     span.add_attribute(GEN_AI_RESPONSE_MODEL, result.model)
                     if result.usage:
                         span.add_attribute(GEN_AI_USAGE_INPUT_TOKENS, result.usage.prompt_tokens)
@@ -1700,7 +1703,7 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
             self.instrumentor.set_end_run(self.span, self.last_run)
 
             if self.last_run and self.last_run.last_error:
-                self.span.set_status(
+                self.span.span_instance.set_status(
                     StatusCode.ERROR,  # pyright: ignore [reportPossiblyUnboundVariable]
                     self.last_run.last_error.message,
                 )
