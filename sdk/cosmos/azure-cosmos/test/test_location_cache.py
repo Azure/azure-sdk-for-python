@@ -101,31 +101,31 @@ class TestLocationCache(unittest.TestCase):
         lc.perform_on_database_account_read(db_acc)
 
         # check read endpoints without preferred locations
-        read_regions = lc.get_read_regional_endpoints()
+        read_regions = lc.get_read_regional_routing_contexts()
         assert len(read_regions) == 1
-        assert read_regions[0].get_current() == location1_endpoint
+        assert read_regions[0].get_primary() == location1_endpoint
 
         # check read endpoints with preferred locations
         lc = refresh_location_cache([location1_name, location2_name, location4_name], False)
         lc.perform_on_database_account_read(db_acc)
-        read_regions = lc.get_read_regional_endpoints()
+        read_regions = lc.get_read_regional_routing_contexts()
         assert len(read_regions) == len(db_acc.ReadableLocations)
         for read_region in db_acc.ReadableLocations:
             found_endpoint = False
             endpoint = read_region['databaseAccountEndpoint']
             for region in read_regions:
-                if endpoint in (region.get_current(), region.get_previous()):
+                if endpoint in (region.get_primary(), region.get_alternate()):
                     found_endpoint = True
             assert found_endpoint
 
         # check write endpoints
-        write_regions = lc.get_write_regional_endpoints()
+        write_regions = lc.get_write_regional_routing_contexts()
         assert len(write_regions) == len(db_acc.WritableLocations)
         for write_region in db_acc.WritableLocations:
             found_endpoint = False
             endpoint = write_region['databaseAccountEndpoint']
             for region in write_regions:
-                if endpoint in (region.get_current(), region.get_previous()):
+                if endpoint in (region.get_primary(), region.get_alternate()):
                     found_endpoint = True
             assert found_endpoint
 

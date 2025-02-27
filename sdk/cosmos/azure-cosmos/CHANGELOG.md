@@ -1,5 +1,17 @@
 ## Release History
 
+### 4.10.0b2 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+* Fixed bug preventing health check in some scenarios. See [PR 39647](https://github.com/Azure/azure-sdk-for-python/pull/39647)
+
+#### Other Changes
+* Moved endpoint health check to the background. See [PR 39647](https://github.com/Azure/azure-sdk-for-python/pull/39647)
+
 ### 4.10.0b1 (2025-02-13)
 
 #### Features Added
