@@ -156,7 +156,7 @@ steps:
       python -m pip install coverage==7.2.5
       python scripts/devops_tasks/create_coverage.py
     displayName: Report Coverage
-    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
 
   - ${{ if eq('true', parameters.UseFederatedAuth) }}:
     - task: AzurePowerShell@5
