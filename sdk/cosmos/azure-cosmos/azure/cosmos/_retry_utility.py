@@ -38,12 +38,22 @@ from . import _service_request_retry_policy, _service_response_retry_policy
 from . import _session_retry_policy
 from . import _timeout_failover_retry_policy
 from . import exceptions
+from ._location_cache import EndpointOperationType
 from .documents import _OperationType
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes, ResourceType
 
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
-
+def reset_consecutive_failures(request_headers, global_endpoint_manager, *args):
+    endpoint = args[0].location_endpoint_to_route
+    if (_OperationType.IsReadOnlyOperation(request_headers.get(HttpHeaders.ThinClientProxyOperationType)) and
+            endpoint in global_endpoint_manager.consecutive_failures):
+        global_endpoint_manager.consecutive_failures[endpoint][EndpointOperationType.ReadType] = 0
+    elif endpoint in global_endpoint_manager.consecutive_failures:
+        global_endpoint_manager.consecutive_failures[endpoint][EndpointOperationType.WriteType] = 0
+    else:
+        global_endpoint_manager.consecutive_failures[endpoint] = {EndpointOperationType.ReadType: 0,
+                                                                  EndpointOperationType.WriteType: 0}
 
 def Execute(client, global_endpoint_manager, function, *args, **kwargs):
     """Executes the function with passed parameters applying all retry policies
@@ -104,6 +114,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
         try:
             if args:
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
+                # after a success reset the consecutive failures
+                reset_consecutive_failures(request.headers, global_endpoint_manager, *args)
             else:
                 result = ExecuteFunction(function, *args, **kwargs)
             if not client.last_response_headers:
