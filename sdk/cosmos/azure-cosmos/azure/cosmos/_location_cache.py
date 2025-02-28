@@ -113,6 +113,25 @@ def get_endpoints_by_location(new_locations,
     return endpoints_by_location, parsed_locations
 
 
+def _get_health_check_endpoints(
+        account_regional_routing_contexts_by_location,
+        regional_routing_contexts) -> set[str]:
+    # only check 2 read regions and 2 write regions
+    region_count = 2
+    # should use the endpoints in the order returned from gateway and only the ones specified in preferred locations
+    endpoints = set()
+    i = 0
+    for regional_routing_context in account_regional_routing_contexts_by_location.values():
+        if regional_routing_context in regional_routing_contexts:
+            endpoints.add(regional_routing_context.get_primary())
+            endpoints.add(regional_routing_context.get_alternate())
+            i += 1
+        if i == region_count:
+            break
+
+    return endpoints
+
+
 class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     def current_time_millis(self):
         return int(round(time.time() * 1000))
@@ -271,22 +290,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             return should_refresh
         return False
 
-    def clear_stale_endpoint_unavailability_info(self):
-        new_location_unavailability_info = {}
-        if self.location_unavailability_info_by_endpoint:
-            for unavailable_endpoint in self.location_unavailability_info_by_endpoint:  #pylint: disable=consider-using-dict-items
-                unavailability_info = self.location_unavailability_info_by_endpoint[unavailable_endpoint]
-                if not (
-                        unavailability_info
-                        and self.current_time_millis() - unavailability_info["lastUnavailabilityCheckTimeStamp"]
-                        > self.refresh_time_interval_in_ms
-                ):
-                    new_location_unavailability_info[
-                        unavailable_endpoint
-                    ] = self.location_unavailability_info_by_endpoint[unavailable_endpoint]
-
-        self.location_unavailability_info_by_endpoint = new_location_unavailability_info
-
     def is_location_unavailable(self, endpoint: RegionalRoutingContext, operation_type: str):
         # For writes only mark it unavailable if both are down
         if not _OperationType.IsReadOnlyOperation(operation_type):
@@ -311,13 +314,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         ):
             return False
 
-        if (
-                self.current_time_millis() - unavailability_info["lastUnavailabilityCheckTimeStamp"]
-                > self.refresh_time_interval_in_ms
-        ):
-            return False
-        # Unexpired entry present. Endpoint is unavailable
-
+        # Endpoint is unavailable
         return True
 
     def mark_endpoint_unavailable(self, unavailable_endpoint: str, unavailable_operation_type, refresh_cache: bool):
@@ -329,16 +326,13 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             if unavailable_endpoint in self.location_unavailability_info_by_endpoint
             else None
         )
-        current_time = self.current_time_millis()
         if not unavailability_info:
             self.location_unavailability_info_by_endpoint[unavailable_endpoint] = {
-                "lastUnavailabilityCheckTimeStamp": current_time,
                 "operationType": set([unavailable_operation_type])
             }
         else:
             unavailable_operations = set([unavailable_operation_type]).union(unavailability_info["operationType"])
             self.location_unavailability_info_by_endpoint[unavailable_endpoint] = {
-                "lastUnavailabilityCheckTimeStamp": current_time,
                 "operationType": unavailable_operations
             }
 
@@ -352,7 +346,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         if enable_multiple_writable_locations:
             self.enable_multiple_writable_locations = enable_multiple_writable_locations
 
-        self.clear_stale_endpoint_unavailability_info()
         if self.enable_endpoint_discovery:
             if read_locations:
                 (self.account_read_regional_routing_contexts_by_location,
@@ -442,6 +435,22 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             )
         )
 
+    def endpoints_to_health_check(self) -> set[str]:
+        # only check 2 read regions and 2 write regions
+        # add read endpoints from gateway and in preferred locations
+        health_check_endpoints = _get_health_check_endpoints(
+            self.account_read_regional_routing_contexts_by_location,
+            self.read_regional_routing_contexts
+        )
+        # add write endpoints from gateway and in preferred locations
+        health_check_endpoints.union(_get_health_check_endpoints(
+            self.account_write_regional_routing_contexts_by_location,
+            self.write_regional_routing_contexts
+        ))
+
+        return health_check_endpoints
+
+    # get at most two regional routing contexts in the order from gateway and the ones specified in preferred locations
     @staticmethod
     def GetLocationalEndpoint(default_endpoint, location_name):
         # For default_endpoint like 'https://contoso.documents.azure.com:443/' parse it to

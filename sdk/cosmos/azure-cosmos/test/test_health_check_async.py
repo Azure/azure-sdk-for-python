@@ -75,10 +75,10 @@ class TestHealthCheckAsync:
         expected_regional_routing_context = []
 
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        if use_write_global_endpoint and use_read_global_endpoint:
-            assert mock_get_database_account_check.counter == 0
-        else:
+        if use_read_global_endpoint:
             assert mock_get_database_account_check.counter == 1
+        else:
+            assert mock_get_database_account_check.counter == 2
         endpoint = self.host if use_read_global_endpoint else locational_endpoint
         expected_regional_routing_context.append(RegionalRoutingContext(endpoint, endpoint))
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
@@ -102,8 +102,12 @@ class TestHealthCheckAsync:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
         expected_endpoints = []
 
-        if not use_read_global_endpoint or not use_write_global_endpoint:
-            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
+        if not use_read_global_endpoint:
+            for region in REGIONS:
+                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, region)
+                expected_endpoints.append(locational_endpoint)
+        else:
+            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
             expected_endpoints.append(locational_endpoint)
 
         unavailable_endpoint_info = client.client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
@@ -129,7 +133,7 @@ class TestHealthCheckAsync:
     async def test_health_check_background_fail(self, setup):
         self.original_health_check = _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check
         _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check = self.mock_health_check_failure
-        _Constants.DefaultUnavailableLocationExpirationTime = 1000
+        _Constants.DefaultEndpointsRefreshTime = 1000
         try:
             setup[COLLECTION].client_connection._global_endpoint_manager.startup = False
             for i in range(20):
@@ -160,10 +164,8 @@ class TestHealthCheckAsync:
         expected_regional_routing_contexts = []
 
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        if use_write_global_endpoint and use_read_global_endpoint:
-            assert mock_get_database_account_check.counter == 0
-        else:
-            assert mock_get_database_account_check.counter > 0
+
+        assert mock_get_database_account_check.counter > 0
         endpoint = self.host if use_read_global_endpoint else locational_endpoint
         expected_regional_routing_contexts.append(RegionalRoutingContext(endpoint, endpoint))
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
@@ -174,6 +176,7 @@ class TestHealthCheckAsync:
 
     @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
     async def test_health_check_failure(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
+        setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint.clear()
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
             self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
@@ -192,8 +195,12 @@ class TestHealthCheckAsync:
             setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = self.original_preferred_locations
         expected_endpoints = []
 
-        if not use_write_global_endpoint or not use_read_global_endpoint:
-            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
+        if not use_write_global_endpoint or not use_read_global_endpoint :
+            for region in REGIONS:
+                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, region)
+                expected_endpoints.append(locational_endpoint)
+        else:
+            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
             expected_endpoints.append(locational_endpoint)
 
         unavailable_endpoint_info = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
@@ -214,9 +221,7 @@ class TestHealthCheckAsync:
             self.index = 0
 
         async def __call__(self, endpoint):
-            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(TestHealthCheckAsync.host, REGIONS[self.index])
-            assert endpoint == locational_endpoint
-            self.index -= 1
+            self.index += 1
             self.counter += 1
 
     class MockGetDatabaseAccount(object):

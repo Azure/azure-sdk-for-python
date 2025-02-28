@@ -38,7 +38,7 @@ class _Constants:
     ReadableLocations: Literal["readableLocations"] = "readableLocations"
     Name: Literal["name"] = "name"
     DatabaseAccountEndpoint: Literal["databaseAccountEndpoint"] = "databaseAccountEndpoint"
-    DefaultUnavailableLocationExpirationTime: int = 5 * 60 * 1000 # milliseconds
+    DefaultEndpointsRefreshTime: int = 5 * 60 * 1000 # milliseconds
     UnavailableEndpointDBATimeouts: int = 1 # seconds
 
     # ServiceDocument Resource
