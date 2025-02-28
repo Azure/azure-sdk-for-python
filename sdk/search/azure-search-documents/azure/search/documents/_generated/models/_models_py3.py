@@ -2332,8 +2332,8 @@ class VectorQuery(_serialization.Model):
     :ivar kind: The kind of vector query being performed. Required. Known values are: "vector",
      "text", "imageUrl", and "imageBinary".
     :vartype kind: str or ~azure.search.documents.models.VectorQueryKind
-    :ivar k: Number of nearest neighbors to return as top hits.
-    :vartype k: int
+    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+    :vartype k_nearest_neighbors: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched.
     :vartype fields: str
@@ -2368,7 +2368,7 @@ class VectorQuery(_serialization.Model):
 
     _attribute_map = {
         "kind": {"key": "kind", "type": "str"},
-        "k": {"key": "k", "type": "int"},
+        "k_nearest_neighbors": {"key": "k", "type": "int"},
         "fields": {"key": "fields", "type": "str"},
         "exhaustive": {"key": "exhaustive", "type": "bool"},
         "oversampling": {"key": "oversampling", "type": "float"},
@@ -2389,7 +2389,7 @@ class VectorQuery(_serialization.Model):
     def __init__(
         self,
         *,
-        k: Optional[int] = None,
+        k_nearest_neighbors: Optional[int] = None,
         fields: Optional[str] = None,
         exhaustive: Optional[bool] = None,
         oversampling: Optional[float] = None,
@@ -2399,8 +2399,8 @@ class VectorQuery(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword k: Number of nearest neighbors to return as top hits.
-        :paramtype k: int
+        :keyword k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+        :paramtype k_nearest_neighbors: int
         :keyword fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
          searched.
         :paramtype fields: str
@@ -2430,7 +2430,7 @@ class VectorQuery(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.kind: Optional[str] = None
-        self.k = k
+        self.k_nearest_neighbors = k_nearest_neighbors
         self.fields = fields
         self.exhaustive = exhaustive
         self.oversampling = oversampling
@@ -2448,8 +2448,8 @@ class VectorizableImageBinaryQuery(VectorQuery):
     :ivar kind: The kind of vector query being performed. Required. Known values are: "vector",
      "text", "imageUrl", and "imageBinary".
     :vartype kind: str or ~azure.search.documents.models.VectorQueryKind
-    :ivar k: Number of nearest neighbors to return as top hits.
-    :vartype k: int
+    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+    :vartype k_nearest_neighbors: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched.
     :vartype fields: str
@@ -2487,7 +2487,7 @@ class VectorizableImageBinaryQuery(VectorQuery):
 
     _attribute_map = {
         "kind": {"key": "kind", "type": "str"},
-        "k": {"key": "k", "type": "int"},
+        "k_nearest_neighbors": {"key": "k", "type": "int"},
         "fields": {"key": "fields", "type": "str"},
         "exhaustive": {"key": "exhaustive", "type": "bool"},
         "oversampling": {"key": "oversampling", "type": "float"},
@@ -2500,7 +2500,7 @@ class VectorizableImageBinaryQuery(VectorQuery):
     def __init__(
         self,
         *,
-        k: Optional[int] = None,
+        k_nearest_neighbors: Optional[int] = None,
         fields: Optional[str] = None,
         exhaustive: Optional[bool] = None,
         oversampling: Optional[float] = None,
@@ -2511,8 +2511,8 @@ class VectorizableImageBinaryQuery(VectorQuery):
         **kwargs: Any
     ) -> None:
         """
-        :keyword k: Number of nearest neighbors to return as top hits.
-        :paramtype k: int
+        :keyword k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+        :paramtype k_nearest_neighbors: int
         :keyword fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
          searched.
         :paramtype fields: str
@@ -2544,7 +2544,7 @@ class VectorizableImageBinaryQuery(VectorQuery):
         :paramtype base64_image: str
         """
         super().__init__(
-            k=k,
+            k_nearest_neighbors=k_nearest_neighbors,
             fields=fields,
             exhaustive=exhaustive,
             oversampling=oversampling,
@@ -2566,8 +2566,8 @@ class VectorizableImageUrlQuery(VectorQuery):
     :ivar kind: The kind of vector query being performed. Required. Known values are: "vector",
      "text", "imageUrl", and "imageBinary".
     :vartype kind: str or ~azure.search.documents.models.VectorQueryKind
-    :ivar k: Number of nearest neighbors to return as top hits.
-    :vartype k: int
+    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+    :vartype k_nearest_neighbors: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched.
     :vartype fields: str
@@ -2604,7 +2604,7 @@ class VectorizableImageUrlQuery(VectorQuery):
 
     _attribute_map = {
         "kind": {"key": "kind", "type": "str"},
-        "k": {"key": "k", "type": "int"},
+        "k_nearest_neighbors": {"key": "k", "type": "int"},
         "fields": {"key": "fields", "type": "str"},
         "exhaustive": {"key": "exhaustive", "type": "bool"},
         "oversampling": {"key": "oversampling", "type": "float"},
@@ -2617,7 +2617,7 @@ class VectorizableImageUrlQuery(VectorQuery):
     def __init__(
         self,
         *,
-        k: Optional[int] = None,
+        k_nearest_neighbors: Optional[int] = None,
         fields: Optional[str] = None,
         exhaustive: Optional[bool] = None,
         oversampling: Optional[float] = None,
@@ -2628,8 +2628,8 @@ class VectorizableImageUrlQuery(VectorQuery):
         **kwargs: Any
     ) -> None:
         """
-        :keyword k: Number of nearest neighbors to return as top hits.
-        :paramtype k: int
+        :keyword k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+        :paramtype k_nearest_neighbors: int
         :keyword fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
          searched.
         :paramtype fields: str
@@ -2660,7 +2660,7 @@ class VectorizableImageUrlQuery(VectorQuery):
         :paramtype url: str
         """
         super().__init__(
-            k=k,
+            k_nearest_neighbors=k_nearest_neighbors,
             fields=fields,
             exhaustive=exhaustive,
             oversampling=oversampling,
@@ -2682,8 +2682,8 @@ class VectorizableTextQuery(VectorQuery):
     :ivar kind: The kind of vector query being performed. Required. Known values are: "vector",
      "text", "imageUrl", and "imageBinary".
     :vartype kind: str or ~azure.search.documents.models.VectorQueryKind
-    :ivar k: Number of nearest neighbors to return as top hits.
-    :vartype k: int
+    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+    :vartype k_nearest_neighbors: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched.
     :vartype fields: str
@@ -2724,7 +2724,7 @@ class VectorizableTextQuery(VectorQuery):
 
     _attribute_map = {
         "kind": {"key": "kind", "type": "str"},
-        "k": {"key": "k", "type": "int"},
+        "k_nearest_neighbors": {"key": "k", "type": "int"},
         "fields": {"key": "fields", "type": "str"},
         "exhaustive": {"key": "exhaustive", "type": "bool"},
         "oversampling": {"key": "oversampling", "type": "float"},
@@ -2739,7 +2739,7 @@ class VectorizableTextQuery(VectorQuery):
         self,
         *,
         text: str,
-        k: Optional[int] = None,
+        k_nearest_neighbors: Optional[int] = None,
         fields: Optional[str] = None,
         exhaustive: Optional[bool] = None,
         oversampling: Optional[float] = None,
@@ -2750,8 +2750,8 @@ class VectorizableTextQuery(VectorQuery):
         **kwargs: Any
     ) -> None:
         """
-        :keyword k: Number of nearest neighbors to return as top hits.
-        :paramtype k: int
+        :keyword k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+        :paramtype k_nearest_neighbors: int
         :keyword fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
          searched.
         :paramtype fields: str
@@ -2785,7 +2785,7 @@ class VectorizableTextQuery(VectorQuery):
         :paramtype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
         """
         super().__init__(
-            k=k,
+            k_nearest_neighbors=k_nearest_neighbors,
             fields=fields,
             exhaustive=exhaustive,
             oversampling=oversampling,
@@ -2807,8 +2807,8 @@ class VectorizedQuery(VectorQuery):
     :ivar kind: The kind of vector query being performed. Required. Known values are: "vector",
      "text", "imageUrl", and "imageBinary".
     :vartype kind: str or ~azure.search.documents.models.VectorQueryKind
-    :ivar k: Number of nearest neighbors to return as top hits.
-    :vartype k: int
+    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+    :vartype k_nearest_neighbors: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched.
     :vartype fields: str
@@ -2846,7 +2846,7 @@ class VectorizedQuery(VectorQuery):
 
     _attribute_map = {
         "kind": {"key": "kind", "type": "str"},
-        "k": {"key": "k", "type": "int"},
+        "k_nearest_neighbors": {"key": "k", "type": "int"},
         "fields": {"key": "fields", "type": "str"},
         "exhaustive": {"key": "exhaustive", "type": "bool"},
         "oversampling": {"key": "oversampling", "type": "float"},
@@ -2860,7 +2860,7 @@ class VectorizedQuery(VectorQuery):
         self,
         *,
         vector: List[float],
-        k: Optional[int] = None,
+        k_nearest_neighbors: Optional[int] = None,
         fields: Optional[str] = None,
         exhaustive: Optional[bool] = None,
         oversampling: Optional[float] = None,
@@ -2870,8 +2870,8 @@ class VectorizedQuery(VectorQuery):
         **kwargs: Any
     ) -> None:
         """
-        :keyword k: Number of nearest neighbors to return as top hits.
-        :paramtype k: int
+        :keyword k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+        :paramtype k_nearest_neighbors: int
         :keyword fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
          searched.
         :paramtype fields: str
@@ -2902,7 +2902,7 @@ class VectorizedQuery(VectorQuery):
         :paramtype vector: list[float]
         """
         super().__init__(
-            k=k,
+            k_nearest_neighbors=k_nearest_neighbors,
             fields=fields,
             exhaustive=exhaustive,
             oversampling=oversampling,
