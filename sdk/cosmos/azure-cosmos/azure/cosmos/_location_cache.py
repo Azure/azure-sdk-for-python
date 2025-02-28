@@ -225,6 +225,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                             or self.is_endpoint_unavailable_internal(write_regional_endpoint.get_primary(),
                                                              request.operation_type)
                     ):
+                        logger.info("Using alternate endpoint for write")
                         return write_regional_endpoint.get_alternate()
                     return write_regional_endpoint.get_primary()
             # if endpoint discovery is off for reads it should use passed in endpoint
@@ -243,6 +244,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 or self.is_endpoint_unavailable_internal(regional_endpoint.get_primary(),
                                                           request.operation_type)
         ):
+            logger.info("Using alternate endpoint for reads")
             return regional_endpoint.get_alternate()
         return regional_endpoint.get_primary()
 
@@ -309,6 +311,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             or not unavailability_info
             or expected_available_operation not in unavailability_info["operationType"]
         ):
+            logger.info("Endpoint %s is available for %s", endpoint, expected_available_operation)
             return False
 
         # Endpoint is unavailable
