@@ -25,7 +25,7 @@ DatabaseAccount with multiple writable and readable locations.
 import collections
 import logging
 import time
-from typing import Set
+from typing import Set, Any
 from urllib.parse import urlparse
 
 from . import documents
@@ -113,6 +113,11 @@ def get_endpoints_by_location(new_locations,
 
     return endpoints_by_location, parsed_locations
 
+def add_endpoint_if_preferred(endpoint: str, preferred_endpoints: Set[str], endpoints: Set[str]) -> bool:
+    if endpoint in preferred_endpoints:
+        endpoints.add(endpoint)
+        return True
+    return False
 
 def _get_health_check_endpoints(
         account_regional_routing_contexts_by_location,
@@ -120,12 +125,23 @@ def _get_health_check_endpoints(
     # only check 2 read regions and 2 write regions
     region_count = 2
     # should use the endpoints in the order returned from gateway and only the ones specified in preferred locations
-    endpoints = set()
+    endpoints: set[str] = set()
     i = 0
+    preferred_endpoints = {context.get_primary() for context in regional_routing_contexts}.union(
+        {context.get_alternate() for context in regional_routing_contexts}
+    )
+
     for regional_routing_context in account_regional_routing_contexts_by_location.values():
-        if regional_routing_context in regional_routing_contexts:
-            endpoints.add(regional_routing_context.get_primary())
-            endpoints.add(regional_routing_context.get_alternate())
+        region_added = add_endpoint_if_preferred(
+            regional_routing_context.get_primary(),
+            preferred_endpoints,
+            endpoints)
+        region_added |= add_endpoint_if_preferred(
+            regional_routing_context.get_alternate(),
+            preferred_endpoints,
+            endpoints)
+
+        if region_added:
             i += 1
         if i == region_count:
             break

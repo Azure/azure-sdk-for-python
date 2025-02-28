@@ -216,8 +216,10 @@ def judge_tag_preview(path: str, package_name: str) -> bool:
         for line in list_in:
             if "DEFAULT_API_VERSION = " in line:
                 default_api_version += line.split("=")[-1].strip("\n")  # collect all default api version
-            if default_api_version == "" and "api_version" in line:
-                api_version += ", ".join(re.findall("\d{4}-\d{2}-\d{2}[-a-z]*", line))  # collect all single api version
+            if default_api_version == "" and "api_version" in line and "method_added_on" not in line:
+                api_version += ", ".join(
+                    re.findall('"\d{4}-\d{2}-\d{2}[-a-z]*"[^:]', line)
+                )  # collect all single api version
     if default_api_version != "":
         _LOGGER.info(f"find default api version:{default_api_version}")
         return "preview" in default_api_version
