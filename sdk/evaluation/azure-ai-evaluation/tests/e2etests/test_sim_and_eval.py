@@ -78,7 +78,7 @@ class TestSimAndEval:
         assert simulator_output[0]["messages"][0]["content"] == simulator_output[0]["messages"][3]["content"]
 
         # Write simulator output to file
-        file_name = "eval_sim_test.jsonl"
+        file_name = "eval_sim_test_violence.jsonl"
         # Sadly tempfile doesn't play nice with evaluate's data reader
         # Write the output to the file
         with open(file_name, "w") as file:
@@ -172,7 +172,7 @@ class TestSimAndEval:
         assert len(simulator_output) == 1
 
         # Write simulator output to file
-        file_name = "eval_sim_test.jsonl"
+        file_name = "eval_sim_test_image_understanding.jsonl"
 
         # Write the output to the file
         with open(file_name, "w") as file:
@@ -264,7 +264,7 @@ class TestSimAndEval:
         assert len(simulator_output) == 1
 
         # Write simulator output to file
-        file_name = "eval_sim_test.jsonl"
+        file_name = "eval_sim_test_image_gen.jsonl"
 
         # Write the output to the file
         with open(file_name, "w") as file:
@@ -349,7 +349,7 @@ class TestSimAndEval:
         assert len(simulator_output) == 1
 
         # Write simulator output to file
-        file_name = "eval_sim_test.jsonl"
+        file_name = "eval_sim_test_image_gen_cs.jsonl"
 
         # Write the output to the file
         with open(file_name, "w") as file:
