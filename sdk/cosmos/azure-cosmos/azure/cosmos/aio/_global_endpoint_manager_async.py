@@ -163,6 +163,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     self.mark_endpoint_unavailable_for_read(endpoint, False)
                     self.mark_endpoint_unavailable_for_write(endpoint, False)
         self.location_cache.update_location_cache()
+        logger.info("Location cache unavailability info in end of health check : %s", self.location_cache.location_unavailability_info_by_endpoint)
 
     async def _GetDatabaseAccount(self, **kwargs) -> Tuple[DatabaseAccount, str]:
         """Gets the database account.
