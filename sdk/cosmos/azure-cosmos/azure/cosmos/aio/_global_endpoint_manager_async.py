@@ -146,6 +146,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         # get all the endpoints to check
         endpoints = self.location_cache.endpoints_to_health_check()
         logger.info("Endpoints to health check: %s", endpoints)
+        logger.info("Endpoints attempted: %s", endpoints_attempted)
         success_count = 0
         for endpoint in endpoints:
             if endpoint not in endpoints_attempted:
@@ -157,6 +158,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     await self.client._GetDatabaseAccountCheck(endpoint, **kwargs)
                     success_count += 1
                     self.location_cache.mark_endpoint_available(endpoint)
+                    logger.info("Endpoint %s is available", endpoint)
                 except (exceptions.CosmosHttpResponseError, AzureError):
                     self.mark_endpoint_unavailable_for_read(endpoint, False)
                     self.mark_endpoint_unavailable_for_write(endpoint, False)
