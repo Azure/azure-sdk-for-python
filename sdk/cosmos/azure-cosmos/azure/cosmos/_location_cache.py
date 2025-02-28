@@ -25,6 +25,7 @@ DatabaseAccount with multiple writable and readable locations.
 import collections
 import logging
 import time
+from typing import Set
 from urllib.parse import urlparse
 
 from . import documents
@@ -115,7 +116,7 @@ def get_endpoints_by_location(new_locations,
 
 def _get_health_check_endpoints(
         account_regional_routing_contexts_by_location,
-        regional_routing_contexts) -> set[str]:
+        regional_routing_contexts) -> Set[str]:
     # only check 2 read regions and 2 write regions
     region_count = 2
     # should use the endpoints in the order returned from gateway and only the ones specified in preferred locations
@@ -435,7 +436,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             )
         )
 
-    def endpoints_to_health_check(self) -> set[str]:
+    def endpoints_to_health_check(self) -> Set[str]:
         # only check 2 read regions and 2 write regions
         # add read endpoints from gateway and in preferred locations
         health_check_endpoints = _get_health_check_endpoints(
