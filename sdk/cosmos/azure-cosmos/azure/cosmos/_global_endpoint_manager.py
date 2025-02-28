@@ -54,7 +54,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             self.DefaultEndpoint,
             self.EnableEndpointDiscovery,
             client.connection_policy.UseMultipleWriteLocations,
-            self.refresh_time_interval_in_ms,
+            constants._Constants.DefaultUnavailableLocationExpirationTime,
         )
         self.refresh_needed = False
         self.refresh_lock = threading.RLock()
@@ -62,7 +62,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self._database_account_cache = None
 
     def get_refresh_time_interval_in_ms_stub(self):
-        return constants._Constants.DefaultUnavailableLocationExpirationTime
+        return constants._Constants.DefaultEndpointRefreshTime
 
     def get_write_endpoint(self):
         return self.location_cache.get_write_regional_routing_context()
