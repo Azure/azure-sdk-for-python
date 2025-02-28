@@ -1638,7 +1638,35 @@ class TestFile(StorageRecordedTestCase):
         fc.get_file_properties()
         fc.upload_data(data, overwrite=True)
 
+    @DataLakePreparer()
+    def test_progress_hook_download_upload(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = self._create_file_and_return_client(
+            directory=self._get_directory_reference(),
+            file=self._get_file_reference()
+        )
+
+        uploads_called = []
+        def upload_progress_hook(current, total):
+            uploads_called.append((current, total))
+
+        downloads_called = []
+        def download_progress_hook(current, total):
+            downloads_called.append((current, total))
+
+        data = self.get_random_bytes(8*1024)
+        file_client.upload_data(data, overwrite=True, progress_hook=upload_progress_hook, chunk_size=1024)
+        assert len(uploads_called) == 8
+
+        file_data = file_client.download_file(progress_hook=download_progress_hook).readall()
+        assert file_data == data
+        assert len(downloads_called) == 1
 
 # ------------------------------------------------------------------------------
+
+
 if __name__ == '__main__':
     unittest.main()
