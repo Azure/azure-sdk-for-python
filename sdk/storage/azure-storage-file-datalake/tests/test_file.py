@@ -1717,7 +1717,7 @@ class TestFile(StorageRecordedTestCase):
 
         file_data = file_client.download_file(progress_hook=download_progress_hook).readall()
         assert file_data == data
-        assert len(downloads_called)
+        assert len(downloads_called) == 1
 
 # ------------------------------------------------------------------------------
 
