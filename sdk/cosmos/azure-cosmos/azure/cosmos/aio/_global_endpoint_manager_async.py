@@ -118,7 +118,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     raise e
 
     async def _refresh_endpoint_list_private(self, database_account=None, **kwargs):
-        if database_account:
+        if database_account and not self.startup:
             self.location_cache.perform_on_database_account_read(database_account)
             self.refresh_needed = False
             self.last_refresh_time = self.location_cache.current_time_millis()
