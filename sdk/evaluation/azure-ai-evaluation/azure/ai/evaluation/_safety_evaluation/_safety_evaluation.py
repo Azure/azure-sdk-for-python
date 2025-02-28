@@ -36,6 +36,9 @@ from pyrit.prompt_target import OpenAIChatTarget
 from pyrit.models import ChatMessage
 
 logger = logging.getLogger(__name__)
+JAILBREAK_EXT = "_Jailbreak"
+DATA_EXT = "_Data.jsonl"
+RESULTS_EXT = "_Results.jsonl"
 
 def _setup_logger():
     """Configure and return a logger instance for the CustomAdversarialSimulator.
@@ -218,7 +221,7 @@ class _SafetyEvaluation:
             return {"messages": messages_list, "stream": stream, "session_state": session_state, "context": latest_context if latest_context else context}
         
         ## Run simulator
-        data_path = "simulator_outputs.jsonl"
+        simulator = None
         simulator_outputs = None
         jailbreak_outputs = None
         simulator_data_paths = {}
@@ -287,13 +290,15 @@ class _SafetyEvaluation:
                 blame=ErrorBlame.USER_ERROR,
             )
         
+        data_path_base = simulator.__class__.__name__
+        
         ## Write outputs to file according to scenario
         if direct_attack and jailbreak_outputs:
-            jailbreak_data_path = "jailbreak_simulator_outputs.jsonl"
-            with Path(jailbreak_data_path).open("w") as f:
+            jailbreak_data_path = data_path_base + JAILBREAK_EXT
+            with Path(jailbreak_data_path + DATA_EXT).open("w") as f:
                 f.writelines(jailbreak_outputs.to_eval_qr_json_lines())
-            simulator_data_paths["jailbreak"] = jailbreak_data_path
-        with Path(data_path).open("w") as f:
+            simulator_data_paths[jailbreak_data_path] = jailbreak_data_path + DATA_EXT
+        with Path(data_path_base + DATA_EXT).open("w") as f:
             if not adversarial_scenario or adversarial_scenario != AdversarialScenario.ADVERSARIAL_CONVERSATION:
                 if source_text or self._check_target_returns_context(target):
                     eval_input_data_json_lines = ""
@@ -328,14 +333,14 @@ class _SafetyEvaluation:
                 f.writelines(
                     [json.dumps({"conversation": {"messages": conversation["messages"]}}) + "\n" for conversation in simulator_outputs]
                 )
-            simulator_data_paths["regular"] = data_path
+            simulator_data_paths[data_path_base] = data_path_base + DATA_EXT
             
         return simulator_data_paths
     
     def _get_scenario(
             self,
             evaluators: List[_SafetyEvaluator], 
-            num_turns: int = 3,
+            num_turns: int = 1,
             scenario: Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]] = None,
     ) -> Optional[Union[AdversarialScenario, AdversarialScenarioJailbreak]]:
         '''
@@ -563,11 +568,14 @@ class _SafetyEvaluation:
             
 
     def _calculate_defect_rate(self, evaluation_result_dict) -> EvaluationResult:
+        jailbreak_cols = [key for key in evaluation_result_dict.keys() if JAILBREAK_EXT in key]
+        regular_cols = [key for key in evaluation_result_dict.keys() if JAILBREAK_EXT not in key]
+
         hate_unfairness_defects = []
         violence_defects = []
         sexual_defects = []
         self_harm_defects = []
-        for i, row in enumerate(zip(evaluation_result_dict['jailbreak']['rows'], evaluation_result_dict['regular']['rows'])):
+        for i, row in enumerate(zip(evaluation_result_dict[jailbreak_cols[0]]['rows'], evaluation_result_dict[regular_cols[0]]['rows'])):
             hate_unfairness_defects.append(1 if (row[0]['outputs.content_safety.hate_unfairness_score'] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT and not row[1]['outputs.content_safety.hate_unfairness_score'] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT) else 0)
             violence_defects.append(1 if (row[0]['outputs.content_safety.violence_score'] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT and not row[1]['outputs.content_safety.violence_score'] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT) else 0)
             sexual_defects.append(1 if (row[0]['outputs.content_safety.sexual_score'] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT and not row[1]['outputs.content_safety.sexual_score'] > CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT) else 0)
@@ -647,23 +655,26 @@ class _SafetyEvaluation:
         return orchestrators
             
     
-    async def _call_orchestrators_for_budget(self, attack_budget: List[_AttackBudget], converters: PromptConverter, chat_target: PromptChatTarget, all_prompts: List[str]) -> List[Union[str, os.PathLike]]:
-        output_data_paths = []
+    async def _call_orchestrators_for_budget(self, attack_budget: List[_AttackBudget], converters: PromptConverter, chat_target: PromptChatTarget, all_prompts: List[str]) -> Dict[str, str]:
+        output_data_paths = {}
         if _AttackBudget.LOW in attack_budget:
             # run many-shot orchestrator (does not handle converters)
-            # TODO: Many shot is flaky for some reason, ignoring for now 
+            # TODO: Many shot is having trouble sneding prompts using the many shot template, ignoring for now 
             # many_shot_orchestrator = await self._many_shot_orchestrator(chat_target, all_prompts)
-            # ouptut_path = "many_shot_outputs.jsonl"
+            # orchestrator_name = many_shot_orchestrator.get_identifier()["__type__"]
+            # ouptut_path = f"{orchestrator_name}{DATA_EXT}"
             # ouptut_path = self._write_pyrit_outputs_to_file(many_shot_orchestrator, ouptut_path)
-            # output_data_paths.append(ouptut_path)
+            # output_data_paths[orchestrator_name] = ouptut_path
             # run skeleton key orchestrator for each converter
             skeleton_key_orchestrators = await self._skeleton_key_orchestrator(chat_target, all_prompts, converters)
             for converter in converters:
                 skeleton_key_orchestrator = skeleton_key_orchestrators.pop(0)
                 converter_name = converter.get_identifier()["__type__"]
-                ouptut_path = f"skeleton_key_outputs_{converter_name}.jsonl"
+                orchestrator_name = skeleton_key_orchestrator.get_identifier()["__type__"]
+                base_path = f"{orchestrator_name}_{converter_name}"
+                ouptut_path = f"{base_path}{DATA_EXT}"
                 ouptut_path = self._write_pyrit_outputs_to_file(skeleton_key_orchestrator, ouptut_path)
-                output_data_paths.append(ouptut_path)
+                output_data_paths[base_path] = ouptut_path
         return output_data_paths
     
     def _write_pyrit_outputs_to_file(self, orchestrator: Orchestrator, output_path: Union[str, os.PathLike]) -> Union[str, os.PathLike]:
@@ -681,13 +692,7 @@ class _SafetyEvaluation:
             f.writelines(json_lines)
         return output_path
     
-    async def _pyrit(
-            self, 
-            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration], 
-            scenario: AdversarialScenario,
-            num_rows: int = 1,
-            attack_budget: List[_AttackBudget] = []
-        ) ->  List[Union[str, os.PathLike]]:
+    def _get_chat_target(self, target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]) -> PromptChatTarget:
         chat_target: OpenAIChatTarget = None
         if not isinstance(target, Callable):
             if "azure_deployment" in target and "azure_endpoint" in target: # Azure OpenAI
@@ -696,7 +701,7 @@ class _SafetyEvaluation:
                     chat_target = OpenAIChatTarget(deployment_name=target["azure_deployment"], endpoint=target["azure_endpoint"], use_aad_auth=True)
                 else: 
                     chat_target = OpenAIChatTarget(deployment_name=target["azure_deployment"], endpoint=target["azure_endpoint"], api_key=api_key)
-            else:
+            else: # OpenAI
                 chat_target = OpenAIChatTarget(deployment=target["model"], endpoint=target.get("base_url", None), key=target["api_key"], is_azure_target=False)
         else:
             async def callback_target(
@@ -723,8 +728,17 @@ class _SafetyEvaluation:
                 messages_list.append(formatted_response) # type: ignore
                 return {"messages": messages_list, "stream": stream, "session_state": session_state, "context": {}}
             
-
-            chat_target = CallbackChatTarget(callback=callback_target)
+            chat_target = CallbackChatTarget(callback=callback_target) # type: ignore
+        return chat_target
+    
+    async def _pyrit(
+            self, 
+            target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration], 
+            scenario: AdversarialScenario,
+            num_rows: int = 1,
+            attack_budget: List[_AttackBudget] = []
+        ) ->  Dict[str, str]:
+        chat_target = self._get_chat_target(target)
         
         all_prompts_list = await self._get_all_prompts(scenario, num_rows=num_rows)
 
@@ -736,13 +750,14 @@ class _SafetyEvaluation:
             return data_paths
         # TODO: Implement handling for pyrit strategies beyond budget levels
         else: 
+            output_paths = {}
             orchestrator = PromptSendingOrchestrator(objective_target=chat_target)
             await orchestrator.send_prompts_async(prompt_list=all_prompts_list)
-
-            output_path = "pyrit_outputs.jsonl"
-            return [self._write_pyrit_outputs_to_file(orchestrator, output_path)]
-
-        
+            orchestrator_name = orchestrator.get_identifier()["__type__"]
+            base_path = f"{orchestrator_name}"
+            ouptut_path = f"{base_path}{DATA_EXT}"
+            output_paths[base_path] = self._write_pyrit_outputs_to_file(orchestrator, ouptut_path)
+            return output_paths
 
     async def __call__(
             self,
@@ -760,7 +775,7 @@ class _SafetyEvaluation:
             data_path: Optional[Union[str, os.PathLike]] = None,
             jailbreak_data_path: Optional[Union[str, os.PathLike]] = None,
             output_path: Optional[Union[str, os.PathLike]] = None
-        ) -> Union[EvaluationResult, Dict[str, Union[str, os.PathLike]], str, os.PathLike]:
+        ) -> Union[Dict[str, str], Dict[str, Union[str,os.PathLike]]]:
         '''
         Evaluates the target function based on the provided parameters.
         
@@ -809,17 +824,16 @@ class _SafetyEvaluation:
         adversarial_scenario = self._get_scenario(evaluators, num_turns=num_turns, scenario=scenario)
         self.logger.info(f"Using scenario: {adversarial_scenario}")
 
-        data_path_list = None
+        data_paths = None
         if isinstance(adversarial_scenario, AdversarialScenario) and num_turns==1:
             self.logger.info(f"Running Pyrit with inputs target={target}, scenario={scenario}, attack_budget={attack_budget}, num_rows={num_rows}") 
-            data_path_list = await self._pyrit(target, adversarial_scenario, num_rows, attack_budget)
-            return EvaluationResult(rows=[], metrics={}, studio_url="")
+            data_paths = await self._pyrit(target, adversarial_scenario, num_rows, attack_budget)
 
         ## Get evaluators
         evaluators_dict = self._get_evaluators(evaluators)
 
         ## If `data_path` is not provided, run simulator
-        if not data_path_list and data_path is None and jailbreak_data_path is None and isinstance(target, Callable):
+        if not data_paths and data_path is None and jailbreak_data_path is None and isinstance(target, Callable):
             self.logger.info(f"No data_path provided. Running simulator.")
             data_paths = await self._simulate(
                 target=target,
@@ -831,45 +845,33 @@ class _SafetyEvaluation:
                 source_text=source_text,
                 direct_attack=_SafetyEvaluator.DIRECT_ATTACK in evaluators
             )
-            data_path = data_paths.get("regular", None)
-            jailbreak_data_path = data_paths.get("jailbreak", None)
-
-        if data_only and data_path:
+        elif data_path:
+            data_paths = {Path(data_path).stem: data_path}
             if jailbreak_data_path:
-                return {"regular": data_path, "jailbreak": jailbreak_data_path}
-            return data_path
+                data_paths[Path(jailbreak_data_path).stem + JAILBREAK_EXT] = jailbreak_data_path
+
+        if data_only and data_paths: return data_paths
 
         ## Run evaluation
         evaluation_results = {}
-        if _SafetyEvaluator.DIRECT_ATTACK in evaluators and jailbreak_data_path:
-            self.logger.info(f"Running evaluation for jailbreak data with inputs jailbreak_data_path={jailbreak_data_path}, evaluators={evaluators_dict}, azure_ai_project={self.azure_ai_project}, output_path=jailbreak_{output_path}, credential={self.credential}")
-            evaluate_outputs_jailbreak = _evaluate.evaluate(
-                data=jailbreak_data_path,
-                evaluators=evaluators_dict,
-                azure_ai_project=self.azure_ai_project,
-                output_path=Path("jailbreak_" + str(output_path)),
-                evaluation_name=evaluation_name,
-            )
-            evaluation_results["jailbreak"] = evaluate_outputs_jailbreak
-
-        if data_path:
-            self.logger.info(f"Running evaluation for data with inputs data_path={data_path}, evaluators={evaluators_dict}, azure_ai_project={self.azure_ai_project}, output_path={output_path}")
-            evaluate_outputs = _evaluate.evaluate(
-                data=data_path,
-                evaluators=evaluators_dict,
-                azure_ai_project=self.azure_ai_project,
-                evaluation_name=evaluation_name,
-                output_path=output_path,
-            )
-            if _SafetyEvaluator.DIRECT_ATTACK in evaluators:
-                evaluation_results["regular"] = evaluate_outputs
-                return self._calculate_defect_rate(evaluation_results)
-            
-            return evaluate_outputs
+        if data_paths:
+            for strategy, data_path in data_paths.items():
+                self.logger.info(f"Running evaluation for data with inputs data_path={data_path}, evaluators={evaluators_dict}, azure_ai_project={self.azure_ai_project}, output_path={output_path}")
+                if evaluation_name: output_prefix = evaluation_name + "_"
+                else: output_prefix = ""
+                evaluate_outputs = _evaluate.evaluate(
+                    data=data_path,
+                    evaluators=evaluators_dict,
+                    azure_ai_project=self.azure_ai_project,
+                    evaluation_name=evaluation_name,
+                    output_path=output_path if output_path else f"{output_prefix}{strategy}{RESULTS_EXT}",
+                )
+                evaluation_results[strategy] = evaluate_outputs
+            return evaluation_results
         else:
             raise EvaluationException(
-                message="No data path found after simulation",
-                internal_message="No data path found after simulation",
+                message="No data found after simulation",
+                internal_message="No data found after simulation",
                 target=ErrorTarget.UNKNOWN,
                 category=ErrorCategory.MISSING_FIELD,
                 blame=ErrorBlame.USER_ERROR,

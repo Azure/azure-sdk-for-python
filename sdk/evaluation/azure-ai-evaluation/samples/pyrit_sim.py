@@ -6,7 +6,7 @@ pip install -e ".[pyrit]"
 """
 
 
-from azure.ai.evaluation._safety_evaluation._safety_evaluation import _SafetyEvaluation
+from azure.ai.evaluation._safety_evaluation._safety_evaluation import _SafetyEvaluation, _AttackBudget
 import os
 from azure.identity import DefaultAzureCredential
 from azure.ai.evaluation.simulator import AdversarialScenario
@@ -34,8 +34,9 @@ async def main():
 
     outputs = await safety_eval_callback_target(
         target=test_target_fn,
-        num_rows=8,
-        attack_budget=[_AttackBudget.LOW]
+        num_rows=1,
+        attack_budget=[_AttackBudget.LOW],
+        evaluation_name="CallbackTarget"
     )
 
     print(outputs)
@@ -47,7 +48,9 @@ async def main():
 
     outputs = await safety_eval_model_target(
         target=model_config,
-        num_rows=8,
+        num_rows=1,
+        attack_budget=[_AttackBudget.LOW],
+        evaluation_name="ModelTarget"
     )
     print(outputs)
 
