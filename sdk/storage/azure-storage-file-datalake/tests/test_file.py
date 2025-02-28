@@ -1693,6 +1693,7 @@ class TestFile(StorageRecordedTestCase):
         assert file_data == b"Hello World!"  # data is fixed by mock transport
 
     @DataLakePreparer()
+    @recorded_by_proxy
     def test_progress_hook_download_upload(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -1720,7 +1721,5 @@ class TestFile(StorageRecordedTestCase):
         assert len(downloads_called) == 1
 
 # ------------------------------------------------------------------------------
-
-
 if __name__ == '__main__':
     unittest.main()

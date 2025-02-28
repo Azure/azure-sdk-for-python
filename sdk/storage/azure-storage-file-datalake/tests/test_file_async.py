@@ -1594,6 +1594,35 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         file_data = await (await file_client.download_file(validate_content=True)).read()
         assert file_data == b"Hello Async World!"  # data is fixed by mock transport
 
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_progress_hook_download_upload(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = await self._create_file_and_return_client(
+            directory=self._get_directory_reference(),
+            file=self._get_file_reference()
+        )
+
+        uploads_called = []
+        async def upload_progress_hook(current, total):
+            uploads_called.append((current, total))
+
+        downloads_called = []
+        async def download_progress_hook(current, total):
+            downloads_called.append((current, total))
+
+        data = self.get_random_bytes(8 * 1024)
+        await file_client.upload_data(data, overwrite=True, progress_hook=upload_progress_hook, chunk_size=1024)
+        assert len(uploads_called) == 8
+
+        file_downloader = await file_client.download_file(progress_hook=download_progress_hook)
+        file_data = await file_downloader.readall()
+        assert file_data == data
+        assert len(downloads_called) == 1
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
