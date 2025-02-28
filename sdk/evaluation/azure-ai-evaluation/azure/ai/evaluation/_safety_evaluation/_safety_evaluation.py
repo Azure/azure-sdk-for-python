@@ -579,7 +579,7 @@ class _SafetyEvaluation:
             jailbreak_data_path: Optional[Union[str, os.PathLike]] = None,
             output_path: Optional[Union[str, os.PathLike]] = None,
             data_paths: Optional[Union[Dict[str, str], Dict[str, Union[str,os.PathLike]]]] = None
-        ) -> Union[Dict[str, str], Dict[str, Union[str,os.PathLike]]]:
+        ) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str,os.PathLike]]]:
         '''
         Evaluates the target function based on the provided parameters.
         
