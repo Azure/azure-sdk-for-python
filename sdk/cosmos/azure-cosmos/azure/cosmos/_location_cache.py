@@ -205,6 +205,10 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             request.use_preferred_locations if request.use_preferred_locations is not None else True
         )
 
+        # whether to check for write or read unavailable
+        endpoint_operation_type = EndpointOperationType.WriteType if (
+            documents._OperationType.IsWriteOperation(request.operation_type)) else EndpointOperationType.ReadType
+
         if not use_preferred_locations or (
             documents._OperationType.IsWriteOperation(request.operation_type)
             and not self.can_use_multiple_write_locations_for_request(request)
@@ -223,7 +227,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                             and request.last_routed_location_endpoint_within_region
                             == write_regional_endpoint.get_primary()
                             or self.is_endpoint_unavailable_internal(write_regional_endpoint.get_primary(),
-                                                             request.operation_type)
+                                                             endpoint_operation_type)
                     ):
                         return write_regional_endpoint.get_alternate()
                     return write_regional_endpoint.get_primary()
@@ -241,7 +245,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 and request.last_routed_location_endpoint_within_region
                 == regional_endpoint.get_primary()
                 or self.is_endpoint_unavailable_internal(regional_endpoint.get_primary(),
-                                                          request.operation_type)
+                                                          endpoint_operation_type)
         ):
             return regional_endpoint.get_alternate()
         return regional_endpoint.get_primary()
