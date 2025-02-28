@@ -10,3 +10,5 @@ need_azuremgmtcore = true
 sample_link = ""
 exclude_folders = ""
 title = "MigrationAssessmentMgmtClient"
+mypy = false
+pyright = false
