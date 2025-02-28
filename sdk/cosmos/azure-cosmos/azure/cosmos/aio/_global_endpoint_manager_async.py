@@ -145,6 +145,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.location_cache.perform_on_database_account_read(database_account)
         # get all the endpoints to check
         endpoints = self.location_cache.endpoints_to_health_check()
+        logger.info("Endpoints to health check: %s", endpoints)
         success_count = 0
         for endpoint in endpoints:
             if endpoint not in endpoints_attempted:
