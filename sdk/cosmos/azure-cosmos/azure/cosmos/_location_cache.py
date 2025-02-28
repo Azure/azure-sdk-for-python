@@ -161,11 +161,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         self.account_read_locations = []
 
     def check_and_update_cache(self):
-        if (
-            self.location_unavailability_info_by_endpoint
-            and self.current_time_millis() - self.last_cache_update_time_stamp > self.refresh_time_interval_in_ms
-        ):
-            self.update_location_cache()
+        self.update_location_cache()
 
     def get_write_regional_routing_contexts(self):
         self.check_and_update_cache()
