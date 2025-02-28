@@ -10,7 +10,3 @@ need_azuremgmtcore = true
 sample_link = ""
 exclude_folders = ""
 title = "MigrationAssessmentMgmtClient"
-
-[tool.azure-sdk-build]
-mypy = false
-pyright = false
