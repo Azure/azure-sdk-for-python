@@ -267,7 +267,8 @@ def append_results_to_csv(entities: list[dict[str, Any]]) -> None:
 def should_run() -> bool:
     """We only update the typing dashboard once a month on the Monday after release week.
     """
-    today = datetime.date.today()
+    pst = datetime.datetime.now(datetime.timezone(offset=datetime.timedelta(hours=-8)))
+    today = pst.date()
     c = calendar.Calendar(firstweekday=calendar.SUNDAY)
     month_dates = c.monthdatescalendar(today.year, today.month)
 
