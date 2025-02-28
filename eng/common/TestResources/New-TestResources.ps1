@@ -270,6 +270,11 @@ try {
             '4d042dc6-fe17-4698-a23f-ec6a8d1e98f4' = 'Azure SDK Test Resources - TME '
         }
 
+        $wellKnownTenantTMEStatus = @{
+            '70a036f6-8e4d-4615-bad6-149c02e7720d' = $true  # tme testing
+            '72f988bf-86f1-41af-91ab-2d7cd011db47' = $false  # corp
+        }
+
         # Print which subscription is currently selected.
         $subscriptionName = $context.Subscription.Id
         if ($wellKnownSubscriptions.ContainsKey($subscriptionName)) {
@@ -528,7 +533,13 @@ try {
         $templateParameters.Add('azsdkPipelineSubnetList', @($env:PoolSubnet))
     }
     # Some arm/bicep templates may want to change deployment settings (e.g. local auth) in sandboxed TME tenants
-    $templateParameters.Add('supportsSafeSecretStandard', ($context.Tenant.Name -notlike '*TME*'))
+    # The pipeline account context does not have the .Tenant.Name property, so check against subscription via
+    # naming convention instead.
+    if ($wellKnownTenantTMEStatus.Contains($TenantId)) {
+        $templateParameters.Add('supportsSafeSecretStandard', !$wellKnownTenantTMEStatus[$TenantId])
+    } else {
+        $templateParameters.Add('supportsSafeSecretStandard', $true)
+    }
 
     $defaultCloudParameters = LoadCloudConfig $Environment
     MergeHashes $defaultCloudParameters $(Get-Variable templateParameters)
