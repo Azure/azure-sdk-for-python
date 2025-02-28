@@ -70,7 +70,7 @@ from mocks_async import MockReceivedMessage, MockReceiver
 from tests.utilities import (
     get_logger,
     print_message,
-    sleep_until_expired,
+    sleep_until_expired_async,
     uamqp_transport as get_uamqp_transport,
     ArgPasserAsync,
 )
@@ -1529,7 +1529,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 finally:
                     await receiver.complete_message(messages[0])
                     await receiver.complete_message(messages[1])
-                    sleep_until_expired(messages[2])
+                    await sleep_until_expired_async(messages[2])
                     with pytest.raises(MessageLockLostError):
                         await receiver.complete_message(messages[2])
 
@@ -1583,7 +1583,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                         print("Finished first sleep", message.locked_until_utc)
                         assert not message._lock_expired
                         await asyncio.sleep(15)  # generate autolockrenewtimeout error by going one iteration past.
-                        sleep_until_expired(message)
+                        await sleep_until_expired_async(message)
                         print("Finished second sleep", message.locked_until_utc, utc_now())
                         assert message._lock_expired
                         try:
@@ -1655,7 +1655,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                         print("Finished first sleep", message.locked_until_utc)
                         assert not message._lock_expired
                         await asyncio.sleep(15)  # generate autolockrenewtimeout error by going one iteration past.
-                        sleep_until_expired(message)
+                        await sleep_until_expired_async(message)
                         print("Finished second sleep", message.locked_until_utc, utc_now())
                         assert message._lock_expired
                         try:
@@ -2331,7 +2331,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
     #             if uamqp_transport:
     #                 await receiver._handler.message_handler.destroy_async()
     #             else:
-    #                 await receiver._handler._link.detach(close=True)
+    #                 await receiver._handler._link.detach()
     #             assert len(messages) == 1
     #             await receiver.complete_message(messages[0])
 
