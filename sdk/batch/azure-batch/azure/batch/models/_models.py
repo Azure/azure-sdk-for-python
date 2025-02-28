@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -31,7 +31,7 @@ class AffinityInfo(_model_base.Model):
     :vartype affinity_id: str
     """
 
-    affinity_id: str = rest_field(name="affinityId")
+    affinity_id: str = rest_field(name="affinityId", visibility=["read", "create", "update", "delete", "query"])
     """An opaque string representing the location of a Compute Node or a Task that has run previously.
      You can pass the affinityId of a Node to indicate that this Task needs to run on that Compute
      Node. Note that this is just a soft affinity. If the target Compute Node is busy or unavailable
@@ -66,7 +66,9 @@ class AuthenticationTokenSettings(_model_base.Model):
     :vartype access: list[str or ~azure.batch.models.AccessScope]
     """
 
-    access: Optional[List[Union[str, "_models.AccessScope"]]] = rest_field()
+    access: Optional[List[Union[str, "_models.AccessScope"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Batch resources to which the token grants access. The authentication token grants access to
      a limited set of Batch service operations. Currently the only supported value for the access
      property is 'job', which grants access to all operations related to the Job which contains the
@@ -110,19 +112,27 @@ class AutomaticOsUpgradePolicy(_model_base.Model):
     :vartype os_rolling_upgrade_deferral: bool
     """
 
-    disable_automatic_rollback: Optional[bool] = rest_field(name="disableAutomaticRollback")
+    disable_automatic_rollback: Optional[bool] = rest_field(
+        name="disableAutomaticRollback", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether OS image rollback feature should be disabled."""
-    enable_automatic_os_upgrade: Optional[bool] = rest_field(name="enableAutomaticOSUpgrade")
+    enable_automatic_os_upgrade: Optional[bool] = rest_field(
+        name="enableAutomaticOSUpgrade", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Indicates whether OS upgrades should automatically be applied to scale set instances in a
      rolling fashion when a newer version of the OS image becomes available. :code:`<br />`\
      :code:`<br />` If this is set to true for Windows based pools,
      `WindowsConfiguration.enableAutomaticUpdates
      <https://learn.microsoft.com/rest/api/batchservice/pool/add?tabs=HTTP#windowsconfiguration>`_
      cannot be set to true."""
-    use_rolling_upgrade_policy: Optional[bool] = rest_field(name="useRollingUpgradePolicy")
+    use_rolling_upgrade_policy: Optional[bool] = rest_field(
+        name="useRollingUpgradePolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Indicates whether rolling upgrade policy should be used during Auto OS Upgrade. Auto OS Upgrade
      will fallback to the default policy if no policy is defined on the VMSS."""
-    os_rolling_upgrade_deferral: Optional[bool] = rest_field(name="osRollingUpgradeDeferral")
+    os_rolling_upgrade_deferral: Optional[bool] = rest_field(
+        name="osRollingUpgradeDeferral", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defer OS upgrades on the TVMs if they are running tasks."""
 
     @overload
@@ -161,13 +171,17 @@ class AutoScaleRun(_model_base.Model):
     :vartype error: ~azure.batch.models.AutoScaleRunError
     """
 
-    timestamp: datetime.datetime = rest_field(format="rfc3339")
+    timestamp: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the autoscale formula was last evaluated. Required."""
-    results: Optional[str] = rest_field()
+    results: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The final values of all variables used in the evaluation of the autoscale formula. Each
      variable value is returned in the form $variable=value, and variables are separated by
      semicolons."""
-    error: Optional["_models.AutoScaleRunError"] = rest_field()
+    error: Optional["_models.AutoScaleRunError"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Details of the error encountered evaluating the autoscale formula on the Pool, if the
      evaluation was unsuccessful."""
 
@@ -204,13 +218,15 @@ class AutoScaleRunError(_model_base.Model):
     :vartype values_property: list[~azure.batch.models.NameValuePair]
     """
 
-    code: Optional[str] = rest_field()
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An identifier for the autoscale error. Codes are invariant and are intended to be consumed
      programmatically."""
-    message: Optional[str] = rest_field()
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A message describing the autoscale error, intended to be suitable for display in a user
      interface."""
-    values_property: Optional[List["_models.NameValuePair"]] = rest_field(name="values")
+    values_property: Optional[List["_models.NameValuePair"]] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of additional error details related to the autoscale error."""
 
     @overload
@@ -246,12 +262,16 @@ class AutoUserSpecification(_model_base.Model):
     :vartype elevation_level: str or ~azure.batch.models.ElevationLevel
     """
 
-    scope: Optional[Union[str, "_models.AutoUserScope"]] = rest_field()
+    scope: Optional[Union[str, "_models.AutoUserScope"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The scope for the auto user. The default value is pool. If the pool is running Windows, a value
      of Task should be specified if stricter isolation between tasks is required, such as if the
      task mutates the registry in a way which could impact other tasks. Known values are: \"task\"
      and \"pool\"."""
-    elevation_level: Optional[Union[str, "_models.ElevationLevel"]] = rest_field(name="elevationLevel")
+    elevation_level: Optional[Union[str, "_models.ElevationLevel"]] = rest_field(
+        name="elevationLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The elevation level of the auto user. The default value is nonAdmin. Known values are:
      \"nonadmin\" and \"admin\"."""
 
@@ -301,24 +321,32 @@ class AzureBlobFileSystemConfiguration(_model_base.Model):
     :vartype identity_reference: ~azure.batch.models.BatchNodeIdentityReference
     """
 
-    account_name: str = rest_field(name="accountName")
+    account_name: str = rest_field(name="accountName", visibility=["read", "create", "update", "delete", "query"])
     """The Azure Storage Account name. Required."""
-    container_name: str = rest_field(name="containerName")
+    container_name: str = rest_field(name="containerName", visibility=["read", "create", "update", "delete", "query"])
     """The Azure Blob Storage Container name. Required."""
-    account_key: Optional[str] = rest_field(name="accountKey")
+    account_key: Optional[str] = rest_field(
+        name="accountKey", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Azure Storage Account key. This property is mutually exclusive with both sasKey and
      identity; exactly one must be specified."""
-    sas_key: Optional[str] = rest_field(name="sasKey")
+    sas_key: Optional[str] = rest_field(name="sasKey", visibility=["read", "create", "update", "delete", "query"])
     """The Azure Storage SAS token. This property is mutually exclusive with both accountKey and
      identity; exactly one must be specified."""
-    blobfuse_options: Optional[str] = rest_field(name="blobfuseOptions")
+    blobfuse_options: Optional[str] = rest_field(
+        name="blobfuseOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional command line options to pass to the mount command. These are 'net use' options in
      Windows and 'mount' options in Linux."""
-    relative_mount_path: str = rest_field(name="relativeMountPath")
+    relative_mount_path: str = rest_field(
+        name="relativeMountPath", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The relative path on the compute node where the file system will be mounted. All file systems
      are mounted relative to the Batch mounts directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR
      environment variable. Required."""
-    identity_reference: Optional["_models.BatchNodeIdentityReference"] = rest_field(name="identityReference")
+    identity_reference: Optional["_models.BatchNodeIdentityReference"] = rest_field(
+        name="identityReference", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The reference to the user assigned identity to use to access containerName. This property is
      mutually exclusive with both accountKey and sasKey; exactly one must be specified."""
 
@@ -366,17 +394,21 @@ class AzureFileShareConfiguration(_model_base.Model):
     :vartype mount_options: str
     """
 
-    account_name: str = rest_field(name="accountName")
+    account_name: str = rest_field(name="accountName", visibility=["read", "create", "update", "delete", "query"])
     """The Azure Storage account name. Required."""
-    azure_file_url: str = rest_field(name="azureFileUrl")
+    azure_file_url: str = rest_field(name="azureFileUrl", visibility=["read", "create", "update", "delete", "query"])
     """The Azure Files URL. This is of the form 'https://{account}.file.core.windows.net/'. Required."""
-    account_key: str = rest_field(name="accountKey")
+    account_key: str = rest_field(name="accountKey", visibility=["read", "create", "update", "delete", "query"])
     """The Azure Storage account key. Required."""
-    relative_mount_path: str = rest_field(name="relativeMountPath")
+    relative_mount_path: str = rest_field(
+        name="relativeMountPath", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The relative path on the compute node where the file system will be mounted. All file systems
      are mounted relative to the Batch mounts directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR
      environment variable. Required."""
-    mount_options: Optional[str] = rest_field(name="mountOptions")
+    mount_options: Optional[str] = rest_field(
+        name="mountOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional command line options to pass to the mount command. These are 'net use' options in
      Windows and 'mount' options in Linux."""
 
@@ -414,11 +446,11 @@ class BatchApplication(_model_base.Model):
     :vartype versions: list[str]
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A string that uniquely identifies the application within the Account. Required."""
-    display_name: str = rest_field(name="displayName")
+    display_name: str = rest_field(name="displayName", visibility=["read", "create", "update", "delete", "query"])
     """The display name for the application. Required."""
-    versions: List[str] = rest_field()
+    versions: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of available versions of the application. Required."""
 
     @overload
@@ -447,7 +479,7 @@ class BatchApplicationPackageReference(_model_base.Model):
 
     :ivar application_id: The ID of the application to deploy. When creating a pool, the package's
      application ID must be fully qualified
-     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).  # pylint: disable=line-too-long
+     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).
      Required.
     :vartype application_id: str
     :ivar version: The version of the application to deploy. If omitted, the default version is
@@ -458,12 +490,12 @@ class BatchApplicationPackageReference(_model_base.Model):
     :vartype version: str
     """
 
-    application_id: str = rest_field(name="applicationId")
+    application_id: str = rest_field(name="applicationId", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the application to deploy. When creating a pool, the package's application ID must be
      fully qualified
-     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).  # pylint: disable=line-too-long
+     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).
      Required."""
-    version: Optional[str] = rest_field()
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the application to deploy. If omitted, the default version is deployed. If this
      is omitted on a Pool, and no default version is specified for this application, the request
      fails with the error code InvalidApplicationPackageReferences and HTTP status code 409. If this
@@ -512,20 +544,28 @@ class BatchAutoPoolSpecification(_model_base.Model):
     :vartype pool: ~azure.batch.models.BatchPoolSpecification
     """
 
-    auto_pool_id_prefix: Optional[str] = rest_field(name="autoPoolIdPrefix")
+    auto_pool_id_prefix: Optional[str] = rest_field(
+        name="autoPoolIdPrefix", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A prefix to be added to the unique identifier when a Pool is automatically created. The Batch
      service assigns each auto Pool a unique identifier on creation. To distinguish between Pools
      created for different purposes, you can specify this element to add a prefix to the ID that is
      assigned. The prefix can be up to 20 characters long."""
-    pool_lifetime_option: Union[str, "_models.BatchPoolLifetimeOption"] = rest_field(name="poolLifetimeOption")
+    pool_lifetime_option: Union[str, "_models.BatchPoolLifetimeOption"] = rest_field(
+        name="poolLifetimeOption", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The minimum lifetime of created auto Pools, and how multiple Jobs on a schedule are assigned to
      Pools. Required. Known values are: \"jobschedule\" and \"job\"."""
-    keep_alive: Optional[bool] = rest_field(name="keepAlive")
+    keep_alive: Optional[bool] = rest_field(
+        name="keepAlive", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether to keep an auto Pool alive after its lifetime expires. If false, the Batch service
      deletes the Pool once its lifetime (as determined by the poolLifetimeOption setting) expires;
      that is, when the Job or Job Schedule completes. If true, the Batch service does not delete the
      Pool automatically. It is up to the user to delete auto Pools created with this option."""
-    pool: Optional["_models.BatchPoolSpecification"] = rest_field()
+    pool: Optional["_models.BatchPoolSpecification"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Pool specification for the auto Pool."""
 
     @overload
@@ -564,12 +604,16 @@ class BatchError(_model_base.Model):
     :vartype values_property: list[~azure.batch.models.BatchErrorDetail]
     """
 
-    code: str = rest_field()
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically. Required."""
-    message: Optional["_models.BatchErrorMessage"] = rest_field()
+    message: Optional["_models.BatchErrorMessage"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A message describing the error, intended to be suitable for display in a user interface."""
-    values_property: Optional[List["_models.BatchErrorDetail"]] = rest_field(name="values")
+    values_property: Optional[List["_models.BatchErrorDetail"]] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A collection of key-value pairs containing additional details about the error."""
 
     @overload
@@ -601,9 +645,9 @@ class BatchErrorDetail(_model_base.Model):
     :vartype value: str
     """
 
-    key: Optional[str] = rest_field()
+    key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An identifier specifying the meaning of the Value property."""
-    value: Optional[str] = rest_field()
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The additional information included with the error response."""
 
     @overload
@@ -634,9 +678,9 @@ class BatchErrorMessage(_model_base.Model):
     :vartype value: str
     """
 
-    lang: Optional[str] = rest_field()
+    lang: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The language code of the error message."""
-    value: Optional[str] = rest_field()
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text of the message."""
 
     @overload
@@ -792,20 +836,26 @@ class BatchJob(_model_base.Model):
     )
     """The time at which the Job entered its previous state. This property is not set if the Job is in
      its initial Active state."""
-    priority: Optional[int] = rest_field()
+    priority: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The priority of the Job. Priority values can range from -1000 to 1000, with -1000 being the
      lowest priority and 1000 being the highest priority. The default value is 0."""
-    allow_task_preemption: Optional[bool] = rest_field(name="allowTaskPreemption")
+    allow_task_preemption: Optional[bool] = rest_field(
+        name="allowTaskPreemption", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether Tasks in this job can be preempted by other high priority jobs. If the value is set to
      True, other high priority jobs submitted to the system will take precedence and will be able
      requeue tasks from this job. You can update a job's allowTaskPreemption after it has been
      created using the update job API."""
-    max_parallel_tasks: Optional[int] = rest_field(name="maxParallelTasks")
+    max_parallel_tasks: Optional[int] = rest_field(
+        name="maxParallelTasks", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum number of tasks that can be executed in parallel for the job. The value of
      maxParallelTasks must be -1 or greater than 0 if specified. If not specified, the default value
      is -1, which means there's no limit to the number of tasks that can be run at once. You can
      update a job's maxParallelTasks after it has been created using the update job API."""
-    constraints: Optional["_models.BatchJobConstraints"] = rest_field()
+    constraints: Optional["_models.BatchJobConstraints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The execution constraints for the Job."""
     job_manager_task: Optional["_models.BatchJobManagerTask"] = rest_field(name="jobManagerTask", visibility=["read"])
     """Details of a Job Manager Task to be launched when the Job is started."""
@@ -824,10 +874,12 @@ class BatchJob(_model_base.Model):
      Tasks in the Job (including the Job Manager, Job Preparation and Job Release Tasks). Individual
      Tasks can override an environment setting specified here by specifying the same setting name
      with a different value."""
-    pool_info: "_models.BatchPoolInfo" = rest_field(name="poolInfo")
+    pool_info: "_models.BatchPoolInfo" = rest_field(
+        name="poolInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Pool settings associated with the Job. Required."""
     on_all_tasks_complete: Optional[Union[str, "_models.OnAllBatchTasksComplete"]] = rest_field(
-        name="onAllTasksComplete"
+        name="onAllTasksComplete", visibility=["read", "create", "update", "delete", "query"]
     )
     """The action the Batch service should take when all Tasks in the Job are in the completed state.
      The default is noaction. Known values are: \"noaction\" and \"terminatejob\"."""
@@ -843,7 +895,9 @@ class BatchJob(_model_base.Model):
         name="networkConfiguration", visibility=["read"]
     )
     """The network configuration for the Job."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field()
+    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of name-value pairs associated with the Job as metadata. The Batch service does not
      assign any meaning to metadata; it is solely for the use of user code."""
     execution_info: Optional["_models.BatchJobExecutionInfo"] = rest_field(name="executionInfo", visibility=["read"])
@@ -897,12 +951,16 @@ class BatchJobConstraints(_model_base.Model):
     :vartype max_task_retry_count: int
     """
 
-    max_wall_clock_time: Optional[datetime.timedelta] = rest_field(name="maxWallClockTime")
+    max_wall_clock_time: Optional[datetime.timedelta] = rest_field(
+        name="maxWallClockTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum elapsed time that the Job may run, measured from the time the Job is created. If
      the Job does not complete within the time limit, the Batch service terminates it and any Tasks
      that are still running. In this case, the termination reason will be MaxWallClockTimeExpiry. If
      this property is not specified, there is no time limit on how long the Job may run."""
-    max_task_retry_count: Optional[int] = rest_field(name="maxTaskRetryCount")
+    max_task_retry_count: Optional[int] = rest_field(
+        name="maxTaskRetryCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum number of times each Task may be retried. The Batch service retries a Task if its
      exit code is nonzero. Note that this value specifically controls the number of retries. The
      Batch service will try each Task once, and may then retry up to this limit. For example, if the
@@ -1012,32 +1070,44 @@ class BatchJobCreateContent(_model_base.Model):
     :vartype metadata: list[~azure.batch.models.MetadataItem]
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A string that uniquely identifies the Job within the Account. The ID can contain any
      combination of alphanumeric characters including hyphens and underscores, and cannot contain
      more than 64 characters. The ID is case-preserving and case-insensitive (that is, you may not
      have two IDs within an Account that differ only by case). Required."""
-    display_name: Optional[str] = rest_field(name="displayName")
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The display name for the Job. The display name need not be unique and can contain any Unicode
      characters up to a maximum length of 1024."""
-    uses_task_dependencies: Optional[bool] = rest_field(name="usesTaskDependencies")
+    uses_task_dependencies: Optional[bool] = rest_field(
+        name="usesTaskDependencies", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether Tasks in the Job can define dependencies on each other. The default is false."""
-    priority: Optional[int] = rest_field()
+    priority: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The priority of the Job. Priority values can range from -1000 to 1000, with -1000 being the
      lowest priority and 1000 being the highest priority. The default value is 0."""
-    allow_task_preemption: Optional[bool] = rest_field(name="allowTaskPreemption")
+    allow_task_preemption: Optional[bool] = rest_field(
+        name="allowTaskPreemption", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether Tasks in this job can be preempted by other high priority jobs. If the value is set to
      True, other high priority jobs submitted to the system will take precedence and will be able
      requeue tasks from this job. You can update a job's allowTaskPreemption after it has been
      created using the update job API."""
-    max_parallel_tasks: Optional[int] = rest_field(name="maxParallelTasks")
+    max_parallel_tasks: Optional[int] = rest_field(
+        name="maxParallelTasks", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum number of tasks that can be executed in parallel for the job. The value of
      maxParallelTasks must be -1 or greater than 0 if specified. If not specified, the default value
      is -1, which means there's no limit to the number of tasks that can be run at once. You can
      update a job's maxParallelTasks after it has been created using the update job API."""
-    constraints: Optional["_models.BatchJobConstraints"] = rest_field()
+    constraints: Optional["_models.BatchJobConstraints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The execution constraints for the Job."""
-    job_manager_task: Optional["_models.BatchJobManagerTask"] = rest_field(name="jobManagerTask")
+    job_manager_task: Optional["_models.BatchJobManagerTask"] = rest_field(
+        name="jobManagerTask", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Details of a Job Manager Task to be launched when the Job is started. If the Job does not
      specify a Job Manager Task, the user must explicitly add Tasks to the Job. If the Job does
      specify a Job Manager Task, the Batch service creates the Job Manager Task when the Job is
@@ -1048,26 +1118,32 @@ class BatchJobCreateContent(_model_base.Model):
      in the system and perform whatever actions are required for the Job.) For example, a Job
      Manager Task might download a file specified as a parameter, analyze the contents of that file
      and submit additional Tasks based on those contents."""
-    job_preparation_task: Optional["_models.BatchJobPreparationTask"] = rest_field(name="jobPreparationTask")
+    job_preparation_task: Optional["_models.BatchJobPreparationTask"] = rest_field(
+        name="jobPreparationTask", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Job Preparation Task. If a Job has a Job Preparation Task, the Batch service will run the
      Job Preparation Task on a Node before starting any Tasks of that Job on that Compute Node."""
-    job_release_task: Optional["_models.BatchJobReleaseTask"] = rest_field(name="jobReleaseTask")
+    job_release_task: Optional["_models.BatchJobReleaseTask"] = rest_field(
+        name="jobReleaseTask", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Job Release Task. A Job Release Task cannot be specified without also specifying a Job
      Preparation Task for the Job. The Batch service runs the Job Release Task on the Nodes that
      have run the Job Preparation Task. The primary purpose of the Job Release Task is to undo
      changes to Compute Nodes made by the Job Preparation Task. Example activities include deleting
      local files, or shutting down services that were started as part of Job preparation."""
     common_environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
-        name="commonEnvironmentSettings"
+        name="commonEnvironmentSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of common environment variable settings. These environment variables are set for all
      Tasks in the Job (including the Job Manager, Job Preparation and Job Release Tasks). Individual
      Tasks can override an environment setting specified here by specifying the same setting name
      with a different value."""
-    pool_info: "_models.BatchPoolInfo" = rest_field(name="poolInfo")
+    pool_info: "_models.BatchPoolInfo" = rest_field(
+        name="poolInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Pool on which the Batch service runs the Job's Tasks. Required."""
     on_all_tasks_complete: Optional[Union[str, "_models.OnAllBatchTasksComplete"]] = rest_field(
-        name="onAllTasksComplete"
+        name="onAllTasksComplete", visibility=["read", "create", "update", "delete", "query"]
     )
     """The action the Batch service should take when all Tasks in the Job are in the completed state.
      Note that if a Job contains no Tasks, then all Tasks are considered complete. This option is
@@ -1075,15 +1151,21 @@ class BatchJobCreateContent(_model_base.Model):
      termination without a Job Manager, you should initially set onAllTasksComplete to noaction and
      update the Job properties to set onAllTasksComplete to terminatejob once you have finished
      adding Tasks. The default is noaction. Known values are: \"noaction\" and \"terminatejob\"."""
-    on_task_failure: Optional[Union[str, "_models.OnBatchTaskFailure"]] = rest_field(name="onTaskFailure")
+    on_task_failure: Optional[Union[str, "_models.OnBatchTaskFailure"]] = rest_field(
+        name="onTaskFailure", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The action the Batch service should take when any Task in the Job fails. A Task is considered
      to have failed if has a failureInfo. A failureInfo is set if the Task completes with a non-zero
      exit code after exhausting its retry count, or if there was an error starting the Task, for
      example due to a resource file download error. The default is noaction. Known values are:
      \"noaction\" and \"performexitoptionsjobaction\"."""
-    network_configuration: Optional["_models.BatchJobNetworkConfiguration"] = rest_field(name="networkConfiguration")
+    network_configuration: Optional["_models.BatchJobNetworkConfiguration"] = rest_field(
+        name="networkConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The network configuration for the Job."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field()
+    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of name-value pairs associated with the Job as metadata. The Batch service does not
      assign any meaning to metadata; it is solely for the use of user code."""
 
@@ -1130,7 +1212,9 @@ class BatchJobDisableContent(_model_base.Model):
     :vartype disable_tasks: str or ~azure.batch.models.DisableBatchJobOption
     """
 
-    disable_tasks: Union[str, "_models.DisableBatchJobOption"] = rest_field(name="disableTasks")
+    disable_tasks: Union[str, "_models.DisableBatchJobOption"] = rest_field(
+        name="disableTasks", visibility=["read", "create", "update", "delete", "query"]
+    )
     """What to do with active Tasks associated with the Job. Required. Known values are: \"requeue\",
      \"terminate\", and \"wait\"."""
 
@@ -1185,21 +1269,29 @@ class BatchJobExecutionInfo(_model_base.Model):
     :vartype termination_reason: str
     """
 
-    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The start time of the Job. This is the time at which the Job was created. Required."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The completion time of the Job. This property is set only if the Job is in the completed state."""
-    pool_id: Optional[str] = rest_field(name="poolId")
+    pool_id: Optional[str] = rest_field(name="poolId", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the Pool to which this Job is assigned. This element contains the actual Pool where
      the Job is assigned. When you get Job details from the service, they also contain a poolInfo
      element, which contains the Pool configuration data from when the Job was added or updated.
      That poolInfo element may also contain a poolId element. If it does, the two IDs are the same.
      If it does not, it means the Job ran on an auto Pool, and this property contains the ID of that
      auto Pool."""
-    scheduling_error: Optional["_models.BatchJobSchedulingError"] = rest_field(name="schedulingError")
+    scheduling_error: Optional["_models.BatchJobSchedulingError"] = rest_field(
+        name="schedulingError", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Details of any error encountered by the service in starting the Job. This property is not set
      if there was no error starting the Job."""
-    termination_reason: Optional[str] = rest_field(name="terminateReason")
+    termination_reason: Optional[str] = rest_field(
+        name="terminateReason", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A string describing the reason the Job ended. This property is set only if the Job is in the
      completed state. If the Batch service terminates the Job, it sets the reason as follows:
      JMComplete - the Job Manager Task completed, and killJobOnCompletion was set to true.
@@ -1349,14 +1441,16 @@ class BatchJobManagerTask(_model_base.Model):
     :vartype allow_low_priority_node: bool
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A string that uniquely identifies the Job Manager Task within the Job. The ID can contain any
      combination of alphanumeric characters including hyphens and underscores and cannot contain
      more than 64 characters. Required."""
-    display_name: Optional[str] = rest_field(name="displayName")
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The display name of the Job Manager Task. It need not be unique and can contain any Unicode
      characters up to a maximum length of 1024."""
-    command_line: str = rest_field(name="commandLine")
+    command_line: str = rest_field(name="commandLine", visibility=["read", "create", "update", "delete", "query"])
     """The command line of the Job Manager Task. The command line does not run under a shell, and
      therefore cannot take advantage of shell features such as environment variable expansion. If
      you want to take advantage of such features, you should invoke the shell in the command line,
@@ -1364,7 +1458,9 @@ class BatchJobManagerTask(_model_base.Model):
      command line refers to file paths, it should use a relative path (relative to the Task working
      directory), or use the Batch provided environment variable
      (https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables). Required."""
-    container_settings: Optional["_models.BatchTaskContainerSettings"] = rest_field(name="containerSettings")
+    container_settings: Optional["_models.BatchTaskContainerSettings"] = rest_field(
+        name="containerSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The settings for the container under which the Job Manager Task runs. If the Pool that will run
      this Task has containerConfiguration set, this must be set as well. If the Pool that will run
      this Task doesn't have containerConfiguration set, this must not be set. When this is
@@ -1373,26 +1469,38 @@ class BatchJobManagerTask(_model_base.Model):
      are mapped into the container, and the Task command line is executed in the container. Files
      produced in the container outside of AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host
      disk, meaning that Batch file APIs will not be able to access those files."""
-    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(name="resourceFiles")
+    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(
+        name="resourceFiles", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of files that the Batch service will download to the Compute Node before running the
      command line. Files listed under this element are located in the Task's working directory.
      There is a maximum size for the list of resource files.  When the max size is exceeded, the
      request will fail and the response error code will be RequestEntityTooLarge. If this occurs,
      the collection of ResourceFiles must be reduced in size. This can be achieved using .zip files,
      Application Packages, or Docker Containers."""
-    output_files: Optional[List["_models.OutputFile"]] = rest_field(name="outputFiles")
+    output_files: Optional[List["_models.OutputFile"]] = rest_field(
+        name="outputFiles", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of files that the Batch service will upload from the Compute Node after running the
      command line. For multi-instance Tasks, the files will only be uploaded from the Compute Node
      on which the primary Task is executed."""
-    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(name="environmentSettings")
+    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
+        name="environmentSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of environment variable settings for the Job Manager Task."""
-    constraints: Optional["_models.BatchTaskConstraints"] = rest_field()
+    constraints: Optional["_models.BatchTaskConstraints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Constraints that apply to the Job Manager Task."""
-    required_slots: Optional[int] = rest_field(name="requiredSlots")
+    required_slots: Optional[int] = rest_field(
+        name="requiredSlots", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of scheduling slots that the Task requires to run. The default is 1. A Task can only
      be scheduled to run on a compute node if the node has enough free scheduling slots available.
      For multi-instance Tasks, this property is not supported and must not be specified."""
-    kill_job_on_completion: Optional[bool] = rest_field(name="killJobOnCompletion")
+    kill_job_on_completion: Optional[bool] = rest_field(
+        name="killJobOnCompletion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether completion of the Job Manager Task signifies completion of the entire Job. If true,
      when the Job Manager Task completes, the Batch service marks the Job as complete. If any Tasks
      are still running at this time (other than Job Release), those Tasks are terminated. If false,
@@ -1403,17 +1511,21 @@ class BatchJobManagerTask(_model_base.Model):
      the onAllTasksComplete and onTaskFailure attributes to control Job lifetime, and using the Job
      Manager Task only to create the Tasks for the Job (not to monitor progress), then it is
      important to set killJobOnCompletion to false."""
-    user_identity: Optional["_models.UserIdentity"] = rest_field(name="userIdentity")
+    user_identity: Optional["_models.UserIdentity"] = rest_field(
+        name="userIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user identity under which the Job Manager Task runs. If omitted, the Task runs as a
      non-administrative user unique to the Task."""
-    run_exclusive: Optional[bool] = rest_field(name="runExclusive")
+    run_exclusive: Optional[bool] = rest_field(
+        name="runExclusive", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether the Job Manager Task requires exclusive use of the Compute Node where it runs. If true,
      no other Tasks will run on the same Node for as long as the Job Manager is running. If false,
      other Tasks can run simultaneously with the Job Manager on a Compute Node. The Job Manager Task
      counts normally against the Compute Node's concurrent Task limit, so this is only relevant if
      the Compute Node allows multiple concurrent Tasks. The default value is true."""
     application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = rest_field(
-        name="applicationPackageReferences"
+        name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of Application Packages that the Batch service will deploy to the
      Compute Node before running the command line.Application Packages are
@@ -1424,7 +1536,7 @@ class BatchJobManagerTask(_model_base.Model):
      Package cannot be installed, for example because the package has been deleted
      or because download failed, the Task fails."""
     authentication_token_settings: Optional["_models.AuthenticationTokenSettings"] = rest_field(
-        name="authenticationTokenSettings"
+        name="authenticationTokenSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """The settings for an authentication token that the Task can use to perform Batch service
      operations. If this property is set, the Batch service provides the Task with an authentication
@@ -1433,7 +1545,9 @@ class BatchJobManagerTask(_model_base.Model):
      The operations that the Task can carry out using the token depend on the settings. For example,
      a Task can request Job permissions in order to add other Tasks to the Job, or check the status
      of the Job or of other Tasks under the Job."""
-    allow_low_priority_node: Optional[bool] = rest_field(name="allowLowPriorityNode")
+    allow_low_priority_node: Optional[bool] = rest_field(
+        name="allowLowPriorityNode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether the Job Manager Task may run on a Spot/Low-priority Compute Node. The default value is
      true."""
 
@@ -1484,7 +1598,7 @@ class BatchJobNetworkConfiguration(_model_base.Model):
      associated Network Security Groups (NSG). If communication to the Nodes in the specified subnet
      is denied by an NSG, then the Batch service will set the state of the Compute Nodes to
      unusable. This is of the form
-     /subscriptions/{subscription}/resourceGroups/{group}/providers/{provider}/virtualNetworks/{network}/subnets/{subnet}.  # pylint: disable=line-too-long
+     /subscriptions/{subscription}/resourceGroups/{group}/providers/{provider}/virtualNetworks/{network}/subnets/{subnet}.
      If the specified VNet has any associated Network Security Groups (NSG), then a few reserved
      system ports must be enabled for inbound communication from the Azure Batch service. For Pools
      created with a Virtual Machine configuration, enable ports 29876 and 29877, as well as port 22
@@ -1500,7 +1614,7 @@ class BatchJobNetworkConfiguration(_model_base.Model):
     :vartype skip_withdraw_from_v_net: bool
     """
 
-    subnet_id: str = rest_field(name="subnetId")
+    subnet_id: str = rest_field(name="subnetId", visibility=["read", "create", "update", "delete", "query"])
     """The ARM resource identifier of the virtual network subnet which Compute Nodes running Tasks
      from the Job will join for the duration of the Task. The virtual network must be in the same
      region and subscription as the Azure Batch Account. The specified subnet should have enough
@@ -1511,7 +1625,7 @@ class BatchJobNetworkConfiguration(_model_base.Model):
      can be verified by checking if the specified VNet has any associated Network Security Groups
      (NSG). If communication to the Nodes in the specified subnet is denied by an NSG, then the
      Batch service will set the state of the Compute Nodes to unusable. This is of the form
-     /subscriptions/{subscription}/resourceGroups/{group}/providers/{provider}/virtualNetworks/{network}/subnets/{subnet}.  # pylint: disable=line-too-long
+     /subscriptions/{subscription}/resourceGroups/{group}/providers/{provider}/virtualNetworks/{network}/subnets/{subnet}.
      If the specified VNet has any associated Network Security Groups (NSG), then a few reserved
      system ports must be enabled for inbound communication from the Azure Batch service. For Pools
      created with a Virtual Machine configuration, enable ports 29876 and 29877, as well as port 22
@@ -1519,7 +1633,9 @@ class BatchJobNetworkConfiguration(_model_base.Model):
      connections for communications to Azure Storage. For more details see:
      https://learn.microsoft.com/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
      Required."""
-    skip_withdraw_from_v_net: bool = rest_field(name="skipWithdrawFromVNet")
+    skip_withdraw_from_v_net: bool = rest_field(
+        name="skipWithdrawFromVNet", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether to withdraw Compute Nodes from the virtual network to DNC when the job is terminated or
      deleted.  If true, nodes will remain joined to the virtual network to DNC. If false, nodes will
      automatically withdraw when the job ends. Defaults to false. Required."""
@@ -1562,18 +1678,18 @@ class BatchJobPreparationAndReleaseTaskStatus(_model_base.Model):
     :vartype job_release_task_execution_info: ~azure.batch.models.BatchJobReleaseTaskExecutionInfo
     """
 
-    pool_id: Optional[str] = rest_field(name="poolId")
+    pool_id: Optional[str] = rest_field(name="poolId", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the Pool containing the Compute Node to which this entry refers."""
-    node_id: Optional[str] = rest_field(name="nodeId")
+    node_id: Optional[str] = rest_field(name="nodeId", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the Compute Node to which this entry refers."""
-    node_url: Optional[str] = rest_field(name="nodeUrl")
+    node_url: Optional[str] = rest_field(name="nodeUrl", visibility=["read", "create", "update", "delete", "query"])
     """The URL of the Compute Node to which this entry refers."""
     job_preparation_task_execution_info: Optional["_models.BatchJobPreparationTaskExecutionInfo"] = rest_field(
-        name="jobPreparationTaskExecutionInfo"
+        name="jobPreparationTaskExecutionInfo", visibility=["read", "create", "update", "delete", "query"]
     )
     """Information about the execution status of the Job Preparation Task on this Compute Node."""
     job_release_task_execution_info: Optional["_models.BatchJobReleaseTaskExecutionInfo"] = rest_field(
-        name="jobReleaseTaskExecutionInfo"
+        name="jobReleaseTaskExecutionInfo", visibility=["read", "create", "update", "delete", "query"]
     )
     """Information about the execution status of the Job Release Task on this Compute Node. This
      property is set only if the Job Release Task has run on the Compute Node."""
@@ -1690,7 +1806,7 @@ class BatchJobPreparationTask(_model_base.Model):
     :vartype rerun_on_node_reboot_after_success: bool
     """
 
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A string that uniquely identifies the Job Preparation Task within the Job. The ID can contain
      any combination of alphanumeric characters including hyphens and underscores and cannot contain
      more than 64 characters. If you do not specify this property, the Batch service assigns a
@@ -1698,7 +1814,7 @@ class BatchJobPreparationTask(_model_base.Model):
      Preparation Task. If you try to submit a Task with the same id, the Batch service rejects the
      request with error code TaskIdSameAsJobPreparationTask; if you are calling the REST API
      directly, the HTTP status code is 409 (Conflict)."""
-    command_line: str = rest_field(name="commandLine")
+    command_line: str = rest_field(name="commandLine", visibility=["read", "create", "update", "delete", "query"])
     """The command line of the Job Preparation Task. The command line does not run under a shell, and
      therefore cannot take advantage of shell features such as environment variable expansion. If
      you want to take advantage of such features, you should invoke the shell in the command line,
@@ -1706,25 +1822,35 @@ class BatchJobPreparationTask(_model_base.Model):
      command line refers to file paths, it should use a relative path (relative to the Task working
      directory), or use the Batch provided environment variable
      (https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables). Required."""
-    container_settings: Optional["_models.BatchTaskContainerSettings"] = rest_field(name="containerSettings")
+    container_settings: Optional["_models.BatchTaskContainerSettings"] = rest_field(
+        name="containerSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The settings for the container under which the Job Preparation Task runs. When this is
      specified, all directories recursively below the AZ_BATCH_NODE_ROOT_DIR (the root of Azure
      Batch directories on the node) are mapped into the container, all Task environment variables
      are mapped into the container, and the Task command line is executed in the container. Files
      produced in the container outside of AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host
      disk, meaning that Batch file APIs will not be able to access those files."""
-    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(name="resourceFiles")
+    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(
+        name="resourceFiles", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of files that the Batch service will download to the Compute Node before running the
      command line. Files listed under this element are located in the Task's working directory.
      There is a maximum size for the list of resource files.  When the max size is exceeded, the
      request will fail and the response error code will be RequestEntityTooLarge. If this occurs,
      the collection of ResourceFiles must be reduced in size. This can be achieved using .zip files,
      Application Packages, or Docker Containers."""
-    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(name="environmentSettings")
+    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
+        name="environmentSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of environment variable settings for the Job Preparation Task."""
-    constraints: Optional["_models.BatchTaskConstraints"] = rest_field()
+    constraints: Optional["_models.BatchTaskConstraints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Constraints that apply to the Job Preparation Task."""
-    wait_for_success: Optional[bool] = rest_field(name="waitForSuccess")
+    wait_for_success: Optional[bool] = rest_field(
+        name="waitForSuccess", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether the Batch service should wait for the Job Preparation Task to complete successfully
      before scheduling any other Tasks of the Job on the Compute Node. A Job Preparation Task has
      completed successfully if it exits with exit code 0. If true and the Job Preparation Task fails
@@ -1736,11 +1862,15 @@ class BatchJobPreparationTask(_model_base.Model):
      executing on the Compute Node while the Job Preparation Task is still running; and even if the
      Job Preparation Task fails, new Tasks will continue to be scheduled on the Compute Node. The
      default value is true."""
-    user_identity: Optional["_models.UserIdentity"] = rest_field(name="userIdentity")
+    user_identity: Optional["_models.UserIdentity"] = rest_field(
+        name="userIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user identity under which the Job Preparation Task runs. If omitted, the Task runs as a
      non-administrative user unique to the Task on Windows Compute Nodes, or a non-administrative
      user unique to the Pool on Linux Compute Nodes."""
-    rerun_on_node_reboot_after_success: Optional[bool] = rest_field(name="rerunOnNodeRebootAfterSuccess")
+    rerun_on_node_reboot_after_success: Optional[bool] = rest_field(
+        name="rerunOnNodeRebootAfterSuccess", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether the Batch service should rerun the Job Preparation Task after a Compute Node reboots.
      The Job Preparation Task is always rerun if a Compute Node is reimaged, or if the Job
      Preparation Task did not complete (e.g. because the reboot occurred while the Task was
@@ -1826,47 +1956,65 @@ class BatchJobPreparationTaskExecutionInfo(_model_base.Model):
     :vartype result: str or ~azure.batch.models.BatchTaskExecutionResult
     """
 
-    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the Task started running. If the Task has been restarted or retried, this is
      the most recent time at which the Task started running. Required."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the Job Preparation Task completed. This property is set only if the Task is
      in the Completed state."""
-    state: Union[str, "_models.BatchJobPreparationTaskState"] = rest_field()
+    state: Union[str, "_models.BatchJobPreparationTaskState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The current state of the Job Preparation Task on the Compute Node. Required. Known values are:
      \"running\" and \"completed\"."""
-    task_root_directory: Optional[str] = rest_field(name="taskRootDirectory")
+    task_root_directory: Optional[str] = rest_field(
+        name="taskRootDirectory", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The root directory of the Job Preparation Task on the Compute Node. You can use this path to
      retrieve files created by the Task, such as log files."""
-    task_root_directory_url: Optional[str] = rest_field(name="taskRootDirectoryUrl")
+    task_root_directory_url: Optional[str] = rest_field(
+        name="taskRootDirectoryUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The URL to the root directory of the Job Preparation Task on the Compute Node."""
-    exit_code: Optional[int] = rest_field(name="exitCode")
+    exit_code: Optional[int] = rest_field(name="exitCode", visibility=["read", "create", "update", "delete", "query"])
     """The exit code of the program specified on the Task command line. This parameter is returned
      only if the Task is in the completed state. The exit code for a process reflects the specific
      convention implemented by the application developer for that process. If you use the exit code
      value to make decisions in your code, be sure that you know the exit code convention used by
      the application process. Note that the exit code may also be generated by the Compute Node
      operating system, such as when a process is forcibly terminated."""
-    container_info: Optional["_models.BatchTaskContainerExecutionInfo"] = rest_field(name="containerInfo")
+    container_info: Optional["_models.BatchTaskContainerExecutionInfo"] = rest_field(
+        name="containerInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Information about the container under which the Task is executing. This property is set only if
      the Task runs in a container context."""
-    failure_info: Optional["_models.BatchTaskFailureInfo"] = rest_field(name="failureInfo")
+    failure_info: Optional["_models.BatchTaskFailureInfo"] = rest_field(
+        name="failureInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Information describing the Task failure, if any. This property is set only if the Task is in
      the completed state and encountered a failure."""
-    retry_count: int = rest_field(name="retryCount")
+    retry_count: int = rest_field(name="retryCount", visibility=["read", "create", "update", "delete", "query"])
     """The number of times the Task has been retried by the Batch service. Task application failures
      (non-zero exit code) are retried, pre-processing errors (the Task could not be run) and file
      upload errors are not retried. The Batch service will retry the Task up to the limit specified
      by the constraints. Task application failures (non-zero exit code) are retried, pre-processing
      errors (the Task could not be run) and file upload errors are not retried. The Batch service
      will retry the Task up to the limit specified by the constraints. Required."""
-    last_retry_time: Optional[datetime.datetime] = rest_field(name="lastRetryTime", format="rfc3339")
+    last_retry_time: Optional[datetime.datetime] = rest_field(
+        name="lastRetryTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The most recent time at which a retry of the Job Preparation Task started running. This
      property is set only if the Task was retried (i.e. retryCount is nonzero). If present, this is
      typically the same as startTime, but may be different if the Task has been restarted for
      reasons other than retry; for example, if the Compute Node was rebooted during a retry, then
      the startTime is updated but the lastRetryTime is not."""
-    result: Optional[Union[str, "_models.BatchTaskExecutionResult"]] = rest_field()
+    result: Optional[Union[str, "_models.BatchTaskExecutionResult"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The result of the Task execution. If the value is 'failed', then the details of the failure can
      be found in the failureInfo property. Known values are: \"success\" and \"failure\"."""
 
@@ -1966,7 +2114,7 @@ class BatchJobReleaseTask(_model_base.Model):
     :vartype user_identity: ~azure.batch.models.UserIdentity
     """
 
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A string that uniquely identifies the Job Release Task within the Job. The ID can contain any
      combination of alphanumeric characters including hyphens and underscores and cannot contain
      more than 64 characters. If you do not specify this property, the Batch service assigns a
@@ -1974,7 +2122,7 @@ class BatchJobReleaseTask(_model_base.Model):
      Task. If you try to submit a Task with the same id, the Batch service rejects the request with
      error code TaskIdSameAsJobReleaseTask; if you are calling the REST API directly, the HTTP
      status code is 409 (Conflict)."""
-    command_line: str = rest_field(name="commandLine")
+    command_line: str = rest_field(name="commandLine", visibility=["read", "create", "update", "delete", "query"])
     """The command line of the Job Release Task. The command line does not run under a shell, and
      therefore cannot take advantage of shell features such as environment variable expansion. If
      you want to take advantage of such features, you should invoke the shell in the command line,
@@ -1982,34 +2130,46 @@ class BatchJobReleaseTask(_model_base.Model):
      command line refers to file paths, it should use a relative path (relative to the Task working
      directory), or use the Batch provided environment variable
      (https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables). Required."""
-    container_settings: Optional["_models.BatchTaskContainerSettings"] = rest_field(name="containerSettings")
+    container_settings: Optional["_models.BatchTaskContainerSettings"] = rest_field(
+        name="containerSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The settings for the container under which the Job Release Task runs. When this is specified,
      all directories recursively below the AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch
      directories on the node) are mapped into the container, all Task environment variables are
      mapped into the container, and the Task command line is executed in the container. Files
      produced in the container outside of AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host
      disk, meaning that Batch file APIs will not be able to access those files."""
-    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(name="resourceFiles")
+    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(
+        name="resourceFiles", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of files that the Batch service will download to the Compute Node before running the
      command line.  There is a maximum size for the list of resource files.  When the max size is
      exceeded, the request will fail and the response error code will be RequestEntityTooLarge. If
      this occurs, the collection of ResourceFiles must be reduced in size. This can be achieved
      using .zip files, Application Packages, or Docker Containers. Files listed under this element
      are located in the Task's working directory."""
-    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(name="environmentSettings")
+    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
+        name="environmentSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of environment variable settings for the Job Release Task."""
-    max_wall_clock_time: Optional[datetime.timedelta] = rest_field(name="maxWallClockTime")
+    max_wall_clock_time: Optional[datetime.timedelta] = rest_field(
+        name="maxWallClockTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum elapsed time that the Job Release Task may run on a given Compute Node, measured
      from the time the Task starts. If the Task does not complete within the time limit, the Batch
      service terminates it. The default value is 15 minutes. You may not specify a timeout longer
      than 15 minutes. If you do, the Batch service rejects it with an error; if you are calling the
      REST API directly, the HTTP status code is 400 (Bad Request)."""
-    retention_time: Optional[datetime.timedelta] = rest_field(name="retentionTime")
+    retention_time: Optional[datetime.timedelta] = rest_field(
+        name="retentionTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The minimum time to retain the Task directory for the Job Release Task on the Compute Node.
      After this time, the Batch service may delete the Task directory and all its contents. The
      default is 7 days, i.e. the Task directory will be retained for 7 days unless the Compute Node
      is removed or the Job is deleted."""
-    user_identity: Optional["_models.UserIdentity"] = rest_field(name="userIdentity")
+    user_identity: Optional["_models.UserIdentity"] = rest_field(
+        name="userIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user identity under which the Job Release Task runs. If omitted, the Task runs as a
      non-administrative user unique to the Task."""
 
@@ -2077,34 +2237,50 @@ class BatchJobReleaseTaskExecutionInfo(_model_base.Model):
     :vartype result: str or ~azure.batch.models.BatchTaskExecutionResult
     """
 
-    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the Task started running. If the Task has been restarted or retried, this is
      the most recent time at which the Task started running. Required."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the Job Release Task completed. This property is set only if the Task is in
      the Completed state."""
-    state: Union[str, "_models.BatchJobReleaseTaskState"] = rest_field()
+    state: Union[str, "_models.BatchJobReleaseTaskState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The current state of the Job Release Task on the Compute Node. Required. Known values are:
      \"running\" and \"completed\"."""
-    task_root_directory: Optional[str] = rest_field(name="taskRootDirectory")
+    task_root_directory: Optional[str] = rest_field(
+        name="taskRootDirectory", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The root directory of the Job Release Task on the Compute Node. You can use this path to
      retrieve files created by the Task, such as log files."""
-    task_root_directory_url: Optional[str] = rest_field(name="taskRootDirectoryUrl")
+    task_root_directory_url: Optional[str] = rest_field(
+        name="taskRootDirectoryUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The URL to the root directory of the Job Release Task on the Compute Node."""
-    exit_code: Optional[int] = rest_field(name="exitCode")
+    exit_code: Optional[int] = rest_field(name="exitCode", visibility=["read", "create", "update", "delete", "query"])
     """The exit code of the program specified on the Task command line. This parameter is returned
      only if the Task is in the completed state. The exit code for a process reflects the specific
      convention implemented by the application developer for that process. If you use the exit code
      value to make decisions in your code, be sure that you know the exit code convention used by
      the application process. Note that the exit code may also be generated by the Compute Node
      operating system, such as when a process is forcibly terminated."""
-    container_info: Optional["_models.BatchTaskContainerExecutionInfo"] = rest_field(name="containerInfo")
+    container_info: Optional["_models.BatchTaskContainerExecutionInfo"] = rest_field(
+        name="containerInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Information about the container under which the Task is executing. This property is set only if
      the Task runs in a container context."""
-    failure_info: Optional["_models.BatchTaskFailureInfo"] = rest_field(name="failureInfo")
+    failure_info: Optional["_models.BatchTaskFailureInfo"] = rest_field(
+        name="failureInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Information describing the Task failure, if any. This property is set only if the Task is in
      the completed state and encountered a failure."""
-    result: Optional[Union[str, "_models.BatchTaskExecutionResult"]] = rest_field()
+    result: Optional[Union[str, "_models.BatchTaskExecutionResult"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The result of the Task execution. If the value is 'failed', then the details of the failure can
      be found in the failureInfo property. Known values are: \"success\" and \"failure\"."""
 
@@ -2222,16 +2398,22 @@ class BatchJobSchedule(_model_base.Model):
     )
     """The time at which the Job Schedule entered its previous state. This property is not present if
      the Job Schedule is in its initial active state."""
-    schedule: Optional["_models.BatchJobScheduleConfiguration"] = rest_field()
+    schedule: Optional["_models.BatchJobScheduleConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The schedule according to which Jobs will be created. All times are fixed respective to UTC and
      are not impacted by daylight saving time."""
-    job_specification: "_models.BatchJobSpecification" = rest_field(name="jobSpecification")
+    job_specification: "_models.BatchJobSpecification" = rest_field(
+        name="jobSpecification", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The details of the Jobs to be created on this schedule. Required."""
     execution_info: Optional["_models.BatchJobScheduleExecutionInfo"] = rest_field(
         name="executionInfo", visibility=["read"]
     )
     """Information about Jobs that have been and will be run under this schedule."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field()
+    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of name-value pairs associated with the schedule as metadata. The Batch service does not
      assign any meaning to metadata; it is solely for the use of user code."""
     stats: Optional["_models.BatchJobScheduleStatistics"] = rest_field(visibility=["read"])
@@ -2300,15 +2482,21 @@ class BatchJobScheduleConfiguration(_model_base.Model):
     :vartype recurrence_interval: ~datetime.timedelta
     """
 
-    do_not_run_until: Optional[datetime.datetime] = rest_field(name="doNotRunUntil", format="rfc3339")
+    do_not_run_until: Optional[datetime.datetime] = rest_field(
+        name="doNotRunUntil", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The earliest time at which any Job may be created under this Job Schedule. If you do not
      specify a doNotRunUntil time, the schedule becomes ready to create Jobs immediately."""
-    do_not_run_after: Optional[datetime.datetime] = rest_field(name="doNotRunAfter", format="rfc3339")
+    do_not_run_after: Optional[datetime.datetime] = rest_field(
+        name="doNotRunAfter", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """A time after which no Job will be created under this Job Schedule. The schedule will move to
      the completed state as soon as this deadline is past and there is no active Job under this Job
      Schedule. If you do not specify a doNotRunAfter time, and you are creating a recurring Job
      Schedule, the Job Schedule will remain active until you explicitly terminate it."""
-    start_window: Optional[datetime.timedelta] = rest_field(name="startWindow")
+    start_window: Optional[datetime.timedelta] = rest_field(
+        name="startWindow", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The time interval, starting from the time at which the schedule indicates a Job should be
      created, within which a Job must be created. If a Job is not created within the startWindow
      interval, then the 'opportunity' is lost; no Job will be created until the next recurrence of
@@ -2318,7 +2506,9 @@ class BatchJobScheduleConfiguration(_model_base.Model):
      infinite. The minimum value is 1 minute. If you specify a lower value, the Batch service
      rejects the schedule with an error; if you are calling the REST API directly, the HTTP status
      code is 400 (Bad Request)."""
-    recurrence_interval: Optional[datetime.timedelta] = rest_field(name="recurrenceInterval")
+    recurrence_interval: Optional[datetime.timedelta] = rest_field(
+        name="recurrenceInterval", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The time interval between the start times of two successive Jobs under the Job Schedule. A Job
      Schedule can have at most one active Job under it at any given time. Because a Job Schedule can
      have at most one active Job under it at any given time, if it is time to create a new Job under
@@ -2378,20 +2568,28 @@ class BatchJobScheduleCreateContent(_model_base.Model):
     :vartype metadata: list[~azure.batch.models.MetadataItem]
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A string that uniquely identifies the schedule within the Account. The ID can contain any
      combination of alphanumeric characters including hyphens and underscores, and cannot contain
      more than 64 characters. The ID is case-preserving and case-insensitive (that is, you may not
      have two IDs within an Account that differ only by case). Required."""
-    display_name: Optional[str] = rest_field(name="displayName")
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The display name for the schedule. The display name need not be unique and can contain any
      Unicode characters up to a maximum length of 1024."""
-    schedule: "_models.BatchJobScheduleConfiguration" = rest_field()
+    schedule: "_models.BatchJobScheduleConfiguration" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The schedule according to which Jobs will be created. All times are fixed respective to UTC and
      are not impacted by daylight saving time. Required."""
-    job_specification: "_models.BatchJobSpecification" = rest_field(name="jobSpecification")
+    job_specification: "_models.BatchJobSpecification" = rest_field(
+        name="jobSpecification", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The details of the Jobs to be created on this schedule. Required."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field()
+    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of name-value pairs associated with the schedule as metadata. The Batch service does not
      assign any meaning to metadata; it is solely for the use of user code."""
 
@@ -2434,15 +2632,21 @@ class BatchJobScheduleExecutionInfo(_model_base.Model):
     :vartype end_time: ~datetime.datetime
     """
 
-    next_run_time: Optional[datetime.datetime] = rest_field(name="nextRunTime", format="rfc3339")
+    next_run_time: Optional[datetime.datetime] = rest_field(
+        name="nextRunTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The next time at which a Job will be created under this schedule. This property is meaningful
      only if the schedule is in the active state when the time comes around. For example, if the
      schedule is disabled, no Job will be created at nextRunTime unless the Job is enabled before
      then."""
-    recent_job: Optional["_models.RecentBatchJob"] = rest_field(name="recentJob")
+    recent_job: Optional["_models.RecentBatchJob"] = rest_field(
+        name="recentJob", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Information about the most recent Job under the Job Schedule. This property is present only if
      the at least one Job has run under the schedule."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the schedule ended. This property is set only if the Job Schedule is in the
      completed state."""
 
@@ -2520,48 +2724,70 @@ class BatchJobScheduleStatistics(_model_base.Model):
     :vartype wait_time: ~datetime.timedelta
     """
 
-    url: str = rest_field()
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The URL of the statistics. Required."""
-    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The start time of the time range covered by the statistics. Required."""
-    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime", format="rfc3339")
+    last_update_time: datetime.datetime = rest_field(
+        name="lastUpdateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the statistics were last updated. All statistics are limited to the range
      between startTime and lastUpdateTime. Required."""
-    user_cpu_time: datetime.timedelta = rest_field(name="userCPUTime")
+    user_cpu_time: datetime.timedelta = rest_field(
+        name="userCPUTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total user mode CPU time (summed across all cores and all Compute Nodes) consumed by all
      Tasks in all Jobs created under the schedule. Required."""
-    kernel_cpu_time: datetime.timedelta = rest_field(name="kernelCPUTime")
+    kernel_cpu_time: datetime.timedelta = rest_field(
+        name="kernelCPUTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total kernel mode CPU time (summed across all cores and all Compute Nodes) consumed by all
      Tasks in all Jobs created under the schedule. Required."""
-    wall_clock_time: datetime.timedelta = rest_field(name="wallClockTime")
+    wall_clock_time: datetime.timedelta = rest_field(
+        name="wallClockTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total wall clock time of all the Tasks in all the Jobs created under the schedule. The wall
      clock time is the elapsed time from when the Task started running on a Compute Node to when it
      finished (or to the last time the statistics were updated, if the Task had not finished by
      then). If a Task was retried, this includes the wall clock time of all the Task retries.
      Required."""
-    read_i_ops: int = rest_field(name="readIOps")
+    read_i_ops: int = rest_field(
+        name="readIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
+    )
     """The total number of disk read operations made by all Tasks in all Jobs created under the
      schedule. Required."""
-    write_i_ops: int = rest_field(name="writeIOps")
+    write_i_ops: int = rest_field(
+        name="writeIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
+    )
     """The total number of disk write operations made by all Tasks in all Jobs created under the
      schedule. Required."""
-    read_io_gi_b: float = rest_field(name="readIOGiB")
+    read_io_gi_b: float = rest_field(name="readIOGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total gibibytes read from disk by all Tasks in all Jobs created under the schedule.
      Required."""
-    write_io_gi_b: float = rest_field(name="writeIOGiB")
+    write_io_gi_b: float = rest_field(name="writeIOGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total gibibytes written to disk by all Tasks in all Jobs created under the schedule.
      Required."""
-    num_succeeded_tasks: int = rest_field(name="numSucceededTasks")
+    num_succeeded_tasks: int = rest_field(
+        name="numSucceededTasks", visibility=["read", "create", "update", "delete", "query"], format="str"
+    )
     """The total number of Tasks successfully completed during the given time range in Jobs created
      under the schedule. A Task completes successfully if it returns exit code 0. Required."""
-    num_failed_tasks: int = rest_field(name="numFailedTasks")
+    num_failed_tasks: int = rest_field(
+        name="numFailedTasks", visibility=["read", "create", "update", "delete", "query"], format="str"
+    )
     """The total number of Tasks that failed during the given time range in Jobs created under the
      schedule. A Task fails if it exhausts its maximum retry count without returning exit code 0.
      Required."""
-    num_task_retries: int = rest_field(name="numTaskRetries")
+    num_task_retries: int = rest_field(
+        name="numTaskRetries", visibility=["read", "create", "update", "delete", "query"], format="str"
+    )
     """The total number of retries during the given time range on all Tasks in all Jobs created under
      the schedule. Required."""
-    wait_time: datetime.timedelta = rest_field(name="waitTime")
+    wait_time: datetime.timedelta = rest_field(
+        name="waitTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total wait time of all Tasks in all Jobs created under the schedule. The wait time for a
      Task is defined as the elapsed time between the creation of the Task and the start of Task
      execution. (If the Task is retried due to failures, the wait time is the time to the most
@@ -2615,15 +2841,21 @@ class BatchJobScheduleUpdateContent(_model_base.Model):
     :vartype metadata: list[~azure.batch.models.MetadataItem]
     """
 
-    schedule: Optional["_models.BatchJobScheduleConfiguration"] = rest_field()
+    schedule: Optional["_models.BatchJobScheduleConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The schedule according to which Jobs will be created. All times are fixed respective to UTC and
      are not impacted by daylight saving time. If you do not specify this element, the existing
      schedule is left unchanged."""
-    job_specification: Optional["_models.BatchJobSpecification"] = rest_field(name="jobSpecification")
+    job_specification: Optional["_models.BatchJobSpecification"] = rest_field(
+        name="jobSpecification", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The details of the Jobs to be created on this schedule. Updates affect only Jobs that are
      started after the update has taken place. Any currently active Job continues with the older
      specification."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field()
+    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of name-value pairs associated with the Job Schedule as metadata. If you do not specify
      this element, existing metadata is left unchanged."""
 
@@ -2664,16 +2896,20 @@ class BatchJobSchedulingError(_model_base.Model):
     :vartype details: list[~azure.batch.models.NameValuePair]
     """
 
-    category: Union[str, "_models.ErrorCategory"] = rest_field()
+    category: Union[str, "_models.ErrorCategory"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The category of the Job scheduling error. Required. Known values are: \"usererror\" and
      \"servererror\"."""
-    code: Optional[str] = rest_field()
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An identifier for the Job scheduling error. Codes are invariant and are intended to be consumed
      programmatically."""
-    message: Optional[str] = rest_field()
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A message describing the Job scheduling error, intended to be suitable for display in a user
      interface."""
-    details: Optional[List["_models.NameValuePair"]] = rest_field()
+    details: Optional[List["_models.NameValuePair"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of additional error details related to the scheduling error."""
 
     @overload
@@ -2774,28 +3010,36 @@ class BatchJobSpecification(_model_base.Model):
     :vartype metadata: list[~azure.batch.models.MetadataItem]
     """
 
-    priority: Optional[int] = rest_field()
+    priority: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The priority of Jobs created under this schedule. Priority values can range from -1000 to 1000,
      with -1000 being the lowest priority and 1000 being the highest priority. The default value is
      0. This priority is used as the default for all Jobs under the Job Schedule. You can update a
      Job's priority after it has been created using by using the update Job API."""
-    allow_task_preemption: Optional[bool] = rest_field(name="allowTaskPreemption")
+    allow_task_preemption: Optional[bool] = rest_field(
+        name="allowTaskPreemption", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether Tasks in this job can be preempted by other high priority jobs. If the value is set to
      True, other high priority jobs submitted to the system will take precedence and will be able
      requeue tasks from this job. You can update a job's allowTaskPreemption after it has been
      created using the update job API."""
-    max_parallel_tasks: Optional[int] = rest_field(name="maxParallelTasks")
+    max_parallel_tasks: Optional[int] = rest_field(
+        name="maxParallelTasks", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum number of tasks that can be executed in parallel for the job. The value of
      maxParallelTasks must be -1 or greater than 0 if specified. If not specified, the default value
      is -1, which means there's no limit to the number of tasks that can be run at once. You can
      update a job's maxParallelTasks after it has been created using the update job API."""
-    display_name: Optional[str] = rest_field(name="displayName")
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The display name for Jobs created under this schedule. The name need not be unique and can
      contain any Unicode characters up to a maximum length of 1024."""
-    uses_task_dependencies: Optional[bool] = rest_field(name="usesTaskDependencies")
+    uses_task_dependencies: Optional[bool] = rest_field(
+        name="usesTaskDependencies", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether Tasks in the Job can define dependencies on each other. The default is false."""
     on_all_tasks_complete: Optional[Union[str, "_models.OnAllBatchTasksComplete"]] = rest_field(
-        name="onAllTasksComplete"
+        name="onAllTasksComplete", visibility=["read", "create", "update", "delete", "query"]
     )
     """The action the Batch service should take when all Tasks in a Job created under this schedule
      are in the completed state. Note that if a Job contains no Tasks, then all Tasks are considered
@@ -2804,28 +3048,40 @@ class BatchJobSpecification(_model_base.Model):
      onAllTasksComplete to noaction and update the Job properties to set onAllTasksComplete to
      terminatejob once you have finished adding Tasks. The default is noaction. Known values are:
      \"noaction\" and \"terminatejob\"."""
-    on_task_failure: Optional[Union[str, "_models.OnBatchTaskFailure"]] = rest_field(name="onTaskFailure")
+    on_task_failure: Optional[Union[str, "_models.OnBatchTaskFailure"]] = rest_field(
+        name="onTaskFailure", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The action the Batch service should take when any Task fails in a Job created under this
      schedule. A Task is considered to have failed if it have failed if has a failureInfo. A
      failureInfo is set if the Task completes with a non-zero exit code after exhausting its retry
      count, or if there was an error starting the Task, for example due to a resource file download
      error. The default is noaction. Known values are: \"noaction\" and
      \"performexitoptionsjobaction\"."""
-    network_configuration: Optional["_models.BatchJobNetworkConfiguration"] = rest_field(name="networkConfiguration")
+    network_configuration: Optional["_models.BatchJobNetworkConfiguration"] = rest_field(
+        name="networkConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The network configuration for the Job."""
-    constraints: Optional["_models.BatchJobConstraints"] = rest_field()
+    constraints: Optional["_models.BatchJobConstraints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The execution constraints for Jobs created under this schedule."""
-    job_manager_task: Optional["_models.BatchJobManagerTask"] = rest_field(name="jobManagerTask")
+    job_manager_task: Optional["_models.BatchJobManagerTask"] = rest_field(
+        name="jobManagerTask", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The details of a Job Manager Task to be launched when a Job is started under this schedule. If
      the Job does not specify a Job Manager Task, the user must explicitly add Tasks to the Job
      using the Task API. If the Job does specify a Job Manager Task, the Batch service creates the
      Job Manager Task when the Job is created, and will try to schedule the Job Manager Task before
      scheduling other Tasks in the Job."""
-    job_preparation_task: Optional["_models.BatchJobPreparationTask"] = rest_field(name="jobPreparationTask")
+    job_preparation_task: Optional["_models.BatchJobPreparationTask"] = rest_field(
+        name="jobPreparationTask", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Job Preparation Task for Jobs created under this schedule. If a Job has a Job Preparation
      Task, the Batch service will run the Job Preparation Task on a Node before starting any Tasks
      of that Job on that Compute Node."""
-    job_release_task: Optional["_models.BatchJobReleaseTask"] = rest_field(name="jobReleaseTask")
+    job_release_task: Optional["_models.BatchJobReleaseTask"] = rest_field(
+        name="jobReleaseTask", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Job Release Task for Jobs created under this schedule. The primary purpose of the Job
      Release Task is to undo changes to Nodes made by the Job Preparation Task. Example activities
      include deleting local files, or shutting down services that were started as part of Job
@@ -2833,16 +3089,20 @@ class BatchJobSpecification(_model_base.Model):
      Task for the Job. The Batch service runs the Job Release Task on the Compute Nodes that have
      run the Job Preparation Task."""
     common_environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
-        name="commonEnvironmentSettings"
+        name="commonEnvironmentSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of common environment variable settings. These environment variables are set for all
      Tasks in Jobs created under this schedule (including the Job Manager, Job Preparation and Job
      Release Tasks). Individual Tasks can override an environment setting specified here by
      specifying the same setting name with a different value."""
-    pool_info: "_models.BatchPoolInfo" = rest_field(name="poolInfo")
+    pool_info: "_models.BatchPoolInfo" = rest_field(
+        name="poolInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Pool on which the Batch service runs the Tasks of Jobs created under this schedule.
      Required."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field()
+    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of name-value pairs associated with each Job created under this schedule as metadata.
      The Batch service does not assign any meaning to metadata; it is solely for the use of user
      code."""
@@ -2931,41 +3191,63 @@ class BatchJobStatistics(_model_base.Model):
     :vartype wait_time: ~datetime.timedelta
     """
 
-    url: str = rest_field()
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The URL of the statistics. Required."""
-    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The start time of the time range covered by the statistics. Required."""
-    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime", format="rfc3339")
+    last_update_time: datetime.datetime = rest_field(
+        name="lastUpdateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the statistics were last updated. All statistics are limited to the range
      between startTime and lastUpdateTime. Required."""
-    user_cpu_time: datetime.timedelta = rest_field(name="userCPUTime")
+    user_cpu_time: datetime.timedelta = rest_field(
+        name="userCPUTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total user mode CPU time (summed across all cores and all Compute Nodes) consumed by all
      Tasks in the Job. Required."""
-    kernel_cpu_time: datetime.timedelta = rest_field(name="kernelCPUTime")
+    kernel_cpu_time: datetime.timedelta = rest_field(
+        name="kernelCPUTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total kernel mode CPU time (summed across all cores and all Compute Nodes) consumed by all
      Tasks in the Job. Required."""
-    wall_clock_time: datetime.timedelta = rest_field(name="wallClockTime")
+    wall_clock_time: datetime.timedelta = rest_field(
+        name="wallClockTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total wall clock time of all Tasks in the Job.  The wall clock time is the elapsed time
      from when the Task started running on a Compute Node to when it finished (or to the last time
      the statistics were updated, if the Task had not finished by then). If a Task was retried, this
      includes the wall clock time of all the Task retries. Required."""
-    read_i_ops: int = rest_field(name="readIOps")
+    read_i_ops: int = rest_field(
+        name="readIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
+    )
     """The total number of disk read operations made by all Tasks in the Job. Required."""
-    write_i_ops: int = rest_field(name="writeIOps")
+    write_i_ops: int = rest_field(
+        name="writeIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
+    )
     """The total number of disk write operations made by all Tasks in the Job. Required."""
-    read_io_gi_b: float = rest_field(name="readIOGiB")
+    read_io_gi_b: float = rest_field(name="readIOGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total amount of data in GiB read from disk by all Tasks in the Job. Required."""
-    write_io_gi_b: float = rest_field(name="writeIOGiB")
+    write_io_gi_b: float = rest_field(name="writeIOGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total amount of data in GiB written to disk by all Tasks in the Job. Required."""
-    num_succeeded_tasks: int = rest_field(name="numSucceededTasks")
+    num_succeeded_tasks: int = rest_field(
+        name="numSucceededTasks", visibility=["read", "create", "update", "delete", "query"], format="str"
+    )
     """The total number of Tasks successfully completed in the Job during the given time range. A Task
      completes successfully if it returns exit code 0. Required."""
-    num_failed_tasks: int = rest_field(name="numFailedTasks")
+    num_failed_tasks: int = rest_field(
+        name="numFailedTasks", visibility=["read", "create", "update", "delete", "query"], format="str"
+    )
     """The total number of Tasks in the Job that failed during the given time range. A Task fails if
      it exhausts its maximum retry count without returning exit code 0. Required."""
-    num_task_retries: int = rest_field(name="numTaskRetries")
+    num_task_retries: int = rest_field(
+        name="numTaskRetries", visibility=["read", "create", "update", "delete", "query"], format="str"
+    )
     """The total number of retries on all the Tasks in the Job during the given time range. Required."""
-    wait_time: datetime.timedelta = rest_field(name="waitTime")
+    wait_time: datetime.timedelta = rest_field(
+        name="waitTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total wait time of all Tasks in the Job. The wait time for a Task is defined as the elapsed
      time between the creation of the Task and the start of Task execution. (If the Task is retried
      due to failures, the wait time is the time to the most recent Task execution.) This value is
@@ -3011,7 +3293,9 @@ class BatchJobTerminateContent(_model_base.Model):
     :vartype termination_reason: str
     """
 
-    termination_reason: Optional[str] = rest_field(name="terminationReason")
+    termination_reason: Optional[str] = rest_field(
+        name="terminateReason", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The text you want to appear as the Job's TerminationReason. The default is 'UserTerminate'."""
 
     @overload
@@ -3074,24 +3358,32 @@ class BatchJobUpdateContent(_model_base.Model):
     :vartype network_configuration: ~azure.batch.models.BatchJobNetworkConfiguration
     """
 
-    priority: Optional[int] = rest_field()
+    priority: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The priority of the Job. Priority values can range from -1000 to 1000, with -1000 being the
      lowest priority and 1000 being the highest priority. If omitted, the priority of the Job is
      left unchanged."""
-    allow_task_preemption: Optional[bool] = rest_field(name="allowTaskPreemption")
+    allow_task_preemption: Optional[bool] = rest_field(
+        name="allowTaskPreemption", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether Tasks in this job can be preempted by other high priority jobs. If the value is set to
      True, other high priority jobs submitted to the system will take precedence and will be able
      requeue tasks from this job. You can update a job's allowTaskPreemption after it has been
      created using the update job API."""
-    max_parallel_tasks: Optional[int] = rest_field(name="maxParallelTasks")
+    max_parallel_tasks: Optional[int] = rest_field(
+        name="maxParallelTasks", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum number of tasks that can be executed in parallel for the job. The value of
      maxParallelTasks must be -1 or greater than 0 if specified. If not specified, the default value
      is -1, which means there's no limit to the number of tasks that can be run at once. You can
      update a job's maxParallelTasks after it has been created using the update job API."""
-    constraints: Optional["_models.BatchJobConstraints"] = rest_field()
+    constraints: Optional["_models.BatchJobConstraints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The execution constraints for the Job. If omitted, the existing execution constraints are left
      unchanged."""
-    pool_info: Optional["_models.BatchPoolInfo"] = rest_field(name="poolInfo")
+    pool_info: Optional["_models.BatchPoolInfo"] = rest_field(
+        name="poolInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Pool on which the Batch service runs the Job's Tasks. You may change the Pool for a Job
      only when the Job is disabled. The Patch Job call will fail if you include the poolInfo element
      and the Job is not disabled. If you specify an autoPoolSpecification in the poolInfo, only the
@@ -3099,7 +3391,7 @@ class BatchJobUpdateContent(_model_base.Model):
      autoPoolSpecification has a poolLifetimeOption of Job (other job properties can be updated as
      normal). If omitted, the Job continues to run on its current Pool."""
     on_all_tasks_complete: Optional[Union[str, "_models.OnAllBatchTasksComplete"]] = rest_field(
-        name="onAllTasksComplete"
+        name="onAllTasksComplete", visibility=["read", "create", "update", "delete", "query"]
     )
     """The action the Batch service should take when all Tasks in the Job are in the completed state.
      If omitted, the completion behavior is left unchanged. You may not change the value from
@@ -3107,10 +3399,14 @@ class BatchJobUpdateContent(_model_base.Model):
      turn it off again. If you try to do this, the request fails with an 'invalid property value'
      error response; if you are calling the REST API directly, the HTTP status code is 400 (Bad
      Request). Known values are: \"noaction\" and \"terminatejob\"."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field()
+    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of name-value pairs associated with the Job as metadata. If omitted, the existing Job
      metadata is left unchanged."""
-    network_configuration: Optional["_models.BatchJobNetworkConfiguration"] = rest_field(name="networkConfiguration")
+    network_configuration: Optional["_models.BatchJobNetworkConfiguration"] = rest_field(
+        name="networkConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The network configuration for the Job."""
 
     @overload
@@ -3218,78 +3514,112 @@ class BatchNode(_model_base.Model):
     :vartype virtual_machine_info: ~azure.batch.models.VirtualMachineInfo
     """
 
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the Compute Node. Every Compute Node that is added to a Pool is assigned a unique ID.
      Whenever a Compute Node is removed from a Pool, all of its local files are deleted, and the ID
      is reclaimed and could be reused for new Compute Nodes."""
-    url: Optional[str] = rest_field()
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The URL of the Compute Node."""
-    state: Optional[Union[str, "_models.BatchNodeState"]] = rest_field()
+    state: Optional[Union[str, "_models.BatchNodeState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The current state of the Compute Node. The Spot/Low-priority Compute Node has been preempted.
      Tasks which were running on the Compute Node when it was preempted will be rescheduled when
      another Compute Node becomes available. Known values are: \"idle\", \"rebooting\",
      \"reimaging\", \"running\", \"unusable\", \"creating\", \"starting\", \"waitingforstarttask\",
      \"starttaskfailed\", \"unknown\", \"leavingpool\", \"offline\", \"preempted\", \"upgradingos\",
      \"deallocated\", and \"deallocating\"."""
-    scheduling_state: Optional[Union[str, "_models.SchedulingState"]] = rest_field(name="schedulingState")
+    scheduling_state: Optional[Union[str, "_models.SchedulingState"]] = rest_field(
+        name="schedulingState", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether the Compute Node is available for Task scheduling. Known values are: \"enabled\" and
      \"disabled\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", format="rfc3339")
+    state_transition_time: Optional[datetime.datetime] = rest_field(
+        name="stateTransitionTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the Compute Node entered its current state."""
-    last_boot_time: Optional[datetime.datetime] = rest_field(name="lastBootTime", format="rfc3339")
+    last_boot_time: Optional[datetime.datetime] = rest_field(
+        name="lastBootTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The last time at which the Compute Node was started. This property may not be present if the
      Compute Node state is unusable."""
-    allocation_time: Optional[datetime.datetime] = rest_field(name="allocationTime", format="rfc3339")
+    allocation_time: Optional[datetime.datetime] = rest_field(
+        name="allocationTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which this Compute Node was allocated to the Pool. This is the time when the
      Compute Node was initially allocated and doesn't change once set. It is not updated when the
      Compute Node is service healed or preempted."""
-    ip_address: Optional[str] = rest_field(name="ipAddress")
+    ip_address: Optional[str] = rest_field(name="ipAddress", visibility=["read", "create", "update", "delete", "query"])
     """The IP address that other Nodes can use to communicate with this Compute Node. Every Compute
      Node that is added to a Pool is assigned a unique IP address. Whenever a Compute Node is
      removed from a Pool, all of its local files are deleted, and the IP address is reclaimed and
      could be reused for new Compute Nodes."""
-    affinity_id: Optional[str] = rest_field(name="affinityId")
+    affinity_id: Optional[str] = rest_field(
+        name="affinityId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An identifier which can be passed when adding a Task to request that the Task be scheduled on
      this Compute Node. Note that this is just a soft affinity. If the target Compute Node is busy
      or unavailable at the time the Task is scheduled, then the Task will be scheduled elsewhere."""
-    vm_size: Optional[str] = rest_field(name="vmSize")
+    vm_size: Optional[str] = rest_field(name="vmSize", visibility=["read", "create", "update", "delete", "query"])
     """The size of the virtual machine hosting the Compute Node. For information about available sizes
      of virtual machines in Pools, see Choose a VM size for Compute Nodes in an Azure Batch Pool
      (https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes)."""
-    total_tasks_run: Optional[int] = rest_field(name="totalTasksRun")
+    total_tasks_run: Optional[int] = rest_field(
+        name="totalTasksRun", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total number of Job Tasks completed on the Compute Node. This includes Job Manager Tasks
      and normal Tasks, but not Job Preparation, Job Release or Start Tasks."""
-    running_tasks_count: Optional[int] = rest_field(name="runningTasksCount")
+    running_tasks_count: Optional[int] = rest_field(
+        name="runningTasksCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total number of currently running Job Tasks on the Compute Node. This includes Job Manager
      Tasks and normal Tasks, but not Job Preparation, Job Release or Start Tasks."""
-    running_task_slots_count: Optional[int] = rest_field(name="runningTaskSlotsCount")
+    running_task_slots_count: Optional[int] = rest_field(
+        name="runningTaskSlotsCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total number of scheduling slots used by currently running Job Tasks on the Compute Node.
      This includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job Release or Start
      Tasks."""
-    total_tasks_succeeded: Optional[int] = rest_field(name="totalTasksSucceeded")
+    total_tasks_succeeded: Optional[int] = rest_field(
+        name="totalTasksSucceeded", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total number of Job Tasks which completed successfully (with exitCode 0) on the Compute
      Node. This includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job Release or
      Start Tasks."""
-    recent_tasks: Optional[List["_models.BatchTaskInfo"]] = rest_field(name="recentTasks")
+    recent_tasks: Optional[List["_models.BatchTaskInfo"]] = rest_field(
+        name="recentTasks", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of Tasks whose state has recently changed. This property is present only if at least one
      Task has run on this Compute Node since it was assigned to the Pool."""
-    start_task: Optional["_models.BatchStartTask"] = rest_field(name="startTask")
+    start_task: Optional["_models.BatchStartTask"] = rest_field(
+        name="startTask", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Task specified to run on the Compute Node as it joins the Pool."""
-    start_task_info: Optional["_models.BatchStartTaskInfo"] = rest_field(name="startTaskInfo")
+    start_task_info: Optional["_models.BatchStartTaskInfo"] = rest_field(
+        name="startTaskInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Runtime information about the execution of the StartTask on the Compute Node."""
-    errors: Optional[List["_models.BatchNodeError"]] = rest_field()
+    errors: Optional[List["_models.BatchNodeError"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of errors that are currently being encountered by the Compute Node."""
-    is_dedicated: Optional[bool] = rest_field(name="isDedicated")
+    is_dedicated: Optional[bool] = rest_field(
+        name="isDedicated", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether this Compute Node is a dedicated Compute Node. If false, the Compute Node is a
      Spot/Low-priority Compute Node."""
     endpoint_configuration: Optional["_models.BatchNodeEndpointConfiguration"] = rest_field(
-        name="endpointConfiguration"
+        name="endpointConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The endpoint configuration for the Compute Node."""
-    node_agent_info: Optional["_models.BatchNodeAgentInfo"] = rest_field(name="nodeAgentInfo")
+    node_agent_info: Optional["_models.BatchNodeAgentInfo"] = rest_field(
+        name="nodeAgentInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Information about the Compute Node agent version and the time the Compute Node upgraded to a
      new version."""
-    virtual_machine_info: Optional["_models.VirtualMachineInfo"] = rest_field(name="virtualMachineInfo")
+    virtual_machine_info: Optional["_models.VirtualMachineInfo"] = rest_field(
+        name="virtualMachineInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Info about the current state of the virtual machine."""
 
     @overload
@@ -3346,11 +3676,13 @@ class BatchNodeAgentInfo(_model_base.Model):
     :vartype last_update_time: ~datetime.datetime
     """
 
-    version: str = rest_field()
+    version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the Batch Compute Node agent running on the Compute Node. This version number
      can be checked against the Compute Node agent release notes located at
      https://github.com/Azure/Batch/blob/master/changelogs/nodeagent/CHANGELOG.md. Required."""
-    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime", format="rfc3339")
+    last_update_time: datetime.datetime = rest_field(
+        name="lastUpdateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time when the Compute Node agent was updated on the Compute Node. This is the most recent
      time that the Compute Node agent was updated to a new version. Required."""
 
@@ -3414,39 +3746,43 @@ class BatchNodeCounts(_model_base.Model):
     :vartype upgrading_os: int
     """
 
-    creating: int = rest_field()
+    creating: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of Compute Nodes in the creating state. Required."""
-    idle: int = rest_field()
+    idle: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of Compute Nodes in the idle state. Required."""
-    offline: int = rest_field()
+    offline: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of Compute Nodes in the offline state. Required."""
-    preempted: int = rest_field()
+    preempted: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of Compute Nodes in the preempted state. Required."""
-    rebooting: int = rest_field()
+    rebooting: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The count of Compute Nodes in the rebooting state. Required."""
-    reimaging: int = rest_field()
+    reimaging: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of Compute Nodes in the reimaging state. Required."""
-    running: int = rest_field()
+    running: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of Compute Nodes in the running state. Required."""
-    starting: int = rest_field()
+    starting: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of Compute Nodes in the starting state. Required."""
-    start_task_failed: int = rest_field(name="startTaskFailed")
+    start_task_failed: int = rest_field(
+        name="startTaskFailed", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of Compute Nodes in the startTaskFailed state. Required."""
-    leaving_pool: int = rest_field(name="leavingPool")
+    leaving_pool: int = rest_field(name="leavingPool", visibility=["read", "create", "update", "delete", "query"])
     """The number of Compute Nodes in the leavingPool state. Required."""
-    unknown: int = rest_field()
+    unknown: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of Compute Nodes in the unknown state. Required."""
-    unusable: int = rest_field()
+    unusable: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of Compute Nodes in the unusable state. Required."""
-    waiting_for_start_task: int = rest_field(name="waitingForStartTask")
+    waiting_for_start_task: int = rest_field(
+        name="waitingForStartTask", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of Compute Nodes in the waitingForStartTask state. Required."""
-    deallocated: int = rest_field()
+    deallocated: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of Compute Nodes in the deallocated state. Required."""
-    deallocating: int = rest_field()
+    deallocating: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of Compute Nodes in the deallocating state. Required."""
-    total: int = rest_field()
+    total: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The total number of Compute Nodes. Required."""
-    upgrading_os: int = rest_field(name="upgradingOS")
+    upgrading_os: int = rest_field(name="upgradingOS", visibility=["read", "create", "update", "delete", "query"])
     """The number of Compute Nodes in the upgradingOS state. Required."""
 
     @overload
@@ -3493,7 +3829,7 @@ class BatchNodeDeallocateContent(_model_base.Model):
     """
 
     node_deallocate_option: Optional[Union[str, "_models.BatchNodeDeallocateOption"]] = rest_field(
-        name="nodeDeallocateOption"
+        name="nodeDeallocateOption", visibility=["read", "create", "update", "delete", "query"]
     )
     """When to deallocate the Compute Node and what to do with currently running Tasks. The default
      value is requeue. Known values are: \"requeue\", \"terminate\", \"taskcompletion\", and
@@ -3528,7 +3864,7 @@ class BatchNodeDisableSchedulingContent(_model_base.Model):
     """
 
     node_disable_scheduling_option: Optional[Union[str, "_models.BatchNodeDisableSchedulingOption"]] = rest_field(
-        name="nodeDisableSchedulingOption"
+        name="nodeDisableSchedulingOption", visibility=["read", "create", "update", "delete", "query"]
     )
     """What to do with currently running Tasks when disabling Task scheduling on the Compute Node. The
      default value is requeue. Known values are: \"requeue\", \"terminate\", and \"taskcompletion\"."""
@@ -3560,7 +3896,9 @@ class BatchNodeEndpointConfiguration(_model_base.Model):
     :vartype inbound_endpoints: list[~azure.batch.models.InboundEndpoint]
     """
 
-    inbound_endpoints: List["_models.InboundEndpoint"] = rest_field(name="inboundEndpoints")
+    inbound_endpoints: List["_models.InboundEndpoint"] = rest_field(
+        name="inboundEndpoints", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of inbound endpoints that are accessible on the Compute Node. Required."""
 
     @overload
@@ -3594,13 +3932,15 @@ class BatchNodeError(_model_base.Model):
     :vartype error_details: list[~azure.batch.models.NameValuePair]
     """
 
-    code: Optional[str] = rest_field()
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An identifier for the Compute Node error. Codes are invariant and are intended to be consumed
      programmatically."""
-    message: Optional[str] = rest_field()
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A message describing the Compute Node error, intended to be suitable for display in a user
      interface."""
-    error_details: Optional[List["_models.NameValuePair"]] = rest_field(name="errorDetails")
+    error_details: Optional[List["_models.NameValuePair"]] = rest_field(
+        name="errorDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of additional error details related to the Compute Node error."""
 
     @overload
@@ -3636,13 +3976,17 @@ class BatchNodeFile(_model_base.Model):
     :vartype properties: ~azure.batch.models.FileProperties
     """
 
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The file path."""
-    url: Optional[str] = rest_field()
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The URL of the file."""
-    is_directory: Optional[bool] = rest_field(name="isDirectory")
+    is_directory: Optional[bool] = rest_field(
+        name="isDirectory", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether the object represents a directory."""
-    properties: Optional["_models.FileProperties"] = rest_field()
+    properties: Optional["_models.FileProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The file properties."""
 
     @overload
@@ -3674,7 +4018,9 @@ class BatchNodeIdentityReference(_model_base.Model):
     :vartype resource_id: str
     """
 
-    resource_id: Optional[str] = rest_field(name="resourceId")
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The ARM resource id of the user assigned identity."""
 
     @overload
@@ -3713,18 +4059,24 @@ class BatchNodeInfo(_model_base.Model):
     :vartype task_root_directory_url: str
     """
 
-    affinity_id: Optional[str] = rest_field(name="affinityId")
+    affinity_id: Optional[str] = rest_field(
+        name="affinityId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An identifier for the Node on which the Task ran, which can be passed when adding a Task to
      request that the Task be scheduled on this Compute Node."""
-    node_url: Optional[str] = rest_field(name="nodeUrl")
+    node_url: Optional[str] = rest_field(name="nodeUrl", visibility=["read", "create", "update", "delete", "query"])
     """The URL of the Compute Node on which the Task ran."""
-    pool_id: Optional[str] = rest_field(name="poolId")
+    pool_id: Optional[str] = rest_field(name="poolId", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the Pool on which the Task ran."""
-    node_id: Optional[str] = rest_field(name="nodeId")
+    node_id: Optional[str] = rest_field(name="nodeId", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the Compute Node on which the Task ran."""
-    task_root_directory: Optional[str] = rest_field(name="taskRootDirectory")
+    task_root_directory: Optional[str] = rest_field(
+        name="taskRootDirectory", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The root directory of the Task on the Compute Node."""
-    task_root_directory_url: Optional[str] = rest_field(name="taskRootDirectoryUrl")
+    task_root_directory_url: Optional[str] = rest_field(
+        name="taskRootDirectoryUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The URL to the root directory of the Task on the Compute Node."""
 
     @overload
@@ -3761,7 +4113,9 @@ class BatchNodePlacementConfiguration(_model_base.Model):
     :vartype policy: str or ~azure.batch.models.BatchNodePlacementPolicyType
     """
 
-    policy: Optional[Union[str, "_models.BatchNodePlacementPolicyType"]] = rest_field()
+    policy: Optional[Union[str, "_models.BatchNodePlacementPolicyType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Node placement Policy type on Batch Pools. Allocation policy used by Batch Service to provision
      the nodes. If not specified, Batch will use the regional policy. Known values are: \"regional\"
      and \"zonal\"."""
@@ -3793,7 +4147,9 @@ class BatchNodeRebootContent(_model_base.Model):
     :vartype node_reboot_option: str or ~azure.batch.models.BatchNodeRebootOption
     """
 
-    node_reboot_option: Optional[Union[str, "_models.BatchNodeRebootOption"]] = rest_field(name="nodeRebootOption")
+    node_reboot_option: Optional[Union[str, "_models.BatchNodeRebootOption"]] = rest_field(
+        name="nodeRebootOption", visibility=["read", "create", "update", "delete", "query"]
+    )
     """When to reboot the Compute Node and what to do with currently running Tasks. The default value
      is requeue. Known values are: \"requeue\", \"terminate\", \"taskcompletion\", and
      \"retaineddata\"."""
@@ -3825,7 +4181,9 @@ class BatchNodeReimageContent(_model_base.Model):
     :vartype node_reimage_option: str or ~azure.batch.models.BatchNodeReimageOption
     """
 
-    node_reimage_option: Optional[Union[str, "_models.BatchNodeReimageOption"]] = rest_field(name="nodeReimageOption")
+    node_reimage_option: Optional[Union[str, "_models.BatchNodeReimageOption"]] = rest_field(
+        name="nodeReimageOption", visibility=["read", "create", "update", "delete", "query"]
+    )
     """When to reimage the Compute Node and what to do with currently running Tasks. The default value
      is requeue. Known values are: \"requeue\", \"terminate\", \"taskcompletion\", and
      \"retaineddata\"."""
@@ -3859,9 +4217,13 @@ class BatchNodeRemoteLoginSettings(_model_base.Model):
     :vartype remote_login_port: int
     """
 
-    remote_login_ip_address: str = rest_field(name="remoteLoginIPAddress")
+    remote_login_ip_address: str = rest_field(
+        name="remoteLoginIPAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The IP address used for remote login to the Compute Node. Required."""
-    remote_login_port: int = rest_field(name="remoteLoginPort")
+    remote_login_port: int = rest_field(
+        name="remoteLoginPort", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The port used for remote login to the Compute Node. Required."""
 
     @overload
@@ -3902,16 +4264,18 @@ class BatchNodeRemoveContent(_model_base.Model):
     :vartype node_deallocation_option: str or ~azure.batch.models.BatchNodeDeallocationOption
     """
 
-    node_list: List[str] = rest_field(name="nodeList")
+    node_list: List[str] = rest_field(name="nodeList", visibility=["read", "create", "update", "delete", "query"])
     """A list containing the IDs of the Compute Nodes to be removed from the specified Pool. A maximum
      of 100 nodes may be removed per request. Required."""
-    resize_timeout: Optional[datetime.timedelta] = rest_field(name="resizeTimeout")
+    resize_timeout: Optional[datetime.timedelta] = rest_field(
+        name="resizeTimeout", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The timeout for removal of Compute Nodes to the Pool. The default value is 15 minutes. The
      minimum value is 5 minutes. If you specify a value less than 5 minutes, the Batch service
      returns an error; if you are calling the REST API directly, the HTTP status code is 400 (Bad
      Request)."""
     node_deallocation_option: Optional[Union[str, "_models.BatchNodeDeallocationOption"]] = rest_field(
-        name="nodeDeallocationOption"
+        name="nodeDeallocationOption", visibility=["read", "create", "update", "delete", "query"]
     )
     """Determines what to do with a Compute Node and its running task(s) after it has been selected
      for deallocation. The default value is requeue. Known values are: \"requeue\", \"terminate\",
@@ -3962,17 +4326,21 @@ class BatchNodeUserCreateContent(_model_base.Model):
     :vartype ssh_public_key: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The user name of the Account. Required."""
-    is_admin: Optional[bool] = rest_field(name="isAdmin")
+    is_admin: Optional[bool] = rest_field(name="isAdmin", visibility=["read", "create", "update", "delete", "query"])
     """Whether the Account should be an administrator on the Compute Node. The default value is false."""
-    expiry_time: Optional[datetime.datetime] = rest_field(name="expiryTime", format="rfc3339")
+    expiry_time: Optional[datetime.datetime] = rest_field(
+        name="expiryTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the Account should expire. If omitted, the default is 1 day from the current
      time. For Linux Compute Nodes, the expiryTime has a precision up to a day."""
-    password: Optional[str] = rest_field()
+    password: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The password of the Account. The password is required for Windows Compute Nodes. For Linux
      Compute Nodes, the password can optionally be specified along with the sshPublicKey property."""
-    ssh_public_key: Optional[str] = rest_field(name="sshPublicKey")
+    ssh_public_key: Optional[str] = rest_field(
+        name="sshPublicKey", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The SSH public key that can be used for remote login to the Compute Node. The public key should
      be compatible with OpenSSH encoding and should be base 64 encoded. This property can be
      specified only for Linux Compute Nodes. If this is specified for a Windows Compute Node, then
@@ -4020,14 +4388,18 @@ class BatchNodeUserUpdateContent(_model_base.Model):
     :vartype ssh_public_key: str
     """
 
-    password: Optional[str] = rest_field()
+    password: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The password of the Account. The password is required for Windows Compute Nodes. For Linux
      Compute Nodes, the password can optionally be specified along with the sshPublicKey property.
      If omitted, any existing password is removed."""
-    expiry_time: Optional[datetime.datetime] = rest_field(name="expiryTime", format="rfc3339")
+    expiry_time: Optional[datetime.datetime] = rest_field(
+        name="expiryTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the Account should expire. If omitted, the default is 1 day from the current
      time. For Linux Compute Nodes, the expiryTime has a precision up to a day."""
-    ssh_public_key: Optional[str] = rest_field(name="sshPublicKey")
+    ssh_public_key: Optional[str] = rest_field(
+        name="sshPublicKey", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The SSH public key that can be used for remote login to the Compute Node. The public key should
      be compatible with OpenSSH encoding and should be base 64 encoded. This property can be
      specified only for Linux Compute Nodes. If this is specified for a Windows Compute Node, then
@@ -4065,11 +4437,17 @@ class BatchNodeVMExtension(_model_base.Model):
     :vartype instance_view: ~azure.batch.models.VMExtensionInstanceView
     """
 
-    provisioning_state: Optional[str] = rest_field(name="provisioningState")
+    provisioning_state: Optional[str] = rest_field(
+        name="provisioningState", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The provisioning state of the virtual machine extension."""
-    vm_extension: Optional["_models.VMExtension"] = rest_field(name="vmExtension")
+    vm_extension: Optional["_models.VMExtension"] = rest_field(
+        name="vmExtension", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The virtual machine extension."""
-    instance_view: Optional["_models.VMExtensionInstanceView"] = rest_field(name="instanceView")
+    instance_view: Optional["_models.VMExtensionInstanceView"] = rest_field(
+        name="instanceView", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The vm extension instance view."""
 
     @overload
@@ -4213,7 +4591,7 @@ class BatchPool(_model_base.Model):
     :ivar identity: The identity of the Batch pool, if configured. The list of user identities
      associated with the Batch pool. The user identity dictionary key references will be ARM
      resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype identity: ~azure.batch.models.BatchPoolIdentity
     :ivar target_node_communication_mode: The desired node communication mode for the pool. If
      omitted, the default value is Default. Known values are: "default", "classic", and
@@ -4321,7 +4699,9 @@ class BatchPool(_model_base.Model):
         name="networkConfiguration", visibility=["read"]
     )
     """The network configuration for the Pool."""
-    start_task: Optional["_models.BatchStartTask"] = rest_field(name="startTask")
+    start_task: Optional["_models.BatchStartTask"] = rest_field(
+        name="startTask", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A Task specified to run on each Compute Node as it joins the Pool."""
     application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences", visibility=["read"]
@@ -4356,9 +4736,9 @@ class BatchPool(_model_base.Model):
     identity: Optional["_models.BatchPoolIdentity"] = rest_field(visibility=["read"])
     """The identity of the Batch pool, if configured. The list of user identities associated with the
      Batch pool. The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long"""
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'."""
     target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = rest_field(
-        name="targetNodeCommunicationMode"
+        name="targetNodeCommunicationMode", visibility=["read", "create", "update", "delete", "query"]
     )
     """The desired node communication mode for the pool. If omitted, the default value is Default.
      Known values are: \"default\", \"classic\", and \"simplified\"."""
@@ -4367,7 +4747,9 @@ class BatchPool(_model_base.Model):
     )
     """The current state of the pool communication mode. Known values are: \"default\", \"classic\",
      and \"simplified\"."""
-    upgrade_policy: Optional["_models.UpgradePolicy"] = rest_field(name="upgradePolicy")
+    upgrade_policy: Optional["_models.UpgradePolicy"] = rest_field(
+        name="upgradePolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The upgrade policy for the Pool. Describes an upgrade policy - automatic, manual, or rolling."""
 
     @overload
@@ -4464,7 +4846,7 @@ class BatchPoolCreateContent(_model_base.Model):
     :vartype start_task: ~azure.batch.models.BatchStartTask
     :ivar application_package_references: The list of Packages to be installed on each Compute Node
      in the Pool. When creating a pool, the package's application ID must be fully qualified
-     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).  # pylint: disable=line-too-long
+     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).
      Changes to Package references affect all new Nodes joining the Pool, but do not affect Compute
      Nodes that are already in the Pool until they are rebooted or reimaged. There is a maximum of
      10 Package references on any given Pool.
@@ -4494,15 +4876,17 @@ class BatchPoolCreateContent(_model_base.Model):
     :vartype upgrade_policy: ~azure.batch.models.UpgradePolicy
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A string that uniquely identifies the Pool within the Account. The ID can contain any
      combination of alphanumeric characters including hyphens and underscores, and cannot contain
      more than 64 characters. The ID is case-preserving and case-insensitive (that is, you may not
      have two Pool IDs within an Account that differ only by case). Required."""
-    display_name: Optional[str] = rest_field(name="displayName")
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The display name for the Pool. The display name need not be unique and can contain any Unicode
      characters up to a maximum length of 1024."""
-    vm_size: str = rest_field(name="vmSize")
+    vm_size: str = rest_field(name="vmSize", visibility=["read", "create", "update", "delete", "query"])
     """The size of virtual machines in the Pool. All virtual machines in a Pool are the same size. For
      information about available VM sizes for Pools using Images from the Virtual Machines
      Marketplace (pools created with virtualMachineConfiguration), see Sizes for Virtual Machines in
@@ -4510,86 +4894,118 @@ class BatchPoolCreateContent(_model_base.Model):
      Azure VM sizes except STANDARD_A0 and those with premium storage (STANDARD_GS, STANDARD_DS, and
      STANDARD_DSV2 series). Required."""
     virtual_machine_configuration: Optional["_models.VirtualMachineConfiguration"] = rest_field(
-        name="virtualMachineConfiguration"
+        name="virtualMachineConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The virtual machine configuration for the Pool. This property must be specified."""
-    resize_timeout: Optional[datetime.timedelta] = rest_field(name="resizeTimeout")
+    resize_timeout: Optional[datetime.timedelta] = rest_field(
+        name="resizeTimeout", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The timeout for allocation of Compute Nodes to the Pool. This timeout applies only to manual
      scaling; it has no effect when enableAutoScale is set to true. The default value is 15 minutes.
      The minimum value is 5 minutes. If you specify a value less than 5 minutes, the Batch service
      returns an error; if you are calling the REST API directly, the HTTP status code is 400 (Bad
      Request)."""
-    resource_tags: Optional[Dict[str, str]] = rest_field(name="resourceTags")
+    resource_tags: Optional[Dict[str, str]] = rest_field(
+        name="resourceTags", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user-specified tags associated with the pool. The user-defined tags to be associated with
      the Azure Batch Pool. When specified, these tags are propagated to the backing Azure resources
      associated with the pool. This property can only be specified when the Batch account was
      created with the poolAllocationMode property set to 'UserSubscription'."""
-    target_dedicated_nodes: Optional[int] = rest_field(name="targetDedicatedNodes")
+    target_dedicated_nodes: Optional[int] = rest_field(
+        name="targetDedicatedNodes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The desired number of dedicated Compute Nodes in the Pool. This property must not be specified
      if enableAutoScale is set to true. If enableAutoScale is set to false, then you must set either
      targetDedicatedNodes, targetLowPriorityNodes, or both."""
-    target_low_priority_nodes: Optional[int] = rest_field(name="targetLowPriorityNodes")
+    target_low_priority_nodes: Optional[int] = rest_field(
+        name="targetLowPriorityNodes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The desired number of Spot/Low-priority Compute Nodes in the Pool. This property must not be
      specified if enableAutoScale is set to true. If enableAutoScale is set to false, then you must
      set either targetDedicatedNodes, targetLowPriorityNodes, or both."""
-    enable_auto_scale: Optional[bool] = rest_field(name="enableAutoScale")
+    enable_auto_scale: Optional[bool] = rest_field(
+        name="enableAutoScale", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether the Pool size should automatically adjust over time. If false, at least one of
      targetDedicatedNodes and targetLowPriorityNodes must be specified. If true, the
      autoScaleFormula property is required and the Pool automatically resizes according to the
      formula. The default value is false."""
-    auto_scale_formula: Optional[str] = rest_field(name="autoScaleFormula")
+    auto_scale_formula: Optional[str] = rest_field(
+        name="autoScaleFormula", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A formula for the desired number of Compute Nodes in the Pool. This property must not be
      specified if enableAutoScale is set to false. It is required if enableAutoScale is set to true.
      The formula is checked for validity before the Pool is created. If the formula is not valid,
      the Batch service rejects the request with detailed error information. For more information
      about specifying this formula, see 'Automatically scale Compute Nodes in an Azure Batch Pool'
      (https://learn.microsoft.com/azure/batch/batch-automatic-scaling)."""
-    auto_scale_evaluation_interval: Optional[datetime.timedelta] = rest_field(name="autoScaleEvaluationInterval")
+    auto_scale_evaluation_interval: Optional[datetime.timedelta] = rest_field(
+        name="autoScaleEvaluationInterval", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The time interval at which to automatically adjust the Pool size according to the autoscale
      formula. The default value is 15 minutes. The minimum and maximum value are 5 minutes and 168
      hours respectively. If you specify a value less than 5 minutes or greater than 168 hours, the
      Batch service returns an error; if you are calling the REST API directly, the HTTP status code
      is 400 (Bad Request)."""
-    enable_inter_node_communication: Optional[bool] = rest_field(name="enableInterNodeCommunication")
+    enable_inter_node_communication: Optional[bool] = rest_field(
+        name="enableInterNodeCommunication", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether the Pool permits direct communication between Compute Nodes. Enabling inter-node
      communication limits the maximum size of the Pool due to deployment restrictions on the Compute
      Nodes of the Pool. This may result in the Pool not reaching its desired size. The default value
      is false."""
-    network_configuration: Optional["_models.NetworkConfiguration"] = rest_field(name="networkConfiguration")
+    network_configuration: Optional["_models.NetworkConfiguration"] = rest_field(
+        name="networkConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The network configuration for the Pool."""
-    start_task: Optional["_models.BatchStartTask"] = rest_field(name="startTask")
+    start_task: Optional["_models.BatchStartTask"] = rest_field(
+        name="startTask", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A Task specified to run on each Compute Node as it joins the Pool. The Task runs when the
      Compute Node is added to the Pool or when the Compute Node is restarted."""
     application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = rest_field(
-        name="applicationPackageReferences"
+        name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of Packages to be installed on each Compute Node in the Pool. When creating a pool,
      the package's application ID must be fully qualified
-     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).  # pylint: disable=line-too-long
+     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).
      Changes to Package references affect all new Nodes joining the Pool, but do not affect Compute
      Nodes that are already in the Pool until they are rebooted or reimaged. There is a maximum of
      10 Package references on any given Pool."""
-    task_slots_per_node: Optional[int] = rest_field(name="taskSlotsPerNode")
+    task_slots_per_node: Optional[int] = rest_field(
+        name="taskSlotsPerNode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of task slots that can be used to run concurrent tasks on a single compute node in
      the pool. The default value is 1. The maximum value is the smaller of 4 times the number of
      cores of the vmSize of the pool or 256."""
-    task_scheduling_policy: Optional["_models.BatchTaskSchedulingPolicy"] = rest_field(name="taskSchedulingPolicy")
+    task_scheduling_policy: Optional["_models.BatchTaskSchedulingPolicy"] = rest_field(
+        name="taskSchedulingPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """How Tasks are distributed across Compute Nodes in a Pool. If not specified, the default is
      spread."""
-    user_accounts: Optional[List["_models.UserAccount"]] = rest_field(name="userAccounts")
+    user_accounts: Optional[List["_models.UserAccount"]] = rest_field(
+        name="userAccounts", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of user Accounts to be created on each Compute Node in the Pool."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field()
+    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of name-value pairs associated with the Pool as metadata. The Batch service does not
      assign any meaning to metadata; it is solely for the use of user code."""
-    mount_configuration: Optional[List["_models.MountConfiguration"]] = rest_field(name="mountConfiguration")
+    mount_configuration: Optional[List["_models.MountConfiguration"]] = rest_field(
+        name="mountConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Mount storage using specified file system for the entire lifetime of the pool. Mount the
      storage using Azure fileshare, NFS, CIFS or Blobfuse based file system."""
     target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = rest_field(
-        name="targetNodeCommunicationMode"
+        name="targetNodeCommunicationMode", visibility=["read", "create", "update", "delete", "query"]
     )
     """The desired node communication mode for the pool. If omitted, the default value is Default.
      Known values are: \"default\", \"classic\", and \"simplified\"."""
-    upgrade_policy: Optional["_models.UpgradePolicy"] = rest_field(name="upgradePolicy")
+    upgrade_policy: Optional["_models.UpgradePolicy"] = rest_field(
+        name="upgradePolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The upgrade policy for the Pool. Describes an upgrade policy - automatic, manual, or rolling."""
 
     @overload
@@ -4653,7 +5069,9 @@ class BatchPoolEnableAutoScaleContent(_model_base.Model):
     :vartype auto_scale_evaluation_interval: ~datetime.timedelta
     """
 
-    auto_scale_formula: Optional[str] = rest_field(name="autoScaleFormula")
+    auto_scale_formula: Optional[str] = rest_field(
+        name="autoScaleFormula", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The formula for the desired number of Compute Nodes in the Pool. The default value is 15
      minutes. The minimum and maximum value are 5 minutes and 168 hours respectively. If you specify
      a value less than 5 minutes or greater than 168 hours, the Batch service rejects the request
@@ -4661,7 +5079,9 @@ class BatchPoolEnableAutoScaleContent(_model_base.Model):
      code is 400 (Bad Request). If you specify a new interval, then the existing autoscale
      evaluation schedule will be stopped and a new autoscale evaluation schedule will be started,
      with its starting time being the time when this request was issued."""
-    auto_scale_evaluation_interval: Optional[datetime.timedelta] = rest_field(name="autoScaleEvaluationInterval")
+    auto_scale_evaluation_interval: Optional[datetime.timedelta] = rest_field(
+        name="autoScaleEvaluationInterval", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The time interval at which to automatically adjust the Pool size according to the autoscale
      formula. The default value is 15 minutes. The minimum and maximum value are 5 minutes and 168
      hours respectively. If you specify a value less than 5 minutes or greater than 168 hours, the
@@ -4701,7 +5121,9 @@ class BatchPoolEndpointConfiguration(_model_base.Model):
     :vartype inbound_nat_pools: list[~azure.batch.models.InboundNatPool]
     """
 
-    inbound_nat_pools: List["_models.InboundNatPool"] = rest_field(name="inboundNATPools")
+    inbound_nat_pools: List["_models.InboundNatPool"] = rest_field(
+        name="inboundNATPools", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of inbound NAT Pools that can be used to address specific ports on an individual Compute
      Node externally. The maximum number of inbound NAT Pools per Batch Pool is 5. If the maximum
      number of inbound NAT Pools is exceeded the request fails with HTTP status code 400. This
@@ -4738,7 +5160,9 @@ class BatchPoolEvaluateAutoScaleContent(_model_base.Model):
     :vartype auto_scale_formula: str
     """
 
-    auto_scale_formula: str = rest_field(name="autoScaleFormula")
+    auto_scale_formula: str = rest_field(
+        name="autoScaleFormula", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The formula for the desired number of Compute Nodes in the Pool. The formula is validated and
      its results calculated, but it is not applied to the Pool. To apply the formula to the Pool,
      'Enable automatic scaling on a Pool'. For more information about specifying this formula, see
@@ -4770,24 +5194,28 @@ class BatchPoolIdentity(_model_base.Model):
     :ivar type: The identity of the Batch pool, if configured. The list of user identities
      associated with the Batch pool. The user identity dictionary key references will be ARM
      resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
      Required. Known values are: "UserAssigned" and "None".
     :vartype type: str or ~azure.batch.models.BatchPoolIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the Batch account.
      The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: list[~azure.batch.models.UserAssignedIdentity]
     """
 
-    type: Union[str, "_models.BatchPoolIdentityType"] = rest_field()
+    type: Union[str, "_models.BatchPoolIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The identity of the Batch pool, if configured. The list of user identities associated with the
      Batch pool. The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
      Required. Known values are: \"UserAssigned\" and \"None\"."""
-    user_assigned_identities: Optional[List["_models.UserAssignedIdentity"]] = rest_field(name="userAssignedIdentities")
+    user_assigned_identities: Optional[List["_models.UserAssignedIdentity"]] = rest_field(
+        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of user identities associated with the Batch account. The user identity dictionary key
      references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.  # pylint: disable=line-too-long"""
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'."""
 
     @overload
     def __init__(
@@ -4828,14 +5256,16 @@ class BatchPoolInfo(_model_base.Model):
     :vartype auto_pool_specification: ~azure.batch.models.BatchAutoPoolSpecification
     """
 
-    pool_id: Optional[str] = rest_field(name="poolId")
+    pool_id: Optional[str] = rest_field(name="poolId", visibility=["read", "create", "update", "delete", "query"])
     """The ID of an existing Pool. All the Tasks of the Job will run on the specified Pool. You must
      ensure that the Pool referenced by this property exists. If the Pool does not exist at the time
      the Batch service tries to schedule a Job, no Tasks for the Job will run until you create a
      Pool with that id. Note that the Batch service will not reject the Job request; it will simply
      not run Tasks until the Pool exists. You must specify either the Pool ID or the auto Pool
      specification, but not both."""
-    auto_pool_specification: Optional["_models.BatchAutoPoolSpecification"] = rest_field(name="autoPoolSpecification")
+    auto_pool_specification: Optional["_models.BatchAutoPoolSpecification"] = rest_field(
+        name="autoPoolSpecification", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Characteristics for a temporary 'auto pool'. The Batch service will create this auto Pool when
      the Job is submitted. If auto Pool creation fails, the Batch service moves the Job to a
      completed state, and the Pool creation error is set in the Job's scheduling error property. The
@@ -4875,11 +5305,15 @@ class BatchPoolNodeCounts(_model_base.Model):
     :vartype low_priority: ~azure.batch.models.BatchNodeCounts
     """
 
-    pool_id: str = rest_field(name="poolId")
+    pool_id: str = rest_field(name="poolId", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the Pool. Required."""
-    dedicated: Optional["_models.BatchNodeCounts"] = rest_field()
+    dedicated: Optional["_models.BatchNodeCounts"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of dedicated Compute Nodes in each state."""
-    low_priority: Optional["_models.BatchNodeCounts"] = rest_field(name="lowPriority")
+    low_priority: Optional["_models.BatchNodeCounts"] = rest_field(
+        name="lowPriority", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of Spot/Low-priority Compute Nodes in each state."""
 
     @overload
@@ -4932,12 +5366,14 @@ class BatchPoolReplaceContent(_model_base.Model):
     :vartype target_node_communication_mode: str or ~azure.batch.models.BatchNodeCommunicationMode
     """
 
-    start_task: Optional["_models.BatchStartTask"] = rest_field(name="startTask")
+    start_task: Optional["_models.BatchStartTask"] = rest_field(
+        name="startTask", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A Task to run on each Compute Node as it joins the Pool. The Task runs when the Compute Node is
      added to the Pool or when the Compute Node is restarted. If this element is present, it
      overwrites any existing StartTask. If omitted, any existing StartTask is removed from the Pool."""
     application_package_references: List["_models.BatchApplicationPackageReference"] = rest_field(
-        name="applicationPackageReferences"
+        name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of Application Packages to be installed on each Compute Node in the Pool. The list
      replaces any existing Application Package references on the Pool. Changes to Application
@@ -4946,12 +5382,12 @@ class BatchPoolReplaceContent(_model_base.Model):
      10 Application Package references on any given Pool. If omitted, or if you specify an empty
      collection, any existing Application Packages references are removed from the Pool. A maximum
      of 10 references may be specified on a given Pool. Required."""
-    metadata: List["_models.MetadataItem"] = rest_field()
+    metadata: List["_models.MetadataItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of name-value pairs associated with the Pool as metadata. This list replaces any
      existing metadata configured on the Pool. If omitted, or if you specify an empty collection,
      any existing metadata is removed from the Pool. Required."""
     target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = rest_field(
-        name="targetNodeCommunicationMode"
+        name="targetNodeCommunicationMode", visibility=["read", "create", "update", "delete", "query"]
     )
     """The desired node communication mode for the pool. This setting replaces any existing
      targetNodeCommunication setting on the Pool. If omitted, the existing setting is default. Known
@@ -4997,17 +5433,23 @@ class BatchPoolResizeContent(_model_base.Model):
     :vartype node_deallocation_option: str or ~azure.batch.models.BatchNodeDeallocationOption
     """
 
-    target_dedicated_nodes: Optional[int] = rest_field(name="targetDedicatedNodes")
+    target_dedicated_nodes: Optional[int] = rest_field(
+        name="targetDedicatedNodes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The desired number of dedicated Compute Nodes in the Pool."""
-    target_low_priority_nodes: Optional[int] = rest_field(name="targetLowPriorityNodes")
+    target_low_priority_nodes: Optional[int] = rest_field(
+        name="targetLowPriorityNodes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The desired number of Spot/Low-priority Compute Nodes in the Pool."""
-    resize_timeout: Optional[datetime.timedelta] = rest_field(name="resizeTimeout")
+    resize_timeout: Optional[datetime.timedelta] = rest_field(
+        name="resizeTimeout", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The timeout for allocation of Nodes to the Pool or removal of Compute Nodes from the Pool. The
      default value is 15 minutes. The minimum value is 5 minutes. If you specify a value less than 5
      minutes, the Batch service returns an error; if you are calling the REST API directly, the HTTP
      status code is 400 (Bad Request)."""
     node_deallocation_option: Optional[Union[str, "_models.BatchNodeDeallocationOption"]] = rest_field(
-        name="nodeDeallocationOption"
+        name="nodeDeallocationOption", visibility=["read", "create", "update", "delete", "query"]
     )
     """Determines what to do with a Compute Node and its running task(s) if the Pool size is
      decreasing. The default value is requeue. Known values are: \"requeue\", \"terminate\",
@@ -5078,33 +5520,49 @@ class BatchPoolResourceStatistics(_model_base.Model):
     :vartype network_write_gi_b: float
     """
 
-    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The start time of the time range covered by the statistics. Required."""
-    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime", format="rfc3339")
+    last_update_time: datetime.datetime = rest_field(
+        name="lastUpdateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the statistics were last updated. All statistics are limited to the range
      between startTime and lastUpdateTime. Required."""
-    avg_cpu_percentage: float = rest_field(name="avgCPUPercentage")
+    avg_cpu_percentage: float = rest_field(
+        name="avgCPUPercentage", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The average CPU usage across all Compute Nodes in the Pool (percentage per node). Required."""
-    avg_memory_gi_b: float = rest_field(name="avgMemoryGiB")
+    avg_memory_gi_b: float = rest_field(name="avgMemoryGiB", visibility=["read", "create", "update", "delete", "query"])
     """The average memory usage in GiB across all Compute Nodes in the Pool. Required."""
-    peak_memory_gi_b: float = rest_field(name="peakMemoryGiB")
+    peak_memory_gi_b: float = rest_field(
+        name="peakMemoryGiB", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The peak memory usage in GiB across all Compute Nodes in the Pool. Required."""
-    avg_disk_gi_b: float = rest_field(name="avgDiskGiB")
+    avg_disk_gi_b: float = rest_field(name="avgDiskGiB", visibility=["read", "create", "update", "delete", "query"])
     """The average used disk space in GiB across all Compute Nodes in the Pool. Required."""
-    peak_disk_gi_b: float = rest_field(name="peakDiskGiB")
+    peak_disk_gi_b: float = rest_field(name="peakDiskGiB", visibility=["read", "create", "update", "delete", "query"])
     """The peak used disk space in GiB across all Compute Nodes in the Pool. Required."""
-    disk_read_i_ops: int = rest_field(name="diskReadIOps")
+    disk_read_i_ops: int = rest_field(
+        name="diskReadIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
+    )
     """The total number of disk read operations across all Compute Nodes in the Pool. Required."""
-    disk_write_i_ops: int = rest_field(name="diskWriteIOps")
+    disk_write_i_ops: int = rest_field(
+        name="diskWriteIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
+    )
     """The total number of disk write operations across all Compute Nodes in the Pool. Required."""
-    disk_read_gi_b: float = rest_field(name="diskReadGiB")
+    disk_read_gi_b: float = rest_field(name="diskReadGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total amount of data in GiB of disk reads across all Compute Nodes in the Pool. Required."""
-    disk_write_gi_b: float = rest_field(name="diskWriteGiB")
+    disk_write_gi_b: float = rest_field(name="diskWriteGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total amount of data in GiB of disk writes across all Compute Nodes in the Pool. Required."""
-    network_read_gi_b: float = rest_field(name="networkReadGiB")
+    network_read_gi_b: float = rest_field(
+        name="networkReadGiB", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total amount of data in GiB of network reads across all Compute Nodes in the Pool.
      Required."""
-    network_write_gi_b: float = rest_field(name="networkWriteGiB")
+    network_write_gi_b: float = rest_field(
+        name="networkWriteGiB", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total amount of data in GiB of network writes across all Compute Nodes in the Pool.
      Required."""
 
@@ -5210,7 +5668,7 @@ class BatchPoolSpecification(_model_base.Model):
     :vartype start_task: ~azure.batch.models.BatchStartTask
     :ivar application_package_references: The list of Packages to be installed on each Compute Node
      in the Pool. When creating a pool, the package's application ID must be fully qualified
-     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).  # pylint: disable=line-too-long
+     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).
      Changes to Package references affect all new Nodes joining the Pool, but do not affect Compute
      Nodes that are already in the Pool until they are rebooted or reimaged. There is a maximum of
      10 Package references on any given Pool.
@@ -5233,93 +5691,127 @@ class BatchPoolSpecification(_model_base.Model):
     :vartype upgrade_policy: ~azure.batch.models.UpgradePolicy
     """
 
-    display_name: Optional[str] = rest_field(name="displayName")
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The display name for the Pool. The display name need not be unique and can contain any Unicode
      characters up to a maximum length of 1024."""
-    vm_size: str = rest_field(name="vmSize")
+    vm_size: str = rest_field(name="vmSize", visibility=["read", "create", "update", "delete", "query"])
     """The size of the virtual machines in the Pool. All virtual machines in a Pool are the same size.
      For information about available sizes of virtual machines in Pools, see Choose a VM size for
      Compute Nodes in an Azure Batch Pool
      (https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes). Required."""
     virtual_machine_configuration: Optional["_models.VirtualMachineConfiguration"] = rest_field(
-        name="virtualMachineConfiguration"
+        name="virtualMachineConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The virtual machine configuration for the Pool. This property must be specified."""
-    task_slots_per_node: Optional[int] = rest_field(name="taskSlotsPerNode")
+    task_slots_per_node: Optional[int] = rest_field(
+        name="taskSlotsPerNode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of task slots that can be used to run concurrent tasks on a single compute node in
      the pool. The default value is 1. The maximum value is the smaller of 4 times the number of
      cores of the vmSize of the pool or 256."""
-    task_scheduling_policy: Optional["_models.BatchTaskSchedulingPolicy"] = rest_field(name="taskSchedulingPolicy")
+    task_scheduling_policy: Optional["_models.BatchTaskSchedulingPolicy"] = rest_field(
+        name="taskSchedulingPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """How Tasks are distributed across Compute Nodes in a Pool. If not specified, the default is
      spread."""
-    resize_timeout: Optional[datetime.timedelta] = rest_field(name="resizeTimeout")
+    resize_timeout: Optional[datetime.timedelta] = rest_field(
+        name="resizeTimeout", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The timeout for allocation of Compute Nodes to the Pool. This timeout applies only to manual
      scaling; it has no effect when enableAutoScale is set to true. The default value is 15 minutes.
      The minimum value is 5 minutes. If you specify a value less than 5 minutes, the Batch service
      rejects the request with an error; if you are calling the REST API directly, the HTTP status
      code is 400 (Bad Request)."""
-    resource_tags: Optional[str] = rest_field(name="resourceTags")
+    resource_tags: Optional[str] = rest_field(
+        name="resourceTags", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user-specified tags associated with the pool.The user-defined tags to be associated with
      the Azure Batch Pool. When specified, these tags are propagated to the backing Azure resources
      associated with the pool. This property can only be specified when the Batch account was
      created with the poolAllocationMode property set to 'UserSubscription'."""
-    target_dedicated_nodes: Optional[int] = rest_field(name="targetDedicatedNodes")
+    target_dedicated_nodes: Optional[int] = rest_field(
+        name="targetDedicatedNodes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The desired number of dedicated Compute Nodes in the Pool. This property must not be specified
      if enableAutoScale is set to true. If enableAutoScale is set to false, then you must set either
      targetDedicatedNodes, targetLowPriorityNodes, or both."""
-    target_low_priority_nodes: Optional[int] = rest_field(name="targetLowPriorityNodes")
+    target_low_priority_nodes: Optional[int] = rest_field(
+        name="targetLowPriorityNodes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The desired number of Spot/Low-priority Compute Nodes in the Pool. This property must not be
      specified if enableAutoScale is set to true. If enableAutoScale is set to false, then you must
      set either targetDedicatedNodes, targetLowPriorityNodes, or both."""
-    enable_auto_scale: Optional[bool] = rest_field(name="enableAutoScale")
+    enable_auto_scale: Optional[bool] = rest_field(
+        name="enableAutoScale", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether the Pool size should automatically adjust over time. If false, at least one of
      targetDedicatedNodes and targetLowPriorityNodes must be specified. If true, the
      autoScaleFormula element is required. The Pool automatically resizes according to the formula.
      The default value is false."""
-    auto_scale_formula: Optional[str] = rest_field(name="autoScaleFormula")
+    auto_scale_formula: Optional[str] = rest_field(
+        name="autoScaleFormula", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The formula for the desired number of Compute Nodes in the Pool. This property must not be
      specified if enableAutoScale is set to false. It is required if enableAutoScale is set to true.
      The formula is checked for validity before the Pool is created. If the formula is not valid,
      the Batch service rejects the request with detailed error information."""
-    auto_scale_evaluation_interval: Optional[datetime.timedelta] = rest_field(name="autoScaleEvaluationInterval")
+    auto_scale_evaluation_interval: Optional[datetime.timedelta] = rest_field(
+        name="autoScaleEvaluationInterval", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The time interval at which to automatically adjust the Pool size according to the autoscale
      formula. The default value is 15 minutes. The minimum and maximum value are 5 minutes and 168
      hours respectively. If you specify a value less than 5 minutes or greater than 168 hours, the
      Batch service rejects the request with an invalid property value error; if you are calling the
      REST API directly, the HTTP status code is 400 (Bad Request)."""
-    enable_inter_node_communication: Optional[bool] = rest_field(name="enableInterNodeCommunication")
+    enable_inter_node_communication: Optional[bool] = rest_field(
+        name="enableInterNodeCommunication", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether the Pool permits direct communication between Compute Nodes. Enabling inter-node
      communication limits the maximum size of the Pool due to deployment restrictions on the Compute
      Nodes of the Pool. This may result in the Pool not reaching its desired size. The default value
      is false."""
-    network_configuration: Optional["_models.NetworkConfiguration"] = rest_field(name="networkConfiguration")
+    network_configuration: Optional["_models.NetworkConfiguration"] = rest_field(
+        name="networkConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The network configuration for the Pool."""
-    start_task: Optional["_models.BatchStartTask"] = rest_field(name="startTask")
+    start_task: Optional["_models.BatchStartTask"] = rest_field(
+        name="startTask", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A Task to run on each Compute Node as it joins the Pool. The Task runs when the Compute Node is
      added to the Pool or when the Compute Node is restarted."""
     application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = rest_field(
-        name="applicationPackageReferences"
+        name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of Packages to be installed on each Compute Node in the Pool. When creating a pool,
      the package's application ID must be fully qualified
-     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).  # pylint: disable=line-too-long
+     (/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Batch/batchAccounts/{accountName}/applications/{applicationName}).
      Changes to Package references affect all new Nodes joining the Pool, but do not affect Compute
      Nodes that are already in the Pool until they are rebooted or reimaged. There is a maximum of
      10 Package references on any given Pool."""
-    user_accounts: Optional[List["_models.UserAccount"]] = rest_field(name="userAccounts")
+    user_accounts: Optional[List["_models.UserAccount"]] = rest_field(
+        name="userAccounts", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of user Accounts to be created on each Compute Node in the Pool."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field()
+    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of name-value pairs associated with the Pool as metadata. The Batch service does not
      assign any meaning to metadata; it is solely for the use of user code."""
-    mount_configuration: Optional[List["_models.MountConfiguration"]] = rest_field(name="mountConfiguration")
+    mount_configuration: Optional[List["_models.MountConfiguration"]] = rest_field(
+        name="mountConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of file systems to mount on each node in the pool. This supports Azure Files, NFS,
      CIFS/SMB, and Blobfuse."""
     target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = rest_field(
-        name="targetNodeCommunicationMode"
+        name="targetNodeCommunicationMode", visibility=["read", "create", "update", "delete", "query"]
     )
     """The desired node communication mode for the pool. If omitted, the default value is Default.
      Known values are: \"default\", \"classic\", and \"simplified\"."""
-    upgrade_policy: Optional["_models.UpgradePolicy"] = rest_field(name="upgradePolicy")
+    upgrade_policy: Optional["_models.UpgradePolicy"] = rest_field(
+        name="upgradePolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The upgrade policy for the Pool. Describes an upgrade policy - automatic, manual, or rolling."""
 
     @overload
@@ -5377,16 +5869,24 @@ class BatchPoolStatistics(_model_base.Model):
     :vartype resource_stats: ~azure.batch.models.BatchPoolResourceStatistics
     """
 
-    url: str = rest_field()
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The URL for the statistics. Required."""
-    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The start time of the time range covered by the statistics. Required."""
-    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime", format="rfc3339")
+    last_update_time: datetime.datetime = rest_field(
+        name="lastUpdateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the statistics were last updated. All statistics are limited to the range
      between startTime and lastUpdateTime. Required."""
-    usage_stats: Optional["_models.BatchPoolUsageStatistics"] = rest_field(name="usageStats")
+    usage_stats: Optional["_models.BatchPoolUsageStatistics"] = rest_field(
+        name="usageStats", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Statistics related to Pool usage, such as the amount of core-time used."""
-    resource_stats: Optional["_models.BatchPoolResourceStatistics"] = rest_field(name="resourceStats")
+    resource_stats: Optional["_models.BatchPoolResourceStatistics"] = rest_field(
+        name="resourceStats", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Statistics related to resource consumption by Compute Nodes in the Pool."""
 
     @overload
@@ -5487,26 +5987,32 @@ class BatchPoolUpdateContent(_model_base.Model):
     :vartype upgrade_policy: ~azure.batch.models.UpgradePolicy
     """
 
-    display_name: Optional[str] = rest_field(name="displayName")
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The display name for the Pool. The display name need not be unique and can contain any Unicode
      characters up to a maximum length of 1024. This field can be updated only when the pool is
      empty."""
-    vm_size: Optional[str] = rest_field(name="vmSize")
+    vm_size: Optional[str] = rest_field(name="vmSize", visibility=["read", "create", "update", "delete", "query"])
     """The size of virtual machines in the Pool. For information about available sizes of virtual
      machines in Pools, see Choose a VM size for Compute Nodes in an Azure Batch Pool
      (https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes).\ :code:`<br />`\ :code:`<br
      />`This field can be updated only when the pool is empty."""
-    enable_inter_node_communication: Optional[bool] = rest_field(name="enableInterNodeCommunication")
+    enable_inter_node_communication: Optional[bool] = rest_field(
+        name="enableInterNodeCommunication", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether the Pool permits direct communication between Compute Nodes. Enabling inter-node
      communication limits the maximum size of the Pool due to deployment restrictions on the Compute
      Nodes of the Pool. This may result in the Pool not reaching its desired size. The default value
      is false.\ :code:`<br />`\ :code:`<br />`This field can be updated only when the pool is empty."""
-    start_task: Optional["_models.BatchStartTask"] = rest_field(name="startTask")
+    start_task: Optional["_models.BatchStartTask"] = rest_field(
+        name="startTask", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A Task to run on each Compute Node as it joins the Pool. The Task runs when the Compute Node is
      added to the Pool or when the Compute Node is restarted. If this element is present, it
      overwrites any existing StartTask. If omitted, any existing StartTask is left unchanged."""
     application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = rest_field(
-        name="applicationPackageReferences"
+        name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of Packages to be installed on each Compute Node in the Pool. Changes to Package
      references affect all new Nodes joining the Pool, but do not affect Compute Nodes that are
@@ -5514,45 +6020,61 @@ class BatchPoolUpdateContent(_model_base.Model):
      replaces any existing Package references. If you specify an empty collection, then all Package
      references are removed from the Pool. If omitted, any existing Package references are left
      unchanged."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field()
+    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of name-value pairs associated with the Pool as metadata. If this element is present, it
      replaces any existing metadata configured on the Pool. If you specify an empty collection, any
      metadata is removed from the Pool. If omitted, any existing metadata is left unchanged."""
     virtual_machine_configuration: Optional["_models.VirtualMachineConfiguration"] = rest_field(
-        name="virtualMachineConfiguration"
+        name="virtualMachineConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The virtual machine configuration for the Pool. This property must be specified.\ :code:`<br
      />`\ :code:`<br />`This field can be updated only when the pool is empty."""
     target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = rest_field(
-        name="targetNodeCommunicationMode"
+        name="targetNodeCommunicationMode", visibility=["read", "create", "update", "delete", "query"]
     )
     """The desired node communication mode for the pool. If this element is present, it replaces the
      existing targetNodeCommunicationMode configured on the Pool. If omitted, any existing metadata
      is left unchanged. Known values are: \"default\", \"classic\", and \"simplified\"."""
-    task_slots_per_node: Optional[int] = rest_field(name="taskSlotsPerNode")
+    task_slots_per_node: Optional[int] = rest_field(
+        name="taskSlotsPerNode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of task slots that can be used to run concurrent tasks on a single compute node in
      the pool. The default value is 1. The maximum value is the smaller of 4 times the number of
      cores of the vmSize of the pool or 256.\ :code:`<br />`\ :code:`<br />`This field can be
      updated only when the pool is empty."""
-    task_scheduling_policy: Optional["_models.BatchTaskSchedulingPolicy"] = rest_field(name="taskSchedulingPolicy")
+    task_scheduling_policy: Optional["_models.BatchTaskSchedulingPolicy"] = rest_field(
+        name="taskSchedulingPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """How Tasks are distributed across Compute Nodes in a Pool. If not specified, the default is
      spread.\ :code:`<br />`\ :code:`<br />`This field can be updated only when the pool is empty."""
-    network_configuration: Optional["_models.NetworkConfiguration"] = rest_field(name="networkConfiguration")
+    network_configuration: Optional["_models.NetworkConfiguration"] = rest_field(
+        name="networkConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The network configuration for the Pool. This field can be updated only when the pool is empty."""
-    resource_tags: Optional[Dict[str, str]] = rest_field(name="resourceTags")
+    resource_tags: Optional[Dict[str, str]] = rest_field(
+        name="resourceTags", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user-specified tags associated with the pool. The user-defined tags to be associated with
      the Azure Batch Pool. When specified, these tags are propagated to the backing Azure resources
      associated with the pool. This property can only be specified when the Batch account was
      created with the poolAllocationMode property set to 'UserSubscription'.\ :code:`<br />`\
      :code:`<br />`This field can be updated only when the pool is empty."""
-    user_accounts: Optional[List["_models.UserAccount"]] = rest_field(name="userAccounts")
+    user_accounts: Optional[List["_models.UserAccount"]] = rest_field(
+        name="userAccounts", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of user Accounts to be created on each Compute Node in the Pool. This field can be
      updated only when the pool is empty."""
-    mount_configuration: Optional[List["_models.MountConfiguration"]] = rest_field(name="mountConfiguration")
+    mount_configuration: Optional[List["_models.MountConfiguration"]] = rest_field(
+        name="mountConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Mount storage using specified file system for the entire lifetime of the pool. Mount the
      storage using Azure fileshare, NFS, CIFS or Blobfuse based file system.\ :code:`<br />`\
      :code:`<br />`This field can be updated only when the pool is empty."""
-    upgrade_policy: Optional["_models.UpgradePolicy"] = rest_field(name="upgradePolicy")
+    upgrade_policy: Optional["_models.UpgradePolicy"] = rest_field(
+        name="upgradePolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The upgrade policy for the Pool. Describes an upgrade policy - automatic, manual, or rolling.\
      :code:`<br />`\ :code:`<br />`This field can be updated only when the pool is empty."""
 
@@ -5608,17 +6130,23 @@ class BatchPoolUsageMetrics(_model_base.Model):
     :vartype total_core_hours: float
     """
 
-    pool_id: str = rest_field(name="poolId")
+    pool_id: str = rest_field(name="poolId", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the Pool whose metrics are aggregated in this entry. Required."""
-    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The start time of the aggregation interval covered by this entry. Required."""
-    end_time: datetime.datetime = rest_field(name="endTime", format="rfc3339")
+    end_time: datetime.datetime = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The end time of the aggregation interval covered by this entry. Required."""
-    vm_size: str = rest_field(name="vmSize")
+    vm_size: str = rest_field(name="vmSize", visibility=["read", "create", "update", "delete", "query"])
     """The size of virtual machines in the Pool. All VMs in a Pool are the same size. For information
      about available sizes of virtual machines in Pools, see Choose a VM size for Compute Nodes in
      an Azure Batch Pool (https://learn.microsoft.com/azure/batch/batch-pool-vm-sizes). Required."""
-    total_core_hours: float = rest_field(name="totalCoreHours")
+    total_core_hours: float = rest_field(
+        name="totalCoreHours", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total core hours used in the Pool during this aggregation interval. Required."""
 
     @overload
@@ -5657,12 +6185,18 @@ class BatchPoolUsageStatistics(_model_base.Model):
     :vartype dedicated_core_time: ~datetime.timedelta
     """
 
-    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The start time of the time range covered by the statistics. Required."""
-    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime", format="rfc3339")
+    last_update_time: datetime.datetime = rest_field(
+        name="lastUpdateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the statistics were last updated. All statistics are limited to the range
      between startTime and lastUpdateTime. Required."""
-    dedicated_core_time: datetime.timedelta = rest_field(name="dedicatedCoreTime")
+    dedicated_core_time: datetime.timedelta = rest_field(
+        name="dedicatedCoreTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The aggregated wall-clock time of the dedicated Compute Node cores being part of the Pool.
      Required."""
 
@@ -5752,7 +6286,7 @@ class BatchStartTask(_model_base.Model):
     :vartype wait_for_success: bool
     """
 
-    command_line: str = rest_field(name="commandLine")
+    command_line: str = rest_field(name="commandLine", visibility=["read", "create", "update", "delete", "query"])
     """The command line of the StartTask. The command line does not run under a shell, and therefore
      cannot take advantage of shell features such as environment variable expansion. If you want to
      take advantage of such features, you should invoke the shell in the command line, for example
@@ -5760,26 +6294,36 @@ class BatchStartTask(_model_base.Model):
      refers to file paths, it should use a relative path (relative to the Task working directory),
      or use the Batch provided environment variable
      (https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables). Required."""
-    container_settings: Optional["_models.BatchTaskContainerSettings"] = rest_field(name="containerSettings")
+    container_settings: Optional["_models.BatchTaskContainerSettings"] = rest_field(
+        name="containerSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The settings for the container under which the StartTask runs. When this is specified, all
      directories recursively below the AZ_BATCH_NODE_ROOT_DIR (the root of Azure Batch directories
      on the node) are mapped into the container, all Task environment variables are mapped into the
      container, and the Task command line is executed in the container. Files produced in the
      container outside of AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host disk, meaning
      that Batch file APIs will not be able to access those files."""
-    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(name="resourceFiles")
+    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(
+        name="resourceFiles", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of files that the Batch service will download to the Compute Node before running the
      command line.  There is a maximum size for the list of resource files. When the max size is
      exceeded, the request will fail and the response error code will be RequestEntityTooLarge. If
      this occurs, the collection of ResourceFiles must be reduced in size. This can be achieved
      using .zip files, Application Packages, or Docker Containers. Files listed under this element
      are located in the Task's working directory."""
-    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(name="environmentSettings")
+    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
+        name="environmentSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of environment variable settings for the StartTask."""
-    user_identity: Optional["_models.UserIdentity"] = rest_field(name="userIdentity")
+    user_identity: Optional["_models.UserIdentity"] = rest_field(
+        name="userIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user identity under which the StartTask runs. If omitted, the Task runs as a
      non-administrative user unique to the Task."""
-    max_task_retry_count: Optional[int] = rest_field(name="maxTaskRetryCount")
+    max_task_retry_count: Optional[int] = rest_field(
+        name="maxTaskRetryCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum number of times the Task may be retried. The Batch service retries a Task if its
      exit code is nonzero. Note that this value specifically controls the number of retries. The
      Batch service will try the Task once, and may then retry up to this limit. For example, if the
@@ -5787,7 +6331,9 @@ class BatchStartTask(_model_base.Model):
      If the maximum retry count is 0, the Batch service does not retry the Task. If the maximum
      retry count is -1, the Batch service retries the Task without limit, however this is not
      recommended for a start task or any task. The default value is 0 (no retries)."""
-    wait_for_success: Optional[bool] = rest_field(name="waitForSuccess")
+    wait_for_success: Optional[bool] = rest_field(
+        name="waitForSuccess", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether the Batch service should wait for the StartTask to complete successfully (that is, to
      exit with exit code 0) before scheduling any Tasks on the Compute Node. If true and the
      StartTask fails on a Node, the Batch service retries the StartTask up to its maximum retry
@@ -5868,18 +6414,24 @@ class BatchStartTaskInfo(_model_base.Model):
     :vartype result: str or ~azure.batch.models.BatchTaskExecutionResult
     """
 
-    state: Union[str, "_models.BatchStartTaskState"] = rest_field()
+    state: Union[str, "_models.BatchStartTaskState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The state of the StartTask on the Compute Node. Required. Known values are: \"running\" and
      \"completed\"."""
-    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the StartTask started running. This value is reset every time the Task is
      restarted or retried (that is, this is the most recent time at which the StartTask started
      running). Required."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the StartTask stopped running. This is the end time of the most recent run of
      the StartTask, if that run has completed (even if that run failed and a retry is pending). This
      element is not present if the StartTask is currently running."""
-    exit_code: Optional[int] = rest_field(name="exitCode")
+    exit_code: Optional[int] = rest_field(name="exitCode", visibility=["read", "create", "update", "delete", "query"])
     """The exit code of the program specified on the StartTask command line. This property is set only
      if the StartTask is in the completed state. In general, the exit code for a process reflects
      the specific convention implemented by the application developer for that process. If you use
@@ -5887,24 +6439,32 @@ class BatchStartTaskInfo(_model_base.Model):
      convention used by the application process. However, if the Batch service terminates the
      StartTask (due to timeout, or user termination via the API) you may see an operating
      system-defined exit code."""
-    container_info: Optional["_models.BatchTaskContainerExecutionInfo"] = rest_field(name="containerInfo")
+    container_info: Optional["_models.BatchTaskContainerExecutionInfo"] = rest_field(
+        name="containerInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Information about the container under which the Task is executing. This property is set only if
      the Task runs in a container context."""
-    failure_info: Optional["_models.BatchTaskFailureInfo"] = rest_field(name="failureInfo")
+    failure_info: Optional["_models.BatchTaskFailureInfo"] = rest_field(
+        name="failureInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Information describing the Task failure, if any. This property is set only if the Task is in
      the completed state and encountered a failure."""
-    retry_count: int = rest_field(name="retryCount")
+    retry_count: int = rest_field(name="retryCount", visibility=["read", "create", "update", "delete", "query"])
     """The number of times the Task has been retried by the Batch service. Task application failures
      (non-zero exit code) are retried, pre-processing errors (the Task could not be run) and file
      upload errors are not retried. The Batch service will retry the Task up to the limit specified
      by the constraints. Required."""
-    last_retry_time: Optional[datetime.datetime] = rest_field(name="lastRetryTime", format="rfc3339")
+    last_retry_time: Optional[datetime.datetime] = rest_field(
+        name="lastRetryTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The most recent time at which a retry of the Task started running. This element is present only
      if the Task was retried (i.e. retryCount is nonzero). If present, this is typically the same as
      startTime, but may be different if the Task has been restarted for reasons other than retry;
      for example, if the Compute Node was rebooted during a retry, then the startTime is updated but
      the lastRetryTime is not."""
-    result: Optional[Union[str, "_models.BatchTaskExecutionResult"]] = rest_field()
+    result: Optional[Union[str, "_models.BatchTaskExecutionResult"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The result of the Task execution. If the value is 'failed', then the details of the failure can
      be found in the failureInfo property. Known values are: \"success\" and \"failure\"."""
 
@@ -5979,43 +6539,61 @@ class BatchSubtask(_model_base.Model):
     :vartype result: str or ~azure.batch.models.BatchTaskExecutionResult
     """
 
-    id: Optional[int] = rest_field()
+    id: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the subtask."""
-    node_info: Optional["_models.BatchNodeInfo"] = rest_field(name="nodeInfo")
+    node_info: Optional["_models.BatchNodeInfo"] = rest_field(
+        name="nodeInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Information about the Compute Node on which the subtask ran."""
-    start_time: Optional[datetime.datetime] = rest_field(name="startTime", format="rfc3339")
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the subtask started running. If the subtask has been restarted or retried,
      this is the most recent time at which the subtask started running."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the subtask completed. This property is set only if the subtask is in the
      Completed state."""
-    exit_code: Optional[int] = rest_field(name="exitCode")
+    exit_code: Optional[int] = rest_field(name="exitCode", visibility=["read", "create", "update", "delete", "query"])
     """The exit code of the program specified on the subtask command line. This property is set only
      if the subtask is in the completed state. In general, the exit code for a process reflects the
      specific convention implemented by the application developer for that process. If you use the
      exit code value to make decisions in your code, be sure that you know the exit code convention
      used by the application process. However, if the Batch service terminates the subtask (due to
      timeout, or user termination via the API) you may see an operating system-defined exit code."""
-    container_info: Optional["_models.BatchTaskContainerExecutionInfo"] = rest_field(name="containerInfo")
+    container_info: Optional["_models.BatchTaskContainerExecutionInfo"] = rest_field(
+        name="containerInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Information about the container under which the Task is executing. This property is set only if
      the Task runs in a container context."""
-    failure_info: Optional["_models.BatchTaskFailureInfo"] = rest_field(name="failureInfo")
+    failure_info: Optional["_models.BatchTaskFailureInfo"] = rest_field(
+        name="failureInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Information describing the Task failure, if any. This property is set only if the Task is in
      the completed state and encountered a failure."""
-    state: Optional[Union[str, "_models.BatchSubtaskState"]] = rest_field()
+    state: Optional[Union[str, "_models.BatchSubtaskState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The current state of the subtask. Known values are: \"preparing\", \"running\", and
      \"completed\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(name="stateTransitionTime", format="rfc3339")
+    state_transition_time: Optional[datetime.datetime] = rest_field(
+        name="stateTransitionTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the subtask entered its current state."""
-    previous_state: Optional[Union[str, "_models.BatchSubtaskState"]] = rest_field(name="previousState")
+    previous_state: Optional[Union[str, "_models.BatchSubtaskState"]] = rest_field(
+        name="previousState", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The previous state of the subtask. This property is not set if the subtask is in its initial
      running state. Known values are: \"preparing\", \"running\", and \"completed\"."""
     previous_state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="previousStateTransitionTime", format="rfc3339"
+        name="previousStateTransitionTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The time at which the subtask entered its previous state. This property is not set if the
      subtask is in its initial running state."""
-    result: Optional[Union[str, "_models.BatchTaskExecutionResult"]] = rest_field()
+    result: Optional[Union[str, "_models.BatchTaskExecutionResult"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The result of the Task execution. If the value is 'failed', then the details of the failure can
      be found in the failureInfo property. Known values are: \"success\" and \"failure\"."""
 
@@ -6075,20 +6653,30 @@ class BatchSupportedImage(_model_base.Model):
     :vartype verification_type: str or ~azure.batch.models.ImageVerificationType
     """
 
-    node_agent_sku_id: str = rest_field(name="nodeAgentSKUId")
+    node_agent_sku_id: str = rest_field(
+        name="nodeAgentSKUId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The ID of the Compute Node agent SKU which the Image supports. Required."""
-    image_reference: "_models.ImageReference" = rest_field(name="imageReference")
+    image_reference: "_models.ImageReference" = rest_field(
+        name="imageReference", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The reference to the Azure Virtual Machine's Marketplace Image. Required."""
-    os_type: Union[str, "_models.OSType"] = rest_field(name="osType")
+    os_type: Union[str, "_models.OSType"] = rest_field(
+        name="osType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of operating system (e.g. Windows or Linux) of the Image. Required. Known values are:
      \"linux\" and \"windows\"."""
-    capabilities: Optional[List[str]] = rest_field()
+    capabilities: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The capabilities or features which the Image supports. Not every capability of the Image is
      listed. Capabilities in this list are considered of special interest and are generally related
      to integration with other features in the Azure Batch service."""
-    batch_support_end_of_life: Optional[datetime.datetime] = rest_field(name="batchSupportEndOfLife", format="rfc3339")
+    batch_support_end_of_life: Optional[datetime.datetime] = rest_field(
+        name="batchSupportEndOfLife", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time when the Azure Batch service will stop accepting create Pool requests for the Image."""
-    verification_type: Union[str, "_models.ImageVerificationType"] = rest_field(name="verificationType")
+    verification_type: Union[str, "_models.ImageVerificationType"] = rest_field(
+        name="verificationType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether the Azure Batch service actively verifies that the Image is compatible with the
      associated Compute Node agent SKU. Required. Known values are: \"verified\" and \"unverified\"."""
 
@@ -6315,7 +6903,9 @@ class BatchTask(_model_base.Model):
     affinity_info: Optional["_models.AffinityInfo"] = rest_field(name="affinityInfo", visibility=["read"])
     """A locality hint that can be used by the Batch service to select a Compute Node on which to
      start the new Task."""
-    constraints: Optional["_models.BatchTaskConstraints"] = rest_field()
+    constraints: Optional["_models.BatchTaskConstraints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The execution constraints that apply to this Task."""
     required_slots: Optional[int] = rest_field(name="requiredSlots", visibility=["read"])
     """The number of scheduling slots that the Task requires to run. The default is 1. A Task can only
@@ -6384,7 +6974,9 @@ class BatchTaskAddCollectionResult(_model_base.Model):
     :vartype value: list[~azure.batch.models.BatchTaskAddResult]
     """
 
-    value: Optional[List["_models.BatchTaskAddResult"]] = rest_field()
+    value: Optional[List["_models.BatchTaskAddResult"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The results of the add Task collection operation."""
 
     @overload
@@ -6427,21 +7019,25 @@ class BatchTaskAddResult(_model_base.Model):
     :vartype error: ~azure.batch.models.BatchError
     """
 
-    status: Union[str, "_models.BatchTaskAddStatus"] = rest_field()
+    status: Union[str, "_models.BatchTaskAddStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The status of the add Task request. Required. Known values are: \"success\", \"clienterror\",
      and \"servererror\"."""
-    task_id: str = rest_field(name="taskId")
+    task_id: str = rest_field(name="taskId", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the Task for which this is the result. Required."""
-    e_tag: Optional[str] = rest_field(name="eTag")
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"])
     """The ETag of the Task, if the Task was successfully added. You can use this to detect whether
      the Task has changed between requests. In particular, you can be pass the ETag with an Update
      Task request to specify that your changes should take effect only if nobody else has modified
      the Job in the meantime."""
-    last_modified: Optional[datetime.datetime] = rest_field(name="lastModified", format="rfc3339")
+    last_modified: Optional[datetime.datetime] = rest_field(
+        name="lastModified", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The last modified time of the Task."""
-    location: Optional[str] = rest_field()
+    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The URL of the Task, if the Task was successfully added."""
-    error: Optional["_models.BatchError"] = rest_field()
+    error: Optional["_models.BatchError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error encountered while attempting to add the Task."""
 
     @overload
@@ -6490,16 +7086,22 @@ class BatchTaskConstraints(_model_base.Model):
     :vartype max_task_retry_count: int
     """
 
-    max_wall_clock_time: Optional[datetime.timedelta] = rest_field(name="maxWallClockTime")
+    max_wall_clock_time: Optional[datetime.timedelta] = rest_field(
+        name="maxWallClockTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum elapsed time that the Task may run, measured from the time the Task starts. If the
      Task does not complete within the time limit, the Batch service terminates it. If this is not
      specified, there is no time limit on how long the Task may run."""
-    retention_time: Optional[datetime.timedelta] = rest_field(name="retentionTime")
+    retention_time: Optional[datetime.timedelta] = rest_field(
+        name="retentionTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The minimum time to retain the Task directory on the Compute Node where it ran, from the time
      it completes execution. After this time, the Batch service may delete the Task directory and
      all its contents. The default is 7 days, i.e. the Task directory will be retained for 7 days
      unless the Compute Node is removed or the Job is deleted."""
-    max_task_retry_count: Optional[int] = rest_field(name="maxTaskRetryCount")
+    max_task_retry_count: Optional[int] = rest_field(
+        name="maxTaskRetryCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum number of times the Task may be retried. The Batch service retries a Task if its
      exit code is nonzero. Note that this value specifically controls the number of retries for the
      Task executable due to a nonzero exit code. The Batch service will try the Task once, and may
@@ -6543,12 +7145,14 @@ class BatchTaskContainerExecutionInfo(_model_base.Model):
     :vartype error: str
     """
 
-    container_id: Optional[str] = rest_field(name="containerId")
+    container_id: Optional[str] = rest_field(
+        name="containerId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The ID of the container."""
-    state: Optional[str] = rest_field()
+    state: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The state of the container. This is the state of the container according to the Docker service.
      It is equivalent to the status field returned by \"docker inspect\"."""
-    error: Optional[str] = rest_field()
+    error: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Detailed error information about the container. This is the detailed error string from the
      Docker service, if available. It is equivalent to the error field returned by \"docker
      inspect\"."""
@@ -6599,22 +7203,28 @@ class BatchTaskContainerSettings(_model_base.Model):
      list[~azure.batch.models.ContainerHostBatchBindMountEntry]
     """
 
-    container_run_options: Optional[str] = rest_field(name="containerRunOptions")
+    container_run_options: Optional[str] = rest_field(
+        name="containerRunOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional options to the container create command. These additional options are supplied as
      arguments to the \"docker create\" command, in addition to those controlled by the Batch
      Service."""
-    image_name: str = rest_field(name="imageName")
+    image_name: str = rest_field(name="imageName", visibility=["read", "create", "update", "delete", "query"])
     """The Image to use to create the container in which the Task will run. This is the full Image
      reference, as would be specified to \"docker pull\". If no tag is provided as part of the Image
      name, the tag \":latest\" is used as a default. Required."""
-    registry: Optional["_models.ContainerRegistryReference"] = rest_field()
+    registry: Optional["_models.ContainerRegistryReference"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The private registry which contains the container Image. This setting can be omitted if was
      already provided at Pool creation."""
-    working_directory: Optional[Union[str, "_models.ContainerWorkingDirectory"]] = rest_field(name="workingDirectory")
+    working_directory: Optional[Union[str, "_models.ContainerWorkingDirectory"]] = rest_field(
+        name="workingDirectory", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The location of the container Task working directory. The default is 'taskWorkingDirectory'.
      Known values are: \"taskWorkingDirectory\" and \"containerImageDefault\"."""
     container_host_batch_bind_mounts: Optional[List["_models.ContainerHostBatchBindMountEntry"]] = rest_field(
-        name="containerHostBatchBindMounts"
+        name="containerHostBatchBindMounts", visibility=["read", "create", "update", "delete", "query"]
     )
     """The paths you want to mounted to container task. If this array is null or be not present,
      container task will mount entire temporary disk drive in windows (or AZ_BATCH_NODE_ROOT_DIR in
@@ -6660,16 +7270,16 @@ class BatchTaskCounts(_model_base.Model):
     :vartype failed: int
     """
 
-    active: int = rest_field()
+    active: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of Tasks in the active state. Required."""
-    running: int = rest_field()
+    running: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of Tasks in the running or preparing state. Required."""
-    completed: int = rest_field()
+    completed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of Tasks in the completed state. Required."""
-    succeeded: int = rest_field()
+    succeeded: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of Tasks which succeeded. A Task succeeds if its result (found in the executionInfo
      property) is 'success'. Required."""
-    failed: int = rest_field()
+    failed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of Tasks which failed. A Task fails if its result (found in the executionInfo
      property) is 'failure'. Required."""
 
@@ -6705,9 +7315,13 @@ class BatchTaskCountsResult(_model_base.Model):
     :vartype task_slot_counts: ~azure.batch.models.BatchTaskSlotCounts
     """
 
-    task_counts: "_models.BatchTaskCounts" = rest_field(name="taskCounts")
+    task_counts: "_models.BatchTaskCounts" = rest_field(
+        name="taskCounts", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of Tasks per state. Required."""
-    task_slot_counts: "_models.BatchTaskSlotCounts" = rest_field(name="taskSlotCounts")
+    task_slot_counts: "_models.BatchTaskSlotCounts" = rest_field(
+        name="taskSlotCounts", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of TaskSlots required by Tasks per state. Required."""
 
     @overload
@@ -6820,17 +7434,21 @@ class BatchTaskCreateContent(_model_base.Model):
     :vartype authentication_token_settings: ~azure.batch.models.AuthenticationTokenSettings
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A string that uniquely identifies the Task within the Job. The ID can contain any combination
      of alphanumeric characters including hyphens and underscores, and cannot contain more than 64
      characters. The ID is case-preserving and case-insensitive (that is, you may not have two IDs
      within a Job that differ only by case). Required."""
-    display_name: Optional[str] = rest_field(name="displayName")
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A display name for the Task. The display name need not be unique and can contain any Unicode
      characters up to a maximum length of 1024."""
-    exit_conditions: Optional["_models.ExitConditions"] = rest_field(name="exitConditions")
+    exit_conditions: Optional["_models.ExitConditions"] = rest_field(
+        name="exitConditions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """How the Batch service should respond when the Task completes."""
-    command_line: str = rest_field(name="commandLine")
+    command_line: str = rest_field(name="commandLine", visibility=["read", "create", "update", "delete", "query"])
     """The command line of the Task. For multi-instance Tasks, the command line is executed as the
      primary Task, after the primary Task and all subtasks have finished executing the coordination
      command line. The command line does not run under a shell, and therefore cannot take advantage
@@ -6840,7 +7458,9 @@ class BatchTaskCreateContent(_model_base.Model):
      paths, it should use a relative path (relative to the Task working directory), or use the Batch
      provided environment variable
      (https://learn.microsoft.com/azure/batch/batch-compute-node-environment-variables). Required."""
-    container_settings: Optional["_models.BatchTaskContainerSettings"] = rest_field(name="containerSettings")
+    container_settings: Optional["_models.BatchTaskContainerSettings"] = rest_field(
+        name="containerSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The settings for the container under which the Task runs. If the Pool that will run this Task
      has containerConfiguration set, this must be set as well. If the Pool that will run this Task
      doesn't have containerConfiguration set, this must not be set. When this is specified, all
@@ -6849,7 +7469,9 @@ class BatchTaskCreateContent(_model_base.Model):
      container, and the Task command line is executed in the container. Files produced in the
      container outside of AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host disk, meaning
      that Batch file APIs will not be able to access those files."""
-    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(name="resourceFiles")
+    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(
+        name="resourceFiles", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of files that the Batch service will download to the Compute Node before running the
      command line. For multi-instance Tasks, the resource files will only be downloaded to the
      Compute Node on which the primary Task is executed. There is a maximum size for the list of
@@ -6857,37 +7479,53 @@ class BatchTaskCreateContent(_model_base.Model):
      code will be RequestEntityTooLarge. If this occurs, the collection of ResourceFiles must be
      reduced in size. This can be achieved using .zip files, Application Packages, or Docker
      Containers."""
-    output_files: Optional[List["_models.OutputFile"]] = rest_field(name="outputFiles")
+    output_files: Optional[List["_models.OutputFile"]] = rest_field(
+        name="outputFiles", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of files that the Batch service will upload from the Compute Node after running the
      command line. For multi-instance Tasks, the files will only be uploaded from the Compute Node
      on which the primary Task is executed."""
-    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(name="environmentSettings")
+    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
+        name="environmentSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of environment variable settings for the Task."""
-    affinity_info: Optional["_models.AffinityInfo"] = rest_field(name="affinityInfo")
+    affinity_info: Optional["_models.AffinityInfo"] = rest_field(
+        name="affinityInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A locality hint that can be used by the Batch service to select a Compute Node on which to
      start the new Task."""
-    constraints: Optional["_models.BatchTaskConstraints"] = rest_field()
+    constraints: Optional["_models.BatchTaskConstraints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The execution constraints that apply to this Task. If you do not specify constraints, the
      maxTaskRetryCount is the maxTaskRetryCount specified for the Job, the maxWallClockTime is
      infinite, and the retentionTime is 7 days."""
-    required_slots: Optional[int] = rest_field(name="requiredSlots")
+    required_slots: Optional[int] = rest_field(
+        name="requiredSlots", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of scheduling slots that the Task required to run. The default is 1. A Task can only
      be scheduled to run on a compute node if the node has enough free scheduling slots available.
      For multi-instance Tasks, this must be 1."""
-    user_identity: Optional["_models.UserIdentity"] = rest_field(name="userIdentity")
+    user_identity: Optional["_models.UserIdentity"] = rest_field(
+        name="userIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user identity under which the Task runs. If omitted, the Task runs as a non-administrative
      user unique to the Task."""
-    multi_instance_settings: Optional["_models.MultiInstanceSettings"] = rest_field(name="multiInstanceSettings")
+    multi_instance_settings: Optional["_models.MultiInstanceSettings"] = rest_field(
+        name="multiInstanceSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An object that indicates that the Task is a multi-instance Task, and contains information about
      how to run the multi-instance Task."""
-    depends_on: Optional["_models.BatchTaskDependencies"] = rest_field(name="dependsOn")
+    depends_on: Optional["_models.BatchTaskDependencies"] = rest_field(
+        name="dependsOn", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Tasks that this Task depends on. This Task will not be scheduled until all Tasks that it
      depends on have completed successfully. If any of those Tasks fail and exhaust their retry
      counts, this Task will never be scheduled. If the Job does not have usesTaskDependencies set to
      true, and this element is present, the request fails with error code
      TaskDependenciesNotSpecifiedOnJob."""
     application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = rest_field(
-        name="applicationPackageReferences"
+        name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of Packages that the Batch service will deploy to the Compute Node before running the
      command line. Application packages are downloaded and deployed to a shared directory, not the
@@ -6896,7 +7534,7 @@ class BatchTaskCreateContent(_model_base.Model):
      referenced Package cannot be installed, for example because the package has been deleted or
      because download failed, the Task fails."""
     authentication_token_settings: Optional["_models.AuthenticationTokenSettings"] = rest_field(
-        name="authenticationTokenSettings"
+        name="authenticationTokenSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """The settings for an authentication token that the Task can use to perform Batch service
      operations. If this property is set, the Batch service provides the Task with an authentication
@@ -6955,13 +7593,17 @@ class BatchTaskDependencies(_model_base.Model):
     :vartype task_id_ranges: list[~azure.batch.models.BatchTaskIdRange]
     """
 
-    task_ids: Optional[List[str]] = rest_field(name="taskIds")
+    task_ids: Optional[List[str]] = rest_field(
+        name="taskIds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of Task IDs that this Task depends on. All Tasks in this list must complete
      successfully before the dependent Task can be scheduled. The taskIds collection is limited to
      64000 characters total (i.e. the combined length of all Task IDs). If the taskIds collection
      exceeds the maximum length, the Add Task request fails with error code
      TaskDependencyListTooLong. In this case consider using Task ID ranges instead."""
-    task_id_ranges: Optional[List["_models.BatchTaskIdRange"]] = rest_field(name="taskIdRanges")
+    task_id_ranges: Optional[List["_models.BatchTaskIdRange"]] = rest_field(
+        name="taskIdRanges", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of Task ID ranges that this Task depends on. All Tasks in all ranges must complete
      successfully before the dependent Task can be scheduled."""
 
@@ -7038,49 +7680,63 @@ class BatchTaskExecutionInfo(_model_base.Model):
     :vartype result: str or ~azure.batch.models.BatchTaskExecutionResult
     """
 
-    start_time: Optional[datetime.datetime] = rest_field(name="startTime", format="rfc3339")
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the Task started running. 'Running' corresponds to the running state, so if
      the Task specifies resource files or Packages, then the start time reflects the time at which
      the Task started downloading or deploying these. If the Task has been restarted or retried,
      this is the most recent time at which the Task started running. This property is present only
      for Tasks that are in the running or completed state."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the Task completed. This property is set only if the Task is in the Completed
      state."""
-    exit_code: Optional[int] = rest_field(name="exitCode")
+    exit_code: Optional[int] = rest_field(name="exitCode", visibility=["read", "create", "update", "delete", "query"])
     """The exit code of the program specified on the Task command line. This property is set only if
      the Task is in the completed state. In general, the exit code for a process reflects the
      specific convention implemented by the application developer for that process. If you use the
      exit code value to make decisions in your code, be sure that you know the exit code convention
      used by the application process. However, if the Batch service terminates the Task (due to
      timeout, or user termination via the API) you may see an operating system-defined exit code."""
-    container_info: Optional["_models.BatchTaskContainerExecutionInfo"] = rest_field(name="containerInfo")
+    container_info: Optional["_models.BatchTaskContainerExecutionInfo"] = rest_field(
+        name="containerInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Information about the container under which the Task is executing. This property is set only if
      the Task runs in a container context."""
-    failure_info: Optional["_models.BatchTaskFailureInfo"] = rest_field(name="failureInfo")
+    failure_info: Optional["_models.BatchTaskFailureInfo"] = rest_field(
+        name="failureInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Information describing the Task failure, if any. This property is set only if the Task is in
      the completed state and encountered a failure."""
-    retry_count: int = rest_field(name="retryCount")
+    retry_count: int = rest_field(name="retryCount", visibility=["read", "create", "update", "delete", "query"])
     """The number of times the Task has been retried by the Batch service. Task application failures
      (non-zero exit code) are retried, pre-processing errors (the Task could not be run) and file
      upload errors are not retried. The Batch service will retry the Task up to the limit specified
      by the constraints. Required."""
-    last_retry_time: Optional[datetime.datetime] = rest_field(name="lastRetryTime", format="rfc3339")
+    last_retry_time: Optional[datetime.datetime] = rest_field(
+        name="lastRetryTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The most recent time at which a retry of the Task started running. This element is present only
      if the Task was retried (i.e. retryCount is nonzero). If present, this is typically the same as
      startTime, but may be different if the Task has been restarted for reasons other than retry;
      for example, if the Compute Node was rebooted during a retry, then the startTime is updated but
      the lastRetryTime is not."""
-    requeue_count: int = rest_field(name="requeueCount")
+    requeue_count: int = rest_field(name="requeueCount", visibility=["read", "create", "update", "delete", "query"])
     """The number of times the Task has been requeued by the Batch service as the result of a user
      request. When the user removes Compute Nodes from a Pool (by resizing/shrinking the pool) or
      when the Job is being disabled, the user can specify that running Tasks on the Compute Nodes be
      requeued for execution. This count tracks how many times the Task has been requeued for these
      reasons. Required."""
-    last_requeue_time: Optional[datetime.datetime] = rest_field(name="lastRequeueTime", format="rfc3339")
+    last_requeue_time: Optional[datetime.datetime] = rest_field(
+        name="lastRequeueTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The most recent time at which the Task has been requeued by the Batch service as the result of
      a user request. This property is set only if the requeueCount is nonzero."""
-    result: Optional[Union[str, "_models.BatchTaskExecutionResult"]] = rest_field()
+    result: Optional[Union[str, "_models.BatchTaskExecutionResult"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The result of the Task execution. If the value is 'failed', then the details of the failure can
      be found in the failureInfo property. Known values are: \"success\" and \"failure\"."""
 
@@ -7128,14 +7784,18 @@ class BatchTaskFailureInfo(_model_base.Model):
     :vartype details: list[~azure.batch.models.NameValuePair]
     """
 
-    category: Union[str, "_models.ErrorCategory"] = rest_field()
+    category: Union[str, "_models.ErrorCategory"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The category of the Task error. Required. Known values are: \"usererror\" and \"servererror\"."""
-    code: Optional[str] = rest_field()
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An identifier for the Task error. Codes are invariant and are intended to be consumed
      programmatically."""
-    message: Optional[str] = rest_field()
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A message describing the Task error, intended to be suitable for display in a user interface."""
-    details: Optional[List["_models.NameValuePair"]] = rest_field()
+    details: Optional[List["_models.NameValuePair"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of additional details related to the error."""
 
     @overload
@@ -7171,7 +7831,9 @@ class BatchTaskGroup(_model_base.Model):
     :vartype value: list[~azure.batch.models.BatchTaskCreateContent]
     """
 
-    value: List["_models.BatchTaskCreateContent"] = rest_field()
+    value: List["_models.BatchTaskCreateContent"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The collection of Tasks to add. The maximum count of Tasks is 100. The total serialized size of
      this collection must be less than 1MB. If it is greater than 1MB (for example if each Task has
      100's of resource files or environment variables), the request will fail with code
@@ -7206,9 +7868,9 @@ class BatchTaskIdRange(_model_base.Model):
     :vartype end: int
     """
 
-    start: int = rest_field()
+    start: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The first Task ID in the range. Required."""
-    end: int = rest_field()
+    end: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The last Task ID in the range. Required."""
 
     @overload
@@ -7249,18 +7911,22 @@ class BatchTaskInfo(_model_base.Model):
     :vartype execution_info: ~azure.batch.models.BatchTaskExecutionInfo
     """
 
-    task_url: Optional[str] = rest_field(name="taskUrl")
+    task_url: Optional[str] = rest_field(name="taskUrl", visibility=["read", "create", "update", "delete", "query"])
     """The URL of the Task."""
-    job_id: Optional[str] = rest_field(name="jobId")
+    job_id: Optional[str] = rest_field(name="jobId", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the Job to which the Task belongs."""
-    task_id: Optional[str] = rest_field(name="taskId")
+    task_id: Optional[str] = rest_field(name="taskId", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the Task."""
-    subtask_id: Optional[int] = rest_field(name="subtaskId")
+    subtask_id: Optional[int] = rest_field(name="subtaskId", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the subtask if the Task is a multi-instance Task."""
-    task_state: Union[str, "_models.BatchTaskState"] = rest_field(name="taskState")
+    task_state: Union[str, "_models.BatchTaskState"] = rest_field(
+        name="taskState", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The current state of the Task. Required. Known values are: \"active\", \"preparing\",
      \"running\", and \"completed\"."""
-    execution_info: Optional["_models.BatchTaskExecutionInfo"] = rest_field(name="executionInfo")
+    execution_info: Optional["_models.BatchTaskExecutionInfo"] = rest_field(
+        name="executionInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Information about the execution of the Task."""
 
     @overload
@@ -7295,7 +7961,9 @@ class BatchTaskSchedulingPolicy(_model_base.Model):
     :vartype node_fill_type: str or ~azure.batch.models.BatchNodeFillType
     """
 
-    node_fill_type: Union[str, "_models.BatchNodeFillType"] = rest_field(name="nodeFillType")
+    node_fill_type: Union[str, "_models.BatchNodeFillType"] = rest_field(
+        name="nodeFillType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """How Tasks are distributed across Compute Nodes in a Pool. If not specified, the default is
      spread. Required. Known values are: \"spread\" and \"pack\"."""
 
@@ -7333,15 +8001,15 @@ class BatchTaskSlotCounts(_model_base.Model):
     :vartype failed: int
     """
 
-    active: int = rest_field()
+    active: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of TaskSlots for active Tasks. Required."""
-    running: int = rest_field()
+    running: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of TaskSlots for running Tasks. Required."""
-    completed: int = rest_field()
+    completed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of TaskSlots for completed Tasks. Required."""
-    succeeded: int = rest_field()
+    succeeded: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of TaskSlots for succeeded Tasks. Required."""
-    failed: int = rest_field()
+    failed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of TaskSlots for failed Tasks. Required."""
 
     @overload
@@ -7403,33 +8071,49 @@ class BatchTaskStatistics(_model_base.Model):
     :vartype wait_time: ~datetime.timedelta
     """
 
-    url: str = rest_field()
+    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The URL of the statistics. Required."""
-    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The start time of the time range covered by the statistics. Required."""
-    last_update_time: datetime.datetime = rest_field(name="lastUpdateTime", format="rfc3339")
+    last_update_time: datetime.datetime = rest_field(
+        name="lastUpdateTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the statistics were last updated. All statistics are limited to the range
      between startTime and lastUpdateTime. Required."""
-    user_cpu_time: datetime.timedelta = rest_field(name="userCPUTime")
+    user_cpu_time: datetime.timedelta = rest_field(
+        name="userCPUTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total user mode CPU time (summed across all cores and all Compute Nodes) consumed by the
      Task. Required."""
-    kernel_cpu_time: datetime.timedelta = rest_field(name="kernelCPUTime")
+    kernel_cpu_time: datetime.timedelta = rest_field(
+        name="kernelCPUTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total kernel mode CPU time (summed across all cores and all Compute Nodes) consumed by the
      Task. Required."""
-    wall_clock_time: datetime.timedelta = rest_field(name="wallClockTime")
+    wall_clock_time: datetime.timedelta = rest_field(
+        name="wallClockTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total wall clock time of the Task. The wall clock time is the elapsed time from when the
      Task started running on a Compute Node to when it finished (or to the last time the statistics
      were updated, if the Task had not finished by then). If the Task was retried, this includes the
      wall clock time of all the Task retries. Required."""
-    read_i_ops: int = rest_field(name="readIOps")
+    read_i_ops: int = rest_field(
+        name="readIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
+    )
     """The total number of disk read operations made by the Task. Required."""
-    write_i_ops: int = rest_field(name="writeIOps")
+    write_i_ops: int = rest_field(
+        name="writeIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
+    )
     """The total number of disk write operations made by the Task. Required."""
-    read_io_gi_b: float = rest_field(name="readIOGiB")
+    read_io_gi_b: float = rest_field(name="readIOGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total gibibytes read from disk by the Task. Required."""
-    write_io_gi_b: float = rest_field(name="writeIOGiB")
+    write_io_gi_b: float = rest_field(name="writeIOGiB", visibility=["read", "create", "update", "delete", "query"])
     """The total gibibytes written to disk by the Task. Required."""
-    wait_time: datetime.timedelta = rest_field(name="waitTime")
+    wait_time: datetime.timedelta = rest_field(
+        name="waitTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total wait time of the Task. The wait time for a Task is defined as the elapsed time
      between the creation of the Task and the start of Task execution. (If the Task is retried due
      to failures, the wait time is the time to the most recent Task execution.). Required."""
@@ -7481,18 +8165,22 @@ class CifsMountConfiguration(_model_base.Model):
     :vartype password: str
     """
 
-    username: str = rest_field()
+    username: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The user to use for authentication against the CIFS file system. Required."""
-    source: str = rest_field()
+    source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The URI of the file system to mount. Required."""
-    relative_mount_path: str = rest_field(name="relativeMountPath")
+    relative_mount_path: str = rest_field(
+        name="relativeMountPath", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The relative path on the compute node where the file system will be mounted. All file systems
      are mounted relative to the Batch mounts directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR
      environment variable. Required."""
-    mount_options: Optional[str] = rest_field(name="mountOptions")
+    mount_options: Optional[str] = rest_field(
+        name="mountOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional command line options to pass to the mount command. These are 'net use' options in
      Windows and 'mount' options in Linux."""
-    password: str = rest_field()
+    password: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The password to use for authentication against the CIFS file system. Required."""
 
     @overload
@@ -7534,14 +8222,18 @@ class ContainerConfiguration(_model_base.Model):
     :vartype container_registries: list[~azure.batch.models.ContainerRegistryReference]
     """
 
-    type: Union[str, "_models.ContainerType"] = rest_field()
+    type: Union[str, "_models.ContainerType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The container technology to be used. Required. Known values are: \"dockerCompatible\" and
      \"criCompatible\"."""
-    container_image_names: Optional[List[str]] = rest_field(name="containerImageNames")
+    container_image_names: Optional[List[str]] = rest_field(
+        name="containerImageNames", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The collection of container Image names. This is the full Image reference, as would be
      specified to \"docker pull\". An Image will be sourced from the default Docker registry unless
      the Image is fully qualified with an alternative registry."""
-    container_registries: Optional[List["_models.ContainerRegistryReference"]] = rest_field(name="containerRegistries")
+    container_registries: Optional[List["_models.ContainerRegistryReference"]] = rest_field(
+        name="containerRegistries", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional private registries from which containers can be pulled. If any Images must be
      downloaded from a private registry which requires credentials, then those credentials must be
      provided here."""
@@ -7580,10 +8272,14 @@ class ContainerHostBatchBindMountEntry(_model_base.Model):
     :vartype is_read_only: bool
     """
 
-    source: Optional[Union[str, "_models.ContainerHostDataPath"]] = rest_field()
+    source: Optional[Union[str, "_models.ContainerHostDataPath"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The path which be mounted to container customer can select. Known values are: \"Shared\",
      \"Startup\", \"VfsMounts\", \"Task\", \"JobPrep\", and \"Applications\"."""
-    is_read_only: Optional[bool] = rest_field(name="isReadOnly")
+    is_read_only: Optional[bool] = rest_field(
+        name="isReadOnly", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Mount this source path as read-only mode or not. Default value is false (read/write mode). For
      Linux, if you mount this path as a read/write mode, this does not mean that all users in
      container have the read/write access for the path, it depends on the access in host VM. If this
@@ -7622,13 +8318,17 @@ class ContainerRegistryReference(_model_base.Model):
     :vartype identity_reference: ~azure.batch.models.BatchNodeIdentityReference
     """
 
-    username: Optional[str] = rest_field()
+    username: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The user name to log into the registry server."""
-    password: Optional[str] = rest_field()
+    password: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The password to log into the registry server."""
-    registry_server: Optional[str] = rest_field(name="registryServer")
+    registry_server: Optional[str] = rest_field(
+        name="registryServer", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The registry URL. If omitted, the default is \"docker.io\"."""
-    identity_reference: Optional["_models.BatchNodeIdentityReference"] = rest_field(name="identityReference")
+    identity_reference: Optional["_models.BatchNodeIdentityReference"] = rest_field(
+        name="identityReference", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The reference to the user assigned identity to use to access an Azure Container Registry
      instead of username and password."""
 
@@ -7676,18 +8376,22 @@ class DataDisk(_model_base.Model):
     :vartype storage_account_type: str or ~azure.batch.models.StorageAccountType
     """
 
-    logical_unit_number: int = rest_field(name="lun")
+    logical_unit_number: int = rest_field(name="lun", visibility=["read", "create", "update", "delete", "query"])
     """The logical unit number. The logicalUnitNumber is used to uniquely identify each data disk. If
      attaching multiple disks, each should have a distinct logicalUnitNumber. The value must be
      between 0 and 63, inclusive. Required."""
-    caching: Optional[Union[str, "_models.CachingType"]] = rest_field()
+    caching: Optional[Union[str, "_models.CachingType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of caching to be enabled for the data disks. The default value for caching is
      readwrite. For information about the caching options see:
      https://blogs.msdn.microsoft.com/windowsazurestorage/2012/06/27/exploring-windows-azure-drives-disks-and-images/.
      Known values are: \"none\", \"readonly\", and \"readwrite\"."""
-    disk_size_gb: int = rest_field(name="diskSizeGB")
+    disk_size_gb: int = rest_field(name="diskSizeGB", visibility=["read", "create", "update", "delete", "query"])
     """The initial disk size in gigabytes. Required."""
-    storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = rest_field(name="storageAccountType")
+    storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = rest_field(
+        name="storageAccountType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The storage Account type to be used for the data disk. If omitted, the default is
      \"standard_lrs\". Known values are: \"standard_lrs\", \"premium_lrs\", and \"standardssd_lrs\"."""
 
@@ -7727,7 +8431,9 @@ class DiffDiskSettings(_model_base.Model):
     :vartype placement: str or ~azure.batch.models.DiffDiskPlacement
     """
 
-    placement: Optional[Union[str, "_models.DiffDiskPlacement"]] = rest_field()
+    placement: Optional[Union[str, "_models.DiffDiskPlacement"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies the ephemeral disk placement for operating system disk for all VMs in the pool. This
      property can be used by user in the request to choose the location e.g., cache disk space for
      Ephemeral OS disk provisioning. For more information on Ephemeral OS disk size requirements,
@@ -7765,7 +8471,9 @@ class DiskEncryptionConfiguration(_model_base.Model):
     :vartype targets: list[str or ~azure.batch.models.DiskEncryptionTarget]
     """
 
-    targets: Optional[List[Union[str, "_models.DiskEncryptionTarget"]]] = rest_field()
+    targets: Optional[List[Union[str, "_models.DiskEncryptionTarget"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of disk targets Batch Service will encrypt on the compute node. The list of disk
      targets Batch Service will encrypt on the compute node."""
 
@@ -7797,9 +8505,9 @@ class EnvironmentSetting(_model_base.Model):
     :vartype value: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the environment variable. Required."""
-    value: Optional[str] = rest_field()
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value of the environment variable."""
 
     @overload
@@ -7833,9 +8541,11 @@ class ExitCodeMapping(_model_base.Model):
     :vartype exit_options: ~azure.batch.models.ExitOptions
     """
 
-    code: int = rest_field()
+    code: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A process exit code. Required."""
-    exit_options: "_models.ExitOptions" = rest_field(name="exitOptions")
+    exit_options: "_models.ExitOptions" = rest_field(
+        name="exitOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """How the Batch service should respond if the Task exits with this exit code. Required."""
 
     @overload
@@ -7871,11 +8581,13 @@ class ExitCodeRangeMapping(_model_base.Model):
     :vartype exit_options: ~azure.batch.models.ExitOptions
     """
 
-    start: int = rest_field()
+    start: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The first exit code in the range. Required."""
-    end: int = rest_field()
+    end: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The last exit code in the range. Required."""
-    exit_options: "_models.ExitOptions" = rest_field(name="exitOptions")
+    exit_options: "_models.ExitOptions" = rest_field(
+        name="exitOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """How the Batch service should respond if the Task exits with an exit code in the range start to
      end (inclusive). Required."""
 
@@ -7924,17 +8636,25 @@ class ExitConditions(_model_base.Model):
     :vartype default: ~azure.batch.models.ExitOptions
     """
 
-    exit_codes: Optional[List["_models.ExitCodeMapping"]] = rest_field(name="exitCodes")
+    exit_codes: Optional[List["_models.ExitCodeMapping"]] = rest_field(
+        name="exitCodes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of individual Task exit codes and how the Batch service should respond to them."""
-    exit_code_ranges: Optional[List["_models.ExitCodeRangeMapping"]] = rest_field(name="exitCodeRanges")
+    exit_code_ranges: Optional[List["_models.ExitCodeRangeMapping"]] = rest_field(
+        name="exitCodeRanges", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of Task exit code ranges and how the Batch service should respond to them."""
-    pre_processing_error: Optional["_models.ExitOptions"] = rest_field(name="preProcessingError")
+    pre_processing_error: Optional["_models.ExitOptions"] = rest_field(
+        name="preProcessingError", visibility=["read", "create", "update", "delete", "query"]
+    )
     """How the Batch service should respond if the Task fails to start due to an error."""
-    file_upload_error: Optional["_models.ExitOptions"] = rest_field(name="fileUploadError")
+    file_upload_error: Optional["_models.ExitOptions"] = rest_field(
+        name="fileUploadError", visibility=["read", "create", "update", "delete", "query"]
+    )
     """How the Batch service should respond if a file upload error occurs. If the Task exited with an
      exit code that was specified via exitCodes or exitCodeRanges, and then encountered a file
      upload error, then the action specified by the exit code takes precedence."""
-    default: Optional["_models.ExitOptions"] = rest_field()
+    default: Optional["_models.ExitOptions"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """How the Batch service should respond if the Task fails with an exit condition not covered by
      any of the other properties. This value is used if the Task exits with any nonzero exit code
      not listed in the exitCodes or exitCodeRanges collection, with a pre-processing error if the
@@ -7982,14 +8702,18 @@ class ExitOptions(_model_base.Model):
     :vartype dependency_action: str or ~azure.batch.models.DependencyAction
     """
 
-    job_action: Optional[Union[str, "_models.BatchJobAction"]] = rest_field(name="jobAction")
+    job_action: Optional[Union[str, "_models.BatchJobAction"]] = rest_field(
+        name="jobAction", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An action to take on the Job containing the Task, if the Task completes with the given exit
      condition and the Job's onTaskFailed property is 'performExitOptionsJobAction'. The default is
      none for exit code 0 and terminate for all other exit conditions. If the Job's onTaskFailed
      property is noaction, then specifying this property returns an error and the add Task request
      fails with an invalid property value error; if you are calling the REST API directly, the HTTP
      status code is 400 (Bad Request). Known values are: \"none\", \"disable\", and \"terminate\"."""
-    dependency_action: Optional[Union[str, "_models.DependencyAction"]] = rest_field(name="dependencyAction")
+    dependency_action: Optional[Union[str, "_models.DependencyAction"]] = rest_field(
+        name="dependencyAction", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An action that the Batch service performs on Tasks that depend on this Task. Possible values
      are 'satisfy' (allowing dependent tasks to progress) and 'block' (dependent tasks continue to
      wait). Batch does not yet support cancellation of dependent tasks. Known values are:
@@ -8024,7 +8748,7 @@ class FileProperties(_model_base.Model):
     :ivar last_modified: The time at which the file was last modified. Required.
     :vartype last_modified: ~datetime.datetime
     :ivar content_length: The length of the file. Required.
-    :vartype content_length: str
+    :vartype content_length: int
     :ivar content_type: The content type of the file.
     :vartype content_type: str
     :ivar file_mode: The file mode attribute in octal format. The file mode is returned only for
@@ -8032,15 +8756,23 @@ class FileProperties(_model_base.Model):
     :vartype file_mode: str
     """
 
-    creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", format="rfc3339")
+    creation_time: Optional[datetime.datetime] = rest_field(
+        name="creationTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The file creation time. The creation time is not returned for files on Linux Compute Nodes."""
-    last_modified: datetime.datetime = rest_field(name="lastModified", format="rfc3339")
+    last_modified: datetime.datetime = rest_field(
+        name="lastModified", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time at which the file was last modified. Required."""
-    content_length: str = rest_field(name="contentLength")
+    content_length: int = rest_field(
+        name="contentLength", visibility=["read", "create", "update", "delete", "query"], format="str"
+    )
     """The length of the file. Required."""
-    content_type: Optional[str] = rest_field(name="contentType")
+    content_type: Optional[str] = rest_field(
+        name="contentType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The content type of the file."""
-    file_mode: Optional[str] = rest_field(name="fileMode")
+    file_mode: Optional[str] = rest_field(name="fileMode", visibility=["read", "create", "update", "delete", "query"])
     """The file mode attribute in octal format. The file mode is returned only for files on Linux
      Compute Nodes."""
 
@@ -8049,7 +8781,7 @@ class FileProperties(_model_base.Model):
         self,
         *,
         last_modified: datetime.datetime,
-        content_length: str,
+        content_length: int,
         creation_time: Optional[datetime.datetime] = None,
         content_type: Optional[str] = None,
         file_mode: Optional[str] = None,
@@ -8077,9 +8809,9 @@ class HttpHeader(_model_base.Model):
     :vartype value: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The case-insensitive name of the header to be used while uploading output files. Required."""
-    value: Optional[str] = rest_field()
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value of the header to be used while uploading output files."""
 
     @overload
@@ -8122,9 +8854,9 @@ class ImageReference(_model_base.Model):
     :vartype version: str
     :ivar virtual_machine_image_id: The ARM resource identifier of the Azure Compute Gallery Image.
      Compute Nodes in the Pool will be created using this Image Id. This is of the form
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}/versions/{VersionId}  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}/versions/{VersionId}
      or
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}
      for always defaulting to the latest image version. This property is mutually exclusive with
      other ImageReference properties. The Azure Compute Gallery Image must have replicas in the same
      region and must be in the same subscription as the Azure Batch account. If the image version is
@@ -8145,24 +8877,26 @@ class ImageReference(_model_base.Model):
     :vartype community_gallery_image_id: str
     """
 
-    publisher: Optional[str] = rest_field()
+    publisher: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The publisher of the Azure Virtual Machines Marketplace Image. For example, Canonical or
      MicrosoftWindowsServer."""
-    offer: Optional[str] = rest_field()
+    offer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The offer type of the Azure Virtual Machines Marketplace Image. For example, UbuntuServer or
      WindowsServer."""
-    sku: Optional[str] = rest_field()
+    sku: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The SKU of the Azure Virtual Machines Marketplace Image. For example, 18.04-LTS or
      2019-Datacenter."""
-    version: Optional[str] = rest_field()
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the Azure Virtual Machines Marketplace Image. A value of 'latest' can be
      specified to select the latest version of an Image. If omitted, the default is 'latest'."""
-    virtual_machine_image_id: Optional[str] = rest_field(name="virtualMachineImageId")
+    virtual_machine_image_id: Optional[str] = rest_field(
+        name="virtualMachineImageId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The ARM resource identifier of the Azure Compute Gallery Image. Compute Nodes in the Pool will
      be created using this Image Id. This is of the form
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}/versions/{VersionId}  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}/versions/{VersionId}
      or
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}
      for always defaulting to the latest image version. This property is mutually exclusive with
      other ImageReference properties. The Azure Compute Gallery Image must have replicas in the same
      region and must be in the same subscription as the Azure Batch account. If the image version is
@@ -8173,10 +8907,14 @@ class ImageReference(_model_base.Model):
     """The specific version of the platform image or marketplace image used to create the node. This
      read-only field differs from 'version' only if the value specified for 'version' when the pool
      was created was 'latest'."""
-    shared_gallery_image_id: Optional[str] = rest_field(name="sharedGalleryImageId")
+    shared_gallery_image_id: Optional[str] = rest_field(
+        name="sharedGalleryImageId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The shared gallery image unique identifier. This property is mutually exclusive with other
      properties and can be fetched from shared gallery image GET call."""
-    community_gallery_image_id: Optional[str] = rest_field(name="communityGalleryImageId")
+    community_gallery_image_id: Optional[str] = rest_field(
+        name="communityGalleryImageId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The community gallery image unique identifier. This property is mutually exclusive with other
      properties and can be fetched from community gallery image GET call."""
 
@@ -8222,17 +8960,21 @@ class InboundEndpoint(_model_base.Model):
     :vartype backend_port: int
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the endpoint. Required."""
-    protocol: Union[str, "_models.InboundEndpointProtocol"] = rest_field()
+    protocol: Union[str, "_models.InboundEndpointProtocol"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The protocol of the endpoint. Required. Known values are: \"tcp\" and \"udp\"."""
-    public_ip_address: str = rest_field(name="publicIPAddress")
+    public_ip_address: str = rest_field(
+        name="publicIPAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The public IP address of the Compute Node. Required."""
-    public_fqdn: str = rest_field(name="publicFQDN")
+    public_fqdn: str = rest_field(name="publicFQDN", visibility=["read", "create", "update", "delete", "query"])
     """The public fully qualified domain name for the Compute Node. Required."""
-    frontend_port: int = rest_field(name="frontendPort")
+    frontend_port: int = rest_field(name="frontendPort", visibility=["read", "create", "update", "delete", "query"])
     """The public port number of the endpoint. Required."""
-    backend_port: int = rest_field(name="backendPort")
+    backend_port: int = rest_field(name="backendPort", visibility=["read", "create", "update", "delete", "query"])
     """The backend port number of the endpoint. Required."""
 
     @overload
@@ -8297,24 +9039,30 @@ class InboundNatPool(_model_base.Model):
     :vartype network_security_group_rules: list[~azure.batch.models.NetworkSecurityGroupRule]
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the endpoint. The name must be unique within a Batch Pool, can contain letters,
      numbers, underscores, periods, and hyphens. Names must start with a letter or number, must end
      with a letter, number, or underscore, and cannot exceed 77 characters.  If any invalid values
      are provided the request fails with HTTP status code 400. Required."""
-    protocol: Union[str, "_models.InboundEndpointProtocol"] = rest_field()
+    protocol: Union[str, "_models.InboundEndpointProtocol"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The protocol of the endpoint. Required. Known values are: \"tcp\" and \"udp\"."""
-    backend_port: int = rest_field(name="backendPort")
+    backend_port: int = rest_field(name="backendPort", visibility=["read", "create", "update", "delete", "query"])
     """The port number on the Compute Node. This must be unique within a Batch Pool. Acceptable values
      are between 1 and 65535 except for 29876 and 29877 as these are reserved. If any reserved
      values are provided the request fails with HTTP status code 400. Required."""
-    frontend_port_range_start: int = rest_field(name="frontendPortRangeStart")
+    frontend_port_range_start: int = rest_field(
+        name="frontendPortRangeStart", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The first port number in the range of external ports that will be used to provide inbound
      access to the backendPort on individual Compute Nodes. Acceptable values range between 1 and
      65534 except ports from 50000 to 55000 which are reserved. All ranges within a Pool must be
      distinct and cannot overlap. Each range must contain at least 40 ports. If any reserved or
      overlapping values are provided the request fails with HTTP status code 400. Required."""
-    frontend_port_range_end: int = rest_field(name="frontendPortRangeEnd")
+    frontend_port_range_end: int = rest_field(
+        name="frontendPortRangeEnd", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The last port number in the range of external ports that will be used to provide inbound access
      to the backendPort on individual Compute Nodes. Acceptable values range between 1 and 65534
      except ports from 50000 to 55000 which are reserved by the Batch service. All ranges within a
@@ -8322,7 +9070,7 @@ class InboundNatPool(_model_base.Model):
      reserved or overlapping values are provided the request fails with HTTP status code 400.
      Required."""
     network_security_group_rules: Optional[List["_models.NetworkSecurityGroupRule"]] = rest_field(
-        name="networkSecurityGroupRules"
+        name="networkSecurityGroupRules", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of network security group rules that will be applied to the endpoint. The maximum number
      of rules that can be specified across all the endpoints on a Batch Pool is 25. If no network
@@ -8368,15 +9116,21 @@ class InstanceViewStatus(_model_base.Model):
     :vartype time: ~datetime.datetime
     """
 
-    code: Optional[str] = rest_field()
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The status code."""
-    display_status: Optional[str] = rest_field(name="displayStatus")
+    display_status: Optional[str] = rest_field(
+        name="displayStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The localized label for the status."""
-    level: Optional[Union[str, "_models.StatusLevelTypes"]] = rest_field()
+    level: Optional[Union[str, "_models.StatusLevelTypes"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Level code. Known values are: \"Error\", \"Info\", and \"Warning\"."""
-    message: Optional[str] = rest_field()
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The detailed status message."""
-    time: Optional[datetime.datetime] = rest_field(format="rfc3339")
+    time: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time of the status."""
 
     @overload
@@ -8420,13 +9174,15 @@ class LinuxUserConfiguration(_model_base.Model):
     :vartype ssh_private_key: str
     """
 
-    uid: Optional[int] = rest_field()
+    uid: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The user ID of the user Account. The uid and gid properties must be specified together or not
      at all. If not specified the underlying operating system picks the uid."""
-    gid: Optional[int] = rest_field()
+    gid: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The group ID for the user Account. The uid and gid properties must be specified together or not
      at all. If not specified the underlying operating system picks the gid."""
-    ssh_private_key: Optional[str] = rest_field(name="sshPrivateKey")
+    ssh_private_key: Optional[str] = rest_field(
+        name="sshPrivateKey", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The SSH private key for the user Account. The private key must not be password protected. The
      private key is used to automatically configure asymmetric-key based authentication for SSH
      between Compute Nodes in a Linux Pool when the Pool's enableInterNodeCommunication property is
@@ -8464,10 +9220,14 @@ class ManagedDisk(_model_base.Model):
     :vartype security_profile: ~azure.batch.models.VMDiskSecurityProfile
     """
 
-    storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = rest_field(name="storageAccountType")
+    storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = rest_field(
+        name="storageAccountType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The storage account type for managed disk. Known values are: \"standard_lrs\", \"premium_lrs\",
      and \"standardssd_lrs\"."""
-    security_profile: Optional["_models.VMDiskSecurityProfile"] = rest_field(name="securityProfile")
+    security_profile: Optional["_models.VMDiskSecurityProfile"] = rest_field(
+        name="securityProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies the security profile settings for the managed disk."""
 
     @overload
@@ -8500,9 +9260,9 @@ class MetadataItem(_model_base.Model):
     :vartype value: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the metadata item. Required."""
-    value: str = rest_field()
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value of the metadata item. Required."""
 
     @overload
@@ -8543,18 +9303,22 @@ class MountConfiguration(_model_base.Model):
     """
 
     azure_blob_file_system_configuration: Optional["_models.AzureBlobFileSystemConfiguration"] = rest_field(
-        name="azureBlobFileSystemConfiguration"
+        name="azureBlobFileSystemConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The Azure Storage Container to mount using blob FUSE on each node. This property is mutually
      exclusive with all other properties."""
-    nfs_mount_configuration: Optional["_models.NfsMountConfiguration"] = rest_field(name="nfsMountConfiguration")
+    nfs_mount_configuration: Optional["_models.NfsMountConfiguration"] = rest_field(
+        name="nfsMountConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The NFS file system to mount on each node. This property is mutually exclusive with all other
      properties."""
-    cifs_mount_configuration: Optional["_models.CifsMountConfiguration"] = rest_field(name="cifsMountConfiguration")
+    cifs_mount_configuration: Optional["_models.CifsMountConfiguration"] = rest_field(
+        name="cifsMountConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The CIFS/SMB file system to mount on each node. This property is mutually exclusive with all
      other properties."""
     azure_file_share_configuration: Optional["_models.AzureFileShareConfiguration"] = rest_field(
-        name="azureFileShareConfiguration"
+        name="azureFileShareConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The Azure File Share to mount on each node. This property is mutually exclusive with all other
      properties."""
@@ -8608,13 +9372,19 @@ class MultiInstanceSettings(_model_base.Model):
     :vartype common_resource_files: list[~azure.batch.models.ResourceFile]
     """
 
-    number_of_instances: Optional[int] = rest_field(name="numberOfInstances")
+    number_of_instances: Optional[int] = rest_field(
+        name="numberOfInstances", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of Compute Nodes required by the Task. If omitted, the default is 1."""
-    coordination_command_line: str = rest_field(name="coordinationCommandLine")
+    coordination_command_line: str = rest_field(
+        name="coordinationCommandLine", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The command line to run on all the Compute Nodes to enable them to coordinate when the primary
      runs the main Task command. A typical coordination command line launches a background service
      and verifies that the service is ready to process inter-node messages. Required."""
-    common_resource_files: Optional[List["_models.ResourceFile"]] = rest_field(name="commonResourceFiles")
+    common_resource_files: Optional[List["_models.ResourceFile"]] = rest_field(
+        name="commonResourceFiles", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of files that the Batch service will download before running the coordination command
      line. The difference between common resource files and Task resource files is that common
      resource files are downloaded for all subtasks including the primary, whereas Task resource
@@ -8654,9 +9424,9 @@ class NameValuePair(_model_base.Model):
     :vartype value: str
     """
 
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name in the name-value pair."""
-    value: Optional[str] = rest_field()
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value in the name-value pair."""
 
     @overload
@@ -8683,7 +9453,7 @@ class NetworkConfiguration(_model_base.Model):
 
     :ivar subnet_id: The ARM resource identifier of the virtual network subnet which the Compute
      Nodes of the Pool will join. This is of the form
-     /subscriptions/{subscription}/resourceGroups/{group}/providers/{provider}/virtualNetworks/{network}/subnets/{subnet}.  # pylint: disable=line-too-long
+     /subscriptions/{subscription}/resourceGroups/{group}/providers/{provider}/virtualNetworks/{network}/subnets/{subnet}.
      The virtual network must be in the same region and subscription as the Azure Batch Account. The
      specified subnet should have enough free IP addresses to accommodate the number of Compute
      Nodes in the Pool. If the subnet doesn't have enough free IP addresses, the Pool will partially
@@ -8715,10 +9485,10 @@ class NetworkConfiguration(_model_base.Model):
     :vartype enable_accelerated_networking: bool
     """
 
-    subnet_id: Optional[str] = rest_field(name="subnetId")
+    subnet_id: Optional[str] = rest_field(name="subnetId", visibility=["read", "create", "update", "delete", "query"])
     """The ARM resource identifier of the virtual network subnet which the Compute Nodes of the Pool
      will join. This is of the form
-     /subscriptions/{subscription}/resourceGroups/{group}/providers/{provider}/virtualNetworks/{network}/subnets/{subnet}.  # pylint: disable=line-too-long
+     /subscriptions/{subscription}/resourceGroups/{group}/providers/{provider}/virtualNetworks/{network}/subnets/{subnet}.
      The virtual network must be in the same region and subscription as the Azure Batch Account. The
      specified subnet should have enough free IP addresses to accommodate the number of Compute
      Nodes in the Pool. If the subnet doesn't have enough free IP addresses, the Pool will partially
@@ -8734,18 +9504,20 @@ class NetworkConfiguration(_model_base.Model):
      29877. Also enable outbound connections to Azure Storage on port 443. For more details see:
      https://learn.microsoft.com/azure/batch/nodes-and-pools#virtual-network-vnet-and-firewall-configuration."""
     dynamic_v_net_assignment_scope: Optional[Union[str, "_models.DynamicVNetAssignmentScope"]] = rest_field(
-        name="dynamicVNetAssignmentScope"
+        name="dynamicVNetAssignmentScope", visibility=["read", "create", "update", "delete", "query"]
     )
     """The scope of dynamic vnet assignment. Known values are: \"none\" and \"job\"."""
     endpoint_configuration: Optional["_models.BatchPoolEndpointConfiguration"] = rest_field(
-        name="endpointConfiguration"
+        name="endpointConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The configuration for endpoints on Compute Nodes in the Batch Pool."""
     public_ip_address_configuration: Optional["_models.PublicIpAddressConfiguration"] = rest_field(
-        name="publicIPAddressConfiguration"
+        name="publicIPAddressConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The Public IPAddress configuration for Compute Nodes in the Batch Pool."""
-    enable_accelerated_networking: Optional[bool] = rest_field(name="enableAcceleratedNetworking")
+    enable_accelerated_networking: Optional[bool] = rest_field(
+        name="enableAcceleratedNetworking", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether this pool should enable accelerated networking. Accelerated networking enables single
      root I/O virtualization (SR-IOV) to a VM, which may lead to improved networking performance.
      For more details, see:
@@ -8800,21 +9572,27 @@ class NetworkSecurityGroupRule(_model_base.Model):
     :vartype source_port_ranges: list[str]
     """
 
-    priority: int = rest_field()
+    priority: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The priority for this rule. Priorities within a Pool must be unique and are evaluated in order
      of priority. The lower the number the higher the priority. For example, rules could be
      specified with order numbers of 150, 250, and 350. The rule with the order number of 150 takes
      precedence over the rule that has an order of 250. Allowed priorities are 150 to 4096. If any
      reserved or duplicate values are provided the request fails with HTTP status code 400.
      Required."""
-    access: Union[str, "_models.NetworkSecurityGroupRuleAccess"] = rest_field()
+    access: Union[str, "_models.NetworkSecurityGroupRuleAccess"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The action that should be taken for a specified IP address, subnet range or tag. Required.
      Known values are: \"allow\" and \"deny\"."""
-    source_address_prefix: str = rest_field(name="sourceAddressPrefix")
+    source_address_prefix: str = rest_field(
+        name="sourceAddressPrefix", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The source address prefix or tag to match for the rule. Valid values are a single IP address
      (i.e. 10.10.10.10), IP subnet (i.e. 192.168.1.0/24), default tag, or * (for all addresses).  If
      any other values are provided the request fails with HTTP status code 400. Required."""
-    source_port_ranges: Optional[List[str]] = rest_field(name="sourcePortRanges")
+    source_port_ranges: Optional[List[str]] = rest_field(
+        name="sourcePortRanges", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The source port ranges to match for the rule. Valid values are '\ *' (for all ports 0 - 65535),
      a specific port (i.e. 22), or a port range (i.e. 100-200). The ports must be in the range of 0
      to 65535. Each entry in this collection must not overlap any other entry (either a range or an
@@ -8857,13 +9635,17 @@ class NfsMountConfiguration(_model_base.Model):
     :vartype mount_options: str
     """
 
-    source: str = rest_field()
+    source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The URI of the file system to mount. Required."""
-    relative_mount_path: str = rest_field(name="relativeMountPath")
+    relative_mount_path: str = rest_field(
+        name="relativeMountPath", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The relative path on the compute node where the file system will be mounted. All file systems
      are mounted relative to the Batch mounts directory, accessible via the AZ_BATCH_NODE_MOUNTS_DIR
      environment variable. Required."""
-    mount_options: Optional[str] = rest_field(name="mountOptions")
+    mount_options: Optional[str] = rest_field(
+        name="mountOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional command line options to pass to the mount command. These are 'net use' options in
      Windows and 'mount' options in Linux."""
 
@@ -8906,18 +9688,28 @@ class OSDisk(_model_base.Model):
     :vartype write_accelerator_enabled: bool
     """
 
-    ephemeral_os_disk_settings: Optional["_models.DiffDiskSettings"] = rest_field(name="ephemeralOSDiskSettings")
+    ephemeral_os_disk_settings: Optional["_models.DiffDiskSettings"] = rest_field(
+        name="ephemeralOSDiskSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies the ephemeral Disk Settings for the operating system disk used by the compute node
      (VM)."""
-    caching: Optional[Union[str, "_models.CachingType"]] = rest_field()
+    caching: Optional[Union[str, "_models.CachingType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies the caching requirements. Possible values are: None, ReadOnly, ReadWrite. The default
      values are: None for Standard storage. ReadOnly for Premium storage. Known values are:
      \"none\", \"readonly\", and \"readwrite\"."""
-    disk_size_gb: Optional[int] = rest_field(name="diskSizeGB")
+    disk_size_gb: Optional[int] = rest_field(
+        name="diskSizeGB", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The initial disk size in GB when creating new OS disk."""
-    managed_disk: Optional["_models.ManagedDisk"] = rest_field(name="managedDisk")
+    managed_disk: Optional["_models.ManagedDisk"] = rest_field(
+        name="managedDisk", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The managed disk parameters."""
-    write_accelerator_enabled: Optional[bool] = rest_field(name="writeAcceleratorEnabled")
+    write_accelerator_enabled: Optional[bool] = rest_field(
+        name="writeAcceleratorEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies whether writeAccelerator should be enabled or disabled on the disk."""
 
     @overload
@@ -8970,7 +9762,7 @@ class OutputFile(_model_base.Model):
     :vartype upload_options: ~azure.batch.models.OutputFileUploadConfig
     """
 
-    file_pattern: str = rest_field(name="filePattern")
+    file_pattern: str = rest_field(name="filePattern", visibility=["read", "create", "update", "delete", "query"])
     """A pattern indicating which file(s) to upload. Both relative and absolute paths are supported.
      Relative paths are relative to the Task working directory. The following wildcards are
      supported: * matches 0 or more characters (for example pattern abc* would match abc or abcdef),
@@ -8984,9 +9776,13 @@ class OutputFile(_model_base.Model):
      using brackets (for example abc[\ *] would match a file named abc*\ ). Note that both and / are
      treated as directory separators on Windows, but only / is on Linux. Environment variables
      (%var% on Windows or $var on Linux) are expanded prior to the pattern being applied. Required."""
-    destination: "_models.OutputFileDestination" = rest_field()
+    destination: "_models.OutputFileDestination" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The destination for the output file(s). Required."""
-    upload_options: "_models.OutputFileUploadConfig" = rest_field(name="uploadOptions")
+    upload_options: "_models.OutputFileUploadConfig" = rest_field(
+        name="uploadOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Additional options for the upload operation, including under what conditions to perform the
      upload. Required."""
 
@@ -9036,21 +9832,25 @@ class OutputFileBlobContainerDestination(_model_base.Model):
     :vartype upload_headers: list[~azure.batch.models.HttpHeader]
     """
 
-    path: Optional[str] = rest_field()
+    path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The destination blob or virtual directory within the Azure Storage container. If filePattern
      refers to a specific file (i.e. contains no wildcards), then path is the name of the blob to
      which to upload that file. If filePattern contains one or more wildcards (and therefore may
      match multiple files), then path is the name of the blob virtual directory (which is prepended
      to each blob name) to which to upload the file(s). If omitted, file(s) are uploaded to the root
      of the container with a blob name matching their file name."""
-    container_url: str = rest_field(name="containerUrl")
+    container_url: str = rest_field(name="containerUrl", visibility=["read", "create", "update", "delete", "query"])
     """The URL of the container within Azure Blob Storage to which to upload the file(s). If not using
      a managed identity, the URL must include a Shared Access Signature (SAS) granting write
      permissions to the container. Required."""
-    identity_reference: Optional["_models.BatchNodeIdentityReference"] = rest_field(name="identityReference")
+    identity_reference: Optional["_models.BatchNodeIdentityReference"] = rest_field(
+        name="identityReference", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The reference to the user assigned identity to use to access Azure Blob Storage specified by
      containerUrl. The identity must have write access to the Azure Blob Storage container."""
-    upload_headers: Optional[List["_models.HttpHeader"]] = rest_field(name="uploadHeaders")
+    upload_headers: Optional[List["_models.HttpHeader"]] = rest_field(
+        name="uploadHeaders", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of name-value pairs for headers to be used in uploading output files. These headers will
      be specified when uploading files to Azure Storage. Official document on allowed headers when
      uploading blobs:
@@ -9084,7 +9884,9 @@ class OutputFileDestination(_model_base.Model):
     :vartype container: ~azure.batch.models.OutputFileBlobContainerDestination
     """
 
-    container: Optional["_models.OutputFileBlobContainerDestination"] = rest_field()
+    container: Optional["_models.OutputFileBlobContainerDestination"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A location in Azure blob storage to which files are uploaded."""
 
     @overload
@@ -9116,7 +9918,9 @@ class OutputFileUploadConfig(_model_base.Model):
     :vartype upload_condition: str or ~azure.batch.models.OutputFileUploadCondition
     """
 
-    upload_condition: Union[str, "_models.OutputFileUploadCondition"] = rest_field(name="uploadCondition")
+    upload_condition: Union[str, "_models.OutputFileUploadCondition"] = rest_field(
+        name="uploadCondition", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The conditions under which the Task output file or set of files should be uploaded. The default
      is taskcompletion. Required. Known values are: \"tasksuccess\", \"taskfailure\", and
      \"taskcompletion\"."""
@@ -9156,11 +9960,13 @@ class PublicIpAddressConfiguration(_model_base.Model):
     """
 
     ip_address_provisioning_type: Optional[Union[str, "_models.IpAddressProvisioningType"]] = rest_field(
-        name="provision"
+        name="provision", visibility=["read", "create", "update", "delete", "query"]
     )
     """The provisioning type for Public IP Addresses for the Pool. The default value is BatchManaged.
      Known values are: \"batchmanaged\", \"usermanaged\", and \"nopublicipaddresses\"."""
-    ip_address_ids: Optional[List[str]] = rest_field(name="ipAddressIds")
+    ip_address_ids: Optional[List[str]] = rest_field(
+        name="ipAddressIds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of public IPs which the Batch service will use when provisioning Compute Nodes. The
      number of IPs specified here limits the maximum size of the Pool - 100 dedicated nodes or 100
      Spot/Low-priority nodes can be allocated for each public IP. For example, a pool needing 250
@@ -9196,9 +10002,9 @@ class RecentBatchJob(_model_base.Model):
     :vartype url: str
     """
 
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the Job."""
-    url: Optional[str] = rest_field()
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The URL of the Job."""
 
     @overload
@@ -9233,13 +10039,15 @@ class ResizeError(_model_base.Model):
     :vartype values_property: list[~azure.batch.models.NameValuePair]
     """
 
-    code: Optional[str] = rest_field()
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An identifier for the Pool resize error. Codes are invariant and are intended to be consumed
      programmatically."""
-    message: Optional[str] = rest_field()
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A message describing the Pool resize error, intended to be suitable for display in a user
      interface."""
-    values_property: Optional[List["_models.NameValuePair"]] = rest_field(name="values")
+    values_property: Optional[List["_models.NameValuePair"]] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of additional error details related to the Pool resize error."""
 
     @overload
@@ -9308,31 +10116,37 @@ class ResourceFile(_model_base.Model):
     :vartype identity_reference: ~azure.batch.models.BatchNodeIdentityReference
     """
 
-    auto_storage_container_name: Optional[str] = rest_field(name="autoStorageContainerName")
+    auto_storage_container_name: Optional[str] = rest_field(
+        name="autoStorageContainerName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The storage container name in the auto storage Account. The autoStorageContainerName,
      storageContainerUrl and httpUrl properties are mutually exclusive and one of them must be
      specified."""
-    storage_container_url: Optional[str] = rest_field(name="storageContainerUrl")
+    storage_container_url: Optional[str] = rest_field(
+        name="storageContainerUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The URL of the blob container within Azure Blob Storage. The autoStorageContainerName,
      storageContainerUrl and httpUrl properties are mutually exclusive and one of them must be
      specified. This URL must be readable and listable from compute nodes. There are three ways to
      get such a URL for a container in Azure storage: include a Shared Access Signature (SAS)
      granting read and list permissions on the container, use a managed identity with read and list
      permissions, or set the ACL for the container to allow public access."""
-    http_url: Optional[str] = rest_field(name="httpUrl")
+    http_url: Optional[str] = rest_field(name="httpUrl", visibility=["read", "create", "update", "delete", "query"])
     """The URL of the file to download. The autoStorageContainerName, storageContainerUrl and httpUrl
      properties are mutually exclusive and one of them must be specified. If the URL points to Azure
      Blob Storage, it must be readable from compute nodes. There are three ways to get such a URL
      for a blob in Azure storage: include a Shared Access Signature (SAS) granting read permissions
      on the blob, use a managed identity with read permission, or set the ACL for the blob or its
      container to allow public access."""
-    blob_prefix: Optional[str] = rest_field(name="blobPrefix")
+    blob_prefix: Optional[str] = rest_field(
+        name="blobPrefix", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The blob prefix to use when downloading blobs from an Azure Storage container. Only the blobs
      whose names begin with the specified prefix will be downloaded. The property is valid only when
      autoStorageContainerName or storageContainerUrl is used. This prefix can be a partial filename
      or a subdirectory. If a prefix is not specified, all the files in the container will be
      downloaded."""
-    file_path: Optional[str] = rest_field(name="filePath")
+    file_path: Optional[str] = rest_field(name="filePath", visibility=["read", "create", "update", "delete", "query"])
     """The location on the Compute Node to which to download the file(s), relative to the Task's
      working directory. If the httpUrl property is specified, the filePath is required and describes
      the path which the file will be downloaded to, including the filename. Otherwise, if the
@@ -9341,12 +10155,14 @@ class ResourceFile(_model_base.Model):
      any directory structure already associated with the input data will be retained in full and
      appended to the specified filePath directory. The specified relative path cannot break out of
      the Task's working directory (for example by using '..')."""
-    file_mode: Optional[str] = rest_field(name="fileMode")
+    file_mode: Optional[str] = rest_field(name="fileMode", visibility=["read", "create", "update", "delete", "query"])
     """The file permission mode attribute in octal format. This property applies only to files being
      downloaded to Linux Compute Nodes. It will be ignored if it is specified for a resourceFile
      which will be downloaded to a Windows Compute Node. If this property is not specified for a
      Linux Compute Node, then a default value of 0770 is applied to the file."""
-    identity_reference: Optional["_models.BatchNodeIdentityReference"] = rest_field(name="identityReference")
+    identity_reference: Optional["_models.BatchNodeIdentityReference"] = rest_field(
+        name="identityReference", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The reference to the user assigned identity to use to access Azure Blob Storage specified by
      storageContainerUrl or httpUrl."""
 
@@ -9415,18 +10231,24 @@ class RollingUpgradePolicy(_model_base.Model):
     :vartype rollback_failed_instances_on_policy_breach: bool
     """
 
-    enable_cross_zone_upgrade: Optional[bool] = rest_field(name="enableCrossZoneUpgrade")
+    enable_cross_zone_upgrade: Optional[bool] = rest_field(
+        name="enableCrossZoneUpgrade", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Allow VMSS to ignore AZ boundaries when constructing upgrade batches. Take into consideration
      the Update Domain and maxBatchInstancePercent to determine the batch size. This field is able
      to be set to true or false only when using NodePlacementConfiguration as Zonal."""
-    max_batch_instance_percent: Optional[int] = rest_field(name="maxBatchInstancePercent")
+    max_batch_instance_percent: Optional[int] = rest_field(
+        name="maxBatchInstancePercent", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum percent of total virtual machine instances that will be upgraded simultaneously by
      the rolling upgrade in one batch. As this is a maximum, unhealthy instances in previous or
      future batches can cause the percentage of instances in a batch to decrease to ensure higher
      reliability. The value of this field should be between 5 and 100, inclusive. If both
      maxBatchInstancePercent and maxUnhealthyInstancePercent are assigned with value, the value of
      maxBatchInstancePercent should not be more than maxUnhealthyInstancePercent."""
-    max_unhealthy_instance_percent: Optional[int] = rest_field(name="maxUnhealthyInstancePercent")
+    max_unhealthy_instance_percent: Optional[int] = rest_field(
+        name="maxUnhealthyInstancePercent", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum percentage of the total virtual machine instances in the scale set that can be
      simultaneously unhealthy, either as a result of being upgraded, or by being found in an
      unhealthy state by the virtual machine health checks before the rolling upgrade aborts. This
@@ -9434,18 +10256,24 @@ class RollingUpgradePolicy(_model_base.Model):
      between 5 and 100, inclusive. If both maxBatchInstancePercent and maxUnhealthyInstancePercent
      are assigned with value, the value of maxBatchInstancePercent should not be more than
      maxUnhealthyInstancePercent."""
-    max_unhealthy_upgraded_instance_percent: Optional[int] = rest_field(name="maxUnhealthyUpgradedInstancePercent")
+    max_unhealthy_upgraded_instance_percent: Optional[int] = rest_field(
+        name="maxUnhealthyUpgradedInstancePercent", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum percentage of upgraded virtual machine instances that can be found to be in an
      unhealthy state. This check will happen after each batch is upgraded. If this percentage is
      ever exceeded, the rolling update aborts. The value of this field should be between 0 and 100,
      inclusive."""
-    pause_time_between_batches: Optional[datetime.timedelta] = rest_field(name="pauseTimeBetweenBatches")
+    pause_time_between_batches: Optional[datetime.timedelta] = rest_field(
+        name="pauseTimeBetweenBatches", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The wait time between completing the update for all virtual machines in one batch and starting
      the next batch. The time duration should be specified in ISO 8601 format.."""
-    prioritize_unhealthy_instances: Optional[bool] = rest_field(name="prioritizeUnhealthyInstances")
+    prioritize_unhealthy_instances: Optional[bool] = rest_field(
+        name="prioritizeUnhealthyInstances", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Upgrade all unhealthy instances in a scale set before any healthy instances."""
     rollback_failed_instances_on_policy_breach: Optional[bool] = rest_field(
-        name="rollbackFailedInstancesOnPolicyBreach"
+        name="rollbackFailedInstancesOnPolicyBreach", visibility=["read", "create", "update", "delete", "query"]
     )
     """Rollback failed instances to previous model if the Rolling Upgrade policy is violated."""
 
@@ -9494,17 +10322,23 @@ class SecurityProfile(_model_base.Model):
     :vartype uefi_settings: ~azure.batch.models.UefiSettings
     """
 
-    encryption_at_host: bool = rest_field(name="encryptionAtHost")
+    encryption_at_host: bool = rest_field(
+        name="encryptionAtHost", visibility=["read", "create", "update", "delete", "query"]
+    )
     """This property can be used by user in the request to enable or disable the Host Encryption for
      the virtual machine or virtual machine scale set. This will enable the encryption for all the
      disks including Resource/Temp disk at host itself. For more information on encryption at host
      requirements, please refer to
      https://learn.microsoft.com/azure/virtual-machines/disk-encryption#supported-vm-sizes.
      Required."""
-    security_type: Union[str, "_models.SecurityTypes"] = rest_field(name="securityType")
+    security_type: Union[str, "_models.SecurityTypes"] = rest_field(
+        name="securityType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies the SecurityType of the virtual machine. It has to be set to any specified value to
      enable UefiSettings. Required. Known values are: \"trustedLaunch\" and \"confidentialVM\"."""
-    uefi_settings: "_models.UefiSettings" = rest_field(name="uefiSettings")
+    uefi_settings: "_models.UefiSettings" = rest_field(
+        name="uefiSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies the security settings like secure boot and vTPM used while creating the virtual
      machine. Specifies the security settings like secure boot and vTPM used while creating the
      virtual machine. Required."""
@@ -9536,15 +10370,15 @@ class ServiceArtifactReference(_model_base.Model):
 
     :ivar id: The service artifact reference id of ServiceArtifactReference. The service artifact
      reference id in the form of
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
      Required.
     :vartype id: str
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The service artifact reference id of ServiceArtifactReference. The service artifact reference
      id in the form of
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
      Required."""
 
     @overload
@@ -9576,9 +10410,13 @@ class UefiSettings(_model_base.Model):
     :vartype v_tpm_enabled: bool
     """
 
-    secure_boot_enabled: Optional[bool] = rest_field(name="secureBootEnabled")
+    secure_boot_enabled: Optional[bool] = rest_field(
+        name="secureBootEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies whether secure boot should be enabled on the virtual machine."""
-    v_tpm_enabled: Optional[bool] = rest_field(name="vTpmEnabled")
+    v_tpm_enabled: Optional[bool] = rest_field(
+        name="vTpmEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies whether vTPM should be enabled on the virtual machine."""
 
     @overload
@@ -9620,7 +10458,7 @@ class UpgradePolicy(_model_base.Model):
     :vartype rolling_upgrade_policy: ~azure.batch.models.RollingUpgradePolicy
     """
 
-    mode: Union[str, "_models.UpgradeMode"] = rest_field()
+    mode: Union[str, "_models.UpgradeMode"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Specifies the mode of an upgrade to virtual machines in the scale set.\ :code:`<br />`\
      :code:`<br />` Possible values are:\ :code:`<br />`\ :code:`<br />` **Manual** - You  control
      the application of updates to virtual machines in the scale set. You do this by using the
@@ -9629,11 +10467,13 @@ class UpgradePolicy(_model_base.Model):
      **Rolling** - Scale set performs updates in batches with an optional pause time in between.
      Required. Known values are: \"automatic\", \"manual\", and \"rolling\"."""
     automatic_os_upgrade_policy: Optional["_models.AutomaticOsUpgradePolicy"] = rest_field(
-        name="automaticOSUpgradePolicy"
+        name="automaticOSUpgradePolicy", visibility=["read", "create", "update", "delete", "query"]
     )
     """Configuration parameters used for performing automatic OS Upgrade. The configuration parameters
      used for performing automatic OS upgrade."""
-    rolling_upgrade_policy: Optional["_models.RollingUpgradePolicy"] = rest_field(name="rollingUpgradePolicy")
+    rolling_upgrade_policy: Optional["_models.RollingUpgradePolicy"] = rest_field(
+        name="rollingUpgradePolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The configuration parameters used while performing a rolling upgrade."""
 
     @overload
@@ -9684,24 +10524,30 @@ class UploadBatchServiceLogsContent(_model_base.Model):
     :vartype identity_reference: ~azure.batch.models.BatchNodeIdentityReference
     """
 
-    container_url: str = rest_field(name="containerUrl")
+    container_url: str = rest_field(name="containerUrl", visibility=["read", "create", "update", "delete", "query"])
     """The URL of the container within Azure Blob Storage to which to upload the Batch Service log
      file(s). If a user assigned managed identity is not being used, the URL must include a Shared
      Access Signature (SAS) granting write permissions to the container. The SAS duration must allow
      enough time for the upload to finish. The start time for SAS is optional and recommended to not
      be specified. Required."""
-    start_time: datetime.datetime = rest_field(name="startTime", format="rfc3339")
+    start_time: datetime.datetime = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The start of the time range from which to upload Batch Service log file(s). Any log file
      containing a log message in the time range will be uploaded. This means that the operation
      might retrieve more logs than have been requested since the entire log file is always uploaded,
      but the operation should not retrieve fewer logs than have been requested. Required."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime", format="rfc3339")
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The end of the time range from which to upload Batch Service log file(s). Any log file
      containing a log message in the time range will be uploaded. This means that the operation
      might retrieve more logs than have been requested since the entire log file is always uploaded,
      but the operation should not retrieve fewer logs than have been requested. If omitted, the
      default is to upload all logs available after the startTime."""
-    identity_reference: Optional["_models.BatchNodeIdentityReference"] = rest_field(name="identityReference")
+    identity_reference: Optional["_models.BatchNodeIdentityReference"] = rest_field(
+        name="identityReference", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The reference to the user assigned identity to use to access Azure Blob Storage specified by
      containerUrl. The identity must have write access to the Azure Blob Storage container."""
 
@@ -9739,11 +10585,15 @@ class UploadBatchServiceLogsResult(_model_base.Model):
     :vartype number_of_files_uploaded: int
     """
 
-    virtual_directory_name: str = rest_field(name="virtualDirectoryName")
+    virtual_directory_name: str = rest_field(
+        name="virtualDirectoryName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The virtual directory within Azure Blob Storage container to which the Batch Service log
      file(s) will be uploaded. The virtual directory name is part of the blob name for each log file
      uploaded, and it is built based poolId, nodeId and a unique identifier. Required."""
-    number_of_files_uploaded: int = rest_field(name="numberOfFilesUploaded")
+    number_of_files_uploaded: int = rest_field(
+        name="numberOfFilesUploaded", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of log files which will be uploaded. Required."""
 
     @overload
@@ -9788,19 +10638,23 @@ class UserAccount(_model_base.Model):
     :vartype windows_user_configuration: ~azure.batch.models.WindowsUserConfiguration
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the user Account. Names can contain any Unicode characters up to a maximum length
      of 20. Required."""
-    password: str = rest_field()
+    password: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The password for the user Account. Required."""
-    elevation_level: Optional[Union[str, "_models.ElevationLevel"]] = rest_field(name="elevationLevel")
+    elevation_level: Optional[Union[str, "_models.ElevationLevel"]] = rest_field(
+        name="elevationLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The elevation level of the user Account. The default value is nonAdmin. Known values are:
      \"nonadmin\" and \"admin\"."""
-    linux_user_configuration: Optional["_models.LinuxUserConfiguration"] = rest_field(name="linuxUserConfiguration")
+    linux_user_configuration: Optional["_models.LinuxUserConfiguration"] = rest_field(
+        name="linuxUserConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Linux-specific user configuration for the user Account. This property is ignored if
      specified on a Windows Pool. If not specified, the user is created with the default options."""
     windows_user_configuration: Optional["_models.WindowsUserConfiguration"] = rest_field(
-        name="windowsUserConfiguration"
+        name="windowsUserConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The Windows-specific user configuration for the user Account. This property can only be
      specified if the user is on a Windows Pool. If not specified and on a Windows Pool, the user is
@@ -9842,7 +10696,7 @@ class UserAssignedIdentity(_model_base.Model):
     :vartype principal_id: str
     """
 
-    resource_id: str = rest_field(name="resourceId")
+    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
     """The ARM resource id of the user assigned identity. Required."""
     client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
     """The client id of the user assigned identity."""
@@ -9879,10 +10733,12 @@ class UserIdentity(_model_base.Model):
     :vartype auto_user: ~azure.batch.models.AutoUserSpecification
     """
 
-    username: Optional[str] = rest_field()
+    username: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the user identity under which the Task is run. The userName and autoUser properties
      are mutually exclusive; you must specify one but not both."""
-    auto_user: Optional["_models.AutoUserSpecification"] = rest_field(name="autoUser")
+    auto_user: Optional["_models.AutoUserSpecification"] = rest_field(
+        name="autoUser", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The auto user under which the Task is run. The userName and autoUser properties are mutually
      exclusive; you must specify one but not both."""
 
@@ -9934,7 +10790,7 @@ class VirtualMachineConfiguration(_model_base.Model):
      information see
      https://learn.microsoft.com/azure/virtual-machines/linux/classic/attach-disk#initialize-a-new-data-disk-in-linux
      and
-     https://learn.microsoft.com/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine.  # pylint: disable=line-too-long
+     https://learn.microsoft.com/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine.
     :vartype data_disks: list[~azure.batch.models.DataDisk]
     :ivar license_type: This only applies to Images that contain the Windows operating system, and
      should only be used when you hold valid on-premises licenses for the Compute
@@ -9967,14 +10823,18 @@ class VirtualMachineConfiguration(_model_base.Model):
     :ivar service_artifact_reference: Specifies the service artifact reference id used to set same
      image version for all virtual machines in the scale set when using 'latest' image version. The
      service artifact reference id in the form of
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
     :vartype service_artifact_reference: ~azure.batch.models.ServiceArtifactReference
     """
 
-    image_reference: "_models.ImageReference" = rest_field(name="imageReference")
+    image_reference: "_models.ImageReference" = rest_field(
+        name="imageReference", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A reference to the Azure Virtual Machines Marketplace Image or the custom Virtual Machine Image
      to use. Required."""
-    node_agent_sku_id: str = rest_field(name="nodeAgentSKUId")
+    node_agent_sku_id: str = rest_field(
+        name="nodeAgentSKUId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The SKU of the Batch Compute Node agent to be provisioned on Compute Nodes in the Pool. The
      Batch Compute Node agent is a program that runs on each Compute Node in the Pool, and provides
      the command-and-control interface between the Compute Node and the Batch service. There are
@@ -9982,10 +10842,14 @@ class VirtualMachineConfiguration(_model_base.Model):
      systems. You must specify a Compute Node agent SKU which matches the selected Image reference.
      To get the list of supported Compute Node agent SKUs along with their list of verified Image
      references, see the 'List supported Compute Node agent SKUs' operation. Required."""
-    windows_configuration: Optional["_models.WindowsConfiguration"] = rest_field(name="windowsConfiguration")
+    windows_configuration: Optional["_models.WindowsConfiguration"] = rest_field(
+        name="windowsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Windows operating system settings on the virtual machine. This property must not be specified
      if the imageReference property specifies a Linux OS Image."""
-    data_disks: Optional[List["_models.DataDisk"]] = rest_field(name="dataDisks")
+    data_disks: Optional[List["_models.DataDisk"]] = rest_field(
+        name="dataDisks", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The configuration for data disks attached to the Compute Nodes in the Pool. This property must
      be specified if the Compute Nodes in the Pool need to have empty data disks attached to them.
      This cannot be updated. Each Compute Node gets its own disk (the disk is not a file share).
@@ -9994,8 +10858,10 @@ class VirtualMachineConfiguration(_model_base.Model):
      not formatted after being attached, it must be formatted before use - for more information see
      https://learn.microsoft.com/azure/virtual-machines/linux/classic/attach-disk#initialize-a-new-data-disk-in-linux
      and
-     https://learn.microsoft.com/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine.  # pylint: disable=line-too-long"""
-    license_type: Optional[str] = rest_field(name="licenseType")
+     https://learn.microsoft.com/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine."""
+    license_type: Optional[str] = rest_field(
+        name="licenseType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """This only applies to Images that contain the Windows operating system, and
      should only be used when you hold valid on-premises licenses for the Compute
      Nodes which will be deployed. If omitted, no on-premises licensing discount is
@@ -10004,34 +10870,42 @@ class VirtualMachineConfiguration(_model_base.Model):
       Windows_Server - The on-premises license is for Windows
      Server.
       Windows_Client - The on-premises license is for Windows Client."""
-    container_configuration: Optional["_models.ContainerConfiguration"] = rest_field(name="containerConfiguration")
+    container_configuration: Optional["_models.ContainerConfiguration"] = rest_field(
+        name="containerConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The container configuration for the Pool. If specified, setup is performed on each Compute Node
      in the Pool to allow Tasks to run in containers. All regular Tasks and Job manager Tasks run on
      this Pool must specify the containerSettings property, and all other Tasks may specify it."""
     disk_encryption_configuration: Optional["_models.DiskEncryptionConfiguration"] = rest_field(
-        name="diskEncryptionConfiguration"
+        name="diskEncryptionConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The disk encryption configuration for the pool. If specified, encryption is performed on each
      node in the pool during node provisioning."""
     node_placement_configuration: Optional["_models.BatchNodePlacementConfiguration"] = rest_field(
-        name="nodePlacementConfiguration"
+        name="nodePlacementConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The node placement configuration for the pool. This configuration will specify rules on how
      nodes in the pool will be physically allocated."""
-    extensions: Optional[List["_models.VMExtension"]] = rest_field()
+    extensions: Optional[List["_models.VMExtension"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The virtual machine extension for the pool. If specified, the extensions mentioned in this
      configuration will be installed on each node."""
-    os_disk: Optional["_models.OSDisk"] = rest_field(name="osDisk")
+    os_disk: Optional["_models.OSDisk"] = rest_field(
+        name="osDisk", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Settings for the operating system disk of the Virtual Machine."""
-    security_profile: Optional["_models.SecurityProfile"] = rest_field(name="securityProfile")
+    security_profile: Optional["_models.SecurityProfile"] = rest_field(
+        name="securityProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies the security profile settings for the virtual machine or virtual machine scale set."""
     service_artifact_reference: Optional["_models.ServiceArtifactReference"] = rest_field(
-        name="serviceArtifactReference"
+        name="serviceArtifactReference", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the service artifact reference id used to set same image version for all virtual
      machines in the scale set when using 'latest' image version. The service artifact reference id
      in the form of
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.  # pylint: disable=line-too-long"""
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}."""
 
     @overload
     def __init__(
@@ -10073,9 +10947,13 @@ class VirtualMachineInfo(_model_base.Model):
     :vartype scale_set_vm_resource_id: str
     """
 
-    image_reference: Optional["_models.ImageReference"] = rest_field(name="imageReference")
+    image_reference: Optional["_models.ImageReference"] = rest_field(
+        name="imageReference", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The reference to the Azure Virtual Machine's Marketplace Image."""
-    scale_set_vm_resource_id: Optional[str] = rest_field(name="scaleSetVmResourceId")
+    scale_set_vm_resource_id: Optional[str] = rest_field(
+        name="scaleSetVmResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource ID of the Compute Node's current Virtual Machine Scale Set VM. Only defined if the
      Batch Account was created with its poolAllocationMode property set to 'UserSubscription'."""
 
@@ -10111,7 +10989,7 @@ class VMDiskSecurityProfile(_model_base.Model):
     """
 
     security_encryption_type: Optional[Union[str, "_models.SecurityEncryptionTypes"]] = rest_field(
-        name="securityEncryptionType"
+        name="securityEncryptionType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the EncryptionType of the managed disk. It is set to VMGuestStateOnly for encryption
      of just the VMGuestState blob, and NonPersistedTPM for not persisting firmware state in the
@@ -10165,27 +11043,37 @@ class VMExtension(_model_base.Model):
     :vartype provision_after_extensions: list[str]
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the virtual machine extension. Required."""
-    publisher: str = rest_field()
+    publisher: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the extension handler publisher. Required."""
-    type: str = rest_field()
+    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of the extension. Required."""
-    type_handler_version: Optional[str] = rest_field(name="typeHandlerVersion")
+    type_handler_version: Optional[str] = rest_field(
+        name="typeHandlerVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of script handler."""
-    auto_upgrade_minor_version: Optional[bool] = rest_field(name="autoUpgradeMinorVersion")
+    auto_upgrade_minor_version: Optional[bool] = rest_field(
+        name="autoUpgradeMinorVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Indicates whether the extension should use a newer minor version if one is available at
      deployment time. Once deployed, however, the extension will not upgrade minor versions unless
      redeployed, even with this property set to true."""
-    enable_automatic_upgrade: Optional[bool] = rest_field(name="enableAutomaticUpgrade")
+    enable_automatic_upgrade: Optional[bool] = rest_field(
+        name="enableAutomaticUpgrade", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Indicates whether the extension should be automatically upgraded by the platform if there is a
      newer version of the extension available."""
-    settings: Optional[Dict[str, str]] = rest_field()
+    settings: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """JSON formatted public settings for the extension."""
-    protected_settings: Optional[Dict[str, str]] = rest_field(name="protectedSettings")
+    protected_settings: Optional[Dict[str, str]] = rest_field(
+        name="protectedSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The extension can contain either protectedSettings or protectedSettingsFromKeyVault or no
      protected settings at all."""
-    provision_after_extensions: Optional[List[str]] = rest_field(name="provisionAfterExtensions")
+    provision_after_extensions: Optional[List[str]] = rest_field(
+        name="provisionAfterExtensions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The collection of extension names. Collection of extension names after which this extension
      needs to be provisioned."""
 
@@ -10226,11 +11114,15 @@ class VMExtensionInstanceView(_model_base.Model):
     :vartype sub_statuses: list[~azure.batch.models.InstanceViewStatus]
     """
 
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the vm extension instance view."""
-    statuses: Optional[List["_models.InstanceViewStatus"]] = rest_field()
+    statuses: Optional[List["_models.InstanceViewStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource status information."""
-    sub_statuses: Optional[List["_models.InstanceViewStatus"]] = rest_field(name="subStatuses")
+    sub_statuses: Optional[List["_models.InstanceViewStatus"]] = rest_field(
+        name="subStatuses", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource status information."""
 
     @overload
@@ -10261,7 +11153,9 @@ class WindowsConfiguration(_model_base.Model):
     :vartype enable_automatic_updates: bool
     """
 
-    enable_automatic_updates: Optional[bool] = rest_field(name="enableAutomaticUpdates")
+    enable_automatic_updates: Optional[bool] = rest_field(
+        name="enableAutomaticUpdates", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether automatic updates are enabled on the virtual machine. If omitted, the default value is
      true."""
 
@@ -10291,7 +11185,9 @@ class WindowsUserConfiguration(_model_base.Model):
     :vartype login_mode: str or ~azure.batch.models.LoginMode
     """
 
-    login_mode: Optional[Union[str, "_models.LoginMode"]] = rest_field(name="loginMode")
+    login_mode: Optional[Union[str, "_models.LoginMode"]] = rest_field(
+        name="loginMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The login mode for the user. The default is 'batch'. Known values are: \"batch\" and
      \"interactive\"."""
 
