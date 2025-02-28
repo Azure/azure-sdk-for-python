@@ -67,7 +67,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self._database_account_cache = None
 
     def get_refresh_time_interval_in_ms_stub(self):
-        return constants._Constants.DefaultEndpointRefreshTime
+        return constants._Constants.DefaultEndpointsRefreshTime
 
     def get_write_endpoint(self):
         return self.location_cache.get_write_regional_routing_context()
@@ -140,45 +140,25 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         Validating if the endpoint is healthy else marking it as unavailable.
         """
         endpoints_attempted = set()
-        database_account, endpoint = await self._GetDatabaseAccount(**kwargs)
-        endpoints_attempted.add(endpoint)
+        database_account, attempted_endpoint = await self._GetDatabaseAccount(**kwargs)
+        endpoints_attempted.add(attempted_endpoint)
         self.location_cache.perform_on_database_account_read(database_account)
-        # should use the endpoints in the order returned from gateway and only the ones specified in preferred locations
-        read_account_regional_routing_contexts_iterator = iter(self.location_cache
-                                                               .account_read_regional_routing_contexts_by_location
-                                                               .values())
-        first_read_regional_routing_context = None
-        # find first read endpoint from gateway and in preferred locations
-        for read_regional_routing_context in read_account_regional_routing_contexts_iterator:
-            if read_regional_routing_context in self.location_cache.read_regional_routing_contexts:
-                first_read_regional_routing_context = read_regional_routing_context
-                break
-        if first_read_regional_routing_context:
-            regional_routing_contexts = [first_read_regional_routing_context]
-        else:
-            regional_routing_contexts = []
-        # add write endpoints from gateway and in preferred locations
-        write_regional_writing_contexts = [endpoint for endpoint in
-                                           self.location_cache
-                                           .account_write_regional_routing_contexts_by_location.values()
-                                           if endpoint in self.location_cache.write_regional_routing_contexts]
-        regional_routing_contexts.extend(write_regional_writing_contexts)
+        # get all the endpoints to check
+        endpoints = self.location_cache.endpoints_to_health_check()
         success_count = 0
-        for regional_routing_context in regional_routing_contexts:
-            if regional_routing_context.get_primary() not in endpoints_attempted:
+        for endpoint in endpoints:
+            if endpoint not in endpoints_attempted:
                 # health check continues until 2 successes or all endpoints are checked
-                if success_count >= 2:
+                if success_count >= 4:
                     break
-                endpoints_attempted.add(regional_routing_context.get_primary())
+                endpoints_attempted.add(endpoint)
                 try:
-                    await self.client._GetDatabaseAccountCheck(regional_routing_context.get_primary(), **kwargs)
+                    await self.client._GetDatabaseAccountCheck(endpoint, **kwargs)
                     success_count += 1
-                    self.location_cache.mark_endpoint_available(regional_routing_context.get_primary())
+                    self.location_cache.mark_endpoint_available(endpoint)
                 except (exceptions.CosmosHttpResponseError, AzureError):
-                    if regional_routing_context in self.location_cache.read_regional_routing_contexts:
-                        self.mark_endpoint_unavailable_for_read(regional_routing_context.get_primary(), False)
-                    if regional_routing_context in self.location_cache.write_regional_routing_contexts:
-                        self.mark_endpoint_unavailable_for_write(regional_routing_context.get_primary(), False)
+                    self.mark_endpoint_unavailable_for_read(endpoint, False)
+                    self.mark_endpoint_unavailable_for_write(endpoint, False)
         self.location_cache.update_location_cache()
 
     async def _GetDatabaseAccount(self, **kwargs) -> Tuple[DatabaseAccount, str]:

@@ -69,10 +69,10 @@ class TestHealthCheck:
         expected_regional_routing_contexts = []
 
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        if use_write_global_endpoint and use_read_global_endpoint:
-            assert mock_get_database_account_check.counter == 0
-        else:
+        if use_read_global_endpoint:
             assert mock_get_database_account_check.counter == 1
+        else:
+            assert mock_get_database_account_check.counter == 2
         endpoint = self.host if use_read_global_endpoint else locational_endpoint
         expected_regional_routing_contexts.append(RegionalRoutingContext(endpoint, endpoint))
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
@@ -95,8 +95,12 @@ class TestHealthCheck:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
         expected_endpoints = []
 
-        if not use_read_global_endpoint or not use_write_global_endpoint:
-            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
+        if not use_read_global_endpoint:
+            for region in REGIONS:
+                locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, region)
+                expected_endpoints.append(locational_endpoint)
+        else:
+            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
             expected_endpoints.append(locational_endpoint)
 
         unavailable_endpoint_info = client.client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
@@ -111,8 +115,7 @@ class TestHealthCheck:
         _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = (
             self.MockGetDatabaseAccount(REGIONS, False, False))
         _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = mock_get_database_account_check
-        self.original_refresh_time_interval = setup[COLLECTION].client_connection._global_endpoint_manager.refresh_time_interval_in_ms
-        setup[COLLECTION].client_connection._global_endpoint_manager.refresh_time_interval_in_ms = 10 # ms
+        setup[COLLECTION].client_connection._global_endpoint_manager.refreshed_needed = True
         # mark endpoint as unavailable for read
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(TestHealthCheck.host, REGION_1)
         setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.mark_endpoint_unavailable_for_read(
@@ -125,7 +128,6 @@ class TestHealthCheck:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
             setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = self.original_preferred_locations
-            setup[COLLECTION].client_connection._global_endpoint_manager.refresh_time_interval_in_ms = self.original_refresh_time_interval
 
     class MockGetDatabaseAccountCheck(object):
         def __init__(self, client_connection=None, endpoint_unavailable=False):
@@ -138,11 +140,7 @@ class TestHealthCheck:
         def __call__(self, endpoint):
             if self.endpoint_unavailable:
                 assert self.client_connection.connection_policy.DBAReadTimeout == 1
-            locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(TestHealthCheck.host, REGIONS[self.index])
-            assert endpoint == locational_endpoint
             self.index -= 1
-
-
             self.counter += 1
 
     class MockGetDatabaseAccount(object):

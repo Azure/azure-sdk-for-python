@@ -48,36 +48,19 @@ class TestLocationCache(unittest.TestCase):
 
     def test_mark_endpoint_unavailable(self):
         lc = refresh_location_cache([], False)
-        current_time = time.time()
         # mark unavailable for read
         lc.mark_endpoint_unavailable_for_read(location1_endpoint, True)
         location1_info = lc.location_unavailability_info_by_endpoint[location1_endpoint]
-        assert location1_info['lastUnavailabilityCheckTimeStamp'] > current_time
         assert location1_info['operationType'] == {'Read'}
 
         # mark unavailable for write
         time.sleep(1)
-        current_time = time.time()
         lc.mark_endpoint_unavailable_for_write(location1_endpoint, False)
         location1_info = lc.location_unavailability_info_by_endpoint[location1_endpoint]
-        assert location1_info['lastUnavailabilityCheckTimeStamp'] > current_time
         assert location1_info['operationType'] == {'Read', 'Write'}
-
-    def test_clear_stale_endpoints(self):
-        lc = refresh_location_cache([], False)
-        current_time = time.time()
-        # mark unavailable for read
-        lc.mark_endpoint_unavailable_for_read(location1_endpoint, False)
-        location1_info = lc.location_unavailability_info_by_endpoint[location1_endpoint]
-        location1_info['lastUnavailabilityCheckTimeStamp'] = current_time - 2 * refresh_time_interval_in_ms
-        lc.location_unavailability_info_by_endpoint[location1_endpoint] = location1_info
-        # refresh stale endpoints, since the time since last check is greater than default expiration time
-        lc.clear_stale_endpoint_unavailability_info()
-        assert len(lc.location_unavailability_info_by_endpoint) == 0
 
     def test_is_endpoint_unavailable(self):
         lc = refresh_location_cache([], False)
-        current_time = time.time()
         assert lc.is_endpoint_unavailable_internal(location1_endpoint, "Read") is False
         assert lc.is_endpoint_unavailable_internal(location1_endpoint, "None") is False
         assert lc.is_endpoint_unavailable_internal(location1_endpoint, "Write") is False
@@ -90,10 +73,7 @@ class TestLocationCache(unittest.TestCase):
         assert lc.is_endpoint_unavailable_internal(location2_endpoint, "None") is False
         assert lc.is_endpoint_unavailable_internal(location2_endpoint, "Write")
         location1_info = lc.location_unavailability_info_by_endpoint[location1_endpoint]
-        location1_info['lastUnavailabilityCheckTimeStamp'] = current_time - 2 * refresh_time_interval_in_ms
         lc.location_unavailability_info_by_endpoint[location1_endpoint] = location1_info
-        # verify stale endpoint does not show up as unavailable
-        assert lc.is_endpoint_unavailable_internal(location1_endpoint, "Read") is False
 
     def test_get_locations(self):
         lc = refresh_location_cache([], False)
