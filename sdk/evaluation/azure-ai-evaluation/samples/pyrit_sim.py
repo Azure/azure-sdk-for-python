@@ -6,7 +6,7 @@ pip install -e ".[pyrit]"
 """
 
 
-from azure.ai.evaluation._safety_evaluation._safety_evaluation import _SafetyEvaluation, _AttackBudget
+from azure.ai.evaluation._safety_evaluation._red_team_agent import RedTeamAgent, AttackStrategy
 import os
 from azure.identity import DefaultAzureCredential
 from azure.ai.evaluation.simulator import AdversarialScenario
@@ -27,29 +27,29 @@ async def main():
         "project_name": os.environ.get("AZURE_PROJECT_NAME"),
     }
 
-    safety_eval_callback_target = _SafetyEvaluation(
+    red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
     )
 
-    outputs = await safety_eval_callback_target(
+    outputs = await red_team_agent.attack(
         target=test_target_fn,
         num_rows=1,
-        attack_budget=[_AttackBudget.LOW],
+        attack_strategy=[AttackStrategy.LOW],
         evaluation_name="CallbackTarget"
     )
 
     print(outputs)
 
-    safety_eval_model_target = _SafetyEvaluation(
+    red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
     )
 
-    outputs = await safety_eval_model_target(
-        target=model_config,
+    outputs = await red_team_agent.attack(
+        target=model_config, # type: ignore
         num_rows=1,
-        attack_budget=[_AttackBudget.LOW],
+        attack_strategy=[AttackStrategy.LOW],
         evaluation_name="ModelTarget"
     )
     print(outputs)
@@ -57,6 +57,8 @@ async def main():
 if __name__ == "__main__":
     import asyncio
     import time
+    from dotenv import load_dotenv
+    load_dotenv()
     start = time.perf_counter()
     asyncio.run(main())
     end = time.perf_counter()

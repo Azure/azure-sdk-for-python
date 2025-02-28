@@ -50,7 +50,7 @@ class CallbackChatTarget(PromptChatTarget):
         logger.info(f"Sending the following prompt to the prompt target: {request}")
 
         # response_context contains "messages", "stream", "session_state, "context"
-        response_context = await self._callback(messages=messages, stream=self._stream, session_state=None, context=None)
+        response_context = await self._callback(messages=messages, stream=self._stream, session_state=None, context=None) # type: ignore
 
         response_text = response_context["messages"][-1]["content"]
         response_entry = construct_response_from_request(
