@@ -53,6 +53,7 @@ from azure.storage.blob._generated.models import RehydratePriority
 from devtools_testutils import FakeTokenCredential, recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
+from test_helpers import MockStorageTransport
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -3530,5 +3531,58 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert
         result = blob.download_blob().readall()
         assert result == data[:length]
+
+    @BlobPreparer()
+    def test_mock_transport_no_content_validation(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        transport = MockStorageTransport()
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, "blob"),
+            container_name='test_cont',
+            blob_name='test_blob',
+            credential=storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        content = blob_client.download_blob()
+        assert content is not None
+
+        props = blob_client.get_blob_properties()
+        assert props is not None
+
+        data = b"Hello World!"
+        resp = blob_client.upload_blob(data, overwrite=True)
+        assert resp is not None
+
+        blob_data = blob_client.download_blob().read()
+        assert blob_data == b"Hello World!"  # data is fixed by mock transport
+
+        resp = blob_client.delete_blob()
+        assert resp is None
+
+    @BlobPreparer()
+    def test_mock_transport_with_content_validation(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        transport = MockStorageTransport()
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, "blob"),
+            container_name='test_cont',
+            blob_name='test_blob',
+            credential=storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        data = b"Hello World!"
+        resp = blob_client.upload_blob(data, overwrite=True, validate_content=True)
+        assert resp is not None
+
+        blob_data = blob_client.download_blob(validate_content=True).read()
+        assert blob_data == b"Hello World!"  # data is fixed by mock transport
 
     # ------------------------------------------------------------------------------

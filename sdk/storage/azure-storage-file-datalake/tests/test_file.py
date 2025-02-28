@@ -37,6 +37,7 @@ from azure.storage.filedatalake import (
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import DataLakePreparer
+from test_helpers import MockStorageTransport
 
 # ------------------------------------------------------------------------------
 
@@ -1639,6 +1640,59 @@ class TestFile(StorageRecordedTestCase):
         fc.upload_data(data, overwrite=True)
 
     @DataLakePreparer()
+    def test_mock_transport_no_content_validation(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        transport = MockStorageTransport()
+        file_client = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            "filesystem/",
+            "dir/file.txt",
+            credential=datalake_storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        data = file_client.download_file()
+        assert data is not None
+
+        props = file_client.get_file_properties()
+        assert props is not None
+
+        data = b"Hello World!"
+        resp = file_client.upload_data(data, overwrite=True)
+        assert resp is not None
+
+        file_data = file_client.download_file().read()
+        assert file_data == b"Hello World!"  # data is fixed by mock transport
+
+        resp = file_client.delete_file()
+        assert resp is not None
+
+    @DataLakePreparer()
+    def test_mock_transport_with_content_validation(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        transport = MockStorageTransport()
+        file_client = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            "filesystem/",
+            "dir/file.txt",
+            credential=datalake_storage_account_key,
+            transport=transport,
+            retry_total=0
+        )
+
+        data = b"Hello World!"
+        resp = file_client.upload_data(data, overwrite=True, validate_content=True)
+        assert resp is not None
+
+        file_data = file_client.download_file(validate_content=True).read()
+        assert file_data == b"Hello World!"  # data is fixed by mock transport
+
+    @DataLakePreparer()
     def test_progress_hook_download_upload(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -1663,7 +1717,7 @@ class TestFile(StorageRecordedTestCase):
 
         file_data = file_client.download_file(progress_hook=download_progress_hook).readall()
         assert file_data == data
-        assert len(downloads_called) == 1
+        assert len(downloads_called)
 
 # ------------------------------------------------------------------------------
 

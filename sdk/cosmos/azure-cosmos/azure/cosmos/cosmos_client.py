@@ -22,7 +22,7 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Union, cast
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Union, cast, Callable
 import warnings
 
 from azure.core import MatchConditions
@@ -260,6 +260,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         initial_headers: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -273,7 +274,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :returns: A DatabaseProxy instance representing the new database.
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
@@ -287,7 +289,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :dedent: 0
                 :caption: Create a database in the Cosmos DB account:
         """
-        response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
             kwargs["session_token"] = session_token
         if initial_headers is not None:
@@ -393,6 +394,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List the databases in a Cosmos DB SQL database account.
@@ -400,11 +402,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[Dict[str, str]]
         """
-        response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
             kwargs["session_token"] = session_token
         if initial_headers is not None:
@@ -435,6 +437,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Query the databases in a Cosmos DB SQL database account.
@@ -447,11 +450,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[Dict[str, str]]
         """
-        response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
             kwargs["session_token"] = session_token
         if initial_headers is not None:
@@ -495,6 +498,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         initial_headers: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         **kwargs: Any
     ) -> None:
         """Delete the database with the given ID (name).
@@ -507,11 +511,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
-        response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
             kwargs["session_token"] = session_token
         if initial_headers is not None:
@@ -534,14 +538,18 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             response_hook(self.client_connection.last_response_headers)
 
     @distributed_trace
-    def get_database_account(self, **kwargs) -> DatabaseAccount:
+    def get_database_account(
+            self,
+            *,
+            response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+            **kwargs) -> DatabaseAccount:
         """Retrieve the database account information.
 
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, Any]], None]
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
-        response_hook = kwargs.pop('response_hook', None)
         result = self.client_connection.GetDatabaseAccount(**kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)

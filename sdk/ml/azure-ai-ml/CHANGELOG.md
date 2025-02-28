@@ -10,6 +10,9 @@
   - #39744 - Fixing a serialization issue in RecurrencePattern schedule.
   - Fix environment archiving and restore
 
+### Other Changes
+  - Removing use of protected methods/classes imported from external libraries.
+
 ## 1.25.0 (2025-02-11)
 
 ### Features Added
