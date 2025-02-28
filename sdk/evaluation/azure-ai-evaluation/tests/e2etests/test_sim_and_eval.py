@@ -69,11 +69,6 @@ class TestSimAndEval:
                 max_conversation_turns=2,
                 max_simulation_results=2,
                 target=callback,
-                api_call_retry_limit=3,
-                api_call_retry_sleep_sec=1,
-                api_call_delay_sec=30,
-                concurrent_async_task=1,
-                randomization_seed=42,
             )
         )
         assert len(simulator_output) == 2
