@@ -1,5 +1,110 @@
 # Release History
 
+## 2.0.0 (2025-02-26)
+
+### Features Added
+
+  - Client `QuotaMgmtClient` added operation group `group_quotas`
+  - Client `QuotaMgmtClient` added operation group `group_quota_subscriptions`
+  - Client `QuotaMgmtClient` added operation group `group_quota_subscription_requests`
+  - Client `QuotaMgmtClient` added operation group `group_quota_limits_request`
+  - Client `QuotaMgmtClient` added operation group `group_quota_limits`
+  - Client `QuotaMgmtClient` added operation group `group_quota_subscription_allocation_request`
+  - Client `QuotaMgmtClient` added operation group `group_quota_subscription_allocation`
+  - Model `QuotaRequestDetails` added property `properties`
+  - Added model `AllocatedQuotaToSubscriptionList`
+  - Added model `AllocatedToSubscription`
+  - Added enum `CreatedByType`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added model `GroupQuotaDetails`
+  - Added model `GroupQuotaDetailsName`
+  - Added model `GroupQuotaLimit`
+  - Added model `GroupQuotaLimitList`
+  - Added model `GroupQuotaLimitListProperties`
+  - Added model `GroupQuotaLimitProperties`
+  - Added model `GroupQuotaList`
+  - Added model `GroupQuotaRequestBase`
+  - Added model `GroupQuotaRequestBaseProperties`
+  - Added model `GroupQuotaRequestBasePropertiesName`
+  - Added model `GroupQuotaSubscriptionId`
+  - Added model `GroupQuotaSubscriptionIdList`
+  - Added model `GroupQuotaSubscriptionIdProperties`
+  - Added model `GroupQuotaSubscriptionRequestStatus`
+  - Added model `GroupQuotaSubscriptionRequestStatusList`
+  - Added model `GroupQuotaSubscriptionRequestStatusProperties`
+  - Added model `GroupQuotaUsagesBase`
+  - Added model `GroupQuotaUsagesBaseName`
+  - Added model `GroupQuotasEntity`
+  - Added model `GroupQuotasEntityBase`
+  - Added model `GroupQuotasEntityBasePatch`
+  - Added model `GroupQuotasEntityPatch`
+  - Added model `GroupQuotasEntityPatchProperties`
+  - Added model `GroupQuotasEntityProperties`
+  - Added model `LROResponse`
+  - Added model `LROResponseProperties`
+  - Added model `ProxyResource`
+  - Added model `QuotaAllocationRequestBase`
+  - Added model `QuotaAllocationRequestBaseProperties`
+  - Added model `QuotaAllocationRequestBasePropertiesName`
+  - Added model `QuotaAllocationRequestStatus`
+  - Added model `QuotaAllocationRequestStatusList`
+  - Added model `QuotaAllocationRequestStatusProperties`
+  - Added model `QuotaRequestOneResourceProperties`
+  - Added model `QuotaRequestStatusDetails`
+  - Added enum `RequestState`
+  - Added model `Resource`
+  - Added model `ResourceBaseRequest`
+  - Added model `ResourceUsageList`
+  - Added model `ResourceUsages`
+  - Added model `SubmittedResourceRequestStatus`
+  - Added model `SubmittedResourceRequestStatusList`
+  - Added model `SubmittedResourceRequestStatusProperties`
+  - Added model `SubscriptionGroupQuotaAssignment`
+  - Added model `SubscriptionQuotaAllocationRequestList`
+  - Added model `SubscriptionQuotaAllocations`
+  - Added model `SubscriptionQuotaAllocationsList`
+  - Added model `SubscriptionQuotaAllocationsListProperties`
+  - Added model `SubscriptionQuotaAllocationsProperties`
+  - Added model `SubscriptionQuotaAllocationsStatusList`
+  - Added model `SubscriptionQuotaDetails`
+  - Added model `SubscriptionQuotaDetailsName`
+  - Added model `SystemData`
+  - Added operation group `GroupQuotaLimitsOperations`
+  - Added operation group `GroupQuotaLimitsRequestOperations`
+  - Added operation group `GroupQuotaSubscriptionAllocationOperations`
+  - Added operation group `GroupQuotaSubscriptionAllocationRequestOperations`
+  - Added operation group `GroupQuotaSubscriptionRequestsOperations`
+  - Added operation group `GroupQuotaSubscriptionsOperations`
+  - Added operation group `GroupQuotasOperations`
+
+### Breaking Changes
+
+  - Model `QuotaRequestDetails` deleted or renamed its instance variable `provisioning_state`
+  - Model `QuotaRequestDetails` deleted or renamed its instance variable `message`
+  - Model `QuotaRequestDetails` deleted or renamed its instance variable `error`
+  - Model `QuotaRequestDetails` deleted or renamed its instance variable `request_submit_time`
+  - Model `QuotaRequestDetails` deleted or renamed its instance variable `value`
+  - Model `QuotaRequestOneResourceSubmitResponse` deleted or renamed its instance variable `provisioning_state`
+  - Model `QuotaRequestOneResourceSubmitResponse` deleted or renamed its instance variable `message`
+  - Model `QuotaRequestOneResourceSubmitResponse` deleted or renamed its instance variable `request_submit_time`
+  - Model `QuotaRequestOneResourceSubmitResponse` deleted or renamed its instance variable `limit`
+  - Model `QuotaRequestOneResourceSubmitResponse` deleted or renamed its instance variable `current_value`
+  - Model `QuotaRequestOneResourceSubmitResponse` deleted or renamed its instance variable `unit`
+  - Model `QuotaRequestOneResourceSubmitResponse` deleted or renamed its instance variable `name_properties_name`
+  - Model `QuotaRequestOneResourceSubmitResponse` deleted or renamed its instance variable `resource_type`
+  - Model `QuotaRequestOneResourceSubmitResponse` deleted or renamed its instance variable `quota_period`
+  - Model `QuotaRequestOneResourceSubmitResponse` deleted or renamed its instance variable `is_quota_applicable`
+  - Model `QuotaRequestOneResourceSubmitResponse` deleted or renamed its instance variable `error`
+  - Model `QuotaRequestSubmitResponse202` deleted or renamed its instance variable `provisioning_state`
+  - Model `QuotaRequestSubmitResponse202` deleted or renamed its instance variable `message`
+  - Model `QuotaRequestSubmitResponse202` deleted or renamed its instance variable `limit`
+  - Model `QuotaRequestSubmitResponse202` deleted or renamed its instance variable `unit`
+  - Model `QuotaRequestSubmitResponse202` deleted or renamed its instance variable `name_properties_name`
+  - Model `QuotaRequestSubmitResponse202` deleted or renamed its instance variable `resource_type`
+  - Model `QuotaRequestSubmitResponse202` deleted or renamed its instance variable `quota_period`
+
 ## 2.0.0b2 (2025-01-22)
 
 ### Features Added
