@@ -27,6 +27,6 @@ def main():
     )
 
 
-# x-ms-original-file: v1.2-preview.1/FaceListOperations_DeleteLargeFaceList.json
+# x-ms-original-file: v1.2/FaceListOperations_DeleteLargeFaceList.json
 if __name__ == "__main__":
     main()

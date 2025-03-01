@@ -20,7 +20,7 @@ class TestEdgeZonesMgmtExtendedZonesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_extended_zones_get(self, resource_group):
         response = self.client.extended_zones.get(
             extended_zone_name="str",
         )
@@ -30,7 +30,7 @@ class TestEdgeZonesMgmtExtendedZonesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_extended_zones_list_by_subscription(self, resource_group):
         response = self.client.extended_zones.list_by_subscription()
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestEdgeZonesMgmtExtendedZonesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_register(self, resource_group):
+    def test_extended_zones_register(self, resource_group):
         response = self.client.extended_zones.register(
             extended_zone_name="str",
         )
@@ -48,7 +48,7 @@ class TestEdgeZonesMgmtExtendedZonesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_unregister(self, resource_group):
+    def test_extended_zones_unregister(self, resource_group):
         response = self.client.extended_zones.unregister(
             extended_zone_name="str",
         )

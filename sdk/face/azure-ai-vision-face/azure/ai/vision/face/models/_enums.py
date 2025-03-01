@@ -148,17 +148,6 @@ class FaceRecognitionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     better recognition accuracy."""
 
 
-class FaceSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current status of the session."""
-
-    NOT_STARTED = "NotStarted"
-    """Session has not started."""
-    STARTED = "Started"
-    """Session has started."""
-    RESULT_AVAILABLE = "ResultAvailable"
-    """Session has available result."""
-
-
 class FindSimilarMatchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Similar face searching mode."""
 
@@ -205,8 +194,7 @@ class HairColorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class LivenessModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The model version used for liveness classification."""
 
-    V2022_10_15_PREVIEW04 = "2022-10-15-preview.04"
-    V2023_12_20_PREVIEW06 = "2023-12-20-preview.06"
+    V2024_11_15 = "2024-11-15"
 
 
 class LivenessOperationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -251,6 +239,21 @@ class NoiseLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """High noise level."""
 
 
+class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum describing allowed operation states."""
+
+    NOT_STARTED = "NotStarted"
+    """The operation has not started."""
+    RUNNING = "Running"
+    """The operation is in progress."""
+    SUCCEEDED = "Succeeded"
+    """The operation has completed successfully."""
+    FAILED = "Failed"
+    """The operation has failed."""
+    CANCELED = "Canceled"
+    """The operation has been canceled by the user."""
+
+
 class QualityForRecognition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates quality of image for recognition."""
 
@@ -269,3 +272,5 @@ class Versions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """v1.1-preview.1"""
     V1_2_PREVIEW1 = "v1.2-preview.1"
     """v1.2-preview.1"""
+    V1_2 = "v1.2"
+    """v1.2"""
