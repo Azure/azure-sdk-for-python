@@ -34,6 +34,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
+    _MICROSOFT_CUSTOM_EVENT_NAME,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_shutdown,
@@ -103,12 +104,13 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         return cls(connection_string=conn_str, **kwargs)
 
 
-def _log_data_is_event(log_data: LogData):
+def _log_data_is_event(log_data: LogData) -> bool:
     log_record = log_data.log_record
-    is_event = False
+    is_event = None
     if log_record.attributes:
-        is_event = log_record.attributes.get(_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE, False)  # type: ignore
-    return is_event is True
+        is_event = log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME) or \
+            log_record.attributes.get(_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE)  # type: ignore
+    return is_event is not None
 
 
 # pylint: disable=protected-access
@@ -133,17 +135,8 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         stack_trace = log_record.attributes.get(EXCEPTION_STACKTRACE)
     severity_level = _get_severity_level(log_record.severity_number)
 
-    # Event telemetry
-    if _log_data_is_event(log_data):
-        _set_statsbeat_custom_events_feature()
-        envelope.name = "Microsoft.ApplicationInsights.Event"
-        data = TelemetryEventData(
-            name=_map_body_to_message(log_record.body),
-            properties=properties,
-        )
-        envelope.data = MonitorBase(base_data=data, base_type="EventData")
     # Exception telemetry
-    elif exc_type is not None or exc_message is not None:
+    if exc_type is not None or exc_message is not None:
         envelope.name = _EXCEPTION_ENVELOPE_NAME
         has_full_stack = stack_trace is not None
         if not exc_type:
@@ -167,6 +160,19 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
             exceptions=[exc_details],
         )
         envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
+    elif _log_data_is_event(log_data):  # Event telemetry
+        _set_statsbeat_custom_events_feature()
+        envelope.name = "Microsoft.ApplicationInsights.Event"
+        event_name = ""
+        if log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME):  # type: ignore
+            event_name = str(log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME))  # type: ignore
+        else:
+            event_name = _map_body_to_message(log_record.body)
+        data = TelemetryEventData(  # type: ignore
+            name=event_name,
+            properties=properties,
+        )
+        envelope.data = MonitorBase(base_data=data, base_type="EventData")
     else:  # Message telemetry
         envelope.name = _MESSAGE_ENVELOPE_NAME
         # pylint: disable=line-too-long
@@ -223,6 +229,7 @@ _IGNORED_ATTRS = frozenset(
         EXCEPTION_STACKTRACE,
         EXCEPTION_ESCAPED,
         _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
+        _MICROSOFT_CUSTOM_EVENT_NAME,
     )
 )
 

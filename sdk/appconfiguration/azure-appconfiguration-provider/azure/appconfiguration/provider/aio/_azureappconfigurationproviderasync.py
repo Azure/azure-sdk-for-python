@@ -406,13 +406,13 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     break
                 except AzureError as e:
                     exception = e
-                    logger.debug("Failed to refresh configurations from endpoint %s", client.endpoint)
+                    logger.warning("Failed to refresh configurations from endpoint %s", client.endpoint)
                     self._replica_client_manager.backoff(client)
                     is_failover_request = True
             if not success:
                 self._refresh_timer.backoff()
                 if self._on_refresh_error:
-                    self._on_refresh_error(exception)
+                    await self._on_refresh_error(exception)
                     return
                 raise exception
             if self._on_refresh_success:
@@ -425,6 +425,11 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self._replica_client_manager.find_active_clients()
         is_failover_request = False
         replica_count = self._replica_client_manager.get_client_count() - 1
+
+        error_message = """
+        Failed to load configuration settings. No Azure App Configuration stores successfully loaded from.
+        """
+        exception: Exception = RuntimeError(error_message)
 
         while client := self._replica_client_manager.get_next_active_client():
             headers = update_correlation_context_header(
@@ -480,13 +485,12 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     self._refresh_on = sentinel_keys
                     self._dict = configuration_settings_processed
                 return
-            except AzureError:
-                logger.debug("Failed to refresh configurations from endpoint %s", client.endpoint)
+            except AzureError as e:
+                exception = e
+                logger.warning("Failed to load configurations from endpoint %s.\n %s", client.endpoint, e.message)
                 self._replica_client_manager.backoff(client)
                 is_failover_request = True
-        raise RuntimeError(
-            "Failed to load configuration settings. No Azure App Configuration stores successfully loaded from."
-        )
+        raise exception
 
     async def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):

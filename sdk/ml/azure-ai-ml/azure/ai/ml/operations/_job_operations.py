@@ -179,6 +179,7 @@ class JobOperations(_ScopeDependentOperations):
 
         self.service_client_01_2024_preview = kwargs.pop("service_client_01_2024_preview", None)
         self.service_client_10_2024_preview = kwargs.pop("service_client_10_2024_preview", None)
+        self.service_client_01_2025_preview = kwargs.pop("service_client_01_2025_preview", None)
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -723,7 +724,7 @@ class JobOperations(_ScopeDependentOperations):
             if snapshot_id is not None:
                 job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-            result = self._create_or_update_with_latest_version_api(rest_job_resource=job_object, **kwargs)
+            result = self._create_or_update_with_different_version_api(rest_job_resource=job_object, **kwargs)
 
         return self._resolve_azureml_id(Job._from_rest_object(result))
 
@@ -737,6 +738,8 @@ class JobOperations(_ScopeDependentOperations):
             service_client_operation = self.service_client_01_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.SWEEP:
             service_client_operation = self.service_client_01_2024_preview.jobs
+        if rest_job_resource.properties.job_type == RestJobType.COMMAND:
+            service_client_operation = self.service_client_01_2025_preview.jobs
 
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,

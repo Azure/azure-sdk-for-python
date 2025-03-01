@@ -24,7 +24,7 @@ import isodate
 from azure.core.exceptions import DeserializationError
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline import PipelineResponse
-from azure.core.serialization import _Null
+from azure.core.serialization import NULL
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -145,7 +145,7 @@ class SdkJSONEncoder(JSONEncoder):
         try:
             return super(SdkJSONEncoder, self).default(o)
         except TypeError:
-            if isinstance(o, _Null):
+            if isinstance(o, type(NULL)):
                 return None
             if isinstance(o, decimal.Decimal):
                 return float(o)
@@ -581,7 +581,7 @@ class Model(_MyMutableMapping):
 
     @staticmethod
     def _as_dict_value(v: typing.Any, exclude_readonly: bool = False) -> typing.Any:
-        if v is None or isinstance(v, _Null):
+        if v is None or isinstance(v, type(NULL)):
             return None
         if isinstance(v, (list, tuple, set)):
             return type(v)(Model._as_dict_value(x, exclude_readonly=exclude_readonly) for x in v)
@@ -754,7 +754,7 @@ def _deserialize_with_callable(
     value: typing.Any,
 ):
     try:
-        if value is None or isinstance(value, _Null):
+        if value is None or isinstance(value, type(NULL)):
             return None
         if deserializer is None:
             return value

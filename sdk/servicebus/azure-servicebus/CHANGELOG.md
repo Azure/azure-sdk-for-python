@@ -1,5 +1,11 @@
 # Release History
 
+## 7.14.1 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed a bug where service errors were incorrectly required and expected to have info/description fields.
+
 ## 7.14.0 (2025-02-13)
 
 ### Features Added

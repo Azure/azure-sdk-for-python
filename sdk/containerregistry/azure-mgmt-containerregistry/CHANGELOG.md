@@ -1,5 +1,27 @@
 # Release History
 
+## 12.0.0 (2025-02-24)
+
+### Breaking Changes
+  - Removed subfolders of some unused Api-Versions for smaller package size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+
+## 11.0.0 (2024-02-19)
+
+### Features Added
+
+  - Model ConnectedRegistry has a new parameter garbage_collection
+  - Model ConnectedRegistryUpdateParameters has a new parameter garbage_collection
+  - Model Registry has a new parameter auto_generated_domain_name_label_scope
+  - Model RegistryNameCheckRequest has a new parameter auto_generated_domain_name_label_scope
+  - Model RegistryNameCheckRequest has a new parameter resource_group_name
+  - Model RegistryNameStatus has a new parameter available_login_server_name
+
+### Breaking Changes
+
+  - Removed operation group BuildStepsOperations
+  - Removed operation group BuildTasksOperations
+  - Removed operation group BuildsOperations
+
 ## 10.3.0 (2023-11-20)
 
 ### Features Added
