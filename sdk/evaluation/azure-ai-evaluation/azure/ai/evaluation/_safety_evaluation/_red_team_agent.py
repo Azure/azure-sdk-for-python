@@ -19,7 +19,7 @@ from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfigurat
 from azure.ai.evaluation._safety_evaluation._callback_chat_target import CallbackChatTarget
 from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
 from pyrit.orchestrator import ManyShotJailbreakOrchestrator, SkeletonKeyOrchestrator, Orchestrator
-from pyrit.prompt_converter import PromptConverter, MathPromptConverter, TenseConverter, Base64Converter, FlipConverter, MorseConverter
+from pyrit.prompt_converter import PromptConverter, MathPromptConverter, TenseConverter, Base64Converter, FlipConverter, MorseConverter, AnsiAttackConverter, AsciiArtConverter, AsciiSmugglerConverter, AtbashConverter, BinaryConverter, CaesarConverter, CharacterSpaceConverter, CharSwapGenerator, CharSwapGenerator, CharSwapGenerator, DiacriticConverter, DiacriticConverter, LeetspeakConverter, UrlConverter, UnicodeSubstitutionConverter, UnicodeConfusableConverter, SuffixAppendConverter, StringJoinConverter, ROT13Converter, RepeatTokenConverter
 from pyrit.prompt_target import PromptChatTarget
 from azure.core.credentials import TokenCredential
 import json
@@ -34,10 +34,33 @@ from azure.ai.evaluation._safety_evaluation._safety_evaluation import _SafetyEva
 
 @experimental
 class AttackStrategy(Enum):
-    """Budget levels for attacks."""
+    """Strategies for attacks."""
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
+    AnsiAttackConverter = "ansi_attack"
+    AsciiArtConverter = "ascii_art"
+    AsciiSmugglerConverter = "ascii_smuggler"
+    AtbashConverter = "atbash"
+    Base64Converter = "base64"
+    BinaryConverter = "binary"
+    CaesarConverter = "caesar"
+    CharacterSpaceConverter = "character_space"
+    CharSwapGenerator = "char_swap"
+    DiacriticConverter = "diacritic"
+    FlipConverter = "flip"
+    LeetspeakConverter = "leetspeak"
+    MathConverter = "math"
+    MorseConverter = "morse"
+    ROT13Converter = "rot13"
+    RepeatTokenConverter = "repeat_token"
+    SuffixAppendConverter = "suffix_append"
+    StringJoinConverter = "string_join"
+    TenseConverter = "tense"
+    UnicodeConfusableConverter = "unicode_confusable"
+    UnicodeSubstitutionConverter = "unicode_substitution"
+    UrlConverter = "url"
+
 
 @experimental
 class RedTeamAgent(_SafetyEvaluation):
@@ -55,6 +78,32 @@ class RedTeamAgent(_SafetyEvaluation):
         )
 
         initialize_pyrit(memory_db_type=DUCK_DB)
+
+    def _strategy_converter_map(self):
+        return{
+        AttackStrategy.AnsiAttackConverter: AnsiAttackConverter(),
+        AttackStrategy.AsciiArtConverter: AsciiArtConverter(),
+        AttackStrategy.AsciiSmugglerConverter: AsciiSmugglerConverter(),
+        AttackStrategy.AtbashConverter: AtbashConverter(),
+        AttackStrategy.Base64Converter: Base64Converter(),
+        AttackStrategy.BinaryConverter: BinaryConverter(),
+        AttackStrategy.CaesarConverter: CaesarConverter(caesar_offset=1),
+        AttackStrategy.CharacterSpaceConverter: CharacterSpaceConverter(),
+        AttackStrategy.CharSwapGenerator: CharSwapGenerator(),
+        AttackStrategy.DiacriticConverter: DiacriticConverter(),
+        AttackStrategy.FlipConverter: FlipConverter(),
+        AttackStrategy.LeetspeakConverter: LeetspeakConverter(),
+        AttackStrategy.MathConverter: MathPromptConverter(converter_target=self.chat_target),
+        AttackStrategy.MorseConverter: MorseConverter(),
+        AttackStrategy.ROT13Converter: ROT13Converter(),
+        AttackStrategy.RepeatTokenConverter: RepeatTokenConverter(token_to_repeat="hello"), # TODO: Decide which token we would like to repeat
+        AttackStrategy.SuffixAppendConverter: SuffixAppendConverter(suffix="hello"), # TODO: Decide which suffix we would like to append
+        AttackStrategy.StringJoinConverter: StringJoinConverter(),
+        AttackStrategy.TenseConverter: TenseConverter(converter_target=self.chat_target, tense="past"), # TODO: Decide which tense we would like to use
+        AttackStrategy.UnicodeConfusableConverter: UnicodeConfusableConverter(),
+        AttackStrategy.UnicodeSubstitutionConverter: UnicodeSubstitutionConverter(),
+        AttackStrategy.UrlConverter: UrlConverter(),
+    }
 
     async def _get_all_prompts(self, scenario: AdversarialScenario, num_rows: int = 3) -> List[str]:
         templates = await self.adversarial_template_handler._get_content_harm_template_collections(
@@ -89,13 +138,28 @@ class RedTeamAgent(_SafetyEvaluation):
             "role": message.role,
             "content": message.content,
         }
-    
-    def _get_converters_for_budget(self, attack_strategy: List[AttackStrategy]) -> List:
-        converters = []
-        if AttackStrategy.LOW in attack_strategy:
-            converters.extend([None, Base64Converter(), FlipConverter(), MorseConverter()])
+
+    def _get_converters_for_budget_helper(self, attack_strategies, converters = set()):
+        for strategy in attack_strategies:
+            if strategy in converters:
+                continue
+            if isinstance(strategy, List):
+                self._get_converters_for_budget_helper(strategy, converters)
+            if strategy in self._strategy_converter_map(): 
+                converters.add(self._strategy_converter_map()[strategy])
         return converters
-    
+
+    def _get_converters_for_budget(self, attack_strategies: List[AttackStrategy]) -> List:
+        converters = set()
+        if AttackStrategy.LOW in attack_strategies:
+            converters.update([Base64Converter(), FlipConverter(), MorseConverter()])
+        if AttackStrategy.MEDIUM in attack_strategies:
+            converters.update([MathPromptConverter(converter_target=self.chat_target), TenseConverter(converter_target=self.chat_target, tense="past")])
+        if AttackStrategy.HIGH in attack_strategies:
+            converters.update([[MathPromptConverter(converter_target=self.chat_target), TenseConverter(converter_target=self.chat_target, tense="past")]])
+        converters = self._get_converters_for_budget_helper(attack_strategies, converters)
+        return list(converters)  
+        
     async def _many_shot_orchestrator(self, chat_target: PromptChatTarget, all_prompts: List[str], converter: PromptConverter) -> Orchestrator:
             orchestrator = ManyShotJailbreakOrchestrator(
                 objective_target=chat_target,
@@ -139,6 +203,8 @@ class RedTeamAgent(_SafetyEvaluation):
 
         with Path(output_path).open("w") as f:
             f.writelines(json_lines)
+
+        orchestrator.dispose_db_engine()
         return output_path
     
     def _get_chat_target(self, target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]) -> PromptChatTarget:
@@ -182,21 +248,25 @@ class RedTeamAgent(_SafetyEvaluation):
     
     def _get_orchestrators_for_budget(self, attack_strategy: List[AttackStrategy]) -> List[Callable]:
         call_to_orchestrators = []
+        #TODO: For now we are just using PromptSendingOrchestrator for each budget level
         if AttackStrategy.LOW in attack_strategy:
-            call_to_orchestrators.extend([self._skeleton_key_orchestrator, self._prompt_sending_orchestrator])
+            call_to_orchestrators.extend([self._prompt_sending_orchestrator])
+        if AttackStrategy.MEDIUM in attack_strategy:
+            call_to_orchestrators.extend([self._prompt_sending_orchestrator])
+        if AttackStrategy.HIGH in attack_strategy:
+            call_to_orchestrators.extend([self._prompt_sending_orchestrator])
         return call_to_orchestrators
     
     async def _process_attack(
             self, 
             target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
-            chat_target: PromptChatTarget, 
             call_orchestrator: Callable, 
             converter: PromptConverter, 
             all_prompts: List[str],
             evaluation_name: Optional[str] = None,
             data_only: bool = False, 
             output_path: Optional[Union[str, os.PathLike]] = None) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str,os.PathLike]]]:
-        orchestrator = await call_orchestrator(chat_target, all_prompts, converter)
+        orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter)
         data_path = self._write_pyrit_outputs_to_file(orchestrator, converter)
         return await super().__call__(
             target=target,
@@ -217,6 +287,7 @@ class RedTeamAgent(_SafetyEvaluation):
             output_path: Optional[Union[str, os.PathLike]] = None) -> Union[Dict[str, EvaluationResult], Dict[str, Union[str, os.PathLike]]]:
         
         chat_target = self._get_chat_target(target)
+        self.chat_target = chat_target
         
         all_prompts_list = await self._get_all_prompts(scenario=AdversarialScenario.ADVERSARIAL_QA, num_rows=num_rows)
 
@@ -228,7 +299,6 @@ class RedTeamAgent(_SafetyEvaluation):
             tasks = [
                 self._process_attack(
                     target=target,
-                    chat_target=chat_target,
                     call_orchestrator=call_orchestrator,
                     converter=converter,
                     all_prompts=all_prompts_list,
