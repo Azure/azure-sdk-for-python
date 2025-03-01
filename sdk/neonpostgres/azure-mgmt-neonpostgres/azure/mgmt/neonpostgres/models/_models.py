@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -34,17 +35,25 @@ class CompanyDetails(_model_base.Model):
     :vartype number_of_employees: int
     """
 
-    company_name: Optional[str] = rest_field(name="companyName")
+    company_name: Optional[str] = rest_field(
+        name="companyName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Company name."""
-    country: Optional[str] = rest_field()
+    country: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Country name of the company."""
-    office_address: Optional[str] = rest_field(name="officeAddress")
+    office_address: Optional[str] = rest_field(
+        name="officeAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Office address of the company."""
-    business_phone: Optional[str] = rest_field(name="businessPhone")
+    business_phone: Optional[str] = rest_field(
+        name="businessPhone", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Business phone number of the company."""
-    domain: Optional[str] = rest_field()
+    domain: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Domain of the user."""
-    number_of_employees: Optional[int] = rest_field(name="numberOfEmployees")
+    number_of_employees: Optional[int] = rest_field(
+        name="numberOfEmployees", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Number of employees in the company."""
 
     @overload
@@ -126,7 +135,7 @@ class ErrorResponse(_model_base.Model):
     :vartype error: ~azure.mgmt.neonpostgres.models.ErrorDetail
     """
 
-    error: Optional["_models.ErrorDetail"] = rest_field()
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error object."""
 
     @overload
@@ -161,14 +170,18 @@ class MarketplaceDetails(_model_base.Model):
     :vartype offer_details: ~azure.mgmt.neonpostgres.models.OfferDetails
     """
 
-    subscription_id: Optional[str] = rest_field(name="subscriptionId")
+    subscription_id: Optional[str] = rest_field(
+        name="subscriptionId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """SaaS subscription id for the the marketplace offer."""
     subscription_status: Optional[Union[str, "_models.MarketplaceSubscriptionStatus"]] = rest_field(
-        name="subscriptionStatus"
+        name="subscriptionStatus", visibility=["read", "create", "update", "delete", "query"]
     )
     """Marketplace subscription status. Known values are: \"PendingFulfillmentStart\", \"Subscribed\",
      \"Suspended\", and \"Unsubscribed\"."""
-    offer_details: "_models.OfferDetails" = rest_field(name="offerDetails")
+    offer_details: "_models.OfferDetails" = rest_field(
+        name="offerDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Offer details for the marketplace that is selected by the user. Required."""
 
     @overload
@@ -209,17 +222,17 @@ class OfferDetails(_model_base.Model):
     :vartype term_id: str
     """
 
-    publisher_id: str = rest_field(name="publisherId")
+    publisher_id: str = rest_field(name="publisherId", visibility=["read", "create", "update", "delete", "query"])
     """Publisher Id for the marketplace offer. Required."""
-    offer_id: str = rest_field(name="offerId")
+    offer_id: str = rest_field(name="offerId", visibility=["read", "create", "update", "delete", "query"])
     """Offer Id for the marketplace offer. Required."""
-    plan_id: str = rest_field(name="planId")
+    plan_id: str = rest_field(name="planId", visibility=["read", "create", "update", "delete", "query"])
     """Plan Id for the marketplace offer. Required."""
-    plan_name: Optional[str] = rest_field(name="planName")
+    plan_name: Optional[str] = rest_field(name="planName", visibility=["read", "create", "update", "delete", "query"])
     """Plan Name for the marketplace offer."""
-    term_unit: Optional[str] = rest_field(name="termUnit")
+    term_unit: Optional[str] = rest_field(name="termUnit", visibility=["read", "create", "update", "delete", "query"])
     """Term Name for the marketplace offer."""
-    term_id: Optional[str] = rest_field(name="termId")
+    term_id: Optional[str] = rest_field(name="termId", visibility=["read", "create", "update", "delete", "query"])
     """Term Id for the marketplace offer."""
 
     @overload
@@ -274,13 +287,15 @@ class Operation(_model_base.Model):
     is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
     """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
      \"false\" for Azure Resource Manager/control-plane operations."""
-    display: Optional["_models.OperationDisplay"] = rest_field(visibility=["read"])
+    display: Optional["_models.OperationDisplay"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Localized display information for this particular operation."""
     origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
      logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
      \"user,system\"."""
-    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType")
+    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType", visibility=["read"])
     """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
      internal only APIs. \"Internal\""""
 
@@ -288,7 +303,7 @@ class Operation(_model_base.Model):
     def __init__(
         self,
         *,
-        action_type: Optional[Union[str, "_models.ActionType"]] = None,
+        display: Optional["_models.OperationDisplay"] = None,
     ) -> None: ...
 
     @overload
@@ -359,9 +374,13 @@ class OrganizationProperties(_model_base.Model):
         name="marketplaceDetails", visibility=["read", "create"]
     )
     """Marketplace details of the resource. Required."""
-    user_details: "_models.UserDetails" = rest_field(name="userDetails")
+    user_details: "_models.UserDetails" = rest_field(
+        name="userDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Details of the user. Required."""
-    company_details: "_models.CompanyDetails" = rest_field(name="companyDetails")
+    company_details: "_models.CompanyDetails" = rest_field(
+        name="companyDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Details of the company. Required."""
     provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
@@ -369,7 +388,7 @@ class OrganizationProperties(_model_base.Model):
     """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
      \"Canceled\"."""
     partner_organization_properties: Optional["_models.PartnerOrganizationProperties"] = rest_field(
-        name="partnerOrganizationProperties"
+        name="partnerOrganizationProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Organization properties."""
 
@@ -400,7 +419,7 @@ class Resource(_model_base.Model):
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -414,7 +433,7 @@ class Resource(_model_base.Model):
 
     id: Optional[str] = rest_field(visibility=["read"])
     """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long"""
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the resource."""
     type: Optional[str] = rest_field(visibility=["read"])
@@ -432,7 +451,7 @@ class TrackedResource(Resource):
 
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -448,7 +467,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field()
+    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -479,7 +498,7 @@ class OrganizationResource(TrackedResource):
 
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -497,7 +516,9 @@ class OrganizationResource(TrackedResource):
     :vartype properties: ~azure.mgmt.neonpostgres.models.OrganizationProperties
     """
 
-    properties: Optional["_models.OrganizationProperties"] = rest_field()
+    properties: Optional["_models.OrganizationProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource-specific properties for this resource."""
 
     @overload
@@ -532,11 +553,17 @@ class PartnerOrganizationProperties(_model_base.Model):
     :vartype single_sign_on_properties: ~azure.mgmt.neonpostgres.models.SingleSignOnProperties
     """
 
-    organization_id: Optional[str] = rest_field(name="organizationId")
+    organization_id: Optional[str] = rest_field(
+        name="organizationId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Organization Id in partner's system."""
-    organization_name: str = rest_field(name="organizationName")
+    organization_name: str = rest_field(
+        name="organizationName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Organization name in partner's system. Required."""
-    single_sign_on_properties: Optional["_models.SingleSignOnProperties"] = rest_field(name="singleSignOnProperties")
+    single_sign_on_properties: Optional["_models.SingleSignOnProperties"] = rest_field(
+        name="singleSignOnProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Single Sign On properties for the organization."""
 
     @overload
@@ -574,14 +601,22 @@ class SingleSignOnProperties(_model_base.Model):
     :vartype aad_domains: list[str]
     """
 
-    single_sign_on_state: Optional[Union[str, "_models.SingleSignOnStates"]] = rest_field(name="singleSignOnState")
+    single_sign_on_state: Optional[Union[str, "_models.SingleSignOnStates"]] = rest_field(
+        name="singleSignOnState", visibility=["read", "create", "update", "delete", "query"]
+    )
     """State of the Single Sign On for the organization. Known values are: \"Initial\", \"Enable\",
      and \"Disable\"."""
-    enterprise_app_id: Optional[str] = rest_field(name="enterpriseAppId")
+    enterprise_app_id: Optional[str] = rest_field(
+        name="enterpriseAppId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """AAD enterprise application Id used to setup SSO."""
-    single_sign_on_url: Optional[str] = rest_field(name="singleSignOnUrl")
+    single_sign_on_url: Optional[str] = rest_field(
+        name="singleSignOnUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
     """URL for SSO to be used by the partner to redirect the user to their system."""
-    aad_domains: Optional[List[str]] = rest_field(name="aadDomains")
+    aad_domains: Optional[List[str]] = rest_field(
+        name="aadDomains", visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of AAD domains fetched from Microsoft Graph for user."""
 
     @overload
@@ -624,19 +659,29 @@ class SystemData(_model_base.Model):
     :vartype last_modified_at: ~datetime.datetime
     """
 
-    created_by: Optional[str] = rest_field(name="createdBy")
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
     """The identity that created the resource."""
-    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="createdByType")
+    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+        name="createdByType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of identity that created the resource. Known values are: \"User\", \"Application\",
      \"ManagedIdentity\", and \"Key\"."""
-    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", format="rfc3339")
+    created_at: Optional[datetime.datetime] = rest_field(
+        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The timestamp of resource creation (UTC)."""
-    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy")
+    last_modified_by: Optional[str] = rest_field(
+        name="lastModifiedBy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The identity that last modified the resource."""
-    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="lastModifiedByType")
+    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+        name="lastModifiedByType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of identity that last modified the resource. Known values are: \"User\",
      \"Application\", \"ManagedIdentity\", and \"Key\"."""
-    last_modified_at: Optional[datetime.datetime] = rest_field(name="lastModifiedAt", format="rfc3339")
+    last_modified_at: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The timestamp of resource last modification (UTC)."""
 
     @overload
@@ -677,15 +722,19 @@ class UserDetails(_model_base.Model):
     :vartype phone_number: str
     """
 
-    first_name: Optional[str] = rest_field(name="firstName")
+    first_name: Optional[str] = rest_field(name="firstName", visibility=["read", "create", "update", "delete", "query"])
     """First name of the user."""
-    last_name: Optional[str] = rest_field(name="lastName")
+    last_name: Optional[str] = rest_field(name="lastName", visibility=["read", "create", "update", "delete", "query"])
     """Last name of the user."""
-    email_address: Optional[str] = rest_field(name="emailAddress")
+    email_address: Optional[str] = rest_field(
+        name="emailAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Email address of the user."""
-    upn: Optional[str] = rest_field()
+    upn: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """User's principal name."""
-    phone_number: Optional[str] = rest_field(name="phoneNumber")
+    phone_number: Optional[str] = rest_field(
+        name="phoneNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
     """User's phone number."""
 
     @overload

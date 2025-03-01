@@ -32,10 +32,14 @@ class AcknowledgeResult(_model_base.Model):
     :vartype succeeded_lock_tokens: list[str]
     """
 
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(
+        name="failedLockTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
      along with the related error information (namely, the error code and description). Required."""
-    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
+    succeeded_lock_tokens: List[str] = rest_field(
+        name="succeededLockTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Array of lock tokens for the successfully acknowledged cloud events. Required."""
 
     @overload
@@ -67,10 +71,28 @@ class BrokerProperties(_model_base.Model):
     :vartype delivery_count: int
     """
 
-    lock_token: str = rest_field(name="lockToken")
+    lock_token: str = rest_field(name="lockToken", visibility=["read", "create", "update", "delete", "query"])
     """The token of the lock on the event. Required."""
-    delivery_count: int = rest_field(name="deliveryCount")
+    delivery_count: int = rest_field(name="deliveryCount", visibility=["read", "create", "update", "delete", "query"])
     """The attempt count for delivering the event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        lock_token: str,
+        delivery_count: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class CloudEvent(_model_base.Model):
@@ -103,29 +125,59 @@ class CloudEvent(_model_base.Model):
     :vartype subject: str
     """
 
-    id: str = rest_field()
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An identifier for the event. The combination of id and source must be unique for each distinct
      event. Required."""
-    source: str = rest_field()
+    source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Identifies the context in which an event happened. The combination of id and source must be
      unique for each distinct event. Required."""
-    data: Optional[Any] = rest_field()
+    data: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Event data specific to the event type."""
-    data_base64: Optional[bytes] = rest_field(format="base64")
+    data_base64: Optional[bytes] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="base64"
+    )
     """Event data specific to the event type, encoded as a base64 string."""
-    type: str = rest_field()
+    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Type of event related to the originating occurrence. Required."""
-    time: Optional[datetime.datetime] = rest_field(format="rfc3339")
+    time: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time (in UTC) the event was generated, in RFC3339 format."""
-    specversion: str = rest_field()
+    specversion: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version of the CloudEvents specification which the event uses. Required."""
-    dataschema: Optional[str] = rest_field()
+    dataschema: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Identifies the schema that data adheres to."""
-    datacontenttype: Optional[str] = rest_field()
+    datacontenttype: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Content type of data value."""
-    subject: Optional[str] = rest_field()
+    subject: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """This describes the subject of the event in the context of the event producer (identified by
      source)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        source: str,
+        type: str,
+        specversion: str,
+        data: Optional[Any] = None,
+        data_base64: Optional[bytes] = None,
+        time: Optional[datetime.datetime] = None,
+        dataschema: Optional[str] = None,
+        datacontenttype: Optional[str] = None,
+        subject: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class FailedLockToken(_model_base.Model):
@@ -139,9 +191,9 @@ class FailedLockToken(_model_base.Model):
     :vartype error: ~azure.core.ODataV4Format
     """
 
-    lock_token: str = rest_field(name="lockToken")
+    lock_token: str = rest_field(name="lockToken", visibility=["read", "create", "update", "delete", "query"])
     """The lock token of an entry in the request. Required."""
-    error: ODataV4Format = rest_field()
+    error: ODataV4Format = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Error information of the failed operation result for the lock token in the request. Required."""
 
     @overload
@@ -177,10 +229,30 @@ class ReceiveDetails(_model_base.Model):
     :vartype event: ~azure.eventgrid.models._models.CloudEvent
     """
 
-    broker_properties: "_models._models.BrokerProperties" = rest_field(name="brokerProperties")
+    broker_properties: "_models._models.BrokerProperties" = rest_field(
+        name="brokerProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The Event Broker details. Required."""
-    event: "_models._models.CloudEvent" = rest_field()
+    event: "_models._models.CloudEvent" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Cloud Event details. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        broker_properties: "_models._models.BrokerProperties",
+        event: "_models._models.CloudEvent",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ReceiveResult(_model_base.Model):
@@ -191,8 +263,27 @@ class ReceiveResult(_model_base.Model):
     :vartype details: list[~azure.eventgrid.models._models.ReceiveDetails]
     """
 
-    details: List["_models._models.ReceiveDetails"] = rest_field(name="value")
+    details: List["_models._models.ReceiveDetails"] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Array of receive responses, one per cloud event. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        details: List["_models._models.ReceiveDetails"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class RejectResult(_model_base.Model):
@@ -208,10 +299,14 @@ class RejectResult(_model_base.Model):
     :vartype succeeded_lock_tokens: list[str]
     """
 
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(
+        name="failedLockTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
      along with the related error information (namely, the error code and description). Required."""
-    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
+    succeeded_lock_tokens: List[str] = rest_field(
+        name="succeededLockTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Array of lock tokens for the successfully rejected cloud events. Required."""
 
     @overload
@@ -246,10 +341,14 @@ class ReleaseResult(_model_base.Model):
     :vartype succeeded_lock_tokens: list[str]
     """
 
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(
+        name="failedLockTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
      along with the related error information (namely, the error code and description). Required."""
-    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
+    succeeded_lock_tokens: List[str] = rest_field(
+        name="succeededLockTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Array of lock tokens for the successfully released cloud events. Required."""
 
     @overload
@@ -283,10 +382,14 @@ class RenewLocksResult(_model_base.Model):
     :vartype succeeded_lock_tokens: list[str]
     """
 
-    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
+    failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(
+        name="failedLockTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Array of FailedLockToken for failed cloud events. Each FailedLockToken includes the lock token
      along with the related error information (namely, the error code and description). Required."""
-    succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
+    succeeded_lock_tokens: List[str] = rest_field(
+        name="succeededLockTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Array of lock tokens for the successfully renewed locks. Required."""
 
     @overload

@@ -20,11 +20,10 @@ from ._serialization import Deserializer, Serializer
 from .operations import CertificateProfilesOperations, CodeSigningAccountsOperations, Operations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class TrustedSigningMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
+class TrustedSigningMgmtClient:
     """Code Signing resource provider api.
 
     :ivar operations: Operations operations
@@ -42,7 +41,7 @@ class TrustedSigningMgmtClient:  # pylint: disable=client-accepts-api-version-ke
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-02-05-preview". Note that overriding this default value may result in unsupported
+     "2024-09-30-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no

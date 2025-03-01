@@ -42,12 +42,12 @@ class FaceAdministrationClient:
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://{resource-name}.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: API Version. Known values are "v1.2-preview.1" and None. Default value is
-     "v1.2-preview.1". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: API Version. Known values are "v1.2" and None. Default value is "v1.2".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str or ~azure.ai.vision.face.models.Versions
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -131,12 +131,12 @@ class FaceClient(FaceClientOperationsMixin):
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://{resource-name}.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: API Version. Known values are "v1.2-preview.1" and None. Default value is
-     "v1.2-preview.1". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: API Version. Known values are "v1.2" and None. Default value is "v1.2".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str or ~azure.ai.vision.face.models.Versions
     """
 
@@ -214,12 +214,12 @@ class FaceSessionClient(FaceSessionClientOperationsMixin):
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://{resource-name}.cognitiveservices.azure.com). Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: API Version. Known values are "v1.2-preview.1" and None. Default value is
-     "v1.2-preview.1". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: API Version. Known values are "v1.2" and None. Default value is "v1.2".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str or ~azure.ai.vision.face.models.Versions
     """
 
