@@ -49,7 +49,7 @@ SERVICE_LIVE_RESP_BODY = (
 )
 
 _ERROR_TYPE_NOT_SUPPORTED = "Type not supported when sending data to the service: {0}."
-_ERROR_VALUE_TOO_LARGE = "{0} is too large to be cast to type {1}."
+_ERROR_VALUE_TOO_LARGE = "{0} is out of range to be cast to type {1}."
 
 
 class FakeTokenCredential(object):
@@ -195,7 +195,7 @@ class TableTestCase(object):
             "birthday": datetime(1991, 10, 4, tzinfo=timezone.utc),
         }
 
-    def _assert_default_entity(self, entity):
+    def _assert_default_entity(self, entity: TableEntity):
         """
         Asserts that the entity passed in matches the default entity.
         """
