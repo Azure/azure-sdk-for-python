@@ -26,7 +26,9 @@
 import json
 import logging
 import time
-from typing import Optional, Union, Dict, Any, TYPE_CHECKING, Callable, Mapping
+import os
+import urllib.parse
+from typing import Optional, Union, Dict, Any, TYPE_CHECKING, Callable, Mapping, Set
 import types
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -41,17 +43,23 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import (  # pylint: disable=no-legacy-azure-core-http-response-import
         HttpRequest as LegacyHttpRequest,
         HttpResponse as LegacyHttpResponse,
-        AsyncHttpResponse as LegacyAsyncHttpResponse
+        AsyncHttpResponse as LegacyAsyncHttpResponse,
     )
+    from azure.core.pipeline.transport._base import _HttpResponseBase as LegacySansIOHttpResponse
+    from azure.core.rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
 
 
 HTTPRequestType = Union["LegacyHttpRequest", "HttpRequest"]
-HTTPResponseType = Union["LegacyHttpResponse", "HttpResponse", "LegacyAsyncHttpResponse", "AsyncHttpResponse"]
+HTTPResponseType = Union["LegacyHttpResponse", "HttpResponse", "LegacyAsyncHttpResponse",
+                                "AsyncHttpResponse", "SansIOHttpResponse", "LegacySansIOHttpResponse"]
 
 
 def _format_error(payload: str) -> str:
     output = json.loads(payload)
-    return output['message'].replace("\r", " ")
+    ret_str = "\n\t" + "Code: " + output['code'] + "\n"
+    message = output["message"].replace("\r\n", "\n\t\t").replace(",", ",\n\t\t")
+    ret_str += "\t" + message + "\n"
+    return ret_str
 
 
 class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
@@ -68,7 +76,6 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
     ):
         self._enable_diagnostics_logging = enable_diagnostics_logging
         self.diagnostics_handler = diagnostics_handler
-        self.__request_already_logged = False
         if self.diagnostics_handler and callable(self.diagnostics_handler):
             if hasattr(self.diagnostics_handler, '__get__'):
                 self._should_log = types.MethodType(diagnostics_handler, self)  # type: ignore
@@ -87,112 +94,261 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             'colls': 'container',
             'dbs': 'database'
         }
+
         super().__init__(logger, **kwargs)
+        if isinstance(diagnostics_handler, logging.Filter):
+            self.logger.addFilter(diagnostics_handler)
         if self._enable_diagnostics_logging:
             cosmos_disallow_list = ["Authorization", "ProxyAuthorization"]
             cosmos_allow_list = [
                 v for k, v in HttpHeaders.__dict__.items() if not k.startswith("_") and k not in cosmos_disallow_list
             ]
             self.allowed_header_names = set(cosmos_allow_list)
+            # For optimizing header redaction. We create the set with lower case allowed headers
+            self.lower_case_allowed_header_names: Set[str] = set(
+                [header.lower() for header in self.allowed_header_names])
+            self.lower_case_allowed_query_params: Set[str] = set(
+                [param.lower() for param in self.allowed_query_params])
 
-    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
-        verb = request.http_request.method
+    def _redact_query_param(self, key: str, value: str) -> str:
+        return value if key.lower() in self.lower_case_allowed_query_params else HttpLoggingPolicy.REDACTED_PLACEHOLDER
+
+    def _redact_header(self, header: str, value: str) -> str:
+        if header.lower() in self.lower_case_allowed_header_names:
+            return value
+        return HttpLoggingPolicy.REDACTED_PLACEHOLDER
+
+    def on_request(  # pylint: disable=too-many-return-statements
+        self, request: PipelineRequest[HTTPRequestType]
+    ) -> None:
+        """Logs HTTP method, url and headers.
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
         if self._enable_diagnostics_logging:
+
+
+            http_request = request.http_request
+            verb = request.http_request.method
             request.context["start_time"] = time.time()
+            operation_type = http_request.headers['x-ms-thinclient-proxy-operation-type'] \
+                if 'x-ms-thinclient-proxy-operation-type' in http_request.headers else None
             url = None
             if self.diagnostics_handler:
                 url = request.http_request.url
             database_name = None
             collection_name = None
-            resource_type = None
+            resource_type = http_request.headers['x-ms-thinclient-proxy-resource-type'] \
+                if 'x-ms-thinclient-proxy-resource-type' in http_request.headers else None
             if url:
                 url_parts = url.split('/')
                 if 'dbs' in url_parts:
                     dbs_index = url_parts.index('dbs')
                     if dbs_index + 1 < len(url_parts):
                         database_name = url_parts[url_parts.index('dbs') + 1]
-                    resource_type = self._resource_map['dbs']
                 if 'colls' in url_parts:
                     colls_index = url_parts.index('colls')
                     if colls_index + 1 < len(url_parts):
                         collection_name = url_parts[url_parts.index('colls') + 1]
-                    resource_type = self._resource_map['colls']
-                if 'docs' in url_parts:
-                    resource_type = self._resource_map['docs']
-            if self._should_log(verb=verb,database_name=database_name,collection_name=collection_name,
-                                resource_type=resource_type, is_request=True):
-                self._log_client_settings()
-                self._log_database_account_settings()
-                super().on_request(request)
-                self.__request_already_logged = True
+            options = request.context.options
+            # Get logger in my context first (request has been retried)
+            # then read from kwargs (pop if that's the case)
+            # then use my instance logger
+            logger = request.context.setdefault("logger", options.pop("logger", self.logger))
+            if not logger.isEnabledFor(logging.INFO):
+                return
+            try:
+                parsed_url = list(urllib.parse.urlparse(http_request.url))
+                parsed_qp = urllib.parse.parse_qsl(parsed_url[4], keep_blank_values=True)
+                filtered_qp = [(key, self._redact_query_param(key, value)) for key, value in parsed_qp]
+                # 4 is query
+                parsed_url[4] = "&".join(["=".join(part) for part in filtered_qp])
+                redacted_url = urllib.parse.urlunparse(parsed_url)
 
-    # pylint: disable=too-many-statements
-    def on_response(
+                multi_record = os.environ.get(HttpLoggingPolicy.MULTI_RECORD_LOG, False)
+
+                if 'logger_attributes' in request.context:
+                    cosmos_logger_attributes = request.context['logger_attributes']
+                    cosmos_logger_attributes['is_request'] = True
+                elif (isinstance(self.diagnostics_handler, logging.Filter)
+                      or self.diagnostics_handler != self._default_should_log
+                        or any(isinstance(f, logging.Filter) for f in logger.filters)):
+                    return
+                else:
+                    cosmos_logger_attributes = {
+                        'duration': None,
+                        'status_code': None,
+                        'sub_status_code': None,
+                        'verb': verb,
+                        'http_version': None,
+                        'database_name': database_name,
+                        'collection_name': collection_name,
+                        'resource_type': resource_type,
+                        'operation_type': operation_type,
+                        'is_request': True}
+
+                if self._should_log(**cosmos_logger_attributes):
+
+                    client_settings = self._log_client_settings()
+                    db_settings = self._log_database_account_settings()
+                    if multi_record:
+                        logger.info(client_settings, extra=cosmos_logger_attributes)
+                        logger.info(db_settings, extra=cosmos_logger_attributes)
+                        logger.info("Request URL: %r", redacted_url, extra=cosmos_logger_attributes)
+                        logger.info("Request method: %r", http_request.method, extra=cosmos_logger_attributes)
+                        logger.info("Request headers:", extra=cosmos_logger_attributes)
+                        for header, value in http_request.headers.items():
+                            value = self._redact_header(header, value)
+                            logger.info("    %r: %r", header, value, extra=cosmos_logger_attributes)
+                        if isinstance(http_request.body, types.GeneratorType):
+                            logger.info("File upload", extra=cosmos_logger_attributes)
+                            return
+                        try:
+                            if isinstance(http_request.body, types.AsyncGeneratorType):
+                                logger.info("File upload", extra=cosmos_logger_attributes)
+                                return
+                        except AttributeError:
+                            pass
+                        if http_request.body:
+                            logger.info("A body is sent with the request", extra=cosmos_logger_attributes)
+                            return
+                        logger.info("No body was attached to the request", extra=cosmos_logger_attributes)
+                        return
+                    log_string = client_settings
+                    log_string += db_settings
+                    log_string += "\nRequest URL: '{}'".format(redacted_url)
+                    log_string += "\nRequest method: '{}'".format(http_request.method)
+                    log_string += "\nRequest headers:"
+                    for header, value in http_request.headers.items():
+                        value = self._redact_header(header, value)
+                        log_string += "\n    '{}': '{}'".format(header, value)
+                    if isinstance(http_request.body, types.GeneratorType):
+                        log_string += "\nFile upload"
+                        logger.info(log_string)
+                        return
+                    try:
+                        if isinstance(http_request.body, types.AsyncGeneratorType):
+                            log_string += "\nFile upload"
+                            logger.info(log_string, extra=cosmos_logger_attributes)
+                            return
+                    except AttributeError:
+                        pass
+                    if http_request.body:
+                        log_string += "\nA body is sent with the request"
+                        logger.info(log_string, extra=cosmos_logger_attributes)
+                        return
+                    log_string += "\nNo body was attached to the request"
+                    logger.info(log_string, extra=cosmos_logger_attributes)
+
+            except Exception as err:  # pylint: disable=broad-except
+                logger.warning("Failed to log request: %s", repr(err))
+        else:
+            super().on_request(request)
+
+    def on_response(  # pylint: disable=too-many-statements
         self,
         request: PipelineRequest[HTTPRequestType],
-        response: PipelineResponse[HTTPRequestType, HTTPResponseType],  # type: ignore[override]
+        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
     ) -> None:
-        duration = time.time() - request.context["start_time"] if "start_time" in request.context else None
-        status_code = response.http_response.status_code
-        sub_status_str = response.http_response.headers.get("x-ms-substatus")
-        sub_status_code = int(sub_status_str) if sub_status_str else None
-        verb = request.http_request.method
-        http_version_obj = None
-        url = None
-        if self.diagnostics_handler:
-            try:
-                major = response.http_response.internal_response.version.major  # type: ignore[attr-defined, union-attr]
-                minor = response.http_response.internal_response.version.minor  # type: ignore[attr-defined, union-attr]
-                http_version_obj = f"{major}."
-                http_version_obj += f"{minor}"
-            except (AttributeError, TypeError):
-                http_version_obj = None
-            try:
-                url = response.http_response.internal_response.url.geturl()  # type: ignore[attr-defined, union-attr]
-            except AttributeError:
-                url = str(response.http_response.internal_response.url)  # type: ignore[attr-defined, union-attr]
-        database_name = None
-        collection_name = None
-        resource_type = None
-        if url:
-            url_parts = url.split('/')
-            if 'dbs' in url_parts:
-                dbs_index = url_parts.index('dbs')
-                if dbs_index + 1 < len(url_parts):
-                    database_name = url_parts[url_parts.index('dbs') + 1]
-                resource_type = self._resource_map['dbs']
-            if 'colls' in url_parts:
-                colls_index = url_parts.index('colls')
-                if colls_index + 1 < len(url_parts):
-                    collection_name = url_parts[url_parts.index('colls') + 1]
-                resource_type = self._resource_map['colls']
-            if 'docs' in url_parts:
-                resource_type = self._resource_map['docs']
-
-
-        if self._should_log(duration=duration, status_code=status_code, sub_status_code=sub_status_code,
-                            verb=verb, http_version=http_version_obj, database_name=database_name,
-                            collection_name=collection_name, resource_type=resource_type, is_request=False):
-            if not self.__request_already_logged:
-                self._log_client_settings()
-                self._log_database_account_settings()
-                super().on_request(request)
-            else:
-                self.__request_already_logged = False
-            super().on_response(request, response)
-            if self._enable_diagnostics_logging:
-                http_response = response.http_response
-                options = response.context.options
-                logger = request.context.setdefault("logger", options.pop("logger", self.logger))
+        if self._enable_diagnostics_logging:
+            duration = time.time() - request.context["start_time"] if "start_time" in request.context else None
+            status_code = response.http_response.status_code
+            sub_status_str = response.http_response.headers.get("x-ms-substatus")
+            sub_status_code = int(sub_status_str) if sub_status_str else None
+            verb = request.http_request.method
+            operation_type = request.http_request.headers['x-ms-thinclient-proxy-operation-type'] \
+                if 'x-ms-thinclient-proxy-operation-type' in request.http_request.headers else None
+            http_version_obj = None
+            url = None
+            if self.diagnostics_handler:
                 try:
+                    major = response.http_response.internal_response.version.major  # type: ignore[attr-defined, union-attr]
+                    minor = response.http_response.internal_response.version.minor  # type: ignore[attr-defined, union-attr]
+                    http_version_obj = f"{major}."
+                    http_version_obj += f"{minor}"
+                except (AttributeError, TypeError):
+                    http_version_obj = None
+                try:
+                    url = response.http_response.internal_response.url.geturl()  # type: ignore[attr-defined, union-attr]
+                except AttributeError:
+                    url = str(response.http_response.internal_response.url)  # type: ignore[attr-defined, union-attr]
+            database_name = None
+            collection_name = None
+            resource_type = request.http_request.headers['x-ms-thinclient-proxy-resource-type'] \
+                if 'x-ms-thinclient-proxy-resource-type' in request.http_request.headers else None
+            if url:
+                url_parts = url.split('/')
+                if 'dbs' in url_parts:
+                    dbs_index = url_parts.index('dbs')
+                    if dbs_index + 1 < len(url_parts):
+                        database_name = url_parts[url_parts.index('dbs') + 1]
+                if 'colls' in url_parts:
+                    colls_index = url_parts.index('colls')
+                    if colls_index + 1 < len(url_parts):
+                        collection_name = url_parts[url_parts.index('colls') + 1]
+
+            http_response = response.http_response
+
+            # Get logger in my context first (request has been retried)
+            # then read from kwargs (pop if that's the case)
+            # then use my instance logger
+            # If on_request was called, should always read from context
+            options = request.context.options
+            logger = request.context.setdefault("logger", options.pop("logger", self.logger))
+
+            if self._should_log(duration=duration, status_code=status_code, sub_status_code=sub_status_code,
+                                verb=verb, http_version=http_version_obj, database_name=database_name,
+                                collection_name=collection_name, resource_type=resource_type,
+                                operation_type=operation_type, is_request=False):
+                cosmos_logger_attributes = {
+                    'duration': duration,
+                    'status_code': status_code,
+                    'sub_status_code': sub_status_code,
+                    'verb': verb,
+                    'http_version': http_version_obj,
+                    'database_name': database_name,
+                    'collection_name': collection_name,
+                    'resource_type': resource_type,
+                    'operation_type': operation_type,
+                    'is_request': False}
+                request.context["logger_attributes"] = cosmos_logger_attributes
+                self.on_request(request)
+
+                try:
+                    if not logger.isEnabledFor(logging.INFO):
+                        return
+
+                    multi_record = os.environ.get(HttpLoggingPolicy.MULTI_RECORD_LOG, False)
+                    if multi_record:
+                        logger.info("Response status: %r", http_response.status_code, extra=cosmos_logger_attributes)
+                        logger.info("Response headers:", extra=cosmos_logger_attributes)
+                        for res_header, value in http_response.headers.items():
+                            value = self._redact_header(res_header, value)
+                            logger.info("    %r: %r", res_header, value, extra=cosmos_logger_attributes)
+                        if "start_time" in request.context:
+                            logger.info("Elapsed time in seconds: {}".format(duration), extra=cosmos_logger_attributes)
+                        else:
+                            logger.info("Elapsed time in seconds: unknown", extra=cosmos_logger_attributes)
+                        if http_response.status_code >= 400:
+                            logger.info("\nResponse error message: %r", _format_error(http_response.text()),
+                                        extra=cosmos_logger_attributes)
+                        return
+                    log_string = "\nResponse status: {}".format(http_response.status_code)
+                    log_string += "\nResponse headers:"
+                    for res_header, value in http_response.headers.items():
+                        value = self._redact_header(res_header, value)
+                        log_string += "\n    '{}': '{}'".format(res_header, value)
                     if "start_time" in request.context:
-                        logger.info("Elapsed time in seconds: {}".format(duration))
+                        log_string += "\nElapsed time in seconds: {}".format(duration)
                     else:
-                        logger.info("Elapsed time in seconds: unknown")
+                        log_string += "\nElapsed time in seconds: unknown"
                     if http_response.status_code >= 400:
-                        logger.info("Response error message: %r", _format_error(http_response.text()))
+                        log_string += "\nResponse error message: {}".format(_format_error(http_response.text()))
+                    logger.info(log_string, extra=cosmos_logger_attributes)
                 except Exception as err:  # pylint: disable=broad-except
-                    logger.warning("Failed to log request: %s", repr(err)) # pylint: disable=do-not-log-exceptions
+                    logger.warning("Failed to log response: %s", repr(err), extra=cosmos_logger_attributes)
+        else:
+            super().on_response(request, response)
 
     # pylint: disable=unused-argument
     def _default_should_log(
@@ -220,34 +376,41 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
     def __get_client_settings(self) -> Optional[Dict[str, Any]]:
         # Place any client settings we want to log here
+        client_info = {"Client Preferred Regions": [], "Client Available Read Regions": [],
+                       "Client Available Write Regions": []}
         if self.__global_endpoint_manager:
-            if hasattr(self.__global_endpoint_manager, 'PreferredLocations'):
-                return {"Client Preferred Regions": self.__global_endpoint_manager.PreferredLocations}
-            return {"Client Preferred Regions": []}
-        return None
+            client_info['Client Preferred Regions'] = self.__global_endpoint_manager.PreferredLocations \
+                if hasattr(self.__global_endpoint_manager, "PreferredLocations") else []
+            try:
+                location_cache = self.__global_endpoint_manager.location_cache
+                client_info["Client Available Read Regions"] = location_cache.available_read_locations
+                client_info["Client Available Write Regions"] = location_cache.available_write_locations
+            except AttributeError:
+                client_info["Client Available Read Regions"] = []
+                client_info["Client Available Write Regions"] = []
+        return client_info
+
 
     def __get_database_account_settings(self) -> Optional[DatabaseAccount]:
         if self.__global_endpoint_manager and hasattr(self.__global_endpoint_manager, '_database_account_cache'):
             return self.__global_endpoint_manager._database_account_cache  # pylint: disable=protected-access
         return None
 
-    def _log_client_settings(self) -> None:
-        self.logger.info("Client Settings:", exc_info=False)
-        if self.__client_settings and isinstance(self.__client_settings, dict):
-            self.logger.info("\tClient Preferred Regions: %s", self.__client_settings["Client Preferred Regions"],
-                             exc_info=False)
+    def _log_client_settings(self) -> str:
+        logger_str = "\nClient Settings: \n"
+        client_settings = self.__get_client_settings()
+        if client_settings and isinstance(client_settings, dict):
+            logger_str += ''.join([f"\t{k}: {v}\n" for k, v in client_settings.items()])
+        return logger_str
 
     # pylint: disable=protected-access
-    def _log_database_account_settings(self) -> None:
-        self.logger.info("Database Account Settings:", exc_info=False)
+    def _log_database_account_settings(self) -> str:
+        logger_str = "\nDatabase Account Settings: \n"
         self.__database_account_settings = self.__get_database_account_settings()
         if self.__database_account_settings and self.__database_account_settings.ConsistencyPolicy:
-            self.logger.info("\tConsistency Level: %s",
-                             self.__database_account_settings.ConsistencyPolicy.get("defaultConsistencyLevel"),
-                             exc_info=False)
-            self.logger.info("\tWritable Locations: %s", self.__database_account_settings.WritableLocations,
-                             exc_info=False)
-            self.logger.info("\tReadable Locations: %s", self.__database_account_settings.ReadableLocations,
-                             exc_info=False)
-            self.logger.info("\tMulti-Region Writes: %s",
-                             self.__database_account_settings._EnableMultipleWritableLocations, exc_info=False)
+            logger_str += f"\tConsistency Level: {self.__database_account_settings.ConsistencyPolicy.get('defaultConsistencyLevel')}\n"  # pylint: disable=line-too-long
+            logger_str += f"\tWritable Locations: {self.__database_account_settings.WritableLocations}\n"
+            logger_str += f"\tReadable Locations: {self.__database_account_settings.ReadableLocations}\n"
+            logger_str += f"\tMulti-Region Writes: {self.__database_account_settings._EnableMultipleWritableLocations}\n"  # pylint: disable=protected-access, line-too-long
+
+        return logger_str
