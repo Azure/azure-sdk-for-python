@@ -129,7 +129,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     # Special use case: Customers want to be able to set location ip on log records
     location_ip = trace_utils._get_location_ip(log_record.attributes)
     if location_ip:
-        envelope.tags[ContextTagKeys.AI_LOCATION_IP] = location_ip
+        envelope.tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
     properties = _utils._filter_custom_properties(
         log_record.attributes, lambda key, val: not _is_ignored_attribute(key)
     )
