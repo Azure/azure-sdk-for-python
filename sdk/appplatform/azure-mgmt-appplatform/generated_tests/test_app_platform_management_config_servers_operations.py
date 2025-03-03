@@ -20,11 +20,11 @@ class TestAppPlatformManagementConfigServersOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_config_servers_get(self, resource_group):
         response = self.client.config_servers.get(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -32,7 +32,7 @@ class TestAppPlatformManagementConfigServersOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update_put(self, resource_group):
+    def test_config_servers_begin_update_put(self, resource_group):
         response = self.client.config_servers.begin_update_put(
             resource_group_name=resource_group.name,
             service_name="str",
@@ -68,8 +68,11 @@ class TestAppPlatformManagementConfigServersOperations(AzureMgmtRecordedTestCase
                             "username": "str",
                         }
                     },
+                    "enabledState": "str",
                     "error": {"code": "str", "message": "str"},
+                    "instances": [{"name": "str", "status": "str"}],
                     "provisioningState": "str",
+                    "resourceRequests": {"cpu": "str", "instanceCount": 0, "memory": "str"},
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -81,7 +84,7 @@ class TestAppPlatformManagementConfigServersOperations(AzureMgmtRecordedTestCase
                 },
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -89,7 +92,7 @@ class TestAppPlatformManagementConfigServersOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update_patch(self, resource_group):
+    def test_config_servers_begin_update_patch(self, resource_group):
         response = self.client.config_servers.begin_update_patch(
             resource_group_name=resource_group.name,
             service_name="str",
@@ -125,8 +128,11 @@ class TestAppPlatformManagementConfigServersOperations(AzureMgmtRecordedTestCase
                             "username": "str",
                         }
                     },
+                    "enabledState": "str",
                     "error": {"code": "str", "message": "str"},
+                    "instances": [{"name": "str", "status": "str"}],
                     "provisioningState": "str",
+                    "resourceRequests": {"cpu": "str", "instanceCount": 0, "memory": "str"},
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -138,7 +144,7 @@ class TestAppPlatformManagementConfigServersOperations(AzureMgmtRecordedTestCase
                 },
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -146,7 +152,31 @@ class TestAppPlatformManagementConfigServersOperations(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_validate(self, resource_group):
+    def test_config_servers_begin_delete(self, resource_group):
+        response = self.client.config_servers.begin_delete(
+            resource_group_name=resource_group.name,
+            service_name="str",
+            api_version="2024-05-01-preview",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_config_servers_list(self, resource_group):
+        response = self.client.config_servers.list(
+            resource_group_name=resource_group.name,
+            service_name="str",
+            api_version="2024-05-01-preview",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_config_servers_begin_validate(self, resource_group):
         response = self.client.config_servers.begin_validate(
             resource_group_name=resource_group.name,
             service_name="str",
@@ -178,7 +208,7 @@ class TestAppPlatformManagementConfigServersOperations(AzureMgmtRecordedTestCase
                     "username": "str",
                 }
             },
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -21,12 +21,12 @@ class TestAppPlatformManagementPredefinedAcceleratorsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_predefined_accelerators_list(self, resource_group):
         response = self.client.predefined_accelerators.list(
             resource_group_name=resource_group.name,
             service_name="str",
             application_accelerator_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,13 +34,13 @@ class TestAppPlatformManagementPredefinedAcceleratorsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_predefined_accelerators_get(self, resource_group):
         response = await self.client.predefined_accelerators.get(
             resource_group_name=resource_group.name,
             service_name="str",
             application_accelerator_name="str",
             predefined_accelerator_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -48,14 +48,14 @@ class TestAppPlatformManagementPredefinedAcceleratorsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_disable(self, resource_group):
+    async def test_predefined_accelerators_begin_disable(self, resource_group):
         response = await (
             await self.client.predefined_accelerators.begin_disable(
                 resource_group_name=resource_group.name,
                 service_name="str",
                 application_accelerator_name="str",
                 predefined_accelerator_name="str",
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -64,14 +64,14 @@ class TestAppPlatformManagementPredefinedAcceleratorsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_enable(self, resource_group):
+    async def test_predefined_accelerators_begin_enable(self, resource_group):
         response = await (
             await self.client.predefined_accelerators.begin_enable(
                 resource_group_name=resource_group.name,
                 service_name="str",
                 application_accelerator_name="str",
                 predefined_accelerator_name="str",
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

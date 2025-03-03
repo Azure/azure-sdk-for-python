@@ -21,12 +21,12 @@ class TestAppPlatformManagementCustomizedAcceleratorsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_customized_accelerators_list(self, resource_group):
         response = self.client.customized_accelerators.list(
             resource_group_name=resource_group.name,
             service_name="str",
             application_accelerator_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,13 +34,13 @@ class TestAppPlatformManagementCustomizedAcceleratorsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_customized_accelerators_get(self, resource_group):
         response = await self.client.customized_accelerators.get(
             resource_group_name=resource_group.name,
             service_name="str",
             application_accelerator_name="str",
             customized_accelerator_name="str",
-            api_version="2023-12-01",
+            api_version="2024-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -48,7 +48,7 @@ class TestAppPlatformManagementCustomizedAcceleratorsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_customized_accelerators_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.customized_accelerators.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -87,7 +87,7 @@ class TestAppPlatformManagementCustomizedAcceleratorsOperationsAsync(AzureMgmtRe
                     },
                     "type": "str",
                 },
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -96,14 +96,14 @@ class TestAppPlatformManagementCustomizedAcceleratorsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_customized_accelerators_begin_delete(self, resource_group):
         response = await (
             await self.client.customized_accelerators.begin_delete(
                 resource_group_name=resource_group.name,
                 service_name="str",
                 application_accelerator_name="str",
                 customized_accelerator_name="str",
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -112,7 +112,7 @@ class TestAppPlatformManagementCustomizedAcceleratorsOperationsAsync(AzureMgmtRe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_validate(self, resource_group):
+    async def test_customized_accelerators_begin_validate(self, resource_group):
         response = await (
             await self.client.customized_accelerators.begin_validate(
                 resource_group_name=resource_group.name,
@@ -137,7 +137,7 @@ class TestAppPlatformManagementCustomizedAcceleratorsOperationsAsync(AzureMgmtRe
                     "imports": ["str"],
                     "provisioningState": "str",
                 },
-                api_version="2023-12-01",
+                api_version="2024-05-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
