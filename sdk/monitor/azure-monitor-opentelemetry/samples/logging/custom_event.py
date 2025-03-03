@@ -5,31 +5,17 @@ An example to show an application using Opentelemetry logging sdk. Logging calls
 logging library are tracked and telemetry is exported to application insights with the AzureMonitorLogExporter.
 """
 # mypy: disable-error-code="attr-defined"
-import os
-import logging
 
-from opentelemetry._logs import (
-    get_logger_provider,
-    set_logger_provider,
+from logging import getLogger
+
+from azure.monitor.opentelemetry import configure_azure_monitor
+from opentelemetry import trace
+
+configure_azure_monitor(
+    logger_name=__name__,
 )
-from opentelemetry.sdk._logs import (
-    LoggerProvider,
-    LoggingHandler,
-)
-from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 
-from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
-
-logger_provider = LoggerProvider()
-set_logger_provider(logger_provider)
-exporter = AzureMonitorLogExporter.from_connection_string(os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"])
-get_logger_provider().add_log_record_processor(BatchLogRecordProcessor(exporter, schedule_delay_millis=5000))
-
-# Attach LoggingHandler to namespaced logger
-handler = LoggingHandler()
-logger = logging.getLogger(__name__)
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
+logger = getLogger(__name__)
 
 # You can send `customEvent`` telemetry using a special `microsoft` attribute key through logging
 # The name of the `customEvent` will correspond to the value of the attribute` 
