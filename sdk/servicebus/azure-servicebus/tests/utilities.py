@@ -8,6 +8,7 @@ import logging
 import sys
 import time
 import os
+import asyncio
 
 try:
     import uamqp
@@ -65,6 +66,8 @@ def print_message(_logger, message):
 def sleep_until_expired(entity):
     time.sleep(max(0, (entity.locked_until_utc - utc_now()).total_seconds() + 1))
 
+async def sleep_until_expired_async(entity):
+    asyncio.sleep(max(0, (entity.locked_until_utc - utc_now()).total_seconds() + 1))
 
 def uamqp_transport(use_uamqp=uamqp_available, use_pyamqp=test_pyamqp):
     uamqp_transport_params = []
