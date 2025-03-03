@@ -128,6 +128,25 @@ class TestChangeAllVersionsFeed:
         actual_change_feeds = list(query_iterable)
         assert_change_feed(expected_change_feeds, actual_change_feeds)
 
+        query_iterable = created_collection.query_items_change_feed(
+            mode = mode,
+            partition_key = 'pk1'
+        )
+        list(query_iterable)
+        pk_cont_token = created_collection.client_connection.last_response_headers[E_TAG]
+        new_documents = [{partition_key: f'pk{i}', ID: f'doc{i}'} for i in range(4)]
+        created_items = []
+        for document in new_documents:
+            created_item = created_collection.create_item(body=document)
+            created_items.append(created_item)
+        query_iterable = created_collection.query_items_change_feed(
+            continuation=pk_cont_token,
+            mode=mode
+        )
+        expected_change_feeds = [{CURRENT: {ID: f'doc1'}, METADATA: {OPERATION_TYPE: CREATE}}]
+        actual_change_feeds = list(query_iterable)
+        assert_change_feed(expected_change_feeds, actual_change_feeds)
+
     def test_query_change_feed_all_versions_and_deletes_errors(self, setup):
         created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
                                                                   PartitionKey(path="/pk"))
