@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Enable live metric for auto instrumentation as opt in
+    ([#39702](https://github.com/Azure/azure-sdk-for-python/pull/39702))
+
 ### Breaking Changes
 
 ### Bugs Fixed
