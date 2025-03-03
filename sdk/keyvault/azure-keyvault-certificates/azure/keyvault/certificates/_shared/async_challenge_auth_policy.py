@@ -66,6 +66,7 @@ async def await_result(func: Callable[P, Union[T, Awaitable[T]]], *args: P.args,
     return result
 
 
+
 class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
     """Policy for handling HTTP authentication challenges.
 
@@ -183,7 +184,6 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
             )
             bodiless_request.headers["Content-Length"] = "0"
             request.http_request = bodiless_request
-
 
     async def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
         try:
