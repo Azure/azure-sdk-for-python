@@ -8,7 +8,9 @@ from datetime import timedelta
 import pytest
 
 from azure.monitor.query import MetricAggregationType
+from azure.monitor.query._version import VERSION
 from azure.monitor.query.aio import MetricsClient
+
 
 from base_testcase import MetricsClientTestCase
 
@@ -60,3 +62,9 @@ class TestMetricsClientAsync(MetricsClientTestCase):
 
         assert client._endpoint == endpoint
         assert f"{audience}/.default" in client._client._config.authentication_policy._scopes
+
+    @pytest.mark.asyncio
+    async def test_client_user_agent(self):
+        client: MetricsClient = self.get_client(MetricsClient, self.get_credential(MetricsClient, is_async=True))
+        async with client:
+            assert f"monitor-query/{VERSION}" in client._client._config.user_agent_policy.user_agent

@@ -10,6 +10,7 @@ from unittest import mock
 import pytest
 
 from azure.monitor.query import MetricAggregationType, Metric
+from azure.monitor.query._version import VERSION
 from azure.monitor.query.aio import MetricsQueryClient
 
 from base_testcase import MetricsQueryClientTestCase
@@ -139,3 +140,10 @@ class TestMetricsQueryClientAsync(MetricsQueryClientTestCase):
 
         assert client._endpoint == endpoint
         assert f"{endpoint}/.default" in client._client._config.authentication_policy._scopes
+
+    @pytest.mark.asyncio
+    async def test_client_user_agent(self):
+        credential = self.get_credential(MetricsQueryClient, is_async=True)
+        client: MetricsQueryClient = self.get_client(MetricsQueryClient, credential)
+        async with client:
+            assert f"monitor-query/{VERSION}" in client._client._config.user_agent_policy.user_agent

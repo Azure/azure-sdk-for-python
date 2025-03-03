@@ -15,6 +15,7 @@ from ._generated.metrics.batch import MonitorBatchMetricsClient
 from ._models import MetricsQueryResult
 from ._enums import MetricAggregationType
 from ._helpers import get_authentication_policy, get_timespan_iso8601_endpoints, get_subscription_id_from_resource
+from ._version import SDK_MONIKER
 
 JSON = MutableMapping[str, Any]
 
@@ -59,7 +60,7 @@ class MetricsClient:  # pylint: disable=client-accepts-api-version-keyword
         authentication_policy = kwargs.pop("authentication_policy", None) or get_authentication_policy(
             credential, audience
         )
-
+        kwargs.setdefault("sdk_moniker", SDK_MONIKER)
         self._client = MonitorBatchMetricsClient(
             credential=credential, endpoint=self._endpoint, authentication_policy=authentication_policy, **kwargs
         )

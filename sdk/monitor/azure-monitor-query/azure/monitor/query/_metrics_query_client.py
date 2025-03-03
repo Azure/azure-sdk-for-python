@@ -15,6 +15,7 @@ from ._generated._serialization import Serializer
 from ._generated.metrics._client import MonitorMetricsClient
 from ._models import MetricsQueryResult, MetricDefinition, MetricNamespace
 from ._helpers import get_authentication_policy, construct_iso8601
+from ._version import SDK_MONIKER
 
 
 class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-keyword
@@ -57,7 +58,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         authentication_policy = kwargs.pop("authentication_policy", None) or get_authentication_policy(
             credential, audience
         )
-
+        kwargs.setdefault("sdk_moniker", SDK_MONIKER)
         self._client = MonitorMetricsClient(
             credential=credential, endpoint=self._endpoint, authentication_policy=authentication_policy, **kwargs
         )
