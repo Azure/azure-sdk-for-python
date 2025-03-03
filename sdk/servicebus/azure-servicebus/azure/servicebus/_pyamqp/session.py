@@ -133,13 +133,38 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self._connection._process_outgoing_frame(self.channel, begin_frame)  # pylint: disable=protected-access
 
     def _incoming_begin(self, frame):
+        """Process incoming Begin frame to finish negotiating a new session.
+         All properties not marked "Required" may be excluded from the frame. i.e. The length of the frame may
+         be less than 8. Note: If any properties are included, no prior properties may be excluded. Instead, they
+         may be set to None to indicate that the property is not present.
+
+        The incoming frame format is::
+
+            - frame[0]: remote_channel (int)
+            - frame[1]: next_outgoing_id (int). Required.
+            - frame[2]: incoming_window (int). Required.
+            - frame[3]: outgoing_window (int). Required.
+            - frame[4]: handle_max (int)
+            - frame[5]: offered_capabilities (Optional[List[bytes]])
+            - frame[6]: desired_capabilities (Optional[List[bytes]])
+            - frame[7]: properties (Optional[Dict[bytes, bytes]])
+
+        :param frame: The incoming Begin frame.
+        :rtype: None
+        """
         if self.network_trace:
             _LOGGER.debug("<- %r", BeginFrame(*frame), extra=self.network_trace_params)
-        self.handle_max = frame[4]  # handle_max
+        try:
+            self.handle_max = frame[4]  # handle_max
+        except IndexError:
+            self.handle_max = None
         self.next_incoming_id = frame[1]  # next_outgoing_id
         self.remote_incoming_window = frame[2]  # incoming_window
         self.remote_outgoing_window = frame[3]  # outgoing_window
-        self.remote_properties = frame[7]  # incoming map of properties about the session
+        try:
+            self.remote_properties = frame[7]  # incoming map of properties about the session
+        except IndexError:
+            self.remote_properties = None
         if self.state == SessionState.BEGIN_SENT:
             self.remote_channel = frame[0]  # remote_channel
             self._set_state(SessionState.MAPPED)
