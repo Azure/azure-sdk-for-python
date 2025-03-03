@@ -102,7 +102,7 @@ class TestLocationCache(unittest.TestCase):
 
         # check read endpoints without preferred locations
         read_regions = lc.get_read_regional_endpoints()
-        assert len(read_regions) == 1
+        assert len(read_regions) == 3
         assert read_regions[0].get_current() == location1_endpoint
 
         # check read endpoints with preferred locations
