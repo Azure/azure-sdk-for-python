@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Renamed `azure.search.documents.indexes.models.AIStudioModelCatalogName` to `azure.search.documents.indexes.models.AIFoundryModelCatalogName`.
+
 ## 11.6.0b9 (2025-01-14)
 
 ### Bugs Fixed
