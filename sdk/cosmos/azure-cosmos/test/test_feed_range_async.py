@@ -58,7 +58,7 @@ class TestFeedRangeAsync:
                                                         True,
                                                         False)).to_dict()
         epk_child_feed_range = await setup["created_collection"].feed_range_from_partition_key("1")
-        assert setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
+        assert await setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
 
 if __name__ == '__main__':
     unittest.main()
