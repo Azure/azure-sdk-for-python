@@ -21,7 +21,7 @@ class TestCognitiveServicesManagementCommitmentTiersOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_commitment_tiers_list(self, resource_group):
         response = self.client.commitment_tiers.list(
             location="str",
             api_version="2024-10-01",

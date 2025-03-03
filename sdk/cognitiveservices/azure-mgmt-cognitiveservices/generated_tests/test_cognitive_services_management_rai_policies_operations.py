@@ -20,7 +20,7 @@ class TestCognitiveServicesManagementRaiPoliciesOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_rai_policies_list(self, resource_group):
         response = self.client.rai_policies.list(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -32,7 +32,7 @@ class TestCognitiveServicesManagementRaiPoliciesOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_rai_policies_get(self, resource_group):
         response = self.client.rai_policies.get(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -45,7 +45,7 @@ class TestCognitiveServicesManagementRaiPoliciesOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_rai_policies_create_or_update(self, resource_group):
         response = self.client.rai_policies.create_or_update(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -82,7 +82,7 @@ class TestCognitiveServicesManagementRaiPoliciesOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_rai_policies_begin_delete(self, resource_group):
         response = self.client.rai_policies.begin_delete(
             resource_group_name=resource_group.name,
             account_name="str",

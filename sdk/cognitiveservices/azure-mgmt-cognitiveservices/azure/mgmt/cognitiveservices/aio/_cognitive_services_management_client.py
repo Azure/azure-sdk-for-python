@@ -43,13 +43,12 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
 class CognitiveServicesManagementClient(
     CognitiveServicesManagementClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes
     """Cognitive Services Management Client.
 
     :ivar accounts: AccountsOperations operations
