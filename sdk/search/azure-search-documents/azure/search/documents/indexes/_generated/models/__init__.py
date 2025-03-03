@@ -201,7 +201,7 @@ from ._models_py3 import (  # type: ignore
 )
 
 from ._search_service_client_enums import (  # type: ignore
-    AIStudioModelCatalogName,
+    AIFoundryModelCatalogName,
     AzureOpenAIModelName,
     BlobIndexerDataToExtract,
     BlobIndexerImageAction,
@@ -452,7 +452,7 @@ __all__ = [
     "WebApiVectorizer",
     "WebApiVectorizerParameters",
     "WordDelimiterTokenFilter",
-    "AIStudioModelCatalogName",
+    "AIFoundryModelCatalogName",
     "AzureOpenAIModelName",
     "BlobIndexerDataToExtract",
     "BlobIndexerImageAction",

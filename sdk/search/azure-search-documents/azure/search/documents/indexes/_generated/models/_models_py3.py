@@ -690,7 +690,7 @@ class AzureMachineLearningParameters(_serialization.Model):
      "OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336",
      "Facebook-DinoV2-Image-Embeddings-ViT-Base", "Facebook-DinoV2-Image-Embeddings-ViT-Giant",
      "Cohere-embed-v3-english", and "Cohere-embed-v3-multilingual".
-    :vartype model_name: str or ~azure.search.documents.indexes.models.AIStudioModelCatalogName
+    :vartype model_name: str or ~azure.search.documents.indexes.models.AIFoundryModelCatalogName
     """
 
     _validation = {
@@ -714,7 +714,7 @@ class AzureMachineLearningParameters(_serialization.Model):
         resource_id: Optional[str] = None,
         timeout: Optional[datetime.timedelta] = None,
         region: Optional[str] = None,
-        model_name: Optional[Union[str, "_models.AIStudioModelCatalogName"]] = None,
+        model_name: Optional[Union[str, "_models.AIFoundryModelCatalogName"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -740,7 +740,7 @@ class AzureMachineLearningParameters(_serialization.Model):
          "OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336",
          "Facebook-DinoV2-Image-Embeddings-ViT-Base", "Facebook-DinoV2-Image-Embeddings-ViT-Giant",
          "Cohere-embed-v3-english", and "Cohere-embed-v3-multilingual".
-        :paramtype model_name: str or ~azure.search.documents.indexes.models.AIStudioModelCatalogName
+        :paramtype model_name: str or ~azure.search.documents.indexes.models.AIFoundryModelCatalogName
         """
         super().__init__(**kwargs)
         self.scoring_uri = scoring_uri
