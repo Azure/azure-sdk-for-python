@@ -1,12 +1,11 @@
 # Release History
 
-## 2.0.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 2.0.1 (2025-02-27)
 
 ### Bugs Fixed
+
+* Updates the failure to load from a config store from a debug level log to a warning level log.
+* Fixes an issue where the stack trace from the azure sdk wasn't being logged on startup.
 
 ### Other Changes
 

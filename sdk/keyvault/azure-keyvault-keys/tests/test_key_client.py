@@ -186,7 +186,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_key_crud_operations(self, client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         assert client is not None
 
         # create ec key
@@ -252,7 +251,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @recorded_by_proxy
     def test_rsa_public_exponent(self, client, **kwargs):
         """The public exponent of a Managed HSM RSA key can be specified during creation"""
-        set_bodiless_matcher()
         assert client is not None
 
         key_name = self.get_resource_name("rsa-key")
@@ -264,7 +262,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_backup_restore(self, client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         assert client is not None
 
         key_name = self.get_resource_name("keybak")
@@ -291,8 +288,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_key_list(self, client, is_hsm, **kwargs):
-        set_bodiless_matcher()
-
         assert client is not None
 
         max_keys = LIST_TEST_SIZE
@@ -342,7 +337,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_list_deleted_keys(self, client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         assert client is not None
 
         expected = {}
@@ -373,7 +367,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_recover(self, client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         assert client is not None
 
         # create keys
@@ -400,7 +393,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_purge(self, client, is_hsm, **kwargs):
-        set_bodiless_matcher()
         assert client is not None
 
         # create keys
@@ -522,7 +514,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         if is_hsm and client.api_version == ApiVersion.V7_5:
             pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
 
-        set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         attestation = get_attestation_token(attestation_uri)
         release_policy = get_release_policy(attestation_uri)
@@ -550,7 +541,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         if client.api_version == ApiVersion.V7_5:
             pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
 
-        set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         attestation = get_attestation_token(attestation_uri)
         release_policy = get_release_policy(attestation_uri)
@@ -575,7 +565,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         if client.api_version == ApiVersion.V7_5:
             pytest.skip("Currently failing on 7.5-preview.1; skipping for now")
 
-        set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         release_policy = get_release_policy(attestation_uri)
         key_name = self.get_resource_name("key-name")
@@ -620,7 +609,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
             pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
 
-        set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         release_policy = get_release_policy(attestation_uri, immutable=True)
         key_name = self.get_resource_name("key-name")
@@ -657,7 +645,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         if (not is_public_cloud() and self.is_live):
             pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
-        set_bodiless_matcher()
         key_name = self.get_resource_name("rotation-key")
         key = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
@@ -679,7 +666,6 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         if (not is_public_cloud() and self.is_live):
             pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
-        set_bodiless_matcher()
         key_name = self.get_resource_name("rotation-key")
         self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 

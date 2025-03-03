@@ -46,10 +46,10 @@ class TestChangeFeed:
         assert len(result) == 1
 
     @pytest.mark.parametrize("change_feed_filter_param", ["partitionKey", "partitionKeyRangeId", "feedRange"])
+    # @pytest.mark.parametrize("change_feed_filter_param", ["partitionKeyRangeId"])
     def test_query_change_feed_with_different_filter(self, change_feed_filter_param, setup):
-        created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
+        created_collection = setup["created_db"].create_container(f"change_feed_test_{change_feed_filter_param}_{str(uuid.uuid4())}",
                                                               PartitionKey(path="/pk"))
-
         # Read change feed without passing any options
         query_iterable = created_collection.query_items_change_feed()
         iter_list = list(query_iterable)
@@ -103,7 +103,7 @@ class TestChangeFeed:
         # with page size 1 and page size 100
         document_definition = {'pk': 'pk', 'id': 'doc2'}
         created_collection.create_item(body=document_definition)
-        document_definition = {'pk': 'pk', 'id': 'doc3'}
+        document_definition = {'pk': 'pk3', 'id': 'doc3'}
         created_collection.create_item(body=document_definition)
 
         for pageSize in [1, 100]:
@@ -115,6 +115,8 @@ class TestChangeFeed:
             )
             it = query_iterable.__iter__()
             expected_ids = 'doc2.doc3.'
+            if "partition_key" in filter_param:
+                expected_ids = 'doc2.'
             actual_ids = ''
             for item in it:
                 actual_ids += item['id'] + '.'
@@ -129,6 +131,8 @@ class TestChangeFeed:
             )
             count = 0
             expected_count = 2
+            if "partition_key" in filter_param:
+                expected_count = 1
             all_fetched_res = []
             for page in query_iterable.by_page():
                 fetched_res = list(page)
@@ -146,11 +150,14 @@ class TestChangeFeed:
             is_start_from_beginning=True,
             **filter_param
         )
-        expected_ids = ['doc1', 'doc2', 'doc3']
+        expected_ids = 'doc1.doc2.doc3.'
+        if "partition_key" in filter_param:
+            expected_ids = 'doc1.doc2.'
         it = query_iterable.__iter__()
-        for i in range(0, len(expected_ids)):
-            doc = next(it)
-            assert doc['id'] == expected_ids[i]
+        actual_ids = ''
+        for item in it:
+            actual_ids += item['id'] + '.'
+        assert actual_ids == expected_ids
         assert 'etag' in created_collection.client_connection.last_response_headers
         continuation3 = created_collection.client_connection.last_response_headers['etag']
 
