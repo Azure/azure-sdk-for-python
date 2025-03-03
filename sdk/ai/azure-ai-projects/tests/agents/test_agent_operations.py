@@ -111,7 +111,7 @@ class TestAgentsOperations:
             assert "tools" not in data, "tools must not be in data"
         mock_pipeline_run.reset_mock()
 
-    def _get_agent_json(self, name: str, assistant_id: str, tool_set: Optional[ToolSet]) -> Dict[str, Any]:
+    def _get_agent_json(self, name: str, agent_id: str, tool_set: Optional[ToolSet]) -> Dict[str, Any]:
         """Read in the agent JSON, so that we can assume service returnred it."""
         with open(
             os.path.join(os.path.dirname(os.path.dirname(__file__)), "test_data", "agent.json"),
@@ -120,7 +120,7 @@ class TestAgentsOperations:
             agent_dict: Dict[str, Any] = json.load(fp)
         assert isinstance(agent_dict, dict)
         agent_dict["name"] = name
-        agent_dict["id"] = assistant_id
+        agent_dict["id"] = agent_id
         if tool_set is not None:
             agent_dict["tool_resources"] = tool_set.resources.as_dict()
             agent_dict["tools"] = tool_set.definitions
@@ -278,10 +278,10 @@ class TestAgentsOperations:
             )
             self._assert_pipeline_and_reset(mock_pipeline._pipeline.run, tool_set=toolset2)
             # Check that the new agents are called with correct tool sets.
-            project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
+            project_client.agents.create_and_process_run(thread_id="some_thread_id", agent_id=agent1.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset1)
 
-            project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent2.id)
+            project_client.agents.create_and_process_run(thread_id="some_thread_id", agent_id=agent2.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run456", toolset2)
             # Check the contents of a toolset
             self._assert_toolset_dict(project_client, agent1.id, toolset1)
@@ -393,7 +393,7 @@ class TestAgentsOperations:
 
             # Create run with new tool set, which also can be none.
             project_client.agents.create_and_process_run(
-                thread_id="some_thread_id", assistant_id=agent1.id, toolset=toolset2
+                thread_id="some_thread_id", agent_id=agent1.id, toolset=toolset2
             )
             if toolset2 is not None:
                 self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset2)
@@ -444,7 +444,7 @@ class TestAgentsOperations:
                 toolset=toolset,
             )
             # Create run with new tool set, which also can be none.
-            project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
+            project_client.agents.create_and_process_run(thread_id="some_thread_id", agent_id=agent1.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset)
 
     def _assert_stream_call(self, submit_tool_mock: MagicMock, run_id: str, tool_set: Optional[ToolSet]) -> None:
@@ -506,7 +506,7 @@ class TestAgentsOperations:
                 toolset=toolset,
             )
             # Create run with new tool set, which also can be none.
-            run = project_client.agents.create_and_process_run(thread_id="some_thread_id", assistant_id=agent1.id)
+            run = project_client.agents.create_and_process_run(thread_id="some_thread_id", agent_id=agent1.id)
             self._assert_tool_call(project_client.agents.submit_tool_outputs_to_run, "run123", toolset)
             project_client.agents._handle_submit_tool_outputs(run)
             self._assert_stream_call(project_client.agents.submit_tool_outputs_to_stream, "run123", toolset)
@@ -550,7 +550,7 @@ class TestIntegrationAgentsOperations:
         operation._toolset = {"asst_01": toolset}
         count = 0
 
-        with operation.create_stream(thread_id="thread_id", assistant_id="asst_01") as stream:
+        with operation.create_stream(thread_id="thread_id", agent_id="asst_01") as stream:
             for _ in stream:
                 count += 1
         assert count == (
