@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Optional, Dict, cast
+from typing import List, Optional, Dict, cast, Any, MutableMapping
 
 import base64
 import itertools
@@ -20,6 +20,7 @@ def convert_search_result(result):
     ret["@search.reranker_score"] = result.reranker_score
     ret["@search.highlights"] = result.highlights
     ret["@search.captions"] = result.captions
+    ret["@search.document_debug_info"] = result.document_debug_info
     return ret
 
 
@@ -44,6 +45,7 @@ def unpack_continuation_token(token):
 
 class SearchItemPaged(ItemPaged[ReturnType]):
     """A pageable list of search results."""
+
     def __init__(self, *args, **kwargs) -> None:
         super(SearchItemPaged, self).__init__(*args, **kwargs)
         self._first_page_iterator_instance: Optional[SearchPageIterator] = None
@@ -118,6 +120,7 @@ def _ensure_response(f):
 
 class SearchPageIterator(PageIterator):
     """An iterator over search results."""
+
     def __init__(self, client, initial_query, kwargs, continuation_token=None) -> None:
         super(SearchPageIterator, self).__init__(
             get_next=self._get_next_cb,
@@ -127,7 +130,7 @@ class SearchPageIterator(PageIterator):
         self._client = client
         self._initial_query = initial_query
         self._kwargs = kwargs
-        self._facets = None
+        self._facets: Optional[MutableMapping[str, List[MutableMapping[str, Any]]]] = None
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
     def _get_next_cb(self, continuation_token):
@@ -144,7 +147,7 @@ class SearchPageIterator(PageIterator):
         return continuation_token, results
 
     @_ensure_response
-    def get_facets(self) -> Optional[Dict]:
+    def get_facets(self) -> Optional[MutableMapping[str, Any]]:
         self.continuation_token = None
         response = cast(SearchDocumentsResult, self._response)
         facets = response.facets
@@ -175,4 +178,4 @@ class SearchPageIterator(PageIterator):
     def get_debug_info(self) -> DebugInfo:
         self.continuation_token = None
         response = cast(SearchDocumentsResult, self._response)
-        return cast(DebugInfo, response.debug_info)
+        return cast(DebugInfo, response.debug)

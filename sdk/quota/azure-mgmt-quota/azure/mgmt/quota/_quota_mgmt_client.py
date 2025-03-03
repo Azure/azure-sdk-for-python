@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -20,12 +21,10 @@ from ._serialization import Deserializer, Serializer
 from .operations import (
     GroupQuotaLimitsOperations,
     GroupQuotaLimitsRequestOperations,
-    GroupQuotaLocationSettingsOperations,
     GroupQuotaSubscriptionAllocationOperations,
     GroupQuotaSubscriptionAllocationRequestOperations,
     GroupQuotaSubscriptionRequestsOperations,
     GroupQuotaSubscriptionsOperations,
-    GroupQuotaUsagesOperations,
     GroupQuotasOperations,
     QuotaOperationOperations,
     QuotaOperations,
@@ -34,11 +33,10 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class QuotaMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class QuotaMgmtClient:  # pylint: disable=too-many-instance-attributes
     """Microsoft Azure Quota Resource Provider. This Swagger is for Azure Group Quota using GroupQuota
     Entity.
 
@@ -50,24 +48,19 @@ class QuotaMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :ivar group_quota_subscription_requests: GroupQuotaSubscriptionRequestsOperations operations
     :vartype group_quota_subscription_requests:
      azure.mgmt.quota.operations.GroupQuotaSubscriptionRequestsOperations
-    :ivar group_quota_limits: GroupQuotaLimitsOperations operations
-    :vartype group_quota_limits: azure.mgmt.quota.operations.GroupQuotaLimitsOperations
     :ivar group_quota_limits_request: GroupQuotaLimitsRequestOperations operations
     :vartype group_quota_limits_request:
      azure.mgmt.quota.operations.GroupQuotaLimitsRequestOperations
-    :ivar group_quota_subscription_allocation: GroupQuotaSubscriptionAllocationOperations
-     operations
-    :vartype group_quota_subscription_allocation:
-     azure.mgmt.quota.operations.GroupQuotaSubscriptionAllocationOperations
+    :ivar group_quota_limits: GroupQuotaLimitsOperations operations
+    :vartype group_quota_limits: azure.mgmt.quota.operations.GroupQuotaLimitsOperations
     :ivar group_quota_subscription_allocation_request:
      GroupQuotaSubscriptionAllocationRequestOperations operations
     :vartype group_quota_subscription_allocation_request:
      azure.mgmt.quota.operations.GroupQuotaSubscriptionAllocationRequestOperations
-    :ivar group_quota_usages: GroupQuotaUsagesOperations operations
-    :vartype group_quota_usages: azure.mgmt.quota.operations.GroupQuotaUsagesOperations
-    :ivar group_quota_location_settings: GroupQuotaLocationSettingsOperations operations
-    :vartype group_quota_location_settings:
-     azure.mgmt.quota.operations.GroupQuotaLocationSettingsOperations
+    :ivar group_quota_subscription_allocation: GroupQuotaSubscriptionAllocationOperations
+     operations
+    :vartype group_quota_subscription_allocation:
+     azure.mgmt.quota.operations.GroupQuotaSubscriptionAllocationOperations
     :ivar usages: UsagesOperations operations
     :vartype usages: azure.mgmt.quota.operations.UsagesOperations
     :ivar quota: QuotaOperations operations
@@ -82,8 +75,8 @@ class QuotaMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-06-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2025-03-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -128,22 +121,16 @@ class QuotaMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self.group_quota_subscription_requests = GroupQuotaSubscriptionRequestsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.group_quota_limits = GroupQuotaLimitsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.group_quota_limits_request = GroupQuotaLimitsRequestOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.group_quota_subscription_allocation = GroupQuotaSubscriptionAllocationOperations(
+        self.group_quota_limits = GroupQuotaLimitsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.group_quota_subscription_allocation_request = GroupQuotaSubscriptionAllocationRequestOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.group_quota_usages = GroupQuotaUsagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.group_quota_location_settings = GroupQuotaLocationSettingsOperations(
+        self.group_quota_subscription_allocation = GroupQuotaSubscriptionAllocationOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -178,7 +165,7 @@ class QuotaMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,too
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "QuotaMgmtClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

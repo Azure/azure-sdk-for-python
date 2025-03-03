@@ -20,11 +20,11 @@ class TestNetworkManagementIpAllocationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_ip_allocations_begin_delete(self, resource_group):
         response = self.client.ip_allocations.begin_delete(
             resource_group_name=resource_group.name,
             ip_allocation_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -32,11 +32,11 @@ class TestNetworkManagementIpAllocationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_ip_allocations_get(self, resource_group):
         response = self.client.ip_allocations.get(
             resource_group_name=resource_group.name,
             ip_allocation_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -44,7 +44,7 @@ class TestNetworkManagementIpAllocationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_ip_allocations_begin_create_or_update(self, resource_group):
         response = self.client.ip_allocations.begin_create_or_update(
             resource_group_name=resource_group.name,
             ip_allocation_name="str",
@@ -63,7 +63,7 @@ class TestNetworkManagementIpAllocationsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "virtualNetwork": {"id": "str"},
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -71,12 +71,12 @@ class TestNetworkManagementIpAllocationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update_tags(self, resource_group):
+    def test_ip_allocations_update_tags(self, resource_group):
         response = self.client.ip_allocations.update_tags(
             resource_group_name=resource_group.name,
             ip_allocation_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -84,9 +84,9 @@ class TestNetworkManagementIpAllocationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_ip_allocations_list(self, resource_group):
         response = self.client.ip_allocations.list(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -94,10 +94,10 @@ class TestNetworkManagementIpAllocationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_ip_allocations_list_by_resource_group(self, resource_group):
         response = self.client.ip_allocations.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

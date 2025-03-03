@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from .. import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -755,7 +754,7 @@ class LeaseAccessConditions(_serialization.Model):
         self.lease_id = lease_id
 
 
-class ListFilesAndDirectoriesSegmentResponse(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ListFilesAndDirectoriesSegmentResponse(_serialization.Model):
     """An enumeration of directories and files.
 
     All required parameters must be populated in order to send to server.
@@ -1203,7 +1202,7 @@ class SharePermission(_serialization.Model):
         self.format = format
 
 
-class SharePropertiesInternal(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class SharePropertiesInternal(_serialization.Model):
     """Properties of a share.
 
     All required parameters must be populated in order to send to server.

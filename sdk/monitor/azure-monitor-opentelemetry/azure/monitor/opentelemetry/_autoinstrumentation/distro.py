@@ -49,7 +49,7 @@ class AzureMonitorDistro(BaseDistro):
             )
         except Exception as e:
             AzureStatusLogger.log_status(False, reason=str(e))
-            AzureDiagnosticLogging.error(
+            AzureDiagnosticLogging.error(  # pylint: disable=C
                 "Azure Monitor OpenTelemetry Distro failed during configuration: %s" % str(e),
                 _ATTACH_FAILURE_DISTRO,
             )

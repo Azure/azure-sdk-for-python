@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2024-03-01/examples/RedisCachePatchSchedulesList.json
+# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2024-11-01/examples/RedisCachePatchSchedulesList.json
 if __name__ == "__main__":
     main()

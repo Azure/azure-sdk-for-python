@@ -1,5 +1,4 @@
 from .__openai_patcher import TestProxyConfig, TestProxyHttpxClientBase  # isort: split
-from . import __pf_service_isolation  # isort: split  # noqa: F401
 
 import os
 import json
@@ -197,8 +196,9 @@ def add_sanitizers(
         add_body_key_sanitizer(json_path="$..userTenantId", value=ZERO_GUID)
         add_body_key_sanitizer(json_path="$..upn", value="Sanitized")
 
-        # remove the stainless retry header since it is causing some unnecessary mismatches in recordings
+        # remove the stainless retry header and read timeout since it is causing some unnecessary mismatches in recordings
         add_batch_sanitizers({Sanitizer.REMOVE_HEADER: [{"headers": "x-stainless-retry-count"}]})
+        add_batch_sanitizers({Sanitizer.REMOVE_HEADER: [{"headers": "x-stainless-read-timeout"}]})
 
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
@@ -394,6 +394,22 @@ def project_scope(request, dev_connections: Dict[str, Any]) -> dict:
 
 
 @pytest.fixture
+def datastore_project_scopes(connection_file, project_scope, mock_project_scope):
+    conn_name = "azure_ai_entra_id_project_scope"
+    if not is_live():
+        entra_id = mock_project_scope
+    else:
+        entra_id = connection_file.get(conn_name)
+        if not entra_id:
+            raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
+
+    return {
+        "sas": project_scope,
+        "none": entra_id,
+    }
+
+
+@pytest.fixture
 def mock_trace_destination_to_cloud(project_scope: dict):
     """Mock trace destination to cloud."""
 
@@ -584,3 +600,10 @@ def pytest_sessionfinish() -> None:
         stop_service()
 
     stop_promptflow_service()
+
+@pytest.fixture
+def run_from_temp_dir(tmp_path):
+    original_cwd = os.getcwd()
+    os.chdir(tmp_path)
+    yield
+    os.chdir(original_cwd)

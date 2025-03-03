@@ -136,7 +136,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
     @distributed_trace
     def get_index(self, name: str, **kwargs: Any) -> SearchIndex:
-        """ Retrieve a named index in an Azure Search service
+        """Retrieve a named index in an Azure Search service
 
         :param name: The name of the index to retrieve.
         :type name: str
@@ -341,7 +341,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         result = self._client.synonym_maps.list(**kwargs)
         assert result.synonym_maps is not None  # Hint for mypy
         # pylint:disable=protected-access
-        return [SynonymMap._from_generated(x) for x in result.synonym_maps]
+        return [cast(SynonymMap, SynonymMap._from_generated(x)) for x in result.synonym_maps]
 
     @distributed_trace
     def get_synonym_map_names(self, **kwargs: Any) -> List[str]:

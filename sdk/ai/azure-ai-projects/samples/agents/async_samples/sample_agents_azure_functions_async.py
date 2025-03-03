@@ -29,6 +29,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.models import (
     AzureFunctionStorageQueue,
     AzureFunctionTool,
+    MessageRole,
 )
 
 
@@ -64,7 +65,7 @@ async def main():
             )
 
             agent = await project_client.agents.create_agent(
-                model="gpt-4",
+                model=os.environ["MODEL_DEPLOYMENT_NAME"],
                 name="azure-function-agent-foo",
                 instructions=f"You are a helpful support agent. Use the provided function any time the prompt contains the string 'What would foo say?'. When you invoke the function, ALWAYS specify the output queue uri parameter as '{storage_service_endpoint}/azure-function-tool-output'. Always responds with \"Foo says\" and then the response from the tool.",
                 tools=azure_function_tool.definitions,
@@ -92,7 +93,7 @@ async def main():
             print(f"Messages: {messages}")
 
             # Get the last message from the sender
-            last_msg = messages.get_last_text_message_by_sender("assistant")
+            last_msg = messages.get_last_text_message_by_role(MessageRole.AGENT)
             if last_msg:
                 print(f"Last Message: {last_msg.text.value}")
 

@@ -21,12 +21,12 @@ class TestNetworkManagementNatRulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_nat_rules_get(self, resource_group):
         response = await self.client.nat_rules.get(
             resource_group_name=resource_group.name,
             gateway_name="str",
             nat_rule_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetworkManagementNatRulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_nat_rules_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.nat_rules.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -53,7 +53,7 @@ class TestNetworkManagementNatRulesOperationsAsync(AzureMgmtRecordedTestCase):
                     "provisioningState": "str",
                     "type": "str",
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -62,13 +62,13 @@ class TestNetworkManagementNatRulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_nat_rules_begin_delete(self, resource_group):
         response = await (
             await self.client.nat_rules.begin_delete(
                 resource_group_name=resource_group.name,
                 gateway_name="str",
                 nat_rule_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -77,11 +77,11 @@ class TestNetworkManagementNatRulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_vpn_gateway(self, resource_group):
+    async def test_nat_rules_list_by_vpn_gateway(self, resource_group):
         response = self.client.nat_rules.list_by_vpn_gateway(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

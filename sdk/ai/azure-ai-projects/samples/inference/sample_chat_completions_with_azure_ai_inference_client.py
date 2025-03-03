@@ -10,7 +10,7 @@ DESCRIPTION:
     on the azure.ai.inference package see https://pypi.org/project/azure-ai-inference/.
 
 USAGE:
-    python sample_get_chat_completions_client.py
+    python sample_chat_completions_with_azure_ai_inference_client.py
 
     Before running the sample:
 

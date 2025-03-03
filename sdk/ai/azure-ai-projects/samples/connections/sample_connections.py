@@ -29,7 +29,6 @@ from azure.identity import DefaultAzureCredential
 
 project_connection_string = os.environ["PROJECT_CONNECTION_STRING"]
 connection_name = os.environ["CONNECTION_NAME"]
-model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),

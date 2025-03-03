@@ -21,11 +21,11 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_tables(self, resource_group):
+    async def test_table_resources_list_tables(self, resource_group):
         response = self.client.table_resources.list_tables(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-11-15",
+            api_version="2024-12-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_table(self, resource_group):
+    async def test_table_resources_get_table(self, resource_group):
         response = await self.client.table_resources.get_table(
             resource_group_name=resource_group.name,
             account_name="str",
             table_name="str",
-            api_version="2024-11-15",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_update_table(self, resource_group):
+    async def test_table_resources_begin_create_update_table(self, resource_group):
         response = await (
             await self.client.table_resources.begin_create_update_table(
                 resource_group_name=resource_group.name,
@@ -63,13 +63,19 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
                         },
                     },
                     "id": "str",
+                    "identity": {
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "type": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "location": "str",
                     "name": "str",
                     "options": {"autoscaleSettings": {"maxThroughput": 0}, "throughput": 0},
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-11-15",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -78,13 +84,13 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete_table(self, resource_group):
+    async def test_table_resources_begin_delete_table(self, resource_group):
         response = await (
             await self.client.table_resources.begin_delete_table(
                 resource_group_name=resource_group.name,
                 account_name="str",
                 table_name="str",
-                api_version="2024-11-15",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -93,12 +99,12 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_table_throughput(self, resource_group):
+    async def test_table_resources_get_table_throughput(self, resource_group):
         response = await self.client.table_resources.get_table_throughput(
             resource_group_name=resource_group.name,
             account_name="str",
             table_name="str",
-            api_version="2024-11-15",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -106,7 +112,7 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update_table_throughput(self, resource_group):
+    async def test_table_resources_begin_update_table_throughput(self, resource_group):
         response = await (
             await self.client.table_resources.begin_update_table_throughput(
                 resource_group_name=resource_group.name,
@@ -124,14 +130,21 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
                         "offerReplacePending": "str",
                         "softAllowedMaximumThroughput": "str",
                         "throughput": 0,
+                        "throughputBuckets": [{"id": 0, "maxThroughputPercentage": 0}],
                     },
                     "id": "str",
+                    "identity": {
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "type": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "location": "str",
                     "name": "str",
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-11-15",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -140,13 +153,13 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_migrate_table_to_autoscale(self, resource_group):
+    async def test_table_resources_begin_migrate_table_to_autoscale(self, resource_group):
         response = await (
             await self.client.table_resources.begin_migrate_table_to_autoscale(
                 resource_group_name=resource_group.name,
                 account_name="str",
                 table_name="str",
-                api_version="2024-11-15",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -155,13 +168,13 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_migrate_table_to_manual_throughput(self, resource_group):
+    async def test_table_resources_begin_migrate_table_to_manual_throughput(self, resource_group):
         response = await (
             await self.client.table_resources.begin_migrate_table_to_manual_throughput(
                 resource_group_name=resource_group.name,
                 account_name="str",
                 table_name="str",
-                api_version="2024-11-15",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -170,16 +183,159 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_retrieve_continuous_backup_information(self, resource_group):
+    async def test_table_resources_begin_retrieve_continuous_backup_information(self, resource_group):
         response = await (
             await self.client.table_resources.begin_retrieve_continuous_backup_information(
                 resource_group_name=resource_group.name,
                 account_name="str",
                 table_name="str",
                 location={"location": "str"},
-                api_version="2024-11-15",
+                api_version="2024-12-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_table_resources_get_table_role_definition(self, resource_group):
+        response = await self.client.table_resources.get_table_role_definition(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            role_definition_id="str",
+            api_version="2024-12-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_table_resources_begin_create_update_table_role_definition(self, resource_group):
+        response = await (
+            await self.client.table_resources.begin_create_update_table_role_definition(
+                resource_group_name=resource_group.name,
+                account_name="str",
+                role_definition_id="str",
+                create_update_table_role_definition_parameters={
+                    "assignableScopes": ["str"],
+                    "id": "str",
+                    "name": "str",
+                    "permissions": [{"dataActions": ["str"], "id": "str", "notDataActions": ["str"]}],
+                    "roleName": "str",
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "type": "str",
+                },
+                api_version="2024-12-01-preview",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_table_resources_begin_delete_table_role_definition(self, resource_group):
+        response = await (
+            await self.client.table_resources.begin_delete_table_role_definition(
+                resource_group_name=resource_group.name,
+                account_name="str",
+                role_definition_id="str",
+                api_version="2024-12-01-preview",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_table_resources_list_table_role_definitions(self, resource_group):
+        response = self.client.table_resources.list_table_role_definitions(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            api_version="2024-12-01-preview",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_table_resources_get_table_role_assignment(self, resource_group):
+        response = await self.client.table_resources.get_table_role_assignment(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            role_assignment_id="str",
+            api_version="2024-12-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_table_resources_begin_create_update_table_role_assignment(self, resource_group):
+        response = await (
+            await self.client.table_resources.begin_create_update_table_role_assignment(
+                resource_group_name=resource_group.name,
+                account_name="str",
+                role_assignment_id="str",
+                create_update_table_role_assignment_parameters={
+                    "id": "str",
+                    "name": "str",
+                    "principalId": "str",
+                    "provisioningState": "str",
+                    "roleDefinitionId": "str",
+                    "scope": "str",
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "type": "str",
+                },
+                api_version="2024-12-01-preview",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_table_resources_begin_delete_table_role_assignment(self, resource_group):
+        response = await (
+            await self.client.table_resources.begin_delete_table_role_assignment(
+                resource_group_name=resource_group.name,
+                account_name="str",
+                role_assignment_id="str",
+                api_version="2024-12-01-preview",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_table_resources_list_table_role_assignments(self, resource_group):
+        response = self.client.table_resources.list_table_role_assignments(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            api_version="2024-12-01-preview",
+        )
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

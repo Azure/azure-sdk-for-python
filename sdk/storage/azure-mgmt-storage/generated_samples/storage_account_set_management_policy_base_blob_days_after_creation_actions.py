@@ -6,15 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, TYPE_CHECKING, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.storage import StorageManagementClient
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 """
 # PREREQUISITES
     pip install azure-identity
@@ -66,6 +61,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-05-01/examples/StorageAccountSetManagementPolicy_BaseBlobDaysAfterCreationActions.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2024-01-01/examples/StorageAccountSetManagementPolicy_BaseBlobDaysAfterCreationActions.json
 if __name__ == "__main__":
     main()

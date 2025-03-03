@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0 (Unreleased)
+## 1.4.0 (Unreleased)
 
 ### Features Added
 
@@ -10,10 +10,81 @@
 
 ### Other Changes
 
-## 1.1.0 (2024-12-12)
+## 1.3.0 (2025-02-28)
+
+### Breaking Changes
+- Multimodal specific evaluators `ContentSafetyMultimodalEvaluator`, `ViolenceMultimodalEvaluator`, `SexualMultimodalEvaluator`, `SelfHarmMultimodalEvaluator`, `HateUnfairnessMultimodalEvaluator` and `ProtectedMaterialMultimodalEvaluator` has been removed. Please use `ContentSafetyEvaluator`, `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator` and `ProtectedMaterialEvaluator` instead.
+- Metric name in ProtectedMaterialEvaluator's output is changed from `protected_material.fictional_characters_label` to `protected_material.fictional_characters_defect_rate`. It's now consistent with other evaluator's metric names (ending with `_defect_rate`).
+
+## 1.2.0 (2025-01-27)
+
+### Features Added
+- CSV files are now supported as data file inputs with `evaluate()` API. The CSV file should have a header row with column names that match the `data` and `target` fields in the `evaluate()` method and the filename should be passed as the `data` parameter. Column name 'Conversation' in CSV file is not fully supported yet.  
+
+### Breaking Changes
+- `ViolenceMultimodalEvaluator`, `SexualMultimodalEvaluator`, `SelfHarmMultimodalEvaluator`, `HateUnfairnessMultimodalEvaluator` and `ProtectedMaterialMultimodalEvaluator` will be removed in next release. 
 
 ### Bugs Fixed
 - Removed `[remote]` extra. This is no longer needed when tracking results in Azure AI Studio.
+- Fixed `AttributeError: 'NoneType' object has no attribute 'get'` while running simulator with 1000+ results
+- Fixed the non adversarial simulator to run in task-free mode
+- Content safety evaluators (violence, self harm, sexual, hate/unfairness) return the maximum result as the
+  main score when aggregating per-turn evaluations from a conversation into an overall
+  evaluation score. Other conversation-capable evaluators still default to a mean for aggregation.
+- Fixed bug in non adversarial simulator sample where `tasks` undefined
+
+### Other Changes
+- Changed minimum required python version to use this package from 3.8 to 3.9
+- Stop dependency on the local promptflow service. No promptflow service will automatically start when running evaluation.
+- Evaluators internally allow for custom aggregation. However, this causes serialization failures if evaluated while the
+  environment variable `AI_EVALS_BATCH_USE_ASYNC` is set to false.
+
+## 1.1.0 (2024-12-12)
+
+### Features Added
+- Added image support in `ContentSafetyEvaluator`, `ViolenceEvaluator`, `SexualEvaluator`, `SelfHarmEvaluator`, `HateUnfairnessEvaluator` and `ProtectedMaterialEvaluator`. Provide image URLs or base64 encoded images in `conversation` input for image evaluation. See below for an example:
+
+```python
+evaluator = ContentSafetyEvaluator(credential=azure_cred, azure_ai_project=project_scope)
+conversation = {
+    "messages": [
+        {
+            "role": "system",
+            "content": [
+                {"type": "text", "text": "You are an AI assistant that understands images."}
+            ],
+        },
+        {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "Can you describe this image?"},
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": "https://cdn.britannica.com/68/178268-050-5B4E7FB6/Tom-Cruise-2013.jpg"
+                    },
+                },
+            ],
+        },
+        {
+            "role": "assistant",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "The image shows a man with short brown hair smiling, wearing a dark-colored shirt.",
+                }
+            ],
+        },
+    ]
+}
+print("Calling Content Safety Evaluator for multi-modal")
+score = evaluator(conversation=conversation)
+```
+
+- Please switch to generic evaluators for image evaluations as mentioned above. `ContentSafetyMultimodalEvaluator`, `ContentSafetyMultimodalEvaluatorBase`, `ViolenceMultimodalEvaluator`, `SexualMultimodalEvaluator`, `SelfHarmMultimodalEvaluator`, `HateUnfairnessMultimodalEvaluator` and `ProtectedMaterialMultimodalEvaluator` will be deprecated in the next release.
+
+### Bugs Fixed
+- Removed `[remote]` extra. This is no longer needed when tracking results in Azure AI Foundry portal.
 - Fixed `AttributeError: 'NoneType' object has no attribute 'get'` while running simulator with 1000+ results
 
 ## 1.0.1 (2024-11-15)

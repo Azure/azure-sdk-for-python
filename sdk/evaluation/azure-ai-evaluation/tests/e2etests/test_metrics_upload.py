@@ -118,13 +118,23 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, EvalRun.__module__)
 
     @pytest.mark.azuretest
-    def test_log_artifact(self, project_scope, azure_ml_client, caplog, tmp_path):
+    @pytest.mark.parametrize("config_name", ["sas", "none"])
+    def test_log_artifact(self, project_scope, azure_cred, datastore_project_scopes, caplog, tmp_path, config_name):
         """Test uploading artifact to the service."""
         logger = logging.getLogger(EvalRun.__module__)
         # All loggers, having promptflow. prefix will have "promptflow" logger
         # as a parent. This logger does not propagate the logs and cannot be
         # captured by caplog. Here we will skip this logger to capture logs.
         logger.parent = logging.root
+
+        project_scope = datastore_project_scopes[config_name]
+        azure_ml_client = LiteMLClient(
+            subscription_id=project_scope["subscription_id"],
+            resource_group=project_scope["resource_group_name"],
+            logger=logger,
+            credential=azure_cred,
+        )
+
         with EvalRun(
             run_name="test",
             tracking_uri=_get_tracking_uri(azure_ml_client, project_scope),

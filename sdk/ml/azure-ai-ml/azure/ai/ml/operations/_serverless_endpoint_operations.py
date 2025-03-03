@@ -7,8 +7,13 @@
 import re
 from typing import Iterable
 
-from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient202401Preview
-from azure.ai.ml._restclient.v2024_01_01_preview.models import KeyType, RegenerateEndpointKeysRequest
+from azure.ai.ml._restclient.v2024_01_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient202401Preview,
+)
+from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+    KeyType,
+    RegenerateEndpointKeysRequest,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -22,7 +27,12 @@ from azure.ai.ml.constants._common import REGISTRY_VERSION_PATTERN, AzureMLResou
 from azure.ai.ml.constants._endpoint import EndpointKeyType
 from azure.ai.ml.entities._autogen_entities.models import ServerlessEndpoint
 from azure.ai.ml.entities._endpoint.online_endpoint import EndpointAuthKeys
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.core.polling import LROPoller
 
 ops_logger = OpsLogger(__name__)
@@ -86,7 +96,11 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
             self._workspace_name,
             endpoint.name,
             endpoint._to_rest_object(),  # type: ignore
-            cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized),  # type: ignore # pylint: disable=line-too-long
+            cls=(
+                lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(  # type: ignore
+                    deserialized
+                )
+            ),
             **kwargs,
         )
 
@@ -104,7 +118,11 @@ class ServerlessEndpointOperations(_ScopeDependentOperations):
             self._resource_group_name,
             self._workspace_name,
             name,
-            cls=lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(deserialized),  # type: ignore # pylint: disable=line-too-long
+            cls=(
+                lambda response, deserialized, headers: ServerlessEndpoint._from_rest_object(  # type: ignore
+                    deserialized
+                )
+            ),
             **kwargs,
         )
 

@@ -241,24 +241,25 @@ class DatastoreOperations(_ScopeDependentOperations):
     def mount(
         self,
         path: str,
+        *,
         mount_point: Optional[str] = None,
         mode: str = "ro_mount",
         debug: bool = False,
         persistent: bool = False,
-        **_kwargs,
+        **kwargs,
     ) -> None:
         """Mount a datastore to a local path, so that you can access data inside it
         under a local path with any tools of your choice.
 
         :param path: The data store path to mount, in the form of `<name>` or `azureml://datastores/<name>`.
         :type path: str
-        :param mount_point: A local path used as mount point.
+        :keyword mount_point: A local path used as mount point.
         :type mount_point: str
-        :param mode: Mount mode, either `ro_mount` (read-only) or `rw_mount` (read-write).
+        :keyword mode: Mount mode, either `ro_mount` (read-only) or `rw_mount` (read-write).
         :type mode: str
-        :param debug: Whether to enable verbose logging.
+        :keyword debug: Whether to enable verbose logging.
         :type debug: bool
-        :param persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance,
+        :keyword persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance,
                 where the 'CI_NAME' environment variable is set."
         :type persistent: bool
         :return: None
@@ -300,6 +301,7 @@ class DatastoreOperations(_ScopeDependentOperations):
                     )
                 ],
                 api_version="2021-01-01",
+                **kwargs,
             )
             print(f"Mount requested [name: {mount_name}]. Waiting for completion ...")
             while True:

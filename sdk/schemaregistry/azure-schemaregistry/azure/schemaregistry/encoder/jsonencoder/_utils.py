@@ -26,15 +26,15 @@ except ImportError:
 from functools import partial
 
 
-from ..._patch import (  # pylint: disable=import-error
+from ..._patch import (
     MessageContent,
     InboundMessageContent as InboundMessageContentProtocol,
     OutboundMessageContent as OutboundMessageContentProtocol,
 )
-from ._exceptions import (  # pylint: disable=import-error
+from ._exceptions import (
     InvalidContentError,
 )
-from ._constants import JSON_MIME_TYPE  # pylint: disable=import-error
+from ._constants import JSON_MIME_TYPE
 
 if TYPE_CHECKING:
     try:
@@ -158,7 +158,7 @@ def create_message_content(
     try:
         # validate content
         validate(schema=schema, content=content)
-    except Exception as exc:  # pylint:disable=broad-except
+    except Exception as exc:
         raise InvalidContentError(
             f"Invalid content value '{content}' for the following schema with schema ID {schema_id}:"
             f"{json.dumps(schema)}",

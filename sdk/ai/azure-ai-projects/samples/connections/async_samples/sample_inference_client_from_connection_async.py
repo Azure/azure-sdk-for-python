@@ -28,10 +28,10 @@ USAGE:
 
 import asyncio
 import os
+from typing import cast
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import ConnectionType, AuthenticationType
 from azure.identity.aio import DefaultAzureCredential
-from typing import cast
 
 
 async def sample_inference_client_from_connection() -> None:
@@ -40,88 +40,89 @@ async def sample_inference_client_from_connection() -> None:
     connection_name = os.environ["CONNECTION_NAME"]
     model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
-    project_client = AIProjectClient.from_connection_string(
-        credential=DefaultAzureCredential(),
-        conn_str=project_connection_string,
-    )
+    async with DefaultAzureCredential() as credential:
 
-    async with project_client:
+        async with AIProjectClient.from_connection_string(
+            credential=credential,
+            conn_str=project_connection_string,
+        ) as project_client:
 
-        # Get the properties of a connection by its connection name:
-        connection = await project_client.connections.get(connection_name=connection_name, include_credentials=True)
-        print("====> Get connection by name (credentials printout redacted)):")
-        print(connection)
+            # Get the properties of a connection by its connection name:
+            connection = await project_client.connections.get(connection_name=connection_name, include_credentials=True)
+            print("====> Get connection by name (credentials printout redacted)):")
+            print(connection)
 
-    # Examples of how you would create an inference client
-    if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
+            # Examples of how you would create an inference client
+            if connection.connection_type == ConnectionType.AZURE_OPEN_AI:
 
-        from openai import AsyncAzureOpenAI
+                from openai import AsyncAzureOpenAI
 
-        if connection.authentication_type == AuthenticationType.API_KEY:
-            print("====> Creating AzureOpenAI client using API key authentication")
-            aoai_client = AsyncAzureOpenAI(
-                api_key=connection.key,
-                azure_endpoint=connection.endpoint_url,
-                api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
-            )
-        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
-            print("====> Creating AzureOpenAI client using Entra ID authentication")
-            from azure.identity.aio import get_bearer_token_provider
-            from azure.core.credentials_async import AsyncTokenCredential
+                if connection.authentication_type == AuthenticationType.API_KEY:
+                    print("====> Creating AsyncAzureOpenAI client using API key authentication")
+                    aoai_client = AsyncAzureOpenAI(
+                        api_key=connection.key,
+                        azure_endpoint=connection.endpoint_url,
+                        api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
+                    )
+                elif connection.authentication_type == AuthenticationType.ENTRA_ID:
+                    print("====> Creating AsyncAzureOpenAI client using Entra ID authentication")
+                    from azure.identity.aio import get_bearer_token_provider
+                    from azure.core.credentials_async import AsyncTokenCredential
 
-            aoai_client = AsyncAzureOpenAI(
-                # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
-                azure_ad_token_provider=get_bearer_token_provider(
-                    cast(AsyncTokenCredential, connection.token_credential),
-                    "https://cognitiveservices.azure.com/.default",
-                ),
-                azure_endpoint=connection.endpoint_url,
-                api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
-            )
-        else:
-            raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
+                    aoai_client = AsyncAzureOpenAI(
+                        # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
+                        azure_ad_token_provider=get_bearer_token_provider(
+                            cast(AsyncTokenCredential, connection.token_credential),
+                            "https://cognitiveservices.azure.com/.default",
+                        ),
+                        azure_endpoint=connection.endpoint_url,
+                        api_version="2024-06-01",  # See "Data plane - inference" row in table https://learn.microsoft.com/azure/ai-services/openai/reference#api-specs
+                    )
+                else:
+                    raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
-        aoai_response = await aoai_client.chat.completions.create(
-            model=model_deployment_name,
-            messages=[
-                {
-                    "role": "user",
-                    "content": "How many feet are in a mile?",
-                },
-            ],
-        )
-        await aoai_client.close()
-        print(aoai_response.choices[0].message.content)
+                aoai_response = await aoai_client.chat.completions.create(
+                    model=model_deployment_name,
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": "How many feet are in a mile?",
+                        },
+                    ],
+                )
+                await aoai_client.close()
+                print(aoai_response.choices[0].message.content)
 
-    elif connection.connection_type == ConnectionType.AZURE_AI_SERVICES:
+            elif connection.connection_type == ConnectionType.AZURE_AI_SERVICES:
 
-        from azure.ai.inference.aio import ChatCompletionsClient
-        from azure.ai.inference.models import UserMessage
+                from azure.ai.inference.aio import ChatCompletionsClient
+                from azure.ai.inference.models import UserMessage
 
-        if connection.authentication_type == AuthenticationType.API_KEY:
-            print("====> Creating ChatCompletionsClient using API key authentication")
-            from azure.core.credentials import AzureKeyCredential
+                if connection.authentication_type == AuthenticationType.API_KEY:
+                    print("====> Creating ChatCompletionsClient using API key authentication")
+                    from azure.core.credentials import AzureKeyCredential
 
-            inference_client = ChatCompletionsClient(
-                endpoint=f"{connection.endpoint_url}/models", credential=AzureKeyCredential(connection.key or "")
-            )
-        elif connection.authentication_type == AuthenticationType.ENTRA_ID:
-            from azure.core.credentials_async import AsyncTokenCredential
+                    inference_client = ChatCompletionsClient(
+                        endpoint=f"{connection.endpoint_url}/models",
+                        credential=AzureKeyCredential(connection.key or ""),
+                    )
+                elif connection.authentication_type == AuthenticationType.ENTRA_ID:
+                    from azure.core.credentials_async import AsyncTokenCredential
 
-            print("====> Creating ChatCompletionsClient using Entra ID authentication")
-            inference_client = ChatCompletionsClient(
-                endpoint=f"{connection.endpoint_url}/models",
-                credential=cast(AsyncTokenCredential, connection.token_credential),
-                credential_scopes=["https://cognitiveservices.azure.com/.default"],
-            )
-        else:
-            raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
+                    print("====> Creating ChatCompletionsClient using Entra ID authentication")
+                    inference_client = ChatCompletionsClient(
+                        endpoint=f"{connection.endpoint_url}/models",
+                        credential=cast(AsyncTokenCredential, connection.token_credential),
+                        credential_scopes=["https://cognitiveservices.azure.com/.default"],
+                    )
+                else:
+                    raise ValueError(f"Authentication type {connection.authentication_type} not supported.")
 
-        inference_response = await inference_client.complete(
-            model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
-        )
-        await inference_client.close()
-        print(inference_response.choices[0].message.content)
+                inference_response = await inference_client.complete(
+                    model=model_deployment_name, messages=[UserMessage(content="How many feet are in a mile?")]
+                )
+                await inference_client.close()
+                print(inference_response.choices[0].message.content)
 
 
 async def main():

@@ -20,7 +20,7 @@ class TestNetworkManagementNetworkManagerCommitsOperations(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_post(self, resource_group):
+    def test_network_manager_commits_begin_post(self, resource_group):
         response = self.client.network_manager_commits.begin_post(
             resource_group_name=resource_group.name,
             network_manager_name="str",
@@ -30,7 +30,7 @@ class TestNetworkManagementNetworkManagerCommitsOperations(AzureMgmtRecordedTest
                 "commitId": "str",
                 "configurationIds": ["str"],
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.9.1b2 (Unreleased)
+### 4.10.0b2 (Unreleased)
 
 #### Features Added
 
@@ -9,6 +9,50 @@
 #### Bugs Fixed
 
 #### Other Changes
+
+### 4.10.0b1 (2025-02-13)
+
+#### Features Added
+* Added ability to replace `computed_properties` through `replace_container` method. See [PR 39543](https://github.com/Azure/azure-sdk-for-python/pull/39543)
+
+#### Other Changes
+* Un-marked `computed_properties` keyword as **provisional**. See [PR 39543](https://github.com/Azure/azure-sdk-for-python/pull/39543)
+
+### 4.9.1b4 (2025-02-06)
+
+#### Bugs Fixed
+* Improved retry logic for read requests to failover on other regions in case of timeouts and any error codes >= 500. See [PR 39596](https://github.com/Azure/azure-sdk-for-python/pull/39596)
+* Fixed a regression where read operations were not retrying on timeouts. See [PR 39596](https://github.com/Azure/azure-sdk-for-python/pull/39596)
+* Updated default read timeout for `getDatabaseAccount` calls to 3 seconds. See [PR 39596](https://github.com/Azure/azure-sdk-for-python/pull/39596)
+
+### 4.9.1b3 (2025-02-04)
+
+#### Features Added
+* Improved retry logic by retrying alternative endpoint for writes within a region before performing a cross region retry. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* Added endpoint health check logic during database account calls. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+
+#### Bugs Fixed
+* Fixed unnecessary retries on the wrong region for timout retry policy. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* All client connection errors from aiohttp will be retried. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+
+#### Other Changes
+* Changed defaults for retry delays. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* Changed default connection timeout to be 5 seconds. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* Changed default read timeout to be 65 seconds. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* On database account calls send a client id header for load balancing. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+* Removed aiohttp dependency. See [PR 39390](https://github.com/Azure/azure-sdk-for-python/pull/39390)
+
+### 4.9.1b2 (2025-01-24)
+
+#### Features Added
+* Added new cross-regional retry logic for `ServiceRequestError` and `ServiceResponseError` exceptions. See [PR 39396](https://github.com/Azure/azure-sdk-for-python/pull/39396)
+
+#### Bugs Fixed
+* Fixed `KeyError` being returned by location cache when most preferred location is not present in cached regions. See [PR 39396](https://github.com/Azure/azure-sdk-for-python/pull/39396).
+* Fixed cross-region retries on `CosmosClient` initialization. See [PR 39396](https://github.com/Azure/azure-sdk-for-python/pull/39396)
+
+#### Other Changes
+* This release requires aiohttp version 3.10.11 and above. See [PR 39396](https://github.com/Azure/azure-sdk-for-python/pull/39396)
 
 ### 4.9.1b1 (2024-12-13)
 
@@ -190,8 +234,8 @@ For more on the `CosmosHttpLoggingPolicy` see our [README](https://github.com/Az
 ### 4.3.1b1 (2022-09-19)
 
 #### Features Added
-- GA release of integrated cache functionality. For more information on integrated cache please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache).
-- Added ability to replace analytical ttl on containers. For more information on analytical ttl please see [Azure Cosmos DB analytical store](https://docs.microsoft.com/azure/cosmos-db/analytical-store-introduction).
+- GA release of integrated cache functionality. For more information on integrated cache please see [Azure Cosmos DB integrated cache](https://learn.microsoft.com/azure/cosmos-db/integrated-cache).
+- Added ability to replace analytical ttl on containers. For more information on analytical ttl please see [Azure Cosmos DB analytical store](https://learn.microsoft.com/azure/cosmos-db/analytical-store-introduction).
 - Added `CosmosHttpLoggingPolicy` to replace `HttpLoggingPolicy` for logging HTTP sessions.
 - Added the ability to create containers and databases with autoscale properties for the sync and async clients.
 - Added the ability to update autoscale throughput properties.
@@ -234,13 +278,13 @@ Method call will now require an 'id' field to be present in the document body.
 > their clients.
 > Default consistency level for the sync and async clients is no longer "Session" and will instead be set to the 
   consistency level of the user's cosmos account setting on initialization if not passed during client initialization. 
-> Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) 
+> Please see [Consistency Levels in Azure Cosmos DB](https://learn.microsoft.com/azure/cosmos-db/consistency-levels) 
 > for more details on consistency levels, or the README section on this change [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos#note-on-client-consistency-levels).
 
 #### Features Added
 - Added new **provisional** `max_integrated_cache_staleness_in_ms` parameter to read item and query items APIs in order
   to make use of the **preview** CosmosDB integrated cache functionality [See PR #22946](https://github.com/Azure/azure-sdk-for-python/pull/22946).
-  Please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache) for more details.
+  Please see [Azure Cosmos DB integrated cache](https://learn.microsoft.com/azure/cosmos-db/integrated-cache) for more details.
 - Added support for split-proof queries for the async client.
 
 ### Bugs fixed
@@ -248,7 +292,7 @@ Method call will now require an 'id' field to be present in the document body.
   consistency level of the user's cosmos account setting on initialization if not passed during client initialization. 
   This change will impact client application in terms of RUs and latency. Users relying on default `Session` consistency
   will need to pass it explicitly if their account consistency is different than `Session`.
-  Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) for more details.  
+  Please see [Consistency Levels in Azure Cosmos DB](https://learn.microsoft.com/azure/cosmos-db/consistency-levels) for more details.  
 - Fixed invalid request body being sent when passing in `serverScript` body parameter to replace operations for trigger, sproc and udf resources.
 - Moved `is_system_key` logic in async client.
 - Fixed TypeErrors not being thrown when passing in invalid connection retry policies to the client.

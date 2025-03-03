@@ -17,12 +17,14 @@ USAGE:
 
     pip install azure-ai-projects azure-identity
 
-    Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Foundry project.
+    Set these environment variables with your own values:
+    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
+       Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+       the "Models + endpoints" tab in your Azure AI Foundry project.
 """
-import io
 import json
-from typing import Generator, Generator, Optional
+from typing import Generator, Optional
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -39,7 +41,7 @@ import os
 # Because we want the iteration to be a string, we define str as the generic type for BaseAsyncAgentEventHandler
 # and override the _process_event method to return a string.
 # The get_stream_chunks method is defined to return the chunks as strings because the iteration is a string.
-class MyEventHandler(BaseAgentEventHandler[str]):
+class MyEventHandler(BaseAgentEventHandler[Optional[str]]):
 
     def _process_event(self, event_data_str: str) -> Optional[str]:  # type: ignore[return]
         event_lines = event_data_str.strip().split("\n")
@@ -66,7 +68,8 @@ class MyEventHandler(BaseAgentEventHandler[str]):
 
     def get_stream_chunks(self) -> Generator[str, None, None]:
         for chunk in self:
-            yield chunk
+            if chunk:
+                yield chunk
 
 
 project_client = AIProjectClient.from_connection_string(
@@ -75,7 +78,7 @@ project_client = AIProjectClient.from_connection_string(
 
 with project_client:
     agent = project_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+        model=os.environ["MODEL_DEPLOYMENT_NAME"], name="my-assistant", instructions="You are helpful assistant"
     )
     print(f"Created agent, agent ID: {agent.id}")
 

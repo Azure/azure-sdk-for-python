@@ -58,7 +58,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, AsyncTokenCredential],  # pylint: disable=used-before-assignment
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
         """DocumentTranslationClient is your interface to the Document Translation service.
@@ -291,7 +291,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
     @distributed_trace_async
-    async def begin_translation(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
+    async def begin_translation(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword,docstring-keyword-should-match-keyword-only
         self, *args: Union[str, List[DocumentTranslationInput], IO[bytes], JSON], **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -353,7 +353,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
 
         polling_interval = kwargs.pop(
             "polling_interval",
-            self._config.polling_interval,  # pylint: disable=protected-access
+            self._config.polling_interval,
         )
 
         pipeline_response = None
@@ -444,7 +444,6 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
             ),
         )
 
-    # pylint: disable=arguments-renamed
     @distributed_trace
     def list_document_statuses(  # type: ignore[override]
         self,

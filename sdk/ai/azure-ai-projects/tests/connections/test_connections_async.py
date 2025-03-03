@@ -5,7 +5,7 @@
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from connection_test_base import ConnectionsTestBase, servicePreparerConnectionsTests
-from azure.ai.projects.models import ConnectionType
+from azure.ai.projects.models import ConnectionType, AuthenticationType
 from azure.core.exceptions import ResourceNotFoundError
 
 
@@ -15,10 +15,32 @@ class TestConnectionsAsync(ConnectionsTestBase):
     @servicePreparerConnectionsTests()
     @recorded_by_proxy_async
     async def test_connections_get_async(self, **kwargs):
-        aoai_connection = kwargs.pop("azure_ai_projects_connections_tests_aoai_connection_name")
-        aiservices_connection = kwargs.pop("azure_ai_projects_connections_tests_aiservices_connection_name")
+        default_key_auth_aoai_connection = kwargs.pop(
+            "azure_ai_projects_connections_tests_default_key_auth_aoai_connection_name"
+        )
+        default_key_auth_aiservices_connection = kwargs.pop(
+            "azure_ai_projects_connections_tests_default_key_auth_aiservices_connection_name"
+        )
+        entraid_auth_aoai_connection = kwargs.pop(
+            "azure_ai_projects_connections_tests_entraid_auth_aoai_connection_name"
+        )
+        entraid_auth_aiservices_connection = kwargs.pop(
+            "azure_ai_projects_connections_tests_entraid_auth_aiservices_connection_name"
+        )
+        aoai_model_deployment_name = kwargs.pop("azure_ai_projects_connections_tests_aoai_model_deployment_name")
+        chat_completions_model_deployment_name = kwargs.pop(
+            "azure_ai_projects_connections_tests_chat_completions_model_deployment_name"
+        )
+        aoai_api_version = kwargs.pop("azure_ai_projects_connections_tests_aoai_api_version")
 
         async with self.get_async_client(**kwargs) as project_client:
+
+            try:
+                _ = await project_client.connections.get(connection_name="")
+                assert False
+            except ValueError as e:
+                print(e)
+                assert ConnectionsTestBase.EXPECTED_EXCEPTION_MESSAGE_FOR_EMPTY_CONNECTION_NAME in e.__str__()
 
             for include_credentials in [True, False]:
                 try:
@@ -32,33 +54,79 @@ class TestConnectionsAsync(ConnectionsTestBase):
                     assert ConnectionsTestBase.EXPECTED_EXCEPTION_MESSAGE_FOR_NON_EXISTING_CONNECTION_NAME in e.message
 
                 connection = await project_client.connections.get(
-                    connection_name=aoai_connection, include_credentials=include_credentials
+                    connection_name=default_key_auth_aoai_connection, include_credentials=include_credentials
                 )
                 print(connection)
                 ConnectionsTestBase.validate_connection(
                     connection,
                     include_credentials,
-                    expected_connection_name=aoai_connection,
+                    expected_connection_name=default_key_auth_aoai_connection,
                     expected_connection_type=ConnectionType.AZURE_OPEN_AI,
+                    expected_authentication_type=AuthenticationType.API_KEY,
                 )
+                if include_credentials:
+                    await ConnectionsTestBase.validate_async_inference(
+                        connection, aoai_model_deployment_name, aoai_api_version=aoai_api_version
+                    )
 
                 connection = await project_client.connections.get(
-                    connection_name=aiservices_connection, include_credentials=include_credentials
+                    connection_name=entraid_auth_aoai_connection, include_credentials=include_credentials
                 )
                 print(connection)
                 ConnectionsTestBase.validate_connection(
                     connection,
                     include_credentials,
-                    expected_connection_name=aiservices_connection,
-                    expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
+                    expected_connection_name=entraid_auth_aoai_connection,
+                    expected_connection_type=ConnectionType.AZURE_OPEN_AI,
+                    expected_authentication_type=AuthenticationType.ENTRA_ID,
                 )
+                if include_credentials:
+                    await ConnectionsTestBase.validate_async_inference(
+                        connection, aoai_model_deployment_name, aoai_api_version=aoai_api_version
+                    )
+
+                connection = await project_client.connections.get(
+                    connection_name=default_key_auth_aiservices_connection, include_credentials=include_credentials
+                )
+                print(connection)
+                ConnectionsTestBase.validate_connection(
+                    connection,
+                    include_credentials,
+                    expected_connection_name=default_key_auth_aiservices_connection,
+                    expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
+                    expected_authentication_type=AuthenticationType.API_KEY,
+                )
+                if include_credentials:
+                    await ConnectionsTestBase.validate_async_inference(
+                        connection, chat_completions_model_deployment_name
+                    )
+
+                connection = await project_client.connections.get(
+                    connection_name=entraid_auth_aiservices_connection, include_credentials=include_credentials
+                )
+                print(connection)
+                ConnectionsTestBase.validate_connection(
+                    connection,
+                    include_credentials,
+                    expected_connection_name=entraid_auth_aiservices_connection,
+                    expected_connection_type=ConnectionType.AZURE_AI_SERVICES,
+                    expected_authentication_type=AuthenticationType.ENTRA_ID,
+                )
+                if include_credentials:
+                    await ConnectionsTestBase.validate_async_inference(
+                        connection, chat_completions_model_deployment_name
+                    )
 
     @servicePreparerConnectionsTests()
     @recorded_by_proxy_async
     async def test_connections_get_default_async(self, **kwargs):
 
-        default_aoai_connection = kwargs.pop("azure_ai_projects_connections_tests_aoai_connection_name")
-        default_serverless_connection = kwargs.pop("azure_ai_projects_connections_tests_aiservices_connection_name")
+        default_aoai_connection = kwargs.pop(
+            "azure_ai_projects_connections_tests_default_key_auth_aoai_connection_name"
+        )
+        default_serverless_connection = kwargs.pop(
+            "azure_ai_projects_connections_tests_default_key_auth_aiservices_connection_name"
+        )
 
         async with self.get_async_client(**kwargs) as project_client:
 
@@ -106,6 +174,7 @@ class TestConnectionsAsync(ConnectionsTestBase):
             for connection in connections:
                 print(connection)
                 ConnectionsTestBase.validate_connection(connection, False)
+            assert count_all >= 6
 
             connections = await project_client.connections.list(
                 connection_type=ConnectionType.AZURE_OPEN_AI,
@@ -115,6 +184,7 @@ class TestConnectionsAsync(ConnectionsTestBase):
             for connection in connections:
                 print(connection)
                 ConnectionsTestBase.validate_connection(connection, False)
+            assert count_aoai >= 2
 
             connections = await project_client.connections.list(
                 connection_type=ConnectionType.AZURE_AI_SERVICES,
@@ -124,7 +194,4 @@ class TestConnectionsAsync(ConnectionsTestBase):
             for connection in connections:
                 print(connection)
                 ConnectionsTestBase.validate_connection(connection, False)
-
-            assert count_all > 2
-            assert count_all > count_aoai
-            assert count_all > count_serverless
+            assert count_serverless >= 2

@@ -99,7 +99,7 @@ async def main():
 
 async def clear_database():
     async with CosmosClient.from_connection_string(CONN_STR) as client:
-        await asyncio.create_task(client.delete_database(DB_ID))
+        await client.delete_database(DB_ID)
     print(f"Deleted {DB_ID} database.")
 
 

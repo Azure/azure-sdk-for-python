@@ -20,10 +20,10 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_kubernetes_versions(self, resource_group):
+    def test_managed_clusters_list_kubernetes_versions(self, resource_group):
         response = self.client.managed_clusters.list_kubernetes_versions(
             location="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -31,9 +31,9 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_managed_clusters_list(self, resource_group):
         response = self.client.managed_clusters.list(
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,10 +41,10 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_managed_clusters_list_by_resource_group(self, resource_group):
         response = self.client.managed_clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -52,11 +52,11 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_upgrade_profile(self, resource_group):
+    def test_managed_clusters_get_upgrade_profile(self, resource_group):
         response = self.client.managed_clusters.get_upgrade_profile(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -64,12 +64,12 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_access_profile(self, resource_group):
+    def test_managed_clusters_get_access_profile(self, resource_group):
         response = self.client.managed_clusters.get_access_profile(
             resource_group_name=resource_group.name,
             resource_name="str",
             role_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -77,11 +77,11 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_cluster_admin_credentials(self, resource_group):
+    def test_managed_clusters_list_cluster_admin_credentials(self, resource_group):
         response = self.client.managed_clusters.list_cluster_admin_credentials(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -89,11 +89,11 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_cluster_user_credentials(self, resource_group):
+    def test_managed_clusters_list_cluster_user_credentials(self, resource_group):
         response = self.client.managed_clusters.list_cluster_user_credentials(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -101,11 +101,11 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_cluster_monitoring_user_credentials(self, resource_group):
+    def test_managed_clusters_list_cluster_monitoring_user_credentials(self, resource_group):
         response = self.client.managed_clusters.list_cluster_monitoring_user_credentials(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -113,11 +113,11 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_managed_clusters_get(self, resource_group):
         response = self.client.managed_clusters.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -125,7 +125,7 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_managed_clusters_begin_create_or_update(self, resource_group):
         response = self.client.managed_clusters.begin_create_or_update(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -214,6 +214,7 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                         },
                         "maxCount": 0,
                         "maxPods": 0,
+                        "messageOfTheDay": "str",
                         "minCount": 0,
                         "mode": "str",
                         "networkProfile": {
@@ -454,7 +455,7 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                 },
                 "workloadAutoScalerProfile": {"keda": {"enabled": bool}, "verticalPodAutoscaler": {"enabled": False}},
             },
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -462,12 +463,12 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update_tags(self, resource_group):
+    def test_managed_clusters_begin_update_tags(self, resource_group):
         response = self.client.managed_clusters.begin_update_tags(
             resource_group_name=resource_group.name,
             resource_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -475,11 +476,11 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_managed_clusters_begin_delete(self, resource_group):
         response = self.client.managed_clusters.begin_delete(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -487,12 +488,12 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_reset_service_principal_profile(self, resource_group):
+    def test_managed_clusters_begin_reset_service_principal_profile(self, resource_group):
         response = self.client.managed_clusters.begin_reset_service_principal_profile(
             resource_group_name=resource_group.name,
             resource_name="str",
             parameters={"clientId": "str", "secret": "str"},
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -500,7 +501,7 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_reset_aad_profile(self, resource_group):
+    def test_managed_clusters_begin_reset_aad_profile(self, resource_group):
         response = self.client.managed_clusters.begin_reset_aad_profile(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -513,7 +514,7 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                 "serverAppSecret": "str",
                 "tenantID": "str",
             },
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -521,11 +522,11 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_rotate_cluster_certificates(self, resource_group):
+    def test_managed_clusters_begin_rotate_cluster_certificates(self, resource_group):
         response = self.client.managed_clusters.begin_rotate_cluster_certificates(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -533,11 +534,11 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_abort_latest_operation(self, resource_group):
+    def test_managed_clusters_begin_abort_latest_operation(self, resource_group):
         response = self.client.managed_clusters.begin_abort_latest_operation(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -545,11 +546,11 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_rotate_service_account_signing_keys(self, resource_group):
+    def test_managed_clusters_begin_rotate_service_account_signing_keys(self, resource_group):
         response = self.client.managed_clusters.begin_rotate_service_account_signing_keys(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -557,11 +558,11 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_stop(self, resource_group):
+    def test_managed_clusters_begin_stop(self, resource_group):
         response = self.client.managed_clusters.begin_stop(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -569,11 +570,11 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_start(self, resource_group):
+    def test_managed_clusters_begin_start(self, resource_group):
         response = self.client.managed_clusters.begin_start(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -581,12 +582,12 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_run_command(self, resource_group):
+    def test_managed_clusters_begin_run_command(self, resource_group):
         response = self.client.managed_clusters.begin_run_command(
             resource_group_name=resource_group.name,
             resource_name="str",
             request_payload={"command": "str", "clusterToken": "str", "context": "str"},
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -594,12 +595,12 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_command_result(self, resource_group):
+    def test_managed_clusters_get_command_result(self, resource_group):
         response = self.client.managed_clusters.get_command_result(
             resource_group_name=resource_group.name,
             resource_name="str",
             command_id="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -607,11 +608,11 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_outbound_network_dependencies_endpoints(self, resource_group):
+    def test_managed_clusters_list_outbound_network_dependencies_endpoints(self, resource_group):
         response = self.client.managed_clusters.list_outbound_network_dependencies_endpoints(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -619,10 +620,10 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_mesh_revision_profiles(self, resource_group):
+    def test_managed_clusters_list_mesh_revision_profiles(self, resource_group):
         response = self.client.managed_clusters.list_mesh_revision_profiles(
             location="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -630,11 +631,11 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_mesh_revision_profile(self, resource_group):
+    def test_managed_clusters_get_mesh_revision_profile(self, resource_group):
         response = self.client.managed_clusters.get_mesh_revision_profile(
             location="str",
             mode="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -642,11 +643,11 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_mesh_upgrade_profiles(self, resource_group):
+    def test_managed_clusters_list_mesh_upgrade_profiles(self, resource_group):
         response = self.client.managed_clusters.list_mesh_upgrade_profiles(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -654,12 +655,12 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_mesh_upgrade_profile(self, resource_group):
+    def test_managed_clusters_get_mesh_upgrade_profile(self, resource_group):
         response = self.client.managed_clusters.get_mesh_upgrade_profile(
             resource_group_name=resource_group.name,
             resource_name="str",
             mode="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself

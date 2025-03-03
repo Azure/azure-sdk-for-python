@@ -22,7 +22,6 @@ from ._enums import StorageInputType
 
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -381,7 +380,7 @@ class TranslationStatus(GeneratedTranslationStatus):
     summary: "_models.TranslationStatusSummary"
     """Status Summary. Required."""
 
-    # pylint: disable=too-many-return-statements,inconsistent-return-statements
+    # pylint: disable=too-many-return-statements
     def __getattr__(self, name: str) -> Any:
         backcompat_attrs = [
             "documents_total_count",

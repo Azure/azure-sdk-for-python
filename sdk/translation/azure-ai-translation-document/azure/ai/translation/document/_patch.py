@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # mypy: disable-error-code="attr-defined"
-# pylint: disable=too-many-lines
 
 from typing import Any, List, Union, overload, Optional, cast, Mapping, IO, MutableMapping
 from enum import Enum
@@ -213,11 +212,11 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         )
 
     def __enter__(self) -> "DocumentTranslationClient":
-        self._client.__enter__()  # pylint:disable=no-member
+        self._client.__enter__()
         return self
 
     def __exit__(self, *args) -> None:
-        self._client.__exit__(*args)  # pylint:disable=no-member
+        self._client.__exit__(*args)
 
     def close(self) -> None:
         """Close the :class:`~azure.ai.translation.document.DocumentTranslationClient` session."""
@@ -393,7 +392,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
     @distributed_trace
-    def begin_translation(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
+    def begin_translation(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword,docstring-keyword-should-match-keyword-only
         self, *args: Union[str, List[DocumentTranslationInput], StartTranslationDetails, IO[bytes], JSON], **kwargs: Any
     ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -455,7 +454,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
 
         polling_interval = kwargs.pop(
             "polling_interval",
-            self._config.polling_interval,  # pylint: disable=protected-access
+            self._config.polling_interval,
         )
 
         pipeline_response = None
@@ -482,7 +481,6 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
             ),
         )
 
-    # pylint: disable=arguments-renamed
     @distributed_trace
     def cancel_translation(self, translation_id: str, **kwargs: Any) -> None:  # type: ignore[override]
         """Cancel a currently processing or queued translation operation.
@@ -561,7 +559,6 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
             ),
         )
 
-    # pylint: disable=arguments-renamed
     @distributed_trace
     def list_document_statuses(  # type: ignore[override]
         self,

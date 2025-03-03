@@ -178,7 +178,7 @@ You may also find existing answers on community sites like
 [Stack Overflow](https://stackoverflow.com/questions/tagged/azure-keyvault+python).
 
 
-[access_policies]: https://docs.microsoft.com/azure/key-vault/general/assign-access-policy
+[access_policies]: https://learn.microsoft.com/azure/key-vault/general/assign-access-policy
 [azure-appconfiguration]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/README.md
 [azure-identity]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md
 
@@ -190,12 +190,12 @@ You may also find existing answers on community sites like
 
 [kv_admin_troubleshooting]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/TROUBLESHOOTING.md
 [kv_certs_troubleshooting]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates/TROUBLESHOOTING.md
-[kv_error_codes]: https://docs.microsoft.com/azure/key-vault/general/rest-error-codes
+[kv_error_codes]: https://learn.microsoft.com/azure/key-vault/general/rest-error-codes
 [kv_keys_troubleshooting]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/TROUBLESHOOTING.md
 [kv_secrets_troubleshooting]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-secrets/TROUBLESHOOTING.md
 
-[rbac]: https://docs.microsoft.com/azure/key-vault/general/rbac-guide
+[rbac]: https://learn.microsoft.com/azure/key-vault/general/rbac-guide
 [release_notes_resource]: https://aka.ms/azsdk/blog/vault-uri
 [release_notes_tenant]: https://aka.ms/azsdk/blog/multi-tenant-guidance
 
-[throttling_guide]: https://docs.microsoft.com/azure/key-vault/general/overview-throttling
+[throttling_guide]: https://learn.microsoft.com/azure/key-vault/general/overview-throttling

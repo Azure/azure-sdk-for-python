@@ -1,18 +1,23 @@
 # Release History
 
-## 2.0.0b4 (Unreleased)
+## 2.0.1 (2025-02-27)
 
-### Features Added
+### Bugs Fixed
 
-### Breaking Changes
+* Updates the failure to load from a config store from a debug level log to a warning level log.
+* Fixes an issue where the stack trace from the azure sdk wasn't being logged on startup.
+
+### Other Changes
+
+* Bumped minimum dependency on `azure-core` to `>=1.30.0`
+* Bumped minimum dependency on `azure-appconfiguration` to `>=1.6.1`
+
+## 2.0.0 (2025-01-06)
 
 ### Features Added
 
 * Added support for load balancing between replicas.
-
-### Bugs Fixed
-
-### Other Changes
+* Added support for adding telemetry information to feature flags.
 
 ## 2.0.0b3 (2024-11-13)
 

@@ -3,12 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
+import logging
+import sys
+
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live, recorded_by_proxy, set_bodiless_matcher
-from _shared.utils import get_http_logging_policy
 from devtools_testutils.fake_credentials import FakeTokenCredential
+from devtools_testutils import get_credential, is_live, recorded_by_proxy, set_bodiless_matcher
+from _shared.utils import get_http_logging_policy
 from azure.core.exceptions import HttpResponseError
-from azure.identity import DefaultAzureCredential
 from acs_sms_test_case import ACSSMSTestCase
 from azure.communication.sms import SmsClient
 
@@ -52,7 +55,7 @@ class TestClient(ACSSMSTestCase):
         if not is_live():
             credential = FakeTokenCredential()
         else:
-            credential = DefaultAzureCredential()
+            credential = get_credential()
         sms_client = SmsClient(self.endpoint, credential, http_logging_policy=get_http_logging_policy())
 
         # calling send() with sms values

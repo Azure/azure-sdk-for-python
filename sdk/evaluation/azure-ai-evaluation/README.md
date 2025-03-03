@@ -22,7 +22,7 @@ Azure AI SDK provides following to evaluate Generative AI Applications:
 
 ### Prerequisites
 
-- Python 3.8 or later is required to use this package.
+- Python 3.9 or later is required to use this package.
 - [Optional] You must have [Azure AI Project][ai_project] or [Azure Open AI][azure_openai] to use AI-assisted evaluators
 
 ### Install the package

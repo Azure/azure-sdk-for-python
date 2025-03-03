@@ -3,9 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-keyword-should-match-keyword-only
+
 import os
 
-from typing import Union, Iterable, AnyStr, IO, Any, Dict  # pylint: disable=unused-import
+from typing import Any, AnyStr, cast, Dict, IO, Iterable, Optional, Union, TYPE_CHECKING
 from ._version import VERSION
 from ._blob_client import BlobClient
 from ._container_client import ContainerClient
@@ -16,21 +18,21 @@ from ._quick_query_helper import BlobQueryReader
 from ._shared_access_signature import generate_account_sas, generate_container_sas, generate_blob_sas
 from ._shared.policies import ExponentialRetry, LinearRetry
 from ._shared.response_handlers import PartialBatchErrorException
-from ._shared.models import(
+from ._shared.models import (
     LocationMode,
     ResourceTypes,
     AccountSasPermissions,
     StorageErrorCode,
-    UserDelegationKey
+    UserDelegationKey,
+    Services
 )
-from ._generated.models import (
-    RehydratePriority
-)
+from ._generated.models import RehydratePriority
 from ._models import (
     BlobType,
     BlockState,
     StandardBlobTier,
     PremiumPageBlobTier,
+    BlobImmutabilityPolicyMode,
     SequenceNumberAction,
     PublicAccess,
     BlobAnalyticsLogging,
@@ -54,22 +56,27 @@ from ._models import (
     BlobQueryError,
     DelimitedJsonDialect,
     DelimitedTextDialect,
+    QuickQueryDialect,
     ArrowDialect,
     ArrowType,
     ObjectReplicationPolicy,
-    ObjectReplicationRule
+    ObjectReplicationRule,
+    ImmutabilityPolicy,
 )
 from ._list_blobs_helper import BlobPrefix
+
+if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
 
 __version__ = VERSION
 
 
 def upload_blob_to_url(
-        blob_url,  # type: str
-        data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-        credential=None,  # type: Any
-        **kwargs):
-    # type: (...) -> Dict[str, Any]
+    blob_url: str,
+    data: Union[Iterable[AnyStr], IO[AnyStr]],
+    credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+    **kwargs: Any
+) -> Dict[str, Any]:
     """Upload data to a given URL
 
     The data will be uploaded as a block blob.
@@ -82,10 +89,17 @@ def upload_blob_to_url(
     :param credential:
         The credentials with which to authenticate. This is optional if the
         blob URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :keyword bool overwrite:
         Whether the blob to be uploaded should overwrite the current data.
         If True, upload_blob_to_url will overwrite any existing data. If set to False, the
@@ -112,21 +126,26 @@ def upload_blob_to_url(
     :rtype: dict(str, Any)
     """
     with BlobClient.from_blob_url(blob_url, credential=credential) as client:
-        return client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs)
+        return cast(BlobClient, client).upload_blob(data=data, blob_type=BlobType.BLOCKBLOB, **kwargs)
 
 
-def _download_to_stream(client, handle, **kwargs):
-    """Download data to specified open file-handle."""
+def _download_to_stream(client: BlobClient, handle: IO[bytes], **kwargs: Any) -> None:
+    """
+    Download data to specified open file-handle.
+
+    :param BlobClient client: The BlobClient to download with.
+    :param Stream handle: A Stream to download the data into.
+    """
     stream = client.download_blob(**kwargs)
     stream.readinto(handle)
 
 
 def download_blob_from_url(
-        blob_url,  # type: str
-        output,  # type: str
-        credential=None,  # type: Any
-        **kwargs):
-    # type: (...) -> None
+    blob_url: str,
+    output: Union[str, IO[bytes]],
+    credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+    **kwargs: Any
+) -> None:
     """Download the contents of a blob to a local file or stream.
 
     :param str blob_url:
@@ -138,10 +157,17 @@ def download_blob_from_url(
     :param credential:
         The credentials with which to authenticate. This is optional if the
         blob URL already has a SAS token or the blob is public. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials,
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
         an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
+    :type credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials.TokenCredential or
+        str or dict[str, str] or None
     :keyword bool overwrite:
         Whether the local file should be overwritten if it already exists. The default value is
         `False` - in which case a ValueError will be raised if the file already exists. If set to
@@ -169,10 +195,10 @@ def download_blob_from_url(
     overwrite = kwargs.pop('overwrite', False)
     with BlobClient.from_blob_url(blob_url, credential=credential) as client:
         if hasattr(output, 'write'):
-            _download_to_stream(client, output, **kwargs)
+            _download_to_stream(client, cast(IO[bytes], output), **kwargs)
         else:
             if not overwrite and os.path.isfile(output):
-                raise ValueError("The file '{}' already exists.".format(output))
+                raise ValueError(f"The file '{output}' already exists.")
             with open(output, 'wb') as file_handle:
                 _download_to_stream(client, file_handle, **kwargs)
 
@@ -194,6 +220,8 @@ __all__ = [
     'StandardBlobTier',
     'PremiumPageBlobTier',
     'SequenceNumberAction',
+    'BlobImmutabilityPolicyMode',
+    'ImmutabilityPolicy',
     'PublicAccess',
     'BlobAnalyticsLogging',
     'Metrics',
@@ -210,6 +238,7 @@ __all__ = [
     'BlobBlock',
     'PageRange',
     'AccessPolicy',
+    'QuickQueryDialect',
     'ContainerSasPermissions',
     'BlobSasPermissions',
     'ResourceTypes',
@@ -229,5 +258,6 @@ __all__ = [
     'ArrowType',
     'BlobQueryReader',
     'ObjectReplicationPolicy',
-    'ObjectReplicationRule'
+    'ObjectReplicationRule',
+    'Services',
 ]

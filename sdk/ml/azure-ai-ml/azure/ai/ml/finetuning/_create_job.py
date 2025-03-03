@@ -68,7 +68,7 @@ def create_finetuning_job(
         task=task,
         model=model_input,
         training_data=training_data_input,
-        validation_data=validation_data_input,
+        validation_data=validation_data_input,  # pylint: disable=(possibly-used-before-assignment
         hyperparameters=hyperparameters,
         compute=compute,
         resources=job_resources,

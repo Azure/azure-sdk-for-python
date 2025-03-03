@@ -21,13 +21,13 @@ class TestNetworkManagementServiceEndpointPolicyDefinitionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_service_endpoint_policy_definitions_begin_delete(self, resource_group):
         response = await (
             await self.client.service_endpoint_policy_definitions.begin_delete(
                 resource_group_name=resource_group.name,
                 service_endpoint_policy_name="str",
                 service_endpoint_policy_definition_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -36,12 +36,12 @@ class TestNetworkManagementServiceEndpointPolicyDefinitionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_service_endpoint_policy_definitions_get(self, resource_group):
         response = await self.client.service_endpoint_policy_definitions.get(
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
             service_endpoint_policy_definition_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestNetworkManagementServiceEndpointPolicyDefinitionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_service_endpoint_policy_definitions_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.service_endpoint_policy_definitions.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -65,7 +65,7 @@ class TestNetworkManagementServiceEndpointPolicyDefinitionsOperationsAsync(Azure
                     "serviceResources": ["str"],
                     "type": "str",
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -74,11 +74,11 @@ class TestNetworkManagementServiceEndpointPolicyDefinitionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_service_endpoint_policy_definitions_list_by_resource_group(self, resource_group):
         response = self.client.service_endpoint_policy_definitions.list_by_resource_group(
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

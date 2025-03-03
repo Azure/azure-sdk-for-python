@@ -17,7 +17,6 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_encrypt_decrypt(self, key_client, **kwargs):
-        set_bodiless_matcher()
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-encrypt-key")
         key_client.create_rsa_key(key_name)
@@ -55,7 +54,6 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_wrap_unwrap(self, key_client, **kwargs):
-        set_bodiless_matcher()
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = key_client.create_rsa_key(key_name)
@@ -84,7 +82,6 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_sign_verify(self, key_client, **kwargs):
-        set_bodiless_matcher()
         credential = self.get_credential(CryptographyClient)
         key_name = self.get_resource_name("crypto-test-wrapping-key")
         key = key_client.create_rsa_key(key_name)

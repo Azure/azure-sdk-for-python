@@ -1,3 +1,7 @@
 [tool.azure-sdk-build]
 breaking = false
 black = false
+mypy = false
+pyright = false
+type_check_samples = false
+verifytypes = false

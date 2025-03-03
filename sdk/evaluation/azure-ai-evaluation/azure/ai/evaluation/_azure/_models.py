@@ -8,7 +8,7 @@
 
 from typing import Dict, List, NamedTuple, Optional, Union
 from msrest.serialization import Model
-from azure.core.credentials import AzureSasCredential
+from azure.core.credentials import AzureSasCredential, TokenCredential
 
 
 class BlobStoreInfo(NamedTuple):
@@ -16,7 +16,7 @@ class BlobStoreInfo(NamedTuple):
     account_name: str
     endpoint: str
     container_name: str
-    credential: Optional[Union[AzureSasCredential, str]]
+    credential: Optional[Union[AzureSasCredential, TokenCredential, str]]
 
 
 class WorkspaceHubConfig(Model):

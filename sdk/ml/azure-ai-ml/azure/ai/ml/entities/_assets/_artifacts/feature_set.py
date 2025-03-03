@@ -166,7 +166,6 @@ class FeatureSet(Artifact):
         return feature_set
 
     def _to_dict(self) -> Dict:
-        # pylint: disable=no-member
         return dict(FeatureSetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:

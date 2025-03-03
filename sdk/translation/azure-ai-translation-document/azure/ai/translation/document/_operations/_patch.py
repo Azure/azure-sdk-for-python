@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint: disable=too-many-lines,protected-access
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -51,7 +50,7 @@ from .._vendor import prepare_multipart_form_data
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # type: ignore[misc] # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]  # type: ignore
@@ -92,6 +91,7 @@ class DocumentTranslationLROPoller(LROPoller[PollingReturnType_co]):
         :return: The str ID for the translation operation.
         :rtype: str
         """
+        # pylint: disable=protected-access
         if self._polling_method._current_body:
             return self._polling_method._current_body.id
         return self._polling_method._get_id_from_headers()
@@ -103,6 +103,7 @@ class DocumentTranslationLROPoller(LROPoller[PollingReturnType_co]):
         :return: The details for the translation operation.
         :rtype: ~azure.ai.translation.document.TranslationStatus
         """
+        # pylint: disable=protected-access
         if self._polling_method._current_body:
             return TranslationStatus(self._polling_method._current_body)
         return TranslationStatus(id=self._polling_method._get_id_from_headers())  # type: ignore
@@ -327,7 +328,7 @@ class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClien
                 deserialization_callback=get_long_running_output,
             )
         return DocumentTranslationLROPoller[_models.TranslationStatus](
-            self._client, raw_result, get_long_running_output, polling_method
+            self._client, raw_result, get_long_running_output, polling_method # pylint: disable=possibly-used-before-assignment
         )
 
 

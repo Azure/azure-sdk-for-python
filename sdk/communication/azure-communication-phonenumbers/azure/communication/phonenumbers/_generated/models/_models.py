@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, List, Optional, TYPE_CHECKING, Union
 from .. import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -130,19 +129,13 @@ class OfferingsResponse(_serialization.Model):
 class OperatorDetails(_serialization.Model):
     """Represents metadata describing the operator of a phone number.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: Name of the phone operator. Required.
+    :ivar name: Name of the phone operator.
     :vartype name: str
-    :ivar mobile_network_code: Mobile Network Code.
+    :ivar mobile_network_code: Mobile Network Code, 2 or 3 decimal digits that identify mobile networks within a country/region.
     :vartype mobile_network_code: str
-    :ivar mobile_country_code: Mobile Country Code.
+    :ivar mobile_country_code: Mobile Country Code, 3 decimal digits that identify a country/region.
     :vartype mobile_country_code: str
     """
-
-    _validation = {
-        "name": {"required": True},
-    }
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
@@ -153,17 +146,17 @@ class OperatorDetails(_serialization.Model):
     def __init__(
         self,
         *,
-        name: str,
+        name: Optional[str] = None,
         mobile_network_code: Optional[str] = None,
         mobile_country_code: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword name: Name of the phone operator. Required.
+        :keyword name: Name of the phone operator.
         :paramtype name: str
-        :keyword mobile_network_code: Mobile Network Code.
+        :keyword mobile_network_code: Mobile Network Code, 2 or 3 decimal digits that identify mobile networks within a country/region.
         :paramtype mobile_network_code: str
-        :keyword mobile_country_code: Mobile Country Code.
+        :keyword mobile_country_code: Mobile Country Code, 3 decimal digits that identify a country/region.
         :paramtype mobile_country_code: str
         """
         super().__init__(**kwargs)
@@ -944,14 +937,6 @@ class PhoneNumberSearchResult(_serialization.Model):
      longer on hold. A search result expires in less than 15min, e.g. 2020-11-19T16:31:49.048Z.
      Required.
     :vartype search_expires_by: ~datetime.datetime
-    :ivar error_code: The error code of the search.
-    :vartype error_code: int
-    :ivar error: Mapping Error Messages to Codes. Known values are: "NoError", "UnknownErrorCode",
-     "OutOfStock", "AuthorizationDenied", "MissingAddress", "InvalidAddress", "InvalidOfferModel",
-     "NotEnoughLicenses", "NoWallet", "NotEnoughCredit", "NumbersPartiallyAcquired",
-     "AllNumbersNotAcquired", "ReservationExpired", "PurchaseFailed", "BillingUnavailable",
-     "ProvisioningFailed", and "UnknownSearchError".
-    :vartype error: str or ~azure.communication.phonenumbers.models.PhoneNumberSearchResultError
     """
 
     _validation = {
@@ -972,8 +957,6 @@ class PhoneNumberSearchResult(_serialization.Model):
         "capabilities": {"key": "capabilities", "type": "PhoneNumberCapabilities"},
         "cost": {"key": "cost", "type": "PhoneNumberCost"},
         "search_expires_by": {"key": "searchExpiresBy", "type": "iso-8601"},
-        "error_code": {"key": "errorCode", "type": "int"},
-        "error": {"key": "error", "type": "str"},
     }
 
     def __init__(
@@ -986,8 +969,6 @@ class PhoneNumberSearchResult(_serialization.Model):
         capabilities: "_models.PhoneNumberCapabilities",
         cost: "_models.PhoneNumberCost",
         search_expires_by: datetime.datetime,
-        error_code: Optional[int] = None,
-        error: Optional[Union[str, "_models.PhoneNumberSearchResultError"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1011,14 +992,6 @@ class PhoneNumberSearchResult(_serialization.Model):
          longer on hold. A search result expires in less than 15min, e.g. 2020-11-19T16:31:49.048Z.
          Required.
         :paramtype search_expires_by: ~datetime.datetime
-        :keyword error_code: The error code of the search.
-        :paramtype error_code: int
-        :keyword error: Mapping Error Messages to Codes. Known values are: "NoError",
-         "UnknownErrorCode", "OutOfStock", "AuthorizationDenied", "MissingAddress", "InvalidAddress",
-         "InvalidOfferModel", "NotEnoughLicenses", "NoWallet", "NotEnoughCredit",
-         "NumbersPartiallyAcquired", "AllNumbersNotAcquired", "ReservationExpired", "PurchaseFailed",
-         "BillingUnavailable", "ProvisioningFailed", and "UnknownSearchError".
-        :paramtype error: str or ~azure.communication.phonenumbers.models.PhoneNumberSearchResultError
         """
         super().__init__(**kwargs)
         self.search_id = search_id
@@ -1028,8 +1001,6 @@ class PhoneNumberSearchResult(_serialization.Model):
         self.capabilities = capabilities
         self.cost = cost
         self.search_expires_by = search_expires_by
-        self.error_code = error_code
-        self.error = error
 
 
 class PurchasedPhoneNumber(_serialization.Model):

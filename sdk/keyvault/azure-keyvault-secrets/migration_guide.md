@@ -65,7 +65,7 @@ credentials = ServicePrincipalCredentials(
 client = KeyVaultClient(credentials)
 ```
 
-Now in `azure-keyvault-secrets` you can create a `SecretClient` using any credential from [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md). Below is an example using [`DefaultAzureCredential`](https://docs.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python):
+Now in `azure-keyvault-secrets` you can create a `SecretClient` using any credential from [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md). Below is an example using [`DefaultAzureCredential`](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python):
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -206,7 +206,7 @@ secret_client.purge_deleted_secret(name="secret-name")
 ## Additional samples
 
 * [Key Vault secrets samples for Python](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-secrets/samples)
-* [General Key Vault samples for Python](https://docs.microsoft.com/samples/browse/?products=azure-key-vault&languages=python)
+* [General Key Vault samples for Python](https://learn.microsoft.com/samples/browse/?products=azure-key-vault&languages=python)
 
 ## Support
 

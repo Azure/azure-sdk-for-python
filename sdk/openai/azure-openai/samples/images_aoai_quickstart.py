@@ -25,7 +25,7 @@ USAGE:
 """
 
 import os
-os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT")
+os.environ["AZURE_OPENAI_ENDPOINT"] = os.environ["AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT"]
 os.environ["AZURE_OPENAI_IMAGE_DEPLOYMENT"] = "dall-e-3"
 
 def images_aoai_quickstart() -> None:
@@ -62,16 +62,16 @@ def images_aoai_quickstart() -> None:
     image_path = os.path.join(image_dir, 'generated_image.png')
 
     # Retrieve the generated image
-
     image_url = result.data[0].url  # extract image URL from response
-    generated_image = httpx.get(image_url).content  # download the image
+    if image_url:
+        generated_image = httpx.get(image_url).content  # download the image
 
-    with open(image_path, "wb") as image_file:
-        image_file.write(generated_image)
+        with open(image_path, "wb") as image_file:
+            image_file.write(generated_image)
 
-    # Display the image in the default image viewer
-    image = Image.open(image_path)
-    image.show()
+        # Display the image in the default image viewer
+        image = Image.open(image_path)
+        image.show()
 
 if __name__ == "__main__":
     images_aoai_quickstart()

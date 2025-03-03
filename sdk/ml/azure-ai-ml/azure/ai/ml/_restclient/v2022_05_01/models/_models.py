@@ -3688,7 +3688,7 @@ class ComponentContainerDetails(AssetContainer):
 
 .. raw:: html
 
-   <see href="https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command" />.
+   <see href="https://learn.microsoft.com/azure/machine-learning/reference-yaml-component-command" />.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3837,7 +3837,7 @@ class ComponentVersionDetails(AssetBase):
      .. raw:: html
     
         <see
-     href="https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command"
+     href="https://learn.microsoft.com/azure/machine-learning/reference-yaml-component-command"
      />.
     :vartype component_spec: any
     """
@@ -3872,7 +3872,7 @@ class ComponentVersionDetails(AssetBase):
          .. raw:: html
         
             <see
-         href="https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command"
+         href="https://learn.microsoft.com/azure/machine-learning/reference-yaml-component-command"
          />.
         :paramtype component_spec: any
         """
@@ -6797,7 +6797,7 @@ class EnvironmentVersionDetails(AssetBase):
      .. raw:: html
     
         <see
-     href="https://docs.microsoft.com/en-us/azure/machine-learning/resource-curated-environments"
+     href="https://learn.microsoft.com/azure/machine-learning/resource-curated-environments"
      />. Possible values include: "Curated", "UserCreated".
     :vartype environment_type: str or ~azure.mgmt.machinelearningservices.models.EnvironmentType
     :ivar image: Name of the image that will be used for the environment.
@@ -6806,7 +6806,7 @@ class EnvironmentVersionDetails(AssetBase):
      .. raw:: html
     
         <seealso
-     href="https://docs.microsoft.com/en-us/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image"
+     href="https://learn.microsoft.com/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image"
      />.
     :vartype image: str
     :ivar inference_config: Defines configuration specific to inference.
@@ -6867,7 +6867,7 @@ class EnvironmentVersionDetails(AssetBase):
          .. raw:: html
         
             <seealso
-         href="https://docs.microsoft.com/en-us/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image"
+         href="https://learn.microsoft.com/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image"
          />.
         :paramtype image: str
         :keyword inference_config: Defines configuration specific to inference.

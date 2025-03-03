@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 
 """
@@ -42,6 +43,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2023-05-01/examples/CreateSharedCommitmentPlanAssociation.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2024-10-01/examples/CreateSharedCommitmentPlanAssociation.json
 if __name__ == "__main__":
     main()

@@ -20,11 +20,11 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_virtual_networks_begin_delete(self, resource_group):
         response = self.client.virtual_networks.begin_delete(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -32,11 +32,11 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_virtual_networks_get(self, resource_group):
         response = self.client.virtual_networks.get(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -44,12 +44,17 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_virtual_networks_begin_create_or_update(self, resource_group):
         response = self.client.virtual_networks.begin_create_or_update(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             parameters={
-                "addressSpace": {"addressPrefixes": ["str"]},
+                "addressSpace": {
+                    "addressPrefixes": ["str"],
+                    "ipamPoolPrefixAllocations": [
+                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                    ],
+                },
                 "bgpCommunities": {"virtualNetworkCommunity": "str", "regionalCommunity": "str"},
                 "ddosProtectionPlan": {"id": "str"},
                 "dhcpOptions": {"dnsServers": ["str"]},
@@ -196,6 +201,9 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                 "subnet": ...,
                             }
                         ],
+                        "ipamPoolPrefixAllocations": [
+                            {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                        ],
                         "name": "str",
                         "natGateway": {"id": "str"},
                         "networkSecurityGroup": {
@@ -287,6 +295,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                 {
                                     "auxiliaryMode": "str",
                                     "auxiliarySku": "str",
+                                    "defaultOutboundConnectivityEnabled": bool,
                                     "disableTcpStateTracking": bool,
                                     "dnsSettings": {
                                         "appliedDnsServers": ["str"],
@@ -1218,6 +1227,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                     {
                                         "auxiliaryMode": "str",
                                         "auxiliarySku": "str",
+                                        "defaultOutboundConnectivityEnabled": bool,
                                         "disableTcpStateTracking": bool,
                                         "dnsSettings": {
                                             "appliedDnsServers": ["str"],
@@ -2180,19 +2190,39 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                         "enableOnlyIPv6Peering": bool,
                         "etag": "str",
                         "id": "str",
-                        "localAddressSpace": {"addressPrefixes": ["str"]},
+                        "localAddressSpace": {
+                            "addressPrefixes": ["str"],
+                            "ipamPoolPrefixAllocations": [
+                                {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                            ],
+                        },
                         "localSubnetNames": ["str"],
-                        "localVirtualNetworkAddressSpace": {"addressPrefixes": ["str"]},
+                        "localVirtualNetworkAddressSpace": {
+                            "addressPrefixes": ["str"],
+                            "ipamPoolPrefixAllocations": [
+                                {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                            ],
+                        },
                         "name": "str",
                         "peerCompleteVnets": bool,
                         "peeringState": "str",
                         "peeringSyncLevel": "str",
                         "provisioningState": "str",
-                        "remoteAddressSpace": {"addressPrefixes": ["str"]},
+                        "remoteAddressSpace": {
+                            "addressPrefixes": ["str"],
+                            "ipamPoolPrefixAllocations": [
+                                {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                            ],
+                        },
                         "remoteBgpCommunities": {"virtualNetworkCommunity": "str", "regionalCommunity": "str"},
                         "remoteSubnetNames": ["str"],
                         "remoteVirtualNetwork": {"id": "str"},
-                        "remoteVirtualNetworkAddressSpace": {"addressPrefixes": ["str"]},
+                        "remoteVirtualNetworkAddressSpace": {
+                            "addressPrefixes": ["str"],
+                            "ipamPoolPrefixAllocations": [
+                                {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                            ],
+                        },
                         "remoteVirtualNetworkEncryption": {"enabled": bool, "enforcement": "str"},
                         "resourceGuid": "str",
                         "type": "str",
@@ -2200,7 +2230,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                     }
                 ],
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2208,12 +2238,12 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update_tags(self, resource_group):
+    def test_virtual_networks_update_tags(self, resource_group):
         response = self.client.virtual_networks.update_tags(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -2221,9 +2251,9 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_all(self, resource_group):
+    def test_virtual_networks_list_all(self, resource_group):
         response = self.client.virtual_networks.list_all(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2231,10 +2261,10 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_virtual_networks_list(self, resource_group):
         response = self.client.virtual_networks.list(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2242,12 +2272,12 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_check_ip_address_availability(self, resource_group):
+    def test_virtual_networks_check_ip_address_availability(self, resource_group):
         response = self.client.virtual_networks.check_ip_address_availability(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             ip_address="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -2255,11 +2285,11 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_usage(self, resource_group):
+    def test_virtual_networks_list_usage(self, resource_group):
         response = self.client.virtual_networks.list_usage(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2267,11 +2297,11 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_list_ddos_protection_status(self, resource_group):
+    def test_virtual_networks_begin_list_ddos_protection_status(self, resource_group):
         response = self.client.virtual_networks.begin_list_ddos_protection_status(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.kusto import KustoManagementClient
 
 """
@@ -40,7 +41,7 @@ def main():
                 "properties": {
                     "blobStorageEventType": "Microsoft.Storage.BlobCreated",
                     "consumerGroup": "$Default",
-                    "dataFormat": "JSON",
+                    "dataFormat": "MULTIJSON",
                     "databaseRouting": "Single",
                     "eventGridResourceId": "/subscriptions/12345678-1234-1234-1234-123456789098/resourceGroups/kustorptest/providers/Microsoft.Storage/storageAccounts/teststorageaccount/providers/Microsoft.EventGrid/eventSubscriptions/eventSubscriptionTest",
                     "eventHubResourceId": "/subscriptions/12345678-1234-1234-1234-123456789098/resourceGroups/kustorptest/providers/Microsoft.EventHub/namespaces/eventhubTestns1/eventhubs/eventhubTest1",
@@ -56,6 +57,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2023-08-15/examples/KustoDataConnectionEventGridValidationAsync.json
+# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2024-04-13/examples/KustoDataConnectionEventGridValidationAsync.json
 if __name__ == "__main__":
     main()

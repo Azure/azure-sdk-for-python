@@ -1,5 +1,53 @@
 # Release History
 
+## 1.0.0b6 (2025-02-14)
+
+### Features added
+
+* Added `trace_function` decorator for conveniently tracing function calls in Agents using OpenTelemetry. Please see the README.md for updated documentation.
+
+### Sample updates
+
+* Added AzureLogicAppTool utility and Logic App sample under `samples/agents`, folder to make Azure Logic App integration with Agents easier.
+* Added better observability for Azure AI Search sample for Agents via improved run steps information from the service.
+* Added sample to demonstrate how to add custom attributes to telemetry span.
+
+### Bugs Fixed
+
+* Lowered the logging level of "Toolset is not available in the client" from `warning` to `debug` to prevent unnecessary log entries in agent application runs.
+
+## 1.0.0b5 (2025-01-17)
+
+### Features added
+
+* Add method `.inference.get_image_embeddings_client` on `AIProjectClient` to get an authenticated
+`ImageEmbeddingsClient` (from the package azure-ai-inference). You need to have azure-ai-inference package
+version 1.0.0b7 or above installed for this method to work.
+
+### Bugs Fixed
+
+* Fix for events dropped in streamed Agent response (see [GitHub issue 39028](https://github.com/Azure/azure-sdk-for-python/issues/39028)).
+* In Agents, incomplete status thread run event is now deserialized into a ThreadRun object, during stream iteration, and invokes the correct function `on_thread_run` (instead of the wrong function `on_unhandled_event`).
+* Fix an error when calling the `to_evaluator_model_config` method of class `ConnectionProperties`. See new input
+argument `include_credentials`.
+
+### Breaking Changes
+
+* `submit_tool_outputs_to_run` returns `None` instead of `ThreadRun` (see [GitHub issue 39028](https://github.com/Azure/azure-sdk-for-python/issues/39028)).
+
+## 1.0.0b4 (2024-12-20)
+
+### Bugs Fixed
+
+* Fix for Agent streaming issue (see [GitHub issue 38918](https://github.com/Azure/azure-sdk-for-python/issues/38918))
+* Fix for Agent async function `send_email_async` is not called (see [GitHub issue 38898](https://github.com/Azure/azure-sdk-for-python/issues/38898))
+* Fix for Agent streaming with event handler fails with "AttributeError: 'MyEventHandler' object has no attribute 'buffer'" (see [GitHub issue 38897](https://github.com/Azure/azure-sdk-for-python/issues/38897))
+
+### Features Added
+
+* Add optional input argument `connection_name` to methods `.inference.get_chat_completions_client`,
+ `.inference.get_embeddings_client` and `.inference.get_azure_openai_client`.
+
 ## 1.0.0b3 (2024-12-13)
 
 ### Features Added

@@ -9,7 +9,7 @@ If you are a client library developer, please reference [client library develope
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/)
 | [Package (Pypi)][package]
 | [Package (Conda)](https://anaconda.org/microsoft/azure-core/)
-| [API reference documentation](https://docs.microsoft.com/python/api/overview/azure/core-readme)
+| [API reference documentation](https://learn.microsoft.com/python/api/overview/azure/core-readme)
 
 ## Getting started
 

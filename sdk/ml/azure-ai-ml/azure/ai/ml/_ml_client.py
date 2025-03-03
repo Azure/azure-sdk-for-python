@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=client-accepts-api-version-keyword,(line-too-long,too-many-locals,no-member,too-many-statements,too-many-instance-attributes,too-many-lines,using-constant-test
+# pylint: disable=client-accepts-api-version-keyword,(too-many-statements,too-many-instance-attributes,too-many-lines
 
 import json
 import logging
@@ -40,6 +40,7 @@ from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
 from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
 from azure.ai.ml._restclient.v2024_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102024Preview
+from azure.ai.ml._restclient.v2025_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012025Preview
 from azure.ai.ml._restclient.workspace_dataplane import (
     AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
 )
@@ -160,7 +161,6 @@ class MLClient:
                 cloud name in kwargs and you must use an authority with DefaultAzureCredential.
     """
 
-    # pylint: disable=client-method-missing-type-annotations
     def __init__(
         self,
         credential: TokenCredential,
@@ -387,6 +387,17 @@ class MLClient:
         )
 
         self._service_client_10_2024_preview = ServiceClient102024Preview(
+            credential=self._credential,
+            subscription_id=(
+                self._ws_operation_scope._subscription_id
+                if registry_reference
+                else self._operation_scope._subscription_id
+            ),
+            base_url=base_url,
+            **kwargs,
+        )
+
+        self._service_client_01_2025_preview = ServiceClient012025Preview(
             credential=self._credential,
             subscription_id=(
                 self._ws_operation_scope._subscription_id
@@ -655,7 +666,7 @@ class MLClient:
         self._operation_container.add(AzureMLResourceType.ONLINE_DEPLOYMENT, self._online_deployments)
         self._operation_container.add(AzureMLResourceType.BATCH_DEPLOYMENT, self._batch_deployments)
         self._data = DataOperations(
-            self._operation_scope,
+            self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
             (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview),
             self._service_client_01_2024_preview,
@@ -684,6 +695,7 @@ class MLClient:
             requests_pipeline=self._requests_pipeline,
             service_client_01_2024_preview=self._service_client_01_2024_preview,
             service_client_10_2024_preview=self._service_client_10_2024_preview,
+            service_client_01_2025_preview=self._service_client_01_2025_preview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)

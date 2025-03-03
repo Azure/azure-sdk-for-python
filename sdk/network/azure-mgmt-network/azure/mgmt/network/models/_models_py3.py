@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from .. import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -231,7 +230,7 @@ class EffectiveConnectivityConfiguration(_serialization.Model):
     :ivar applies_to_groups: Groups for configuration.
     :vartype applies_to_groups: list[~azure.mgmt.network.models.ConnectivityGroupItem]
     :ivar provisioning_state: The provisioning state of the connectivity configuration resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar delete_existing_peering: Flag if need to remove current existing peerings. Known values
      are: "False" and "True".
@@ -304,9 +303,7 @@ class EffectiveConnectivityConfiguration(_serialization.Model):
         self.resource_guid = None
 
 
-class ActiveConnectivityConfiguration(
-    EffectiveConnectivityConfiguration
-):  # pylint: disable=too-many-instance-attributes
+class ActiveConnectivityConfiguration(EffectiveConnectivityConfiguration):
     """Active connectivity configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -327,7 +324,7 @@ class ActiveConnectivityConfiguration(
     :ivar applies_to_groups: Groups for configuration.
     :vartype applies_to_groups: list[~azure.mgmt.network.models.ConnectivityGroupItem]
     :ivar provisioning_state: The provisioning state of the connectivity configuration resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar delete_existing_peering: Flag if need to remove current existing peerings. Known values
      are: "False" and "True".
@@ -449,7 +446,7 @@ class ActiveConnectivityConfigurationsListResult(_serialization.Model):  # pylin
         self.skip_token = skip_token
 
 
-class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=too-many-instance-attributes
+class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):
     """Network default admin rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -499,8 +496,8 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: di
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
      Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -604,7 +601,7 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: di
         self.resource_guid = None
 
 
-class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=too-many-instance-attributes
+class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):
     """Network admin rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -652,8 +649,8 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=t
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
      Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -816,7 +813,8 @@ class AddressPrefixItem(_serialization.Model):
 
     :ivar address_prefix: Address prefix.
     :vartype address_prefix: str
-    :ivar address_prefix_type: Address prefix type. Known values are: "IPPrefix" and "ServiceTag".
+    :ivar address_prefix_type: Address prefix type. Known values are: "IPPrefix", "ServiceTag", and
+     "NetworkGroup".
     :vartype address_prefix_type: str or ~azure.mgmt.network.models.AddressPrefixType
     """
 
@@ -835,8 +833,8 @@ class AddressPrefixItem(_serialization.Model):
         """
         :keyword address_prefix: Address prefix.
         :paramtype address_prefix: str
-        :keyword address_prefix_type: Address prefix type. Known values are: "IPPrefix" and
-         "ServiceTag".
+        :keyword address_prefix_type: Address prefix type. Known values are: "IPPrefix", "ServiceTag",
+         and "NetworkGroup".
         :paramtype address_prefix_type: str or ~azure.mgmt.network.models.AddressPrefixType
         """
         super().__init__(**kwargs)
@@ -851,20 +849,34 @@ class AddressSpace(_serialization.Model):
     :ivar address_prefixes: A list of address blocks reserved for this virtual network in CIDR
      notation.
     :vartype address_prefixes: list[str]
+    :ivar ipam_pool_prefix_allocations: A list of IPAM Pools allocating IP address prefixes.
+    :vartype ipam_pool_prefix_allocations:
+     list[~azure.mgmt.network.models.IpamPoolPrefixAllocation]
     """
 
     _attribute_map = {
         "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
+        "ipam_pool_prefix_allocations": {"key": "ipamPoolPrefixAllocations", "type": "[IpamPoolPrefixAllocation]"},
     }
 
-    def __init__(self, *, address_prefixes: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        address_prefixes: Optional[List[str]] = None,
+        ipam_pool_prefix_allocations: Optional[List["_models.IpamPoolPrefixAllocation"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword address_prefixes: A list of address blocks reserved for this virtual network in CIDR
          notation.
         :paramtype address_prefixes: list[str]
+        :keyword ipam_pool_prefix_allocations: A list of IPAM Pools allocating IP address prefixes.
+        :paramtype ipam_pool_prefix_allocations:
+         list[~azure.mgmt.network.models.IpamPoolPrefixAllocation]
         """
         super().__init__(**kwargs)
         self.address_prefixes = address_prefixes
+        self.ipam_pool_prefix_allocations = ipam_pool_prefix_allocations
 
 
 class ChildResource(_serialization.Model):
@@ -957,7 +969,7 @@ class BaseAdminRule(ChildResource):
         self.system_data = None
 
 
-class AdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
+class AdminRule(BaseAdminRule):
     """Network admin rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1000,8 +1012,8 @@ class AdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
      Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -1112,8 +1124,8 @@ class AdminRuleCollection(ChildResource):
     :vartype description: str
     :ivar applies_to_groups: Groups for configuration.
     :vartype applies_to_groups: list[~azure.mgmt.network.models.NetworkManagerSecurityGroupItem]
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -1276,7 +1288,7 @@ class Resource(_serialization.Model):
         self.tags = tags
 
 
-class ApplicationGateway(Resource):  # pylint: disable=too-many-instance-attributes
+class ApplicationGateway(Resource):
     """Application gateway resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1404,7 +1416,7 @@ class ApplicationGateway(Resource):  # pylint: disable=too-many-instance-attribu
     :ivar resource_guid: The resource GUID property of the application gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the application gateway resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar custom_error_configurations: Custom error configurations of the application gateway
      resource.
@@ -1781,7 +1793,7 @@ class ApplicationGatewayAuthenticationCertificate(SubResource):  # pylint: disab
     :ivar data: Certificate public data.
     :vartype data: str
     :ivar provisioning_state: The provisioning state of the authentication certificate resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -2042,7 +2054,7 @@ class ApplicationGatewayBackendAddressPool(SubResource):
     :ivar backend_addresses: Backend addresses.
     :vartype backend_addresses: list[~azure.mgmt.network.models.ApplicationGatewayBackendAddress]
     :ivar provisioning_state: The provisioning state of the backend address pool resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -2279,7 +2291,7 @@ class ApplicationGatewayBackendHealthServer(_serialization.Model):
         self.health_probe_log = health_probe_log
 
 
-class ApplicationGatewayBackendHttpSettings(SubResource):  # pylint: disable=too-many-instance-attributes
+class ApplicationGatewayBackendHttpSettings(SubResource):
     """Backend address pool settings of an application gateway.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2327,7 +2339,7 @@ class ApplicationGatewayBackendHttpSettings(SubResource):  # pylint: disable=too
      will be prefixed. Default value is null.
     :vartype path: str
     :ivar provisioning_state: The provisioning state of the backend HTTP settings resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -2439,7 +2451,7 @@ class ApplicationGatewayBackendHttpSettings(SubResource):  # pylint: disable=too
         self.provisioning_state = None
 
 
-class ApplicationGatewayBackendSettings(SubResource):  # pylint: disable=too-many-instance-attributes
+class ApplicationGatewayBackendSettings(SubResource):
     """Backend address pool settings of an application gateway.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2472,7 +2484,7 @@ class ApplicationGatewayBackendSettings(SubResource):  # pylint: disable=too-man
      name of the backend server for Tls protocol. Default value is false.
     :vartype pick_host_name_from_backend_address: bool
     :ivar provisioning_state: The provisioning state of the backend HTTP settings resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -2940,7 +2952,7 @@ class ApplicationGatewayFirewallRuleSet(Resource):
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar provisioning_state: The provisioning state of the web application firewall rule set.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar rule_set_type: The type of the web application firewall rule set.
     :vartype rule_set_type: str
@@ -3059,7 +3071,7 @@ class ApplicationGatewayFrontendIPConfiguration(SubResource):  # pylint: disable
      configuration.
     :vartype private_link_configuration: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the frontend IP configuration resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -3141,7 +3153,7 @@ class ApplicationGatewayFrontendPort(SubResource):
     :ivar port: Frontend port.
     :vartype port: int
     :ivar provisioning_state: The provisioning state of the frontend port resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -3261,7 +3273,7 @@ class ApplicationGatewayHeaderConfiguration(_serialization.Model):
         self.header_value = header_value
 
 
-class ApplicationGatewayHttpListener(SubResource):  # pylint: disable=too-many-instance-attributes
+class ApplicationGatewayHttpListener(SubResource):
     """Http listener of an application gateway.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3291,7 +3303,7 @@ class ApplicationGatewayHttpListener(SubResource):  # pylint: disable=too-many-i
      multi-hosting.
     :vartype require_server_name_indication: bool
     :ivar provisioning_state: The provisioning state of the HTTP listener resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar custom_error_configurations: Custom error configurations of the HTTP listener.
     :vartype custom_error_configurations:
@@ -3413,7 +3425,8 @@ class ApplicationGatewayIPConfiguration(SubResource):
      its private address.
     :vartype subnet: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the application gateway IP configuration
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -3457,7 +3470,7 @@ class ApplicationGatewayIPConfiguration(SubResource):
         self.provisioning_state = None
 
 
-class ApplicationGatewayListener(SubResource):  # pylint: disable=too-many-instance-attributes
+class ApplicationGatewayListener(SubResource):
     """Listener of an application gateway.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3481,7 +3494,7 @@ class ApplicationGatewayListener(SubResource):  # pylint: disable=too-many-insta
     :ivar ssl_profile: SSL profile resource of the application gateway.
     :vartype ssl_profile: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the listener resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar host_names: List of Server Name Indications(SNI) for TLS Multi-site Listener that allows
      special wildcard characters as well.
@@ -3608,7 +3621,7 @@ class ApplicationGatewayLoadDistributionPolicy(SubResource):
     :vartype load_distribution_algorithm: str or
      ~azure.mgmt.network.models.ApplicationGatewayLoadDistributionAlgorithm
     :ivar provisioning_state: The provisioning state of the Load Distribution Policy resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -3812,7 +3825,7 @@ class ApplicationGatewayOnDemandProbe(_serialization.Model):
         self.backend_http_settings = backend_http_settings
 
 
-class ApplicationGatewayPathRule(SubResource):  # pylint: disable=too-many-instance-attributes
+class ApplicationGatewayPathRule(SubResource):
     """Path rule of URL path map of an application gateway.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3838,7 +3851,7 @@ class ApplicationGatewayPathRule(SubResource):  # pylint: disable=too-many-insta
     :ivar load_distribution_policy: Load Distribution Policy resource of URL path map path rule.
     :vartype load_distribution_policy: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the path rule resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar firewall_policy: Reference to the FirewallPolicy resource.
     :vartype firewall_policy: ~azure.mgmt.network.models.SubResource
@@ -3933,7 +3946,8 @@ class ApplicationGatewayPrivateEndpointConnection(SubResource):  # pylint: disab
     :vartype private_link_service_connection_state:
      ~azure.mgmt.network.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of the application gateway private endpoint
-     connection resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     connection resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating",
+     "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar link_identifier: The consumer link id.
     :vartype link_identifier: str
@@ -4040,7 +4054,8 @@ class ApplicationGatewayPrivateLinkConfiguration(SubResource):  # pylint: disabl
     :vartype ip_configurations:
      list[~azure.mgmt.network.models.ApplicationGatewayPrivateLinkIpConfiguration]
     :ivar provisioning_state: The provisioning state of the application gateway private link
-     configuration. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     configuration. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -4111,7 +4126,8 @@ class ApplicationGatewayPrivateLinkIpConfiguration(SubResource):  # pylint: disa
     :ivar primary: Whether the ip configuration is primary or not.
     :vartype primary: bool
     :ivar provisioning_state: The provisioning state of the application gateway private link IP
-     configuration. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     configuration. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -4266,7 +4282,7 @@ class ApplicationGatewayPrivateLinkResourceListResult(_serialization.Model):  # 
         self.next_link = next_link
 
 
-class ApplicationGatewayProbe(SubResource):  # pylint: disable=too-many-instance-attributes
+class ApplicationGatewayProbe(SubResource):
     """Probe of the application gateway.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4309,7 +4325,7 @@ class ApplicationGatewayProbe(SubResource):  # pylint: disable=too-many-instance
     :ivar match: Criterion for classifying a healthy probe response.
     :vartype match: ~azure.mgmt.network.models.ApplicationGatewayProbeHealthResponseMatch
     :ivar provisioning_state: The provisioning state of the probe resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar port: Custom port which will be used for probing the backend servers. The valid value
      ranges from 1 to 65535. In case not set, port from http settings will be used. This property is
@@ -4449,7 +4465,7 @@ class ApplicationGatewayProbeHealthResponseMatch(_serialization.Model):  # pylin
         self.status_codes = status_codes
 
 
-class ApplicationGatewayRedirectConfiguration(SubResource):  # pylint: disable=too-many-instance-attributes
+class ApplicationGatewayRedirectConfiguration(SubResource):
     """Redirect configuration of an application gateway.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4553,7 +4569,7 @@ class ApplicationGatewayRedirectConfiguration(SubResource):  # pylint: disable=t
         self.path_rules = path_rules
 
 
-class ApplicationGatewayRequestRoutingRule(SubResource):  # pylint: disable=too-many-instance-attributes
+class ApplicationGatewayRequestRoutingRule(SubResource):
     """Request routing rule of an application gateway.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4585,7 +4601,7 @@ class ApplicationGatewayRequestRoutingRule(SubResource):  # pylint: disable=too-
     :ivar load_distribution_policy: Load Distribution Policy resource of the application gateway.
     :vartype load_distribution_policy: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the request routing rule resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -4834,7 +4850,7 @@ class ApplicationGatewayRewriteRuleSet(SubResource):
     :ivar rewrite_rules: Rewrite rules in the rewrite rule set.
     :vartype rewrite_rules: list[~azure.mgmt.network.models.ApplicationGatewayRewriteRule]
     :ivar provisioning_state: The provisioning state of the rewrite rule set resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -4898,7 +4914,7 @@ class ApplicationGatewayRoutingRule(SubResource):
     :ivar listener: Listener resource of the application gateway.
     :vartype listener: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the request routing rule resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -5041,7 +5057,7 @@ class ApplicationGatewaySslCertificate(SubResource):
      'Certificate' object stored in KeyVault.
     :vartype key_vault_secret_id: str
     :ivar provisioning_state: The provisioning state of the SSL certificate resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -5241,7 +5257,7 @@ class ApplicationGatewaySslProfile(SubResource):
     :vartype client_auth_configuration:
      ~azure.mgmt.network.models.ApplicationGatewayClientAuthConfiguration
     :ivar provisioning_state: The provisioning state of the HTTP listener resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -5321,7 +5337,7 @@ class ApplicationGatewayTrustedClientCertificate(SubResource):  # pylint: disabl
     :ivar client_cert_issuer_dn: Distinguished name of client certificate issuer.
     :vartype client_cert_issuer_dn: str
     :ivar provisioning_state: The provisioning state of the trusted client certificate resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -5390,7 +5406,7 @@ class ApplicationGatewayTrustedRootCertificate(SubResource):
      'Certificate' object stored in KeyVault.
     :vartype key_vault_secret_id: str
     :ivar provisioning_state: The provisioning state of the trusted root certificate resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -5485,7 +5501,7 @@ class ApplicationGatewayUrlConfiguration(_serialization.Model):
         self.reroute = reroute
 
 
-class ApplicationGatewayUrlPathMap(SubResource):  # pylint: disable=too-many-instance-attributes
+class ApplicationGatewayUrlPathMap(SubResource):
     """UrlPathMaps give a url path to the backend mapping information for PathBasedRouting.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5512,7 +5528,7 @@ class ApplicationGatewayUrlPathMap(SubResource):  # pylint: disable=too-many-ins
     :ivar path_rules: Path rule of URL path map resource.
     :vartype path_rules: list[~azure.mgmt.network.models.ApplicationGatewayPathRule]
     :ivar provisioning_state: The provisioning state of the URL path map resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -5830,7 +5846,7 @@ class FirewallPolicyRule(_serialization.Model):
         self.rule_type: Optional[str] = None
 
 
-class ApplicationRule(FirewallPolicyRule):  # pylint: disable=too-many-instance-attributes
+class ApplicationRule(FirewallPolicyRule):
     """Rule of type application.
 
     All required parameters must be populated in order to send to server.
@@ -5965,7 +5981,7 @@ class ApplicationSecurityGroup(Resource):
      across subscriptions or resource groups.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the application security group resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -6624,7 +6640,7 @@ class AzureAsyncOperationResult(_serialization.Model):
         self.error = error
 
 
-class AzureFirewall(Resource):  # pylint: disable=too-many-instance-attributes
+class AzureFirewall(Resource):
     """Azure Firewall resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6658,7 +6674,7 @@ class AzureFirewall(Resource):  # pylint: disable=too-many-instance-attributes
      traffic.
     :vartype management_ip_configuration: ~azure.mgmt.network.models.AzureFirewallIPConfiguration
     :ivar provisioning_state: The provisioning state of the Azure firewall resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar threat_intel_mode: The operation mode for Threat Intelligence. Known values are: "Alert",
      "Deny", and "Off".
@@ -6896,7 +6912,7 @@ class AzureFirewallApplicationRuleCollection(SubResource):
     :ivar rules: Collection of rules used by a application rule collection.
     :vartype rules: list[~azure.mgmt.network.models.AzureFirewallApplicationRule]
     :ivar provisioning_state: The provisioning state of the application rule collection resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -7042,7 +7058,7 @@ class AzureFirewallFqdnTag(Resource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the Azure firewall FQDN tag resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar fqdn_tag_name: The name of this FQDN Tag.
     :vartype fqdn_tag_name: str
@@ -7145,7 +7161,8 @@ class AzureFirewallIPConfiguration(SubResource):
      subnet is not null.
     :vartype public_ip_address: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the Azure firewall IP configuration
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -7386,7 +7403,7 @@ class AzureFirewallNatRuleCollection(SubResource):
     :ivar rules: Collection of rules used by a NAT rule collection.
     :vartype rules: list[~azure.mgmt.network.models.AzureFirewallNatRule]
     :ivar provisioning_state: The provisioning state of the NAT rule collection resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -7538,7 +7555,7 @@ class AzureFirewallNetworkRuleCollection(SubResource):
     :ivar rules: Collection of rules used by a network rule collection.
     :vartype rules: list[~azure.mgmt.network.models.AzureFirewallNetworkRule]
     :ivar provisioning_state: The provisioning state of the network rule collection resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -8051,7 +8068,7 @@ class BackendAddressInboundNatRulePortMappings(_serialization.Model):
         self.inbound_nat_rule_port_mappings = inbound_nat_rule_port_mappings
 
 
-class BackendAddressPool(SubResource):  # pylint: disable=too-many-instance-attributes
+class BackendAddressPool(SubResource):
     """Pool of backend IP addresses.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8088,7 +8105,7 @@ class BackendAddressPool(SubResource):  # pylint: disable=too-many-instance-attr
      address pool.
     :vartype inbound_nat_rules: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the backend address pool resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar drain_period_in_seconds: Amount of seconds Load Balancer waits for before sending RESET
      to client and backend address.
@@ -8190,7 +8207,7 @@ class BackendAddressPool(SubResource):  # pylint: disable=too-many-instance-attr
         self.sync_mode = sync_mode
 
 
-class BastionActiveSession(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class BastionActiveSession(_serialization.Model):
     """The session detail for a target.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8295,7 +8312,7 @@ class BastionActiveSessionListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
+class BastionHost(Resource):
     """Bastion Host resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8326,7 +8343,7 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar network_acls:
     :vartype network_acls: ~azure.mgmt.network.models.BastionHostPropertiesFormatNetworkAcls
     :ivar provisioning_state: The provisioning state of the bastion host resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar scale_units: The scale units for the Bastion Host resource.
     :vartype scale_units: int
@@ -8345,6 +8362,9 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar enable_session_recording: Enable/Disable Session Recording feature of the Bastion Host
      resource.
     :vartype enable_session_recording: bool
+    :ivar enable_private_only_bastion: Enable/Disable Private Only feature of the Bastion Host
+     resource.
+    :vartype enable_private_only_bastion: bool
     """
 
     _validation = {
@@ -8377,6 +8397,7 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         "enable_tunneling": {"key": "properties.enableTunneling", "type": "bool"},
         "enable_kerberos": {"key": "properties.enableKerberos", "type": "bool"},
         "enable_session_recording": {"key": "properties.enableSessionRecording", "type": "bool"},
+        "enable_private_only_bastion": {"key": "properties.enablePrivateOnlyBastion", "type": "bool"},
     }
 
     def __init__(
@@ -8399,6 +8420,7 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         enable_tunneling: bool = False,
         enable_kerberos: bool = False,
         enable_session_recording: bool = False,
+        enable_private_only_bastion: bool = False,
         **kwargs: Any
     ) -> None:
         """
@@ -8438,6 +8460,9 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         :keyword enable_session_recording: Enable/Disable Session Recording feature of the Bastion Host
          resource.
         :paramtype enable_session_recording: bool
+        :keyword enable_private_only_bastion: Enable/Disable Private Only feature of the Bastion Host
+         resource.
+        :paramtype enable_private_only_bastion: bool
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.zones = zones
@@ -8456,6 +8481,7 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         self.enable_tunneling = enable_tunneling
         self.enable_kerberos = enable_kerberos
         self.enable_session_recording = enable_session_recording
+        self.enable_private_only_bastion = enable_private_only_bastion
 
 
 class BastionHostIPConfiguration(SubResource):
@@ -8474,10 +8500,10 @@ class BastionHostIPConfiguration(SubResource):
     :vartype type: str
     :ivar subnet: Reference of the subnet resource.
     :vartype subnet: ~azure.mgmt.network.models.SubResource
-    :ivar public_ip_address: Reference of the PublicIP resource.
+    :ivar public_ip_address: Reference of the PublicIP resource. Null for private only bastion.
     :vartype public_ip_address: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the bastion host IP configuration resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_ip_allocation_method: Private IP allocation method. Known values are: "Static"
      and "Dynamic".
@@ -8519,7 +8545,7 @@ class BastionHostIPConfiguration(SubResource):
         :paramtype name: str
         :keyword subnet: Reference of the subnet resource.
         :paramtype subnet: ~azure.mgmt.network.models.SubResource
-        :keyword public_ip_address: Reference of the PublicIP resource.
+        :keyword public_ip_address: Reference of the PublicIP resource. Null for private only bastion.
         :paramtype public_ip_address: ~azure.mgmt.network.models.SubResource
         :keyword private_ip_allocation_method: Private IP allocation method. Known values are: "Static"
          and "Dynamic".
@@ -8848,8 +8874,8 @@ class BgpConnection(SubResource):
     :ivar hub_virtual_network_connection: The reference to the HubVirtualNetworkConnection
      resource.
     :vartype hub_virtual_network_connection: ~azure.mgmt.network.models.SubResource
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar connection_state: The current state of the VirtualHub to Peer. Known values are:
      "Unknown", "Connecting", "Connected", and "NotConnected".
@@ -9249,6 +9275,213 @@ class CloudErrorBody(_serialization.Model):
         self.details = details
 
 
+class CommonErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class CommonErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.network.models.CommonErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.network.models.CommonErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CommonErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[CommonErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class CommonErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.network.models.CommonErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "CommonErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.CommonErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.network.models.CommonErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class CommonResource(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.system_data = None
+
+
+class CommonProxyResource(CommonResource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    """
+
+
+class CommonTrackedResource(CommonResource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.location = location
+
+
 class Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties(
     _serialization.Model
 ):  # pylint: disable=name-too-long
@@ -9292,7 +9525,7 @@ class ConfigurationGroup(_serialization.Model):
      "Subnet".
     :vartype member_type: str or ~azure.mgmt.network.models.GroupMemberType
     :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -9336,7 +9569,7 @@ class ConfigurationGroup(_serialization.Model):
         self.resource_guid = None
 
 
-class ConnectionMonitor(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ConnectionMonitor(_serialization.Model):
     """Parameters that define the operation to create a connection monitor.
 
     :ivar location: Connection monitor location.
@@ -10000,7 +10233,7 @@ class ConnectionMonitorQueryResult(_serialization.Model):
         self.states = states
 
 
-class ConnectionMonitorResult(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ConnectionMonitorResult(_serialization.Model):
     """Information about the connection monitor.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10037,7 +10270,7 @@ class ConnectionMonitorResult(_serialization.Model):  # pylint: disable=too-many
     :ivar notes: Optional notes to be associated with the connection monitor.
     :vartype notes: str
     :ivar provisioning_state: The provisioning state of the connection monitor. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar start_time: The date and time when the connection monitor was started.
     :vartype start_time: ~datetime.datetime
@@ -10146,7 +10379,7 @@ class ConnectionMonitorResult(_serialization.Model):  # pylint: disable=too-many
         self.connection_monitor_type = None
 
 
-class ConnectionMonitorResultProperties(ConnectionMonitorParameters):  # pylint: disable=too-many-instance-attributes
+class ConnectionMonitorResultProperties(ConnectionMonitorParameters):
     """Describes the properties of a connection monitor.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10171,7 +10404,7 @@ class ConnectionMonitorResultProperties(ConnectionMonitorParameters):  # pylint:
     :ivar notes: Optional notes to be associated with the connection monitor.
     :vartype notes: str
     :ivar provisioning_state: The provisioning state of the connection monitor. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar start_time: The date and time when the connection monitor was started.
     :vartype start_time: ~datetime.datetime
@@ -10787,7 +11020,7 @@ class ConnectionStateSnapshot(_serialization.Model):
         self.hops = None
 
 
-class ConnectivityConfiguration(ChildResource):  # pylint: disable=too-many-instance-attributes
+class ConnectivityConfiguration(ChildResource):
     """The network manager connectivity configuration resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10814,7 +11047,7 @@ class ConnectivityConfiguration(ChildResource):  # pylint: disable=too-many-inst
     :ivar applies_to_groups: Groups for configuration.
     :vartype applies_to_groups: list[~azure.mgmt.network.models.ConnectivityGroupItem]
     :ivar provisioning_state: The provisioning state of the connectivity configuration resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar delete_existing_peering: Flag if need to remove current existing peerings. Known values
      are: "False" and "True".
@@ -11307,7 +11540,7 @@ class ContainerNetworkInterface(SubResource):
     :vartype ip_configurations:
      list[~azure.mgmt.network.models.ContainerNetworkInterfaceIpConfiguration]
     :ivar provisioning_state: The provisioning state of the container network interface resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -11383,7 +11616,8 @@ class ContainerNetworkInterfaceConfiguration(SubResource):
      container network interface configuration.
     :vartype container_network_interfaces: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the container network interface
-     configuration resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     configuration resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating",
+     "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -11445,7 +11679,8 @@ class ContainerNetworkInterfaceIpConfiguration(_serialization.Model):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the container network interface IP
-     configuration resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     configuration resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating",
+     "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -11581,7 +11816,7 @@ class CustomDnsConfigPropertiesFormat(_serialization.Model):
         self.ip_addresses = ip_addresses
 
 
-class CustomIpPrefix(Resource):  # pylint: disable=too-many-instance-attributes
+class CustomIpPrefix(Resource):
     """Custom IP prefix resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11637,7 +11872,7 @@ class CustomIpPrefix(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar failed_reason: The reason why resource is in failed state.
     :vartype failed_reason: str
     :ivar provisioning_state: The provisioning state of the custom IP prefix resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -11807,7 +12042,7 @@ class DdosCustomPolicy(Resource):
      subscriptions or resource groups.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the DDoS custom policy resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -11874,7 +12109,7 @@ class DdosProtectionPlan(_serialization.Model):
      across subscriptions or resource groups.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the DDoS protection plan resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar public_ip_addresses: The list of public IPs associated with the DDoS protection plan
      resource. This list is read-only.
@@ -11994,7 +12229,7 @@ class DdosSettings(_serialization.Model):
         self.ddos_protection_plan = ddos_protection_plan
 
 
-class DefaultAdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
+class DefaultAdminRule(BaseAdminRule):
     """Network default admin rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12039,8 +12274,8 @@ class DefaultAdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attr
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
      Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -12128,7 +12363,7 @@ class Delegation(SubResource):
     :ivar actions: The actions permitted to the service upon delegation.
     :vartype actions: list[str]
     :ivar provisioning_state: The provisioning state of the service delegation resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -12185,8 +12420,8 @@ class DelegationProperties(_serialization.Model):
 
     :ivar service_name: The service name to which the NVA is delegated.
     :vartype service_name: str
-    :ivar provisioning_state: The current provisioning state. Known values are: "Succeeded",
-     "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -12368,7 +12603,7 @@ class DnsSettings(_serialization.Model):
         self.require_proxy_for_network_rules = require_proxy_for_network_rules
 
 
-class DscpConfiguration(Resource):  # pylint: disable=too-many-instance-attributes
+class DscpConfiguration(Resource):
     """Differentiated Services Code Point configuration for any given network interface.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12407,7 +12642,7 @@ class DscpConfiguration(Resource):  # pylint: disable=too-many-instance-attribut
     :ivar resource_guid: The resource GUID property of the DSCP Configuration resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the DSCP Configuration resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -12601,7 +12836,7 @@ class EffectiveBaseSecurityAdminRule(_serialization.Model):
         self.kind: Optional[str] = None
 
 
-class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: disable=too-many-instance-attributes
+class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):
     """Network default admin rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12647,8 +12882,8 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pyli
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
      Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -12859,7 +13094,7 @@ class EffectiveNetworkSecurityGroupListResult(_serialization.Model):
         self.next_link = None
 
 
-class EffectiveNetworkSecurityRule(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class EffectiveNetworkSecurityRule(_serialization.Model):
     """Effective network security rules.
 
     :ivar name: The name of the security rule specified by the user (if created by the user).
@@ -13190,7 +13425,7 @@ class EffectiveRoutesParameters(_serialization.Model):
         self.virtual_wan_resource_type = virtual_wan_resource_type
 
 
-class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: disable=too-many-instance-attributes
+class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):
     """Network admin rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -13234,8 +13469,8 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: dis
     :ivar direction: Indicates if the traffic matched against the rule in inbound or outbound.
      Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -13830,7 +14065,7 @@ class ExplicitProxy(_serialization.Model):
         self.pac_file = pac_file
 
 
-class ExpressRouteCircuit(Resource):  # pylint: disable=too-many-instance-attributes
+class ExpressRouteCircuit(Resource):
     """ExpressRouteCircuit resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -13878,7 +14113,7 @@ class ExpressRouteCircuit(Resource):  # pylint: disable=too-many-instance-attrib
     :ivar stag: The identifier of the circuit traffic. Outer tag for QinQ encapsulation.
     :vartype stag: int
     :ivar provisioning_state: The provisioning state of the express route circuit resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar gateway_manager_etag: The GatewayManager Etag.
     :vartype gateway_manager_etag: str
@@ -14091,7 +14326,7 @@ class ExpressRouteCircuitAuthorization(SubResource):
      authorization.
     :vartype connection_resource_uri: str
     :ivar provisioning_state: The provisioning state of the authorization resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -14144,7 +14379,7 @@ class ExpressRouteCircuitAuthorization(SubResource):
         self.provisioning_state = None
 
 
-class ExpressRouteCircuitConnection(SubResource):  # pylint: disable=too-many-instance-attributes
+class ExpressRouteCircuitConnection(SubResource):
     """Express Route Circuit Connection in an ExpressRouteCircuitPeering resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -14175,7 +14410,8 @@ class ExpressRouteCircuitConnection(SubResource):  # pylint: disable=too-many-in
      "Connected", "Connecting", and "Disconnected".
     :vartype circuit_connection_status: str or ~azure.mgmt.network.models.CircuitConnectionStatus
     :ivar provisioning_state: The provisioning state of the express route circuit connection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -14319,7 +14555,7 @@ class ExpressRouteCircuitListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class ExpressRouteCircuitPeering(SubResource):  # pylint: disable=too-many-instance-attributes
+class ExpressRouteCircuitPeering(SubResource):
     """Peering in an ExpressRouteCircuit resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -14359,7 +14595,7 @@ class ExpressRouteCircuitPeering(SubResource):  # pylint: disable=too-many-insta
     :ivar stats: The peering stats of express route circuit.
     :vartype stats: ~azure.mgmt.network.models.ExpressRouteCircuitStats
     :ivar provisioning_state: The provisioning state of the express route circuit peering resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar gateway_manager_etag: The GatewayManager Etag.
     :vartype gateway_manager_etag: str
@@ -14997,7 +15233,7 @@ class ExpressRouteConnection(SubResource):
     :ivar name: The name of the resource. Required.
     :vartype name: str
     :ivar provisioning_state: The provisioning state of the express route connection resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar express_route_circuit_peering: The ExpressRoute circuit peering.
     :vartype express_route_circuit_peering: ~azure.mgmt.network.models.ExpressRouteCircuitPeeringId
@@ -15130,7 +15366,7 @@ class ExpressRouteConnectionList(_serialization.Model):
         self.value = value
 
 
-class ExpressRouteCrossConnection(Resource):  # pylint: disable=too-many-instance-attributes
+class ExpressRouteCrossConnection(Resource):
     """ExpressRouteCrossConnection resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -15167,7 +15403,8 @@ class ExpressRouteCrossConnection(Resource):  # pylint: disable=too-many-instanc
     :ivar service_provider_notes: Additional read only notes set by the connectivity provider.
     :vartype service_provider_notes: str
     :ivar provisioning_state: The provisioning state of the express route cross connection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar peerings: The list of peerings.
     :vartype peerings: list[~azure.mgmt.network.models.ExpressRouteCrossConnectionPeering]
@@ -15279,7 +15516,7 @@ class ExpressRouteCrossConnectionListResult(_serialization.Model):
         self.next_link = None
 
 
-class ExpressRouteCrossConnectionPeering(SubResource):  # pylint: disable=too-many-instance-attributes
+class ExpressRouteCrossConnectionPeering(SubResource):
     """Peering in an ExpressRoute Cross Connection resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -15315,7 +15552,8 @@ class ExpressRouteCrossConnectionPeering(SubResource):  # pylint: disable=too-ma
     :ivar microsoft_peering_config: The Microsoft peering configuration.
     :vartype microsoft_peering_config: ~azure.mgmt.network.models.ExpressRouteCircuitPeeringConfig
     :ivar provisioning_state: The provisioning state of the express route cross connection peering
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar gateway_manager_etag: The GatewayManager Etag.
     :vartype gateway_manager_etag: str
@@ -15541,7 +15779,334 @@ class ExpressRouteCrossConnectionsRoutesTableSummaryListResult(_serialization.Mo
         self.next_link = None
 
 
-class ExpressRouteGateway(Resource):  # pylint: disable=too-many-instance-attributes
+class ExpressRouteFailoverCircuitResourceDetails(_serialization.Model):  # pylint: disable=name-too-long
+    """ExpressRouteFailoverCircuitResourceDetails.
+
+    :ivar nrp_resource_uri: NRP Resource URI of the circuit.
+    :vartype nrp_resource_uri: str
+    :ivar name: Circuit Name.
+    :vartype name: str
+    :ivar connection_name: Connection name associated with the circuit.
+    :vartype connection_name: str
+    """
+
+    _attribute_map = {
+        "nrp_resource_uri": {"key": "nrpResourceUri", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "connection_name": {"key": "connectionName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        nrp_resource_uri: Optional[str] = None,
+        name: Optional[str] = None,
+        connection_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword nrp_resource_uri: NRP Resource URI of the circuit.
+        :paramtype nrp_resource_uri: str
+        :keyword name: Circuit Name.
+        :paramtype name: str
+        :keyword connection_name: Connection name associated with the circuit.
+        :paramtype connection_name: str
+        """
+        super().__init__(**kwargs)
+        self.nrp_resource_uri = nrp_resource_uri
+        self.name = name
+        self.connection_name = connection_name
+
+
+class ExpressRouteFailoverConnectionResourceDetails(_serialization.Model):  # pylint: disable=name-too-long
+    """ExpressRouteFailoverConnectionResourceDetails.
+
+    :ivar nrp_resource_uri: NRP Resource URI of the connection.
+    :vartype nrp_resource_uri: str
+    :ivar name: Connection Name.
+    :vartype name: str
+    :ivar status: The current status of the connection. Known values are: "Connected" and
+     "Disconnected".
+    :vartype status: str or ~azure.mgmt.network.models.FailoverConnectionStatus
+    :ivar last_updated_time: Time when the connection was last updated.
+    :vartype last_updated_time: str
+    """
+
+    _attribute_map = {
+        "nrp_resource_uri": {"key": "nrpResourceUri", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "last_updated_time": {"key": "lastUpdatedTime", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        nrp_resource_uri: Optional[str] = None,
+        name: Optional[str] = None,
+        status: Optional[Union[str, "_models.FailoverConnectionStatus"]] = None,
+        last_updated_time: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword nrp_resource_uri: NRP Resource URI of the connection.
+        :paramtype nrp_resource_uri: str
+        :keyword name: Connection Name.
+        :paramtype name: str
+        :keyword status: The current status of the connection. Known values are: "Connected" and
+         "Disconnected".
+        :paramtype status: str or ~azure.mgmt.network.models.FailoverConnectionStatus
+        :keyword last_updated_time: Time when the connection was last updated.
+        :paramtype last_updated_time: str
+        """
+        super().__init__(**kwargs)
+        self.nrp_resource_uri = nrp_resource_uri
+        self.name = name
+        self.status = status
+        self.last_updated_time = last_updated_time
+
+
+class ExpressRouteFailoverRedundantRoute(_serialization.Model):
+    """ExpressRouteFailoverRedundantRoute.
+
+    :ivar peering_locations: A list of all the peering locations for the redundant routes.
+    :vartype peering_locations: list[str]
+    :ivar routes: A list of all the redundant routes in the peering locations.
+    :vartype routes: list[str]
+    """
+
+    _attribute_map = {
+        "peering_locations": {"key": "peeringLocations", "type": "[str]"},
+        "routes": {"key": "routes", "type": "[str]"},
+    }
+
+    def __init__(
+        self, *, peering_locations: Optional[List[str]] = None, routes: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword peering_locations: A list of all the peering locations for the redundant routes.
+        :paramtype peering_locations: list[str]
+        :keyword routes: A list of all the redundant routes in the peering locations.
+        :paramtype routes: list[str]
+        """
+        super().__init__(**kwargs)
+        self.peering_locations = peering_locations
+        self.routes = routes
+
+
+class ExpressRouteFailoverSingleTestDetails(_serialization.Model):
+    """ExpressRoute failover single test details.
+
+    :ivar peering_location: Peering location of the test.
+    :vartype peering_location: str
+    :ivar status: The current status of the test. Known values are: "NotStarted", "Starting",
+     "Running", "StartFailed", "Stopping", "Completed", "StopFailed", "Invalid", and "Expired".
+    :vartype status: str or ~azure.mgmt.network.models.FailoverTestStatusForSingleTest
+    :ivar start_time_utc: Time when the test was started.
+    :vartype start_time_utc: str
+    :ivar end_time_utc: Time when the test was completed.
+    :vartype end_time_utc: str
+    :ivar redundant_routes: List of routes received from this peering as well as some other peering
+     location.
+    :vartype redundant_routes: list[~azure.mgmt.network.models.ExpressRouteFailoverRedundantRoute]
+    :ivar non_redundant_routes: List of al the routes that were received only from this peering
+     location.
+    :vartype non_redundant_routes: list[str]
+    :ivar was_simulation_successful: Whether the failover simulation was successful or not.
+    :vartype was_simulation_successful: bool
+    :ivar failover_connection_details: List of all the failover connections for this peering
+     location.
+    :vartype failover_connection_details:
+     list[~azure.mgmt.network.models.FailoverConnectionDetails]
+    """
+
+    _attribute_map = {
+        "peering_location": {"key": "peeringLocation", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "start_time_utc": {"key": "startTimeUtc", "type": "str"},
+        "end_time_utc": {"key": "endTimeUtc", "type": "str"},
+        "redundant_routes": {"key": "redundantRoutes", "type": "[ExpressRouteFailoverRedundantRoute]"},
+        "non_redundant_routes": {"key": "nonRedundantRoutes", "type": "[str]"},
+        "was_simulation_successful": {"key": "wasSimulationSuccessful", "type": "bool"},
+        "failover_connection_details": {"key": "failoverConnectionDetails", "type": "[FailoverConnectionDetails]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        peering_location: Optional[str] = None,
+        status: Optional[Union[str, "_models.FailoverTestStatusForSingleTest"]] = None,
+        start_time_utc: Optional[str] = None,
+        end_time_utc: Optional[str] = None,
+        redundant_routes: Optional[List["_models.ExpressRouteFailoverRedundantRoute"]] = None,
+        non_redundant_routes: Optional[List[str]] = None,
+        was_simulation_successful: Optional[bool] = None,
+        failover_connection_details: Optional[List["_models.FailoverConnectionDetails"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword peering_location: Peering location of the test.
+        :paramtype peering_location: str
+        :keyword status: The current status of the test. Known values are: "NotStarted", "Starting",
+         "Running", "StartFailed", "Stopping", "Completed", "StopFailed", "Invalid", and "Expired".
+        :paramtype status: str or ~azure.mgmt.network.models.FailoverTestStatusForSingleTest
+        :keyword start_time_utc: Time when the test was started.
+        :paramtype start_time_utc: str
+        :keyword end_time_utc: Time when the test was completed.
+        :paramtype end_time_utc: str
+        :keyword redundant_routes: List of routes received from this peering as well as some other
+         peering location.
+        :paramtype redundant_routes:
+         list[~azure.mgmt.network.models.ExpressRouteFailoverRedundantRoute]
+        :keyword non_redundant_routes: List of al the routes that were received only from this peering
+         location.
+        :paramtype non_redundant_routes: list[str]
+        :keyword was_simulation_successful: Whether the failover simulation was successful or not.
+        :paramtype was_simulation_successful: bool
+        :keyword failover_connection_details: List of all the failover connections for this peering
+         location.
+        :paramtype failover_connection_details:
+         list[~azure.mgmt.network.models.FailoverConnectionDetails]
+        """
+        super().__init__(**kwargs)
+        self.peering_location = peering_location
+        self.status = status
+        self.start_time_utc = start_time_utc
+        self.end_time_utc = end_time_utc
+        self.redundant_routes = redundant_routes
+        self.non_redundant_routes = non_redundant_routes
+        self.was_simulation_successful = was_simulation_successful
+        self.failover_connection_details = failover_connection_details
+
+
+class ExpressRouteFailoverStopApiParameters(_serialization.Model):
+    """Start packet capture parameters on virtual network gateway.
+
+    :ivar peering_location: Peering location of the test.
+    :vartype peering_location: str
+    :ivar was_simulation_successful: Whether the failover simulation was successful or not.
+    :vartype was_simulation_successful: bool
+    :ivar details: List of all the failover connections for this peering location.
+    :vartype details: list[~azure.mgmt.network.models.FailoverConnectionDetails]
+    """
+
+    _attribute_map = {
+        "peering_location": {"key": "peeringLocation", "type": "str"},
+        "was_simulation_successful": {"key": "wasSimulationSuccessful", "type": "bool"},
+        "details": {"key": "details", "type": "[FailoverConnectionDetails]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        peering_location: Optional[str] = None,
+        was_simulation_successful: Optional[bool] = None,
+        details: Optional[List["_models.FailoverConnectionDetails"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword peering_location: Peering location of the test.
+        :paramtype peering_location: str
+        :keyword was_simulation_successful: Whether the failover simulation was successful or not.
+        :paramtype was_simulation_successful: bool
+        :keyword details: List of all the failover connections for this peering location.
+        :paramtype details: list[~azure.mgmt.network.models.FailoverConnectionDetails]
+        """
+        super().__init__(**kwargs)
+        self.peering_location = peering_location
+        self.was_simulation_successful = was_simulation_successful
+        self.details = details
+
+
+class ExpressRouteFailoverTestDetails(_serialization.Model):
+    """ExpressRoute failover test details.
+
+    :ivar peering_location: Peering location of the test.
+    :vartype peering_location: str
+    :ivar circuits: All circuits in the peering location.
+    :vartype circuits: list[~azure.mgmt.network.models.ExpressRouteFailoverCircuitResourceDetails]
+    :ivar status: The current status of the test. Known values are: "NotStarted", "Starting",
+     "Running", "StartFailed", "Stopping", "Completed", "StopFailed", "Invalid", and "Expired".
+    :vartype status: str or ~azure.mgmt.network.models.FailoverTestStatus
+    :ivar start_time: Time when the test was started.
+    :vartype start_time: str
+    :ivar end_time: Time when the test was completed.
+    :vartype end_time: str
+    :ivar connections: All connections to the circuits in the peering location.
+    :vartype connections:
+     list[~azure.mgmt.network.models.ExpressRouteFailoverConnectionResourceDetails]
+    :ivar test_guid: The unique GUID associated with the test.
+    :vartype test_guid: str
+    :ivar test_type: The type of failover test. Known values are: "SingleSiteFailover",
+     "MultiSiteFailover", and "All".
+    :vartype test_type: str or ~azure.mgmt.network.models.FailoverTestType
+    :ivar issues: A list of all issues with the test.
+    :vartype issues: list[str]
+    """
+
+    _attribute_map = {
+        "peering_location": {"key": "peeringLocation", "type": "str"},
+        "circuits": {"key": "circuits", "type": "[ExpressRouteFailoverCircuitResourceDetails]"},
+        "status": {"key": "status", "type": "str"},
+        "start_time": {"key": "startTime", "type": "str"},
+        "end_time": {"key": "endTime", "type": "str"},
+        "connections": {"key": "connections", "type": "[ExpressRouteFailoverConnectionResourceDetails]"},
+        "test_guid": {"key": "testGuid", "type": "str"},
+        "test_type": {"key": "testType", "type": "str"},
+        "issues": {"key": "issues", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        peering_location: Optional[str] = None,
+        circuits: Optional[List["_models.ExpressRouteFailoverCircuitResourceDetails"]] = None,
+        status: Optional[Union[str, "_models.FailoverTestStatus"]] = None,
+        start_time: Optional[str] = None,
+        end_time: Optional[str] = None,
+        connections: Optional[List["_models.ExpressRouteFailoverConnectionResourceDetails"]] = None,
+        test_guid: Optional[str] = None,
+        test_type: Optional[Union[str, "_models.FailoverTestType"]] = None,
+        issues: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword peering_location: Peering location of the test.
+        :paramtype peering_location: str
+        :keyword circuits: All circuits in the peering location.
+        :paramtype circuits:
+         list[~azure.mgmt.network.models.ExpressRouteFailoverCircuitResourceDetails]
+        :keyword status: The current status of the test. Known values are: "NotStarted", "Starting",
+         "Running", "StartFailed", "Stopping", "Completed", "StopFailed", "Invalid", and "Expired".
+        :paramtype status: str or ~azure.mgmt.network.models.FailoverTestStatus
+        :keyword start_time: Time when the test was started.
+        :paramtype start_time: str
+        :keyword end_time: Time when the test was completed.
+        :paramtype end_time: str
+        :keyword connections: All connections to the circuits in the peering location.
+        :paramtype connections:
+         list[~azure.mgmt.network.models.ExpressRouteFailoverConnectionResourceDetails]
+        :keyword test_guid: The unique GUID associated with the test.
+        :paramtype test_guid: str
+        :keyword test_type: The type of failover test. Known values are: "SingleSiteFailover",
+         "MultiSiteFailover", and "All".
+        :paramtype test_type: str or ~azure.mgmt.network.models.FailoverTestType
+        :keyword issues: A list of all issues with the test.
+        :paramtype issues: list[str]
+        """
+        super().__init__(**kwargs)
+        self.peering_location = peering_location
+        self.circuits = circuits
+        self.status = status
+        self.start_time = start_time
+        self.end_time = end_time
+        self.connections = connections
+        self.test_guid = test_guid
+        self.test_type = test_type
+        self.issues = issues
+
+
+class ExpressRouteGateway(Resource):
     """ExpressRoute gateway resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -15564,7 +16129,7 @@ class ExpressRouteGateway(Resource):  # pylint: disable=too-many-instance-attrib
     :ivar express_route_connections: List of ExpressRoute connections to the ExpressRoute gateway.
     :vartype express_route_connections: list[~azure.mgmt.network.models.ExpressRouteConnection]
     :ivar provisioning_state: The provisioning state of the express route gateway resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar virtual_hub: The Virtual Hub where the ExpressRoute gateway is or will be deployed.
     :vartype virtual_hub: ~azure.mgmt.network.models.VirtualHubId
@@ -15716,7 +16281,7 @@ class ExpressRouteGatewayPropertiesAutoScaleConfigurationBounds(_serialization.M
         self.max = max
 
 
-class ExpressRouteLink(SubResource):  # pylint: disable=too-many-instance-attributes
+class ExpressRouteLink(SubResource):
     """ExpressRouteLink child resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -15744,7 +16309,7 @@ class ExpressRouteLink(SubResource):  # pylint: disable=too-many-instance-attrib
      "Disabled".
     :vartype admin_state: str or ~azure.mgmt.network.models.ExpressRouteLinkAdminState
     :ivar provisioning_state: The provisioning state of the express route link resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar mac_sec_config: MacSec configuration.
     :vartype mac_sec_config: ~azure.mgmt.network.models.ExpressRouteLinkMacSecConfig
@@ -15891,7 +16456,7 @@ class ExpressRouteLinkMacSecConfig(_serialization.Model):
         self.sci_state = sci_state
 
 
-class ExpressRoutePort(Resource):  # pylint: disable=too-many-instance-attributes
+class ExpressRoutePort(Resource):
     """ExpressRoutePort resource definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -15933,7 +16498,7 @@ class ExpressRoutePort(Resource):  # pylint: disable=too-many-instance-attribute
      ExpressRoutePort resource.
     :vartype circuits: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the express route port resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: The resource GUID property of the express route port resource.
     :vartype resource_guid: str
@@ -16055,7 +16620,7 @@ class ExpressRoutePortAuthorization(SubResource):
      authorization.
     :vartype circuit_resource_uri: str
     :ivar provisioning_state: The provisioning state of the authorization resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -16190,7 +16755,7 @@ class ExpressRoutePortsLocation(Resource):
     :vartype available_bandwidths:
      list[~azure.mgmt.network.models.ExpressRoutePortsLocationBandwidths]
     :ivar provisioning_state: The provisioning state of the express route port location resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -16304,7 +16869,7 @@ class ExpressRoutePortsLocationListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class ExpressRouteProviderPort(Resource):  # pylint: disable=too-many-instance-attributes
+class ExpressRouteProviderPort(Resource):
     """ExpressRouteProviderPort resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -16459,7 +17024,8 @@ class ExpressRouteServiceProvider(Resource):
     :vartype bandwidths_offered:
      list[~azure.mgmt.network.models.ExpressRouteServiceProviderBandwidthsOffered]
     :ivar provisioning_state: The provisioning state of the express route service provider
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -16602,6 +17168,47 @@ class ExtendedLocation(_serialization.Model):
         self.type = type
 
 
+class FailoverConnectionDetails(_serialization.Model):
+    """FailoverConnectionDetails.
+
+    :ivar failover_connection_name: Name of the failover connection.
+    :vartype failover_connection_name: str
+    :ivar failover_location: Location of the failover connection.
+    :vartype failover_location: str
+    :ivar is_verified: Whether the customer was able to establish connectivity through this
+     failover connection or not.
+    :vartype is_verified: bool
+    """
+
+    _attribute_map = {
+        "failover_connection_name": {"key": "failoverConnectionName", "type": "str"},
+        "failover_location": {"key": "failoverLocation", "type": "str"},
+        "is_verified": {"key": "isVerified", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        failover_connection_name: Optional[str] = None,
+        failover_location: Optional[str] = None,
+        is_verified: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword failover_connection_name: Name of the failover connection.
+        :paramtype failover_connection_name: str
+        :keyword failover_location: Location of the failover connection.
+        :paramtype failover_location: str
+        :keyword is_verified: Whether the customer was able to establish connectivity through this
+         failover connection or not.
+        :paramtype is_verified: bool
+        """
+        super().__init__(**kwargs)
+        self.failover_connection_name = failover_connection_name
+        self.failover_location = failover_location
+        self.is_verified = is_verified
+
+
 class FilterItems(_serialization.Model):
     """Will contain the filter name and values to operate on.
 
@@ -16702,7 +17309,7 @@ class FirewallPacketCaptureParameters(_serialization.Model):
         self.filters = filters
 
 
-class FirewallPolicy(Resource):  # pylint: disable=too-many-instance-attributes
+class FirewallPolicy(Resource):
     """FirewallPolicy Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -16727,7 +17334,7 @@ class FirewallPolicy(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar rule_collection_groups: List of references to FirewallPolicyRuleCollectionGroups.
     :vartype rule_collection_groups: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the firewall policy resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar base_policy: The parent firewall policy from which rules are inherited.
     :vartype base_policy: ~azure.mgmt.network.models.SubResource
@@ -16902,7 +17509,7 @@ class FirewallPolicyCertificateAuthority(_serialization.Model):
         self.name = name
 
 
-class FirewallPolicyDraft(Resource):  # pylint: disable=too-many-instance-attributes
+class FirewallPolicyDraft(Resource):
     """FirewallPolicy Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -17660,7 +18267,8 @@ class FirewallPolicyRuleCollectionGroup(SubResource):
     :ivar rule_collections: Group of Firewall Policy rule collections.
     :vartype rule_collections: list[~azure.mgmt.network.models.FirewallPolicyRuleCollection]
     :ivar provisioning_state: The provisioning state of the firewall policy rule collection group
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -17937,7 +18545,7 @@ class FirewallPolicyTransportSecurity(_serialization.Model):
         self.certificate_authority = certificate_authority
 
 
-class FlowLog(Resource):  # pylint: disable=too-many-instance-attributes
+class FlowLog(Resource):
     """A flow log resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -17975,8 +18583,8 @@ class FlowLog(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar flow_analytics_configuration: Parameters that define the configuration of traffic
      analytics.
     :vartype flow_analytics_configuration: ~azure.mgmt.network.models.TrafficAnalyticsProperties
-    :ivar provisioning_state: The provisioning state of the flow log. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the flow log. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -18243,7 +18851,7 @@ class FlowLogStatusParameters(_serialization.Model):
         self.target_resource_id = target_resource_id
 
 
-class FrontendIPConfiguration(SubResource):  # pylint: disable=too-many-instance-attributes
+class FrontendIPConfiguration(SubResource):
     """Frontend IP address of the load balancer.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -18286,7 +18894,7 @@ class FrontendIPConfiguration(SubResource):  # pylint: disable=too-many-instance
     :ivar gateway_load_balancer: The reference to gateway load balancer frontend IP.
     :vartype gateway_load_balancer: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the frontend IP configuration resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -18990,7 +19598,7 @@ class HubIpConfiguration(SubResource):
     :ivar public_ip_address: The reference to the public IP resource.
     :vartype public_ip_address: ~azure.mgmt.network.models.PublicIPAddress
     :ivar provisioning_state: The provisioning state of the IP configuration resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -19171,7 +19779,7 @@ class HubRouteTable(SubResource):
     :ivar propagating_connections: List of all connections that advertise to this route table.
     :vartype propagating_connections: list[str]
     :ivar provisioning_state: The provisioning state of the RouteTable resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -19252,7 +19860,8 @@ class HubVirtualNetworkConnection(SubResource):
      route tables on this connection.
     :vartype routing_configuration: ~azure.mgmt.network.models.RoutingConfiguration
     :ivar provisioning_state: The provisioning state of the hub virtual network connection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -19376,7 +19985,7 @@ class IDPSQueryObject(_serialization.Model):
         self.skip = skip
 
 
-class InboundNatPool(SubResource):  # pylint: disable=too-many-instance-attributes
+class InboundNatPool(SubResource):
     """Inbound NAT pool of the load balancer.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -19419,7 +20028,7 @@ class InboundNatPool(SubResource):  # pylint: disable=too-many-instance-attribut
      connection termination. This element is only used when the protocol is set to TCP.
     :vartype enable_tcp_reset: bool
     :ivar provisioning_state: The provisioning state of the inbound NAT pool resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -19510,7 +20119,7 @@ class InboundNatPool(SubResource):  # pylint: disable=too-many-instance-attribut
         self.provisioning_state = None
 
 
-class InboundNatRule(SubResource):  # pylint: disable=too-many-instance-attributes
+class InboundNatRule(SubResource):
     """Inbound NAT rule of the load balancer.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -19564,7 +20173,7 @@ class InboundNatRule(SubResource):  # pylint: disable=too-many-instance-attribut
     :ivar backend_address_pool: A reference to backendAddressPool resource.
     :vartype backend_address_pool: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the inbound NAT rule resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -19762,8 +20371,8 @@ class InboundSecurityRule(SubResource):
     :vartype rule_type: str or ~azure.mgmt.network.models.InboundSecurityRuleType
     :ivar rules: List of allowed rules.
     :vartype rules: list[~azure.mgmt.network.models.InboundSecurityRules]
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -19884,6 +20493,60 @@ class InboundSecurityRules(_serialization.Model):
         self.applies_on = applies_on
 
 
+class IntentContent(_serialization.Model):
+    """Intent information.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar description:
+    :vartype description: str
+    :ivar source_resource_id: Source resource id of the intent. Required.
+    :vartype source_resource_id: str
+    :ivar destination_resource_id: Destination resource id of the intent. Required.
+    :vartype destination_resource_id: str
+    :ivar ip_traffic: IP traffic information. Required.
+    :vartype ip_traffic: ~azure.mgmt.network.models.IPTraffic
+    """
+
+    _validation = {
+        "source_resource_id": {"required": True},
+        "destination_resource_id": {"required": True},
+        "ip_traffic": {"required": True},
+    }
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "destination_resource_id": {"key": "destinationResourceId", "type": "str"},
+        "ip_traffic": {"key": "ipTraffic", "type": "IPTraffic"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_resource_id: str,
+        destination_resource_id: str,
+        ip_traffic: "_models.IPTraffic",
+        description: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description:
+        :paramtype description: str
+        :keyword source_resource_id: Source resource id of the intent. Required.
+        :paramtype source_resource_id: str
+        :keyword destination_resource_id: Destination resource id of the intent. Required.
+        :paramtype destination_resource_id: str
+        :keyword ip_traffic: IP traffic information. Required.
+        :paramtype ip_traffic: ~azure.mgmt.network.models.IPTraffic
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.source_resource_id = source_resource_id
+        self.destination_resource_id = destination_resource_id
+        self.ip_traffic = ip_traffic
+
+
 class InternetIngressPublicIpsProperties(_serialization.Model):
     """Resource Uri of Public Ip for Standard Load Balancer Frontend End.
 
@@ -19945,7 +20608,7 @@ class IPAddressAvailabilityResult(_serialization.Model):
         self.is_platform_reserved = is_platform_reserved
 
 
-class IpAllocation(Resource):  # pylint: disable=too-many-instance-attributes
+class IpAllocation(Resource):
     """IpAllocation resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -20083,6 +20746,272 @@ class IpAllocationListResult(_serialization.Model):
         self.next_link = next_link
 
 
+class IpamPool(CommonTrackedResource):
+    """Instance of Pool resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Properties of IpamPool resource properties which are specific to the Pool
+     resource. Required.
+    :vartype properties: ~azure.mgmt.network.models.IpamPoolProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "IpamPoolProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        properties: "_models.IpamPoolProperties",
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword properties: Properties of IpamPool resource properties which are specific to the Pool
+         resource. Required.
+        :paramtype properties: ~azure.mgmt.network.models.IpamPoolProperties
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.properties = properties
+
+
+class IpamPoolList(_serialization.Model):
+    """List of IpamPool.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.network.models.IpamPool]
+    :ivar next_link: The link used to get the next page of operations.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[IpamPool]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.IpamPool"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.network.models.IpamPool]
+        :keyword next_link: The link used to get the next page of operations.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class IpamPoolPrefixAllocation(_serialization.Model):
+    """IpamPool prefix allocation reference.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar number_of_ip_addresses: Number of IP addresses to allocate.
+    :vartype number_of_ip_addresses: str
+    :ivar allocated_address_prefixes: List of assigned IP address prefixes in the IpamPool of the
+     associated resource.
+    :vartype allocated_address_prefixes: list[str]
+    :ivar id: Resource id of the associated Azure IpamPool resource.
+    :vartype id: str
+    """
+
+    _validation = {
+        "allocated_address_prefixes": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "number_of_ip_addresses": {"key": "numberOfIpAddresses", "type": "str"},
+        "allocated_address_prefixes": {"key": "allocatedAddressPrefixes", "type": "[str]"},
+        "id": {"key": "pool.id", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        number_of_ip_addresses: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword number_of_ip_addresses: Number of IP addresses to allocate.
+        :paramtype number_of_ip_addresses: str
+        :keyword id: Resource id of the associated Azure IpamPool resource.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.number_of_ip_addresses = number_of_ip_addresses
+        self.allocated_address_prefixes = None
+        self.id = id
+
+
+class IpamPoolProperties(_serialization.Model):
+    """Properties of IpamPool resource properties which are specific to the Pool resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar description:
+    :vartype description: str
+    :ivar display_name: String representing a friendly name for the resource.
+    :vartype display_name: str
+    :ivar ip_address_type: List of IP address type for the IpamPool.
+    :vartype ip_address_type: list[str or ~azure.mgmt.network.models.IpType]
+    :ivar parent_pool_name: String representing parent IpamPool resource name. If empty the
+     IpamPool will be a root pool.
+    :vartype parent_pool_name: str
+    :ivar address_prefixes: List of IP address prefixes of the resource. Required.
+    :vartype address_prefixes: list[str]
+    :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    """
+
+    _validation = {
+        "ip_address_type": {"readonly": True},
+        "address_prefixes": {"required": True},
+    }
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "ip_address_type": {"key": "ipAddressType", "type": "[str]"},
+        "parent_pool_name": {"key": "parentPoolName", "type": "str"},
+        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        address_prefixes: List[str],
+        description: Optional[str] = None,
+        display_name: Optional[str] = None,
+        parent_pool_name: Optional[str] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description:
+        :paramtype description: str
+        :keyword display_name: String representing a friendly name for the resource.
+        :paramtype display_name: str
+        :keyword parent_pool_name: String representing parent IpamPool resource name. If empty the
+         IpamPool will be a root pool.
+        :paramtype parent_pool_name: str
+        :keyword address_prefixes: List of IP address prefixes of the resource. Required.
+        :paramtype address_prefixes: list[str]
+        :keyword provisioning_state: Provisioning states of a resource. Known values are: "Failed",
+         "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+        :paramtype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.display_name = display_name
+        self.ip_address_type = None
+        self.parent_pool_name = parent_pool_name
+        self.address_prefixes = address_prefixes
+        self.provisioning_state = provisioning_state
+
+
+class IpamPoolUpdate(_serialization.Model):
+    """Represents the IpamPool update API request interface.
+
+    :ivar tags: Dictionary of :code:`<string>`.
+    :vartype tags: dict[str, str]
+    :ivar properties: Represents the IpamPool update properties.
+    :vartype properties: ~azure.mgmt.network.models.IpamPoolUpdateProperties
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "IpamPoolUpdateProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.IpamPoolUpdateProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Dictionary of :code:`<string>`.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Represents the IpamPool update properties.
+        :paramtype properties: ~azure.mgmt.network.models.IpamPoolUpdateProperties
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.properties = properties
+
+
+class IpamPoolUpdateProperties(_serialization.Model):
+    """Represents the IpamPool update properties.
+
+    :ivar description:
+    :vartype description: str
+    :ivar display_name: String representing a friendly name for the resource.
+    :vartype display_name: str
+    """
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+    }
+
+    def __init__(self, *, description: Optional[str] = None, display_name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword description:
+        :paramtype description: str
+        :keyword display_name: String representing a friendly name for the resource.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.display_name = display_name
+
+
 class IPConfiguration(SubResource):
     """IP configuration.
 
@@ -20105,7 +21034,7 @@ class IPConfiguration(SubResource):
     :ivar public_ip_address: The reference to the public IP resource.
     :vartype public_ip_address: ~azure.mgmt.network.models.PublicIPAddress
     :ivar provisioning_state: The provisioning state of the IP configuration resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -20230,7 +21159,7 @@ class IPConfigurationProfile(SubResource):
      configuration.
     :vartype subnet: ~azure.mgmt.network.models.Subnet
     :ivar provisioning_state: The provisioning state of the IP configuration profile resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -20292,7 +21221,7 @@ class IpGroup(Resource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the IpGroups resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar ip_addresses: IpAddresses/IpAddressPrefixes in the IpGroups resource.
     :vartype ip_addresses: list[str]
@@ -20554,6 +21483,69 @@ class IpTag(_serialization.Model):
         super().__init__(**kwargs)
         self.ip_tag_type = ip_tag_type
         self.tag = tag
+
+
+class IPTraffic(_serialization.Model):
+    """IP traffic information.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar source_ips: List of source IP addresses of the traffic.. Required.
+    :vartype source_ips: list[str]
+    :ivar destination_ips: List of destination IP addresses of the traffic.. Required.
+    :vartype destination_ips: list[str]
+    :ivar source_ports: The source ports of the traffic. Required.
+    :vartype source_ports: list[str]
+    :ivar destination_ports: The destination ports of the traffic. Required.
+    :vartype destination_ports: list[str]
+    :ivar protocols: Required.
+    :vartype protocols: list[str or ~azure.mgmt.network.models.NetworkProtocol]
+    """
+
+    _validation = {
+        "source_ips": {"required": True},
+        "destination_ips": {"required": True},
+        "source_ports": {"required": True},
+        "destination_ports": {"required": True},
+        "protocols": {"required": True},
+    }
+
+    _attribute_map = {
+        "source_ips": {"key": "sourceIps", "type": "[str]"},
+        "destination_ips": {"key": "destinationIps", "type": "[str]"},
+        "source_ports": {"key": "sourcePorts", "type": "[str]"},
+        "destination_ports": {"key": "destinationPorts", "type": "[str]"},
+        "protocols": {"key": "protocols", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_ips: List[str],
+        destination_ips: List[str],
+        source_ports: List[str],
+        destination_ports: List[str],
+        protocols: List[Union[str, "_models.NetworkProtocol"]],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword source_ips: List of source IP addresses of the traffic.. Required.
+        :paramtype source_ips: list[str]
+        :keyword destination_ips: List of destination IP addresses of the traffic.. Required.
+        :paramtype destination_ips: list[str]
+        :keyword source_ports: The source ports of the traffic. Required.
+        :paramtype source_ports: list[str]
+        :keyword destination_ports: The destination ports of the traffic. Required.
+        :paramtype destination_ports: list[str]
+        :keyword protocols: Required.
+        :paramtype protocols: list[str or ~azure.mgmt.network.models.NetworkProtocol]
+        """
+        super().__init__(**kwargs)
+        self.source_ips = source_ips
+        self.destination_ips = destination_ips
+        self.source_ports = source_ports
+        self.destination_ports = destination_ports
+        self.protocols = protocols
 
 
 class Ipv6CircuitConnectionConfig(_serialization.Model):
@@ -21218,7 +22210,7 @@ class ListVpnSitesResult(_serialization.Model):
         self.next_link = next_link
 
 
-class LoadBalancer(Resource):  # pylint: disable=too-many-instance-attributes
+class LoadBalancer(Resource):
     """LoadBalancer resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -21268,7 +22260,7 @@ class LoadBalancer(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar resource_guid: The resource GUID property of the load balancer resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the load balancer resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -21524,6 +22516,107 @@ class LoadBalancerFrontendIPConfigurationListResult(_serialization.Model):  # py
         self.next_link = None
 
 
+class LoadBalancerHealthPerRule(_serialization.Model):
+    """The response for a Health API.
+
+    :ivar up: Number of backend instances associated to the LB rule that are considered healthy.
+    :vartype up: int
+    :ivar down: Number of backend instances associated to the LB rule that are considered
+     unhealthy.
+    :vartype down: int
+    :ivar load_balancer_backend_addresses: Information about the health per rule of the backend
+     addresses.
+    :vartype load_balancer_backend_addresses:
+     list[~azure.mgmt.network.models.LoadBalancerHealthPerRulePerBackendAddress]
+    """
+
+    _attribute_map = {
+        "up": {"key": "up", "type": "int"},
+        "down": {"key": "down", "type": "int"},
+        "load_balancer_backend_addresses": {
+            "key": "loadBalancerBackendAddresses",
+            "type": "[LoadBalancerHealthPerRulePerBackendAddress]",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        up: Optional[int] = None,
+        down: Optional[int] = None,
+        load_balancer_backend_addresses: Optional[List["_models.LoadBalancerHealthPerRulePerBackendAddress"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword up: Number of backend instances associated to the LB rule that are considered healthy.
+        :paramtype up: int
+        :keyword down: Number of backend instances associated to the LB rule that are considered
+         unhealthy.
+        :paramtype down: int
+        :keyword load_balancer_backend_addresses: Information about the health per rule of the backend
+         addresses.
+        :paramtype load_balancer_backend_addresses:
+         list[~azure.mgmt.network.models.LoadBalancerHealthPerRulePerBackendAddress]
+        """
+        super().__init__(**kwargs)
+        self.up = up
+        self.down = down
+        self.load_balancer_backend_addresses = load_balancer_backend_addresses
+
+
+class LoadBalancerHealthPerRulePerBackendAddress(_serialization.Model):  # pylint: disable=name-too-long
+    """The information about health per rule per backend address.
+
+    :ivar ip_address: The IP address belonging to the backend address.
+    :vartype ip_address: str
+    :ivar network_interface_ip_configuration_id: The id of the network interface ip configuration
+     belonging to the backend address.
+    :vartype network_interface_ip_configuration_id:
+     ~azure.mgmt.network.models.NetworkInterfaceIPConfiguration
+    :ivar state: The current health of the backend instances that is associated to the LB rule.
+    :vartype state: str
+    :ivar reason: The explanation of the State.
+    :vartype reason: str
+    """
+
+    _attribute_map = {
+        "ip_address": {"key": "ipAddress", "type": "str"},
+        "network_interface_ip_configuration_id": {
+            "key": "networkInterfaceIPConfigurationId",
+            "type": "NetworkInterfaceIPConfiguration",
+        },
+        "state": {"key": "state", "type": "str"},
+        "reason": {"key": "reason", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        ip_address: Optional[str] = None,
+        network_interface_ip_configuration_id: Optional["_models.NetworkInterfaceIPConfiguration"] = None,
+        state: Optional[str] = None,
+        reason: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword ip_address: The IP address belonging to the backend address.
+        :paramtype ip_address: str
+        :keyword network_interface_ip_configuration_id: The id of the network interface ip
+         configuration belonging to the backend address.
+        :paramtype network_interface_ip_configuration_id:
+         ~azure.mgmt.network.models.NetworkInterfaceIPConfiguration
+        :keyword state: The current health of the backend instances that is associated to the LB rule.
+        :paramtype state: str
+        :keyword reason: The explanation of the State.
+        :paramtype reason: str
+        """
+        super().__init__(**kwargs)
+        self.ip_address = ip_address
+        self.network_interface_ip_configuration_id = network_interface_ip_configuration_id
+        self.state = state
+        self.reason = reason
+
+
 class LoadBalancerListResult(_serialization.Model):
     """Response for ListLoadBalancers API service call.
 
@@ -21742,7 +22835,7 @@ class LoadBalancerVipSwapRequestFrontendIPConfiguration(_serialization.Model):  
         self.public_ip_address = public_ip_address
 
 
-class LoadBalancingRule(SubResource):  # pylint: disable=too-many-instance-attributes
+class LoadBalancingRule(SubResource):
     """A load balancing rule for a load balancer.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -21794,7 +22887,7 @@ class LoadBalancingRule(SubResource):  # pylint: disable=too-many-instance-attri
      publicIP address specified in the frontend of the load balancing rule.
     :vartype disable_outbound_snat: bool
     :ivar provisioning_state: The provisioning state of the load balancing rule resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -21906,7 +22999,7 @@ class LoadBalancingRule(SubResource):  # pylint: disable=too-many-instance-attri
         self.provisioning_state = None
 
 
-class LocalNetworkGateway(Resource):  # pylint: disable=too-many-instance-attributes
+class LocalNetworkGateway(Resource):
     """A common class for general resource information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -21934,7 +23027,7 @@ class LocalNetworkGateway(Resource):  # pylint: disable=too-many-instance-attrib
     :ivar resource_guid: The resource GUID property of the local network gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the local network gateway resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -22456,7 +23549,7 @@ class MatchVariable(_serialization.Model):
         self.selector = selector
 
 
-class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class MetricSpecification(_serialization.Model):
     """Description of metrics specification.
 
     :ivar name: The name of the metric.
@@ -22612,7 +23705,7 @@ class MigrateLoadBalancerToIpBasedRequest(_serialization.Model):
         self.pools = pools
 
 
-class NatGateway(Resource):  # pylint: disable=too-many-instance-attributes
+class NatGateway(Resource):
     """Nat Gateway resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -22647,7 +23740,7 @@ class NatGateway(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar resource_guid: The resource GUID property of the NAT gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the NAT gateway resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -22771,7 +23864,7 @@ class NatGatewaySku(_serialization.Model):
         self.name = name
 
 
-class NatRule(FirewallPolicyRule):  # pylint: disable=too-many-instance-attributes
+class NatRule(FirewallPolicyRule):
     """Rule of type nat.
 
     All required parameters must be populated in order to send to server.
@@ -23105,7 +24198,7 @@ class NetworkGroup(ChildResource):
      "Subnet".
     :vartype member_type: str or ~azure.mgmt.network.models.GroupMemberType
     :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -23272,7 +24365,7 @@ class NetworkIntentPolicyConfiguration(_serialization.Model):
         self.source_network_intent_policy = source_network_intent_policy
 
 
-class NetworkInterface(Resource):  # pylint: disable=too-many-instance-attributes
+class NetworkInterface(Resource):
     """A network interface in a resource group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -23311,6 +24404,9 @@ class NetworkInterface(Resource):  # pylint: disable=too-many-instance-attribute
     :ivar vnet_encryption_supported: Whether the virtual machine this nic is attached to supports
      encryption.
     :vartype vnet_encryption_supported: bool
+    :ivar default_outbound_connectivity_enabled: Whether default outbound connectivity for nic was
+     configured or not.
+    :vartype default_outbound_connectivity_enabled: bool
     :ivar enable_accelerated_networking: If the network interface is configured for accelerated
      networking. Not applicable to VM sizes which require accelerated networking.
     :vartype enable_accelerated_networking: bool
@@ -23327,7 +24423,7 @@ class NetworkInterface(Resource):  # pylint: disable=too-many-instance-attribute
     :ivar resource_guid: The resource GUID property of the network interface resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the network interface resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar workload_type: WorkloadType of the NetworkInterface for BareMetal resources.
     :vartype workload_type: str
@@ -23356,6 +24452,7 @@ class NetworkInterface(Resource):  # pylint: disable=too-many-instance-attribute
         "mac_address": {"readonly": True},
         "primary": {"readonly": True},
         "vnet_encryption_supported": {"readonly": True},
+        "default_outbound_connectivity_enabled": {"readonly": True},
         "hosted_workloads": {"readonly": True},
         "dscp_configuration": {"readonly": True},
         "resource_guid": {"readonly": True},
@@ -23379,6 +24476,10 @@ class NetworkInterface(Resource):  # pylint: disable=too-many-instance-attribute
         "mac_address": {"key": "properties.macAddress", "type": "str"},
         "primary": {"key": "properties.primary", "type": "bool"},
         "vnet_encryption_supported": {"key": "properties.vnetEncryptionSupported", "type": "bool"},
+        "default_outbound_connectivity_enabled": {
+            "key": "properties.defaultOutboundConnectivityEnabled",
+            "type": "bool",
+        },
         "enable_accelerated_networking": {"key": "properties.enableAcceleratedNetworking", "type": "bool"},
         "disable_tcp_state_tracking": {"key": "properties.disableTcpStateTracking", "type": "bool"},
         "enable_ip_forwarding": {"key": "properties.enableIPForwarding", "type": "bool"},
@@ -23467,6 +24568,7 @@ class NetworkInterface(Resource):  # pylint: disable=too-many-instance-attribute
         self.mac_address = None
         self.primary = None
         self.vnet_encryption_supported = None
+        self.default_outbound_connectivity_enabled = None
         self.enable_accelerated_networking = enable_accelerated_networking
         self.disable_tcp_state_tracking = disable_tcp_state_tracking
         self.enable_ip_forwarding = enable_ip_forwarding
@@ -23571,7 +24673,7 @@ class NetworkInterfaceDnsSettings(_serialization.Model):
         self.internal_domain_name_suffix = None
 
 
-class NetworkInterfaceIPConfiguration(SubResource):  # pylint: disable=too-many-instance-attributes
+class NetworkInterfaceIPConfiguration(SubResource):
     """IPConfiguration in a network interface.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -23622,7 +24724,7 @@ class NetworkInterfaceIPConfiguration(SubResource):  # pylint: disable=too-many-
      included.
     :vartype application_security_groups: list[~azure.mgmt.network.models.ApplicationSecurityGroup]
     :ivar provisioning_state: The provisioning state of the network interface IP configuration.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_link_connection_properties: PrivateLinkConnection properties for the network
      interface.
@@ -23908,7 +25010,8 @@ class NetworkInterfaceTapConfiguration(SubResource):
     :ivar virtual_network_tap: The reference to the Virtual Network Tap resource.
     :vartype virtual_network_tap: ~azure.mgmt.network.models.VirtualNetworkTap
     :ivar provisioning_state: The provisioning state of the network interface tap configuration
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -23984,7 +25087,7 @@ class NetworkInterfaceTapConfigurationListResult(_serialization.Model):  # pylin
         self.next_link = None
 
 
-class NetworkManager(Resource):  # pylint: disable=too-many-instance-attributes
+class NetworkManager(Resource):
     """The Managed Network resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -24012,7 +25115,7 @@ class NetworkManager(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype network_manager_scope_accesses: list[str or
      ~azure.mgmt.network.models.ConfigurationType]
     :ivar provisioning_state: The provisioning state of the network manager resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -24522,8 +25625,8 @@ class NetworkManagerRoutingConfiguration(ChildResource):
     :vartype system_data: ~azure.mgmt.network.models.SystemData
     :ivar description: A description of the routing configuration.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -24673,7 +25776,7 @@ class NetworkProfile(Resource):
     :ivar resource_guid: The resource GUID property of the network profile resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the network profile resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -24856,7 +25959,7 @@ class NetworkRule(FirewallPolicyRule):
         self.destination_fqdns = destination_fqdns
 
 
-class NetworkSecurityGroup(Resource):  # pylint: disable=too-many-instance-attributes
+class NetworkSecurityGroup(Resource):
     """NetworkSecurityGroup resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -24889,7 +25992,7 @@ class NetworkSecurityGroup(Resource):  # pylint: disable=too-many-instance-attri
     :ivar resource_guid: The resource GUID property of the network security group resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the network security group resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -25087,7 +26190,7 @@ class NetworkSecurityRulesEvaluationResult(_serialization.Model):
         self.destination_port_matched = destination_port_matched
 
 
-class NetworkVirtualAppliance(Resource):  # pylint: disable=too-many-instance-attributes
+class NetworkVirtualAppliance(Resource):
     """NetworkVirtualAppliance Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -25141,8 +26244,8 @@ class NetworkVirtualAppliance(Resource):  # pylint: disable=too-many-instance-at
     :vartype virtual_appliance_connections: list[~azure.mgmt.network.models.SubResource]
     :ivar inbound_security_rules: List of references to InboundSecurityRules.
     :vartype inbound_security_rules: list[~azure.mgmt.network.models.SubResource]
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar deployment_type: The deployment type. PartnerManaged for the SaaS NVA.
     :vartype deployment_type: str
@@ -25301,7 +26404,8 @@ class NetworkVirtualApplianceConnection(SubResource):
     :ivar name_properties_name: The name of the resource.
     :vartype name_properties_name: str
     :ivar provisioning_state: The provisioning state of the NetworkVirtualApplianceConnection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar asn: Network Virtual Appliance ASN.
     :vartype asn: int
@@ -25684,7 +26788,7 @@ class NetworkWatcher(Resource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the network watcher resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -26124,7 +27228,7 @@ class OrderBy(_serialization.Model):
         self.order = order
 
 
-class OutboundRule(SubResource):  # pylint: disable=too-many-instance-attributes
+class OutboundRule(SubResource):
     """Outbound rule of the load balancer.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -26146,7 +27250,7 @@ class OutboundRule(SubResource):  # pylint: disable=too-many-instance-attributes
      balanced across IPs in the backend IPs.
     :vartype backend_address_pool: ~azure.mgmt.network.models.SubResource
     :ivar provisioning_state: The provisioning state of the outbound rule resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar protocol: The protocol for the outbound rule in load balancer. Known values are: "Tcp",
      "Udp", and "All".
@@ -26327,7 +27431,7 @@ class P2SConnectionConfiguration(SubResource):
     :vartype previous_configuration_policy_group_associations:
      list[~azure.mgmt.network.models.VpnServerConfigurationPolicyGroup]
     :ivar provisioning_state: The provisioning state of the P2SConnectionConfiguration resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -26469,7 +27573,7 @@ class P2SVpnConnectionRequest(_serialization.Model):
         self.vpn_connection_ids = vpn_connection_ids
 
 
-class P2SVpnGateway(Resource):  # pylint: disable=too-many-instance-attributes
+class P2SVpnGateway(Resource):
     """P2SVpnGateway Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -26492,7 +27596,7 @@ class P2SVpnGateway(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype p2_s_connection_configurations:
      list[~azure.mgmt.network.models.P2SConnectionConfiguration]
     :ivar provisioning_state: The provisioning state of the P2S VPN gateway resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar vpn_gateway_scale_unit: The scale unit for this p2s vpn gateway.
     :vartype vpn_gateway_scale_unit: int
@@ -27028,7 +28132,7 @@ class PacketCaptureQueryStatusResult(_serialization.Model):
         self.packet_capture_error = packet_capture_error
 
 
-class PacketCaptureResult(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PacketCaptureResult(_serialization.Model):
     """Information about packet capture session.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -27068,7 +28172,7 @@ class PacketCaptureResult(_serialization.Model):  # pylint: disable=too-many-ins
      'SessionTimeLimitInSeconds' values.
     :vartype capture_settings: ~azure.mgmt.network.models.PacketCaptureSettings
     :ivar provisioning_state: The provisioning state of the packet capture session. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -27161,7 +28265,7 @@ class PacketCaptureResult(_serialization.Model):  # pylint: disable=too-many-ins
         self.provisioning_state = None
 
 
-class PacketCaptureResultProperties(PacketCaptureParameters):  # pylint: disable=too-many-instance-attributes
+class PacketCaptureResultProperties(PacketCaptureParameters):
     """The properties of a packet capture session.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -27197,7 +28301,7 @@ class PacketCaptureResultProperties(PacketCaptureParameters):  # pylint: disable
      'SessionTimeLimitInSeconds' values.
     :vartype capture_settings: ~azure.mgmt.network.models.PacketCaptureSettings
     :ivar provisioning_state: The provisioning state of the packet capture session. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -27511,7 +28615,7 @@ class PatchRouteFilter(SubResource):
     :ivar ipv6_peerings: A collection of references to express route circuit ipv6 peerings.
     :vartype ipv6_peerings: list[~azure.mgmt.network.models.ExpressRouteCircuitPeering]
     :ivar provisioning_state: The provisioning state of the route filter resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -27583,7 +28687,7 @@ class PatchRouteFilterRule(SubResource):
      ['12076:5010','12076:5020'].
     :vartype communities: list[str]
     :ivar provisioning_state: The provisioning state of the route filter rule resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -27632,7 +28736,7 @@ class PatchRouteFilterRule(SubResource):
         self.provisioning_state = None
 
 
-class PeerExpressRouteCircuitConnection(SubResource):  # pylint: disable=too-many-instance-attributes
+class PeerExpressRouteCircuitConnection(SubResource):
     """Peer Express Route Circuit Connection in an ExpressRouteCircuitPeering resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -27663,7 +28767,8 @@ class PeerExpressRouteCircuitConnection(SubResource):  # pylint: disable=too-man
      circuit connection.
     :vartype auth_resource_guid: str
     :ivar provisioning_state: The provisioning state of the peer express route circuit connection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -27824,7 +28929,7 @@ class PeerRoute(_serialization.Model):
         self.weight = None
 
 
-class PolicySettings(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class PolicySettings(_serialization.Model):
     """Defines contents of a web application firewall global configuration.
 
     :ivar state: The state of the policy. Known values are: "Disabled" and "Enabled".
@@ -27980,6 +29085,173 @@ class PolicySettingsLogScrubbing(_serialization.Model):
         self.scrubbing_rules = scrubbing_rules
 
 
+class PoolAssociation(_serialization.Model):
+    """IpamPool association information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar resource_id: Resource id of the associated Azure resource. Required.
+    :vartype resource_id: str
+    :ivar pool_id: IpamPool id for which the resource is associated to.
+    :vartype pool_id: str
+    :ivar description:
+    :vartype description: str
+    :ivar address_prefixes: List of assigned IP address prefixes in the IpamPool of the associated
+     resource.
+    :vartype address_prefixes: list[str]
+    :ivar reserved_prefixes: List of reserved IP address prefixes in the IpamPool of the associated
+     resource.
+    :vartype reserved_prefixes: list[str]
+    :ivar total_number_of_ip_addresses: Total number of assigned IP addresses of the association.
+    :vartype total_number_of_ip_addresses: str
+    :ivar number_of_reserved_ip_addresses: Total number of reserved IP addresses of the
+     association.
+    :vartype number_of_reserved_ip_addresses: str
+    :ivar created_at: Creation time of the association.
+    :vartype created_at: ~datetime.datetime
+    :ivar reservation_expires_at: Expire time for IP addresses reserved.
+    :vartype reservation_expires_at: ~datetime.datetime
+    """
+
+    _validation = {
+        "resource_id": {"required": True},
+        "address_prefixes": {"readonly": True},
+        "reserved_prefixes": {"readonly": True},
+        "total_number_of_ip_addresses": {"readonly": True},
+        "number_of_reserved_ip_addresses": {"readonly": True},
+        "created_at": {"readonly": True},
+        "reservation_expires_at": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "pool_id": {"key": "poolId", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
+        "reserved_prefixes": {"key": "reservedPrefixes", "type": "[str]"},
+        "total_number_of_ip_addresses": {"key": "totalNumberOfIPAddresses", "type": "str"},
+        "number_of_reserved_ip_addresses": {"key": "numberOfReservedIPAddresses", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "reservation_expires_at": {"key": "reservationExpiresAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self, *, resource_id: str, pool_id: Optional[str] = None, description: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_id: Resource id of the associated Azure resource. Required.
+        :paramtype resource_id: str
+        :keyword pool_id: IpamPool id for which the resource is associated to.
+        :paramtype pool_id: str
+        :keyword description:
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
+        self.resource_id = resource_id
+        self.pool_id = pool_id
+        self.description = description
+        self.address_prefixes = None
+        self.reserved_prefixes = None
+        self.total_number_of_ip_addresses = None
+        self.number_of_reserved_ip_addresses = None
+        self.created_at = None
+        self.reservation_expires_at = None
+
+
+class PoolAssociationList(_serialization.Model):
+    """List of PoolAssociation.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.network.models.PoolAssociation]
+    :ivar next_link: The link used to get the next page of operations.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[PoolAssociation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.PoolAssociation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.network.models.PoolAssociation]
+        :keyword next_link: The link used to get the next page of operations.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class PoolUsage(_serialization.Model):
+    """IpamPool usage information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar address_prefixes: List of IP address prefixes of the resource.
+    :vartype address_prefixes: list[str]
+    :ivar child_pools: List of IpamPool that are children of this IpamPool.
+    :vartype child_pools: list[~azure.mgmt.network.models.ResourceBasics]
+    :ivar allocated_address_prefixes: List of assigned IP address prefixes.
+    :vartype allocated_address_prefixes: list[str]
+    :ivar reserved_address_prefixes: List of reserved IP address prefixes. These IP addresses could
+     be reclaimed if not assigned in the given time.
+    :vartype reserved_address_prefixes: list[str]
+    :ivar available_address_prefixes: List of available IP address prefixes.
+    :vartype available_address_prefixes: list[str]
+    :ivar total_number_of_ip_addresses: Total number of IP addresses managed in the IpamPool.
+    :vartype total_number_of_ip_addresses: str
+    :ivar number_of_allocated_ip_addresses: Total number of assigned IP addresses in the IpamPool.
+    :vartype number_of_allocated_ip_addresses: str
+    :ivar number_of_reserved_ip_addresses: Total number of reserved IP addresses in the IpamPool.
+    :vartype number_of_reserved_ip_addresses: str
+    :ivar number_of_available_ip_addresses: Total number of available IP addresses in the IpamPool.
+    :vartype number_of_available_ip_addresses: str
+    """
+
+    _validation = {
+        "address_prefixes": {"readonly": True},
+        "child_pools": {"readonly": True},
+        "allocated_address_prefixes": {"readonly": True},
+        "reserved_address_prefixes": {"readonly": True},
+        "available_address_prefixes": {"readonly": True},
+        "total_number_of_ip_addresses": {"readonly": True},
+        "number_of_allocated_ip_addresses": {"readonly": True},
+        "number_of_reserved_ip_addresses": {"readonly": True},
+        "number_of_available_ip_addresses": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
+        "child_pools": {"key": "childPools", "type": "[ResourceBasics]"},
+        "allocated_address_prefixes": {"key": "allocatedAddressPrefixes", "type": "[str]"},
+        "reserved_address_prefixes": {"key": "reservedAddressPrefixes", "type": "[str]"},
+        "available_address_prefixes": {"key": "availableAddressPrefixes", "type": "[str]"},
+        "total_number_of_ip_addresses": {"key": "totalNumberOfIPAddresses", "type": "str"},
+        "number_of_allocated_ip_addresses": {"key": "numberOfAllocatedIPAddresses", "type": "str"},
+        "number_of_reserved_ip_addresses": {"key": "numberOfReservedIPAddresses", "type": "str"},
+        "number_of_available_ip_addresses": {"key": "numberOfAvailableIPAddresses", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.address_prefixes = None
+        self.child_pools = None
+        self.allocated_address_prefixes = None
+        self.reserved_address_prefixes = None
+        self.available_address_prefixes = None
+        self.total_number_of_ip_addresses = None
+        self.number_of_allocated_ip_addresses = None
+        self.number_of_reserved_ip_addresses = None
+        self.number_of_available_ip_addresses = None
+
+
 class PrepareNetworkPoliciesRequest(_serialization.Model):
     """Details of PrepareNetworkPolicies for Subnet.
 
@@ -28069,7 +29341,7 @@ class PrivateDnsZoneGroup(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the private dns zone group resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_dns_zone_configs: A collection of private dns zone configurations of the private
      dns zone group.
@@ -28144,7 +29416,7 @@ class PrivateDnsZoneGroupListResult(_serialization.Model):
         self.next_link = None
 
 
-class PrivateEndpoint(Resource):  # pylint: disable=too-many-instance-attributes
+class PrivateEndpoint(Resource):
     """Private endpoint resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -28169,7 +29441,7 @@ class PrivateEndpoint(Resource):  # pylint: disable=too-many-instance-attributes
      private endpoint.
     :vartype network_interfaces: list[~azure.mgmt.network.models.NetworkInterface]
     :ivar provisioning_state: The provisioning state of the private endpoint resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_link_service_connections: A grouping of information about the connection to the
      remote resource.
@@ -28313,7 +29585,7 @@ class PrivateEndpointConnection(SubResource):
     :vartype private_link_service_connection_state:
      ~azure.mgmt.network.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar link_identifier: The consumer link id.
     :vartype link_identifier: str
@@ -28501,7 +29773,7 @@ class PrivateEndpointListResult(_serialization.Model):
         self.next_link = None
 
 
-class PrivateLinkService(Resource):  # pylint: disable=too-many-instance-attributes
+class PrivateLinkService(Resource):
     """Private link service resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -28532,7 +29804,7 @@ class PrivateLinkService(Resource):  # pylint: disable=too-many-instance-attribu
      private link service.
     :vartype network_interfaces: list[~azure.mgmt.network.models.NetworkInterface]
     :ivar provisioning_state: The provisioning state of the private link service resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_endpoint_connections: An array of list about connections to the private endpoint.
     :vartype private_endpoint_connections:
@@ -28662,7 +29934,8 @@ class PrivateLinkServiceConnection(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the private link service connection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_link_service_id: The resource id of private link service.
     :vartype private_link_service_id: str
@@ -28807,7 +30080,8 @@ class PrivateLinkServiceIpConfiguration(SubResource):
     :ivar primary: Whether the ip configuration is primary or not.
     :vartype primary: bool
     :ivar provisioning_state: The provisioning state of the private link service IP configuration
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_ip_address_version: Whether the specific IP configuration is IPv4 or IPv6.
      Default is IPv4. Known values are: "IPv4" and "IPv6".
@@ -28961,7 +30235,7 @@ class PrivateLinkServiceVisibility(_serialization.Model):
         self.visible = visible
 
 
-class Probe(SubResource):  # pylint: disable=too-many-instance-attributes
+class Probe(SubResource):
     """A load balancer probe.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -29008,7 +30282,7 @@ class Probe(SubResource):  # pylint: disable=too-many-instance-attributes
      a protocol is set to http. Otherwise, it is not allowed. There is no default value.
     :vartype request_path: str
     :ivar provisioning_state: The provisioning state of the probe resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -29149,7 +30423,7 @@ class ProtocolConfiguration(_serialization.Model):
         self.http_configuration = http_configuration
 
 
-class PublicIPAddress(Resource):  # pylint: disable=too-many-instance-attributes
+class PublicIPAddress(Resource):
     """Public IP address resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -29196,7 +30470,7 @@ class PublicIPAddress(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar resource_guid: The resource GUID property of the public IP address resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the public IP address resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar service_public_ip_address: The service public IP address of the public IP address
      resource.
@@ -29524,7 +30798,7 @@ class PublicIpDdosProtectionStatusResult(_serialization.Model):
         self.ddos_protection_plan_id = ddos_protection_plan_id
 
 
-class PublicIPPrefix(Resource):  # pylint: disable=too-many-instance-attributes
+class PublicIPPrefix(Resource):
     """Public IP prefix resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -29567,7 +30841,7 @@ class PublicIPPrefix(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar resource_guid: The resource GUID property of the public IP prefix resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the public IP prefix resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar nat_gateway: NatGateway of Public IP Prefix.
     :vartype nat_gateway: ~azure.mgmt.network.models.NatGateway
@@ -30005,6 +31279,293 @@ class RadiusServer(_serialization.Model):
         self.radius_server_secret = radius_server_secret
 
 
+class ReachabilityAnalysisIntent(CommonProxyResource):
+    """Configuration information or intent on which to do the analysis on.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar properties: Represents the Reachability Analysis Intent properties. Required.
+    :vartype properties: ~azure.mgmt.network.models.ReachabilityAnalysisIntentProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ReachabilityAnalysisIntentProperties"},
+    }
+
+    def __init__(self, *, properties: "_models.ReachabilityAnalysisIntentProperties", **kwargs: Any) -> None:
+        """
+        :keyword properties: Represents the Reachability Analysis Intent properties. Required.
+        :paramtype properties: ~azure.mgmt.network.models.ReachabilityAnalysisIntentProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ReachabilityAnalysisIntentListResult(_serialization.Model):
+    """A list of Reachability Analysis Intents.
+
+    :ivar value: Gets a page of Reachability Analysis Intents.
+    :vartype value: list[~azure.mgmt.network.models.ReachabilityAnalysisIntent]
+    :ivar next_link: Gets the URL to get the next page of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ReachabilityAnalysisIntent]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.ReachabilityAnalysisIntent"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: Gets a page of Reachability Analysis Intents.
+        :paramtype value: list[~azure.mgmt.network.models.ReachabilityAnalysisIntent]
+        :keyword next_link: Gets the URL to get the next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ReachabilityAnalysisIntentProperties(_serialization.Model):
+    """Represents the Reachability Analysis Intent properties.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar description:
+    :vartype description: str
+    :ivar source_resource_id: Source resource id to verify the reachability path of. Required.
+    :vartype source_resource_id: str
+    :ivar destination_resource_id: Destination resource id to verify the reachability path of.
+     Required.
+    :vartype destination_resource_id: str
+    :ivar ip_traffic: IP traffic information. Required.
+    :vartype ip_traffic: ~azure.mgmt.network.models.IPTraffic
+    """
+
+    _validation = {
+        "source_resource_id": {"required": True},
+        "destination_resource_id": {"required": True},
+        "ip_traffic": {"required": True},
+    }
+
+    _attribute_map = {
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "destination_resource_id": {"key": "destinationResourceId", "type": "str"},
+        "ip_traffic": {"key": "ipTraffic", "type": "IPTraffic"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_resource_id: str,
+        destination_resource_id: str,
+        ip_traffic: "_models.IPTraffic",
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
+        description: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword provisioning_state: Provisioning states of a resource. Known values are: "Failed",
+         "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+        :paramtype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+        :keyword description:
+        :paramtype description: str
+        :keyword source_resource_id: Source resource id to verify the reachability path of. Required.
+        :paramtype source_resource_id: str
+        :keyword destination_resource_id: Destination resource id to verify the reachability path of.
+         Required.
+        :paramtype destination_resource_id: str
+        :keyword ip_traffic: IP traffic information. Required.
+        :paramtype ip_traffic: ~azure.mgmt.network.models.IPTraffic
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state = provisioning_state
+        self.description = description
+        self.source_resource_id = source_resource_id
+        self.destination_resource_id = destination_resource_id
+        self.ip_traffic = ip_traffic
+
+
+class ReachabilityAnalysisRun(CommonProxyResource):
+    """Configuration information for analysis run.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar properties: Represents the Reachability Analysis Run properties. Required.
+    :vartype properties: ~azure.mgmt.network.models.ReachabilityAnalysisRunProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "ReachabilityAnalysisRunProperties"},
+    }
+
+    def __init__(self, *, properties: "_models.ReachabilityAnalysisRunProperties", **kwargs: Any) -> None:
+        """
+        :keyword properties: Represents the Reachability Analysis Run properties. Required.
+        :paramtype properties: ~azure.mgmt.network.models.ReachabilityAnalysisRunProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ReachabilityAnalysisRunListResult(_serialization.Model):
+    """A list of Reachability Analysis Run.
+
+    :ivar value: Gets a page of Reachability Analysis Runs.
+    :vartype value: list[~azure.mgmt.network.models.ReachabilityAnalysisRun]
+    :ivar next_link: Gets the URL to get the next page of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ReachabilityAnalysisRun]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.ReachabilityAnalysisRun"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: Gets a page of Reachability Analysis Runs.
+        :paramtype value: list[~azure.mgmt.network.models.ReachabilityAnalysisRun]
+        :keyword next_link: Gets the URL to get the next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ReachabilityAnalysisRunProperties(_serialization.Model):
+    """Represents the Reachability Analysis Run properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar description:
+    :vartype description: str
+    :ivar intent_id: Id of the intent resource to run analysis on. Required.
+    :vartype intent_id: str
+    :ivar intent_content: Intent information.
+    :vartype intent_content: ~azure.mgmt.network.models.IntentContent
+    :ivar analysis_result:
+    :vartype analysis_result: str
+    :ivar error_message:
+    :vartype error_message: str
+    :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    """
+
+    _validation = {
+        "intent_id": {"required": True},
+        "intent_content": {"readonly": True},
+        "analysis_result": {"readonly": True},
+        "error_message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "intent_id": {"key": "intentId", "type": "str"},
+        "intent_content": {"key": "intentContent", "type": "IntentContent"},
+        "analysis_result": {"key": "analysisResult", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        intent_id: str,
+        description: Optional[str] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description:
+        :paramtype description: str
+        :keyword intent_id: Id of the intent resource to run analysis on. Required.
+        :paramtype intent_id: str
+        :keyword provisioning_state: Provisioning states of a resource. Known values are: "Failed",
+         "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+        :paramtype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.intent_id = intent_id
+        self.intent_content = None
+        self.analysis_result = None
+        self.error_message = None
+        self.provisioning_state = provisioning_state
+
+
 class RecordSet(_serialization.Model):
     """A collective group of information about the record set information.
 
@@ -30016,8 +31577,8 @@ class RecordSet(_serialization.Model):
     :vartype record_set_name: str
     :ivar fqdn: Fqdn that resolves to private endpoint ip address.
     :vartype fqdn: str
-    :ivar provisioning_state: The provisioning state of the recordset. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the recordset. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar ttl: Recordset time to live.
     :vartype ttl: int
@@ -30089,6 +31650,34 @@ class ReferencedPublicIpAddress(_serialization.Model):
         self.id = id
 
 
+class ResourceBasics(_serialization.Model):
+    """Representation of basic resource information.
+
+    :ivar resource_id: ResourceId of the Azure resource.
+    :vartype resource_id: str
+    :ivar address_prefixes: List of IP address prefixes of the resource.
+    :vartype address_prefixes: list[str]
+    """
+
+    _attribute_map = {
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
+    }
+
+    def __init__(
+        self, *, resource_id: Optional[str] = None, address_prefixes: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_id: ResourceId of the Azure resource.
+        :paramtype resource_id: str
+        :keyword address_prefixes: List of IP address prefixes of the resource.
+        :paramtype address_prefixes: list[str]
+        """
+        super().__init__(**kwargs)
+        self.resource_id = resource_id
+        self.address_prefixes = address_prefixes
+
+
 class ResourceNavigationLink(SubResource):
     """ResourceNavigationLink resource.
 
@@ -30108,7 +31697,7 @@ class ResourceNavigationLink(SubResource):
     :ivar link: Link to the external resource.
     :vartype link: str
     :ivar provisioning_state: The provisioning state of the resource navigation link resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -30236,7 +31825,7 @@ class Route(SubResource):
      only allowed in routes where the next hop type is VirtualAppliance.
     :vartype next_hop_ip_address: str
     :ivar provisioning_state: The provisioning state of the route resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar has_bgp_override: A value indicating whether this route overrides overlapping BGP routes
      regardless of LPM.
@@ -30324,7 +31913,7 @@ class RouteFilter(Resource):
     :ivar ipv6_peerings: A collection of references to express route circuit ipv6 peerings.
     :vartype ipv6_peerings: list[~azure.mgmt.network.models.ExpressRouteCircuitPeering]
     :ivar provisioning_state: The provisioning state of the route filter resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -30427,7 +32016,7 @@ class RouteFilterRule(SubResource):
      ['12076:5010','12076:5020'].
     :vartype communities: list[str]
     :ivar provisioning_state: The provisioning state of the route filter rule resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -30563,7 +32152,7 @@ class RouteMap(SubResource):
     :ivar rules: List of RouteMap rules to be applied.
     :vartype rules: list[~azure.mgmt.network.models.RouteMapRule]
     :ivar provisioning_state: The provisioning state of the RouteMap resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -30666,7 +32255,7 @@ class RouteMapRule(_serialization.Model):
         self.next_step_if_matched = next_step_if_matched
 
 
-class RouteTable(Resource):  # pylint: disable=too-many-instance-attributes
+class RouteTable(Resource):
     """Route table resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -30691,7 +32280,7 @@ class RouteTable(Resource):  # pylint: disable=too-many-instance-attributes
      table. True means disable.
     :vartype disable_bgp_route_propagation: bool
     :ivar provisioning_state: The provisioning state of the route table resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: The resource GUID property of the route table.
     :vartype resource_guid: str
@@ -30859,7 +32448,7 @@ class RoutingIntent(SubResource):
     :ivar routing_policies: List of routing policies.
     :vartype routing_policies: list[~azure.mgmt.network.models.RoutingPolicy]
     :ivar provisioning_state: The provisioning state of the RoutingIntent resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -30964,8 +32553,8 @@ class RoutingRule(ChildResource):
     :vartype system_data: ~azure.mgmt.network.models.SystemData
     :ivar description: A description for this rule.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -31040,8 +32629,8 @@ class RoutingRuleCollection(ChildResource):
     :vartype system_data: ~azure.mgmt.network.models.SystemData
     :ivar description: A description of the routing rule collection.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -31360,8 +32949,13 @@ class SecurityAdminConfiguration(ChildResource):
      services.
     :vartype apply_on_network_intent_policy_based_services: list[str or
      ~azure.mgmt.network.models.NetworkIntentPolicyBasedService]
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar network_group_address_space_aggregation_option: Determine update behavior for changes to
+     network groups referenced within the rules in this configuration. Known values are: "None" and
+     "Manual".
+    :vartype network_group_address_space_aggregation_option: str or
+     ~azure.mgmt.network.models.AddressSpaceAggregationOption
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -31388,6 +32982,10 @@ class SecurityAdminConfiguration(ChildResource):
             "key": "properties.applyOnNetworkIntentPolicyBasedServices",
             "type": "[str]",
         },
+        "network_group_address_space_aggregation_option": {
+            "key": "properties.networkGroupAddressSpaceAggregationOption",
+            "type": "str",
+        },
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
     }
@@ -31399,6 +32997,9 @@ class SecurityAdminConfiguration(ChildResource):
         apply_on_network_intent_policy_based_services: Optional[
             List[Union[str, "_models.NetworkIntentPolicyBasedService"]]
         ] = None,
+        network_group_address_space_aggregation_option: Optional[
+            Union[str, "_models.AddressSpaceAggregationOption"]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -31408,11 +33009,17 @@ class SecurityAdminConfiguration(ChildResource):
          based services.
         :paramtype apply_on_network_intent_policy_based_services: list[str or
          ~azure.mgmt.network.models.NetworkIntentPolicyBasedService]
+        :keyword network_group_address_space_aggregation_option: Determine update behavior for changes
+         to network groups referenced within the rules in this configuration. Known values are: "None"
+         and "Manual".
+        :paramtype network_group_address_space_aggregation_option: str or
+         ~azure.mgmt.network.models.AddressSpaceAggregationOption
         """
         super().__init__(**kwargs)
         self.system_data = None
         self.description = description
         self.apply_on_network_intent_policy_based_services = apply_on_network_intent_policy_based_services
+        self.network_group_address_space_aggregation_option = network_group_address_space_aggregation_option
         self.provisioning_state = None
         self.resource_guid = None
 
@@ -31547,7 +33154,7 @@ class SecurityPartnerProvider(Resource):
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the Security Partner Provider resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar security_provider_name: The security provider name. Known values are: "ZScaler", "IBoss",
      and "Checkpoint".
@@ -31644,7 +33251,7 @@ class SecurityPartnerProviderListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class SecurityRule(SubResource):  # pylint: disable=too-many-instance-attributes
+class SecurityRule(SubResource):
     """Network security rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -31703,7 +33310,7 @@ class SecurityRule(SubResource):  # pylint: disable=too-many-instance-attributes
      on incoming or outgoing traffic. Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityRuleDirection
     :ivar provisioning_state: The provisioning state of the security rule resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -31938,8 +33545,8 @@ class SecurityUserConfiguration(ChildResource):
     :vartype system_data: ~azure.mgmt.network.models.SystemData
     :ivar description: A description of the security user configuration.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -32036,7 +33643,7 @@ class SecurityUserGroupItem(_serialization.Model):
         self.network_group_id = network_group_id
 
 
-class SecurityUserRule(ChildResource):  # pylint: disable=too-many-instance-attributes
+class SecurityUserRule(ChildResource):
     """Network security user rule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -32068,7 +33675,8 @@ class SecurityUserRule(ChildResource):  # pylint: disable=too-many-instance-attr
      Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.network.models.SecurityConfigurationRuleDirection
     :ivar provisioning_state: The provisioning state of the security configuration user rule
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -32163,8 +33771,8 @@ class SecurityUserRuleCollection(ChildResource):
     :vartype description: str
     :ivar applies_to_groups: Groups for configuration.
     :vartype applies_to_groups: list[~azure.mgmt.network.models.SecurityUserGroupItem]
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_guid: Unique identifier for this resource.
     :vartype resource_guid: str
@@ -32296,7 +33904,7 @@ class ServiceAssociationLink(SubResource):
     :ivar link: Link to the external resource.
     :vartype link: str
     :ivar provisioning_state: The provisioning state of the service association link resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar allow_delete: If true, the resource can be deleted.
     :vartype allow_delete: bool
@@ -32389,7 +33997,7 @@ class ServiceAssociationLinksListResult(_serialization.Model):
         self.next_link = None
 
 
-class ServiceEndpointPolicy(Resource):  # pylint: disable=too-many-instance-attributes
+class ServiceEndpointPolicy(Resource):
     """Service End point policy resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -32418,7 +34026,7 @@ class ServiceEndpointPolicy(Resource):  # pylint: disable=too-many-instance-attr
     :ivar resource_guid: The resource GUID property of the service endpoint policy resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the service endpoint policy resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar service_alias: The alias indicating if the policy belongs to a service.
     :vartype service_alias: str
@@ -32518,7 +34126,8 @@ class ServiceEndpointPolicyDefinition(SubResource):
     :ivar service_resources: A list of service resources.
     :vartype service_resources: list[str]
     :ivar provisioning_state: The provisioning state of the service endpoint policy definition
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -32649,7 +34258,7 @@ class ServiceEndpointPropertiesFormat(_serialization.Model):
     :ivar locations: A list of locations.
     :vartype locations: list[str]
     :ivar provisioning_state: The provisioning state of the service endpoint resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -32882,7 +34491,7 @@ class SharedKeyProperties(_serialization.Model):
     :ivar shared_key_length: The length of the shared key for the vpn link connection.
     :vartype shared_key_length: int
     :ivar provisioning_state: The provisioning state of the SharedKey resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -33043,7 +34652,7 @@ class SignaturesOverridesProperties(_serialization.Model):
         self.signatures = signatures
 
 
-class SingleQueryResult(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class SingleQueryResult(_serialization.Model):
     """SingleQueryResult.
 
     :ivar signature_id: The ID of the signature.
@@ -33055,7 +34664,8 @@ class SingleQueryResult(_serialization.Model):  # pylint: disable=too-many-insta
      values are: 1, 2, and 3.
     :vartype severity: int or ~azure.mgmt.network.models.FirewallPolicyIDPSSignatureSeverity
     :ivar direction: Describes in which direction signature is being enforced: 0 - OutBound, 1 -
-     InBound, 2 - Any, 3 - Internal, 4 - InternalOutbound. Known values are: 0, 1, 2, 3, and 4.
+     InBound, 2 - Any, 3 - Internal, 4 - InternalOutbound, 5 - InternalInbound. Known values are: 0,
+     1, 2, 3, 4, and 5.
     :vartype direction: int or ~azure.mgmt.network.models.FirewallPolicyIDPSSignatureDirection
     :ivar group: Describes the groups the signature belongs to.
     :vartype group: str
@@ -33115,7 +34725,8 @@ class SingleQueryResult(_serialization.Model):  # pylint: disable=too-many-insta
          values are: 1, 2, and 3.
         :paramtype severity: int or ~azure.mgmt.network.models.FirewallPolicyIDPSSignatureSeverity
         :keyword direction: Describes in which direction signature is being enforced: 0 - OutBound, 1 -
-         InBound, 2 - Any, 3 - Internal, 4 - InternalOutbound. Known values are: 0, 1, 2, 3, and 4.
+         InBound, 2 - Any, 3 - Internal, 4 - InternalOutbound, 5 - InternalInbound. Known values are: 0,
+         1, 2, 3, 4, and 5.
         :paramtype direction: int or ~azure.mgmt.network.models.FirewallPolicyIDPSSignatureDirection
         :keyword group: Describes the groups the signature belongs to.
         :paramtype group: str
@@ -33170,6 +34781,139 @@ class Sku(_serialization.Model):
         self.name = name
 
 
+class StaticCidr(CommonProxyResource):
+    """Instance of StaticCidr resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar properties: Properties of static CIDR resource.
+    :vartype properties: ~azure.mgmt.network.models.StaticCidrProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "StaticCidrProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.StaticCidrProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: Properties of static CIDR resource.
+        :paramtype properties: ~azure.mgmt.network.models.StaticCidrProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class StaticCidrList(_serialization.Model):
+    """List of StaticCidr.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.network.models.StaticCidr]
+    :ivar next_link: The link used to get the next page of operations.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[StaticCidr]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.StaticCidr"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.network.models.StaticCidr]
+        :keyword next_link: The link used to get the next page of operations.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class StaticCidrProperties(_serialization.Model):
+    """Properties of static CIDR resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar description:
+    :vartype description: str
+    :ivar number_of_ip_addresses_to_allocate: Number of IP addresses to allocate for a static CIDR
+     resource. The IP addresses will be assigned based on IpamPools available space.
+    :vartype number_of_ip_addresses_to_allocate: str
+    :ivar address_prefixes: List of IP address prefixes of the resource.
+    :vartype address_prefixes: list[str]
+    :ivar total_number_of_ip_addresses: Total number of IP addresses allocated for the static CIDR
+     resource.
+    :vartype total_number_of_ip_addresses: str
+    :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    """
+
+    _validation = {
+        "total_number_of_ip_addresses": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "number_of_ip_addresses_to_allocate": {"key": "numberOfIPAddressesToAllocate", "type": "str"},
+        "address_prefixes": {"key": "addressPrefixes", "type": "[str]"},
+        "total_number_of_ip_addresses": {"key": "totalNumberOfIPAddresses", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        number_of_ip_addresses_to_allocate: Optional[str] = None,
+        address_prefixes: Optional[List[str]] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description:
+        :paramtype description: str
+        :keyword number_of_ip_addresses_to_allocate: Number of IP addresses to allocate for a static
+         CIDR resource. The IP addresses will be assigned based on IpamPools available space.
+        :paramtype number_of_ip_addresses_to_allocate: str
+        :keyword address_prefixes: List of IP address prefixes of the resource.
+        :paramtype address_prefixes: list[str]
+        :keyword provisioning_state: Provisioning states of a resource. Known values are: "Failed",
+         "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+        :paramtype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.number_of_ip_addresses_to_allocate = number_of_ip_addresses_to_allocate
+        self.address_prefixes = address_prefixes
+        self.total_number_of_ip_addresses = None
+        self.provisioning_state = provisioning_state
+
+
 class StaticMember(ChildResource):
     """StaticMember Item.
 
@@ -33190,7 +34934,7 @@ class StaticMember(ChildResource):
     :ivar region: Resource region.
     :vartype region: str
     :ivar provisioning_state: The provisioning state of the scope assignment resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -33336,7 +35080,7 @@ class StaticRoutesConfig(_serialization.Model):
         self.vnet_local_route_override_criteria = vnet_local_route_override_criteria
 
 
-class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
+class Subnet(SubResource):
     """Subnet in a virtual network resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -33384,7 +35128,7 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
      delegations and other user-defined properties.
     :vartype purpose: str
     :ivar provisioning_state: The provisioning state of the subnet resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar private_endpoint_network_policies: Enable or Disable apply network policies on private
      end point in the subnet. Known values are: "Enabled", "Disabled",
@@ -33408,6 +35152,9 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
      connectivity for all VMs in the subnet. This property can only be set at the time of subnet
      creation and cannot be updated for an existing subnet.
     :vartype default_outbound_access: bool
+    :ivar ipam_pool_prefix_allocations: A list of IPAM Pools for allocating IP address prefixes.
+    :vartype ipam_pool_prefix_allocations:
+     list[~azure.mgmt.network.models.IpamPoolPrefixAllocation]
     """
 
     _validation = {
@@ -33450,6 +35197,10 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
         },
         "sharing_scope": {"key": "properties.sharingScope", "type": "str"},
         "default_outbound_access": {"key": "properties.defaultOutboundAccess", "type": "bool"},
+        "ipam_pool_prefix_allocations": {
+            "key": "properties.ipamPoolPrefixAllocations",
+            "type": "[IpamPoolPrefixAllocation]",
+        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -33476,6 +35227,7 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
         application_gateway_ip_configurations: Optional[List["_models.ApplicationGatewayIPConfiguration"]] = None,
         sharing_scope: Optional[Union[str, "_models.SharingScope"]] = None,
         default_outbound_access: Optional[bool] = None,
+        ipam_pool_prefix_allocations: Optional[List["_models.IpamPoolPrefixAllocation"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -33526,6 +35278,9 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
          connectivity for all VMs in the subnet. This property can only be set at the time of subnet
          creation and cannot be updated for an existing subnet.
         :paramtype default_outbound_access: bool
+        :keyword ipam_pool_prefix_allocations: A list of IPAM Pools for allocating IP address prefixes.
+        :paramtype ipam_pool_prefix_allocations:
+         list[~azure.mgmt.network.models.IpamPoolPrefixAllocation]
         """
         super().__init__(id=id, **kwargs)
         self.name = name
@@ -33552,6 +35307,7 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
         self.application_gateway_ip_configurations = application_gateway_ip_configurations
         self.sharing_scope = sharing_scope
         self.default_outbound_access = default_outbound_access
+        self.ipam_pool_prefix_allocations = ipam_pool_prefix_allocations
 
 
 class SubnetAssociation(_serialization.Model):
@@ -34574,6 +36330,188 @@ class VerificationIPFlowResult(_serialization.Model):
         self.rule_name = rule_name
 
 
+class VerifierWorkspace(CommonTrackedResource):
+    """Instance of Verifier Workspace.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Properties of Verifier Workspace resource.
+    :vartype properties: ~azure.mgmt.network.models.VerifierWorkspaceProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "VerifierWorkspaceProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.VerifierWorkspaceProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword properties: Properties of Verifier Workspace resource.
+        :paramtype properties: ~azure.mgmt.network.models.VerifierWorkspaceProperties
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.properties = properties
+
+
+class VerifierWorkspaceListResult(_serialization.Model):
+    """A list of Verifier Workspace.
+
+    :ivar value: Gets a page of Verifier Workspaces.
+    :vartype value: list[~azure.mgmt.network.models.VerifierWorkspace]
+    :ivar next_link: Gets the URL to get the next page of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[VerifierWorkspace]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.VerifierWorkspace"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: Gets a page of Verifier Workspaces.
+        :paramtype value: list[~azure.mgmt.network.models.VerifierWorkspace]
+        :keyword next_link: Gets the URL to get the next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class VerifierWorkspaceProperties(_serialization.Model):
+    """Properties of Verifier Workspace resource.
+
+    :ivar description:
+    :vartype description: str
+    :ivar provisioning_state: Provisioning states of a resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    """
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description:
+        :paramtype description: str
+        :keyword provisioning_state: Provisioning states of a resource. Known values are: "Failed",
+         "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+        :paramtype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.provisioning_state = provisioning_state
+
+
+class VerifierWorkspaceUpdate(_serialization.Model):
+    """Represents the VerifierWorkspace update API request interface.
+
+    :ivar tags: Dictionary of :code:`<string>`.
+    :vartype tags: dict[str, str]
+    :ivar properties: Represents the VerifierWorkspace update properties.
+    :vartype properties: ~azure.mgmt.network.models.VerifierWorkspaceUpdateProperties
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "VerifierWorkspaceUpdateProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional["_models.VerifierWorkspaceUpdateProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Dictionary of :code:`<string>`.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Represents the VerifierWorkspace update properties.
+        :paramtype properties: ~azure.mgmt.network.models.VerifierWorkspaceUpdateProperties
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.properties = properties
+
+
+class VerifierWorkspaceUpdateProperties(_serialization.Model):
+    """Represents the VerifierWorkspace update properties.
+
+    :ivar description:
+    :vartype description: str
+    """
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+    }
+
+    def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword description:
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
+        self.description = description
+
+
 class VirtualApplianceAdditionalNicProperties(_serialization.Model):
     """Network Virtual Appliance Additional NIC properties.
 
@@ -34771,8 +36709,8 @@ class VirtualApplianceSite(SubResource):
     :vartype address_prefix: str
     :ivar o365_policy: Office 365 Policy.
     :vartype o365_policy: ~azure.mgmt.network.models.Office365PolicyProperties
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -34859,7 +36797,7 @@ class VirtualApplianceSkuProperties(_serialization.Model):
         self.market_place_version = market_place_version
 
 
-class VirtualHub(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualHub(Resource):
     """VirtualHub Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -34896,7 +36834,7 @@ class VirtualHub(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar route_table: The routeTable associated with this virtual hub.
     :vartype route_table: ~azure.mgmt.network.models.VirtualHubRouteTable
     :ivar provisioning_state: The provisioning state of the virtual hub resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar security_provider_name: The Security Provider name.
     :vartype security_provider_name: str
@@ -35247,7 +37185,7 @@ class VirtualHubRouteTableV2(SubResource):
     :ivar attached_connections: List of all connections attached to this route table v2.
     :vartype attached_connections: list[str]
     :ivar provisioning_state: The provisioning state of the virtual hub route table v2 resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -35339,7 +37277,7 @@ class VirtualHubRouteV2(_serialization.Model):
         self.next_hops = next_hops
 
 
-class VirtualNetwork(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualNetwork(Resource):
     """Virtual Network resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -35373,7 +37311,7 @@ class VirtualNetwork(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar resource_guid: The resourceGuid property of the Virtual Network resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar enable_ddos_protection: Indicates if DDoS protection is enabled for all the protected
      resources in the virtual network. It requires a DDoS protection plan associated with the
@@ -35654,7 +37592,7 @@ class VirtualNetworkEncryption(_serialization.Model):
         self.enforcement = enforcement
 
 
-class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualNetworkGateway(Resource):
     """A common class for general resource information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -35722,7 +37660,7 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
     :ivar resource_guid: The resource GUID property of the virtual network gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network gateway resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar enable_dns_forwarding: Whether dns forwarding is enabled or not.
     :vartype enable_dns_forwarding: bool
@@ -35999,7 +37937,7 @@ class VirtualNetworkGatewayAutoScaleConfiguration(_serialization.Model):  # pyli
         self.bounds = bounds
 
 
-class VirtualNetworkGatewayConnection(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualNetworkGatewayConnection(Resource):
     """A common class for general resource information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -36077,7 +38015,8 @@ class VirtualNetworkGatewayConnection(Resource):  # pylint: disable=too-many-ins
      resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network gateway connection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar express_route_gateway_bypass: Bypass ExpressRoute Gateway for data forwarding.
     :vartype express_route_gateway_bypass: bool
@@ -36259,7 +38198,7 @@ class VirtualNetworkGatewayConnection(Resource):  # pylint: disable=too-many-ins
         self.enable_private_link_fast_path = enable_private_link_fast_path
 
 
-class VirtualNetworkGatewayConnectionListEntity(Resource):  # pylint: disable=too-many-instance-attributes,name-too-long
+class VirtualNetworkGatewayConnectionListEntity(Resource):  # pylint: disable=name-too-long
     """A common class for general resource information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -36332,7 +38271,8 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):  # pylint: disable=to
      resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network gateway connection
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar express_route_gateway_bypass: Bypass ExpressRoute Gateway for data forwarding.
     :vartype express_route_gateway_bypass: bool
@@ -36562,7 +38502,8 @@ class VirtualNetworkGatewayIPConfiguration(SubResource):
     :ivar private_ip_address: Private IP Address for this gateway.
     :vartype private_ip_address: str
     :ivar provisioning_state: The provisioning state of the virtual network gateway IP
-     configuration resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     configuration resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating",
+     "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -36696,7 +38637,7 @@ class VirtualNetworkGatewayNatRule(SubResource):
     :ivar type: Resource type.
     :vartype type: str
     :ivar provisioning_state: The provisioning state of the NAT Rule resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar type_properties_type: The type of NAT rule for VPN NAT. Known values are: "Static" and
      "Dynamic".
@@ -36797,7 +38738,8 @@ class VirtualNetworkGatewayPolicyGroup(SubResource):
      vngClientConnectionConfigurations.
     :vartype vng_client_connection_configurations: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the VirtualNetworkGatewayPolicyGroup
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -37006,7 +38948,7 @@ class VirtualNetworkListUsageResult(_serialization.Model):
         self.next_link = next_link
 
 
-class VirtualNetworkPeering(SubResource):  # pylint: disable=too-many-instance-attributes
+class VirtualNetworkPeering(SubResource):
     """Peerings in a virtual network resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -37062,7 +39004,7 @@ class VirtualNetworkPeering(SubResource):  # pylint: disable=too-many-instance-a
      are: "FullyInSync", "RemoteNotInSync", "LocalNotInSync", and "LocalAndRemoteNotInSync".
     :vartype peering_sync_level: str or ~azure.mgmt.network.models.VirtualNetworkPeeringLevel
     :ivar provisioning_state: The provisioning state of the virtual network peering resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar do_not_verify_remote_gateways: If we need to verify the provisioning state of the remote
      gateway.
@@ -37270,7 +39212,7 @@ class VirtualNetworkPeeringListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class VirtualNetworkTap(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualNetworkTap(Resource):
     """Virtual Network Tap resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -37294,7 +39236,7 @@ class VirtualNetworkTap(Resource):  # pylint: disable=too-many-instance-attribut
     :ivar resource_guid: The resource GUID property of the virtual network tap resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the virtual network tap resource. Known
-     values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar destination_network_interface_ip_configuration: The reference to the private IP Address
      of the collector nic that will receive the tap.
@@ -37483,7 +39425,7 @@ class VirtualNetworkUsageName(_serialization.Model):
         self.value = None
 
 
-class VirtualRouter(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualRouter(Resource):
     """VirtualRouter Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -37510,8 +39452,8 @@ class VirtualRouter(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype hosted_gateway: ~azure.mgmt.network.models.SubResource
     :ivar peerings: List of references to VirtualRouterPeerings.
     :vartype peerings: list[~azure.mgmt.network.models.SubResource]
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -37646,8 +39588,8 @@ class VirtualRouterPeering(SubResource):
     :vartype peer_asn: int
     :ivar peer_ip: Peer IP.
     :vartype peer_ip: str
-    :ivar provisioning_state: The provisioning state of the resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -37728,7 +39670,7 @@ class VirtualRouterPeeringListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class VirtualWAN(Resource):  # pylint: disable=too-many-instance-attributes
+class VirtualWAN(Resource):
     """VirtualWAN Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -37760,7 +39702,7 @@ class VirtualWAN(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype office365_local_breakout_category: str or
      ~azure.mgmt.network.models.OfficeTrafficCategory
     :ivar provisioning_state: The provisioning state of the virtual WAN resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar type_properties_type: The type of the VirtualWAN.
     :vartype type_properties_type: str
@@ -38006,7 +39948,8 @@ class VngClientConnectionConfiguration(SubResource):
      virtualNetworkGatewayPolicyGroups.
     :vartype virtual_network_gateway_policy_groups: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the VngClientConnectionConfiguration
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -38057,7 +40000,7 @@ class VngClientConnectionConfiguration(SubResource):
         self.provisioning_state = None
 
 
-class VpnClientConfiguration(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class VpnClientConfiguration(_serialization.Model):
     """VpnClientConfiguration for P2S client.
 
     :ivar vpn_client_address_pool: The reference to the address space resource which represents
@@ -38247,7 +40190,7 @@ class VpnClientConnectionHealth(_serialization.Model):
         self.allocated_ip_addresses = allocated_ip_addresses
 
 
-class VpnClientConnectionHealthDetail(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class VpnClientConnectionHealthDetail(_serialization.Model):
     """VPN client connection health detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -38527,7 +40470,8 @@ class VpnClientRevokedCertificate(SubResource):
     :ivar thumbprint: The revoked VPN client certificate thumbprint.
     :vartype thumbprint: str
     :ivar provisioning_state: The provisioning state of the VPN client revoked certificate
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -38585,7 +40529,7 @@ class VpnClientRootCertificate(SubResource):
     :ivar public_cert_data: The certificate public data. Required.
     :vartype public_cert_data: str
     :ivar provisioning_state: The provisioning state of the VPN client root certificate resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -38627,7 +40571,7 @@ class VpnClientRootCertificate(SubResource):
         self.provisioning_state = None
 
 
-class VpnConnection(SubResource):  # pylint: disable=too-many-instance-attributes
+class VpnConnection(SubResource):
     """VpnConnection Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -38676,7 +40620,7 @@ class VpnConnection(SubResource):  # pylint: disable=too-many-instance-attribute
     :ivar use_local_azure_ip_address: Use local azure ip to initiate connection.
     :vartype use_local_azure_ip_address: bool
     :ivar provisioning_state: The provisioning state of the VPN connection resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar vpn_link_connections: List of all vpn site link connections to the gateway.
     :vartype vpn_link_connections: list[~azure.mgmt.network.models.VpnSiteLinkConnection]
@@ -38901,7 +40845,7 @@ class VpnDeviceScriptParameters(_serialization.Model):
         self.firmware_version = firmware_version
 
 
-class VpnGateway(Resource):  # pylint: disable=too-many-instance-attributes
+class VpnGateway(Resource):
     """VpnGateway Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -38925,7 +40869,7 @@ class VpnGateway(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar bgp_settings: Local network gateway's BGP speaker settings.
     :vartype bgp_settings: ~azure.mgmt.network.models.BgpSettings
     :ivar provisioning_state: The provisioning state of the VPN gateway resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar vpn_gateway_scale_unit: The scale unit for this vpn gateway.
     :vartype vpn_gateway_scale_unit: int
@@ -39058,7 +41002,7 @@ class VpnGatewayIpConfiguration(_serialization.Model):
         self.private_ip_address = private_ip_address
 
 
-class VpnGatewayNatRule(SubResource):  # pylint: disable=too-many-instance-attributes
+class VpnGatewayNatRule(SubResource):
     """VpnGatewayNatRule Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -39073,7 +41017,7 @@ class VpnGatewayNatRule(SubResource):  # pylint: disable=too-many-instance-attri
     :ivar type: Resource type.
     :vartype type: str
     :ivar provisioning_state: The provisioning state of the NAT Rule resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar type_properties_type: The type of NAT rule for VPN NAT. Known values are: "Static" and
      "Dynamic".
@@ -39396,7 +41340,7 @@ class VpnServerConfigRadiusServerRootCertificate(_serialization.Model):  # pylin
         self.public_cert_data = public_cert_data
 
 
-class VpnServerConfiguration(Resource):  # pylint: disable=too-many-instance-attributes
+class VpnServerConfiguration(Resource):
     """VpnServerConfiguration Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -39625,7 +41569,8 @@ class VpnServerConfigurationPolicyGroup(SubResource):
     :ivar p2_s_connection_configurations: List of references to P2SConnectionConfigurations.
     :vartype p2_s_connection_configurations: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the VpnServerConfigurationPolicyGroup
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -39800,7 +41745,7 @@ class VpnServerConfigVpnClientRootCertificate(_serialization.Model):
         self.public_cert_data = public_cert_data
 
 
-class VpnSite(Resource):  # pylint: disable=too-many-instance-attributes
+class VpnSite(Resource):
     """VpnSite Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -39830,7 +41775,7 @@ class VpnSite(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar bgp_properties: The set of bgp properties.
     :vartype bgp_properties: ~azure.mgmt.network.models.BgpSettings
     :ivar provisioning_state: The provisioning state of the VPN site resource. Known values are:
-     "Succeeded", "Updating", "Deleting", and "Failed".
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar is_security_site: IsSecuritySite flag.
     :vartype is_security_site: bool
@@ -39969,7 +41914,7 @@ class VpnSiteLink(SubResource):
     :ivar bgp_properties: The set of bgp properties.
     :vartype bgp_properties: ~azure.mgmt.network.models.VpnLinkBgpSettings
     :ivar provisioning_state: The provisioning state of the VPN site link resource. Known values
-     are: "Succeeded", "Updating", "Deleting", and "Failed".
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     """
 
@@ -40028,7 +41973,7 @@ class VpnSiteLink(SubResource):
         self.provisioning_state = None
 
 
-class VpnSiteLinkConnection(SubResource):  # pylint: disable=too-many-instance-attributes
+class VpnSiteLinkConnection(SubResource):
     """VpnSiteLinkConnection Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -40078,7 +42023,7 @@ class VpnSiteLinkConnection(SubResource):  # pylint: disable=too-many-instance-a
     :ivar use_local_azure_ip_address: Use local azure ip to initiate connection.
     :vartype use_local_azure_ip_address: bool
     :ivar provisioning_state: The provisioning state of the VPN site link connection resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar ingress_nat_rules: List of ingress NatRules.
     :vartype ingress_nat_rules: list[~azure.mgmt.network.models.SubResource]
@@ -40329,7 +42274,7 @@ class WebApplicationFirewallCustomRule(_serialization.Model):
         self.action = action
 
 
-class WebApplicationFirewallPolicy(Resource):  # pylint: disable=too-many-instance-attributes
+class WebApplicationFirewallPolicy(Resource):
     """Defines web application firewall policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -40353,7 +42298,8 @@ class WebApplicationFirewallPolicy(Resource):  # pylint: disable=too-many-instan
     :ivar application_gateways: A collection of references to application gateways.
     :vartype application_gateways: list[~azure.mgmt.network.models.ApplicationGateway]
     :ivar provisioning_state: The provisioning state of the web application firewall policy
-     resource. Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar resource_state: Resource status of the policy. Known values are: "Creating", "Enabling",
      "Enabled", "Disabling", "Disabled", and "Deleting".

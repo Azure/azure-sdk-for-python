@@ -22,7 +22,7 @@
 """Interact with databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Union, Optional, Mapping
+from typing import Any, Dict, List, Union, Optional, Mapping, Callable
 
 import warnings
 from azure.core import MatchConditions
@@ -44,6 +44,7 @@ __all__ = ("DatabaseProxy",)
 
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 def _get_database_link(database_or_id: Union[str, 'DatabaseProxy', Mapping[str, Any]]) -> str:
     if isinstance(database_or_id, str):
@@ -173,6 +174,7 @@ class DatabaseProxy(object):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
+        computed_properties: Optional[List[Dict[str, str]]] = None,
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
@@ -199,10 +201,10 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
-        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
+        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
-            `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
-        :keyword Dict[str, Any] vector_embedding_policy: **provisional** The vector embedding policy for the container.
+            `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
+        :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container.
             Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
             data type, and is generated for a particular distance function.
         :keyword Dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
@@ -248,7 +250,6 @@ class DatabaseProxy(object):
             definition["conflictResolutionPolicy"] = conflict_resolution_policy
         if analytical_storage_ttl is not None:
             definition["analyticalStorageTtl"] = analytical_storage_ttl
-        computed_properties = kwargs.pop('computed_properties', None)
         if computed_properties is not None:
             definition["computedProperties"] = computed_properties
         if vector_embedding_policy is not None:
@@ -297,6 +298,7 @@ class DatabaseProxy(object):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
+        computed_properties: Optional[List[Dict[str, str]]] = None,
         vector_embedding_policy: Optional[Dict[str, Any]] = None,
         change_feed_policy: Optional[Dict[str, Any]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
@@ -325,9 +327,9 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
-        :keyword List[Dict[str, str]] computed_properties: **provisional** Sets The computed properties for this
+        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
-            `here: https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
+            `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container. Each vector
             embedding possesses a predetermined number of dimensions, is associated with an underlying data type, and
             is generated for a particular distance function.
@@ -340,7 +342,6 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
         """
-        computed_properties = kwargs.pop("computed_properties", None)
         try:
             container_proxy = self.get_container_client(id)
             container_proxy.read(
@@ -452,6 +453,7 @@ class DatabaseProxy(object):
         *,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List the containers in the database.
@@ -459,7 +461,8 @@ class DatabaseProxy(object):
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[Dict[str, Any]]
 
@@ -477,7 +480,6 @@ class DatabaseProxy(object):
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
         feed_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if populate_query_metrics is not None:
@@ -504,6 +506,7 @@ class DatabaseProxy(object):
         *,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List the properties for containers in the current database.
@@ -514,7 +517,8 @@ class DatabaseProxy(object):
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -523,7 +527,6 @@ class DatabaseProxy(object):
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
         feed_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if populate_query_metrics is not None:
@@ -558,6 +561,7 @@ class DatabaseProxy(object):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         analytical_storage_ttl: Optional[int] = None,
+        computed_properties: Optional[List[Dict[str, str]]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
@@ -582,6 +586,9 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
+            `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
@@ -627,6 +634,7 @@ class DatabaseProxy(object):
                 "defaultTtl": default_ttl,
                 "conflictResolutionPolicy": conflict_resolution_policy,
                 "analyticalStorageTtl": analytical_storage_ttl,
+                "computedProperties": computed_properties,
                 "fullTextPolicy": full_text_policy,
             }.items()
             if value is not None
@@ -639,16 +647,22 @@ class DatabaseProxy(object):
             self.client_connection, self.database_link, container_properties["id"], properties=container_properties)
 
     @distributed_trace
-    def list_users(self, max_item_count: Optional[int] = None, **kwargs: Any) -> ItemPaged[Dict[str, Any]]:
+    def list_users(
+            self,
+            max_item_count: Optional[int] = None,
+            *,
+            response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
+            **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
         """List all the users in the container.
 
         :param int max_item_count: Max number of users to be returned in the enumeration operation.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of user properties (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
         feed_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -665,6 +679,8 @@ class DatabaseProxy(object):
         query: str,
         parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
+        *,
+        response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Return all users matching the given `query`.
@@ -673,12 +689,12 @@ class DatabaseProxy(object):
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :type parameters: List[Dict[str, Any]]
         :param int max_item_count: Max number of users to be returned in the enumeration operation.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, Any], ItemPaged[Dict[str, Any]]], None]
         :returns: An Iterable of user properties (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
         feed_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -830,18 +846,22 @@ class DatabaseProxy(object):
         return self.get_throughput(**kwargs)
 
     @distributed_trace
-    def get_throughput(self, **kwargs: Any) -> ThroughputProperties:
+    def get_throughput(
+            self,
+            *,
+            response_hook: Optional[Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]] = None,
+            **kwargs: Any) -> ThroughputProperties:
         """Get the ThroughputProperties object for this database.
 
         If no ThroughputProperties already exist for the database, an exception is raised.
 
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]
         :returns: ThroughputProperties for the database.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
             the throughput properties could not be retrieved.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
         link = properties["_self"]
         query_spec = {

@@ -20,11 +20,11 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_inbound_nat_rules_list(self, resource_group):
         response = self.client.inbound_nat_rules.list(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_inbound_nat_rules_begin_delete(self, resource_group):
         response = self.client.inbound_nat_rules.begin_delete(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             inbound_nat_rule_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -45,12 +45,12 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_inbound_nat_rules_get(self, resource_group):
         response = self.client.inbound_nat_rules.get(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             inbound_nat_rule_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_inbound_nat_rules_begin_create_or_update(self, resource_group):
         response = self.client.inbound_nat_rules.begin_create_or_update(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
@@ -199,6 +199,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                     }
                                 ],
                                 "ipConfigurations": [...],
+                                "ipamPoolPrefixAllocations": [
+                                    {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                                ],
                                 "name": "str",
                                 "natGateway": {"id": "str"},
                                 "networkSecurityGroup": {
@@ -292,6 +295,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                         {
                                             "auxiliaryMode": "str",
                                             "auxiliarySku": "str",
+                                            "defaultOutboundConnectivityEnabled": bool,
                                             "disableTcpStateTracking": bool,
                                             "dnsSettings": {
                                                 "appliedDnsServers": ["str"],
@@ -680,6 +684,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                             {
                                                 "auxiliaryMode": "str",
                                                 "auxiliarySku": "str",
+                                                "defaultOutboundConnectivityEnabled": bool,
                                                 "disableTcpStateTracking": bool,
                                                 "dnsSettings": {
                                                     "appliedDnsServers": ["str"],
@@ -1205,6 +1210,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                 "subnet": ...,
                             }
                         ],
+                        "ipamPoolPrefixAllocations": [
+                            {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                        ],
                         "name": "str",
                         "natGateway": {"id": "str"},
                         "networkSecurityGroup": {
@@ -1296,6 +1304,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                 {
                                     "auxiliaryMode": "str",
                                     "auxiliarySku": "str",
+                                    "defaultOutboundConnectivityEnabled": bool,
                                     "disableTcpStateTracking": bool,
                                     "dnsSettings": {
                                         "appliedDnsServers": ["str"],
@@ -1798,6 +1807,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                     {
                                         "auxiliaryMode": "str",
                                         "auxiliarySku": "str",
+                                        "defaultOutboundConnectivityEnabled": bool,
                                         "disableTcpStateTracking": bool,
                                         "dnsSettings": {
                                             "appliedDnsServers": ["str"],
@@ -2387,6 +2397,13 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                 }
                                             ],
                                             "ipConfigurations": [...],
+                                            "ipamPoolPrefixAllocations": [
+                                                {
+                                                    "allocatedAddressPrefixes": ["str"],
+                                                    "id": "str",
+                                                    "numberOfIpAddresses": "str",
+                                                }
+                                            ],
                                             "name": "str",
                                             "natGateway": {"id": "str"},
                                             "networkSecurityGroup": {
@@ -2480,6 +2497,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                     {
                                                         "auxiliaryMode": "str",
                                                         "auxiliarySku": "str",
+                                                        "defaultOutboundConnectivityEnabled": bool,
                                                         "disableTcpStateTracking": bool,
                                                         "dnsSettings": {
                                                             "appliedDnsServers": ["str"],
@@ -2822,6 +2840,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                         {
                                                             "auxiliaryMode": "str",
                                                             "auxiliarySku": "str",
+                                                            "defaultOutboundConnectivityEnabled": bool,
                                                             "disableTcpStateTracking": bool,
                                                             "dnsSettings": {
                                                                 "appliedDnsServers": ["str"],
@@ -3306,6 +3325,9 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                             "subnet": ...,
                                         }
                                     ],
+                                    "ipamPoolPrefixAllocations": [
+                                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                                    ],
                                     "name": "str",
                                     "natGateway": {"id": "str"},
                                     "networkSecurityGroup": {
@@ -3399,6 +3421,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                             {
                                                 "auxiliaryMode": "str",
                                                 "auxiliarySku": "str",
+                                                "defaultOutboundConnectivityEnabled": bool,
                                                 "disableTcpStateTracking": bool,
                                                 "dnsSettings": {
                                                     "appliedDnsServers": ["str"],
@@ -3736,6 +3759,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                                                 {
                                                     "auxiliaryMode": "str",
                                                     "auxiliarySku": "str",
+                                                    "defaultOutboundConnectivityEnabled": bool,
                                                     "disableTcpStateTracking": bool,
                                                     "dnsSettings": {
                                                         "appliedDnsServers": ["str"],
@@ -4122,7 +4146,7 @@ class TestNetworkManagementInboundNatRulesOperations(AzureMgmtRecordedTestCase):
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

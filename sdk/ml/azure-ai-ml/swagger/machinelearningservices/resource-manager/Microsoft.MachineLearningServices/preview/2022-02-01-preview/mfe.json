@@ -6772,7 +6772,7 @@
       "additionalProperties": false
     },
     "ComponentContainer": {
-      "description": "Component container definition.\r\n<see href=\"https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command\" />",
+      "description": "Component container definition.\r\n<see href=\"https://learn.microsoft.com/azure/machine-learning/reference-yaml-component-command\" />",
       "type": "object",
       "allOf": [
         {
@@ -6830,7 +6830,7 @@
       ],
       "properties": {
         "componentSpec": {
-          "description": "Defines Component definition details.\r\n<see href=\"https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command\" />",
+          "description": "Defines Component definition details.\r\n<see href=\"https://learn.microsoft.com/azure/machine-learning/reference-yaml-component-command\" />",
           "type": "object",
           "example": {
             "name": "Hello_Python_World",
@@ -8009,7 +8009,7 @@
           ]
         },
         "environmentType": {
-          "description": "Environment type is either user managed or curated by the Azure ML service\r\n<see href=\"https://docs.microsoft.com/en-us/azure/machine-learning/resource-curated-environments\" />",
+          "description": "Environment type is either user managed or curated by the Azure ML service\r\n<see href=\"https://learn.microsoft.com/azure/machine-learning/resource-curated-environments\" />",
           "$ref": "#/definitions/EnvironmentType",
           "readOnly": true,
           "x-ms-mutability": [
@@ -8017,7 +8017,7 @@
           ]
         },
         "image": {
-          "description": "Name of the image that will be used for the environment.\r\n<seealso href=\"https://docs.microsoft.com/en-us/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image\" />",
+          "description": "Name of the image that will be used for the environment.\r\n<seealso href=\"https://learn.microsoft.com/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image\" />",
           "type": "string",
           "example": "docker.io/tensorflow/serving:latest",
           "x-ms-mutability": [
@@ -8714,7 +8714,7 @@
       "additionalProperties": false
     },
     "ImageModelDistributionSettings": {
-      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n<code>\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n</code></example>\r\nAll distributions can be specified as distribution_name(min, max) or choice(val1, val2, ..., valn)\r\nwhere distribution name can be: uniform, quniform, loguniform, etc\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
+      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n<code>\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n</code></example>\r\nAll distributions can be specified as distribution_name(min, max) or choice(val1, val2, ..., valn)\r\nwhere distribution name can be: uniform, quniform, loguniform, etc\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://learn.microsoft.com/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.",
       "type": "object",
       "properties": {
         "amsGradient": {
@@ -8784,7 +8784,7 @@
           "x-nullable": true
         },
         "layersToFreeze": {
-          "description": "Number of layers to freeze for the model. Must be a positive integer.\r\nFor instance, passing 2 as value for 'seresnext' means\r\nfreezing layer0 and layer1. For a full list of models supported and details on layer freeze, please\r\nsee: https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
+          "description": "Number of layers to freeze for the model. Must be a positive integer.\r\nFor instance, passing 2 as value for 'seresnext' means\r\nfreezing layer0 and layer1. For a full list of models supported and details on layer freeze, please\r\nsee: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.",
           "type": "string",
           "example": "choice(1, 2)",
           "x-nullable": true
@@ -8802,7 +8802,7 @@
           "x-nullable": true
         },
         "modelName": {
-          "description": "Name of the model to use for training.\r\nFor more information on the available models please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
+          "description": "Name of the model to use for training.\r\nFor more information on the available models please visit the official documentation:\r\nhttps://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.",
           "type": "string",
           "example": "choice('seresnext', 'resnest50')",
           "x-nullable": true
@@ -8895,7 +8895,7 @@
       "additionalProperties": false
     },
     "ImageModelDistributionSettingsClassification": {
-      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n<code>\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n</code></example>\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
+      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n<code>\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n</code></example>\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://learn.microsoft.com/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.",
       "type": "object",
       "allOf": [
         {
@@ -8931,7 +8931,7 @@
       "additionalProperties": false
     },
     "ImageModelDistributionSettingsObjectDetection": {
-      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n<code>\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n</code></example>\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
+      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n<code>\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n</code></example>\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://learn.microsoft.com/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.",
       "type": "object",
       "allOf": [
         {
@@ -9021,7 +9021,7 @@
       "additionalProperties": false
     },
     "ImageModelSettings": {
-      "description": "Settings used for training the model.\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
+      "description": "Settings used for training the model.\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.",
       "type": "object",
       "properties": {
         "advancedSettings": {
@@ -9115,7 +9115,7 @@
         },
         "layersToFreeze": {
           "format": "int32",
-          "description": "Number of layers to freeze for the model. Must be a positive integer.\r\nFor instance, passing 2 as value for 'seresnext' means\r\nfreezing layer0 and layer1. For a full list of models supported and details on layer freeze, please\r\nsee: https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
+          "description": "Number of layers to freeze for the model. Must be a positive integer.\r\nFor instance, passing 2 as value for 'seresnext' means\r\nfreezing layer0 and layer1. For a full list of models supported and details on layer freeze, please\r\nsee: https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.",
           "type": "integer",
           "x-nullable": true
         },
@@ -9131,7 +9131,7 @@
           "$ref": "#/definitions/LearningRateScheduler"
         },
         "modelName": {
-          "description": "Name of the model to use for training.\r\nFor more information on the available models please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
+          "description": "Name of the model to use for training.\r\nFor more information on the available models please visit the official documentation:\r\nhttps://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.",
           "type": "string",
           "x-nullable": true
         },
@@ -9221,7 +9221,7 @@
       "additionalProperties": false
     },
     "ImageModelSettingsClassification": {
-      "description": "Settings used for training the model.\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
+      "description": "Settings used for training the model.\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.",
       "type": "object",
       "allOf": [
         {
@@ -9257,7 +9257,7 @@
       "additionalProperties": false
     },
     "ImageModelSettingsObjectDetection": {
-      "description": "Settings used for training the model.\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
+      "description": "Settings used for training the model.\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.",
       "type": "object",
       "allOf": [
         {

@@ -133,10 +133,10 @@ class TestServiceBusAdministrationClientTopicTests(AzureMgmtRecordedTestCase):
             assert topic.duplicate_detection_history_time_window == datetime.timedelta(minutes=12)
             assert topic.enable_batched_operations
             # enable_express is not supported for the premium sku, see doc
-            # https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-premium-messaging#express-entities
+            # https://learn.microsoft.com/azure/service-bus-messaging/service-bus-premium-messaging#express-entities
             # assert topic.enable_express
             # partitioning is not available for the the premium sku, see doc
-            # https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-partitioning
+            # https://learn.microsoft.com/azure/service-bus-messaging/service-bus-partitioning
             # assert topic.enable_partitioning
             assert topic.max_size_in_megabytes % 3072 == 0
             assert topic.max_message_size_in_kilobytes == 12345

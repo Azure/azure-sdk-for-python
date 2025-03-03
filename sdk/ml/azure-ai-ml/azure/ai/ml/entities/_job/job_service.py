@@ -210,7 +210,7 @@ class SshJobService(JobServiceBase):
         port: Optional[int] = None,
         ssh_public_keys: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         super().__init__(
             endpoint=endpoint,
@@ -273,7 +273,7 @@ class TensorBoardJobService(JobServiceBase):
         port: Optional[int] = None,
         log_dir: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         super().__init__(
             endpoint=endpoint,
@@ -333,7 +333,7 @@ class JupyterLabJobService(JobServiceBase):
         status: Optional[str] = None,
         port: Optional[int] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         super().__init__(
             endpoint=endpoint,
@@ -389,7 +389,7 @@ class VsCodeJobService(JobServiceBase):
         status: Optional[str] = None,
         port: Optional[int] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         super().__init__(
             endpoint=endpoint,

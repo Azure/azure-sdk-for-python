@@ -6,6 +6,7 @@ import pathlib
 import pandas as pd
 import pytest
 from regex import F
+from devtools_testutils import is_live
 
 
 from azure.ai.evaluation import (
@@ -19,14 +20,13 @@ from azure.ai.evaluation import (
     RelevanceEvaluator,
     SimilarityEvaluator,
     GroundednessEvaluator,
-    # QAEvaluator,
+    QAEvaluator,
     ContentSafetyEvaluator,
     GroundednessProEvaluator,
     ProtectedMaterialEvaluator,
     IndirectAttackEvaluator,
     RetrievalEvaluator,
-    ContentSafetyMultimodalEvaluator,
-    ProtectedMaterialMultimodalEvaluator,
+    SexualEvaluator,
     RougeType,
     evaluate,
 )
@@ -73,7 +73,8 @@ class TestMassEvaluate:
     - Conversation inputs: Where a conversation is inputted and the relevant inputs are extracted.
     - Multi-modal inputs: This one has some parameters for the different types of multi-modal inputs.
     """
-
+    
+    @pytest.mark.skipif(not is_live(), reason="Skip in playback due to inconsistency in evaluation results.")
     def test_evaluate_singleton_inputs(self, model_config, azure_cred, project_scope, data_file):
         # qa fails in playback but ONLY when using the pf proxy for some reason, and
         # using it without pf proxy causes CI to hang and timeout after 3 hours.
@@ -88,7 +89,7 @@ class TestMassEvaluate:
             "fluency": FluencyEvaluator(model_config),
             "relevance": RelevanceEvaluator(model_config),
             "similarity": SimilarityEvaluator(model_config),
-            # "qa": QAEvaluator(model_config),
+            "qa": QAEvaluator(model_config),
             "grounded_pro": GroundednessProEvaluator(azure_cred, project_scope),
             "protected_material": ProtectedMaterialEvaluator(azure_cred, project_scope),
             "indirect_attack": IndirectAttackEvaluator(azure_cred, project_scope),
@@ -104,8 +105,7 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
-
-        assert len(row_result_df.keys()) == 48  # 63 with qa
+        assert len(row_result_df.keys()) == 63
         assert len(row_result_df["inputs.query"]) == 3
         assert len(row_result_df["inputs.context"]) == 3
         assert len(row_result_df["inputs.response"]) == 3
@@ -154,23 +154,23 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.content_safety.violence"]) == 3
         assert len(row_result_df["outputs.content_safety.violence_score"]) == 3
         assert len(row_result_df["outputs.content_safety.violence_reason"]) == 3
-        # assert len(row_result_df["outputs.qa.f1_score"]) == 3
-        # assert len(row_result_df["outputs.qa.groundedness"]) == 3
-        # assert len(row_result_df["outputs.qa.gpt_groundedness"]) == 3
-        # assert len(row_result_df["outputs.qa.groundedness_reason"]) == 3
-        # assert len(row_result_df["outputs.qa.coherence"]) == 3
-        # assert len(row_result_df["outputs.qa.gpt_coherence"]) == 3
-        # assert len(row_result_df["outputs.qa.coherence_reason"]) == 3
-        # assert len(row_result_df["outputs.qa.fluency"]) == 3
-        # assert len(row_result_df["outputs.qa.gpt_fluency"]) == 3
-        # assert len(row_result_df["outputs.qa.fluency_reason"]) == 3
-        # assert len(row_result_df["outputs.qa.relevance"]) == 3
-        # assert len(row_result_df["outputs.qa.gpt_relevance"]) == 3
-        # assert len(row_result_df["outputs.qa.relevance_reason"]) == 3
-        # assert len(row_result_df["outputs.qa.similarity"]) == 3
-        # assert len(row_result_df["outputs.qa.gpt_similarity"]) == 3
+        assert len(row_result_df["outputs.qa.f1_score"]) == 3
+        assert len(row_result_df["outputs.qa.groundedness"]) == 3
+        assert len(row_result_df["outputs.qa.gpt_groundedness"]) == 3
+        assert len(row_result_df["outputs.qa.groundedness_reason"]) == 3
+        assert len(row_result_df["outputs.qa.coherence"]) == 3
+        assert len(row_result_df["outputs.qa.gpt_coherence"]) == 3
+        assert len(row_result_df["outputs.qa.coherence_reason"]) == 3
+        assert len(row_result_df["outputs.qa.fluency"]) == 3
+        assert len(row_result_df["outputs.qa.gpt_fluency"]) == 3
+        assert len(row_result_df["outputs.qa.fluency_reason"]) == 3
+        assert len(row_result_df["outputs.qa.relevance"]) == 3
+        assert len(row_result_df["outputs.qa.gpt_relevance"]) == 3
+        assert len(row_result_df["outputs.qa.relevance_reason"]) == 3
+        assert len(row_result_df["outputs.qa.similarity"]) == 3
+        assert len(row_result_df["outputs.qa.gpt_similarity"]) == 3
 
-        assert len(metrics.keys()) == 28  # 39 with qa
+        assert len(metrics.keys()) == 39
         assert metrics["f1_score.f1_score"] >= 0
         assert metrics["gleu.gleu_score"] >= 0
         assert metrics["bleu.bleu_score"] >= 0
@@ -199,17 +199,17 @@ class TestMassEvaluate:
         assert metrics["protected_material.protected_material_defect_rate"] >= 0
         assert metrics["indirect_attack.xpia_defect_rate"] >= 0
         assert metrics["eci.eci_defect_rate"] >= 0
-        # assert metrics["qa.f1_score"] >= 0
-        # assert metrics["qa.groundedness"] >= 0
-        # assert metrics["qa.gpt_groundedness"] >= 0
-        # assert metrics["qa.coherence"] >= 0
-        # assert metrics["qa.gpt_coherence"] >= 0
-        # assert metrics["qa.fluency"] >= 0
-        # assert metrics["qa.gpt_fluency"] >= 0
-        # assert metrics["qa.relevance"] >= 0
-        # assert metrics["qa.gpt_relevance"] >= 0
-        # assert metrics["qa.similarity"] >= 0
-        # assert metrics["qa.gpt_similarity"] >= 0
+        assert metrics["qa.f1_score"] >= 0
+        assert metrics["qa.groundedness"] >= 0
+        assert metrics["qa.gpt_groundedness"] >= 0
+        assert metrics["qa.coherence"] >= 0
+        assert metrics["qa.gpt_coherence"] >= 0
+        assert metrics["qa.fluency"] >= 0
+        assert metrics["qa.gpt_fluency"] >= 0
+        assert metrics["qa.relevance"] >= 0
+        assert metrics["qa.gpt_relevance"] >= 0
+        assert metrics["qa.similarity"] >= 0
+        assert metrics["qa.gpt_similarity"] >= 0
 
     def test_evaluate_conversation(self, model_config, data_convo_file, azure_cred, project_scope):
         evaluators = {
@@ -291,40 +291,35 @@ class TestMassEvaluate:
         assert metrics["indirect_attack.xpia_defect_rate"] >= 0
         assert metrics["eci.eci_defect_rate"] >= 0
 
-    # Image urls with target is disabled due to being unstable in CI
     @pytest.mark.parametrize(
-        "multi_modal_input_type,pm_evaluator_class,cs_evaluator_class",
+        "multi_modal_input_type",
         [
-            ("imageurls", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
-            ("imageurls", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
-            # ("imageurls_with_target", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
-            # ("imageurls_with_target", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
-            ("b64_images", ProtectedMaterialMultimodalEvaluator, ContentSafetyMultimodalEvaluator),
-            ("b64_images", ProtectedMaterialEvaluator, ContentSafetyEvaluator),
+            "imageurls",
+            "imageurls_with_target",
+            "b64_images",
         ],
     )
     def test_evaluate_multimodal(
         self,
         multi_modal_input_type,
-        pm_evaluator_class,
-        cs_evaluator_class,
         multimodal_input_selector,
         azure_cred,
         project_scope,
+        run_from_temp_dir,
     ):
-        # Content safety is removed due to being unstable in playback mode
         evaluators = {
-            # "content_safety" : cs_evaluator_class(credential=azure_cred, azure_ai_project=project_scope),
-            "protected_material": pm_evaluator_class(credential=azure_cred, azure_ai_project=project_scope),
+            "content_safety": ContentSafetyEvaluator(credential=azure_cred, azure_ai_project=project_scope),
+            "protected_material": ProtectedMaterialEvaluator(credential=azure_cred, azure_ai_project=project_scope),
+            "sexual": SexualEvaluator(credential=azure_cred, azure_ai_project=project_scope),
         }
 
-        evaluator_config = None  # use default normally
+        evaluator_config = None  # use default column mapping normally
         target = None
+        # imageurls_with_target has special column mapping to convert target function into inputted conversation.
         if multi_modal_input_type == "imageurls_with_target":
-            evaluator_config = {
-                # "content_safety": {"conversation": "${target.conversation}"},
-                "protected_material": {"conversation": "${target.conversation}"},
-            }
+            evaluator_config = {}
+            for key in evaluators.keys():
+                evaluator_config[key] = {"conversation": "${target.conversation}"}
             from .target_fn import target_multimodal_fn1
 
             target = target_multimodal_fn1
@@ -344,6 +339,11 @@ class TestMassEvaluate:
         assert result is not None
         assert result["rows"] is not None
 
+        if multi_modal_input_type == "imageurls_with_target":
+            # imageurls_with_target has 1 extra column: outputs.conversation due to the target mapping
+            assert len(row_result_df.keys()) == 23
+        else:
+            assert len(row_result_df.keys()) == 22
         assert "outputs.protected_material.artwork_label" in row_result_df.columns.to_list()
         assert "outputs.protected_material.artwork_reason" in row_result_df.columns.to_list()
         assert "outputs.protected_material.fictional_characters_label" in row_result_df.columns.to_list()
@@ -351,31 +351,29 @@ class TestMassEvaluate:
         assert "outputs.protected_material.logos_and_brands_label" in row_result_df.columns.to_list()
         assert "outputs.protected_material.logos_and_brands_reason" in row_result_df.columns.to_list()
 
-        # assert "outputs.content_safety.sexual" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.violence" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.self_harm" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.hate_unfairness" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.sexual_score" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.violence_score" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.self_harm_score" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.hate_unfairness_score" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.sexual_reason" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.violence_reason" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.self_harm_reason" in row_result_df.columns.to_list()
-        # assert "outputs.content_safety.hate_unfairness_reason" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.sexual" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.violence" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.self_harm" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.hate_unfairness" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.sexual_score" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.violence_score" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.self_harm_score" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.hate_unfairness_score" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.sexual_reason" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.violence_reason" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.self_harm_reason" in row_result_df.columns.to_list()
+        assert "outputs.content_safety.hate_unfairness_reason" in row_result_df.columns.to_list()
 
-        # assert "content_safety.sexual_defect_rate" in metrics.keys()
-        # assert "content_safety.violence_defect_rate" in metrics.keys()
-        # assert "content_safety.self_harm_defect_rate" in metrics.keys()
-        # assert "content_safety.hate_unfairness_defect_rate" in metrics.keys()
-        assert "protected_material.fictional_characters_label" in metrics.keys()
-        assert "protected_material.logos_and_brands_label" in metrics.keys()
-        assert "protected_material.artwork_label" in metrics.keys()
+        assert "outputs.sexual.sexual_score" in row_result_df.columns.to_list()
+        assert "outputs.sexual.sexual_reason" in row_result_df.columns.to_list()
+        assert "outputs.sexual.sexual" in row_result_df.columns.to_list()
 
-        # assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1
-        # assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
-        # assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
-        # assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
-        assert 0 <= metrics.get("protected_material.fictional_characters_label") <= 1
-        assert 0 <= metrics.get("protected_material.logos_and_brands_label") <= 1
-        assert 0 <= metrics.get("protected_material.artwork_label") <= 1
+        assert len(metrics) == 8
+        assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1
+        assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
+        assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
+        assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
+        assert 0 <= metrics.get("protected_material.fictional_characters_defect_rate") <= 1
+        assert 0 <= metrics.get("protected_material.logos_and_brands_defect_rate") <= 1
+        assert 0 <= metrics.get("protected_material.artwork_defect_rate") <= 1
+        assert 0 <= metrics.get("sexual.sexual_defect_rate") <= 1

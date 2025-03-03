@@ -1,13 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from concurrent.futures import as_completed
-from typing import Callable, Dict, List, Union
+from typing import Dict, List, Union
 
-from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._evaluators._common import EvaluatorBase
+from azure.ai.evaluation._evaluators._common import MultiEvaluatorBase
 from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._common._experimental import experimental
 
@@ -18,7 +16,7 @@ from ._violence import ViolenceEvaluator
 
 
 @experimental
-class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
+class ContentSafetyEvaluator(MultiEvaluatorBase[Union[str, float]]):
     """
     Initialize a content safety evaluator configured to evaluate content safety metrics for QA scenario.
 
@@ -44,16 +42,14 @@ class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
     id = "content_safety"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
-    # TODO address 3579092 to re-enabled parallel evals.
     def __init__(self, credential, azure_ai_project, **kwargs):
-        super().__init__()
-        self._parallel = kwargs.pop("_parallel", True)
-        self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
+        evaluators = [
             ViolenceEvaluator(credential, azure_ai_project),
             SexualEvaluator(credential, azure_ai_project),
             SelfHarmEvaluator(credential, azure_ai_project),
             HateUnfairnessEvaluator(credential, azure_ai_project),
         ]
+        super().__init__(evaluators=evaluators, **kwargs)
 
     @overload
     def __call__(
@@ -109,36 +105,3 @@ class ContentSafetyEvaluator(EvaluatorBase[Union[str, float]]):
         :rtype: Union[Dict[str, Union[str, float]], Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]]
         """
         return super().__call__(*args, **kwargs)
-
-    @override
-    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[str, float]]:
-        """Perform the evaluation using the Azure AI RAI service.
-        The exact evaluation performed is determined by the evaluation metric supplied
-        by the child class initializer.
-
-        :param eval_input: The input to the evaluation function.
-        :type eval_input: Dict
-        :return: The evaluation result.
-        :rtype: Dict
-        """
-        query = eval_input.get("query", None)
-        response = eval_input.get("response", None)
-        conversation = eval_input.get("conversation", None)
-        results: Dict[str, Union[str, float]] = {}
-        # TODO fix this to not explode on empty optional inputs (PF SKD error)
-        if self._parallel:
-            with ThreadPoolExecutor() as executor:
-                # pylint: disable=no-value-for-parameter
-                futures = {
-                    executor.submit(evaluator, query=query, response=response, conversation=conversation): evaluator
-                    for evaluator in self._evaluators
-                }
-
-                for future in as_completed(futures):
-                    results.update(future.result())
-        else:
-            for evaluator in self._evaluators:
-                result = evaluator(query=query, response=response, conversation=conversation)
-                results.update(result)
-
-        return results
