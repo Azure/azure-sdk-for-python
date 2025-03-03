@@ -3748,7 +3748,7 @@ class ApplicationGatewayOnDemandProbe(_serialization.Model):
     :ivar host: Host name to send the probe to.
     :vartype host: str
     :ivar path: Relative path of probe. Valid path starts from '/'. Probe is sent to
-     :code:`<Protocol>`://:code:`<host>`::code:`<port>`:code:`<path>`.
+     :code:`<Protocol>`://\\ :code:`<host>`:\\ :code:`<port>`\\ :code:`<path>`.
     :vartype path: str
     :ivar timeout: The probe timeout in seconds. Probe marked as failed if valid response is not
      received with this timeout period. Acceptable values are from 1 second to 86400 seconds.
@@ -3797,7 +3797,7 @@ class ApplicationGatewayOnDemandProbe(_serialization.Model):
         :keyword host: Host name to send the probe to.
         :paramtype host: str
         :keyword path: Relative path of probe. Valid path starts from '/'. Probe is sent to
-         :code:`<Protocol>`://:code:`<host>`::code:`<port>`:code:`<path>`.
+         :code:`<Protocol>`://\\ :code:`<host>`:\\ :code:`<port>`\\ :code:`<path>`.
         :paramtype path: str
         :keyword timeout: The probe timeout in seconds. Probe marked as failed if valid response is not
          received with this timeout period. Acceptable values are from 1 second to 86400 seconds.
@@ -4301,7 +4301,7 @@ class ApplicationGatewayProbe(SubResource):
     :ivar host: Host name to send the probe to.
     :vartype host: str
     :ivar path: Relative path of probe. Valid path starts from '/'. Probe is sent to
-     :code:`<Protocol>`://:code:`<host>`::code:`<port>`:code:`<path>`.
+     :code:`<Protocol>`://\\ :code:`<host>`:\\ :code:`<port>`\\ :code:`<path>`.
     :vartype path: str
     :ivar interval: The probing interval in seconds. This is the time interval between two
      consecutive probes. Acceptable values are from 1 second to 86400 seconds.
@@ -4391,7 +4391,7 @@ class ApplicationGatewayProbe(SubResource):
         :keyword host: Host name to send the probe to.
         :paramtype host: str
         :keyword path: Relative path of probe. Valid path starts from '/'. Probe is sent to
-         :code:`<Protocol>`://:code:`<host>`::code:`<port>`:code:`<path>`.
+         :code:`<Protocol>`://\\ :code:`<host>`:\\ :code:`<port>`\\ :code:`<path>`.
         :paramtype path: str
         :keyword interval: The probing interval in seconds. This is the time interval between two
          consecutive probes. Acceptable values are from 1 second to 86400 seconds.
@@ -24702,7 +24702,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
     :ivar load_balancer_inbound_nat_rules: A list of references of LoadBalancerInboundNatRules.
     :vartype load_balancer_inbound_nat_rules: list[~azure.mgmt.network.models.InboundNatRule]
     :ivar private_ip_address: Private IP address of the IP configuration. It can be a single IP
-     address or a CIDR block in the format :code:`<address>`/:code:`<prefix-length>`.
+     address or a CIDR block in the format :code:`<address>`/\\ :code:`<prefix-length>`.
     :vartype private_ip_address: str
     :ivar private_ip_address_prefix_length: The private IP address prefix length. If specified and
      the allocation method is dynamic, the service will allocate a CIDR block instead of a single IP
@@ -24822,7 +24822,7 @@ class NetworkInterfaceIPConfiguration(SubResource):
         :keyword load_balancer_inbound_nat_rules: A list of references of LoadBalancerInboundNatRules.
         :paramtype load_balancer_inbound_nat_rules: list[~azure.mgmt.network.models.InboundNatRule]
         :keyword private_ip_address: Private IP address of the IP configuration. It can be a single IP
-         address or a CIDR block in the format :code:`<address>`/:code:`<prefix-length>`.
+         address or a CIDR block in the format :code:`<address>`/\\ :code:`<prefix-length>`.
         :paramtype private_ip_address: str
         :keyword private_ip_address_prefix_length: The private IP address prefix length. If specified
          and the allocation method is dynamic, the service will allocate a CIDR block instead of a
