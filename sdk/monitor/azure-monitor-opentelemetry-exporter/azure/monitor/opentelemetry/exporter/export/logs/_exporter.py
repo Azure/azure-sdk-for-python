@@ -114,7 +114,6 @@ def _log_data_is_event(log_data: LogData) -> bool:
     return is_event is not None
 
 
-
 # pylint: disable=protected-access
 def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     log_record = log_data.log_record
