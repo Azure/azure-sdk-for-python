@@ -1,2 +1,3 @@
 The general guidelines for SDK in this repo are defined in this website: https://azure.github.io/azure-sdk/python_design.html. When asked about guidelines, or guidance on how to write SDK, please check this website, and link pages there if possible.
 
+When looking into pylint or fixing pylint errors, please follow the general guidelines for SDK in this repo. If you are not sure about a specific error, please check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md, or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html. If you are not sure about a specific error, please ask for help in the PR or issue.
