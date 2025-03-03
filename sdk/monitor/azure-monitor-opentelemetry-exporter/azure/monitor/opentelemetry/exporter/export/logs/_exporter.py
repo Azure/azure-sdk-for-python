@@ -135,7 +135,6 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         stack_trace = log_record.attributes.get(EXCEPTION_STACKTRACE)
     severity_level = _get_severity_level(log_record.severity_number)
 
-
     # Exception telemetry
     if exc_type is not None or exc_message is not None:
         envelope.name = _EXCEPTION_ENVELOPE_NAME
