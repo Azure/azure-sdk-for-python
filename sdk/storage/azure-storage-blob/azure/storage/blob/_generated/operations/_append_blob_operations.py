@@ -72,7 +72,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     blob_type: Literal["AppendBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "AppendBlob"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -182,7 +182,7 @@ def build_append_block_request(
 
     comp: Literal["appendblock"] = kwargs.pop("comp", _params.pop("comp", "appendblock"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -278,13 +278,14 @@ def build_append_block_from_url_request(
     source_if_none_match: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
     copy_source_authorization: Optional[str] = None,
+    file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["appendblock"] = kwargs.pop("comp", _params.pop("comp", "appendblock"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -360,6 +361,8 @@ def build_append_block_from_url_request(
         _headers["x-ms-copy-source-authorization"] = _SERIALIZER.header(
             "copy_source_authorization", copy_source_authorization, "str"
         )
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -382,7 +385,7 @@ def build_seal_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["seal"] = kwargs.pop("comp", _params.pop("comp", "seal"))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: Literal["2025-07-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -823,6 +826,7 @@ class AppendBlobOperations:
         transactional_content_md5: Optional[bytes] = None,
         request_id_parameter: Optional[str] = None,
         copy_source_authorization: Optional[str] = None,
+        file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -864,6 +868,8 @@ class AppendBlobOperations:
         :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
          OAuth access token to copy source. Default value is None.
         :type copy_source_authorization: str
+        :param file_request_intent: Valid value is backup. "backup" Default value is None.
+        :type file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param cpk_scope_info: Parameter group. Default value is None.
@@ -962,6 +968,7 @@ class AppendBlobOperations:
             source_if_none_match=_source_if_none_match,
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
+            file_request_intent=file_request_intent,
             comp=comp,
             version=self._config.version,
             headers=_headers,

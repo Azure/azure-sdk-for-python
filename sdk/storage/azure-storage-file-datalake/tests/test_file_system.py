@@ -1127,6 +1127,28 @@ class TestFileSystem(StorageRecordedTestCase):
         fsc.exists()
         fsc.create_directory('testdir22')
 
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_get_and_set_access_control_oauth(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+
+        # Arrange
+        token_credential = self.get_credential(DataLakeServiceClient)
+        dsc = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            token_credential
+        )
+        file_system = dsc.create_file_system(self.get_resource_name(TEST_FILE_SYSTEM_PREFIX))
+        directory_client = file_system._get_root_directory_client()
+
+        # Act
+        acl = 'user::rwx,group::r-x,other::rwx'
+        directory_client.set_access_control(acl=acl)
+        access_control = directory_client.get_access_control()
+
+        # Assert
+        assert acl == access_control['acl']
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

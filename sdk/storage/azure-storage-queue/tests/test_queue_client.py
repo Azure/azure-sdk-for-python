@@ -599,6 +599,21 @@ class TestStorageQueueClient(StorageRecordedTestCase):
                 self.account_url(storage_account_name, "queue"), credential=storage_account_key, queue_name='queue')
             service.close()
 
+    @QueuePreparer()
+    @recorded_by_proxy
+    def test_get_and_set_queue_access_policy_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        self.setUp()
+
+        # Arrange
+        service_client = QueueServiceClient(self.account_url(storage_account_name, "queue"), self.token_credential)
+        queue_client = service_client.get_queue_client(self.get_resource_name("pyqueuesync"))
+        queue_client.create_queue()
+
+        # Act / Assert
+        queue_client.set_queue_access_policy(signed_identifiers={})
+        acl = queue_client.get_queue_access_policy()
+        assert acl is not None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

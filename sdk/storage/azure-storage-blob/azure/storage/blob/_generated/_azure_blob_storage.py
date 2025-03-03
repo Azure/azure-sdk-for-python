@@ -48,7 +48,7 @@ class AzureBlobStorage:  # pylint: disable=client-accepts-api-version-keyword
     :param base_url: Service URL. Required. Default value is "".
     :type base_url: str
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2025-01-05". Note that overriding this default value may result in unsupported behavior.
+     is "2025-07-05". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     """
 
