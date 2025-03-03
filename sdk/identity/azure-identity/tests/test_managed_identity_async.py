@@ -858,6 +858,27 @@ async def test_service_fabric_tenant_id(get_token_method):
 
 
 @pytest.mark.asyncio
+async def test_service_fabric_with_client_id_error():
+    """ManagedIdentityCredential should raise ValueError if client_id is provided."""
+    endpoint = "http://localhost:42"
+    with mock.patch(
+        "os.environ",
+        {
+            EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
+            EnvironmentVariables.IDENTITY_HEADER: "secret",
+            EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: "thumbprint",
+        },
+    ):
+        ManagedIdentityCredential()
+
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential(client_id="client_id")
+
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential(identity_config={"resource_id": "resource_id"})
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 async def test_azure_arc(tmpdir, get_token_method):
     """Azure Arc 2020-06-01"""
