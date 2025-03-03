@@ -20,7 +20,7 @@ class TestCognitiveServicesManagementPrivateLinkResourcesOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_private_link_resources_list(self, resource_group):
         response = self.client.private_link_resources.list(
             resource_group_name=resource_group.name,
             account_name="str",
