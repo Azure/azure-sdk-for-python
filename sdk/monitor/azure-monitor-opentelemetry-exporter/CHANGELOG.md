@@ -11,6 +11,9 @@
 
 ### Bugs Fixed
 
+- Implement `from_log_record` for `Trace` data types in live metrics
+  ([#39886](https://github.com/Azure/azure-sdk-for-python/pull/39886))
+
 ### Other Changes
 
 ## 1.0.0b34 (2025-02-26)
