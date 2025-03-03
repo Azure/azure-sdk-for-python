@@ -6,7 +6,7 @@
 # pylint: disable=invalid-overridden-method
 # mypy: disable-error-code=override
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import codecs
 import sys
 import warnings
