@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -36,7 +36,7 @@ from .._serialization import Serializer
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -55,7 +55,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -93,7 +93,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -134,7 +134,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -172,7 +172,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -209,12 +209,13 @@ def build_list_request(
     subscription_id: str,
     *,
     version: Optional[List[str]] = None,
+    expand: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -235,6 +236,8 @@ def build_list_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if version is not None:
         _params["version"] = [_SERIALIZER.query("version", q, "str") if q is not None else "" for q in version]
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -254,7 +257,7 @@ def build_list_for_cluster_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -294,7 +297,7 @@ def build_start_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -332,7 +335,7 @@ def build_stop_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -370,7 +373,7 @@ def build_restart_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -408,7 +411,7 @@ def build_enable_remote_debugging_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -449,7 +452,7 @@ def build_disable_remote_debugging_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -487,7 +490,7 @@ def build_get_remote_debugging_config_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -525,7 +528,7 @@ def build_get_log_file_url_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -563,7 +566,7 @@ def build_generate_heap_dump_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -604,7 +607,7 @@ def build_generate_thread_dump_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -645,7 +648,7 @@ def build_start_jfr_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -713,7 +716,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.appplatform.models.DeploymentResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -766,7 +769,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         deployment_resource: Union[_models.DeploymentResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -976,7 +979,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
     def _delete_initial(
         self, resource_group_name: str, service_name: str, app_name: str, deployment_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1095,7 +1098,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         deployment_resource: Union[_models.DeploymentResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1309,6 +1312,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         service_name: str,
         app_name: str,
         version: Optional[List[str]] = None,
+        expand: Optional[str] = None,
         **kwargs: Any
     ) -> Iterable["_models.DeploymentResource"]:
         """Handles requests to list all resources in an App.
@@ -1322,6 +1326,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type app_name: str
         :param version: Version of the deployments to be listed. Default value is None.
         :type version: list[str]
+        :param expand: The expand expression to apply on the operation. Default value is None.
+        :type expand: str
         :return: An iterator like instance of either DeploymentResource or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.appplatform.models.DeploymentResource]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1332,7 +1338,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.DeploymentResourceCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1349,6 +1355,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
                     app_name=app_name,
                     subscription_id=self._config.subscription_id,
                     version=version,
+                    expand=expand,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -1426,7 +1433,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.DeploymentResourceCollection] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1493,7 +1500,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
     def _start_initial(
         self, resource_group_name: str, service_name: str, app_name: str, deployment_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1606,7 +1613,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
     def _stop_initial(
         self, resource_group_name: str, service_name: str, app_name: str, deployment_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1719,7 +1726,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
     def _restart_initial(
         self, resource_group_name: str, service_name: str, app_name: str, deployment_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1838,7 +1845,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         remote_debugging_payload: Optional[Union[_models.RemoteDebuggingPayload, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2052,7 +2059,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
     def _disable_remote_debugging_initial(
         self, resource_group_name: str, service_name: str, app_name: str, deployment_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2186,7 +2193,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.appplatform.models.RemoteDebugging
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2249,7 +2256,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.appplatform.models.LogFileUrlResponse or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2304,7 +2311,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         diagnostic_parameters: Union[_models.DiagnosticParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2513,7 +2520,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         diagnostic_parameters: Union[_models.DiagnosticParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2722,7 +2729,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         diagnostic_parameters: Union[_models.DiagnosticParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

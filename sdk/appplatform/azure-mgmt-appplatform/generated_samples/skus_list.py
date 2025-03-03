@@ -35,6 +35,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/stable/2023-12-01/examples/Skus_List.json
+# x-ms-original-file: specification/appplatform/resource-manager/Microsoft.AppPlatform/preview/2024-05-01-preview/examples/Skus_List.json
 if __name__ == "__main__":
     main()
