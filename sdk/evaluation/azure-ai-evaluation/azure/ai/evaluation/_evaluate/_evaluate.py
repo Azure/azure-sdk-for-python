@@ -152,6 +152,7 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
         EvaluationMetrics.LOGOS_AND_BRANDS,
         _InternalEvaluationMetrics.ECI,
         EvaluationMetrics.XPIA,
+        EvaluationMetrics.CODE_VULNERABILITY,
     ]
     label_cols = []
     for col in df.columns:

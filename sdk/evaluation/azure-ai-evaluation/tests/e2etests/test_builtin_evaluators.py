@@ -38,6 +38,7 @@ from azure.ai.evaluation import (
     ViolenceEvaluator,
     RetrievalEvaluator,
     GroundednessProEvaluator,
+    CodeVulnerabilityEvaluator,
 )
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 
@@ -237,6 +238,45 @@ class TestBuiltInEvaluators:
         assert score2["evaluation_per_turn"]["violence_score"][1] > 0
         assert len(score2["evaluation_per_turn"]["violence"]) == 2
         assert all(score2["evaluation_per_turn"]["violence_reason"]), "violence_reason must not be None or empty."
+
+    def test_code_vulnerability_evaluator(self, project_scope, azure_cred):
+        code_vuln_eval = CodeVulnerabilityEvaluator(azure_cred, project_scope)
+        
+        # the code that comes before the completion.
+        context = "{\n\t\t\t\t\toptimize"
+        # the code that is recommended by the assistant.
+        completion = "dKeys = false;\n"
+        
+        code_vulnerability_result = code_vuln_eval(
+            query=context,
+            response=completion
+        )
+        assert code_vulnerability_result is not None
+        assert "code_vulnerability_label" in code_vulnerability_result and code_vulnerability_result["code_vulnerability_label"] is False
+        assert "code_vulnerability_reason" in code_vulnerability_result
+        assert "code_vulnerability_metadata" in code_vulnerability_result
+        
+        metadata = code_vulnerability_result["code_vulnerability_metadata"]
+        
+        assert "code_injection" in metadata and metadata["code_injection"] is False
+        assert "full_ssrf" in metadata and metadata["full_ssrf"] is False
+        assert "path_injection" in metadata and metadata["path_injection"] is False
+        assert "hardcoded_credentials" in metadata and metadata["hardcoded_credentials"] is False
+        assert "stack_trace_exposure" in metadata and metadata["stack_trace_exposure"] is False
+        assert "incomplete_url_substring_sanitization" in metadata and metadata["incomplete_url_substring_sanitization"] is False
+        assert "flask_debug" in metadata and metadata["flask_debug"] is False
+        assert "potentially_weak_cryptographic_algorithm" in metadata and metadata["potentially_weak_cryptographic_algorithm"] is False
+        assert "clear_text_logging_sensitive_data" in metadata and metadata["clear_text_logging_sensitive_data"] is False
+        assert "incomplete_hostname_regexp" in metadata and metadata["incomplete_hostname_regexp"] is False
+        assert "sql_injection" in metadata and metadata["sql_injection"] is False
+        assert "insecure_randomness" in metadata and metadata["insecure_randomness"] is False
+        assert "bind_socket_all_network_interfaces" in metadata and metadata["bind_socket_all_network_interfaces"] is False
+        assert "client_side_unvalidated_url_redirection" in metadata and metadata["client_side_unvalidated_url_redirection"] is False
+        assert "likely_bugs" in metadata and metadata["likely_bugs"] is False
+        assert "server_side_unvalidated_url_redirection" in metadata and metadata["server_side_unvalidated_url_redirection"] is False
+        assert "clear_text_storage_sensitive_data" in metadata and metadata["clear_text_storage_sensitive_data"] is False
+        assert "tarslip" in metadata and metadata["tarslip"] is False
+        assert "reflected_xss" in metadata and metadata["reflected_xss"] is False
 
     def test_content_safety_evaluator_sexual(self, project_scope, azure_cred, simple_conversation):
         eval_fn = SexualEvaluator(azure_cred, project_scope)
