@@ -37,6 +37,7 @@ if sys.version_info >= (3, 9):
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 
+
 class VaultsOperations(_VaultsOperations):
     @distributed_trace
     def list(self, top: Optional[int] = None, **kwargs: Any) -> Iterable["_models.Resource"]:
@@ -54,9 +55,7 @@ class VaultsOperations(_VaultsOperations):
         filter: Literal["resourceType eq 'Microsoft.KeyVault/vaults'"] = kwargs.pop(
             "filter", _params.pop("$filter", "resourceType eq 'Microsoft.KeyVault/vaults'")
         )
-        api_version: Literal["2015-11-01"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2015-11-01")
-        )
+        api_version: Literal["2015-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2015-11-01"))
         cls: ClsType[_models.ResourceListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
