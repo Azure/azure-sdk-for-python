@@ -18,6 +18,9 @@ extends:
     # Run only emulator tests in Emulator CI
     TestMarkArgument: cosmosEmulator
     ServiceDirectory: cosmos
+    # The cosmos emulator hits limits running too many parallel tests on internal pipelines
+    ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+      ToxEnvParallel: '3'
     BeforeTestSteps:
       - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
         parameters:

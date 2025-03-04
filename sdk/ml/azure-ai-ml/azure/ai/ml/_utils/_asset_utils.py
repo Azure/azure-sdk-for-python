@@ -49,7 +49,7 @@ from azure.ai.ml._artifacts._constants import (
     WORKSPACE_MANAGED_DATASTORE,
     WORKSPACE_MANAGED_DATASTORE_WITH_SLASH,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: disable = unused-import
+from azure.ai.ml._restclient.v2022_02_01_preview.operations import (
     ComponentContainersOperations,
     ComponentVersionsOperations,
     DataContainersOperations,
@@ -1017,6 +1017,7 @@ def _archive_or_restore(
             )
         )
         version_resource.properties.is_archived = is_archived
+        version_resource.properties.stage = None
         (  # pylint: disable=expression-not-assigned
             version_operation.begin_create_or_update(
                 name=name,

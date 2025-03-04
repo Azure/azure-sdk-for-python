@@ -15,19 +15,19 @@ USAGE:
  
     pip install azure-ai-projects azure-identity
  
-    Set this environment variables with your own values:
-    PROJECT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
-    STORAGE_SERVICE_ENDPONT - the storage service queue endpoint, triggering Azure function.
-    Please see Getting Started with Azure Functions page for more information on Azure Functions:
-    https://learn.microsoft.com/azure/azure-functions/functions-get-started
+    Set these environment variables with your own values:
+    1) PROJECT_CONNECTION_STRING - The project connection string, as found in the overview page of your
+       Azure AI Foundry project.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+       the "Models + endpoints" tab in your Azure AI Foundry project.
+    3) STORAGE_SERVICE_ENDPONT - the storage service queue endpoint, triggering Azure function.
+       Please see Getting Started with Azure Functions page for more information on Azure Functions:
+       https://learn.microsoft.com/azure/azure-functions/functions-get-started
 """
 
 import os
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (
-    AzureFunctionStorageQueue,
-    AzureFunctionTool,
-)
+from azure.ai.projects.models import AzureFunctionStorageQueue, AzureFunctionTool, MessageRole
 from azure.identity import DefaultAzureCredential
 
 project_client = AIProjectClient.from_connection_string(
@@ -89,8 +89,8 @@ with project_client:
     messages = project_client.agents.list_messages(thread_id=thread.id)
     print(f"Messages: {messages}")
 
-    # Get the last message from the sender
-    last_msg = messages.get_last_text_message_by_sender("assistant")
+    # Get the last message from agent
+    last_msg = messages.get_last_text_message_by_role(MessageRole.AGENT)
     if last_msg:
         print(f"Last Message: {last_msg.text.value}")
 

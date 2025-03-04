@@ -9,7 +9,7 @@ DESCRIPTION:
     AsyncAzureOpenAI client from the azure.ai.inference package.
 
 USAGE:
-    python sample_get_azure_openai_client.py
+    python sample_chat_completions_with_azure_openai_client.py
 
     Before running the sample:
 

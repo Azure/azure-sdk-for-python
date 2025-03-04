@@ -29,6 +29,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.models import (
     AzureFunctionStorageQueue,
     AzureFunctionTool,
+    MessageRole,
 )
 
 
@@ -92,7 +93,7 @@ async def main():
             print(f"Messages: {messages}")
 
             # Get the last message from the sender
-            last_msg = messages.get_last_text_message_by_sender("assistant")
+            last_msg = messages.get_last_text_message_by_role(MessageRole.AGENT)
             if last_msg:
                 print(f"Last Message: {last_msg.text.value}")
 

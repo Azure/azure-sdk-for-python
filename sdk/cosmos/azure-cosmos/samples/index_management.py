@@ -689,7 +689,7 @@ def use_vector_embedding_policy(db):
         indexing_policy = {
             "vectorIndexes": [
                 {"path": "/vector", "type": "quantizedFlat", "quantizationByteSize": 8},
-                {"path": "/vector2", "type": "diskANN", "indexingSearchListSize": 50}
+                {"path": "/vector2", "type": "diskANN", "vectorIndexShardKey": ["/city"], "indexingSearchListSize": 50}
             ]
         }
         vector_embedding_policy = {

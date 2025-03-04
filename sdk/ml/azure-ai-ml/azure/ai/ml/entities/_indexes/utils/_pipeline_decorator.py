@@ -127,7 +127,6 @@ def pipeline(
     get_component = kwargs.get("get_component", False)
 
     def pipeline_decorator(func: Callable[P, T]) -> Callable:
-        # pylint: disable=isinstance-second-argument-not-valid-type
         if not isinstance(func, Callable):  # type: ignore
             raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
 
@@ -174,7 +173,6 @@ def pipeline(
         @wraps(func)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> Union[Pipeline, PipelineJob]:
             # Default args will be added here.
-            # pylint: disable=abstract-class-instantiated
             # Node: push/pop stack here instead of put it inside build()
             # Because we only want to enable dsl settings on top level pipeline
             _dsl_settings_stack.push()  # use this stack to track on_init/on_finalize settings

@@ -34,11 +34,11 @@ def main():
         management_group_id="E7EC67B3-7657-4966-BFFC-41EFD36BAA09",
         group_quota_name="groupquota1",
         resource_provider_name="Microsoft.Compute",
-        resource_name="standardav2family",
+        location="westus",
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/preview/2023-06-01-preview/examples/GroupQuotaLimitsRequests/PatchGroupQuotaLimitsRequests-Compute.json
+# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2025-03-01/examples/GroupQuotaLimitsRequests/PatchGroupQuotaLimitsRequests-Compute.json
 if __name__ == "__main__":
     main()

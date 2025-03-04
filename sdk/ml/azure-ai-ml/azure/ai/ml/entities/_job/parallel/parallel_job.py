@@ -97,7 +97,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         self.identity = identity
 
     def _to_dict(self) -> Dict:
-        res: dict = ParallelJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        res: dict = ParallelJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 
     def _to_rest_object(self) -> None:
@@ -193,7 +193,6 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
 
         component = self._to_component(context, **kwargs)
 
-        # pylint: disable=abstract-class-instantiated
         return Parallel(
             component=component,
             compute=self.compute,

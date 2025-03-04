@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +7,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -44,7 +43,7 @@ from ...operations._disaster_recovery_configs_operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -92,7 +91,7 @@ class DisasterRecoveryConfigsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2024-01-01"))
         cls: ClsType[_models.AuthorizationRuleListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -174,7 +173,7 @@ class DisasterRecoveryConfigsOperations:
         :rtype: ~azure.mgmt.eventhub.v2024_01_01.models.AuthorizationRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -237,7 +236,7 @@ class DisasterRecoveryConfigsOperations:
         :rtype: ~azure.mgmt.eventhub.v2024_01_01.models.AccessKeys
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -356,7 +355,7 @@ class DisasterRecoveryConfigsOperations:
         :rtype: ~azure.mgmt.eventhub.v2024_01_01.models.CheckNameAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -432,7 +431,7 @@ class DisasterRecoveryConfigsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2024-01-01"))
         cls: ClsType[_models.ArmDisasterRecoveryListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -579,7 +578,7 @@ class DisasterRecoveryConfigsOperations:
         :rtype: ~azure.mgmt.eventhub.v2024_01_01.models.ArmDisasterRecovery
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -628,11 +627,7 @@ class DisasterRecoveryConfigsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("ArmDisasterRecovery", pipeline_response.http_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("ArmDisasterRecovery", pipeline_response.http_response)
+        deserialized = self._deserialize("ArmDisasterRecovery", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -640,9 +635,7 @@ class DisasterRecoveryConfigsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, namespace_name: str, alias: str, **kwargs: Any
-    ) -> None:
+    async def delete(self, resource_group_name: str, namespace_name: str, alias: str, **kwargs: Any) -> None:
         """Deletes an Alias(Disaster Recovery configuration).
 
         :param resource_group_name: Name of the resource group within the azure subscription. Required.
@@ -655,7 +648,7 @@ class DisasterRecoveryConfigsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -711,7 +704,7 @@ class DisasterRecoveryConfigsOperations:
         :rtype: ~azure.mgmt.eventhub.v2024_01_01.models.ArmDisasterRecovery
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -756,9 +749,7 @@ class DisasterRecoveryConfigsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def break_pairing(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, namespace_name: str, alias: str, **kwargs: Any
-    ) -> None:
+    async def break_pairing(self, resource_group_name: str, namespace_name: str, alias: str, **kwargs: Any) -> None:
         """This operation disables the Disaster Recovery and stops replicating changes from primary to
         secondary namespaces.
 
@@ -772,7 +763,7 @@ class DisasterRecoveryConfigsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -813,9 +804,7 @@ class DisasterRecoveryConfigsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def fail_over(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, namespace_name: str, alias: str, **kwargs: Any
-    ) -> None:
+    async def fail_over(self, resource_group_name: str, namespace_name: str, alias: str, **kwargs: Any) -> None:
         """Invokes GEO DR failover and reconfigure the alias to point to the secondary namespace.
 
         :param resource_group_name: Name of the resource group within the azure subscription. Required.
@@ -828,7 +817,7 @@ class DisasterRecoveryConfigsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

@@ -5,7 +5,6 @@ extends:
     parameters:
       BuildTargetingString: azure-containerregistry
       ServiceDirectory: containerregistry
-      SupportedClouds: 'Public,UsGov,China'
       TestTimeoutInMinutes: 240
       MatrixReplace:
         - TestSamples=.*/true

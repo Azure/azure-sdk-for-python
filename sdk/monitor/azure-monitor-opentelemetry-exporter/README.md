@@ -647,7 +647,7 @@ Please find further examples in the [samples][exporter_samples] directory demons
 
 ### Additional documentation
 
-For more extensive documentation on the Azure Monitor service, see the [Azure Monitor documentation][product_docs] on docs.microsoft.com.
+For more extensive documentation on the Azure Monitor service, see the [Azure Monitor documentation][product_docs] on learn.microsoft.com.
 
 For detailed overview of OpenTelemetry, visit their [overview](https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md) page.
 
@@ -673,13 +673,13 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [aad_for_ai_docs]: https://learn.microsoft.com/azure/azure-monitor/app/azure-ad-authentication?tabs=python
 [api_docs]: https://azure.github.io/azure-sdk-for-python/monitor.html#azure-monitor-opentelemetry-exporter
 [exporter_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples
-[product_docs]: https://docs.microsoft.com/azure/azure-monitor/overview
+[product_docs]: https://learn.microsoft.com/azure/azure-monitor/overview
 [azure_sub]: https://azure.microsoft.com/free/
 [pip]: https://pypi.org/project/pip/
 [pypi]: https://pypi.org/project/azure-monitor-opentelemetry-exporter/
 [python]: https://www.python.org/downloads/
 [ot_sdk_python]: https://github.com/open-telemetry/opentelemetry-python
-[application_insights_namespace]: https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview#how-do-i-use-application-insights
+[application_insights_namespace]: https://learn.microsoft.com/azure/azure-monitor/app/app-insights-overview#how-do-i-use-application-insights
 [opentelemetry_spec]: https://opentelemetry.io/
 [instrumentation_library]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md#instrumentation-libraries
 [log_concept]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#log-signal

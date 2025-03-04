@@ -11,7 +11,7 @@ from azure.identity.aio import DefaultAzureCredential
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://learn.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
@@ -46,9 +46,7 @@ async def run_sample():
     # Let's create a certificate for your key vault.
     # if the certificate already exists in the Key Vault, then a new version of the certificate is created.
     # Awaiting the call returns a KeyVaultCertificate if creation is successful, and a CertificateOperation if not.
-    certificate = await client.create_certificate(
-        certificate_name=cert_name, policy=CertificatePolicy.get_default()
-    )
+    certificate = await client.create_certificate(certificate_name=cert_name, policy=CertificatePolicy.get_default())
 
     print(f"Certificate with name '{certificate.name}' created.")
 

@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AudioContentFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A representation of the possible audio formats for audio."""
+
+    WAV = "wav"
+    """Specifies audio in WAV format."""
+    MP3 = "mp3"
+    """Specifies audio in MP3 format."""
+
+
 class ChatCompletionsToolChoicePreset(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents a generic policy for how a chat completions tool may be selected."""
 
@@ -37,6 +46,9 @@ class ChatRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The role that provides responses to system-instructed, user-prompted input."""
     TOOL = "tool"
     """The role that represents extension tool activity within a chat completions operation."""
+    DEVELOPER = "developer"
+    """The role that instructs or sets the behavior of the assistant. Some AI models support this role
+    instead of the 'system' role."""
 
 
 class CompletionsFinishReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -121,14 +133,14 @@ class ModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of AI model."""
 
     EMBEDDINGS = "embeddings"
-    """Embeddings."""
+    """A model capable of generating embeddings from a text"""
     IMAGE_GENERATION = "image_generation"
-    """Image generation"""
+    """A model capable of generating images from an image and text description"""
     TEXT_GENERATION = "text_generation"
-    """Text generation"""
+    """A text generation model"""
     IMAGE_EMBEDDINGS = "image_embeddings"
-    """Image embeddings"""
+    """A model capable of generating embeddings from an image"""
     AUDIO_GENERATION = "audio_generation"
-    """Audio generation"""
-    CHAT = "chat"
-    """Chat completions"""
+    """A text-to-audio generative model"""
+    CHAT_COMPLETION = "chat_completion"
+    """A model capable of taking chat-formatted messages and generate responses"""

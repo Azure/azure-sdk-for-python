@@ -13,7 +13,7 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     This enum represents the names of the various event types for the system events published to
     Azure Event Grid. To check the list of recognizable system topics,
-    visit https://docs.microsoft.com/azure/event-grid/system-topics.
+    visit https://learn.microsoft.com/azure/event-grid/system-topics.
     """
 
     # These names at the top are 'corrected' aliases of duplicate values that appear below, which are

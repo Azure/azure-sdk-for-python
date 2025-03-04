@@ -133,7 +133,7 @@ The unit tests can be run by right-clicking a specific test file or specific tes
 <!-- LINKS -->
 [cosmos_db_sdk_repo]: https://github.com/Azure/azure-sdk-for-python
 [azure_sub]: https://azure.microsoft.com/free/
-[cosmos_account]: https://docs.microsoft.com/azure/cosmos-db/account-overview
+[cosmos_account]: https://learn.microsoft.com/azure/cosmos-db/account-overview
 [python]: https://www.python.org/downloads/
 [pycharm]: https://www.jetbrains.com/pycharm/
 [cosmos_db_emulator]: https://learn.microsoft.com/azure/cosmos-db/emulator

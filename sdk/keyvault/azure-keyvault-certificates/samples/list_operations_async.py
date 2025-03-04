@@ -11,7 +11,7 @@ from azure.identity.aio import DefaultAzureCredential
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://learn.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
@@ -20,7 +20,7 @@ from azure.identity.aio import DefaultAzureCredential
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic list operations on a vault(certificate) resource for Azure Key Vault.
-# The vault has to be soft-delete enabled to perform one of the following operations: https://docs.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete
+# The vault has to be soft-delete enabled to perform one of the following operations: https://learn.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete
 #
 # 1. Create certificate (create_certificate)
 #

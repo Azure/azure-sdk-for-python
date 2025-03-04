@@ -219,7 +219,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
          For instance, passing 2 as value for 'seresnext' means
          freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
          please
-         see: https://docs.microsoft.com/en-us/azure/machine-learning/reference-automl-images-hyperparameters#model-agnostic-hyperparameters.   # pylint: disable=line-too-long
+         see: https://learn.microsoft.com/azure/machine-learning/reference-automl-images-hyperparameters#model-agnostic-hyperparameters.   # pylint: disable=line-too-long
         :type layers_to_freeze: int
         :keyword learning_rate: Initial learning rate. Must be a float in the range [0, 1].
         :paramtype learning_rate: float
@@ -229,7 +229,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
          ~azure.mgmt.machinelearningservices.models.LearningRateScheduler
         :keyword model_name: Name of the model to use for training.
          For more information on the available models please visit the official documentation:
-         https://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.
+         https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
         :type model_name: str
         :keyword momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0,
          1].

@@ -627,7 +627,7 @@ authentication_policy = BearerTokenCredentialPolicy(credential, scopes, enable_c
 
 See [doc/dev/customize_long_running_operation.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_long_running_operation.md) for more information.
 
-[cae_doc]: https://docs.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation
+[cae_doc]: https://learn.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation
 [custom_creds_sample]: https://github.com/Azure/azure-sdk-for-python/blob/fc95f8d3d84d076ffea158116ca1bf6912689c70/sdk/identity/azure-identity/samples/custom_credentials.py
 [identity_github]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [interactive_cred]: https://github.com/Azure/azure-sdk-for-python/blob/58c974883123b10b1ca9249ac49109220facb02f/sdk/identity/azure-identity/azure/identity/_internal/interactive.py

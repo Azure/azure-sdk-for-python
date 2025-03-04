@@ -6,7 +6,6 @@ extends:
       BuildTargetingString: azure-data-tables
       ServiceDirectory: tables
       TestTimeoutInMinutes: 180
-      SupportedClouds: 'Public,UsGov,China'
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:

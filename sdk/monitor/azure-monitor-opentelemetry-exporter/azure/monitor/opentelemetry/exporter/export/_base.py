@@ -90,6 +90,7 @@ class BaseExporter:
         self._disable_offline_storage = kwargs.get("disable_offline_storage", False)
         self._endpoint = parsed_connection_string.endpoint
         self._instrumentation_key = parsed_connection_string.instrumentation_key
+        self._aad_audience = parsed_connection_string.aad_audience
         self._storage_maintenance_period = kwargs.get(
             "storage_maintenance_period", 60
         )  # Maintenance interval in seconds.
@@ -126,7 +127,7 @@ class BaseExporter:
             # Handle redirects in exporter, set new endpoint if redirected
             RedirectPolicy(permit_redirects=False),
             config.retry_policy,
-            _get_auth_policy(self._credential, config.authentication_policy),
+            _get_auth_policy(self._credential, config.authentication_policy, self._aad_audience),
             config.custom_hook_policy,
             config.logging_policy,
             # Explicitly disabling to avoid infinite loop of Span creation when data is exported
@@ -181,7 +182,6 @@ class BaseExporter:
 
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
-    # pylint: disable=too-many-return-statements
     # pylint: disable=too-many-statements
     def _transmit(self, envelopes: List[TelemetryItem]) -> ExportResult:
         """
@@ -256,7 +256,7 @@ class BaseExporter:
                             url = urlparse(location)
                         else:
                             redirect_has_headers = False
-                        if redirect_has_headers and url.scheme and url.netloc:
+                        if redirect_has_headers and url.scheme and url.netloc:  # pylint: disable=E0606
                             # Change the host to the new redirected host
                             self.client._config.host = "{}://{}".format(url.scheme, url.netloc)  # pylint: disable=W0212
                             # Attempt to export again
@@ -309,7 +309,7 @@ class BaseExporter:
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 result = ExportResult.FAILED_RETRYABLE
             except Exception as ex:
-                logger.error("Envelopes could not be exported and are not retryable: %s.", ex)
+                logger.exception("Envelopes could not be exported and are not retryable: %s.")
                 if self._should_collect_stats():
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=ex.__class__.__name__)
                 result = ExportResult.FAILED_NOT_RETRYABLE
@@ -333,9 +333,9 @@ class BaseExporter:
 
                             shutdown_statsbeat_metrics()
                             # pylint: disable=lost-exception
-                            return ExportResult.FAILED_NOT_RETRYABLE  # pylint: disable=W0012,W0134
+                            return ExportResult.FAILED_NOT_RETRYABLE  # pylint: disable=W0134
                 # pylint: disable=lost-exception
-                return result  # pylint: disable=W0012,W0134
+                return result  # pylint: disable=W0134
 
         # No spans to export
         self._consecutive_redirects = 0

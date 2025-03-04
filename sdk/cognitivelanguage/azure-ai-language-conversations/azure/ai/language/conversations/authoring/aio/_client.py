@@ -27,7 +27,7 @@ class ConversationAuthoringClient(
 ):  # pylint: disable=client-accepts-api-version-keyword
     """The language service conversations API is a suite of natural language processing (NLP) skills
     that can be used to analyze structured conversations (textual or spoken). Further documentation
-    can be found in https://docs.microsoft.com/azure/cognitive-services/language-service/overview.
+    can be found in https://learn.microsoft.com/azure/cognitive-services/language-service/overview.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.

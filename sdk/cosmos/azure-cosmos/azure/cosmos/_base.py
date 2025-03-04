@@ -116,8 +116,10 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         path: str,
         resource_id: Optional[str],
         resource_type: str,
+        operation_type: str,
         options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None,
+        client_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Gets HTTP request headers.
 
@@ -127,8 +129,10 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     :param str path:
     :param str resource_id:
     :param str resource_type:
+    :param str operation_type:
     :param dict options:
     :param str partition_key_range_id:
+    :param str client_id:
     :return: The HTTP request headers.
     :rtype: dict
     """
@@ -278,6 +282,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if partition_key_range_id is not None:
         headers[http_constants.HttpHeaders.PartitionKeyRangeID] = partition_key_range_id
 
+    if client_id is not None:
+        headers[http_constants.HttpHeaders.ClientId] = client_id
+
     if options.get("enableScriptLogging"):
         headers[http_constants.HttpHeaders.EnableScriptLogging] = options["enableScriptLogging"]
 
@@ -322,6 +329,11 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     # refreshed.
     if resource_type != 'dbs' and options.get("containerRID"):
         headers[http_constants.HttpHeaders.IntendedCollectionRID] = options["containerRID"]
+
+    if resource_type == "":
+        resource_type = http_constants.ResourceType.DatabaseAccount
+    headers[http_constants.HttpHeaders.ThinClientProxyResourceType] = resource_type
+    headers[http_constants.HttpHeaders.ThinClientProxyOperationType] = operation_type
 
     return headers
 

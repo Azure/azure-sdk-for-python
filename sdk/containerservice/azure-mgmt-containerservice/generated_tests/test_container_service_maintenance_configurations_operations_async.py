@@ -21,11 +21,11 @@ class TestContainerServiceMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_managed_cluster(self, resource_group):
+    async def test_maintenance_configurations_list_by_managed_cluster(self, resource_group):
         response = self.client.maintenance_configurations.list_by_managed_cluster(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestContainerServiceMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_maintenance_configurations_get(self, resource_group):
         response = await self.client.maintenance_configurations.get(
             resource_group_name=resource_group.name,
             resource_name="str",
             config_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestContainerServiceMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_maintenance_configurations_create_or_update(self, resource_group):
         response = await self.client.maintenance_configurations.create_or_update(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -79,7 +79,7 @@ class TestContainerServiceMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
                 "timeInWeek": [{"day": "str", "hourSlots": [0]}],
                 "type": "str",
             },
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -87,12 +87,12 @@ class TestContainerServiceMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_maintenance_configurations_delete(self, resource_group):
         response = await self.client.maintenance_configurations.delete(
             resource_group_name=resource_group.name,
             resource_name="str",
             config_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself

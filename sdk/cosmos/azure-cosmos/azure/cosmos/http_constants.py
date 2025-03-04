@@ -252,6 +252,13 @@ class HttpHeaders:
     CosmosQuorumAckedLsn = "x-ms-cosmos-quorum-acked-llsn"  # cspell:disable-line
     RequestDurationMs = "x-ms-request-duration-ms"
 
+    # Thin Client headers
+    ThinClientProxyOperationType = "x-ms-thinclient-proxy-operation-type"
+    ThinClientProxyResourceType = "x-ms-thinclient-proxy-resource-type"
+
+    # ClientId header for load balancing
+    ClientId = "x-ms-client-id"
+
 class HttpHeaderPreferenceTokens:
     """Constants of http header preference tokens.
     """
@@ -393,7 +400,6 @@ class StatusCodes:
     RETRY_WITH = 449
 
     INTERNAL_SERVER_ERROR = 500
-    SERVICE_UNAVAILABLE = 503
 
     # Operation pause and cancel. These are FAKE status codes for QOS logging purpose only.
     OPERATION_PAUSED = 1200
@@ -428,6 +434,7 @@ class SubStatusCodes:
     # 404: LSN in session token is higher
     READ_SESSION_NOTAVAILABLE = 1002
     OWNER_RESOURCE_NOT_FOUND = 1003
+    CONTAINER_CREATE_IN_PROGRESS = 1013
 
     # 409: Conflict exception
     CONFLICT_WITH_CONTROL_PLANE = 1006

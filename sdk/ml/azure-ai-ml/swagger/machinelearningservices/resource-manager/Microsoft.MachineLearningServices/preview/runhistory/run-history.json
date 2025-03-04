@@ -5796,7 +5796,7 @@
           },
           "filter": {
             "type": "string",
-            "description": "Allows for filtering the collection of resources.\r\nThe expression specified is evaluated for each resource in the collection, and only items where the expression evaluates to true are included in the response.\r\nSee https://docs.microsoft.com/en-us/azure/search/query-odata-filter-orderby-syntax for details on the expression syntax.",
+            "description": "Allows for filtering the collection of resources.\r\nThe expression specified is evaluated for each resource in the collection, and only items where the expression evaluates to true are included in the response.\r\nSee https://learn.microsoft.com/azure/search/query-odata-filter-orderby-syntax for details on the expression syntax.",
             "nullable": true
           },
           "continuationToken": {
@@ -6563,7 +6563,7 @@
         "properties": {
           "filter": {
             "type": "string",
-            "description": "Allows for filtering the collection of resources.\r\nThe expression specified is evaluated for each resource in the collection, and only items where the expression evaluates to true are included in the response.\r\nSee https://docs.microsoft.com/en-us/azure/search/query-odata-filter-orderby-syntax for details on the expression syntax.",
+            "description": "Allows for filtering the collection of resources.\r\nThe expression specified is evaluated for each resource in the collection, and only items where the expression evaluates to true are included in the response.\r\nSee https://learn.microsoft.com/azure/search/query-odata-filter-orderby-syntax for details on the expression syntax.",
             "nullable": true
           },
           "continuationToken": {

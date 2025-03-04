@@ -11,7 +11,7 @@ from devtools_testutils import (
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     # Scrubbing api-version since latest and mindependency versions of azure-schemaregistry will not be the same.
-    add_general_regex_sanitizer(regex="(?<=api-version=)[0-9]{4}-[0-9]{2}", value="xxxx-xx")
+    add_general_regex_sanitizer(regex="(?<=api-version=)[0-9]{4}-[0-9]{2}(-[0-9]{2})?", value="xxxx-xx")
     add_general_regex_sanitizer(regex="(?<=\\/\\/)[a-z-]+(?=\\.servicebus\\.windows\\.net)", value="fake_resource_avro")
     # Accept is not used by the service. Removing from request headers so changes to Accept are not flagged as diffs.
     add_remove_header_sanitizer(headers="Accept")
