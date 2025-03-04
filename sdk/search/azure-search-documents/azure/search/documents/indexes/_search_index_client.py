@@ -484,7 +484,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.get_service_statistics(**kwargs)
         return result.as_dict()
-    
+
     @distributed_trace
     def list_index_stats_summary(self, **kwargs: Any) -> ItemPaged[IndexStatisticsSummary]:
         """Get index level statistics for a search service.
