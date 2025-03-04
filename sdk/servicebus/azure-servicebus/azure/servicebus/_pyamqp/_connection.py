@@ -6,7 +6,6 @@
 
 import uuid
 import logging
-import threading
 import time
 from urllib.parse import urlparse
 import socket

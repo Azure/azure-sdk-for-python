@@ -18,8 +18,6 @@ from ._common.utils import create_authentication
 from ._common.tracing import (
     get_receive_links,
     receive_trace_context_manager,
-    settle_trace_context_manager,
-    get_span_link_from_message,
     SPAN_NAME_RECEIVE_DEFERRED,
     SPAN_NAME_PEEK,
 )
@@ -253,7 +251,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
     next = __next__  # for python2.7
 
     @classmethod
-    def _from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusReceiver": # pylint: disable=docstring-keyword-should-match-keyword-only
+    def _from_connection_string( # pylint: disable=docstring-keyword-should-match-keyword-only
+        cls, conn_str: str, **kwargs: Any
+    ) -> "ServiceBusReceiver":
         """Create a ServiceBusReceiver from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
@@ -401,7 +401,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
                 link_credit_needed = max_message_count - len(batch)
                 self._amqp_transport.reset_link_credit(amqp_receive_client, link_credit_needed)
 
-            return self._amqp_transport.receive_loop(self, amqp_receive_client, max_message_count, batch, abs_timeout, timeout_time)
+            return self._amqp_transport.receive_loop(
+                self, amqp_receive_client, max_message_count, batch, abs_timeout, timeout_time
+            )
         finally:
             self._receive_context.clear()
 
@@ -418,7 +420,9 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
             raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
         self._check_message_alive(message, settle_operation)
 
-        self._amqp_transport._settle_message_with_retry(self, message, settle_operation, dead_letter_reason, dead_letter_error_description)
+        self._amqp_transport._settle_message_with_retry(
+            self, message, settle_operation, dead_letter_reason, dead_letter_error_description
+        )
 
     def _settle_message(
         self,
@@ -736,11 +740,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         if not sequence_number:
-            sequence_number = (
-                self._last_received_sequenced_number + 1
-                if self._last_received_sequenced_number
-                else 1
-            )
+            sequence_number = self._last_received_sequenced_number + 1 if self._last_received_sequenced_number else 1
         if int(max_message_count) < 0:
             raise ValueError("max_message_count must be 1 or greater.")
 

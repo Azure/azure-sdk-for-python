@@ -122,6 +122,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         if uamqp_transport:
             try:
                 from ._transport._uamqp_transport import UamqpTransport
+
                 amqp_transport = UamqpTransport
             except ImportError:
                 raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.") from None
@@ -203,7 +204,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             self._connection.close()
 
     @classmethod
-    def from_connection_string( # pylint: disable=docstring-keyword-should-match-keyword-only
+    def from_connection_string(  # pylint: disable=docstring-keyword-should-match-keyword-only
         cls,
         conn_str: str,
         *,
@@ -282,13 +283,13 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         )
 
     def get_queue_sender(
-            self,
-            queue_name: str,
-            *,
-            client_identifier: Optional[str] = None,
-            socket_timeout: Optional[float] = None,
-            **kwargs: Any
-        ) -> ServiceBusSender:
+        self,
+        queue_name: str,
+        *,
+        client_identifier: Optional[str] = None,
+        socket_timeout: Optional[float] = None,
+        **kwargs: Any,
+    ) -> ServiceBusSender:
         """Get ServiceBusSender for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.

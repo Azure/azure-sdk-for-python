@@ -14,14 +14,15 @@ from .link import Link
 from .constants import LinkState, Role, LinkDeliverySettleReason
 from .performatives import TransferFrame, DispositionFrame
 from .outcomes import Received, Accepted, Rejected, Released, Modified
-from .error import AMQPLinkError, ErrorCondition
+from .error import ErrorCondition, AMQPException
 
 if TYPE_CHECKING:
     from .message import _MessageDelivery
-from .error import AMQPException, ErrorCondition
+
 
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class PendingDisposition(object):
     def __init__(self, **kwargs):
@@ -32,7 +33,7 @@ class PendingDisposition(object):
         self.transfer_state = kwargs.get("transfer_state")
         self.timeout = kwargs.get("timeout")
         self.settled = kwargs.get("settled", False)
-        self._network_trace_params = kwargs.get('network_trace_params')
+        self._network_trace_params = kwargs.get("network_trace_params")
 
     def on_settled(self, reason, state):
         if self.on_delivery_settled and not self.settled:
@@ -40,13 +41,12 @@ class PendingDisposition(object):
                 self.on_delivery_settled(reason, state)
             except Exception as e:  # pylint:disable=broad-except
                 _LOGGER.warning(
-                    "Disposition 'on_delivery_settled' callback failed: %r",
-                    e,
-                    extra=self._network_trace_params
+                    "Disposition 'on_delivery_settled' callback failed: %r", e, extra=self._network_trace_params
                 )
         self.settled = True
 
-class ReceiverLink(Link):
+
+class ReceiverLink(Link): # pylint: disable=too-many-instance-attributes
     def __init__(self, session, handle, source_address, **kwargs):
         name = kwargs.pop("name", None) or str(uuid.uuid4())
         role = Role.Receiver
@@ -89,7 +89,6 @@ class ReceiverLink(Link):
             self._received_drain_response = True
             self.total_link_credit = frame[6]  # link_credit
             self.current_link_credit = frame[6]  # link_credit
-
 
     def _incoming_transfer(self, frame):
         if self.network_trace:
@@ -168,14 +167,12 @@ class ReceiverLink(Link):
                 settled=settled,
                 transfer_state=state,
                 start=time.time(),
-                sent=True
-
+                sent=True,
             )
             self._pending_receipts.append(delivery)
-            
-        self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
-        self._received_delivery_tags.remove(delivery_tag)
 
+        self._session._outgoing_disposition(disposition_frame)  # pylint: disable=protected-access
+        self._received_delivery_tags.remove(delivery_tag)
 
     def _incoming_disposition(self, frame):
         # If delivery_id is not settled, return
@@ -192,7 +189,6 @@ class ReceiverLink(Link):
             unsettled.append(delivery)
         self._pending_receipts = unsettled
 
-
     def _remove_pending_deliveries(self):
         self._pending_receipts = []
         # TODO: Add in error handling
@@ -204,7 +200,7 @@ class ReceiverLink(Link):
     def send_disposition(
         self,
         *,
-        wait: Union[bool, float] = False,
+        wait: Union[bool, float] = False, # pylint: disable=unused-argument
         first_delivery_id: int,
         last_delivery_id: Optional[int] = None,
         delivery_tag: bytes,
@@ -222,5 +218,5 @@ class ReceiverLink(Link):
             settled,
             delivery_state,
             batchable,
-            on_disposition=on_disposition
+            on_disposition=on_disposition,
         )

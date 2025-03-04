@@ -915,9 +915,7 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
         except ValueError:
             error = MessageException(condition, description=description, info=info)
         else:
-            error = MessageSendFailed(
-                amqp_condition, description=description, info=info
-            )
+            error = MessageSendFailed(amqp_condition, description=description, info=info)
         message_delivery.state = MessageDeliveryState.Error
         message_delivery.error = error
 
@@ -1022,13 +1020,10 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
                         message_delivery,
                         condition=error_info[0][0],
                         description=error_info[0][1],
-                        info=error_info[0][2]
+                        info=error_info[0][2],
                     )
                 except TypeError:
-                    self._process_receive_error(
-                        message_delivery,
-                        condition=ErrorCondition.UnknownError
-                    )
+                    self._process_receive_error(message_delivery, condition=ErrorCondition.UnknownError)
         elif reason == LinkDeliverySettleReason.SETTLED:
             message_delivery.state = MessageDeliveryState.Ok
         elif reason == LinkDeliverySettleReason.TIMEOUT:
@@ -1036,13 +1031,7 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
             message_delivery.error = TimeoutError("Sending disposition timed out.")
         else:
             # NotDelivered and other unknown errors
-            self._process_receive_error(
-                message_delivery,
-                condition=ErrorCondition.UnknownError
-            )
-
-
-
+            self._process_receive_error(message_delivery, condition=ErrorCondition.UnknownError)
 
     @overload
     def settle_messages(
@@ -1124,12 +1113,7 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
             first = delivery_id
             last = None
 
-
-        message_delivery = _MessageDelivery(
-            None,
-            MessageDeliveryState.WaitingToBeSent,
-            expire_time
-        )
+        message_delivery = _MessageDelivery(None, MessageDeliveryState.WaitingToBeSent, expire_time)
         on_disposition_received = partial(self._on_disposition_received, message_delivery)
 
         self._link.send_disposition(
@@ -1149,19 +1133,18 @@ class ReceiveClient(AMQPClient):  # pylint:disable=too-many-instance-attributes
 
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(
-                condition=ErrorCondition.ClientError,
-                description="Settlement failed - connection not running."
+                condition=ErrorCondition.ClientError, description="Settlement failed - connection not running."
             )
 
         if message_delivery.state in (
             MessageDeliveryState.Error,
             MessageDeliveryState.Cancelled,
-            MessageDeliveryState.Timeout
+            MessageDeliveryState.Timeout,
         ):
             try:
                 raise message_delivery.error  # pylint: disable=raising-bad-type
             except TypeError:
                 # This is a default handler
                 raise MessageException(
-                    condition=ErrorCondition.UnknownError,
-                    description="Settlement failed.") from None
+                    condition=ErrorCondition.UnknownError, description="Settlement failed."
+                ) from None

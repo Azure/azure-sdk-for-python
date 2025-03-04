@@ -203,8 +203,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return self
 
     @classmethod
-    def _from_connection_string(cls, conn_str: str, **kwargs: Any # pylint: disable=docstring-keyword-should-match-keyword-only
-                                )-> "ServiceBusSender":
+    def _from_connection_string(  # pylint: disable=docstring-keyword-should-match-keyword-only
+        cls, conn_str: str, **kwargs: Any
+    ) -> "ServiceBusSender":
         """Create a ServiceBusSender from a connection string.
 
         :param conn_str: The connection string of a Service Bus.

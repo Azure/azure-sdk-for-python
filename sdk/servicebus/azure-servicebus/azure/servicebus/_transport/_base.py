@@ -141,7 +141,7 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_send_client(config, **kwargs): # pylint:disable=docstring-keyword-should-match-keyword-only
+    def create_send_client(config, **kwargs):  # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Creates and returns the uamqp SendClient.
         :param ~azure.servicebus._common._configuration.Configuration config:
@@ -193,7 +193,7 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_receive_client(receiver, **kwargs): # pylint:disable=docstring-keyword-should-match-keyword-only
+    def create_receive_client(receiver, **kwargs):  # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Creates and returns the receive client.
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
@@ -269,13 +269,12 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def reset_link_credit(
-        handler, link_credit, *, drain=False
-    ):
+    def reset_link_credit(handler, link_credit, *, drain=False):
         """
         Resets the link credit on the link.
         :param ~uamqp.SendClient or ~pyamqp.SendClient handler: The handler.
         :param int link_credit: The link credit.
+        :keyword bool drain: Whether to drain the link.
         """
 
     @staticmethod
@@ -298,7 +297,9 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def parse_received_message(message, message_type, **kwargs): # pylint:disable=docstring-keyword-should-match-keyword-only
+    def parse_received_message(
+        message, message_type, **kwargs
+    ):  # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Parses peek/deferred op messages into ServiceBusReceivedMessage.
         :param Message message: Message to parse.
@@ -318,7 +319,9 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_token_auth(auth_uri, get_token, token_type, config, **kwargs): # pylint:disable=docstring-keyword-should-match-keyword-only
+    def create_token_auth(
+        auth_uri, get_token, token_type, config, **kwargs
+    ):  # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -359,17 +362,16 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def receive_loop(
-        receiver,
-        amqp_receive_client,
-        max_message_count,
-        batch,
-        abs_timeout,
-        timeout,
-        **kwargs
-    ):
-        """TODO"""
-
+    def receive_loop(receiver, amqp_receive_client, max_message_count, batch, abs_timeout, timeout, **kwargs):
+        """
+        :param ServiceBusReceiver receiver: The receiver.
+        :param ReceiveClient amqp_receive_client: The ReceiveClient.
+        :param int max_message_count: The maximum message count.
+        :param int batch: The batch size.
+        :param int abs_timeout: The absolute timeout.
+        :param int timeout: The timeout.
+        :rtype: None
+        """
 
     @staticmethod
     @abstractmethod
@@ -380,4 +382,12 @@ class AmqpTransport(ABC):  # pylint: disable=too-many-public-methods
         dead_letter_reason=None,
         dead_letter_error_description=None,
     ):
-        """TODO"""
+        """
+        Settle message with retry.
+        :param ServiceBusReceiver receiver: The receiver.
+        :param Message message: The message.
+        :param Callable settle_operation: The settle operation.
+        :param str dead_letter_reason: The dead letter reason.
+        :param str dead_letter_error_description: The dead letter error description.
+        :rtype: None
+        """

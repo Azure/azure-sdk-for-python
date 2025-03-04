@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, protected-access
 import time
 import functools
 import datetime
@@ -56,7 +56,7 @@ try:
     from ..amqp._constants import AmqpMessageBodyType
     from .._common.utils import utc_from_timestamp, utc_now
     from .._common.tracing import (
-        get_receive_links, 
+        get_receive_links,
         receive_trace_context_manager,
         settle_trace_context_manager,
         get_span_link_from_message,
@@ -414,7 +414,7 @@ try:
             :return: Encoded message.
             :rtype: bytes
             """
-            return cast("Message", message._message).encode_message() # pylint:disable=protected-access
+            return cast("Message", message._message).encode_message()  # pylint:disable=protected-access
 
         @staticmethod
         def update_message_app_properties(message: "Message", key: str, value: str) -> "Message":
@@ -513,7 +513,9 @@ try:
             connection.destroy()
 
         @staticmethod
-        def create_send_client(config: "Configuration", **kwargs: Any) -> "SendClient": # pylint:disable=docstring-keyword-should-match-keyword-only
+        def create_send_client(  # pylint:disable=docstring-keyword-should-match-keyword-only
+            config: "Configuration", **kwargs: Any
+        ) -> "SendClient":
             """
             Creates and returns the uamqp SendClient.
             :param ~azure.servicebus._common._configuration.Configuration config:
@@ -619,7 +621,9 @@ try:
             return source
 
         @staticmethod
-        def create_receive_client(receiver: "ServiceBusReceiver", **kwargs: Any) -> "ReceiveClient": # pylint:disable=docstring-keyword-should-match-keyword-only
+        def create_receive_client(  # pylint:disable=docstring-keyword-should-match-keyword-only
+            receiver: "ServiceBusReceiver", **kwargs: Any
+        ) -> "ReceiveClient":
             """
             Creates and returns the receive client.
 
@@ -800,11 +804,12 @@ try:
             return handler._counter.get_current_ms()  # pylint: disable=protected-access
 
         @staticmethod
-        def reset_link_credit(handler: "ReceiveClient", link_credit: int, *, drain = False) -> None:
+        def reset_link_credit(handler: "ReceiveClient", link_credit: int, *, drain=False) -> None:
             """
             Resets the link credit on the link.
             :param ~uamqp.ReceiveClient handler: Client with link to reset link credit.
             :param int link_credit: Link credit needed.
+            :keyword bool drain: Whether to drain the link.
             :rtype: None
             """
             handler.message_handler.reset_link_credit(link_credit)
@@ -819,9 +824,10 @@ try:
             dead_letter_reason: Optional[str] = None,
             dead_letter_error_description: Optional[str] = None,
         ) -> None:  # pylint: disable=unused-argument
-        # uamqp doesn't have the ability to wait to receive disposition result returned
-        # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
-        # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
+            # uamqp doesn't have the ability to wait to receive disposition result returned
+            # from the service after settlement, so there's no way we could tell whether a disposition
+            # succeeds or not and
+            # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
             if not handler._session and message._lock_expired:
                 raise MessageLockLostError(
                     message="The lock on the message lock has expired.",
@@ -864,7 +870,7 @@ try:
             raise ValueError(f"Unsupported settle operation type: {settle_operation}")
 
         @staticmethod
-        def parse_received_message( # pylint:disable=docstring-keyword-should-match-keyword-only
+        def parse_received_message(  # pylint:disable=docstring-keyword-should-match-keyword-only
             message: "Message",
             message_type: Type["ServiceBusReceivedMessage"],
             **kwargs: Any,
@@ -891,7 +897,7 @@ try:
             return message.get_data()
 
         @staticmethod
-        def create_token_auth( # pylint:disable=docstring-keyword-should-match-keyword-only
+        def create_token_auth(  # pylint:disable=docstring-keyword-should-match-keyword-only
             auth_uri: str,
             get_token: Callable,
             token_type: bytes,
@@ -1097,7 +1103,7 @@ try:
                 exception = ServiceBusError(message=f"Handler failed: {exception}.", error=exception)
 
             return exception
-        
+
         @staticmethod
         def receive_loop(
             receiver,
@@ -1106,20 +1112,15 @@ try:
             batch,
             abs_timeout,
             timeout,
-            **kwargs: Any
+            **kwargs: Any,
         ) -> List["ServiceBusReceivedMessage"]:
-            
+
             first_message_received = expired = False
             receiving = True
-            drain_receive = False
             # If we have sent a drain, but have not yet received the drain response, we should continue to receive
             while receiving and not expired and len(batch) < max_message_count:
                 while receiving and amqp_receive_client._received_messages.qsize() < max_message_count:
-                    if (
-                        abs_timeout
-                        and receiver._amqp_transport.get_current_time(amqp_receive_client)
-                        > abs_timeout
-                    ):
+                    if abs_timeout and receiver._amqp_transport.get_current_time(amqp_receive_client) > abs_timeout:
                         expired = True
                         break
                     before = amqp_receive_client._received_messages.qsize()
@@ -1136,14 +1137,10 @@ try:
                             receiver._amqp_transport.get_current_time(amqp_receive_client)
                             + receiver._further_pull_receive_timeout
                         )
-                while (
-                    not amqp_receive_client._received_messages.empty()
-                    and len(batch) < max_message_count
-                ):
+                while not amqp_receive_client._received_messages.empty() and len(batch) < max_message_count:
                     batch.append(amqp_receive_client._received_messages.get())
                     amqp_receive_client._received_messages.task_done()
             return [receiver._build_received_message(message) for message in batch]
-
 
         @staticmethod
         def _settle_message_with_retry(
@@ -1155,9 +1152,12 @@ try:
         ):
             # The following condition check is a hot fix for settling a message received for non-session queue after
             # lock expiration.
-            # pyamqp doesn't currently (and uamqp doesn't have the ability to) wait to receive disposition result returned
-            # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
-            # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
+            # pyamqp doesn't currently (and uamqp doesn't have the ability to)
+            # wait to receive disposition result returned
+            # from the service after settlement, so there's no way we
+            # could tell whether a disposition succeeds or not and
+            # there's no error condition info.
+            # (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
             if not receiver._session and message._lock_expired:
                 raise MessageLockLostError(
                     message="The lock on the message lock has expired.",
@@ -1178,4 +1178,3 @@ try:
 
 except ImportError:
     pass
-

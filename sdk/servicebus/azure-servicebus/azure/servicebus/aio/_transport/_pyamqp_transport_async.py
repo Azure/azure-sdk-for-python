@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-
+# pylint: disable=protected-access
 from __future__ import annotations
 import functools
 from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator, cast, List
@@ -17,7 +17,6 @@ from ..._pyamqp.aio import SendClientAsync, ReceiveClientAsync
 from ..._pyamqp.aio._authentication_async import JWTTokenAuthAsync
 from ..._pyamqp.aio._connection_async import Connection as ConnectionAsync
 from ..._pyamqp.error import (
-    AMQPConnectionError,
     AMQPError,
     AMQPException,
     MessageException,
@@ -28,11 +27,11 @@ from ..._pyamqp.error import (
 from ._base_async import AmqpTransportAsync
 from ..._common.utils import utc_from_timestamp, utc_now
 from ..._common.tracing import (
-        get_receive_links, 
-        receive_trace_context_manager,
-        settle_trace_context_manager,
-        get_span_link_from_message,
-    )
+    get_receive_links,
+    receive_trace_context_manager,
+    settle_trace_context_manager,
+    get_span_link_from_message,
+)
 from ..._common.constants import (
     DATETIMEOFFSET_EPOCH,
     SESSION_LOCKED_UNTIL,
@@ -93,7 +92,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         await connection.close()
 
     @staticmethod
-    def create_send_client_async(config: "Configuration", **kwargs: Any) -> "SendClientAsync": # pylint:disable=docstring-keyword-should-match-keyword-only
+    def create_send_client_async(  # pylint:disable=docstring-keyword-should-match-keyword-only
+        config: "Configuration", **kwargs: Any
+    ) -> "SendClientAsync":
         """
         Creates and returns the pyamqp SendClient.
         :param Configuration config: The configuration.
@@ -156,7 +157,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             raise PyamqpTransportAsync.create_servicebus_exception(logger, e)
 
     @staticmethod
-    def create_receive_client_async( # pylint: disable=docstring-keyword-should-match-keyword-only
+    def create_receive_client_async(  # pylint: disable=docstring-keyword-should-match-keyword-only
         receiver: "ServiceBusReceiver", **kwargs: Any
     ) -> "ReceiveClientAsync":
         """
@@ -255,7 +256,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = await receiver._handler.receive_messages_iter_async(timeout=wait_time)
             if receiver._handler._link.current_link_credit <= 0:
-                await receiver._amqp_transport.reset_link_credit_async(receiver._handler, link_credit=receiver._handler._link_credit)
+                await receiver._amqp_transport.reset_link_credit_async(
+                    receiver._handler, link_credit=receiver._handler._link_credit
+                )
             pyamqp_message = await cast(AsyncIterator["Message"], receiver._message_iter).__anext__()
             message = receiver._build_received_message(pyamqp_message)
             if (
@@ -300,13 +303,13 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         )
 
     @staticmethod
-    async def reset_link_credit_async(
-        handler: "ReceiveClientAsync", link_credit: int, *, drain: bool = False
-    ) -> None:
+    async def reset_link_credit_async(handler: "ReceiveClientAsync", link_credit: int, *, drain: bool = False) -> None:
         """
         Resets the link credit on the link.
         :param ReceiveClientAsync handler: Client with link to reset link credit.
         :param int link_credit: Total link credit wanted.
+        :keyword drain: Whether to drain the link.
+        :paramtype drain: bool
         :rtype: None
         """
         await handler._link.flow(link_credit=link_credit, drain=drain)  # pylint: disable=protected-access
@@ -319,8 +322,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         dead_letter_reason: Optional[str] = None,
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
-        # pylint: disable=protected-access
-        from ..._pyamqp.error import ErrorCondition
         try:
             if handler._link._is_closed:
                 raise ServiceBusConnectionError(message="Link is closed.")
@@ -370,6 +371,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 raise RuntimeError("Link error occurred during settle operation.") from le
             # TODO: fix logger
             import logging
+
             raise PyamqpTransportAsync.create_servicebus_exception(logging.getLogger(__name__), le)
             # raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from le
 
@@ -396,7 +398,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             receiver._session._session_id = receiver._session_id
 
     @staticmethod
-    async def create_token_auth_async( # pylint: disable=docstring-keyword-should-match-keyword-only
+    async def create_token_auth_async(  # pylint: disable=docstring-keyword-should-match-keyword-only
         auth_uri: str, get_token: Callable, token_type: bytes, config: "Configuration", **kwargs: Any
     ) -> "JWTTokenAuthAsync":
         """
@@ -468,30 +470,33 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         batch: List["Message"],
         abs_timeout,
         timeout,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List["ServiceBusReceivedMessage"]:
-        receive_drain_timeout = 2 # 200 ms
+        receive_drain_timeout = 2  # 200 ms
         first_message_received = expired = False
         receiving = True
         sent_drain = False
         time_sent = time.time()
         while receiving and not expired and len(batch) < max_message_count:
             while receiving and amqp_receive_client._received_messages.qsize() < max_message_count:
-                if (
-                    abs_timeout
-                    and receiver._amqp_transport.get_current_time(amqp_receive_client)
-                    > abs_timeout
-                ):
+                if abs_timeout and receiver._amqp_transport.get_current_time(amqp_receive_client) > abs_timeout:
                     # If we reach our expired point, send Drain=True and wait for receiving flow to stop.
                     if not sent_drain:
-                        await receiver._amqp_transport.reset_link_credit_async(amqp_receive_client, max_message_count, drain=True)
+                        await receiver._amqp_transport.reset_link_credit_async(
+                            amqp_receive_client, max_message_count, drain=True
+                        )
                         sent_drain = True
                         time_sent = time.time()
-                    
-                    # If we have sent a drain and we havent received messages in X time or gotten back the responding flow, lets close the link
-                    if (not receiver._handler._link._received_drain_response and sent_drain) and (time.time() - time_sent > receive_drain_timeout):
+
+                    # If we have sent a drain and we havent received messages
+                    # in X time or gotten back the responding flow, lets close the link
+                    if (not receiver._handler._link._received_drain_response and sent_drain) and (
+                        time.time() - time_sent > receive_drain_timeout
+                    ):
                         expired = True
-                        await receiver._handler._link.detach(close=True, error="Have not received back drain response in time")
+                        await receiver._handler._link.detach(
+                            close=True, error="Have not received back drain response in time"
+                        )
                         break
 
                     # if you have received the drain -> break out of the loop
@@ -499,35 +504,28 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                         expired = True
                         break
 
-                    ## Figure this out - getting stuck in receive if we are below max_message_count and we are not exiting this loop to go to complete_message?
+                    ## Figure this out - getting stuck in receive if we are below max_message_count
+                    # and we are not exiting this loop to go to complete_message?
 
                 before = amqp_receive_client._received_messages.qsize()
                 receiving = await amqp_receive_client.do_work_async()
                 received = amqp_receive_client._received_messages.qsize() - before
 
-
-                if (
-                    not first_message_received
-                    and amqp_receive_client._received_messages.qsize() > 0
-                    and received > 0
-                ):
+                if not first_message_received and amqp_receive_client._received_messages.qsize() > 0 and received > 0:
                     # first message(s) received, continue receiving for some time
                     first_message_received = True
                     abs_timeout = (
                         receiver._amqp_transport.get_current_time(amqp_receive_client)
                         + receiver._further_pull_receive_timeout
                     )
-            while (
-                not amqp_receive_client._received_messages.empty() and len(batch) < max_message_count
-            ):
+            while not amqp_receive_client._received_messages.empty() and len(batch) < max_message_count:
                 batch.append(amqp_receive_client._received_messages.get())
-                amqp_receive_client._received_messages.task_done()     
-        
+                amqp_receive_client._received_messages.task_done()
 
         return [receiver._build_received_message(message) for message in batch]
-    
+
     @staticmethod
-    async def _settle_message_with_retry(
+    async def _settle_message_with_retry_async(
         receiver,
         message,
         settle_operation,

@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Tuple, Union, TYPE_CHECKING, Any, Dict, Callable, List
+from typing import Tuple, Union, TYPE_CHECKING, Any, Dict, Callable
 from typing_extensions import Literal
 
 if TYPE_CHECKING:
@@ -15,6 +15,7 @@ if TYPE_CHECKING:
         uamqp_types = None
 
     from ..._pyamqp.message import Message as pyamqp_message
+
 
 class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     """
@@ -125,7 +126,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_send_client_async(config, **kwargs): # pylint:disable=docstring-keyword-should-match-keyword-only
+    def create_send_client_async(config, **kwargs):  # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Creates and returns the send client.
         :param Configuration config: The configuration.
@@ -165,7 +166,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_receive_client_async(receiver, **kwargs): # pylint:disable=docstring-keyword-should-match-keyword-only
+    def create_receive_client_async(receiver, **kwargs):  # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Creates and returns the receive client.
         :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync receiver: The receiver.
@@ -237,14 +238,13 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    async def reset_link_credit_async(
-        handler, link_credit, *, drain=False
-    ):
+    async def reset_link_credit_async(handler, link_credit, *, drain=False):
         """
         Resets the link credit on the link.
         :param ~uamqp.ReceiveClientAsync
          or ~pyamqp.aio.ReceiveClientAsync handler: Client with link to reset link credit.
         :param int link_credit: Link credit needed.
+        :keyword bool drain: Whether to drain the link.
         :rtype: None
         """
 
@@ -269,7 +269,9 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def parse_received_message(message, message_type, **kwargs): # pylint:disable=docstring-keyword-should-match-keyword-only
+    def parse_received_message(
+        message, message_type, **kwargs
+    ):  # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Parses peek/deferred op messages into ServiceBusReceivedMessage.
         :param ~uamqp.Message or ~pyamqp.message.Message message: Message to parse.
@@ -282,7 +284,9 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs): # pylint:disable=docstring-keyword-should-match-keyword-only
+    async def create_token_auth_async(
+        auth_uri, get_token, token_type, config, **kwargs
+    ):  # pylint:disable=docstring-keyword-should-match-keyword-only
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -314,23 +318,32 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     async def receive_loop_async(
-        receiver,
-        amqp_receive_client,
-        max_message_count,
-        batch,
-        abs_timeout,
-        timeout,
-        **kwargs
+        receiver, amqp_receive_client, max_message_count, batch, abs_timeout, timeout, **kwargs
     ):
-        """TODO"""
+        """
+        :param ServiceBusReceiver receiver: The receiver.
+        :param ReceiveClientAsync amqp_receive_client: The receiver client.
+        :param int max_message_count: The max message count.
+        :param bool batch: Whether to receive in a batch.
+        :param int abs_timeout: The absolute timeout.
+        :param int timeout: The timeout.
+        :rtype: None
+        """
 
     @staticmethod
     @abstractmethod
-    async def _settle_message_with_retry(
+    async def _settle_message_with_retry_async(
         receiver,
         message,
         settle_operation,
         dead_letter_reason=None,
         dead_letter_error_description=None,
     ):
-        """TODO"""
+        """
+        :param ServiceBusReceiver receiver: The receiver.
+        :param Message message: The message to settle.
+        :param Callable settle_operation: The settle operation.
+        :param str or None dead_letter_reason: The dead letter reason.
+        :param str or None dead_letter_error_description: The dead letter error description.
+        :rtype: None
+        """

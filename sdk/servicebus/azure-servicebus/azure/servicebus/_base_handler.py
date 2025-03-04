@@ -340,7 +340,6 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         except AttributeError:
             pass
 
-
         if error._shutdown_handler:
             self._close_handler()
         if not error._retryable:
@@ -367,9 +366,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         # see issue: https://github.com/Azure/azure-uamqp-python/issues/183
         # if self._amqp_transport.KIND == "uamqp":
         try:
-            if self._session and (
-                self._session._lock_lost or self._session._lock_expired
-            ):
+            if self._session and (self._session._lock_lost or self._session._lock_expired):
                 raise SessionLockLostError(error=self._session.auto_renew_error)
         except AttributeError:
             pass

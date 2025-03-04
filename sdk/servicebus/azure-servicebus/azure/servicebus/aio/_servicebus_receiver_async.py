@@ -43,9 +43,7 @@ from .._common import mgmt_handlers
 from .._common.utils import utc_from_timestamp
 from .._common.tracing import (
     receive_trace_context_manager,
-    settle_trace_context_manager,
     get_receive_links,
-    get_span_link_from_message,
     SPAN_NAME_RECEIVE_DEFERRED,
     SPAN_NAME_PEEK,
 )
@@ -249,7 +247,9 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             self._receive_context.clear()
 
     @classmethod
-    def _from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusReceiver": # pylint: disable=docstring-keyword-should-match-keyword-only
+    def _from_connection_string(  # pylint: disable=docstring-keyword-should-match-keyword-only
+        cls, conn_str: str, **kwargs: Any
+    ) -> "ServiceBusReceiver":
         """Create a ServiceBusReceiver from a connection string.
 
         :param str conn_str: The connection string of a Service Bus.
@@ -371,7 +371,6 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             await self._open()
 
             amqp_receive_client = self._handler
-            received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
             timeout_seconds = (
                 self._amqp_transport.TIMEOUT_FACTOR * (timeout or self._max_wait_time)
@@ -388,7 +387,9 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             if max_message_count and self._prefetch_count == 0 and max_message_count >= 1:
                 await self._amqp_transport.reset_link_credit_async(amqp_receive_client, max_message_count)
 
-            return await self._amqp_transport.receive_loop_async(self, amqp_receive_client, max_message_count, batch, abs_timeout, timeout_seconds)
+            return await self._amqp_transport.receive_loop_async(
+                self, amqp_receive_client, max_message_count, batch, abs_timeout, timeout_seconds
+            )
         finally:
             self._receive_context.clear()
 
@@ -405,7 +406,9 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             raise TypeError("Parameter 'message' must be of type ServiceBusReceivedMessage")
         self._check_message_alive(message, settle_operation)
 
-        await self._amqp_transport._settle_message_with_retry(self, message, settle_operation, dead_letter_reason, dead_letter_error_description)
+        await self._amqp_transport._settle_message_with_retry_async(
+            self, message, settle_operation, dead_letter_reason, dead_letter_error_description
+        )
 
     async def _settle_message(  # type: ignore
         self,
@@ -708,11 +711,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         if not sequence_number:
-            sequence_number = (
-                self._last_received_sequenced_number + 1
-                if self._last_received_sequenced_number
-                else 1
-            )
+            sequence_number = self._last_received_sequenced_number + 1 if self._last_received_sequenced_number else 1
         if int(max_message_count) < 0:
             raise ValueError("max_message_count must be 1 or greater.")
 
