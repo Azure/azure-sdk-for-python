@@ -180,6 +180,7 @@ class BaseExporter:
                 # Try to send any cached events
                 self._transmit_from_storage()
 
+
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
     # pylint: disable=too-many-statements
