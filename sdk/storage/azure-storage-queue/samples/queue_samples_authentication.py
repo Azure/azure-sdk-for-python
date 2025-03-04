@@ -80,7 +80,7 @@ class QueueAuthSamples(object):
         token_credential = DefaultAzureCredential()
         # Instantiate a QueueServiceClient using a token credential
         from azure.storage.queue import QueueServiceClient
-        queue_service = QueueServiceClient(account_url=self.account_url, credential=self.access_key)
+        queue_service = QueueServiceClient(account_url=self.account_url, credential=token_credential)
         # [END create_queue_service_client_oauth]
 
         # Get information for the Queue Service

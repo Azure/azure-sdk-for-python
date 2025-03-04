@@ -121,7 +121,7 @@ class FileAuthSamplesAsync(object):
         from azure.storage.fileshare.aio import ShareServiceClient
         share_service_client = ShareServiceClient(
             account_url=self.account_url,
-            credential=self.access_key,
+            credential=default_credential,
             # When using a token credential, you MUST also specify a token_intent
             token_intent='backup'
         )

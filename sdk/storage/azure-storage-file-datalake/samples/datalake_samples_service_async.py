@@ -27,7 +27,6 @@ import os
 
 connection_string = os.environ['DATALAKE_STORAGE_CONNECTION_STRING']
 account_name = os.getenv('DATALAKE_STORAGE_ACCOUNT_NAME', "")
-account_key = os.getenv('DATALAKE_STORAGE_ACCOUNT_KEY', "")
 
 #--Begin DataLake Service Samples-----------------------------------------------------------------
 
@@ -46,16 +45,15 @@ async def main():
     from azure.identity.aio import DefaultAzureCredential
     token_credential = DefaultAzureCredential()
     datalake_service_client = DataLakeServiceClient("https://{}.dfs.core.windows.net".format(account_name),
-                                                        credential=account_key)
+                                                        credential=token_credential)
     # [END create_datalake_service_client_oauth]
 
     async with datalake_service_client:
         # get user delegation key
         # [START get_user_delegation_key]
         from datetime import datetime, timedelta
-        # 
-        # user_delegation_key = await datalake_service_client.get_user_delegation_key(datetime.utcnow(),
-        #                                                                       datetime.utcnow() + timedelta(hours=1))
+        user_delegation_key = await datalake_service_client.get_user_delegation_key(datetime.utcnow(),
+                                                                              datetime.utcnow() + timedelta(hours=1))
         # [END get_user_delegation_key]
 
         # Create file systems
