@@ -22,7 +22,8 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 from datetime import datetime
-from typing import Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast, overload, AsyncIterable
+from typing import (Any, Dict, Mapping, Optional, Sequence, Type, Union, List, Tuple, cast, overload, AsyncIterable,
+                    Callable)
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
@@ -337,6 +338,8 @@ class ContainerProxy:
         max_item_count: Optional[int] = None,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any],
+                                          Union[Dict[str, Any], AsyncItemPaged[Dict[str, Any]]]], None]] = None,
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
@@ -346,8 +349,10 @@ class ContainerProxy:
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
+        :keyword response_hook: A callable invoked with the response metadata. Note that due to the nature of combining
+            calls to build the results, this function may be called with a either single dict or iterable of dicts
+        :paramtype response_hook:
+            Callable[[Mapping[str, Any], Union[Dict[str, Any], AsyncItemPaged[Dict[str, Any]]]], None]
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
@@ -357,7 +362,6 @@ class ContainerProxy:
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
             kwargs['session_token'] = session_token
         if initial_headers is not None:
@@ -370,7 +374,7 @@ class ContainerProxy:
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-        if hasattr(response_hook, "clear"):
+        if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
         if self.container_link in self.__get_client_container_caches():
             feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
@@ -398,6 +402,8 @@ class ContainerProxy:
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         continuation_token_limit: Optional[int] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any],
+                                          Union[Dict[str, Any], AsyncItemPaged[Dict[str, Any]]]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
@@ -424,8 +430,10 @@ class ContainerProxy:
             overhead, so it should be enabled only when debugging slow queries.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
+        :keyword response_hook: A callable invoked with the response metadata. Note that due to the nature of combining
+            calls to build the results, this function may be called with a either single dict or iterable of dicts
+        :paramtype response_hook:
+            Callable[[Mapping[str, Any], Union[Dict[str, Any], AsyncItemPaged[Dict[str, Any]]]], None]
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
             response. Valid values are positive integers.
             A value of 0 is the same as not passing a value (default no limit).
@@ -456,7 +464,6 @@ class ContainerProxy:
                 :caption: Parameterized query to get all products that have been discontinued:
                 :name: query_items_param
         """
-        response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
             kwargs['session_token'] = session_token
         if initial_headers is not None:
@@ -484,7 +491,7 @@ class ContainerProxy:
         feed_options["correlatedActivityId"] = correlated_activity_id
         if continuation_token_limit is not None:
             feed_options["responseContinuationTokenLimitInKb"] = continuation_token_limit
-        if hasattr(response_hook, "clear"):
+        if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
         if self.container_link in self.__get_client_container_caches():
             feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
@@ -510,6 +517,7 @@ class ContainerProxy:
             partition_key: PartitionKeyType,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -548,6 +556,7 @@ class ContainerProxy:
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -570,7 +579,7 @@ class ContainerProxy:
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -583,6 +592,7 @@ class ContainerProxy:
             continuation: str,
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -595,7 +605,7 @@ class ContainerProxy:
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :paramtype priority: Literal["High", "Low"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -610,6 +620,7 @@ class ContainerProxy:
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed in the entire container,
@@ -632,7 +643,7 @@ class ContainerProxy:
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], Mapping[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -993,7 +1004,12 @@ class ContainerProxy:
         await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
 
     @distributed_trace_async
-    async def get_throughput(self, **kwargs: Any) -> ThroughputProperties:
+    async def get_throughput(
+            self,
+            *,
+            response_hook: Optional[Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]] = None,
+            **kwargs: Any
+    ) -> ThroughputProperties:
         """Get the ThroughputProperties object for this container.
 
         If no ThroughputProperties already exists for the container, an exception is raised.
@@ -1005,7 +1021,6 @@ class ContainerProxy:
         :returns: ThroughputProperties for the container.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
-        response_hook = kwargs.pop('response_hook', None)
         throughput_properties: List[Dict[str, Any]]
         properties = await self._get_properties()
         link = properties["_self"]
@@ -1064,6 +1079,7 @@ class ContainerProxy:
         self,
         *,
         max_item_count: Optional[int] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the conflicts in the container.
@@ -1075,7 +1091,6 @@ class ContainerProxy:
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
         feed_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if self.container_link in self.__get_client_container_caches():
@@ -1096,6 +1111,7 @@ class ContainerProxy:
         parameters: Optional[List[Dict[str, object]]] = None,
         partition_key: Optional[PartitionKeyType] = None,
         max_item_count: Optional[int] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all conflicts matching a given `query`.
@@ -1113,7 +1129,6 @@ class ContainerProxy:
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
         feed_options = _build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if partition_key is not None:

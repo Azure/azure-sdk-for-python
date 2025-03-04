@@ -99,6 +99,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-09-01-preview/Create_Asset_Without_DisplayName.json
+# x-ms-original-file: 2024-11-01/Create_Asset_Without_DisplayName.json
 if __name__ == "__main__":
     main()
