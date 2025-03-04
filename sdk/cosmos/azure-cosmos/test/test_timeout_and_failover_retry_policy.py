@@ -124,15 +124,15 @@ class TestTimeoutRetryPolicy:
         self.original_execute_function = _retry_utility.ExecuteFunction
         original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
         fake_endpoint = "other-region"
-        regional_endpoint = RegionalRoutingContext(self.host, self.host)
-        regional_endpoint_2 = RegionalRoutingContext(fake_endpoint, fake_endpoint)
         region_1 = "East US"
         region_2 = "West US"
+        regional_routing_context = RegionalRoutingContext(self.host, self.host)
+        regional_routing_context_2 = RegionalRoutingContext(fake_endpoint, fake_endpoint)
         original_location_cache.account_read_locations = [region_1, region_2]
-        original_location_cache.available_read_regional_endpoints_by_locations = {region_1: regional_endpoint,
-                                                                                  region_2: regional_endpoint_2
+        original_location_cache.account_read_regional_routing_contexts_by_location = {region_1: regional_routing_context,
+                                                                                  region_2: regional_routing_context_2
                                                                                   }
-        original_location_cache.read_regional_routing_contexts = [regional_endpoint, regional_endpoint_2]
+        original_location_cache.read_regional_routing_contexts = [regional_routing_context, regional_routing_context_2]
         try:
             # should retry once and then succeed
             mf = self.MockExecuteFunctionCrossRegion(self.original_execute_function, error_code, fake_endpoint)

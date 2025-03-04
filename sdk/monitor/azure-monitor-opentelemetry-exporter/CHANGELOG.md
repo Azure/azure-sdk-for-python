@@ -4,6 +4,11 @@
 
 ### Features Added
 
+- Support sending `customEvent` telemetry through special `microsoft` marker
+  ([#39886](https://github.com/Azure/azure-sdk-for-python/pull/39886))
+- Populate `client_Ip` on `customEvent` telemetry
+  ([#39923](https://github.com/Azure/azure-sdk-for-python/pull/39923))
+
 ### Breaking Changes
 
 ### Bugs Fixed
