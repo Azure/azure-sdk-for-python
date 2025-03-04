@@ -5,6 +5,8 @@
 from enum import Enum
 from typing import Dict, Mapping, Optional, Union, Sequence, TypedDict
 
+from .._enum_meta import CaseInsensitiveEnumMeta
+
 
 AttributeValue = Union[
     str,
@@ -19,7 +21,7 @@ AttributeValue = Union[
 Attributes = Mapping[str, AttributeValue]
 
 
-class SpanKind(Enum):
+class SpanKind(Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes the role or kind of a span within a distributed trace.
 
     This helps to categorize spans based on their relationship to other spans and the type
