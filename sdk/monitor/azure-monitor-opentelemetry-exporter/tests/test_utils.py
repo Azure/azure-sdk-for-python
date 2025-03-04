@@ -11,15 +11,6 @@ from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 from opentelemetry.sdk.resources import Resource
 from unittest.mock import patch
-# from azure.monitor.opentelemetry.exporter._constants import (
-#     _AKS_ARM_NAMESPACE_ID,
-#     _DEFAULT_AAD_SCOPE,
-#     _FUNCTIONS_WORKER_RUNTIME,
-#     _INSTRUMENTATIONS_BIT_MAP,
-#     _KUBERNETES_SERVICE_HOST,
-#     _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY,
-#     _WEBSITE_SITE_NAME,
-# )
 
 
 TEST_AI_DEVICE_ID = "TEST_AI_DEVICE_ID"
