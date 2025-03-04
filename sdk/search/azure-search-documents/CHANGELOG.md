@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Added `SearchIndexClient.list_index_stats_summary`.
+- Added `SearchIndexerCache.id`.
+
 ### Breaking Changes
 
 ### Bugs Fixed
