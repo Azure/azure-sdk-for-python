@@ -250,7 +250,7 @@ async def test_challenge_policy_disable_scopes_discovery(http_request):
             raise ValueError("unexpected token request")
 
         credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
-        policy = AsyncBearerTokenChallengePolicy(credential, "scope", discover_scopes=False)
+        policy = AsyncBearerTokenChallengePolicy(credential, ["scope1", "scope2"], discover_scopes=False)
         pipeline = AsyncPipeline(policies=[policy], transport=Mock(send=send))
         await pipeline.run(http_request("GET", "https://localhost"))
 
@@ -301,7 +301,9 @@ async def test_challenge_policy_disable_any_discovery(http_request):
             raise ValueError("unexpected token request")
 
         credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
-        policy = AsyncBearerTokenChallengePolicy(credential, "scope", discover_tenant=False, discover_scopes=False)
+        policy = AsyncBearerTokenChallengePolicy(
+            credential, ["scope1", "scope2"], discover_tenant=False, discover_scopes=False
+        )
         pipeline = AsyncPipeline(policies=[policy], transport=Mock(send=send))
         await pipeline.run(http_request("GET", "https://localhost"))
 

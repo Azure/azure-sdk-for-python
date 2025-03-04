@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.quota import QuotaMgmtClient
@@ -46,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/preview/2023-06-01-preview/examples/patchNetworkOneSkuQuotaRequest.json
+# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2025-03-01/examples/patchNetworkOneSkuQuotaRequest.json
 if __name__ == "__main__":
     main()

@@ -11,7 +11,7 @@ TYPE = "TYPE"
 VALUE = "VALUE"
 
 
-class AMQPTypes(object):
+class AMQPTypes:
     null = "NULL"
     boolean = "BOOL"
     ubyte = "UBYTE"
@@ -33,6 +33,7 @@ class AMQPTypes(object):
     map = "MAP"
     array = "ARRAY"
     described = "DESCRIBED"
+    decimal128 = "DECIMAL128"
 
 
 class FieldDefinition(Enum):
@@ -88,3 +89,4 @@ class ConstructorBytes(object):
     array_small = b"\xE0"
     array_large = b"\xF0"
     descriptor = b"\x00"
+    decimal128 = b"\x94"

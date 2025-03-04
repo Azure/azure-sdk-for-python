@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -92,7 +92,7 @@ from ...operations._operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -187,7 +187,7 @@ class PolicyDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -241,9 +241,7 @@ class PolicyDefinitionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, policy_definition_name: str, **kwargs: Any
-    ) -> None:
+    async def delete(self, policy_definition_name: str, **kwargs: Any) -> None:
         """Deletes a policy definition in a subscription.
 
         This operation deletes the policy definition in the given subscription with the given name.
@@ -254,7 +252,7 @@ class PolicyDefinitionsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -303,7 +301,7 @@ class PolicyDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -356,7 +354,7 @@ class PolicyDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -478,7 +476,7 @@ class PolicyDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -532,7 +530,7 @@ class PolicyDefinitionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_at_management_group(  # pylint: disable=inconsistent-return-statements
+    async def delete_at_management_group(
         self, management_group_id: str, policy_definition_name: str, **kwargs: Any
     ) -> None:
         """Deletes a policy definition in a management group.
@@ -547,7 +545,7 @@ class PolicyDefinitionsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -601,7 +599,7 @@ class PolicyDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -682,7 +680,7 @@ class PolicyDefinitionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-01"))
         cls: ClsType[_models.PolicyDefinitionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -779,7 +777,7 @@ class PolicyDefinitionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-01"))
         cls: ClsType[_models.PolicyDefinitionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -883,7 +881,7 @@ class PolicyDefinitionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-01"))
         cls: ClsType[_models.PolicyDefinitionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -977,7 +975,7 @@ class PolicyDefinitionVersionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyDefinitionVersionListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1032,7 +1030,7 @@ class PolicyDefinitionVersionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyDefinitionVersionListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1083,7 +1081,7 @@ class PolicyDefinitionVersionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyDefinitionVersionListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1212,7 +1210,7 @@ class PolicyDefinitionVersionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1267,9 +1265,7 @@ class PolicyDefinitionVersionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, policy_definition_name: str, policy_definition_version: str, **kwargs: Any
-    ) -> None:
+    async def delete(self, policy_definition_name: str, policy_definition_version: str, **kwargs: Any) -> None:
         """Deletes a policy definition version in a subscription.
 
         This operation deletes the policy definition version in the given subscription with the given
@@ -1285,7 +1281,7 @@ class PolicyDefinitionVersionsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1342,7 +1338,7 @@ class PolicyDefinitionVersionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1402,7 +1398,7 @@ class PolicyDefinitionVersionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1544,7 +1540,7 @@ class PolicyDefinitionVersionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1599,7 +1595,7 @@ class PolicyDefinitionVersionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_at_management_group(  # pylint: disable=inconsistent-return-statements
+    async def delete_at_management_group(
         self, management_group_name: str, policy_definition_name: str, policy_definition_version: str, **kwargs: Any
     ) -> None:
         """Deletes a policy definition in a management group.
@@ -1619,7 +1615,7 @@ class PolicyDefinitionVersionsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1679,7 +1675,7 @@ class PolicyDefinitionVersionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1747,7 +1743,7 @@ class PolicyDefinitionVersionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-01"))
         cls: ClsType[_models.PolicyDefinitionVersionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1835,7 +1831,7 @@ class PolicyDefinitionVersionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-01"))
         cls: ClsType[_models.PolicyDefinitionVersionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1925,7 +1921,7 @@ class PolicyDefinitionVersionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-01"))
         cls: ClsType[_models.PolicyDefinitionVersionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2079,7 +2075,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicySetDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2133,9 +2129,7 @@ class PolicySetDefinitionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, policy_set_definition_name: str, **kwargs: Any
-    ) -> None:
+    async def delete(self, policy_set_definition_name: str, **kwargs: Any) -> None:
         """Deletes a policy set definition.
 
         This operation deletes the policy set definition in the given subscription with the given name.
@@ -2146,7 +2140,7 @@ class PolicySetDefinitionsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2184,7 +2178,9 @@ class PolicySetDefinitionsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def get(self, policy_set_definition_name: str, **kwargs: Any) -> _models.PolicySetDefinition:
+    async def get(
+        self, policy_set_definition_name: str, expand: Optional[str] = None, **kwargs: Any
+    ) -> _models.PolicySetDefinition:
         """Retrieves a policy set definition.
 
         This operation retrieves the policy set definition in the given subscription with the given
@@ -2192,11 +2188,15 @@ class PolicySetDefinitionsOperations:
 
         :param policy_set_definition_name: The name of the policy set definition to get. Required.
         :type policy_set_definition_name: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :return: PolicySetDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicySetDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2213,6 +2213,7 @@ class PolicySetDefinitionsOperations:
         _request = build_policy_set_definitions_get_request(
             policy_set_definition_name=policy_set_definition_name,
             subscription_id=self._config.subscription_id,
+            expand=expand,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -2238,18 +2239,24 @@ class PolicySetDefinitionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_built_in(self, policy_set_definition_name: str, **kwargs: Any) -> _models.PolicySetDefinition:
+    async def get_built_in(
+        self, policy_set_definition_name: str, expand: Optional[str] = None, **kwargs: Any
+    ) -> _models.PolicySetDefinition:
         """Retrieves a built in policy set definition.
 
         This operation retrieves the built-in policy set definition with the given name.
 
         :param policy_set_definition_name: The name of the policy set definition to get. Required.
         :type policy_set_definition_name: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :return: PolicySetDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicySetDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2265,6 +2272,7 @@ class PolicySetDefinitionsOperations:
 
         _request = build_policy_set_definitions_get_built_in_request(
             policy_set_definition_name=policy_set_definition_name,
+            expand=expand,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -2291,7 +2299,7 @@ class PolicySetDefinitionsOperations:
 
     @distributed_trace
     def list(
-        self, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+        self, filter: Optional[str] = None, expand: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.PolicySetDefinition"]:
         """Retrieves the policy set definitions for a subscription.
 
@@ -2315,6 +2323,10 @@ class PolicySetDefinitionsOperations:
          $filter='category -eq {value}' is provided, the returned list only includes all policy set
          definitions whose category match the {value}. Default value is None.
         :type filter: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :param top: Maximum number of records to return. When the $top filter is not provided, it will
          return 500 records. Default value is None.
         :type top: int
@@ -2329,7 +2341,7 @@ class PolicySetDefinitionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-01"))
         cls: ClsType[_models.PolicySetDefinitionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2343,6 +2355,7 @@ class PolicySetDefinitionsOperations:
                 _request = build_policy_set_definitions_list_request(
                     subscription_id=self._config.subscription_id,
                     filter=filter,
+                    expand=expand,
                     top=top,
                     api_version=api_version,
                     headers=_headers,
@@ -2393,7 +2406,7 @@ class PolicySetDefinitionsOperations:
 
     @distributed_trace
     def list_built_in(
-        self, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+        self, filter: Optional[str] = None, expand: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.PolicySetDefinition"]:
         """Retrieves built-in policy set definitions.
 
@@ -2410,6 +2423,10 @@ class PolicySetDefinitionsOperations:
          $filter='category -eq {value}' is provided, the returned list only includes all policy set
          definitions whose category match the {value}. Default value is None.
         :type filter: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :param top: Maximum number of records to return. When the $top filter is not provided, it will
          return 500 records. Default value is None.
         :type top: int
@@ -2424,7 +2441,7 @@ class PolicySetDefinitionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-01"))
         cls: ClsType[_models.PolicySetDefinitionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2437,6 +2454,7 @@ class PolicySetDefinitionsOperations:
 
                 _request = build_policy_set_definitions_list_built_in_request(
                     filter=filter,
+                    expand=expand,
                     top=top,
                     api_version=api_version,
                     headers=_headers,
@@ -2568,7 +2586,7 @@ class PolicySetDefinitionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicySetDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2622,7 +2640,7 @@ class PolicySetDefinitionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_at_management_group(  # pylint: disable=inconsistent-return-statements
+    async def delete_at_management_group(
         self, management_group_id: str, policy_set_definition_name: str, **kwargs: Any
     ) -> None:
         """Deletes a policy set definition.
@@ -2638,7 +2656,7 @@ class PolicySetDefinitionsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2677,7 +2695,7 @@ class PolicySetDefinitionsOperations:
 
     @distributed_trace_async
     async def get_at_management_group(
-        self, management_group_id: str, policy_set_definition_name: str, **kwargs: Any
+        self, management_group_id: str, policy_set_definition_name: str, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.PolicySetDefinition:
         """Retrieves a policy set definition.
 
@@ -2688,11 +2706,15 @@ class PolicySetDefinitionsOperations:
         :type management_group_id: str
         :param policy_set_definition_name: The name of the policy set definition to get. Required.
         :type policy_set_definition_name: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :return: PolicySetDefinition or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicySetDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2709,6 +2731,7 @@ class PolicySetDefinitionsOperations:
         _request = build_policy_set_definitions_get_at_management_group_request(
             management_group_id=management_group_id,
             policy_set_definition_name=policy_set_definition_name,
+            expand=expand,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -2735,7 +2758,12 @@ class PolicySetDefinitionsOperations:
 
     @distributed_trace
     def list_by_management_group(
-        self, management_group_id: str, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+        self,
+        management_group_id: str,
+        filter: Optional[str] = None,
+        expand: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicySetDefinition"]:
         """Retrieves all policy set definitions in management group.
 
@@ -2762,6 +2790,10 @@ class PolicySetDefinitionsOperations:
          $filter='category -eq {value}' is provided, the returned list only includes all policy set
          definitions whose category match the {value}. Default value is None.
         :type filter: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :param top: Maximum number of records to return. When the $top filter is not provided, it will
          return 500 records. Default value is None.
         :type top: int
@@ -2776,7 +2808,7 @@ class PolicySetDefinitionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-01"))
         cls: ClsType[_models.PolicySetDefinitionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2790,6 +2822,7 @@ class PolicySetDefinitionsOperations:
                 _request = build_policy_set_definitions_list_by_management_group_request(
                     management_group_id=management_group_id,
                     filter=filter,
+                    expand=expand,
                     top=top,
                     api_version=api_version,
                     headers=_headers,
@@ -2870,7 +2903,7 @@ class PolicySetDefinitionVersionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicySetDefinitionVersionListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2925,7 +2958,7 @@ class PolicySetDefinitionVersionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicySetDefinitionVersionListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2976,7 +3009,7 @@ class PolicySetDefinitionVersionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicySetDefinitionVersionListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3105,7 +3138,7 @@ class PolicySetDefinitionVersionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicySetDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3160,9 +3193,7 @@ class PolicySetDefinitionVersionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, policy_set_definition_name: str, policy_definition_version: str, **kwargs: Any
-    ) -> None:
+    async def delete(self, policy_set_definition_name: str, policy_definition_version: str, **kwargs: Any) -> None:
         """Deletes a policy set definition version.
 
         This operation deletes the policy set definition version in the given subscription with the
@@ -3178,7 +3209,7 @@ class PolicySetDefinitionVersionsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3218,7 +3249,11 @@ class PolicySetDefinitionVersionsOperations:
 
     @distributed_trace_async
     async def get(
-        self, policy_set_definition_name: str, policy_definition_version: str, **kwargs: Any
+        self,
+        policy_set_definition_name: str,
+        policy_definition_version: str,
+        expand: Optional[str] = None,
+        **kwargs: Any
     ) -> _models.PolicySetDefinitionVersion:
         """Retrieves a policy set definition version.
 
@@ -3231,11 +3266,15 @@ class PolicySetDefinitionVersionsOperations:
          x is the major version number, y is the minor version number, and z is the patch number.
          Required.
         :type policy_definition_version: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :return: PolicySetDefinitionVersion or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicySetDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3253,6 +3292,7 @@ class PolicySetDefinitionVersionsOperations:
             policy_set_definition_name=policy_set_definition_name,
             policy_definition_version=policy_definition_version,
             subscription_id=self._config.subscription_id,
+            expand=expand,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -3279,7 +3319,11 @@ class PolicySetDefinitionVersionsOperations:
 
     @distributed_trace_async
     async def get_built_in(
-        self, policy_set_definition_name: str, policy_definition_version: str, **kwargs: Any
+        self,
+        policy_set_definition_name: str,
+        policy_definition_version: str,
+        expand: Optional[str] = None,
+        **kwargs: Any
     ) -> _models.PolicySetDefinitionVersion:
         """Retrieves a built in policy set definition version.
 
@@ -3292,11 +3336,15 @@ class PolicySetDefinitionVersionsOperations:
          x is the major version number, y is the minor version number, and z is the patch number.
          Required.
         :type policy_definition_version: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :return: PolicySetDefinitionVersion or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicySetDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3313,6 +3361,7 @@ class PolicySetDefinitionVersionsOperations:
         _request = build_policy_set_definition_versions_get_built_in_request(
             policy_set_definition_name=policy_set_definition_name,
             policy_definition_version=policy_definition_version,
+            expand=expand,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -3339,8 +3388,9 @@ class PolicySetDefinitionVersionsOperations:
 
     @distributed_trace
     def list(
-        self, policy_set_definition_name: str, top: Optional[int] = None, **kwargs: Any
+        self, policy_set_definition_name: str, expand: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.PolicySetDefinitionVersion"]:
+        # pylint: disable=line-too-long
         """Retrieves the policy set definition versions for a given policy set definition in a
         subscription.
 
@@ -3349,6 +3399,10 @@ class PolicySetDefinitionVersionsOperations:
 
         :param policy_set_definition_name: The name of the policy set definition. Required.
         :type policy_set_definition_name: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :param top: Maximum number of records to return. When the $top filter is not provided, it will
          return 500 records. Default value is None.
         :type top: int
@@ -3364,7 +3418,7 @@ class PolicySetDefinitionVersionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-01"))
         cls: ClsType[_models.PolicySetDefinitionVersionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3378,6 +3432,7 @@ class PolicySetDefinitionVersionsOperations:
                 _request = build_policy_set_definition_versions_list_request(
                     policy_set_definition_name=policy_set_definition_name,
                     subscription_id=self._config.subscription_id,
+                    expand=expand,
                     top=top,
                     api_version=api_version,
                     headers=_headers,
@@ -3428,8 +3483,9 @@ class PolicySetDefinitionVersionsOperations:
 
     @distributed_trace
     def list_built_in(
-        self, policy_set_definition_name: str, top: Optional[int] = None, **kwargs: Any
+        self, policy_set_definition_name: str, expand: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.PolicySetDefinitionVersion"]:
+        # pylint: disable=line-too-long
         """Retrieves built-in policy set definition versions.
 
         This operation retrieves a list of all the built-in policy set definition versions for the
@@ -3437,6 +3493,10 @@ class PolicySetDefinitionVersionsOperations:
 
         :param policy_set_definition_name: The name of the policy set definition. Required.
         :type policy_set_definition_name: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :param top: Maximum number of records to return. When the $top filter is not provided, it will
          return 500 records. Default value is None.
         :type top: int
@@ -3452,7 +3512,7 @@ class PolicySetDefinitionVersionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-01"))
         cls: ClsType[_models.PolicySetDefinitionVersionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3465,6 +3525,7 @@ class PolicySetDefinitionVersionsOperations:
 
                 _request = build_policy_set_definition_versions_list_built_in_request(
                     policy_set_definition_name=policy_set_definition_name,
+                    expand=expand,
                     top=top,
                     api_version=api_version,
                     headers=_headers,
@@ -3614,7 +3675,7 @@ class PolicySetDefinitionVersionsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicySetDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3669,7 +3730,7 @@ class PolicySetDefinitionVersionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_at_management_group(  # pylint: disable=inconsistent-return-statements
+    async def delete_at_management_group(
         self, management_group_name: str, policy_set_definition_name: str, policy_definition_version: str, **kwargs: Any
     ) -> None:
         """Deletes a policy set definition version.
@@ -3690,7 +3751,7 @@ class PolicySetDefinitionVersionsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3730,7 +3791,12 @@ class PolicySetDefinitionVersionsOperations:
 
     @distributed_trace_async
     async def get_at_management_group(
-        self, management_group_name: str, policy_set_definition_name: str, policy_definition_version: str, **kwargs: Any
+        self,
+        management_group_name: str,
+        policy_set_definition_name: str,
+        policy_definition_version: str,
+        expand: Optional[str] = None,
+        **kwargs: Any
     ) -> _models.PolicySetDefinitionVersion:
         """Retrieves a policy set definition version.
 
@@ -3746,11 +3812,15 @@ class PolicySetDefinitionVersionsOperations:
          x is the major version number, y is the minor version number, and z is the patch number.
          Required.
         :type policy_definition_version: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :return: PolicySetDefinitionVersion or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicySetDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3768,6 +3838,7 @@ class PolicySetDefinitionVersionsOperations:
             management_group_name=management_group_name,
             policy_set_definition_name=policy_set_definition_name,
             policy_definition_version=policy_definition_version,
+            expand=expand,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -3794,8 +3865,14 @@ class PolicySetDefinitionVersionsOperations:
 
     @distributed_trace
     def list_by_management_group(
-        self, management_group_name: str, policy_set_definition_name: str, top: Optional[int] = None, **kwargs: Any
+        self,
+        management_group_name: str,
+        policy_set_definition_name: str,
+        expand: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicySetDefinitionVersion"]:
+        # pylint: disable=line-too-long
         """Retrieves all policy set definition versions for a given policy set definition in a management
         group.
 
@@ -3807,6 +3884,10 @@ class PolicySetDefinitionVersionsOperations:
         :type management_group_name: str
         :param policy_set_definition_name: The name of the policy set definition. Required.
         :type policy_set_definition_name: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :param top: Maximum number of records to return. When the $top filter is not provided, it will
          return 500 records. Default value is None.
         :type top: int
@@ -3822,7 +3903,7 @@ class PolicySetDefinitionVersionsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-01"))
         cls: ClsType[_models.PolicySetDefinitionVersionListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3836,6 +3917,7 @@ class PolicySetDefinitionVersionsOperations:
                 _request = build_policy_set_definition_versions_list_by_management_group_request(
                     management_group_name=management_group_name,
                     policy_set_definition_name=policy_set_definition_name,
+                    expand=expand,
                     top=top,
                     api_version=api_version,
                     headers=_headers,
@@ -3909,6 +3991,7 @@ class PolicyAssignmentsOperations:
     async def delete(
         self, scope: str, policy_assignment_name: str, **kwargs: Any
     ) -> Optional[_models.PolicyAssignment]:
+        # pylint: disable=line-too-long
         """Deletes a policy assignment.
 
         This operation deletes a policy assignment, given its name and the scope it was created in. The
@@ -3928,7 +4011,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyAssignment or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3981,6 +4064,7 @@ class PolicyAssignmentsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PolicyAssignment:
+        # pylint: disable=line-too-long
         """Creates or updates a policy assignment.
 
         This operation creates or updates a policy assignment with the given scope and name. Policy
@@ -4016,6 +4100,7 @@ class PolicyAssignmentsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PolicyAssignment:
+        # pylint: disable=line-too-long
         """Creates or updates a policy assignment.
 
         This operation creates or updates a policy assignment with the given scope and name. Policy
@@ -4049,6 +4134,7 @@ class PolicyAssignmentsOperations:
         parameters: Union[_models.PolicyAssignment, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyAssignment:
+        # pylint: disable=line-too-long
         """Creates or updates a policy assignment.
 
         This operation creates or updates a policy assignment with the given scope and name. Policy
@@ -4071,7 +4157,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4125,7 +4211,10 @@ class PolicyAssignmentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(self, scope: str, policy_assignment_name: str, **kwargs: Any) -> _models.PolicyAssignment:
+    async def get(
+        self, scope: str, policy_assignment_name: str, expand: Optional[str] = None, **kwargs: Any
+    ) -> _models.PolicyAssignment:
+        # pylint: disable=line-too-long
         """Retrieves a policy assignment.
 
         This operation retrieves a single policy assignment, given its name and the scope it was
@@ -4140,11 +4229,15 @@ class PolicyAssignmentsOperations:
         :type scope: str
         :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :return: PolicyAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4161,6 +4254,7 @@ class PolicyAssignmentsOperations:
         _request = build_policy_assignments_get_request(
             scope=scope,
             policy_assignment_name=policy_assignment_name,
+            expand=expand,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -4195,6 +4289,7 @@ class PolicyAssignmentsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PolicyAssignment:
+        # pylint: disable=line-too-long
         """Updates a policy assignment.
 
         This operation updates a policy assignment with the given scope and name. Policy assignments
@@ -4230,6 +4325,7 @@ class PolicyAssignmentsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PolicyAssignment:
+        # pylint: disable=line-too-long
         """Updates a policy assignment.
 
         This operation updates a policy assignment with the given scope and name. Policy assignments
@@ -4263,6 +4359,7 @@ class PolicyAssignmentsOperations:
         parameters: Union[_models.PolicyAssignmentUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyAssignment:
+        # pylint: disable=line-too-long
         """Updates a policy assignment.
 
         This operation updates a policy assignment with the given scope and name. Policy assignments
@@ -4286,7 +4383,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4341,7 +4438,12 @@ class PolicyAssignmentsOperations:
 
     @distributed_trace
     def list_for_resource_group(
-        self, resource_group_name: str, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+        self,
+        resource_group_name: str,
+        filter: Optional[str] = None,
+        expand: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignment"]:
         """Retrieves all policy assignments that apply to a resource group.
 
@@ -4370,6 +4472,10 @@ class PolicyAssignmentsOperations:
          $filter=policyDefinitionId eq '{value}' is provided, the returned list includes all policy
          assignments of the policy definition whose id is {value}. Default value is None.
         :type filter: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :param top: Maximum number of records to return. When the $top filter is not provided, it will
          return 500 records. Default value is None.
         :type top: int
@@ -4384,7 +4490,7 @@ class PolicyAssignmentsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-01"))
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4399,6 +4505,7 @@ class PolicyAssignmentsOperations:
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
+                    expand=expand,
                     top=top,
                     api_version=api_version,
                     headers=_headers,
@@ -4456,6 +4563,7 @@ class PolicyAssignmentsOperations:
         resource_type: str,
         resource_name: str,
         filter: Optional[str] = None,
+        expand: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignment"]:
@@ -4508,6 +4616,10 @@ class PolicyAssignmentsOperations:
          $filter=policyDefinitionId eq '{value}' is provided, the returned list includes all policy
          assignments of the policy definition whose id is {value}. Default value is None.
         :type filter: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :param top: Maximum number of records to return. When the $top filter is not provided, it will
          return 500 records. Default value is None.
         :type top: int
@@ -4522,7 +4634,7 @@ class PolicyAssignmentsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-01"))
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4541,6 +4653,7 @@ class PolicyAssignmentsOperations:
                     resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
+                    expand=expand,
                     top=top,
                     api_version=api_version,
                     headers=_headers,
@@ -4591,7 +4704,12 @@ class PolicyAssignmentsOperations:
 
     @distributed_trace
     def list_for_management_group(
-        self, management_group_id: str, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+        self,
+        management_group_id: str,
+        filter: Optional[str] = None,
+        expand: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignment"]:
         """Retrieves all policy assignments that apply to a management group.
 
@@ -4615,6 +4733,10 @@ class PolicyAssignmentsOperations:
          $filter=policyDefinitionId eq '{value}' is provided, the returned list includes all policy
          assignments of the policy definition whose id is {value}. Default value is None.
         :type filter: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :param top: Maximum number of records to return. When the $top filter is not provided, it will
          return 500 records. Default value is None.
         :type top: int
@@ -4629,7 +4751,7 @@ class PolicyAssignmentsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-01"))
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4643,6 +4765,7 @@ class PolicyAssignmentsOperations:
                 _request = build_policy_assignments_list_for_management_group_request(
                     management_group_id=management_group_id,
                     filter=filter,
+                    expand=expand,
                     top=top,
                     api_version=api_version,
                     headers=_headers,
@@ -4693,7 +4816,7 @@ class PolicyAssignmentsOperations:
 
     @distributed_trace
     def list(
-        self, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+        self, filter: Optional[str] = None, expand: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.PolicyAssignment"]:
         """Retrieves all policy assignments that apply to a subscription.
 
@@ -4718,6 +4841,10 @@ class PolicyAssignmentsOperations:
          $filter=policyDefinitionId eq '{value}' is provided, the returned list includes all policy
          assignments of the policy definition whose id is {value}. Default value is None.
         :type filter: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :param top: Maximum number of records to return. When the $top filter is not provided, it will
          return 500 records. Default value is None.
         :type top: int
@@ -4732,7 +4859,7 @@ class PolicyAssignmentsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2023-04-01"))
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4746,6 +4873,7 @@ class PolicyAssignmentsOperations:
                 _request = build_policy_assignments_list_request(
                     subscription_id=self._config.subscription_id,
                     filter=filter,
+                    expand=expand,
                     top=top,
                     api_version=api_version,
                     headers=_headers,
@@ -4813,7 +4941,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyAssignment or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4947,7 +5075,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5000,7 +5128,9 @@ class PolicyAssignmentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_by_id(self, policy_assignment_id: str, **kwargs: Any) -> _models.PolicyAssignment:
+    async def get_by_id(
+        self, policy_assignment_id: str, expand: Optional[str] = None, **kwargs: Any
+    ) -> _models.PolicyAssignment:
         """Retrieves the policy assignment with the given ID.
 
         The operation retrieves the policy assignment with the given ID. Policy assignment IDs have
@@ -5015,11 +5145,15 @@ class PolicyAssignmentsOperations:
         :param policy_assignment_id: The ID of the policy assignment to get. Use the format
          '{scope}/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'. Required.
         :type policy_assignment_id: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
         :return: PolicyAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5035,6 +5169,7 @@ class PolicyAssignmentsOperations:
 
         _request = build_policy_assignments_get_by_id_request(
             policy_assignment_id=policy_assignment_id,
+            expand=expand,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -5152,7 +5287,7 @@ class PolicyAssignmentsOperations:
         :rtype: ~azure.mgmt.resource.policy.v2023_04_01.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

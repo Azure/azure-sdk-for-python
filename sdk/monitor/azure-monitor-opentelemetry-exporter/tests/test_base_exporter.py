@@ -18,6 +18,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP
 from azure.monitor.opentelemetry.exporter._constants import (
+    _DEFAULT_AAD_SCOPE,
     _REQ_DURATION_NAME,
     _REQ_EXCEPTION_NAME,
     _REQ_FAILURE_NAME,
@@ -941,16 +942,29 @@ class TestBaseExporter(unittest.TestCase):
         TEST_CREDENTIAL = "TEST_CREDENTIAL"
         base = BaseExporter(credential=TEST_CREDENTIAL, authentication_policy=TEST_AUTH_POLICY)
         self.assertEqual(base._credential, TEST_CREDENTIAL)
-        mock_add_credential_policy.assert_called_once_with(TEST_CREDENTIAL, TEST_AUTH_POLICY)
+        mock_add_credential_policy.assert_called_once_with(TEST_CREDENTIAL, TEST_AUTH_POLICY, None)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._get_auth_policy")
+    def test_exporter_credential_audience(self, mock_add_credential_policy):
+        test_cs = "AadAudience=test-aad"
+        TEST_CREDENTIAL = "TEST_CREDENTIAL"
+        base = BaseExporter(
+            connection_string=test_cs,
+            credential=TEST_CREDENTIAL,
+            authentication_policy=TEST_AUTH_POLICY,
+        )
+        self.assertEqual(base._credential, TEST_CREDENTIAL)
+        mock_add_credential_policy.assert_called_once_with(TEST_CREDENTIAL, TEST_AUTH_POLICY, "test-aad")
 
     def test_get_auth_policy(self):
         class TestCredential:
-            def get_token():
+            def get_token(self):
                 return "TEST_TOKEN"
 
         credential = TestCredential()
         result = _get_auth_policy(credential, TEST_AUTH_POLICY)
         self.assertEqual(result._credential, credential)
+        self.assertEqual(result._scopes, (_DEFAULT_AAD_SCOPE,))
 
     def test_get_auth_policy_no_credential(self):
         self.assertEqual(_get_auth_policy(credential=None, default_auth_policy=TEST_AUTH_POLICY), TEST_AUTH_POLICY)
@@ -963,6 +977,16 @@ class TestBaseExporter(unittest.TestCase):
         self.assertRaises(
             ValueError, _get_auth_policy, credential=InvalidTestCredential(), default_auth_policy=TEST_AUTH_POLICY
         )
+
+    def test_get_auth_policy_audience(self):
+        class TestCredential:
+            def get_token():
+                return "TEST_TOKEN"
+
+        credential = TestCredential()
+        result = _get_auth_policy(credential, TEST_AUTH_POLICY, aad_audience="test_audience")
+        self.assertEqual(result._credential, credential)
+        self.assertEqual(result._scopes, ("test_audience/.default",))
 
 
 def validate_telemetry_item(item1, item2):

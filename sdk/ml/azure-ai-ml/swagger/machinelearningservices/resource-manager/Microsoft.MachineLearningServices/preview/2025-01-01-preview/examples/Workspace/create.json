@@ -1,0 +1,109 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "workspace-1234",
+    "workspaceName": "testworkspace",
+    "api-version": "2025-01-01-preview",
+    "body": {
+      "location": "eastus2euap",
+      "identity": {
+        "type": "SystemAssigned,UserAssigned",
+        "userAssignedIdentities": {
+          "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/workspace-1234/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testuai": {}
+        }
+      },
+      "properties": {
+        "friendlyName": "HelloName",
+        "description": "test description",
+        "containerRegistry": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/workspace-1234/providers/Microsoft.ContainerRegistry/registries/testRegistry",
+        "keyVault": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/workspace-1234/providers/Microsoft.KeyVault/vaults/testkv",
+        "applicationInsights": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/workspace-1234/providers/microsoft.insights/components/testinsights",
+        "storageAccount": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/accountcrud-1234/providers/Microsoft.Storage/storageAccounts/testStorageAccount",
+        "encryption": {
+          "status": "Enabled",
+          "identity": {
+            "userAssignedIdentity": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/workspace-1234/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testuai"
+          },
+          "keyVaultProperties": {
+            "keyVaultArmId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/workspace-1234/providers/Microsoft.KeyVault/vaults/testkv",
+            "keyIdentifier": "https://testkv.vault.azure.net/keys/testkey/aabbccddee112233445566778899aabb",
+            "identityClientId": ""
+          }
+        },
+        "hbiWorkspace": false,
+        "sharedPrivateLinkResources": [
+          {
+            "name": "testdbresource",
+            "properties": {
+              "privateLinkResourceId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/workspace-1234/providers/Microsoft.DocumentDB/databaseAccounts/testdbresource/privateLinkResources/Sql",
+              "groupId": "Sql",
+              "requestMessage": "Please approve",
+              "status": "Approved"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "id": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/workspace-1234/providers/Microsoft.MachineLearningServices/workspaces/testworkspace",
+        "name": "testworkspace",
+        "type": "Microsoft.MachineLearningServices/workspaces",
+        "location": "eastus2euap",
+        "identity": {
+          "principalId": "00000000-1111-2222-3333-444444444444",
+          "tenantId": "00000000-1111-2222-3333-444444444444",
+          "type": "SystemAssigned,UserAssigned",
+          "userAssignedIdentities": {
+            "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/workspace-1234/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testuai": {
+              "principalId": "00000000-1111-2222-3333-444444444444",
+              "clientId": "00000000-1111-2222-3333-444444444444"
+            }
+          }
+        },
+        "properties": {
+          "containerRegistry": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/workspace-1234/providers/Microsoft.ContainerRegistry/registries/testRegistry",
+          "keyVault": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/workspace-1234/providers/Microsoft.KeyVault/vaults/testkv",
+          "applicationInsights": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/workspace-1234/providers/microsoft.insights/components/testinsights",
+          "storageAccount": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/accountcrud-1234/providers/Microsoft.Storage/storageAccounts/testStorageAccount",
+          "discoveryUrl": "http://example.com",
+          "friendlyName": "HelloName",
+          "description": "test description",
+          "encryption": {
+            "status": "Enabled",
+            "identity": {
+              "userAssignedIdentity": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/workspace-1234/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testuai"
+            },
+            "keyVaultProperties": {
+              "keyVaultArmId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/workspace-1234/providers/Microsoft.KeyVault/vaults/testkv",
+              "keyIdentifier": "https://testkv.vault.azure.net/keys/testkey/aabbccddee112233445566778899aabb",
+              "identityClientId": ""
+            }
+          },
+          "hbiWorkspace": false,
+          "allowPublicAccessWhenBehindVnet": false,
+          "publicNetworkAccess": "Disabled",
+          "sharedPrivateLinkResources": [
+            {
+              "name": "testdbresource",
+              "properties": {
+                "privateLinkResourceId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/workspace-1234/providers/Microsoft.DocumentDB/databaseAccounts/testdbresource/privateLinkResources/Sql",
+                "groupId": "Sql",
+                "requestMessage": "Please approve",
+                "status": "Approved"
+              }
+            }
+          ],
+          "enableDataIsolation": false
+        }
+      }
+    },
+    "202": {
+      "headers": {
+        "Location": "example_location"
+      }
+    }
+  }
+}

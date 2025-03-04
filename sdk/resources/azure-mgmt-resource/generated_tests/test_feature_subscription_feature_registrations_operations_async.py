@@ -21,7 +21,7 @@ class TestFeatureSubscriptionFeatureRegistrationsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_subscription_feature_registrations_get(self, resource_group):
         response = await self.client.subscription_feature_registrations.get(
             provider_namespace="str",
             feature_name="str",
@@ -33,7 +33,7 @@ class TestFeatureSubscriptionFeatureRegistrationsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_subscription_feature_registrations_create_or_update(self, resource_group):
         response = await self.client.subscription_feature_registrations.create_or_update(
             provider_namespace="str",
             feature_name="str",
@@ -45,7 +45,7 @@ class TestFeatureSubscriptionFeatureRegistrationsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_subscription_feature_registrations_delete(self, resource_group):
         response = await self.client.subscription_feature_registrations.delete(
             provider_namespace="str",
             feature_name="str",
@@ -57,7 +57,7 @@ class TestFeatureSubscriptionFeatureRegistrationsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_subscription_feature_registrations_list_by_subscription(self, resource_group):
         response = self.client.subscription_feature_registrations.list_by_subscription(
             provider_namespace="str",
             api_version="2021-07-01",
@@ -68,7 +68,7 @@ class TestFeatureSubscriptionFeatureRegistrationsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_all_by_subscription(self, resource_group):
+    async def test_subscription_feature_registrations_list_all_by_subscription(self, resource_group):
         response = self.client.subscription_feature_registrations.list_all_by_subscription(
             api_version="2021-07-01",
         )

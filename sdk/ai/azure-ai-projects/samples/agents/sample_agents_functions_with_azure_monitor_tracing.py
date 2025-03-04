@@ -28,6 +28,7 @@ from typing import Any, Callable, Set
 
 import os, time, json
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.telemetry import trace_function
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import FunctionTool, RequiredFunctionToolCall, SubmitToolOutputsAction, ToolOutput
 from opentelemetry import trace
@@ -49,9 +50,9 @@ scenario = os.path.basename(__file__)
 tracer = trace.get_tracer(__name__)
 
 
-# The tracer.start_as_current_span decorator will trace the function call and enable adding additional attributes
+# The trace_func decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
-@tracer.start_as_current_span("fetch_weather")  # type: ignore
+@trace_function()
 def fetch_weather(location: str) -> str:
     """
     Fetches the weather information for the specified location.
