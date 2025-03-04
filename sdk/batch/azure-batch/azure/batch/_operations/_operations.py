@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6229,7 +6229,6 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         select: Optional[List[str]] = None,
         **kwargs: Any
     ) -> Iterable["_models.BatchJobPreparationAndReleaseTaskStatus"]:
-        # pylint: disable=line-too-long
         """Lists the execution status of the Job Preparation and Job Release Task for the
         specified Job across the Compute Nodes where the Job has run.
 
@@ -8722,7 +8721,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Content-Length"] = self._deserialize("str", response.headers.get("Content-Length"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -8828,7 +8827,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Content-Length"] = self._deserialize("str", response.headers.get("Content-Length"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -10585,7 +10584,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Content-Length"] = self._deserialize("str", response.headers.get("Content-Length"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -10691,7 +10690,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Content-Length"] = self._deserialize("str", response.headers.get("Content-Length"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
