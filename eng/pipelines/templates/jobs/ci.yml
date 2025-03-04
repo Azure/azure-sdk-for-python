@@ -31,7 +31,7 @@ parameters:
     default: 60
   - name: ToxEnvParallel
     type: string
-    default: '--tenvparallel'
+    default: 'all'
   - name: InjectedPackages
     type: string
     default: ''
@@ -259,6 +259,7 @@ jobs:
           - "**/*matrix*.json"
         EnablePRGeneration: true
         PRMatrixSetting: "TargetingString"
+        PRJobBatchSize: 5
         PreGenerationSteps:
           - task: UsePythonVersion@0
             inputs:

@@ -19,7 +19,7 @@ class AzureMLOnBehalfOfCredential(AsyncContextManager):
     """Authenticates a user via the on-behalf-of flow.
 
     This credential can only be used on `Azure Machine Learning Compute.
-    <https://docs.microsoft.com/azure/machine-learning/concept-compute-target#azure-machine-learning-compute-managed>`_ during job execution when user request to
+    <https://learn.microsoft.com/azure/machine-learning/concept-compute-target#azure-machine-learning-compute-managed>`_ during job execution when user request to
     run job during its identity.
     """
     # pylint: enable=line-too-long

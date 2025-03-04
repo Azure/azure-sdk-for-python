@@ -65,9 +65,15 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
             return False
 
         if self._discover_tenant:
-            await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+            if isinstance(scope, str):
+                await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+            else:
+                await self.authorize_request(request, *scope, tenant_id=challenge.tenant_id)
         else:
-            await self.authorize_request(request, scope)
+            if isinstance(scope, str):
+                await self.authorize_request(request, scope)
+            else:
+                await self.authorize_request(request, *scope)
         return True
 
 

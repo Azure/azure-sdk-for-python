@@ -92,14 +92,12 @@ Each page is treated as a separate document. Each empty page is kept as its own 
 
 |SDK version|Supported API service version|
 |-|-|
-|1.0.0b1|2023-10-31-preview|
+|1.0.0|2024-11-30|
 |3.3.X(azure-ai-formrecognizer latest GA release)|2.0, 2.1, 2022-08-31, 2023-07-31 (default)|
 
 |API version|Supported clients|
 |-|-|
-|2023-10-31-preview|DocumentIntelligenceClient and DocumentIntelligenceAdministrationClient|
-|2023-07-31|DocumentAnalysisClient and DocumentModelAdministrationClient|
-|2022-08-31 | DocumentAnalysisClient and DocumentModelAdministrationClient|
+|2024-11-30 | DocumentAnalysisClient and DocumentModelAdministrationClient|
 |2.1 | FormRecognizerClient and FormTrainingClient|
 |2.0 | FormRecognizerClient and FormTrainingClient|
 

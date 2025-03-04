@@ -90,7 +90,7 @@ additional questions or comments.
 
 <!-- LINKS -->
 [product_documentation]: https://learn.microsoft.com/azure/purview/concept-workflow
-[purview_resource]: https://docs.microsoft.com/azure/purview/create-catalog-portal
+[purview_resource]: https://learn.microsoft.com/azure/purview/create-catalog-portal
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
 [username_password_credential]: https://learn.microsoft.com/python/api/azure-identity/azure.identity.usernamepasswordcredential?view=azure-python
 [azure_sub]: https://azure.microsoft.com/free/

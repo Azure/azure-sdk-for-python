@@ -21,7 +21,7 @@
 
 """Iterable query results in the Azure Cosmos database service.
 """
-import asyncio
+import asyncio # pylint: disable=do-not-import-asyncio
 from azure.core.async_paging import AsyncPageIterator
 from azure.cosmos._execution_context.aio import execution_dispatcher
 

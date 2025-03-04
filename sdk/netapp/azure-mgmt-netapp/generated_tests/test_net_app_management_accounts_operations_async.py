@@ -21,9 +21,9 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_accounts_list_by_subscription(self, resource_group):
         response = self.client.accounts.list_by_subscription(
-            api_version="2024-07-01-preview",
+            api_version="2024-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_accounts_list(self, resource_group):
         response = self.client.accounts.list(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01-preview",
+            api_version="2024-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_accounts_get(self, resource_group):
         response = await self.client.accounts.get(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-07-01-preview",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_accounts_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.accounts.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -90,7 +90,7 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
                     ],
                     "disableShowmount": bool,
                     "encryption": {
-                        "identity": {"federatedClientId": "str", "principalId": "str", "userAssignedIdentity": "str"},
+                        "identity": {"principalId": "str", "userAssignedIdentity": "str"},
                         "keySource": "Microsoft.NetApp",
                         "keyVaultProperties": {
                             "keyName": "str",
@@ -108,9 +108,7 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
                         "tenantId": "str",
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
-                    "isMultiAdEnabled": bool,
                     "name": "str",
-                    "nfsV4IDDomain": "str",
                     "provisioningState": "str",
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -123,7 +121,7 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-07-01-preview",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -132,12 +130,12 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_accounts_begin_delete(self, resource_group):
         response = await (
             await self.client.accounts.begin_delete(
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2024-07-01-preview",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -146,7 +144,7 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_accounts_begin_update(self, resource_group):
         response = await (
             await self.client.accounts.begin_update(
                 resource_group_name=resource_group.name,
@@ -181,7 +179,7 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
                     ],
                     "disableShowmount": bool,
                     "encryption": {
-                        "identity": {"federatedClientId": "str", "principalId": "str", "userAssignedIdentity": "str"},
+                        "identity": {"principalId": "str", "userAssignedIdentity": "str"},
                         "keySource": "Microsoft.NetApp",
                         "keyVaultProperties": {
                             "keyName": "str",
@@ -198,15 +196,13 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
                         "tenantId": "str",
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
-                    "isMultiAdEnabled": bool,
                     "location": "str",
                     "name": "str",
-                    "nfsV4IDDomain": "str",
                     "provisioningState": "str",
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-07-01-preview",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -215,12 +211,12 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_renew_credentials(self, resource_group):
+    async def test_accounts_begin_renew_credentials(self, resource_group):
         response = await (
             await self.client.accounts.begin_renew_credentials(
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2024-07-01-preview",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -229,12 +225,12 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_transition_to_cmk(self, resource_group):
+    async def test_accounts_begin_transition_to_cmk(self, resource_group):
         response = await (
             await self.client.accounts.begin_transition_to_cmk(
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2024-07-01-preview",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -243,12 +239,12 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_get_change_key_vault_information(self, resource_group):
+    async def test_accounts_begin_get_change_key_vault_information(self, resource_group):
         response = await (
             await self.client.accounts.begin_get_change_key_vault_information(
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2024-07-01-preview",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -257,12 +253,12 @@ class TestNetAppManagementAccountsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_change_key_vault(self, resource_group):
+    async def test_accounts_begin_change_key_vault(self, resource_group):
         response = await (
             await self.client.accounts.begin_change_key_vault(
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2024-07-01-preview",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

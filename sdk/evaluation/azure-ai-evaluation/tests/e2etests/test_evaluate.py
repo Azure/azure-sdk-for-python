@@ -34,7 +34,6 @@ def questions_file():
     data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
     return os.path.join(data_path, "questions.jsonl")
 
-
 def answer_evaluator(response):
     return {"length": len(response)}
 
@@ -173,7 +172,7 @@ class TestEvaluate:
         assert metrics.get(metric) == list_mean_nan_safe(row_result_df[out_column])
         assert row_result_df[out_column][2] == 31
 
-    def test_evaluate_with_target(self, questions_file):
+    def test_evaluate_with_target(self, questions_file, run_from_temp_dir):
         """Test evaluation with target function."""
         # We cannot define target in this file as pytest will load
         # all modules in test folder and target_fn will be imported from the first
@@ -211,7 +210,7 @@ class TestEvaluate:
             {"default": {"column_mapping": {"another_question": "${target.query}"}}},
         ],
     )
-    def test_evaluate_another_questions(self, questions_file, evaluation_config):
+    def test_evaluate_another_questions(self, questions_file, evaluation_config, run_from_temp_dir):
         """Test evaluation with target function."""
         from .target_fn import target_fn3
 
@@ -270,7 +269,7 @@ class TestEvaluate:
             ),
         ],
     )
-    def test_evaluate_with_evaluator_config(self, questions_file, evaluate_config):
+    def test_evaluate_with_evaluator_config(self, questions_file, evaluate_config, run_from_temp_dir):
         input_data = pd.read_json(questions_file, lines=True)
         from .target_fn import target_fn2
 

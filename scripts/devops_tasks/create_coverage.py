@@ -19,6 +19,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 coverage_dir = os.path.join(root_dir, "_coverage/")
+toxrc = os.path.join(root_dir, "eng","tox", "tox.ini")
 
 
 def collect_tox_coverage_files():
@@ -52,8 +53,8 @@ def collect_tox_coverage_files():
 def generate_coverage_xml():
     if os.path.exists(coverage_dir):
         logging.info("Generating coverage XML")
-        commands = ["coverage", "xml", "-i"]
-        run_check_call(commands, root_dir, always_exit = False)
+        commands = ["coverage", "xml", "-i", "--rcfile", toxrc]
+        run_check_call(commands, root_dir, always_exit=False)
     else:
         logging.error("Coverage file is not available in {} to generate coverage XML".format(coverage_dir))
 
@@ -72,11 +73,12 @@ def fix_coverage_xml(coverage_file):
         out = re.sub("\.?\.tox[\s\S\.\d]*?\.site-packages", "", out)
 
     if out:
-        with open(coverage_file, 'w') as cov_file:
+        with open(coverage_file, "w") as cov_file:
             cov_file.write(out)
 
+
 if __name__ == "__main__":
-    coverage_xml = os.path.join(root_dir, 'coverage.xml')
+    coverage_xml = os.path.join(root_dir, "coverage.xml")
 
     collect_tox_coverage_files()
     generate_coverage_xml()

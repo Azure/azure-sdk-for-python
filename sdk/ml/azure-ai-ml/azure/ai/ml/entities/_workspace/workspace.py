@@ -56,7 +56,7 @@ class Workspace(Resource):
     :param hbi_workspace: Whether the customer data is of high business impact (HBI),
         containing sensitive business information.
         For more information, see
-        https://docs.microsoft.com/azure/machine-learning/concept-data-encryption#encryption-at-rest.
+        https://learn.microsoft.com/azure/machine-learning/concept-data-encryption#encryption-at-rest.
     :type hbi_workspace: bool
     :param storage_account: The resource ID of an existing storage account to use instead of creating a new one.
     :type storage_account: str

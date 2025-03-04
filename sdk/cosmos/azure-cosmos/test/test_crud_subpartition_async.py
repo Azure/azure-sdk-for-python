@@ -44,7 +44,7 @@ class TimeoutTransport(RequestsTransport):
         return response
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """

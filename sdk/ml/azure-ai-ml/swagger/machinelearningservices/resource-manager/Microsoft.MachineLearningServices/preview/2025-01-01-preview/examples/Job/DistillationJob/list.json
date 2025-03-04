@@ -1,0 +1,99 @@
+{
+  "parameters": {
+    "subscriptionId": "00000000-1111-2222-3333-444444444444",
+    "resourceGroupName": "test-rg",
+    "workspaceName": "my-aml-workspace",
+    "api-version": "2025-01-01-preview",
+    "$skipToken": "string",
+    "jobType": "string",
+    "tag": "string",
+    "listViewType": "All"
+  },
+  "responses": {
+    "200": {
+      "headers": {},
+      "body": {
+        "value": [
+          {
+            "id": "string",
+            "name": "string",
+            "type": "string",
+            "properties": {
+              "description": "string",
+              "tags": {
+                "string": "string"
+              },
+              "properties": {
+                "string": "string"
+              },
+              "displayName": "string",
+              "status": "Created",
+              "experimentName": "string",
+              "computeId": "string",
+              "isArchived": false,
+              "identity": {
+                "identityType": "AMLToken"
+              },
+              "dataGenerationDetails": {
+                "dataGenerationType": "LabelGeneration",
+                "dataGenerationTaskType": "Conversation",
+                "teacherModelEndpoint": {
+                  "endpointName": "newfinetuneinttesting-jbuob"
+                },
+                "trainingData": {
+                  "description": null,
+                  "jobInputType": "uri_file",
+                  "mode": "ReadOnlyMount",
+                  "uri": "azureml://registries/azureml-meta/models/Llama-2-7b/versions/11"
+                }
+              },
+              "finetuningDetails": {
+                "studentModel": {
+                  "description": null,
+                  "jobInputType": "mlflow_model",
+                  "mode": "ReadOnlyMount",
+                  "uri": "azureml://registries/azureml-meta/models/Meta-Llama-3.1-8B-Instruct/versions/1"
+                }
+              },
+              "resources": {
+                "instanceTypes": [
+                  "Standard_NC6"
+                ]
+              },
+              "queueSettings": {
+                "jobTier": "Standard"
+              },
+              "componentId": "string",
+              "notificationSetting": {
+                "emails": [
+                  "string"
+                ],
+                "emailOn": [
+                  "JobFailed"
+                ]
+              },
+              "jobType": "Distillation",
+              "outputs": {
+                "string": {
+                  "description": "string",
+                  "uri": "string",
+                  "mode": "ReadWriteMount",
+                  "jobOutputType": "mlflow_model"
+                }
+              }
+            },
+            "systemData": {
+              "createdAt": "2025-01-01T12:34:56.999+00:22",
+              "createdBy": "string",
+              "createdByType": "Application",
+              "lastModifiedAt": "2025-01-01T12:34:56.999+00:22",
+              "lastModifiedBy": "string",
+              "lastModifiedByType": "ManagedIdentity"
+            }
+          }
+        ],
+        "nextLink": "string"
+      }
+    }
+  }
+}

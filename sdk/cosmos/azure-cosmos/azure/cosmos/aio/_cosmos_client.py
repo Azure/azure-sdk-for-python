@@ -22,11 +22,12 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Optional, Union, cast, Mapping, Iterable
+from typing import Any, Dict, List, Optional, Union, cast, Mapping, Iterable, Callable
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core import MatchConditions
+from azure.core.pipeline.policies import RetryMode
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
@@ -39,6 +40,8 @@ from ._retry_utility_async import _ConnectionRetryPolicy
 from ._database import DatabaseProxy, _get_database_link
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
+
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 __all__ = ("CosmosClient",)
 
@@ -98,7 +101,7 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
     retry_options._max_retry_attempt_count = total_retries or retry_options._max_retry_attempt_count
     retry_options._fixed_retry_interval_in_milliseconds = \
         kwargs.pop('retry_fixed_interval', retry_options._fixed_retry_interval_in_milliseconds)
-    max_backoff = kwargs.pop('retry_backoff_max', None)
+    max_backoff = kwargs.pop('retry_backoff_max', policy.MaxBackoff)
     retry_options._max_wait_time_in_seconds = max_backoff or retry_options._max_wait_time_in_seconds
     policy.RetryOptions = retry_options
     connection_retry = policy.ConnectionRetryConfiguration
@@ -109,8 +112,9 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
             retry_read=kwargs.pop('retry_read', None),
             retry_status=kwargs.pop('retry_status', None),
             retry_backoff_max=max_backoff,
+            retry_mode=kwargs.pop('retry_mode', RetryMode.Fixed),
             retry_on_status_codes=kwargs.pop('retry_on_status_codes', []),
-            retry_backoff_factor=kwargs.pop('retry_backoff_factor', 0.8),
+            retry_backoff_factor=kwargs.pop('retry_backoff_factor', 1),
         )
     policy.ConnectionRetryConfiguration = connection_retry
     policy.ResponsePayloadOnWriteDisabled = kwargs.pop('no_response_on_write', False)
@@ -368,6 +372,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         max_item_count: Optional[int] = None,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the databases in a Cosmos DB SQL database account.
@@ -376,11 +381,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any]], None]
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
-        response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
             kwargs["session_token"] = session_token
         if initial_headers is not None:
@@ -403,6 +407,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         max_item_count: Optional[int] = None,
         session_token: Optional[str] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Query the databases in a Cosmos DB SQL database account.
@@ -415,11 +420,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any]], None]
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
-        response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
             kwargs["session_token"] = session_token
         if initial_headers is not None:
@@ -445,6 +449,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         initial_headers: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         **kwargs: Any
     ) -> None:
         """Delete the database with the given ID (name).
@@ -459,11 +464,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
-        response_hook = kwargs.pop('response_hook', None)
         if session_token is not None:
             kwargs["session_token"] = session_token
         if initial_headers is not None:
@@ -480,15 +484,19 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             response_hook(self.client_connection.last_response_headers)
 
     @distributed_trace_async
-    async def _get_database_account(self, **kwargs: Any) -> DatabaseAccount:
+    async def _get_database_account(
+            self,
+            *,
+            response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+            **kwargs: Any
+    ) -> DatabaseAccount:
         """Retrieve the database account information.
 
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any]], None]
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
-        response_hook = kwargs.pop('response_hook', None)
         result = await self.client_connection.GetDatabaseAccount(**kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)

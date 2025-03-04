@@ -20,7 +20,7 @@ Why do we patch auto-generated code? Below is a summary of the changes made in a
    JsonSchemaFormat object, instead of using auto-generated base/derived classes named
    ChatCompletionsResponseFormatXxxInternal.
 10. Allow UserMessage("my message") in addition to UserMessage(content="my message"). Same applies to 
-AssistantMessage, SystemMessage and ToolMessage.
+AssistantMessage, SystemMessage, DeveloperMessage and ToolMessage.
 
 """
 import json
@@ -98,8 +98,10 @@ def _get_internal_response_format(
                 _models._models.ChatCompletionsResponseFormatJsonObject()  # pylint: disable=protected-access
             )
         elif isinstance(response_format, _models.JsonSchemaFormat):
-            internal_response_format = _models._models.ChatCompletionsResponseFormatJsonSchema(  # pylint: disable=protected-access
-                json_schema=response_format
+            internal_response_format = (
+                _models._models.ChatCompletionsResponseFormatJsonSchema(  # pylint: disable=protected-access
+                    json_schema=response_format
+                )
             )
         else:
             raise ValueError(f"Unsupported `response_format` {response_format}")
@@ -119,8 +121,10 @@ def load_client(
     `api_version`, `logging_enable`, `user_agent`, etc., you can do so here.
     This method will only work when using Serverless API or Managed Compute endpoint.
     It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
+    Keyword arguments are passed through to the client constructor (you can set keywords such as
+    `api_version`, `user_agent`, `logging_enable` etc. on the client constructor).
 
-    :param endpoint: Service host. Required.
+    :param endpoint: Service endpoint URL for AI model inference. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
@@ -135,7 +139,14 @@ def load_client(
     with ChatCompletionsClient(
         endpoint, credential, **kwargs
     ) as client:  # Pick any of the clients, it does not matter.
-        model_info = client.get_model_info()  # type: ignore
+        try:
+            model_info = client.get_model_info()  # type: ignore
+        except ResourceNotFoundError as error:
+            error.message = (
+                "`load_client` function does not work on this endpoint (`/info` route not supported). "
+                "Please construct one of the clients (e.g. `ChatCompletionsClient`) directly."
+            )
+            raise error
 
     _LOGGER.info("model_info=%s", model_info)
     if not model_info.model_type:
@@ -192,7 +203,7 @@ def load_client(
 class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=too-many-instance-attributes
     """ChatCompletionsClient.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: Service endpoint URL for AI model inference. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
@@ -744,7 +755,12 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not self._model_info:
-            self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
+            try:
+                self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
+            except ResourceNotFoundError as error:
+                error.message = "Model information is not available on this endpoint (`/info` route not supported)."
+                raise error
+
         return self._model_info
 
     def __str__(self) -> str:
@@ -755,7 +771,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
 class EmbeddingsClient(EmbeddingsClientGenerated):
     """EmbeddingsClient.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: Service endpoint URL for AI model inference. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
@@ -1040,7 +1056,12 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not self._model_info:
-            self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
+            try:
+                self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
+            except ResourceNotFoundError as error:
+                error.message = "Model information is not available on this endpoint (`/info` route not supported)."
+                raise error
+
         return self._model_info
 
     def __str__(self) -> str:
@@ -1051,7 +1072,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     """ImageEmbeddingsClient.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: Service endpoint URL for AI model inference. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      AzureKeyCredential type or a TokenCredential type. Required.
@@ -1336,7 +1357,12 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if not self._model_info:
-            self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
+            try:
+                self._model_info = self._get_model_info(**kwargs)  # pylint: disable=attribute-defined-outside-init
+            except ResourceNotFoundError as error:
+                error.message = "Model information is not available on this endpoint (`/info` route not supported)."
+                raise error
+
         return self._model_info
 
     def __str__(self) -> str:

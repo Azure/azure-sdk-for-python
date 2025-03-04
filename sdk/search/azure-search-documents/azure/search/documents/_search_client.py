@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import cast, List, Any, Union, Dict, Optional
+from typing import cast, List, Any, Union, Dict, Optional, MutableMapping
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.credentials import AzureKeyCredential, TokenCredential
@@ -416,7 +416,7 @@ class SearchClient(HeadersMixin):
         select: Optional[List[str]] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> List[Dict]:
+    ) -> List[MutableMapping[str, Any]]:
         """Get search suggestion results from the Azure search index.
 
         :param str search_text: Required. The search text to use to suggest documents. Must be at least 1
@@ -503,7 +503,7 @@ class SearchClient(HeadersMixin):
         search_fields: Optional[List[str]] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> List[Dict]:
+    ) -> List[MutableMapping[str, Any]]:
         """Get search auto-completion results from the Azure search index.
 
         :param str search_text: The search text on which to base autocomplete results.
@@ -690,7 +690,7 @@ class SearchClient(HeadersMixin):
         :return: List of IndexingResult
         :rtype:  list[IndexingResult]
 
-        :raises ~azure.search.documents.RequestEntityTooLargeError
+        :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
         """
         return self._index_documents_actions(actions=batch.actions, **kwargs)
 

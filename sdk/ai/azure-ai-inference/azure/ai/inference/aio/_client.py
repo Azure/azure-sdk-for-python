@@ -36,8 +36,8 @@ class ChatCompletionsClient(ChatCompletionsClientOperationsMixin):
 
     :param endpoint: Service host. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is one of the
-     following types: AzureKeyCredential, AzureKeyCredential, TokenCredential Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
@@ -119,8 +119,8 @@ class EmbeddingsClient(EmbeddingsClientOperationsMixin):
 
     :param endpoint: Service host. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is one of the
-     following types: AzureKeyCredential, AzureKeyCredential, TokenCredential Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
@@ -202,8 +202,8 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientOperationsMixin):
 
     :param endpoint: Service host. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is one of the
-     following types: AzureKeyCredential, AzureKeyCredential, TokenCredential Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
