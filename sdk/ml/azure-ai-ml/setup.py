@@ -69,7 +69,7 @@ setup(
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "pyyaml>=5.1.0, < 7",
-        "msrest>=0.6.18",
+        "msrest>=0.6.18, < 1",
         "azure-core>=1.23.0",
         "azure-mgmt-core>=1.3.0",
         "marshmallow>=3.5, < 4",
@@ -78,13 +78,13 @@ setup(
         # Used for PR 825138
         "strictyaml < 2",
         # Used for PR 718512
-        "colorama",
+        "colorama < 1",
         "pyjwt < 3",
         "azure-storage-blob>=12.10.0",
         "azure-storage-file-share",
         "azure-storage-file-datalake>=12.2.0",
         "pydash>=6.0.0, < 9",
-        "isodate",
+        "isodate < 1",
         "azure-common>=1.1 , < 2",
         "typing-extensions < 5",
         "azure-monitor-opentelemetry",
