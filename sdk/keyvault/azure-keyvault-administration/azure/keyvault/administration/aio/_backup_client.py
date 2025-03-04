@@ -260,7 +260,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         ...
 
     @distributed_trace_async
-    async def begin_pre_backup(
+    async def begin_pre_backup(  # pylint: disable=docstring-keyword-should-match-keyword-only
         self, blob_storage_url: str, **kwargs: Any
     ) -> AsyncLROPoller[KeyVaultBackupOperation]:
         """Initiates a pre-backup check of whether a full Key Vault backup can be performed.
@@ -333,7 +333,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         ...
 
     @distributed_trace_async
-    async def begin_pre_restore(
+    async def begin_pre_restore(  # pylint: disable=docstring-keyword-should-match-keyword-only
         self, folder_url: str, **kwargs: Any
     ) -> AsyncLROPoller[KeyVaultRestoreOperation]:
         """Initiates a pre-restore check of whether a full Key Vault restore can be performed.

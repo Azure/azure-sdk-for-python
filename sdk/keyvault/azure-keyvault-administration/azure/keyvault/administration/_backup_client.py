@@ -265,7 +265,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         ...
 
     @distributed_trace
-    def begin_pre_backup(
+    def begin_pre_backup(  # pylint: disable=docstring-keyword-should-match-keyword-only
         self, blob_storage_url: str, **kwargs: Any
     ) -> LROPoller[KeyVaultBackupOperation]:
         """Initiates a pre-backup check of whether a full Key Vault backup can be performed.
@@ -338,7 +338,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         ...
 
     @distributed_trace
-    def begin_pre_restore(
+    def begin_pre_restore(  # pylint: disable=docstring-keyword-should-match-keyword-only
         self, folder_url: str, **kwargs: Any
     ) -> LROPoller[KeyVaultRestoreOperation]:
         """Initiates a pre-restore check of whether a full Key Vault restore can be performed.
