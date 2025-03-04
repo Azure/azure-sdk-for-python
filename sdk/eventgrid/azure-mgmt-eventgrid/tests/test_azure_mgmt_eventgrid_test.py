@@ -1,11 +1,12 @@
-﻿# coding: utf-8
+# coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import unittest
+import pytest
 
 raise unittest.SkipTest("Skipping all tests")
 
@@ -23,12 +24,13 @@ from azure.mgmt.eventgrid.models import (
     Topic,
     Domain,
     NumberLessThanAdvancedFilter,
-    RetryPolicy
+    RetryPolicy,
 )
 
 from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
 
+@pytest.mark.live_test_only
 class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
@@ -51,14 +53,21 @@ class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
         eventsubscription_name = "kalspythonEventSubscription2"
 
         # Create a new topic and verify that it is created successfully
-        topic_result_create = self.eventgrid_client.topics.create_or_update(resource_group.name, topic_name, Topic(location="westcentralus"))
+        topic_result_create = self.eventgrid_client.topics.create_or_update(
+            resource_group.name, topic_name, Topic(location="westcentralus")
+        )
         topic = topic_result_create.result()
         assert topic.name == topic_name
 
         # Create a new event subscription to this topic
         # Use this for recording mode
         # scope = "/subscriptions/55f3dcd4-cac7-43b4-990b-a139d62a1eb2/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name
-        scope = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name
+        scope = (
+            "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/"
+            + resource_group.name
+            + "/providers/Microsoft.EventGrid/topics/"
+            + topic_name
+        )
 
         destination = WebHookEventSubscriptionDestination(
             # TODO: Before recording tests, replace with a valid Azure function URL
@@ -67,7 +76,9 @@ class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
         filter = EventSubscriptionFilter()
 
         event_subscription_info = EventSubscription(destination=destination, filter=filter)
-        es_result_create = self.eventgrid_client.event_subscriptions.create_or_update(scope, eventsubscription_name, event_subscription_info)
+        es_result_create = self.eventgrid_client.event_subscriptions.create_or_update(
+            scope, eventsubscription_name, event_subscription_info
+        )
         event_subscription = es_result_create.result()
         assert eventsubscription_name == event_subscription.name
 
@@ -76,7 +87,6 @@ class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
 
         # Delete the topic
         self.eventgrid_client.topics.delete(resource_group.name, topic_name).wait()
-
 
     @ResourceGroupPreparer()
     @recorded_by_proxy
@@ -95,16 +105,21 @@ class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
         # Create a new event subscription to this topic
         # Use this for recording mode
         # scope = "/subscriptions/55f3dcd4-cac7-43b4-990b-a139d62a1eb2/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name
-        scope = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/topics/" + topic_name
+        scope = (
+            "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/"
+            + resource_group.name
+            + "/providers/Microsoft.EventGrid/topics/"
+            + topic_name
+        )
 
         destination = StorageQueueEventSubscriptionDestination(
-            resource_id= "/subscriptions/55f3dcd4-cac7-43b4-990b-a139d62a1eb2/resourceGroups/kalstest/providers/Microsoft.Storage/storageAccounts/kalsdemo",
-            queue_name= "kalsdemoqueue"
+            resource_id="/subscriptions/55f3dcd4-cac7-43b4-990b-a139d62a1eb2/resourceGroups/kalstest/providers/Microsoft.Storage/storageAccounts/kalsdemo",
+            queue_name="kalsdemoqueue",
         )
 
         deadletter_destination = StorageBlobDeadLetterDestination(
-            resource_id= "/subscriptions/55f3dcd4-cac7-43b4-990b-a139d62a1eb2/resourceGroups/kalstest/providers/Microsoft.Storage/storageAccounts/kalsdemo",
-            blob_container_name= "dlq"
+            resource_id="/subscriptions/55f3dcd4-cac7-43b4-990b-a139d62a1eb2/resourceGroups/kalstest/providers/Microsoft.Storage/storageAccounts/kalsdemo",
+            blob_container_name="dlq",
         )
 
         filter = EventSubscriptionFilter()
@@ -114,9 +129,11 @@ class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
             filter=filter,
             dead_letter_destination=deadletter_destination,
             event_delivery_schema=EventDeliverySchema.cloud_event_v01_schema,
-            retry_policy=RetryPolicy(event_time_to_live_in_minutes=5, max_delivery_attempts=10)
+            retry_policy=RetryPolicy(event_time_to_live_in_minutes=5, max_delivery_attempts=10),
         )
-        es_result_create = self.eventgrid_client.event_subscriptions.create_or_update(scope, eventsubscription_name, event_subscription_info)
+        es_result_create = self.eventgrid_client.event_subscriptions.create_or_update(
+            scope, eventsubscription_name, event_subscription_info
+        )
         event_subscription = es_result_create.result()
         assert eventsubscription_name == event_subscription.name
 
@@ -126,7 +143,6 @@ class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
         # Delete the topic
         self.eventgrid_client.topics.delete(resource_group.name, topic_name).wait()
 
-
     @ResourceGroupPreparer()
     @recorded_by_proxy
     def test_domains_and_advanced_filter(self, resource_group, location):
@@ -134,14 +150,21 @@ class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
         eventsubscription_name = "kalspythonEventSubscription2"
 
         # Create a new domain and verify that it is created successfully
-        domain_result_create = self.eventgrid_client.domains.create_or_update(resource_group.name, domain_name, Domain(location="westcentralus"))
+        domain_result_create = self.eventgrid_client.domains.create_or_update(
+            resource_group.name, domain_name, Domain(location="westcentralus")
+        )
         domain = domain_result_create.result()
         assert domain.name == domain_name
 
         # Create a new event subscription to this domain
         # Use this for recording mode
         # scope = "/subscriptions/55f3dcd4-cac7-43b4-990b-a139d62a1eb2/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/domains/" + domain_name
-        scope = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/" + resource_group.name + "/providers/Microsoft.EventGrid/domains/" + domain_name
+        scope = (
+            "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/"
+            + resource_group.name
+            + "/providers/Microsoft.EventGrid/domains/"
+            + domain_name
+        )
 
         destination = WebHookEventSubscriptionDestination(
             # TODO: Before recording tests, replace with a valid Azure function URL
@@ -153,7 +176,9 @@ class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
         filter.advanced_filters.append(advanced_filter)
 
         event_subscription_info = EventSubscription(destination=destination, filter=filter)
-        es_result_create = self.eventgrid_client.event_subscriptions.create_or_update(scope, eventsubscription_name, event_subscription_info)
+        es_result_create = self.eventgrid_client.event_subscriptions.create_or_update(
+            scope, eventsubscription_name, event_subscription_info
+        )
         event_subscription = es_result_create.result()
         assert eventsubscription_name == event_subscription.name
 
@@ -164,6 +189,6 @@ class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
         self.eventgrid_client.domains.delete(resource_group.name, domain_name).wait()
 
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

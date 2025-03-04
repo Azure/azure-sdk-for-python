@@ -1,4 +1,4 @@
-﻿# coding: utf-8
+# coding: utf-8
 
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,6 +13,7 @@ from azure.mgmt.eventgrid import EventGridManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 
+@pytest.mark.live_test_only
 class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
@@ -23,20 +24,13 @@ class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_domain(self, resource_group, location):
         # create
-        DOMAIN_NAME = self.get_resource_name('domain')
-        BODY = {
-            "location": location
-        }
+        DOMAIN_NAME = self.get_resource_name("domain")
+        BODY = {"location": location}
         result = self.eventgrid_client.domains.begin_create_or_update(resource_group.name, DOMAIN_NAME, BODY)
         result.result()
 
         # update
-        BODY = {
-            "tags": {
-                "tag1": "value1",
-                "tag2": "value2"
-            }
-        }
+        BODY = {"tags": {"tag1": "value1", "tag2": "value2"}}
         result = self.eventgrid_client.domains.begin_update(resource_group.name, DOMAIN_NAME, BODY)
         result.result()
 
@@ -49,5 +43,5 @@ class TestMgmtEventGrid(AzureMgmtRecordedTestCase):
 
 
 # ------------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
