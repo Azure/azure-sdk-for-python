@@ -121,16 +121,16 @@ class TestLocationCache(unittest.TestCase):
         assert write_doc_resolved == read_doc_resolved
 
         # mark main region unavailable and try again
-        lc.mark_endpoint_unavailable_for_read(location1_endpoint, False)
-        lc.mark_endpoint_unavailable_for_write(location1_endpoint, False)
+        lc.mark_endpoint_unavailable_for_read(location1_endpoint, True)
+        lc.mark_endpoint_unavailable_for_write(location1_endpoint, True)
         read_doc_resolved = lc.resolve_service_endpoint(read_doc_request)
         write_doc_resolved = lc.resolve_service_endpoint(write_doc_request)
         assert read_doc_resolved == location4_endpoint
         assert write_doc_resolved == location3_endpoint
 
         # mark next preferred region as unavailable - no preferred endpoints left
-        lc.mark_endpoint_unavailable_for_read(location4_endpoint, False)
-        lc.mark_endpoint_unavailable_for_write(location3_endpoint, False)
+        lc.mark_endpoint_unavailable_for_read(location4_endpoint, True)
+        lc.mark_endpoint_unavailable_for_write(location3_endpoint, True)
         read_resolved = lc.resolve_service_endpoint(read_doc_request)
         write_resolved = lc.resolve_service_endpoint(write_doc_request)
         assert read_resolved == write_resolved
