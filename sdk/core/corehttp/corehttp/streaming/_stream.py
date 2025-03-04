@@ -25,14 +25,14 @@
 # --------------------------------------------------------------------------
 
 from types import TracebackType
-from typing import Iterator, AsyncIterator, TypeVar, Callable, Any, Optional, Type
+from typing import Iterator, AsyncIterator, TypeVar, Callable, Optional, Type
 
 from typing_extensions import Self
 
 from ..rest import HttpResponse, AsyncHttpResponse
 from .decoders import StreamDecoder, AsyncStreamDecoder
 
-
+DecodedType = TypeVar("DecodedType")
 ReturnType_co = TypeVar("ReturnType_co", covariant=True)
 
 
@@ -53,8 +53,8 @@ class Stream(Iterator[ReturnType_co]):
         self,
         *,
         response: HttpResponse,
-        decoder: StreamDecoder,
-        deserialization_callback: Callable[[Any], ReturnType_co],
+        decoder: StreamDecoder[DecodedType],
+        deserialization_callback: Callable[[DecodedType], ReturnType_co],
         terminal_event: Optional[str] = None,
     ) -> None:
         self._response = response
@@ -109,8 +109,8 @@ class AsyncStream(AsyncIterator[ReturnType_co]):
         self,
         *,
         response: AsyncHttpResponse,
-        decoder: AsyncStreamDecoder,
-        deserialization_callback: Callable[[Any], ReturnType_co],
+        decoder: AsyncStreamDecoder[DecodedType],
+        deserialization_callback: Callable[[DecodedType], ReturnType_co],
         terminal_event: Optional[str] = None,
     ) -> None:
         self._response = response
