@@ -291,6 +291,19 @@ class TestComputeEntity:
         )
         assert compute_from_rest.ssh_public_access_enabled == False
 
+    def test_compute_instace_to_rest(self):
+        compute: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci.yaml")
+        compute.ssh_public_access_enabled = True
+
+        compute_rest = compute._to_rest_object()
+
+        assert compute_rest.location == compute.location
+        assert compute_rest.properties.properties.ssh_settings.ssh_public_access == "Enabled"
+        assert compute_rest.properties.properties.ssh_settings.admin_public_key == compute.ssh_settings.ssh_key_value
+        assert compute_rest.properties.description == compute.description
+        assert compute_rest.properties.compute_type == "ComputeInstance"
+        assert compute_rest.properties.disable_local_auth == False
+
     def test_compute_instance_sai_from_yaml(self):
         compute: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci.yaml")
         assert compute.name == "banchci"
@@ -299,6 +312,7 @@ class TestComputeEntity:
 
         compute_resource = compute._to_rest_object()
         assert compute_resource.identity.type == "SystemAssigned"
+        assert compute_resource.properties.disable_local_auth == True
 
         compute_from_rest = Compute._from_rest_object(compute_resource)
         assert compute_from_rest.type == "computeinstance"
