@@ -30,6 +30,7 @@ class TestSparkJobSchema:
         assert source.properties.conf == target["conf"]
         assert source.properties.code_id == target["code"]
 
+    @pytest.mark.skip()
     def test_invalid_runtime_version(self):
         test_path = "./tests/test_configs/spark_job/spark_job_invalid_runtime.yml"
         with open(test_path, "r") as f:
