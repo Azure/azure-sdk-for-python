@@ -142,7 +142,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
                 if not tracer:
                     _LOGGER.warning(
                         "Tracing is enabled, but not able to get an OpenTelemetry tracer. "
-                        "Please check that `opentelemtry-api` is installed."
+                        "Please ensure that `opentelemetry-api` is installed."
                     )
                     return
 
