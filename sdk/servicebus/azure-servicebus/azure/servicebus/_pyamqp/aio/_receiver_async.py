@@ -90,6 +90,7 @@ class ReceiverLink(Link):
             self._drain_state = False
             self._received_drain_response = True
             self.current_link_credit = frame[6]  # link_credit
+            self.total_link_credit = frame[6]  # link_credit
 
     async def _incoming_transfer(self, frame):
         if self.network_trace:
