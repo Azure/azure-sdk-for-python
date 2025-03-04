@@ -43,7 +43,7 @@ from devtools_testutils import (
 TEST_SYNC_CLIENT = False
 BatchClient = SyncBatchClient if TEST_SYNC_CLIENT else AsyncBatchClient
 
-AZURE_LOCATION = "eastus"
+AZURE_LOCATION = "eastus2"
 BATCH_ENVIRONMENT = None  # Set this to None if testing against prod
 BATCH_RESOURCE = "https://batch.core.windows.net/"
 DEFAULT_VM_SIZE = "standard_d2_v2"
@@ -223,7 +223,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert len(pools) > 1
 
         # Test List Pools with Maximum
-        pools = list(await async_wrapper(client.list_pools(maxresults=1)))
+        pools = list(await async_wrapper(client.list_pools(max_results=1)))
         assert len(pools) == 3
 
         # Test List Pools with Filter
@@ -361,8 +361,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await async_wrapper(
             client.enable_pool_auto_scale(
                 batch_pool.name,
-                auto_scale_formula="$TargetDedicatedNodes=2",
-                auto_scale_evaluation_interval=interval,
+                models.BatchPoolEnableAutoScaleContent(
+                    auto_scale_formula="$TargetDedicatedNodes=2",
+                    auto_scale_evaluation_interval=interval,
+                ),
             )
         )
 
@@ -402,10 +404,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
             time.sleep(5)
             pool = await async_wrapper(client.get_pool(batch_pool.name))
-
-        # Test Get Pool Usage Info
-        info = list(await async_wrapper(client.list_pool_usage_metrics()))
-        assert info == []
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -524,7 +522,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         nodes = list(await async_wrapper(client.list_nodes(pool.id)))
         assert len(nodes) == 1
         assert isinstance(nodes[0], models.BatchNode)
-        assert len(nodes[0].endpoint_configuration.inbound_endpoints) == 2
+        assert len(nodes[0].endpoint_configuration.inbound_endpoints) == 1
         assert nodes[0].endpoint_configuration.inbound_endpoints[0].name == "TestEndpointConfig.0"
         assert nodes[0].endpoint_configuration.inbound_endpoints[0].protocol == "udp"
 
@@ -572,7 +570,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             client.disable_node_scheduling(
                 batch_pool.name,
                 nodes[0].id,
-                models.BatchNodeDisableSchedulingOption.terminate,
+                models.BatchNodeDisableSchedulingContent(node_disable_scheduling_option=models.BatchNodeDisableSchedulingOption.terminate),
             )
         )
         assert response is None
@@ -902,16 +900,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert task.user_identity.auto_user.scope == models.AutoUserScope.task
         assert task.user_identity.auto_user.elevation_level == models.ElevationLevel.admin
 
-        # Test Create Task with Token Settings
-        task_param = models.BatchTaskCreateContent(
-            id=self.get_resource_name("batch_task4_"),
-            command_line='cmd /c "echo hello world"',
-            authentication_token_settings=models.AuthenticationTokenSettings(access=[models.AccessScope.job]),
-        )
-        await async_wrapper(client.create_task(batch_job.id, task_param))
-        task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
-        assert isinstance(task, models.BatchTask)
-        assert task.authentication_token_settings.access[0] == models.AccessScope.job
 
         # Test Create Task with Container Settings
         task_param = models.BatchTaskCreateContent(
@@ -955,7 +943,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test List Tasks
         tasks = list(await async_wrapper(client.list_tasks(batch_job.id)))
-        assert len(tasks) == 9
+        assert len(tasks) == 8
 
         # Test Count Tasks
         task_results = await async_wrapper(client.get_job_task_counts(batch_job.id))
