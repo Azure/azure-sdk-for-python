@@ -55,7 +55,8 @@ def get_tracer(
     :paramtype library_name: str
     :keyword library_version: The version of the library to use in the tracer.
     :paramtype library_version: str
-    :keyword schema_url: Specifies the Schema URL of the emitted spans.
+    :keyword schema_url: Specifies the Schema URL of the emitted spans. Defaults to
+        "https://opentelemetry.io/schemas/1.23.1".
     :paramtype schema_url: str
     :keyword attributes: Attributes to add to the emitted spans.
     :paramtype attributes: Mapping[str, Union[str, bool, int, float]]

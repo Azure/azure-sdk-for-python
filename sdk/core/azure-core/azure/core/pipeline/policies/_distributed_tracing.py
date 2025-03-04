@@ -140,6 +140,10 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
                     attributes=config.get("attributes"),
                 )
                 if not tracer:
+                    _LOGGER.warning(
+                        "Tracing is enabled, but not able to get an OpenTelemetry tracer. "
+                        "Please check that `opentelemtry-api` is installed."
+                    )
                     return
 
                 otel_span = tracer.start_span(
@@ -206,6 +210,13 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
             self._set_http_client_span_attributes(span, request=http_request, response=response)
             span.set_attributes(attributes)
             if exc_info:
+                # If there was an exception, set the error.type attribute.
+                exception_type = exc_info[0]
+                if exception_type:
+                    module = exception_type.__module__ if exception_type.__module__ != "builtins" else ""
+                    error_type = f"{module}.{exception_type.__qualname__}" if module else exception_type.__qualname__
+                    span.set_attribute(self._ERROR_TYPE, error_type)
+
                 span.__exit__(*exc_info)
             else:
                 span.end()
@@ -239,7 +250,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         :param request: The request made
         :type request: ~azure.core.rest.HttpRequest
         :param response: The response received from the server. Is None if no response received.
-        :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
+        :type response: ~azure.core.rest.HTTPResponse or ~azure.core.pipeline.transport.HttpResponse
         """
         attributes: Dict[str, Any] = {
             self._HTTP_REQUEST_METHOD: request.method,
@@ -259,8 +270,5 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
             attributes[self._HTTP_RESPONSE_STATUS_CODE] = response.status_code
             if response.status_code >= 400:
                 attributes[self._ERROR_TYPE] = str(response.status_code)
-        else:
-            attributes[self._HTTP_RESPONSE_STATUS_CODE] = 504
-            attributes[self._ERROR_TYPE] = "504"
 
         span.set_attributes(attributes)

@@ -35,7 +35,7 @@ from ..instrumentation import get_tracer as _get_tracer
 from ._models import SpanKind as _SpanKind
 
 if TYPE_CHECKING:
-    from ._models import TracingOptions
+    from azure.core.tracing import TracingOptions, SpanKind
 
 
 P = ParamSpec("P")
@@ -55,7 +55,7 @@ def distributed_trace(__func: Callable[P, T]) -> Callable[P, T]:
 def distributed_trace(
     *,
     name_of_span: Optional[str] = None,
-    kind: Optional[_SpanKind] = None,
+    kind: Optional["SpanKind"] = None,
     tracing_attributes: Optional[Mapping[str, Any]] = None,
     **kwargs: Any,
 ) -> Callable[[Callable[P, T]], Callable[P, T]]:
@@ -66,7 +66,7 @@ def distributed_trace(
     __func: Optional[Callable[P, T]] = None,  # pylint: disable=unused-argument
     *,
     name_of_span: Optional[str] = None,
-    kind: Optional[_SpanKind] = None,
+    kind: Optional["SpanKind"] = None,
     tracing_attributes: Optional[Mapping[str, Any]] = None,
     **kwargs: Any,
 ) -> Any:

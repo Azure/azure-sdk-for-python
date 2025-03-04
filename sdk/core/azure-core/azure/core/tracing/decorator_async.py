@@ -29,13 +29,13 @@ import functools
 
 from typing import Awaitable, Callable, Any, TypeVar, overload, Optional, Mapping, TYPE_CHECKING
 from typing_extensions import ParamSpec
-from .common import change_context, get_function_and_class_name
+from .common import change_context
 from ._models import SpanKind as _SpanKind
 from ..instrumentation import get_tracer as _get_tracer
 from ..settings import settings
 
 if TYPE_CHECKING:
-    from ._models import TracingOptions
+    from azure.core.tracing import TracingOptions, SpanKind
 
 
 P = ParamSpec("P")
@@ -55,7 +55,7 @@ def distributed_trace_async(__func: Callable[P, Awaitable[T]]) -> Callable[P, Aw
 def distributed_trace_async(
     *,
     name_of_span: Optional[str] = None,
-    kind: Optional[_SpanKind] = None,
+    kind: Optional["SpanKind"] = None,
     tracing_attributes: Optional[Mapping[str, Any]] = None,
     **kwargs: Any,
 ) -> Callable[[Callable[P, Awaitable[T]]], Callable[P, Awaitable[T]]]:
@@ -66,7 +66,7 @@ def distributed_trace_async(  # pylint: disable=unused-argument
     __func: Optional[Callable[P, Awaitable[T]]] = None,
     *,
     name_of_span: Optional[str] = None,
-    kind: Optional[_SpanKind] = None,
+    kind: Optional["SpanKind"] = None,
     tracing_attributes: Optional[Mapping[str, Any]] = None,
     **kwargs: Any,
 ) -> Any:
@@ -132,7 +132,6 @@ def distributed_trace_async(  # pylint: disable=unused-argument
             if span_impl_type:
                 # Plugin path
                 with change_context(passed_in_parent):
-                    name = name_of_span or get_function_and_class_name(func, *args)
                     with span_impl_type(name=name, kind=kind) as span:
                         for key, value in span_attributes.items():
                             span.add_attribute(key, value)  # type: ignore

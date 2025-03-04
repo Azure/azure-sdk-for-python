@@ -1,6 +1,6 @@
 # Release History
 
-## 1.32.1 (Unreleased)
+## 1.33.0 (Unreleased)
 
 ### Features Added
 
@@ -21,13 +21,13 @@
 
 ### Breaking Changes
 
-- Removed automatic tracing enablement for the OpenTelemetry plugin if `opentelemetry` was imported. #39563
+- Removed automatic tracing enablement for the OpenTelemetry plugin if `opentelemetry` was imported. To enable tracing with the plugin, please import `azure.core.settings.settings` and set `settings.tracing_implementation` to `"opentelemetry"`. #39563
 
 ### Bugs Fixed
 
 ### Other Changes
 
-- Added `opentelemetry-api` as an optional dependency for tracing. #39563
+- Added `opentelemetry-api` as an optional dependency for tracing. This can be installed with `pip install azure-core[tracing]`. #39563
 
 ## 1.32.0 (2024-10-31)
 

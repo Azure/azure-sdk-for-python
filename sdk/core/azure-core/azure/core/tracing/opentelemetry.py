@@ -4,7 +4,7 @@
 # ------------------------------------
 from __future__ import annotations
 from contextlib import contextmanager
-from typing import Optional, Dict, Sequence, cast, Callable, Iterator
+from typing import Optional, Dict, Sequence, cast, Callable, Iterator, TYPE_CHECKING
 
 from opentelemetry import context as otel_context_module, trace
 from opentelemetry.trace import (
@@ -24,8 +24,10 @@ from .._version import VERSION
 from ._models import (
     Attributes,
     SpanKind as _SpanKind,
-    Link as _Link,
 )
+
+if TYPE_CHECKING:
+    from azure.core.tracing import Link, SpanKind
 
 
 _DEFAULT_SCHEMA_URL = "https://opentelemetry.io/schemas/1.23.1"
@@ -48,9 +50,11 @@ class OpenTelemetryTracer:
     :paramtype library_name: str
     :keyword library_version: The version of the library to use in the tracer.
     :paramtype library_version: str
-    :keyword schema_url: Specifies the Schema URL of the emitted spans.
+    :keyword schema_url: Specifies the Schema URL of the emitted spans. Defaults to
+        "https://opentelemetry.io/schemas/1.23.1".
     :paramtype schema_url: str
     :keyword attributes: Attributes to add to the emitted spans.
+    :paramtype attributes: Mapping[str, AttributeValue]
     """
 
     def __init__(
@@ -72,9 +76,9 @@ class OpenTelemetryTracer:
         self,
         name: str,
         *,
-        kind: _SpanKind = _SpanKind.INTERNAL,
+        kind: SpanKind = _SpanKind.INTERNAL,
         attributes: Optional[Attributes] = None,
-        links: Optional[Sequence[_Link]] = None,
+        links: Optional[Sequence[Link]] = None,
     ) -> Span:
         """Starts a span without setting it as the current span in the context.
 
@@ -107,9 +111,9 @@ class OpenTelemetryTracer:
         self,
         name: str,
         *,
-        kind: _SpanKind = _SpanKind.INTERNAL,
+        kind: SpanKind = _SpanKind.INTERNAL,
         attributes: Optional[Attributes] = None,
-        links: Optional[Sequence[_Link]] = None,
+        links: Optional[Sequence[Link]] = None,
     ) -> Iterator[Span]:
         """Context manager that starts a span and sets it as the current span in the context.
 
@@ -136,7 +140,7 @@ class OpenTelemetryTracer:
         with trace.use_span(span, record_exception=False, end_on_exit=True) as span:  # type: ignore[attr-defined]  # pylint: disable=not-context-manager
             yield span
 
-    def _parse_links(self, links: Optional[Sequence[_Link]]) -> Optional[Sequence[OpenTelemetryLink]]:
+    def _parse_links(self, links: Optional[Sequence[Link]]) -> Optional[Sequence[OpenTelemetryLink]]:
         if not links:
             return None
 
