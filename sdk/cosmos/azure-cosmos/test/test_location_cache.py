@@ -39,8 +39,7 @@ def refresh_location_cache(preferred_locations, use_multiple_write_locations):
     lc = LocationCache(preferred_locations=preferred_locations,
                        default_endpoint=default_endpoint,
                        enable_endpoint_discovery=True,
-                       use_multiple_write_locations=use_multiple_write_locations,
-                       refresh_time_interval_in_ms=refresh_time_interval_in_ms)
+                       use_multiple_write_locations=use_multiple_write_locations)
     return lc
 
 @pytest.mark.cosmosEmulator

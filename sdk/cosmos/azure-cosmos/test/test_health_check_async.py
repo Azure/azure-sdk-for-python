@@ -195,7 +195,7 @@ class TestHealthCheckAsync:
             setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.preferred_locations = self.original_preferred_locations
         expected_endpoints = []
 
-        if not use_write_global_endpoint or not use_read_global_endpoint :
+        if not use_write_global_endpoint:
             for region in REGIONS:
                 locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, region)
                 expected_endpoints.append(locational_endpoint)
