@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b35 (Unreleased)
+## 1.0.0b35 (2025-03-04)
 
 ### Features Added
 
@@ -9,14 +9,10 @@
 - Populate `client_Ip` on `customEvent` telemetry
   ([#39923](https://github.com/Azure/azure-sdk-for-python/pull/39923))
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Implement `from_log_record` for `Trace` data types in live metrics
   ([#39922](https://github.com/Azure/azure-sdk-for-python/pull/39922))
-
-### Other Changes
 
 ## 1.0.0b34 (2025-02-26)
 
