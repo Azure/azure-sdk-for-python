@@ -23,10 +23,7 @@ def get_package_wheel_path(pkg_root):
     # Check if wheel is already built and available for current package
     prebuilt_dir = os.getenv("PREBUILT_WHEEL_DIR")
     if prebuilt_dir:
-        prebuilt_package_path = find_whl(prebuilt_dir, pkg_details.name, pkg_details.version)
-        if prebuilt_package_path:
-            logging.info("Prebuilt package path: {}".format(os.path.abspath(prebuilt_package_path)))
-            return os.path.abspath(prebuilt_package_path)
+        return find_whl(prebuilt_dir, pkg_details.name, pkg_details.version)
     return None
 
 
