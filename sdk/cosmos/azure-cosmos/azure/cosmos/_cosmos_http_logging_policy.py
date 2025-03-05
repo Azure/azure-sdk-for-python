@@ -85,7 +85,6 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         else:
             self._should_log = self._default_should_log  # type: ignore
         self.__global_endpoint_manager = global_endpoint_manager
-        self.__client_settings = self.__get_client_settings()
         self.__database_account_settings: Optional[DatabaseAccount] = (database_account or
                                                                        self.__get_database_account_settings())
         self._resource_map = {
@@ -95,15 +94,14 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         }
 
         super().__init__(logger, **kwargs)
-        if self._enable_diagnostics_logging:
-            cosmos_disallow_list = ["Authorization", "ProxyAuthorization"]
-            cosmos_allow_list = [
-                v for k, v in HttpHeaders.__dict__.items() if not k.startswith("_") and k not in cosmos_disallow_list
-            ]
-            self.allowed_header_names = set(cosmos_allow_list)
-            # For optimizing header redaction. We create the set with lower case allowed headers
-            self.lower_case_allowed_header_names: Set[str] = {header.lower() for header in self.allowed_header_names}
-            self.lower_case_allowed_query_params: Set[str] = {param.lower() for param in self.allowed_query_params}
+        cosmos_disallow_list = ["Authorization", "ProxyAuthorization"]
+        cosmos_allow_list = [
+            v for k, v in HttpHeaders.__dict__.items() if not k.startswith("_") and k not in cosmos_disallow_list
+        ]
+        self.allowed_header_names = set(cosmos_allow_list)
+        # For optimizing header redaction. We create the set with lower case allowed headers
+        self.lower_case_allowed_header_names: Set[str] = {header.lower() for header in self.allowed_header_names}
+        self.lower_case_allowed_query_params: Set[str] = {param.lower() for param in self.allowed_query_params}
 
     def _redact_query_param(self, key: str, value: str) -> str:
         return value if key.lower() in self.lower_case_allowed_query_params else HttpLoggingPolicy.REDACTED_PLACEHOLDER
@@ -113,7 +111,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             return value
         return HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
-    def on_request(  # pylint: disable=too-many-return-statements, too-many-statements
+    def on_request(  # pylint: disable=too-many-return-statements, too-many-statements, too-many-nested-blocks, too-many-branches
             self, request: PipelineRequest[HTTPRequestType]
     ) -> None:
         """Logs HTTP method, url and headers.
@@ -273,7 +271,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             logger = context.setdefault("logger", options.pop("logger", self.logger))
 
             if self._should_log(**log_data):
-                context["logger_attributes"] = log_data
+                context["logger_attributes"] = log_data.copy()
                 self.on_request(request)
 
                 try:
