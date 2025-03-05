@@ -30,14 +30,13 @@ class TestSparkJobSchema:
         assert source.properties.conf == target["conf"]
         assert source.properties.code_id == target["code"]
 
-    @pytest.mark.skip()
     def test_invalid_runtime_version(self):
         test_path = "./tests/test_configs/spark_job/spark_job_invalid_runtime.yml"
         with open(test_path, "r") as f:
             cfg = yaml.safe_load(f)
             context = {BASE_PATH_CONTEXT_KEY: Path(test_path).parent}
             schema = SparkJobSchema(context=context)
-            with pytest.raises(ValidationError) as ve:
+            with pytest.raises(ValidationException) as ve:
                 internal_representation: SparkJob = SparkJob(**schema.load(cfg))
                 source = internal_representation._to_rest_object()
                 assert ve.message == "runtime version should be 3.4"
