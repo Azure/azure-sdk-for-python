@@ -27,7 +27,7 @@ MASTER_KEY = config.settings['master_key']
 # 5. retry_on_status_codes is a list of specific status codes to retry on. The default value is an empty list as the
 #    SDK has its own retry logic already configured where this is option is taken care of.
 #
-# 6. retry_backoff_factor is a factor to calculate wait time between retry attempts. Default value is .08 seconds
+# 6. retry_backoff_factor is a factor to calculate wait time between retry attempts. Default value is 1 second
 #
 # 7. retry_backoff_max option determines the maximum back off time. Default value is 120 seconds (2 minutes)
 #

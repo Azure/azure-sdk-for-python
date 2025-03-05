@@ -297,7 +297,7 @@ the client level to enable it for all requests.
 
 ### General
 Azure Tables clients raise exceptions defined in [Azure Core][azure_core_readme].
-When you interact with the Azure table library using the Python SDK, errors returned by the service respond ot the same HTTP status codes for [REST API][tables_rest] requests. The Table service operations will throw a `HttpResponseError` on failure with helpful [error codes][tables_error_codes].
+When you interact with the Azure table library using the Python SDK, errors returned by the service respond to the same HTTP status codes for [REST API][tables_rest] requests. The Table service operations will throw a `HttpResponseError` on failure with helpful [error codes][tables_error_codes].
 
 For examples, if you try to create a table that already exists, a `409` error is returned indicating "Conflict".
 ```python
@@ -423,4 +423,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct][msft_oss_co
 [get_entity]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py#L67-L71
 [upsert_entity]:https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py#L155-L163
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/tables/azure-data-tables/README.png)
+

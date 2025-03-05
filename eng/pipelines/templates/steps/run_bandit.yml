@@ -21,7 +21,6 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="bandit"
         --disablecov
-        --filter-type="Omit_management"
         ${{ parameters.AdditionalTestArgs }}
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Bandit'],'true'))

@@ -6,6 +6,7 @@
 from datetime import timedelta
 
 from azure.monitor.query import MetricsClient, MetricAggregationType
+from azure.monitor.query._version import VERSION
 
 from base_testcase import MetricsClientTestCase
 
@@ -53,3 +54,7 @@ class TestMetricsClient(MetricsClientTestCase):
 
         assert client._endpoint == endpoint
         assert f"{audience}/.default" in client._client._config.authentication_policy._scopes
+
+    def test_client_user_agent(self):
+        client: MetricsClient = self.get_client(MetricsClient, self.get_credential(MetricsClient))
+        assert f"monitor-query/{VERSION}" in client._client._config.user_agent_policy.user_agent

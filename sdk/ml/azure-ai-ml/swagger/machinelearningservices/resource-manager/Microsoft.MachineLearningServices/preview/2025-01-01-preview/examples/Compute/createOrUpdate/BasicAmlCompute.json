@@ -1,0 +1,60 @@
+{
+  "parameters": {
+    "subscriptionId": "34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
+    "resourceGroupName": "testrg123",
+    "workspaceName": "workspaces123",
+    "computeName": "compute123",
+    "api-version": "2025-01-01-preview",
+    "parameters": {
+      "location": "eastus",
+      "properties": {
+        "computeType": "AmlCompute",
+        "properties": {
+          "vmSize": "STANDARD_NC6",
+          "vmPriority": "Dedicated",
+          "osType": "Windows",
+          "virtualMachineImage": {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup/providers/Microsoft.Compute/galleries/myImageGallery/images/myImageDefinition/versions/0.0.1"
+          },
+          "isolatedNetwork": false,
+          "scaleSettings": {
+            "maxNodeCount": 1,
+            "minNodeCount": 0,
+            "nodeIdleTimeBeforeScaleDown": "PT5M"
+          },
+          "remoteLoginPortPublicAccess": "NotSpecified",
+          "enableNodePublicIp": true
+        }
+      }
+    }
+  },
+  "responses": {
+    "200": {
+      "body": {
+        "id": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/testrg123/providers/Microsoft.MachineLearningServices/workspaces/workspaces123/computes/compute123",
+        "type": "Microsoft.MachineLearningServices/workspaces/computes",
+        "name": "compute123",
+        "location": "eastus",
+        "properties": {
+          "computeType": "AmlCompute",
+          "provisioningState": "Creating"
+        }
+      }
+    },
+    "201": {
+      "body": {
+        "id": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/testrg123/providers/Microsoft.MachineLearningServices/workspaces/workspaces123/computes/compute123",
+        "type": "Microsoft.MachineLearningServices/workspaces/computes",
+        "name": "compute123",
+        "location": "eastus",
+        "properties": {
+          "computeType": "AmlCompute",
+          "provisioningState": "Creating"
+        }
+      },
+      "headers": {
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/...pathToOperationStatus..."
+      }
+    }
+  }
+}

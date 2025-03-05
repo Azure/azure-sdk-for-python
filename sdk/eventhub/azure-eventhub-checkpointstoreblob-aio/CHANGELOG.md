@@ -1,10 +1,8 @@
 # Release History
 
-## 1.2.0 (2025-02-11)
+## 1.2.0 (2025-02-13)
 
 This version and all future versions will require Python 3.8+. Python 2.7, 3.6, and 3.7 are no longer supported.
-
-- `aiohttp` dependency upper bound raised to `<5.0` to account for the custom built `aiohttp` that supports python 3.12. This change may be reverted prior to release.
 
 ### Bugs Fixed
 
@@ -73,5 +71,3 @@ This release has trivial internal changes only. No feature changes.
 **New features**
 
 - `BlobPartitionManager` that uses Azure Blob Storage Block Blob to store EventProcessor checkpoint data
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/HISTORY.png)

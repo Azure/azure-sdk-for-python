@@ -287,8 +287,6 @@ class TestAdvSimulator:
             ]
         )
 
-    @pytest.mark.skipif(
-            not is_live(), reason="Getting ServiceResponseTimeoutError in playback mode. WI: 3819148")
     def test_adv_summarization_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
@@ -420,7 +418,6 @@ class TestAdvSimulator:
         )
         assert len(outputs) == 1
 
-    @pytest.mark.skipif(is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT.")
     def test_adv_protected_matierial_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
@@ -464,7 +461,6 @@ class TestAdvSimulator:
         )
         assert len(outputs) == 1
 
-    @pytest.mark.skipif(is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT.")
     def test_adv_eci_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.simulator import AdversarialSimulator
@@ -794,7 +790,6 @@ class TestAdvSimulator:
         outputs3["regular"][0]["messages"][0]["content"] in outputs3["jailbreak"][0]["messages"][0]["content"]
         outputs3["regular"][0]["messages"][0]["content"] != outputs3["jailbreak"][0]["messages"][0]["content"]
 
-    @pytest.mark.skip("Skipping due to category mismatch in simulator output. WI: 3819162")
     def test_regular_and_jailbreak_outputs_match(self, azure_cred, project_scope):
         """
         Test to verify that the regular and jailbreak outputs of the simulator have matching categories

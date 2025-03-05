@@ -8,4 +8,4 @@ If you are looking to install the Azure client libraries, refer to the main Gith
 https://github.com/Azure/azure-sdk-for-python
 
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-common%2FREADME.png)
+

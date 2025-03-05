@@ -27,7 +27,7 @@ class _config:
     sum = 0
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosQuery
 class TestAggregateQuery(unittest.TestCase):
     client: cosmos_client.CosmosClient = None
 

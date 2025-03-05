@@ -314,6 +314,7 @@
     "logz",
     "LPCWSTR",
     "Lucene",
+    "Mazuel",
     "mbps",
     "mday",
     "mibps",
@@ -1370,7 +1371,9 @@
         "wday",
         "Hola",
         "cómo",
-        "estás"
+        "estás",
+        "logprobs",
+        "conver",
       ]
     },
     {
