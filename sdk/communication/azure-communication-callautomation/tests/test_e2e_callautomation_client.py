@@ -112,7 +112,7 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
         return
     
     @recorded_by_proxy
-    def test_create_VOIP_call_and_answer_with_custom_context_then_hangup(self):
+    def test_create_VOIP_call_and_answer_custom_context(self):
         # try to establish the call
         caller = self.identity_client.create_user()
         target = self.identity_client.create_user()
