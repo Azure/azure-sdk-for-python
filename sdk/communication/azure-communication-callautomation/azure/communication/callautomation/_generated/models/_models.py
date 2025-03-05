@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -98,8 +98,7 @@ class AddParticipantRequest(_serialization.Model):
      ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
     :ivar source_display_name: (Optional) The display name of the source that is associated with
      this invite operation when
-     adding a PSTN participant or teams user.  Note: Will not update the display name in the
-     roster.
+     adding a PSTN participant or teams user.  Note: Will not update the display name in the roster.
     :vartype source_display_name: str
     :ivar participant_to_add: The participant to invite. Required.
     :vartype participant_to_add:
@@ -156,8 +155,7 @@ class AddParticipantRequest(_serialization.Model):
          ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
         :keyword source_display_name: (Optional) The display name of the source that is associated with
          this invite operation when
-         adding a PSTN participant or teams user.  Note: Will not update the display name in the
-         roster.
+         adding a PSTN participant or teams user.  Note: Will not update the display name in the roster.
         :paramtype source_display_name: str
         :keyword participant_to_add: The participant to invite. Required.
         :paramtype participant_to_add:
@@ -5450,7 +5448,7 @@ class RecordingStorageInfo(_serialization.Model):
     """Container for chunks.
 
     :ivar recording_chunks: Collection of
-     {Microsoft.Skype.Platform.ExecutionAgent.Azure.Communication.Service.ServerCalling.Content.Contracts.ALPHA4_2024_09_01_preview.Models.RecordingChunkStorageInfo}.  # pylint: disable=line-too-long
+     {Microsoft.Skype.Platform.ExecutionAgent.Azure.Communication.Service.ServerCalling.Content.Contracts.ALPHA4_2024_09_01_preview.Models.RecordingChunkStorageInfo}.
     :vartype recording_chunks:
      list[~azure.communication.callautomation.models.RecordingChunkStorageInfo]
     """
@@ -5464,7 +5462,7 @@ class RecordingStorageInfo(_serialization.Model):
     ) -> None:
         """
         :keyword recording_chunks: Collection of
-         {Microsoft.Skype.Platform.ExecutionAgent.Azure.Communication.Service.ServerCalling.Content.Contracts.ALPHA4_2024_09_01_preview.Models.RecordingChunkStorageInfo}.  # pylint: disable=line-too-long
+         {Microsoft.Skype.Platform.ExecutionAgent.Azure.Communication.Service.ServerCalling.Content.Contracts.ALPHA4_2024_09_01_preview.Models.RecordingChunkStorageInfo}.
         :paramtype recording_chunks:
          list[~azure.communication.callautomation.models.RecordingChunkStorageInfo]
         """
@@ -6109,8 +6107,8 @@ class StartCallRecordingRequest(_serialization.Model):
     :vartype audio_channel_participant_ordering:
      list[~azure.communication.callautomation.models.CommunicationIdentifierModel]
     :ivar channel_affinity: The channel affinity of call recording
-     When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
-     'channel' will be automatically assigned.
+     When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified, 'channel'
+     will be automatically assigned.
      Channel-Participant mapping details can be found in the metadata of the recording.
      ///.
     :vartype channel_affinity: list[~azure.communication.callautomation.models.ChannelAffinity]
@@ -6184,8 +6182,8 @@ class StartCallRecordingRequest(_serialization.Model):
         :paramtype audio_channel_participant_ordering:
          list[~azure.communication.callautomation.models.CommunicationIdentifierModel]
         :keyword channel_affinity: The channel affinity of call recording
-         When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified,
-         'channel' will be automatically assigned.
+         When 'recordingChannelType' is set to 'unmixed', if channelAffinity is not specified, 'channel'
+         will be automatically assigned.
          Channel-Participant mapping details can be found in the metadata of the recording.
          ///.
         :paramtype channel_affinity: list[~azure.communication.callautomation.models.ChannelAffinity]
