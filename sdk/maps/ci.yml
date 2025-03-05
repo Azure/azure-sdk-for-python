@@ -37,5 +37,7 @@ extends:
       safeName: azuremapsrender
     - name: azure-maps-route
       safeName: azuremapsroute
+    - name: azure-maps-timezone
+      safeName: azuremapstimezone
     - name: azure-maps-weather
       safeName: azuremapsweather

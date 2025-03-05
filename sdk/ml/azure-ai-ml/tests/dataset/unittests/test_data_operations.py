@@ -1,6 +1,6 @@
-import os
+import os, sys
 from pathlib import Path
-from typing import Callable, Iterable
+from typing import Iterable
 from unittest.mock import ANY, Mock, patch
 
 import pytest
@@ -24,7 +24,6 @@ from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.exceptions import ErrorTarget
 from azure.ai.ml.operations import DataOperations, DatastoreOperations
-from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
 
@@ -577,6 +576,10 @@ class TestDataOperations:
                 blob_uri=None,
             )
 
+    @pytest.mark.skipif(
+        sys.version_info >= (3, 13),
+        reason="Skipping because Python version is 3.13 or above. azureml.dataprep.rslex do not support py313",
+    )
     def test_mount_persistent(
         self,
         mock_data_operations: DataOperations,
@@ -597,6 +600,10 @@ class TestDataOperations:
             mock_build_uri.assert_called_once()
             mock_data_operations._compute_operation.update_data_mounts.assert_called_once()
 
+    @pytest.mark.skipif(
+        sys.version_info >= (3, 13),
+        reason="Skipping because Python version is 3.13 or above. azureml.dataprep.rslex do not support py313",
+    )
     def test_mount_non_persistent(
         self,
         mock_data_operations: DataOperations,

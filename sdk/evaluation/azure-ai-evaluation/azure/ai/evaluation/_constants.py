@@ -22,6 +22,9 @@ class EvaluationMetrics:
     SELF_HARM = "self_harm"
     SEXUAL = "sexual"
     PROTECTED_MATERIAL = "protected_material"
+    ARTWORK = "artwork"
+    FICTIONAL_CHARACTERS = "fictional_characters"
+    LOGOS_AND_BRANDS = "logos_and_brands"
     XPIA = "xpia"
 
 

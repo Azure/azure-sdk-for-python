@@ -1,5 +1,23 @@
 # Release History
-## 1.26.0 (unreleased)
+## 1.27.0 (unreleased)
+### Features Added
+
+### Bugs Fixed
+
+## 1.26.0 (2025-03-11)
+
+### Features Added
+  - Adding parent job support for command job.
+  - Adding multiple docker argument support for command job.
+
+### Bugs Fixed
+  - #37464 - Allowing to update a component in register with anonymousEnvironment environment.
+  - #39744 - Fixing a serialization issue in RecurrencePattern schedule.
+  - #39793 - Fixing bug in AML OBO to work with KV secret client.
+  - Fix environment archiving and restore
+
+### Other Changes
+  - Removing use of protected methods/classes imported from external libraries.
 
 ## 1.25.0 (2025-02-11)
 
@@ -8,6 +26,10 @@
 ### Bugs Fixed
   - #39187 - Submitting a Command job created using the __call__ method on another Command is missing outputs.
   - #37738 - documentation fix for deployment entities.
+
+### Other Changes
+
+- Adding support for Python 3.13. Ensuring that azureml-dataprep-rslex is only installed for Python versions below 3.13. This change may break if `Annotated` used directly without parameters.
 
 ## 1.24.0 (2025-01-07)
 

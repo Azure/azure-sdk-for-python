@@ -215,7 +215,7 @@ class OnlineDeployment(Deployment):
         if deployment.properties.endpoint_compute_type == EndpointComputeType.MANAGED:
             return ManagedOnlineDeployment._from_rest_object(deployment)
 
-        msg = f"Unsupported online endpoint type {deployment.properties.type}."
+        msg = f"Unsupported online endpoint type {deployment.properties.endpoint_compute_type}."
         raise DeploymentException(
             message=msg,
             target=ErrorTarget.ONLINE_DEPLOYMENT,

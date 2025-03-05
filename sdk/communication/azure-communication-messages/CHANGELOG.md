@@ -1,14 +1,16 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 1.2.0b1 (2025-01-15)
+This is feature addition public preview release.
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Using `NotificationMessagesClient`
+  - Send Interactive messages
+    - WhatsApp List Interactive Message
+    - WhatsApp Reply Button Interactive Message
+    - WhatsApp Url Interactive Message
+  - Send Reactions messages
+  - Send Stickers messages
 
 ## 1.1.0 (2024-10-18)
 This is feature addition release.

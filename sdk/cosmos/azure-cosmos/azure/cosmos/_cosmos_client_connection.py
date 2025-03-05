@@ -25,6 +25,7 @@
 """
 import os
 import urllib.parse
+import uuid
 from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast, Type
 from typing_extensions import TypedDict
 from urllib3.util.retry import Retry
@@ -109,7 +110,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     _DefaultStringHashPrecision = 3
     _DefaultStringRangePrecision = -1
 
-    def __init__(
+    def __init__( # pylint: disable=too-many-statements
         self,
         url_connection: str,
         auth: CredentialDict,
@@ -131,6 +132,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The default consistency policy for client operations.
 
         """
+        self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
         self.master_key: Optional[str] = None
         self.resource_tokens: Optional[Mapping[str, Any]] = None
@@ -1029,14 +1031,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         collection_link: str,
         feed_options: Optional[Mapping[str, Any]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Reads all documents in a collection.
         :param str collection_link: The link to the document collection.
         :param dict feed_options: The additional options for the operation.
         :param response_hook: A callable invoked with the response metadata.
-        :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
+        :type response_hook: Callable[[Mapping[str, Any], Dict[str, Any]]
         :return: Query Iterable of Documents.
         :rtype: query_iterable.QueryIterable
         """
@@ -1051,7 +1053,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
         partition_key: Optional[PartitionKeyType] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Queries documents in a collection.
@@ -1063,7 +1065,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param partition_key: Partition key for the query(default value None)
         :type: partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
         :param response_hook: A callable invoked with the response metadata.
-        :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
+        :type response_hook: Callable[[Mapping[str, Any], Dict[str, Any]], None]
 
         :return:
             Query Iterable of Documents.
@@ -2555,7 +2557,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             url_connection = self.url_connection
 
         headers = base.GetHeaders(self, self.default_headers, "get", "", "", "",
-                                  documents._OperationType.Read,{})
+                                  documents._OperationType.Read,{}, client_id=self.client_id)
         request_params = RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
         result, last_response_headers = self.__Get("", request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
@@ -2588,6 +2590,26 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if response_hook:
             response_hook(last_response_headers, result)
         return database_account
+
+    def _GetDatabaseAccountCheck(
+            self,
+            url_connection: Optional[str] = None,
+            **kwargs: Any
+    ):
+        """Gets database account info.
+
+        :param str url_connection: the endpoint used to get the database account
+        :return: The Database Account.
+        :rtype: documents.DatabaseAccount
+        """
+        if url_connection is None:
+            url_connection = self.url_connection
+
+        headers = base.GetHeaders(self, self.default_headers, "get", "", "", "",
+                                  documents._OperationType.Read,{}, client_id=self.client_id)
+        request_params = RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
+        self.__Get("", request_params, headers, **kwargs)
+
 
     def Create(
         self,
@@ -2983,7 +3005,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
         partition_key_range_id: Optional[str] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         is_query_plan: bool = False,
         **kwargs: Any
     ) -> Tuple[List[Dict[str, Any]], CaseInsensitiveDict]:
@@ -2999,7 +3021,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The request options for the request.
         :param str partition_key_range_id:
             Specifies partition key range id.
-        :param function response_hook:
+        :param response_hook: A callable invoked with the response metadata.
+        :type response_hook: Callable[[Mapping[str, Any], Dict[str, Any]], None]
         :param bool is_query_plan:
             Specifies if the call is to fetch query plan
         :returns: A list of the queried resources.
