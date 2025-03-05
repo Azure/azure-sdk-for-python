@@ -27,38 +27,54 @@ async def main():
         "project_name": os.environ.get("AZURE_PROJECT_NAME"),
     }
 
+
+    ## Minimal inputs
     red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
     )
 
     outputs = await red_team_agent.attack(
+        target=test_target_fn, # type: ignore
+    )
+    print(outputs)
+
+
+    ## Maximal inputs
+    red_team_agent = RedTeamAgent(
+        azure_ai_project=azure_ai_project,
+        credential=DefaultAzureCredential(),
+    )
+
+    outputs = await red_team_agent.attack(
+        evaluation_name="Racoon red-team evaluation",
         target=test_target_fn,
-        num_rows=1,
-        attack_strategy=[AttackStrategy.LOW],
-        evaluation_name="CallbackTarget"
+        attack_strategy=[AttackStrategy.Compose([AttackStrategy.Flip, AttackStrategy.Base64]), 
+            AttackStrategy.LOW,
+            AttackStrategy.Morse],
+        output_path="RacoonRedTeamEvalResults.jsonl", 
     )
 
     print(outputs)
 
+    ## High budget with duplicates and model config as target
     red_team_agent = RedTeamAgent(
         azure_ai_project=azure_ai_project,
         credential=DefaultAzureCredential(),
     )
 
     outputs = await red_team_agent.attack(
+        evaluation_name="HighBudget-Duplicates",
         target=model_config, # type: ignore
-        num_rows=1,
-        attack_strategy=[AttackStrategy.LOW],
-        evaluation_name="ModelTarget"
+        attack_strategy=[AttackStrategy.HIGH, AttackStrategy.Compose([AttackStrategy.Math, AttackStrategy.Tense])],
+        output_path="HighBudget-Duplicates.jsonl"
     )
+
     print(outputs)
 
 if __name__ == "__main__":
     import asyncio
     import time
-    from dotenv import load_dotenv
-    load_dotenv()
     start = time.perf_counter()
     asyncio.run(main())
     end = time.perf_counter()
