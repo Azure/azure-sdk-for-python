@@ -369,3 +369,16 @@ def test_legacy_message(uamqp_transport):
     assert event_data_batch.message.header.priority is None
     assert event_data_batch.message.on_send_complete is None
     assert event_data_batch.message.properties is None
+
+def test_from_bytes(uamqp_transport):
+    if uamqp_transport:
+        pytest.skip("This test is only for pyamqp transport")
+    data = b'\x00Sr\xc1\x87\x08\xa3\x1bx-opt-sequence-number-epochT\xff\xa3\x15x-opt-sequence-numberU\x00\xa3\x0cx-opt-offsetU\x00\xa3\x13x-opt-enqueued-time\x00\xa3\x1dcom.microsoft:datetime-offset\x81\x08\xddF\xdb\xa7\x82\x12 \x00St\xc1I\x02\xa1\rDiagnostic-Id\xa1700-1aa201483d464ac3c3d2ab796fbccb36-72e947bb22f404fc-00\x00Su\xa0\x08message1'
+
+    event_data = EventData.from_bytes(data)
+    assert event_data.body_as_str() == 'message1'
+    assert event_data.sequence_number == 0
+    assert event_data.offset is None
+    assert event_data.properties == {b'Diagnostic-Id': b'00-1aa201483d464ac3c3d2ab796fbccb36-72e947bb22f404fc-00'}
+    assert event_data.partition_key is None
+    assert event_data.raw_amqp_message.annotations[b"x-opt-enqueued-time"] == 638744631378580000
