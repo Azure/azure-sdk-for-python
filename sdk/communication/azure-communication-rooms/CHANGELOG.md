@@ -1,14 +1,9 @@
 # Release History
 
-## 1.1.2 (Unreleased)
+## 1.2.0 (2025-03-13)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- General Availability version of participant Collaborator role.
 
 ## 1.1.1 (2024-12-10)
 - Update azure-code dependency
