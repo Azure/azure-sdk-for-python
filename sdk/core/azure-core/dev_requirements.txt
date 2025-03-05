@@ -8,3 +8,5 @@ aiohttp ; platform_python_implementation != "PyPy"
 pytest-trio
 azure-storage-blob
 azure-data-tables
+opentelemetry-sdk~=1.26
+opentelemetry-instrumentation-requests>=0.50b0
