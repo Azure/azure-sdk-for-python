@@ -1,6 +1,6 @@
 # Release History
 
-## 11.6.0b10 (Unreleased)
+## 11.6.0b10 (2025-03-11)
 
 ### Features Added
 
@@ -13,8 +13,6 @@
 > These changes do not impact the API of stable versions such as 11.5.0.
 > Only code written against a beta version such as 11.6.0b9 may be affected.
 - Renamed `azure.search.documents.indexes.models.AIStudioModelCatalogName` to `azure.search.documents.indexes.models.AIFoundryModelCatalogName`.
-
-### Bugs Fixed
 
 ### Other Changes
 
