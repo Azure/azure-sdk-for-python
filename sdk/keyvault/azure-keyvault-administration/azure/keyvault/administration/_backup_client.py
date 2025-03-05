@@ -305,7 +305,6 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             status_response = self._use_continuation_token(continuation_token, self._client.full_backup_status)
 
         return self._client.begin_pre_full_backup(
-            vault_base_url=self._vault_url,
             pre_backup_operation_parameters=parameters,
             cls=KeyVaultBackupOperation._from_generated,  # pylint: disable=protected-access
             polling=KeyVaultBackupClientPollingMethod(
@@ -380,7 +379,6 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             status_response = self._use_continuation_token(continuation_token, self._client.restore_status)
 
         return self._client.begin_pre_full_restore_operation(
-            vault_base_url=self._vault_url,
             pre_restore_operation_parameters=parameters,
             cls=KeyVaultRestoreOperation._from_generated,  # pylint: disable=protected-access
             polling=KeyVaultBackupClientPollingMethod(
