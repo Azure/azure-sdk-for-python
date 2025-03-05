@@ -32,6 +32,8 @@ from pyrit.prompt_target import OpenAIChatTarget
 from pyrit.models import ChatMessage
 from azure.ai.evaluation._safety_evaluation._safety_evaluation import _SafetyEvaluation, _SafetyEvaluator, DATA_EXT
 
+BASELINE_IDENTIFIER = "Baseline"
+
 @experimental
 class AttackStrategy(Enum):
     """Strategies for attacks."""
@@ -60,6 +62,7 @@ class AttackStrategy(Enum):
     UnicodeConfusable = "unicode_confusable"
     UnicodeSubstitution = "unicode_substitution"
     Url = "url"
+    Baseline = "baseline"
 
     @classmethod
     def Compose(cls, items: List["AttackStrategy"]) -> List["AttackStrategy"]:
@@ -116,6 +119,7 @@ class RedTeamAgent(_SafetyEvaluation):
         AttackStrategy.AsciiSmuggler: AsciiSmugglerConverter(),
         AttackStrategy.Atbash: AtbashConverter(),
         AttackStrategy.Base64: Base64Converter(),
+        AttackStrategy.Baseline: None,
         AttackStrategy.Binary: BinaryConverter(),
         AttackStrategy.Caesar: CaesarConverter(caesar_offset=1),
         AttackStrategy.CharacterSpace: CharacterSpaceConverter(),
@@ -170,7 +174,7 @@ class RedTeamAgent(_SafetyEvaluation):
         }
 
     def _get_converters_for_budget(self, attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]) -> List[Union[PromptConverter, List[PromptConverter]]]:
-        converters = []
+        converters = [] 
         seen_strategies = set()
         if AttackStrategy.LOW in attack_strategies:
             attack_strategies.extend([AttackStrategy.Base64, AttackStrategy.Flip, AttackStrategy.Morse])
@@ -181,6 +185,10 @@ class RedTeamAgent(_SafetyEvaluation):
         if AttackStrategy.HIGH in attack_strategies:
             attack_strategies.extend([AttackStrategy.Compose([AttackStrategy.Math, AttackStrategy.Tense])])
             attack_strategies.remove(AttackStrategy.HIGH)
+
+        ## Baseline is always included    
+        attack_strategies.append(AttackStrategy.Baseline)
+
         for strategy in attack_strategies:
             if isinstance(strategy, List) and tuple(strategy) not in seen_strategies: # For composed strategies
                 converters.append([self._strategy_converter_map()[s] for s in strategy])
@@ -193,22 +201,6 @@ class RedTeamAgent(_SafetyEvaluation):
         self.logger.info(f"Using converters: {converters}")
         return converters
 
-        
-    async def _many_shot_orchestrator(self, chat_target: PromptChatTarget, all_prompts: List[str], converter: PromptConverter) -> Orchestrator:
-            orchestrator = ManyShotJailbreakOrchestrator(
-                objective_target=chat_target,
-            )
-            await orchestrator.send_prompts_async(prompt_list=all_prompts)
-            return orchestrator
-    
-    async def _skeleton_key_orchestrator(self, chat_target: PromptChatTarget, all_prompts: List[str], converter: PromptConverter) -> Orchestrator:
-        orchestrator = SkeletonKeyOrchestrator(
-            prompt_target=chat_target,
-            prompt_converters=[converter] if converter else []
-        )
-        await orchestrator.send_skeleton_key_with_prompts_async(prompt_list=all_prompts)
-        return orchestrator
-    
     async def _prompt_sending_orchestrator(self, chat_target:PromptChatTarget, all_prompts: List[str], converter: Union[PromptConverter, List[PromptConverter]]) -> Orchestrator:
         self.logger.info("Sending prompts via PromptSendingOrchestrator")
         orchestrator = PromptSendingOrchestrator(
@@ -225,8 +217,9 @@ class RedTeamAgent(_SafetyEvaluation):
                 converter_name = converter.get_identifier()["__type__"]
             else: 
                 converter_name = "".join([c.get_identifier()["__type__"] for c in converter])
-            base_path = f"{orchestrator_name}_{converter_name}"
-        else: base_path = orchestrator_name
+        else: 
+            converter_name = BASELINE_IDENTIFIER
+        base_path = f"{orchestrator_name}_{converter_name}"
         output_path = f"{base_path}{DATA_EXT}"
 
         memory = orchestrator.get_memory()
@@ -346,18 +339,7 @@ class RedTeamAgent(_SafetyEvaluation):
                 output_path=output_path
             )
             for call_orchestrator, converter in itertools.product(orchestrators, converters)
-        ] if converters else [
-            # Default case, calls PromptSendingOrchestrator with no converters
-            self._process_attack(
-                target=target,
-                call_orchestrator=orchestrators[0],
-                converter=None,
-                all_prompts=all_prompts_list,
-                evaluation_name=evaluation_name,
-                data_only=data_only,
-                output_path=output_path
-            )
-        ]
+        ] 
 
         results = await asyncio.gather(*tasks)
         merged_results = {}
