@@ -838,7 +838,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
 
     def _schedule_keep_alive(self):
         if self._keep_alive_interval > 0 and not self._shutdown:
-            self._keep_alive_timer = Timer(self._keep_alive_interval, self._get_remote_timeout, (time.time(),))
+            self._keep_alive_timer = Timer(self._keep_alive_interval, self._send_empty_frame)
             self._keep_alive_timer.daemon = True
             self._keep_alive_timer.start()
 

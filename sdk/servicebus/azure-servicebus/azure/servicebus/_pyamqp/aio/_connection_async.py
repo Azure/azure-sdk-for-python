@@ -834,7 +834,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
 
     async def _keep_alive(self):
         await asyncio.sleep(self._keep_alive_interval)
-        await self._get_remote_timeout(time.time())
+        await self._send_empty_frame()
 
     async def open(self, wait: bool = False) -> None:
         """Send an Open frame to start the connection.
