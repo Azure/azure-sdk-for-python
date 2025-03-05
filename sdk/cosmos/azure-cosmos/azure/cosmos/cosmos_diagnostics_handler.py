@@ -57,7 +57,6 @@ class CosmosDiagnosticsHandler(CIMultiDict):
                     isinstance(x, (list, tuple)) and x[0] != 200 and (x[1] is None or x[1] != 0)
             ) if isinstance(x, (list, tuple)) else x != 200),  # Log if status code is not 200
             'verb': None,  # No condition for verb
-            'http version': None,  # No condition for http_version
             'database name': None,  # No condition for database_name
             'collection name': None,  # No condition for collection_name
             'resource type': None,  # No condition for resource_type
@@ -69,6 +68,7 @@ class CosmosDiagnosticsHandler(CIMultiDict):
     def __setitem__(self, key, value):
         if key.lower() in self._preset_keys:
             super().__setitem__(key, value)
+            self._preset_keys[key.lower()] = value
         else:
             raise KeyError(f"Cannot add new key: {key}")
 
@@ -88,7 +88,6 @@ class CosmosDiagnosticsHandler(CIMultiDict):
             'duration': kwargs.get('duration'),
             'status code': status_and_sub_status,
             'verb': kwargs.get('verb'),
-            'http version': kwargs.get('http_version'),
             'database name': kwargs.get('database_name'),
             'collection name': kwargs.get('collection_name'),
             'resource type': kwargs.get('resource_type'),
@@ -96,8 +95,11 @@ class CosmosDiagnosticsHandler(CIMultiDict):
         }
         for key, param in params.items():
             if param is not None and self[key] is not None:
-                if self[key](param):
-                    return True
+                try:
+                    if self[key](param):
+                        return True
+                except TypeError:
+                    return False
         return False
 
     def get_preset_keys(self):
