@@ -24,8 +24,9 @@ def get_package_wheel_path(pkg_root):
     prebuilt_dir = os.getenv("PREBUILT_WHEEL_DIR")
     if prebuilt_dir:
         prebuilt_package_path = find_whl(prebuilt_dir, pkg_details.name, pkg_details.version)
-    else:
-        return None
+        if prebuilt_package_path:
+            return os.path.join(os.path.abspath(prebuilt_package_path), prebuilt_package_path)
+    return None
 
 
 if __name__ == "__main__":
