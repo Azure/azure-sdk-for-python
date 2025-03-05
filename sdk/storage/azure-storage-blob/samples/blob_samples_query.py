@@ -12,19 +12,21 @@ DESCRIPTION:
     This sample demos how to read quick query data.
 USAGE: python blob_samples_query.py
     Set the environment variables with your own values before running the sample.
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 import os
 import sys
 from azure.storage.blob import BlobServiceClient, DelimitedJsonDialect, DelimitedTextDialect
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+BASE_FILE = os.path.join(current_dir, './sample-blobs/quick_query.csv')
 
 def main():
     try:
-        CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+        CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
 
     except KeyError:
-        print("AZURE_STORAGE_CONNECTION_STRING must be set.")
+        print("STORAGE_CONNECTION_STRING must be set.")
         sys.exit(1)
 
     blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
@@ -41,7 +43,7 @@ def main():
 
     # upload the csv file
     blob_client = blob_service_client.get_blob_client(container_name, "csvfile")
-    with open("./sample-blobs/quick_query.csv", "rb") as stream:
+    with open(BASE_FILE, "rb") as stream:
         blob_client.upload_blob(stream, overwrite=True)
 
     # select the second column of the csv file

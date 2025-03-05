@@ -14,7 +14,7 @@ DESCRIPTION:
 USAGE:
     python blob_samples_container.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 import os
@@ -23,18 +23,19 @@ from datetime import datetime, timedelta
 
 from azure.core.exceptions import ResourceExistsError
 
-SOURCE_FILE = 'SampleSource.txt'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+SOURCE_FILE = os.path.join(current_dir, 'SampleSource.txt')
 
 
 class ContainerSamples(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
     #--Begin Blob Samples-----------------------------------------------------------------
 
     def container_sample(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: container_sample")
             sys.exit(1)
 
@@ -70,7 +71,7 @@ class ContainerSamples(object):
 
     def acquire_lease_on_container(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: acquire_lease_on_container")
             sys.exit(1)
 
@@ -97,7 +98,7 @@ class ContainerSamples(object):
 
     def set_metadata_on_container(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: set_metadata_on_container")
             sys.exit(1)
 
@@ -129,7 +130,7 @@ class ContainerSamples(object):
 
     def container_access_policy(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: container_access_policy")
             sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
@@ -191,7 +192,7 @@ class ContainerSamples(object):
 
     def list_blobs_in_container(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: list_blobs_in_container")
             sys.exit(1)
 
@@ -223,7 +224,7 @@ class ContainerSamples(object):
 
     def get_blob_client_from_container(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: get_blob_client_from_container")
             sys.exit(1)
 
@@ -250,7 +251,7 @@ class ContainerSamples(object):
 
     def get_container_client_from_blob_client(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: get_container_client_from_blob_client")
             sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string

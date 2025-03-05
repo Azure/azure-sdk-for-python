@@ -18,7 +18,7 @@ USAGE:
     python file_samples_share.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 import os
@@ -26,17 +26,18 @@ import sys
 
 from azure.storage.fileshare import ShareAccessTier
 
-SOURCE_FILE = './SampleSource.txt'
-DEST_FILE = './SampleDestination.txt'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+DEST_FILE = os.path.join(current_dir, "SampleDestination.txt")
+SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
 
 
 class ShareSamples(object):
 
-    connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
+    connection_string = os.getenv('STORAGE_CONNECTION_STRING')
 
     def create_share_snapshot(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: create_share_snapshot")
             sys.exit(1)
 
@@ -59,7 +60,7 @@ class ShareSamples(object):
 
     def set_share_quota_and_metadata(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: set_share_quota_and_metadata")
             sys.exit(1)
 
@@ -91,7 +92,7 @@ class ShareSamples(object):
 
     def set_share_properties(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: set_share_properties")
             sys.exit(1)
 
@@ -126,7 +127,7 @@ class ShareSamples(object):
 
     def list_directories_and_files(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: list_directories_and_files")
             sys.exit(1)
 
@@ -156,7 +157,7 @@ class ShareSamples(object):
 
     def get_directory_or_file_client(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: get_directory_or_file_client")
             sys.exit(1)
 
@@ -172,7 +173,7 @@ class ShareSamples(object):
 
     def acquire_share_lease(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: acquire_share_lease")
             sys.exit(1)
 

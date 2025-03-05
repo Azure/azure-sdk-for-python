@@ -17,24 +17,25 @@ USAGE:
     python file_samples_hello_world_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 import asyncio
 import os
 import sys
 
-SOURCE_FILE = './SampleSource.txt'
-DEST_FILE = './SampleDestination.txt'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+DEST_FILE = os.path.join(current_dir, "SampleDestination.txt")
+SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
 
 
 class HelloWorldSamplesAsync(object):
 
-    connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
+    connection_string = os.getenv('STORAGE_CONNECTION_STRING')
 
     async def create_client_with_connection_string_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: create_client_with_connection_string_async")
             sys.exit(1)
 
@@ -45,13 +46,13 @@ class HelloWorldSamplesAsync(object):
 
     async def create_file_share_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: create_file_share_async")
             sys.exit(1)
 
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, share_name="helloworld1")
+        share = ShareClient.from_connection_string(self.connection_string, share_name="helloworld1async")
 
         # Create the share
         async with share:
@@ -68,13 +69,13 @@ class HelloWorldSamplesAsync(object):
 
     async def upload_a_file_to_share_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: upload_a_file_to_share_async")
             sys.exit(1)
 
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, share_name='helloworld2')
+        share = ShareClient.from_connection_string(self.connection_string, share_name='helloworld2async')
 
         # Create the share
         async with share:
@@ -86,7 +87,7 @@ class HelloWorldSamplesAsync(object):
                 from azure.storage.fileshare.aio import ShareFileClient
                 file = ShareFileClient.from_connection_string(
                     self.connection_string,
-                    share_name='helloworld2',
+                    share_name='helloworld2async',
                     file_path="myfile")
                 # [END create_file_client]
 

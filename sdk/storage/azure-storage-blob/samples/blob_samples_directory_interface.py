@@ -17,12 +17,12 @@ DESCRIPTION:
 
     To run this sample, provide the name of the storage container to operate on
     as the script argument (e.g. `python3 directory_interface.py my-container`).
-    This sample expects that the `AZURE_STORAGE_CONNECTION_STRING` environment
+    This sample expects that the `STORAGE_CONNECTION_STRING` environment
     variable is set. It SHOULD NOT be hardcoded in any code derived from this
     sample.
   USAGE: python blob_samples_directory_interface.py CONTAINER_NAME
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 '''
 
 import os
@@ -164,17 +164,12 @@ class DirectoryClient:
 
 import sys
 try:
-  CONNECTION_STRING = os.environ['AZURE_STORAGE_CONNECTION_STRING']
+  CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
 except KeyError:
-  print('AZURE_STORAGE_CONNECTION_STRING must be set')
+  print('STORAGE_CONNECTION_STRING must be set')
   sys.exit(1)
 
-try:
-  CONTAINER_NAME = sys.argv[1]
-except IndexError:
-  print('usage: directory_interface.py CONTAINER_NAME')
-  print('error: the following arguments are required: CONTAINER_NAME')
-  sys.exit(1)
+CONTAINER_NAME = "mycontainerdirectory2"
 
 SAMPLE_DIRS = [
   'cats/calico',

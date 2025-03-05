@@ -41,8 +41,8 @@ from azure.keyvault.secrets import SecretClient
 from azure.storage.blob import BlobServiceClient
 
 # Environment variable keys which must be set to run this sample
-STORAGE_URL = 'AZURE_STORAGE_ACCOUNT_URL'
-KEYVAULT_URL = 'AZURE_KEYVAULT_DNS_NAME'
+STORAGE_URL = 'STORAGE_ACCOUNT_BLOB_URL'
+KEYVAULT_URL = 'KEYVAULT_URL'
 CLIENT_ID = 'ACTIVE_DIRECTORY_APPLICATION_ID'
 CLIENT_SECRET = 'ACTIVE_DIRECTORY_APPLICATION_SECRET'
 TENANT_ID = 'ACTIVE_DIRECTORY_TENANT_ID'
@@ -93,6 +93,12 @@ keyvault_url = get_env_var(KEYVAULT_URL)
 credential = DefaultAzureCredential()
 secret_client = SecretClient(keyvault_url, credential=credential)
 
+# Generate a random 256-bit key for AES  
+key = os.urandom(32)  # 32 bytes = 256 bits   
+
+# Base64 encode the binary key  
+encoded_key = base64.urlsafe_b64encode(key).decode('utf-8')
+secret_client.set_secret(name="symmetric-key", value=encoded_key)
 # The secret is url-safe base64 encoded bytes, content type 'application/octet-stream'
 secret = secret_client.get_secret('symmetric-key')
 key_bytes = base64.urlsafe_b64decode(secret.value)
