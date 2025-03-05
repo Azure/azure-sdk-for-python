@@ -65,7 +65,12 @@ if __name__ == "__main__":
 
     cmds = ["apistubgen", "--pkg-path", pkg_path]
     if args.out_path:
-        cmds.extend(["--out-path", os.path.join(args.out_path, os.path.basename(pkg_path))])
+        if not os.path.isdir(pkg_path):
+            # If the package is a wheel, the out_path should be the parent directory of the wheel
+            out_path = os.path.join(args.out_path, os.path.basename(os.path.dirname(pkg_path)))
+        else:
+            out_path = os.path.join(args.out_path, os.path.basename(pkg_path))
+        cmds.extend(["--out-path", out_path])
 
     logging.info("Running apistubgen {}.".format(cmds))
     check_call(cmds, cwd=args.work_dir)
