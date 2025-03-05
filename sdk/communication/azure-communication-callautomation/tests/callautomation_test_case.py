@@ -176,114 +176,119 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         return None
 
     def establish_callconnection_voip(self, caller, target, *, cognitive_service_enabled: Optional[bool] = False) -> tuple:
-        call_automation_client_caller = CallAutomationClient.from_connection_string(self.connection_str, source=caller) # for creating call
-        call_automation_client_target = CallAutomationClient.from_connection_string(self.connection_str, source=target) # answering call, all other actions
-
-        unique_id = self._unique_key_gen(caller, target)
-        if is_live():
-            dispatcher_url = f"{self.dispatcher_endpoint}/api/servicebuscallback/subscribe?q={unique_id}"
-            response = requests.post(dispatcher_url)
-
-            if response is None:
-                raise ValueError("Response cannot be None")
-
-            print(f"Subscription to dispatcher of {unique_id}: {response.status_code}")
-
-            self.wait_for_event_flags.append(unique_id)
-            thread = threading.Thread(target=self._message_awaiter, args=(unique_id,))
-            thread.start()
-
-        # create a call
-        create_call_result = call_automation_client_caller.create_call(
-            target_participant=target, 
-            callback_url=(self.dispatcher_callback + "?q={}".format(unique_id)),
-            cognitive_services_endpoint=self.cognitive_service_endpoint if cognitive_service_enabled else None
+        return self._establish_callconnection(
+            caller, target, cognitive_service_enabled=cognitive_service_enabled
         )
-
-        if create_call_result is None:
-            raise ValueError("Invalid create_call_result")
-
-        caller_connection_id = create_call_result.call_connection_id
-        if caller_connection_id is None:
-            raise ValueError("Caller connection ID is None")
-
-        # wait for incomingCallContext
-        incoming_call_event = self.check_for_event("IncomingCall", unique_id, timedelta(seconds=30))
-        if incoming_call_event is None:
-            raise ValueError("incoming_call_event is None")
-        incoming_call_context = incoming_call_event["incomingCallContext"]
-
-        # answer the call
-        answer_call_result = call_automation_client_target.answer_call(
-            incoming_call_context=incoming_call_context, callback_url=self.dispatcher_callback
-        )
-        if answer_call_result is None:
-            raise ValueError("Invalid answer_call result")
-
-        call_connection_caller = CallConnectionClient.from_connection_string(self.connection_str, caller_connection_id)
-        call_connection_target = CallConnectionClient.from_connection_string(
-            self.connection_str, answer_call_result.call_connection_id
-        )
-        self.open_call_connections[unique_id] = call_connection_caller
-
-        return unique_id, call_connection_caller, call_connection_target
 
     def establish_callconnection_pstn(self, caller, target) -> tuple:
-        call_automation_client_caller = CallAutomationClient.from_connection_string(
-            self.connection_str
-        )  # for creating call
-        call_automation_client_target = CallAutomationClient.from_connection_string(
-            self.connection_str
-        )  # answering call, all other actions
+        return self._establish_callconnection(caller, target, is_pstn=True)
+
+    def establish_callconnection_voip_answercall_withcustomcontext(self, caller, target) -> tuple:
+        return self._establish_callconnection(caller, target, custom_context=True)
+
+    def establish_callconnection_voip_with_streaming_options(self, caller, target, options, is_transcription) -> tuple:
+        return self._establish_callconnection(
+            caller, target, options=options, is_transcription=is_transcription
+        )
+
+    def establish_callconnection_voip_connect_call(self, caller, target) -> tuple:
+        return self._establish_callconnection(caller, target, connect_call=True)
+
+    def _establish_callconnection(self, caller, target, cognitive_service_enabled: Optional[bool] = False, is_pstn: bool = False, custom_context: bool = False, options=None, is_transcription: bool = False, connect_call: bool = False) -> tuple:
+        call_automation_client_caller = self._create_call_automation_client(caller)
+        call_automation_client_target = self._create_call_automation_client(target)
 
         unique_id = self._unique_key_gen(caller, target)
         if is_live():
-            dispatcher_url = f"{self.dispatcher_endpoint}/api/servicebuscallback/subscribe?q={unique_id}"
-            response = requests.post(dispatcher_url)
+            self._subscribe_to_dispatcher(unique_id)
 
-            if response is None:
-                raise ValueError("Response cannot be None")
-
-            print(f"Subscription to dispatcher of {unique_id}: {response.status_code}")
-
-            self.wait_for_event_flags.append(unique_id)
-            thread = threading.Thread(target=self._message_awaiter, args=(unique_id,))
-            thread.start()
-
-        # create a call
-        create_call_result = call_automation_client_caller.create_call(
-            target_participant=target,
-            source_caller_id_number=caller,
-            callback_url=(self.dispatcher_callback + "?q={}".format(unique_id)),
+        callback_url = f"{self.dispatcher_callback}?q={unique_id}"
+        create_call_result = self._create_call(
+            call_automation_client_caller, target, unique_id, cognitive_service_enabled, is_pstn, options, is_transcription
         )
+        caller_connection_id = self._validate_create_call_result(create_call_result)
 
-        if create_call_result is None:
+        incoming_call_context = self._wait_for_incoming_call(unique_id)
+        answer_call_result = self._answer_call(call_automation_client_target, incoming_call_context, custom_context)
+
+        call_connection_caller = self._create_call_connection_client(caller_connection_id)
+        call_connection_target = self._create_call_connection_client(answer_call_result.call_connection_id)
+        self.open_call_connections[unique_id] = call_connection_caller
+
+        if connect_call:
+            return unique_id, call_connection_caller, call_connection_target, call_automation_client_caller, callback_url
+
+        return unique_id, call_connection_caller, call_connection_target
+
+    def _create_call_automation_client(self, source):
+        return CallAutomationClient.from_connection_string(self.connection_str, source=source)
+
+    def _subscribe_to_dispatcher(self, unique_id):
+        dispatcher_url = f"{self.dispatcher_endpoint}/api/servicebuscallback/subscribe?q={unique_id}"
+        response = requests.post(dispatcher_url)
+
+        if response is None:
+            raise ValueError("Response cannot be None")
+
+        print(f"Subscription to dispatcher of {unique_id}: {response.status_code}")
+
+        self.wait_for_event_flags.append(unique_id)
+        thread = threading.Thread(target=self._message_awaiter, args=(unique_id,))
+        thread.start()
+
+    def _create_call(self, client, target, unique_id, cognitive_service_enabled, is_pstn, options, is_transcription):
+        if is_pstn:
+            return client.create_call(
+                target_participant=target,
+                source_caller_id_number=caller,
+                callback_url=f"{self.dispatcher_callback}?q={unique_id}",
+            )
+        elif options:
+            return client.create_call(
+                target_participant=target,
+                callback_url=f"{self.dispatcher_callback}?q={unique_id}",
+                media_streaming=options if not is_transcription else None,
+                transcription=options if is_transcription else None,
+                cognitive_services_endpoint=self.cognitive_service_endpoint if is_transcription else None
+            )
+        else:
+            return client.create_call(
+                target_participant=target,
+                callback_url=f"{self.dispatcher_callback}?q={unique_id}",
+                cognitive_services_endpoint=self.cognitive_service_endpoint if cognitive_service_enabled else None
+            )
+
+    def _validate_create_call_result(self, result):
+        if result is None:
             raise ValueError("Invalid create_call_result")
 
-        caller_connection_id = create_call_result.call_connection_id
+        caller_connection_id = result.call_connection_id
         if caller_connection_id is None:
             raise ValueError("Caller connection ID is None")
 
-        # wait for incomingCallContext
+        return caller_connection_id
+
+    def _wait_for_incoming_call(self, unique_id):
         incoming_call_event = self.check_for_event("IncomingCall", unique_id, timedelta(seconds=30))
         if incoming_call_event is None:
             raise ValueError("incoming_call_event is None")
-        incoming_call_context = incoming_call_event["incomingCallContext"]
+        return incoming_call_event["incomingCallContext"]
 
-        # answer the call
-        answer_call_result = call_automation_client_target.answer_call(
-            incoming_call_context=incoming_call_context, callback_url=self.dispatcher_callback
-        )
-        if answer_call_result is None:
+    def _answer_call(self, client, context, custom_context):
+        if custom_context:
+            result = client.answer_call(
+                incoming_call_context=context, callback_url=self.dispatcher_callback, voip_headers={"foo": "bar"}
+            )
+        else:
+            result = client.answer_call(
+                incoming_call_context=context, callback_url=self.dispatcher_callback
+            )
+        if result is None:
             raise ValueError("Invalid answer_call result")
+        return result
 
-        call_connection_caller = CallConnectionClient.from_connection_string(self.connection_str, caller_connection_id)
-        call_connection_target = CallConnectionClient.from_connection_string(
-            self.connection_str, answer_call_result.call_connection_id
-        )
-        self.open_call_connections[unique_id] = call_connection_caller
-
-        return unique_id, call_connection_caller, call_connection_target
+    def _create_call_connection_client(self, connection_id):
+        return CallConnectionClient.from_connection_string(self.connection_str, connection_id)
 
     def terminate_call(self, unique_id) -> None:
         try:
@@ -296,106 +301,10 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
                 if disconnected_event is None:
                     raise ValueError("Receiver CallDisconnected event is None")
         finally:
-            while unique_id in self.wait_for_event_flags: self.wait_for_event_flags.remove(unique_id)
+            while unique_id in self.wait_for_event_flags:
+                self.wait_for_event_flags.remove(unique_id)
             pass
-        
-    def establish_callconnection_voip_with_streaming_options(self, caller, target, options, is_transcription) -> tuple:
-        call_automation_client_caller = CallAutomationClient.from_connection_string(self.connection_str, source=caller) # for creating call
-        call_automation_client_target = CallAutomationClient.from_connection_string(self.connection_str, source=target) # answering call, all other actions
 
-        unique_id = self._unique_key_gen(caller, target)
-        if is_live():
-            dispatcher_url = f"{self.dispatcher_endpoint}/api/servicebuscallback/subscribe?q={unique_id}"
-            response = requests.post(dispatcher_url)
-
-            if response is None:
-                raise ValueError("Response cannot be None")
-
-            print(f"Subscription to dispatcher of {unique_id}: {response.status_code}")
-
-            self.wait_for_event_flags.append(unique_id)
-            thread = threading.Thread(target=self._message_awaiter, args=(unique_id,))
-            thread.start()
-
-        # create a call with options either media streaming or transcription.
-        create_call_result = call_automation_client_caller.create_call(
-            target_participant=target, 
-            callback_url=(self.dispatcher_callback + "?q={}".format(unique_id)),
-            media_streaming=options if not is_transcription else None,
-            transcription=options if is_transcription else None,
-            cognitive_services_endpoint=self.cognitive_service_endpoint if is_transcription else None
-            )
-
-        if create_call_result is None:
-            raise ValueError("Invalid create_call_result")
-
-        caller_connection_id = create_call_result.call_connection_id
-        if caller_connection_id is None:
-            raise ValueError("Caller connection ID is None")
-
-        # wait for incomingCallContext
-        incoming_call_event = self.check_for_event('IncomingCall', unique_id, timedelta(seconds=30))
-        if incoming_call_event is None:
-            raise ValueError("incoming_call_event is None")
-        incoming_call_context = incoming_call_event["incomingCallContext"]
-
-        # answer the call
-        answer_call_result = call_automation_client_target.answer_call(incoming_call_context=incoming_call_context, callback_url=self.dispatcher_callback)
-        if answer_call_result is None:
-            raise ValueError("Invalid answer_call result")
-
-        call_connection_caller = CallConnectionClient.from_connection_string(self.connection_str, caller_connection_id)
-        call_connection_target = CallConnectionClient.from_connection_string(self.connection_str, answer_call_result.call_connection_id)
-        self.open_call_connections[unique_id] = call_connection_caller
-
-        return unique_id, call_connection_caller, call_connection_target
-    
-    def establish_callconnection_voip_connect_call(self, caller, target) -> tuple:
-        call_automation_client_caller = CallAutomationClient.from_connection_string(self.connection_str, source=caller) # for creating call
-        call_automation_client_target = CallAutomationClient.from_connection_string(self.connection_str, source=target) # answering call, all other actions
-
-        unique_id = self._unique_key_gen(caller, target)
-        if is_live():
-            dispatcher_url = f"{self.dispatcher_endpoint}/api/servicebuscallback/subscribe?q={unique_id}"
-            response = requests.post(dispatcher_url)
-
-            if response is None:
-                raise ValueError("Response cannot be None")
-
-            print(f"Subscription to dispatcher of {unique_id}: {response.status_code}")
-
-            self.wait_for_event_flags.append(unique_id)
-            thread = threading.Thread(target=self._message_awaiter, args=(unique_id,))
-            thread.start()
-
-        callback_url=(self.dispatcher_callback + "?q={}".format(unique_id))
-        # create a call
-        create_call_result = call_automation_client_caller.create_call(target_participant=target, callback_url=(self.dispatcher_callback + "?q={}".format(unique_id)))
-
-        if create_call_result is None:
-            raise ValueError("Invalid create_call_result")
-
-        caller_connection_id = create_call_result.call_connection_id
-        if caller_connection_id is None:
-            raise ValueError("Caller connection ID is None")
-
-        # wait for incomingCallContext
-        incoming_call_event = self.check_for_event('IncomingCall', unique_id, timedelta(seconds=30))
-        if incoming_call_event is None:
-            raise ValueError("incoming_call_event is None")
-        incoming_call_context = incoming_call_event["incomingCallContext"]
-
-        # answer the call
-        answer_call_result = call_automation_client_target.answer_call(incoming_call_context=incoming_call_context, callback_url=self.dispatcher_callback)
-        if answer_call_result is None:
-            raise ValueError("Invalid answer_call result")
-
-        call_connection_caller = CallConnectionClient.from_connection_string(self.connection_str, caller_connection_id)
-        call_connection_target = CallConnectionClient.from_connection_string(self.connection_str, answer_call_result.call_connection_id)
-        self.open_call_connections[unique_id] = call_connection_caller
-
-        return unique_id, call_connection_caller, call_connection_target, call_automation_client_caller, callback_url
-    
     def redact_by_key(self, data: Dict[str, Dict[str, any]], keys_to_redact: List[str]) -> Dict[str, Dict[str, any]]:
         for _, inner_dict in data.items():
             for key in keys_to_redact:
