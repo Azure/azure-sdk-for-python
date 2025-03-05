@@ -419,7 +419,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             A callback to track the progress of a long-running upload. The signature is
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
-        :paramtype progress_hook: Callable[[int, int], None]
+        :paramtype progress_hook: Callable[[int, Optional[int]], Awaitable[None]]
         :return: response dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
@@ -639,7 +639,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             A callback to track the progress of a long-running download. The signature is
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
-        :paramtype progress_hook: Callable[[int, int], None]
+        :paramtype progress_hook: Callable[[int, Optional[int]], Awaitable[None]]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
