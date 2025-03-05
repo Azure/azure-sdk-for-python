@@ -6,14 +6,19 @@
 
 - Added `SearchIndexClient.list_index_stats_summary`.
 - Added `SearchIndexerCache.id`.
+- Added new model `azure.search.documents.indexes.models.IndexStatisticsSummary`.
 
 ### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 11.5.0.
+> Only code written against a beta version such as 11.6.0b9 may be affected.
+- Renamed `azure.search.documents.indexes.models.AIStudioModelCatalogName` to `azure.search.documents.indexes.models.AIFoundryModelCatalogName`.
 
 ### Bugs Fixed
 
 ### Other Changes
 
-- Renamed `azure.search.documents.indexes.models.AIStudioModelCatalogName` to `azure.search.documents.indexes.models.AIFoundryModelCatalogName`.
+- Updated the API version to "2025-03-01-preview"
 
 ## 11.6.0b9 (2025-01-14)
 
@@ -84,6 +89,11 @@
 ### Other Changes
 
 - Updated the API version to "2024-09-01-preview"
+
+### Breaking changes
+
+> These changes do not impact the API of stable versions such as 11.5.0.
+> Only code written against a beta version such as 11.6.0b4 may be affected.
 - Below models were renamed
   - `azure.search.documents.indexes.models.SearchIndexerIndexProjections` -> `azure.search.documents.indexes.models.SearchIndexerIndexProjection`
   - `azure.search.documents.indexes.models.LineEnding` -> `azure.search.documents.indexes.models.OrcLineEnding`
