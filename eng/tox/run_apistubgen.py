@@ -70,7 +70,7 @@ if __name__ == "__main__":
             out_path = os.path.join(args.out_path, os.path.basename(os.path.dirname(pkg_path)))
         else:
             out_path = os.path.join(args.out_path, os.path.basename(pkg_path))
-        cmds.extend(["--out-path", out_path])
+        cmds.extend(["--out-path", out_path, "--verbose"])
 
     logging.info("Running apistubgen {}.".format(cmds))
     check_call(cmds, cwd=args.work_dir)
