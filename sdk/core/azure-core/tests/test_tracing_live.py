@@ -33,7 +33,6 @@ class TestTracing:
         spans = tracing_helper.exporter.get_finished_spans()
 
         # We expect 3 spans, one for the root span, one for the method call, and one for the HTTP request.
-        assert len(spans) == 3
         span_names_list = [span.name for span in spans]
         assert span_names_list == ["/", "BlobServiceClient.get_service_properties", "root"]
 
@@ -80,9 +79,8 @@ class TestTracing:
                 pass
 
         spans = tracing_helper.exporter.get_finished_spans()
-
-        # We expect 3 spans even with the error
-        assert len(spans) == 3
+        span_names_list = [span.name for span in spans]
+        assert span_names_list == ["/", "BlobServiceClient.get_service_properties", "root"]
 
         http_span: ReadableSpan = spans[0]
         assert http_span.kind == SpanKind.CLIENT
