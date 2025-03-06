@@ -2,6 +2,8 @@
 python3 r-proxy-workload.py &
 python3 r-proxy-workload-1.py &
 python3 r-proxy-workload-2.py &
+python3 r-proxy-workload-3.py &
+python3 r-proxy-workload-4.py &
 python3 r-w-q-proxy-workload.py &
 python3 r-w-q-proxy-workload-1.py &
 python3 r-w-q-proxy-workload-2.py &
@@ -11,6 +13,8 @@ python3 r-w-q-workload-2.py &
 python3 r-workload.py &
 python3 r-workload-1.py &
 python3 r-workload-2.py &
+python3 r-workload-3.py &
+python3 r-workload-4.py &
 python3 w-workload.py &
 python3 w-proxy-workload.py &
 python3 r-w-q-workload-sync.py &
