@@ -1,0 +1,16 @@
+from typing import TypedDict, Dict, Union
+
+from ..._bicep.expressions import Parameter
+
+RESOURCE = "Microsoft.Resources/resourceGroups"
+VERSION = "2021-04-01"
+
+
+class ResourceGroupResource(TypedDict, total=False):
+    """"""
+    name: Union[str, Parameter[str]]
+    """The name of the Resource Group."""
+    location: Union[str, Parameter[str]]
+    """Location of the Resource Group. It uses the deployment's location when not provided."""
+    tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict[str, str]]]
+    """Tags of the Resource Group."""

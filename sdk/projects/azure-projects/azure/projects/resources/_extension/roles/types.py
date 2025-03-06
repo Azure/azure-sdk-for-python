@@ -1,0 +1,33 @@
+from typing import Literal, TypedDict, Union
+from typing_extensions import Required
+
+from ...._bicep.expressions import Parameter, ResourceSymbol, Output
+
+RESOURCE = "Microsoft.Authorization/roleAssignments"
+VERSION = "2022-04-01"
+
+
+class RoleAssignmentProperties(TypedDict, total=False):
+    condition: Union[str, Parameter[str]]
+    """The conditions on the role assignment. This limits the resources it can be assigned to. e.g.: @Resource[Microsoft.Storage/storageAccounts/blobServices/containers:ContainerName] StringEqualsIgnoreCase 'foo_storage_container'."""
+    conditionVersion: Literal['2.0']
+    """Version of the condition. Currently the only accepted value is '2.0'."""
+    delegatedManagedIdentityResourceId: Union[str, Parameter[str], Output]
+    """Id of the delegated managed identity resource."""
+    description: Union[str, Parameter[str]]
+    """Description of role assignment."""
+    principalId: Required[Union[str, Parameter[str]]]
+    """The principal ID."""
+    principalType: Required[Union[Literal['Device', 'ForeignGroup', 'Group', 'ServicePrincipal', 'User'], Parameter[str]]]
+    """The principal type of the assigned principal ID."""
+    roleDefinitionId: Required[Union[str, Parameter[str]]]
+    """The role definition ID."""
+
+
+class RoleAssignmentResource(TypedDict, total=False):
+    name: Required[Union[str, Parameter[str]]]
+    """The resource name"""
+    properties: Required[RoleAssignmentProperties]
+    """Role assignment properties."""
+    scope: ResourceSymbol
+    """Use when creating a resource at a scope that is different than the deployment scope."""

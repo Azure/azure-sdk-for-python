@@ -1,0 +1,34 @@
+param location string
+param environmentName string
+param defaultNamePrefix string
+param defaultName string
+param principalId string
+param tenantId string
+param azdTags object
+param managedIdentityId string
+param managedIdentityPrincipalId string
+param managedIdentityClientId string
+
+resource resourcegroup_testrg 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
+  name: 'testrg'
+  scope: subscription()
+}
+
+resource storageaccount_storagetest 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
+  name: 'storagetest'
+  scope: resourcegroup_testrg
+}
+
+output AZURE_STORAGE_ID_STORAGETEST string = storageaccount_storagetest.id
+output AZURE_STORAGE_NAME_STORAGETEST string = storageaccount_storagetest.name
+output AZURE_STORAGE_RESOURCE_GROUP_STORAGETEST string = 'testrg'
+
+
+resource tableservice_storagetest 'Microsoft.Storage/storageAccounts/tableServices@2024-01-01' existing = {
+  name: 'default'
+  parent: storageaccount_storagetest
+}
+
+output AZURE_TABLES_ENDPOINT_STORAGETEST string = storageaccount_storagetest.properties.primaryEndpoints.table
+
+
