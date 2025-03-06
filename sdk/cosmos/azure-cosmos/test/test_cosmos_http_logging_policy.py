@@ -127,11 +127,5 @@ class TestCosmosHttpLogger(unittest.TestCase):
         self.mock_handler_diagnostic.reset()
 
 
-    def mock_diagnostics_handler(self, **kwargs):
-        """
-        Mock diagnostics handler that always returns True for logging.
-        """
-        return True
-
 if __name__ == "__main__":
     unittest.main()

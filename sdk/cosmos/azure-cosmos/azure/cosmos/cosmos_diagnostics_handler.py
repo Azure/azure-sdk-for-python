@@ -104,4 +104,3 @@ class CosmosDiagnosticsHandler(CIMultiDict):
 
     def get_preset_keys(self):
         return self._preset_keys.keys()
-
