@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Document retrieval metrics",
+  "type": "object",
+  "properties": {
+    "ndcg@3": {
+      "description": "NDCG (Normalized Discounted Cumulative Gain) calculated for the top 3 documents retrieved from a search query.  NDCG measures how well a document ranking compares to an ideal document ranking given a list of ground-truth documents.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "xdcg@3": {
+      "description": "XDCG calculated for the top 3 documents retrieved from a search query.  XDCG measures how objectively good are the top 3 documents, discounted by their position in the list."
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "fidelity": {
+      "description": "Fidelity calculated over all documents retrieved from a search query.  Fidelity measures how objectively good are all of the documents retrieved compared with all known good documents in the underlying data store.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "top1_relevance": {
+      "description": "The true relevance of the top ranked document retrieved from a search query.  Its value is dependent on the range of ground-truth labels given in the input.",
+      "type": "number"
+    },
+    "topk_max_relevance@3": {
+      "description": "The maximum true relevance score among the top 3 documents retrieved from a search query.  Its value is dependent on the range of ground-truth labels given in the input.",
+      "type": "number"
+    },
+    "holes": {
+      "description": "The number of documents retrieved from a search query which have no provided ground-truth label.  This metric is helpful for determining the accuracy of other metrics that are highly dependent on ground-truth knowledge, particularly NDCG and XDCG.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 50
+    },
+    "ratioholes": {
+      "description": "The proportion of holes in the retrieved results set.",
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "total_document_results": {
+      "description": "The total number of document results retrieved from a search query.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 50
+    },
+    "total_groundtruth_documents": {
+      "description": "The total number of ground-truth documents for a search query.  If none are given, then no meaningful evaluation can be performed.",
+      "type": "number",
+      "minimum": 1,
+      "maximum": 50
+    }
+  },
+  "required": [
+    "ndcg@3",
+    "xdcg@3",
+    "fidelity",
+    "top1_relevance",
+    "topk_max_relevance@3",
+    "holes",
+    "ratioholes",
+    "total_document_results",
+    "total_groundtruth_documents"
+  ]
+}

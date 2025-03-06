@@ -5,37 +5,74 @@
 import math
 from itertools import starmap
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
+from typing import List, TypedDict
 
 
-class DocumentRetrievalEvaluator(EvaluatorBase):
+DocumentLabel = TypedDict(
+    'DocumentLabel',
+    {
+        "document_id": str,
+        "label": float
+    }
+)
+
+
+DocumentRetrievalEvaluationData = TypedDict(
+    'DocumentRetrievalEvaluationData',
+    {
+        "retrieved_documents_labels": List[DocumentLabel],
+        "groundtruth_documents_labels": List[DocumentLabel]
+    }
+)
+
+
+DocumentRetrievalMetrics = TypedDict(
+    'DocumentRetrievalMetrics',
+    {
+        "ndcg@3": float,
+        "xdcg@3": float,
+        "fidelity": float,
+        "top1_relevance": float,
+        "topk_max_relevance@3": float,
+        "holes": int,
+        "holes_ratio": float,
+        "total_document_results": int,
+        "total_groundtruth_documents": int
+    }
+)
+
+class DocumentRetrievalEvaluator:
     """
     Calculate document retrieval metrics, such as NDCG, XDCG, Fidelity and Top K Relevance.
     """
-    def __init__(self, k: int = 3, ndcg_score_linear: bool = True, xdcg_discount_factor: float = 0.6):
+    def __init__(
+        self,
+        ndcg_score_linear: bool = True,
+        xdcg_discount_factor: float = 0.6
+    ):
         super().__init__()
 
-        self.k = 3
         self.ndcg_score_linear = ndcg_score_linear  # TODO: pick an NDCG implementation to avoid setting this value
         self.xdcg_discount_factor = xdcg_discount_factor  # TODO: should we expose this, or just pick a recommended value?
 
     def __compute_holes(
         self,
-        actual_docs,
-        labeled_docs
-    ):
+        actual_docs: list,
+        labeled_docs: list
+    ) -> int:
         return len(set(actual_docs).difference(set(labeled_docs)))
     
 
     def __compute_ndcg(
         self,
-        result_docs_groundtruth_labels: list,
-        ideal_docs_groundtruth_labels: list,
-    ):
+        result_docs_groundtruth_labels: List[float],
+        ideal_docs_groundtruth_labels: List[float],
+    ) -> float:
         # Set the scoring function
-        def calculate_dcg(relevance, rank):
+        def calculate_dcg(relevance: float, rank: int):
             return ((math.pow(2, relevance) - 1) / (math.log2(rank + 1)))
         
-        def calculate_dcg_linear(relevance, rank):
+        def calculate_dcg_linear(relevance: float, rank: int):
             return (relevance / (math.log2(rank + 1)))
         
         score_fn = calculate_dcg_linear if self.ndcg_score_linear else calculate_dcg
@@ -49,8 +86,8 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
     
     def __compute_xdcg(
         self,
-        result_docs_groundtruth_labels: list
-    ):
+        result_docs_groundtruth_labels: List[float]
+    ) -> float:
         def calculate_xdcg_numerator(relevance, rank):
             return (25 * relevance * math.pow(self.xdcg_discount_factor, rank - 1))
         
@@ -65,26 +102,26 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
     
     def __compute_fidelity(
         self,
-        result_docs_groundtruth_labels: list,
-        ideal_docs_groundtruth_labels: list,
-    ):
-        def get_rating(score):
-            if score >= 4:
+        result_docs_groundtruth_labels: List[float],
+        ideal_docs_groundtruth_labels: List[float],
+    ) -> float:
+        def get_rating(label: float) -> str:
+            if label >= 4:
                 return "perfect"
             
-            elif score >= 3:
+            elif label >= 3:
                 return "excellent"
             
-            elif score >= 2:
+            elif label >= 2:
                 return "good"
             
-            elif score >= 1:
+            elif label >= 1:
                 return "fair"
             
             else:
                 return "poor"
 
-        def calculate_weighted_sum_by_rating(relevance):
+        def calculate_weighted_sum_by_rating(labels: List[float]) -> float:
             rating_counts = {
                 "perfect": 0,
                 "excellent": 0,
@@ -93,8 +130,8 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
                 "poor": 0
             }
 
-            for rel in relevance:
-                rating_counts[get_rating(rel)] += 1 
+            for label in labels:
+                rating_counts[get_rating(label)] += 1 
             
             return (31 * rating_counts["perfect"]) + (15 * rating_counts["excellent"]) + (7 * rating_counts["good"]) + (3 * rating_counts["fair"]) 
         
@@ -103,68 +140,66 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
 
         return weighted_sum_by_rating_results / float(weighted_sum_by_rating_index)
     
-    def __call__(self, *, qrels: dict, results: dict):
-        # if the results set or the groundtruth set is empty, no meaningful evaluation is possible.
-        if len(results) == 0:
-            return {
-                f"ndcg@{self.k}": 0,
-                f"xdcg@{self.k}": 0,
-                f"fidelity": 0,
-                f"top1_relevance": 0,
-                f"topk_max_relevance@{self.k}": 0,
-                f"holes": 0,
-                f"ratioholes": 0,
-                f"total_document_results": len(results),
-                f"total_groundtruth_documents": len(qrels)
-            }
-        
+    def __call__(self, *, evaluation_data: DocumentRetrievalEvaluationData) -> DocumentRetrievalMetrics:
+        qrels = evaluation_data["groundtruth_documents_labels"]
+        results = evaluation_data["retrieved_documents_labels"]
+
+        # if the qrels are empty, no meaningful evaluation is possible
         if len(qrels) == 0:
-            return {
-                f"ndcg@{self.k}": 0,
-                f"xdcg@{self.k}": 0,
-                f"fidelity": 0,
-                f"top1_relevance": 0,
-                f"topk_max_relevance@{self.k}": 0,
-                f"holes": len(results),
-                f"ratioholes": 1.0,
-                f"total_document_results": len(results),
-                f"total_groundtruth_documents": len(qrels)
-            }
+            raise ValueError("No groundtruth labels were provided.")
+
+        # if the results set is empty, results are all zero
+        if len(results) == 0:
+            return DocumentRetrievalMetrics(**{
+                "ndcg@3": 0,
+                "xdcg@3": 0,
+                "fidelity": 0,
+                "top1_relevance": 0,
+                "topk_max_relevance@3": 0,
+                "holes": 0,
+                "ratioholes": 0,
+                "total_document_results": len(results),
+                "total_groundtruth_documents": len(qrels)
+            })
+
+        # flatten qrels and results to normal dictionaries
+        qrels_lookup = {x["document_id"]: x["label"] for x in qrels}
+        results_lookup = {x["document_id"]: x["label"] for x in results}
 
         # calculate the proportion of result docs with no ground truth label (holes)
-        holes = self.__compute_holes(results.keys(), qrels.keys())
-        ratioholes = holes / len(qrels)
+        holes = self.__compute_holes(list(results_lookup.keys()), list(qrels_lookup.keys()))
+        ratioholes = holes / len(results)
 
         # sort each input set by label to get the ranking
-        qrels_sorted_by_rank = sorted(qrels.items(), key=lambda x: x[1], reverse=True)
-        results_sorted_by_rank = sorted(results.items(), key=lambda x: x[1], reverse=True)
+        qrels_sorted_by_rank = sorted(qrels_lookup.items(), key=lambda x: x[1], reverse=True)
+        results_sorted_by_rank = sorted(results_lookup.items(), key=lambda x: x[1], reverse=True)
 
         # find ground truth labels for the results set and ideal set
-        result_docs_groundtruth_labels = [qrels[doc_id] if doc_id in qrels else 0 for (doc_id, _) in results_sorted_by_rank]
+        result_docs_groundtruth_labels = [qrels_lookup[doc_id] if doc_id in qrels_lookup else 0 for (doc_id, _) in results_sorted_by_rank]
         ideal_docs_groundtruth_labels = [label for (_, label) in qrels_sorted_by_rank]
 
         # if none of the retrieved docs are labeled, report holes only
         if not any(result_docs_groundtruth_labels):
-            return {
-                f"ndcg@{self.k}": 0,
-                f"xdcg@{self.k}": 0,
-                f"fidelity": 0,
-                f"top1_relevance": 0,
-                f"topk_max_relevance@{self.k}": 0,
-                f"holes": holes,
-                f"ratioholes": ratioholes,
-                f"total_document_results": len(results),
-                f"total_groundtruth_documents": len(qrels)
-            }
+            return DocumentRetrievalMetrics(**{
+                "ndcg@3": 0,
+                "xdcg@3": 0,
+                "fidelity": 0,
+                "top1_relevance": 0,
+                "topk_max_relevance@3": 0,
+                "holes": holes,
+                "ratioholes": ratioholes,
+                "total_document_results": len(results),
+                "total_groundtruth_documents": len(qrels)
+            })
 
-        return {
-            f"ndcg@{self.k}": self.__compute_ndcg(result_docs_groundtruth_labels[:self.k], ideal_docs_groundtruth_labels[:self.k]),
-            f"xdcg@{self.k}": self.__compute_xdcg(result_docs_groundtruth_labels[:self.k]),
-            f"fidelity": self.__compute_fidelity(result_docs_groundtruth_labels, ideal_docs_groundtruth_labels),
-            f"top1_relevance": result_docs_groundtruth_labels[0],
-            f"topk_max_relevance@{self.k}": max(result_docs_groundtruth_labels[:self.k]),
-            f"holes": holes,
-            f"ratioholes": ratioholes,
-            f"total_document_results": len(results),
-            f"total_groundtruth_documents": len(qrels)
-        }
+        return DocumentRetrievalMetrics(**{
+            "ndcg@3": self.__compute_ndcg(result_docs_groundtruth_labels[:3], ideal_docs_groundtruth_labels[:3]),
+            "xdcg@3": self.__compute_xdcg(result_docs_groundtruth_labels[:3]),
+            "fidelity": self.__compute_fidelity(result_docs_groundtruth_labels, ideal_docs_groundtruth_labels),
+            "top1_relevance": result_docs_groundtruth_labels[0],
+            "topk_max_relevance@3": max(result_docs_groundtruth_labels[:3]),
+            "holes": holes,
+            "ratioholes": ratioholes,
+            "total_document_results": len(results),
+            "total_groundtruth_documents": len(qrels)
+        })

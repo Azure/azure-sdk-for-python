@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "evaluation_data": {
+      "description": "The evaluation data object used as input for document retrieval metrics, such as NDCG, XDCG, Fidelity, and Top K Max Relevance.",
+      "type": "object",
+      "properties": {
+        "retrieved_documents_labels": {
+          "description": "A set of documents retrieved as a result of a particular search query, each containing a unique identifier and a retrieval score/label.",
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 50,
+          "uniqueItems": true,
+          "items": {"$ref": "#/definitions/DocumentLabel"}
+        },
+        "groundtruth_documents_labels": {
+          "description": "A set of ground-truth documents for a particular search query, each containing a unique identifier and an ideal score/label.  At least one ground-truth document should be provided to perform evaluation.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 50,
+          "uniqueItems": true,
+          "items": {"$ref": "#/definitions/DocumentLabel"}
+        }
+      },
+      "required": [
+        "retrieved_documents_labels",
+        "groundtruth_documents_labels"
+      ]
+    }
+  },
+  "definitions": {
+    "DocumentLabel": {
+        "description": "A labeled document, containing a unique identifier and a label."
+        "type": "object",
+        "required": [
+            "document_id",
+            "label"
+        ],
+        "properties": {
+            "document_id": {
+                "type": "string",
+                "minLength": 1
+            },
+            "label": {
+                "type": "number"
+            }
+        }
+    }
+  },
+  "required": [
+    "evaluation_data"
+  ]
+}
