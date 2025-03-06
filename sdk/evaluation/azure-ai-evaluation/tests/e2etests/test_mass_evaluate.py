@@ -102,6 +102,8 @@ class TestMassEvaluate:
         result = evaluate(
             data=data_file,
             evaluators=evaluators,
+            evaluation_name="test_evaluate_singleton_inputs",
+            azure_ai_project=project_scope,
         )
 
         row_result_df = pd.DataFrame(result["rows"])
@@ -172,9 +174,9 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.qa.gpt_similarity"]) == 3
         assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_label"]) == 3
         assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_reason"]) == 3
-        assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_metadata"]) == 3
+        assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_details"]) == 3
 
-        assert len(metrics.keys()) == 40
+        assert len(metrics.keys()) == 59
         assert metrics["f1_score.f1_score"] >= 0
         assert metrics["gleu.gleu_score"] >= 0
         assert metrics["bleu.bleu_score"] >= 0
@@ -215,6 +217,25 @@ class TestMassEvaluate:
         assert metrics["qa.similarity"] >= 0
         assert metrics["qa.gpt_similarity"] >= 0
         assert metrics["code_vulnerability.code_vulnerability_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.code_injection_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.full_ssrf_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.path_injection_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.hardcoded_credentials_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.stack_trace_exposure_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.incomplete_url_substring_sanitization_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.flask_debug_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.potentially_weak_cryptographic_algorithm_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.clear_text_logging_sensitive_data_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.incomplete_hostname_regexp_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.sql_injection_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.insecure_randomness_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.bind_socket_all_network_interfaces_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.client_side_unvalidated_url_redirection_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.likely_bugs_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.server_side_unvalidated_url_redirection_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.clear_text_storage_sensitive_data_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.tarslip_defect_rate"] >= 0
+        assert metrics["code_vulnerability.code_vulnerability_details.reflected_xss_defect_rate"] >= 0
 
     def test_evaluate_conversation(self, model_config, data_convo_file, azure_cred, project_scope):
         evaluators = {

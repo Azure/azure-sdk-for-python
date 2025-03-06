@@ -464,12 +464,12 @@ class TestSimAndEval:
         assert "inputs.response" in row_result_df.columns.to_list()
         assert "outputs.code_vulnerability.code_vulnerability_label" in row_result_df.columns.to_list()
         assert "outputs.code_vulnerability.code_vulnerability_reason" in row_result_df.columns.to_list()
-        assert "outputs.code_vulnerability.code_vulnerability_metadata" in row_result_df.columns.to_list()
+        assert "outputs.code_vulnerability.code_vulnerability_details" in row_result_df.columns.to_list()
 
         assert eval_output["rows"][0]["inputs.query"] == simulator_output[0]["messages"][0]["content"]
         assert eval_output["rows"][0]["inputs.response"] == simulator_output[0]["messages"][1]["content"]
         assert eval_output["rows"][0]["outputs.code_vulnerability.code_vulnerability_label"] is True
-        assert eval_output["rows"][0]["outputs.code_vulnerability.code_vulnerability_metadata"]["sql_injection"] is True
+        assert eval_output["rows"][0]["outputs.code_vulnerability.code_vulnerability_details"]["sql_injection"] is True
         
         # verifying metrics
         metrics = eval_output["metrics"]

@@ -254,29 +254,29 @@ class TestBuiltInEvaluators:
         assert code_vulnerability_result is not None
         assert "code_vulnerability_label" in code_vulnerability_result and code_vulnerability_result["code_vulnerability_label"] is False
         assert "code_vulnerability_reason" in code_vulnerability_result
-        assert "code_vulnerability_metadata" in code_vulnerability_result
+        assert "code_vulnerability_details" in code_vulnerability_result
         
-        metadata = code_vulnerability_result["code_vulnerability_metadata"]
+        details = code_vulnerability_result["code_vulnerability_details"]
         
-        assert "code_injection" in metadata and metadata["code_injection"] is False
-        assert "full_ssrf" in metadata and metadata["full_ssrf"] is False
-        assert "path_injection" in metadata and metadata["path_injection"] is False
-        assert "hardcoded_credentials" in metadata and metadata["hardcoded_credentials"] is False
-        assert "stack_trace_exposure" in metadata and metadata["stack_trace_exposure"] is False
-        assert "incomplete_url_substring_sanitization" in metadata and metadata["incomplete_url_substring_sanitization"] is False
-        assert "flask_debug" in metadata and metadata["flask_debug"] is False
-        assert "potentially_weak_cryptographic_algorithm" in metadata and metadata["potentially_weak_cryptographic_algorithm"] is False
-        assert "clear_text_logging_sensitive_data" in metadata and metadata["clear_text_logging_sensitive_data"] is False
-        assert "incomplete_hostname_regexp" in metadata and metadata["incomplete_hostname_regexp"] is False
-        assert "sql_injection" in metadata and metadata["sql_injection"] is False
-        assert "insecure_randomness" in metadata and metadata["insecure_randomness"] is False
-        assert "bind_socket_all_network_interfaces" in metadata and metadata["bind_socket_all_network_interfaces"] is False
-        assert "client_side_unvalidated_url_redirection" in metadata and metadata["client_side_unvalidated_url_redirection"] is False
-        assert "likely_bugs" in metadata and metadata["likely_bugs"] is False
-        assert "server_side_unvalidated_url_redirection" in metadata and metadata["server_side_unvalidated_url_redirection"] is False
-        assert "clear_text_storage_sensitive_data" in metadata and metadata["clear_text_storage_sensitive_data"] is False
-        assert "tarslip" in metadata and metadata["tarslip"] is False
-        assert "reflected_xss" in metadata and metadata["reflected_xss"] is False
+        assert "code_injection" in details and details["code_injection"] is False
+        assert "full_ssrf" in details and details["full_ssrf"] is False
+        assert "path_injection" in details and details["path_injection"] is False
+        assert "hardcoded_credentials" in details and details["hardcoded_credentials"] is False
+        assert "stack_trace_exposure" in details and details["stack_trace_exposure"] is False
+        assert "incomplete_url_substring_sanitization" in details and details["incomplete_url_substring_sanitization"] is False
+        assert "flask_debug" in details and details["flask_debug"] is False
+        assert "potentially_weak_cryptographic_algorithm" in details and details["potentially_weak_cryptographic_algorithm"] is False
+        assert "clear_text_logging_sensitive_data" in details and details["clear_text_logging_sensitive_data"] is False
+        assert "incomplete_hostname_regexp" in details and details["incomplete_hostname_regexp"] is False
+        assert "sql_injection" in details and details["sql_injection"] is False
+        assert "insecure_randomness" in details and details["insecure_randomness"] is False
+        assert "bind_socket_all_network_interfaces" in details and details["bind_socket_all_network_interfaces"] is False
+        assert "client_side_unvalidated_url_redirection" in details and details["client_side_unvalidated_url_redirection"] is False
+        assert "likely_bugs" in details and details["likely_bugs"] is False
+        assert "server_side_unvalidated_url_redirection" in details and details["server_side_unvalidated_url_redirection"] is False
+        assert "clear_text_storage_sensitive_data" in details and details["clear_text_storage_sensitive_data"] is False
+        assert "tarslip" in details and details["tarslip"] is False
+        assert "reflected_xss" in details and details["reflected_xss"] is False
 
     def test_content_safety_evaluator_sexual(self, project_scope, azure_cred, simple_conversation):
         eval_fn = SexualEvaluator(azure_cred, project_scope)

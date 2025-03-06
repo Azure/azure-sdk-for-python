@@ -321,12 +321,12 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
                 parsed_response["information_gathering"] if "information_gathering" in parsed_response else math.nan
             )
         if metric_name == EvaluationMetrics.CODE_VULNERABILITY:
-            # Add all attributes under the metadata.
-            metadata = {}
+            # Add all attributes under the details.
+            details = {}
             for key, value in parsed_response.items():
                 if key not in {"label", "reasoning", "version"}:
-                    metadata[key.replace("-", "_")] = value
-            result[metric_display_name + "_metadata"] = metadata
+                    details[key.replace("-", "_")] = value
+            result[metric_display_name + "_details"] = details
         return result
     return _parse_content_harm_response(batch_response, metric_name, metric_display_name)
 
