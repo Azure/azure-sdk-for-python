@@ -1702,7 +1702,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         }
 
     @distributed_trace_async
-    async def hardlink_to(
+    async def create_hardlink(
         self, target: str,
         *,
         lease: Optional[Union[ShareLeaseClient, str]] = None,

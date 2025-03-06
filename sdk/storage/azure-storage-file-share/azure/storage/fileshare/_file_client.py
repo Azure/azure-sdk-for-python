@@ -1701,7 +1701,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         }
 
     @distributed_trace
-    def hardlink_to(
+    def create_hardlink(
         self, target: str,
         *,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
