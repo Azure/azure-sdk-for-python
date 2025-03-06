@@ -50,7 +50,7 @@ if __name__ == "__main__":
                 metric_obj = {}
                 metric_obj["value"] = total_coverage / 100
                 metric_obj["name"] = "test_coverage_ratio"
-                metric_obj["labels"] = { "package": pkg_details.name }
+                metric_obj["labels"] = { "package": pkg_details.name, "repo": "Azure/azure-sdk-for-python" }
                 metric_obj["timestamp"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
                 # normally we logging.info anywhere we need to output, but these logmetric statements
                 # need to be the sole value on the line, as the logmetric log parsing doesn't allow prefixes
