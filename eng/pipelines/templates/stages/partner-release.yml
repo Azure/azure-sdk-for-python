@@ -14,6 +14,7 @@ extends:
     stages:
     - stage: PartnerRelease
       displayName: 'Partner Release'
+      dependsOn: []
       variables:
         - name: Artifacts
           value: $(Pipeline.Workspace)/artifacts
@@ -49,7 +50,6 @@ extends:
             parameters:
               ArtifactName: 'artifacts-for-release'
               ArtifactPath: $(Artifacts)
-
         - deployment: PublishPackage
           displayName: "Publish to PyPI"
           environment: none
