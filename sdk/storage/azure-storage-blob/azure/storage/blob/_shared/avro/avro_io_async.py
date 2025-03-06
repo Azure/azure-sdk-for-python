@@ -145,7 +145,7 @@ class AsyncBinaryDecoder(object):
             try:
                 return input_bytes.decode('utf-8')
             except UnicodeDecodeError as exn:
-                logger.error('Invalid UTF-8 input bytes: %r', input_bytes)
+                logger.error('Invalid UTF-8 input bytes: %r', input_bytes)  # pylint: disable=do-not-log-raised-errors
                 raise exn
         else:
             # PY2
