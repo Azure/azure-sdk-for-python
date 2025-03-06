@@ -45,7 +45,7 @@ LOCAL_PRINCIPAL: Parameter[str] = Parameter(
 AZD_TAGS: Parameter[Dict[str, str]] = Variable(
     'azdTags',
     value={'azd-env-name': ENV_NAME},
-    description='Tags to apply to all resources in AZD envrionment.'
+    description='Tags to apply to all resources in AZD environment.'
 )
 TENANT_ID: Parameter[str] = Parameter(
     'tenantId',

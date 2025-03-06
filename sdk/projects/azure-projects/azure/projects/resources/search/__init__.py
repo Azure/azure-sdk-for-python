@@ -11,7 +11,7 @@ from ..._bicep.expressions import Output, Expression, ResourceSymbol, Parameter
 from ..._resource import _ClientResource, FieldsType, FieldType, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
-    from .types import SearchServiceResource, NetworkRuleSet
+    from .types import SearchServiceResource, SearchNetworkRuleSet
     from azure.search.documents import SearchClient
     from azure.search.documents.indexes import SearchIndexClient
 
@@ -33,7 +33,7 @@ class SearchServiceKwargs(TypedDict, total=False):
     # """The lock settings for all Resources in the solution."""
     managed_identities: 'ManagedIdentity'
     """The managed identity definition for this resource."""
-    network_acls: 'NetworkRuleSet'
+    network_acls: 'SearchNetworkRuleSet'
     """Network specific rules that determine how the Azure Cognitive Search service may be reached."""
     partition_count: int
     """The number of partitions in the search service; if specified, it can be 1, 2, 3, 4, 6, or 12. Values greater than 1 are only valid for standard SKUs. For 'standard3' services with hostingMode set to 'highDensity', the allowed values are between 1 and 3."""

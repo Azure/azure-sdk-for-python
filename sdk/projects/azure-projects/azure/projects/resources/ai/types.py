@@ -7,19 +7,19 @@ RESOURCE = "Microsoft.CognitiveServices/accounts"
 VERSION = "2024-10-01"
 
 
-class Identity(TypedDict, total=False):
+class CognitiveServicesIdentity(TypedDict, total=False):
     type: Required[Union[Literal['None', 'SystemAssigned', 'SystemAssigned,UserAssigned','UserAssigned'], Parameter[str]]]
     """The identity type."""
     userAssignedIdentities: Dict[Union[str, Parameter[str]], Dict]
     """The set of user assigned identities associated with the resource."""
 
 
-class IpRule(TypedDict, total=False):
+class CognitiveServicesIpRule(TypedDict, total=False):
     value: Required[Union[str, Parameter[str]]]
     """An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address) or '124.56.78.0/24' (all addresses that start with 124.56.78)."""
 
 
-class Sku(TypedDict, total=False):
+class CognitiveServicesSku(TypedDict, total=False):
     capacity: Union[int, Parameter[int]]
     """If the SKU supports scale out/in then the capacity integer should be included. If scale out/in is not possible for the resource this may be omitted."""
     family: Union[str, Parameter[str]]
@@ -43,7 +43,7 @@ class KeyVaultProperties(TypedDict, total=False):
     """Version of the Key from KeyVault"""
 
 
-class Encryption(TypedDict, total=False):
+class CognitiveServicesEncryption(TypedDict, total=False):
     keySource: Union[Parameter[str], Literal['Microsoft.CognitiveServices', 'Microsoft.KeyVault']]
     """Enumerates the possible value of keySource for Encryption."""
     keyVaultProperties: Union[Parameter[KeyVaultProperties], KeyVaultProperties]
@@ -57,12 +57,12 @@ class VirtualNetworkRule(TypedDict, total=False):
     """Ignore missing vnet service endpoint or not."""
 
 
-class NetworkRuleSet(TypedDict, total=False):
+class CognitiveServicesNetworkRuleSet(TypedDict, total=False):
     bypass: Union[Parameter[str], Literal['AzureServices', 'None']]
     """Setting for trusted services."""
     defaultAction: Union[Parameter[str], Literal['Allow', 'Deny']]
     """The default action when no rule from ipRules and from virtualNetworkRules match. This is only used after the bypass property has been evaluated."""
-    ipRules: Union[Parameter[List[IpRule]], List[Union[IpRule, Parameter[IpRule]]]]
+    ipRules: Union[Parameter[List[CognitiveServicesIpRule]], List[Union[CognitiveServicesIpRule, Parameter[CognitiveServicesIpRule]]]]
     """The list of IP address rules."""
     virtualNetworkRules: Union[Parameter[List[VirtualNetworkRule]], List[Union[VirtualNetworkRule, Parameter[VirtualNetworkRule]]]]
     """The list of virtual network rules."""
@@ -127,7 +127,7 @@ class ApiProperties(TypedDict, total=False):
     """(Metrics Advisor Only) The website name of Metrics Advisor."""
 
 
-class AccountProperties(TypedDict, total=False):
+class CognitiveServicesAccountProperties(TypedDict, total=False):
     allowedFqdnList: Union[List[Union[str, Parameter[str]]], Parameter[List[str]]]
     """List of allowed FQDN."""
     amlWorkspace: Union[UserOwnedAmlWorkspace, Parameter[UserOwnedAmlWorkspace]]
@@ -140,13 +140,13 @@ class AccountProperties(TypedDict, total=False):
     """Allow only Azure AD authentication. Should be enabled for security reasons."""
     dynamicThrottlingEnabled: Union[bool, Parameter[bool]]
     """The flag to enable dynamic throttling."""
-    encryption: Union[Encryption, Parameter[Encryption]]
+    encryption: Union[CognitiveServicesEncryption, Parameter[CognitiveServicesEncryption]]
     """The encryption properties for this resource."""
     locations: Union[MultiRegionSettings, Parameter[MultiRegionSettings]]
     """The multiregion settings of Cognitive Services account."""
     migrationToken: Union[str, Parameter[str]]
     """Resource migration token."""
-    networkAcls: Union[NetworkRuleSet, Parameter[NetworkRuleSet]]
+    networkAcls: Union[CognitiveServicesNetworkRuleSet, Parameter[CognitiveServicesNetworkRuleSet]]
     """A collection of rules governing the accessibility from specific network locations."""
     publicNetworkAccess: Union[Literal['Disabled', 'Enabled'], Parameter[str]]
     """Whether or not public endpoint access is allowed for this account."""
@@ -161,7 +161,7 @@ class AccountProperties(TypedDict, total=False):
 
 
 class CognitiveServicesAccountResource(TypedDict, total=False):
-    identity: 'Identity'
+    identity: 'CognitiveServicesIdentity'
     """Identity for the resource."""
     kind: Union[Literal['AIServices', 'AnomalyDetector', 'CognitiveServices', 'ComputerVision', 'ContentModerator', 'ContentSafety', 'ConversationalLanguageUnderstanding', 'CustomVision.Prediction', 'CustomVision.Training', 'Face', 'FormRecognizer', 'HealthInsights', 'ImmersiveReader', 'Internal.AllInOne', 'LanguageAuthoring', 'LUIS', 'LUIS.Authoring', 'MetricsAdvisor', 'OpenAI', 'Personalizer', 'QnAMaker.v2', 'SpeechServices', 'TextAnalytics', 'TextTranslation'], Parameter[str]]
     """The Kind of the resource."""
@@ -169,9 +169,9 @@ class CognitiveServicesAccountResource(TypedDict, total=False):
     """The geo-location where the resource lives."""
     name: Union[str, Parameter[str]]
     """The resource name."""
-    properties:	'AccountProperties'
+    properties:	'CognitiveServicesAccountProperties'
     """Properties of Cognitive Services account."""
-    sku: Union['Sku', Parameter['Sku']]
+    sku: Union['CognitiveServicesSku', Parameter['CognitiveServicesSku']]
     """The resource model definition representing SKU"""
     tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict[str, str]]]
     """Dictionary of tag names and values. See Tags in templates"""

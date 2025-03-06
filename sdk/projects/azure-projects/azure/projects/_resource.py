@@ -6,7 +6,6 @@
 
 from __future__ import annotations
 
-from inspect import get_annotations
 import inspect
 from itertools import takewhile, product, accumulate
 from enum import Enum
@@ -19,7 +18,6 @@ from typing import (
     Generator,
     Generic,
     Mapping,
-    Required,
     Tuple,
     TypedDict,
     runtime_checkable,
@@ -36,7 +34,7 @@ from typing import (
     NamedTuple,
     TYPE_CHECKING
 )
-from typing_extensions import Self
+from typing_extensions import Self, Required
 
 from dotenv import dotenv_values
 

@@ -8,7 +8,7 @@ RESOURCE = "Microsoft.KeyVault/vaults"
 VERSION = "2024-12-01-preview"
 
 
-class IpRule(TypedDict, total=False):
+class KeyVaultIpRule(TypedDict, total=False):
     value: Required[Union[str, Parameter[str]]]
     """An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address) or '124.56.78.0/24' (all addresses that start with 124.56.78)."""
 
@@ -20,12 +20,12 @@ class VirtualNetworkRule(TypedDict, total=False):
     """Ignore missing vnet service endpoint or not."""
 
 
-class NetworkRuleSet(TypedDict, total=False):
+class KeyVaultNetworkRuleSet(TypedDict, total=False):
     bypass: Union[Parameter[str], Literal['AzureServices', 'None']]
     """Setting for trusted services."""
     defaultAction: Union[Parameter[str], Literal['Allow', 'Deny']]
     """The default action when no rule from ipRules and from virtualNetworkRules match. This is only used after the bypass property has been evaluated."""
-    ipRules: Union[Parameter[List[IpRule]], List[Union[IpRule, Parameter[IpRule]]]]
+    ipRules: Union[Parameter[List[KeyVaultIpRule]], List[Union[KeyVaultIpRule, Parameter[KeyVaultIpRule]]]]
     """The list of IP address rules."""
     virtualNetworkRules: Union[Parameter[List[VirtualNetworkRule]], List[Union[VirtualNetworkRule, Parameter[VirtualNetworkRule]]]]
     """The list of virtual network rules."""

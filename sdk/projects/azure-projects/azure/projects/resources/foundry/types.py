@@ -8,7 +8,7 @@ RESOURCE = "Microsoft.MachineLearningServices/workspaces"
 VERSION = "2024-04-01-preview"
 
 
-class Identity(TypedDict, total=False):
+class MLIdentity(TypedDict, total=False):
     type: Required[Union[Literal['None', 'SystemAssigned', 'SystemAssigned,UserAssigned','UserAssigned'], Parameter[str]]]
     """The identity type."""
     userAssignedIdentities: Dict[Union[str, Parameter[str]], Dict]
@@ -16,7 +16,7 @@ class Identity(TypedDict, total=False):
 
 
 class MachineLearningWorkspaceResource(TypedDict, total=False):
-    identity: Union[Identity, Parameter[Identity]]
+    identity: Union[MLIdentity, Parameter[MLIdentity]]
     """Managed service identity (system assigned and/or user assigned identities)."""
     kind: Union[Literal['Default', 'FeatureStore', 'Hub', 'Project'], Parameter[str]]
     """The type of Azure Machine Learning workspace to create."""

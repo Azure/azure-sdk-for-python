@@ -71,7 +71,7 @@ setup(
     },
     install_requires=[
         "python-dotenv>=1.0.0",
-        "azure-identity",
+        "azure-identity>=1.20",
         "azure-core>=1.31.0",
         "typing-extensions>=4.5",
     ],

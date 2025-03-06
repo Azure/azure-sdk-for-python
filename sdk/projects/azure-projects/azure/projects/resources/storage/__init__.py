@@ -12,7 +12,7 @@ from ..._parameters import GLOBAL_PARAMS
 if TYPE_CHECKING:
     from .types import (
         StorageAccountResource,
-        NetworkRuleSet,
+        StorageNetworkRuleSet,
         AzureFilesIdentityBasedAuthentication,
         Encryption
     )
@@ -75,7 +75,7 @@ class StorageAccountKwargs(TypedDict, total=False):
     # """The Storage Account ManagementPolicies Rules."""
     minimum_tls_version: Union[Literal['TLS1_2', 'TLS1_3'], Parameter[str]]
     """Set the minimum TLS version on request to storage. The TLS versions 1.0 and 1.1 are deprecated and not supported anymore."""
-    network_acls: Union['NetworkRuleSet', Parameter['NetworkRuleSet']]
+    network_acls: Union['StorageNetworkRuleSet', Parameter['StorageNetworkRuleSet']]
     """Networks ACLs, this value contains IPs to whitelist and/or Subnet information. If in use, bypass needs to be supplied. For security reasons, it is recommended to set the DefaultAction Deny."""
     # TODO: support private endpoints
     # private_endpoints: List['PrivateEndpoint']

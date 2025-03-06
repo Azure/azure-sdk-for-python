@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 from concurrent.futures import ThreadPoolExecutor
-from inspect import get_annotations
 import asyncio
 import sys
 import threading
@@ -61,6 +60,21 @@ RESOURCE_FROM_CLIENT_ANNOTATION: Dict[str, ResourceIdentifiers] = {
     'SearchIndexClient': ResourceIdentifiers.search,
     'SearchClient': ResourceIdentifiers.search,
 }
+
+
+def get_annotations(cls: Type) -> Mapping[str, Any]:
+    """This is needed for Python <3.10"""
+    try:
+        from inspect import get_annotations
+        return get_annotations(cls)
+    except ImportError:
+        pass
+    try:
+        return cls.__annotations__
+    except AttributeError:
+        pass
+    return {}
+
 
 class DefaultFactory(Protocol, Generic[ParameterType]):
     def __call__(self, **kwargs) -> ParameterType:

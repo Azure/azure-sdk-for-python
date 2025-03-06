@@ -11,7 +11,7 @@ from ..._bicep.expressions import Output, Expression, ResourceSymbol, Parameter
 from ..._resource import _ClientResource, FieldsType, FieldType, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
-    from .types import KeyVaultResource, NetworkRuleSet
+    from .types import KeyVaultResource, KeyVaultNetworkRuleSet
 
 
 class KeyVaultKwargs(TypedDict, total=False):
@@ -37,7 +37,7 @@ class KeyVaultKwargs(TypedDict, total=False):
     """Location for all resources."""
     # lock: 'Lock'
     # """The lock settings of the service."""
-    network_acls: Union['NetworkRuleSet', Parameter['NetworkRuleSet']]
+    network_acls: Union['KeyVaultNetworkRuleSet', Parameter['KeyVaultNetworkRuleSet']]
     """A collection of rules governing the accessibility from specific network locations."""
     # private_endpoints: List['PrivateEndpoint']
     # """Configuration details for private endpoints. For security reasons, it is recommended to use private endpoints whenever possible."""

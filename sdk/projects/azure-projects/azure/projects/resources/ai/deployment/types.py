@@ -38,7 +38,7 @@ class DeploymentModel(TypedDict, total=False):
     """Source of the model, another Microsoft.CognitiveServices accounts ARM resource ID."""
 
 
-class Sku(TypedDict, total=False):
+class DeploymentSku(TypedDict, total=False):
     """The resource model definition representing SKU."""
     name: Required[Union[str, Parameter[str]]]
     """The name of the SKU. Ex - P3. It is typically a letter+number code."""
@@ -74,7 +74,7 @@ class DeploymentResource(TypedDict, total=False):
     """The resource name."""
     properties:	'DeploymentProperties'
     """Properties of Cognitive Services account deployment."""
-    sku: Union['Sku', Parameter['Sku']]
+    sku: Union['DeploymentSku', Parameter['DeploymentSku']]
     """The resource model definition representing SKU"""
     tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict[str, str]]]
     """Dictionary of tag names and values. See Tags in templates"""

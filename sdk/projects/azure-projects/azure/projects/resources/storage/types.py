@@ -7,7 +7,7 @@ RESOURCE = "Microsoft.Storage/storageAccounts"
 VERSION = "2023-05-01"
 
 
-class Sku(TypedDict):
+class StorageSku(TypedDict, total=False):
     name: Required[Union[Literal['Premium_LRS', 'Premium_ZRS', 'Standard_GRS', 'Standard_GZRS', 'Standard_LRS', 'Standard_RAGRS', 'Standard_RAGZRS', 'Standard_ZRS'], Parameter[str]]]
     """The SKU name. Required for account creation; optional for update. Note that in older versions, SKU name was called accountType."""
 
@@ -19,7 +19,7 @@ class ExtendedLocation(TypedDict):
     """The type of the extended location."""
 
 
-class Identity(TypedDict, total=False):
+class StorageIdentity(TypedDict, total=False):
     type: Required[Union[Literal['None', 'SystemAssigned', 'SystemAssigned,UserAssigned','UserAssigned'], Parameter[str]]]
     """The identity type."""
     userAssignedIdentities: Dict[Union[str, Parameter[str]], Dict]
@@ -95,7 +95,7 @@ class EncryptionServices(TypedDict, total=False):
     """The encryption function of the table storage service."""
 
 
-class Encryption(TypedDict, total=False):
+class StorageEncryption(TypedDict, total=False):
     identity: Union[EncryptionIdentity, Parameter[EncryptionIdentity]]
     """The identity to be used with service-side encryption at rest."""
     keySource: Union[Literal['Microsoft.Keyvault', 'Microsoft.Storage'], Parameter[str]]
@@ -150,7 +150,7 @@ class VirtualNetworkRule(TypedDict):
     """Resource ID of a subnet, for example: /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}."""
 
 
-class NetworkRuleSet(TypedDict, total=False):
+class StorageNetworkRuleSet(TypedDict, total=False):
     bypass: Literal['AzureServices', 'Logging', 'Metrics', 'None']
     """Specifies whether traffic is bypassed for Logging/Metrics/AzureServices. Possible values are any combination of Logging	Metrics	AzureServices (For example, "Logging, Metrics"), or None to bypass none of those traffics."""
     defaultAction: Required[Union[Literal['Allow', 'Deny'], Parameter[str]]]
@@ -200,7 +200,7 @@ class StorageAccountProperties(TypedDict, total=False):
     """Allows you to specify the type of endpoint. Set this to AzureDNSZone to create a large number of accounts in a single subscription, which creates accounts in an Azure DNS Zone and the endpoint URL will have an alphanumeric DNS Zone identifier."""
     enableExtendedGroups: Union[bool, Parameter[bool]]
     """Enables extended group support with local users feature, if set to true."""
-    encryption: Union[Encryption, Parameter[Encryption]]
+    encryption: Union[StorageEncryption, Parameter[StorageEncryption]]
     """Encryption settings to be used for server-side encryption for the storage account."""
     immutableStorageWithVersioning: Union[ImmutableStorageAccount, Parameter[ImmutableStorageAccount]]
     """The property is immutable and can only be set to true at the account creation time. When set to true, it enables object level immutability for all the new containers in the account by default."""
@@ -218,7 +218,7 @@ class StorageAccountProperties(TypedDict, total=False):
     """Allow large file shares if sets to Enabled. It cannot be disabled once it is enabled."""
     minimumTlsVersion: Union[Literal['TLS1_0', 'TLS1_1', 'TLS1_2', 'TLS1_3'], Parameter[str]]
     """Set the minimum TLS version to be permitted on requests to storage. The default interpretation is TLS 1.0 for this property."""
-    networkAcls: Union[NetworkRuleSet, Parameter[NetworkRuleSet]]
+    networkAcls: Union[StorageNetworkRuleSet, Parameter[StorageNetworkRuleSet]]
     """Network rule set."""
     publicNetworkAccess: Union[Literal['Disabled', 'Enabled', 'SecuredByPerimeter'], Parameter[str]]
     """Allow, disallow, or let Network Security Perimeter configuration to evaluate public network access to Storage Account. Value is optional but if passed in, must be 'Enabled', 'Disabled' or 'SecuredByPerimeter'."""
@@ -233,7 +233,7 @@ class StorageAccountProperties(TypedDict, total=False):
 class StorageAccountResource(TypedDict, total=False):
     extendedLocation: Union[ExtendedLocation, Parameter[ExtendedLocation]]
     """Set the extended location of the resource. If not set, the storage account will be created in Azure main region. Otherwise it will be created in the specified extended location."""
-    identity: Union[Identity, Parameter[Identity]]
+    identity: Union[StorageIdentity, Parameter[StorageIdentity]]
     """The identity of the resource."""
     kind: Union[Literal['BlobStorage', 'BlockBlobStorage', 'FileStorage', 'Storage', 'StorageV2'], Parameter[str]]
     """Indicates the type of storage account."""
@@ -243,7 +243,7 @@ class StorageAccountResource(TypedDict, total=False):
     """The resource name."""
     properties: Union[StorageAccountProperties, Parameter[StorageAccountProperties]]
     """The parameters used to create the storage account."""
-    sku: Union[Sku, Parameter[Sku]]
+    sku: Union[StorageSku, Parameter[StorageSku]]
     """Gets or sets the SKU name."""
     tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict[str, str]]]
     """Dictionary of resource tag names and values."""

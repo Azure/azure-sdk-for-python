@@ -10,7 +10,7 @@ from ..._bicep.expressions import Output, Expression, ResourceSymbol, Parameter
 from ..._resource import _ClientResource, FieldsType, FieldType, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
-    from .types import CognitiveServicesAccountResource, ApiProperties, NetworkRuleSet
+    from .types import CognitiveServicesAccountResource, ApiProperties, CognitiveServicesNetworkRuleSet
 
 
 class CognitiveServicesKwargs(TypedDict, total=False):
@@ -30,7 +30,7 @@ class CognitiveServicesKwargs(TypedDict, total=False):
     """The managed identity definition for this resource."""
     migration_token: Union[str, Parameter[str]]
     """Resource migration token."""
-    network_acls: Union['NetworkRuleSet', Parameter['NetworkRuleSet']]
+    network_acls: Union['CognitiveServicesNetworkRuleSet', Parameter['CognitiveServicesNetworkRuleSet']]
     """A collection of rules governing the accessibility from specific network locations."""
     public_network_access: Union[Literal['Disabled', 'Enabled'], Parameter[str]]
     """Whether or not public network access is allowed for this resource. For security reasons it should be disabled. If not specified, it will be disabled by default if private endpoints are set and networkAcls are not set."""

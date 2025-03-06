@@ -19,7 +19,7 @@ param principalId string
 @sys.description('The Azure Active Directory tenant ID.')
 param tenantId string = subscription().tenantId
 
-@sys.description('Tags to apply to all resources in AZD envrionment.')
+@sys.description('Tags to apply to all resources in AZD environment.')
 var azdTags = {
   'azd-env-name': environmentName
 }
