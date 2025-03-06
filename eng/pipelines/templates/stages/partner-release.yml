@@ -63,7 +63,7 @@ extends:
             inputs:
             - input: pipelineArtifact
               artifactName: artifacts-for-release
-              targetPath: $(Pipeline.Workspace)/artifacts
+              targetPath: $(Artifacts)
 
           pool:
             image: azsdk-pool-mms-ubuntu-2004-1espt
