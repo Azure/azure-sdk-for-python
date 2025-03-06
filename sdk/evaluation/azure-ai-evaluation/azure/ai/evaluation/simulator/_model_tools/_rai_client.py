@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Any
+from typing import Any, Dict, List
 from urllib.parse import urljoin, urlparse
 import base64
+import json
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client, get_http_client
@@ -62,6 +63,7 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         self.jailbreaks_json_endpoint = urljoin(self.api_url, "simulation/jailbreak")
         self.simulation_submit_endpoint = urljoin(self.api_url, "simulation/chat/completions/submit")
         self.xpia_jailbreaks_json_endpoint = urljoin(self.api_url, "simulation/jailbreak/xpia")
+        self.attack_objectives_endpoint = urljoin(self.api_url, "simulation/attack/objectives")
 
     def _get_service_discovery_url(self):
         bearer_token = self.token_manager.get_token()
@@ -206,3 +208,51 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             category=ErrorCategory.UNKNOWN,
             blame=ErrorBlame.USER_ERROR,
         )
+
+    async def get_attack_objectives(self, risk_categories: List[str], application_scenario: str = None) -> Any:
+        """Get the attack objectives based on risk categories and application scenario
+        
+        :param risk_categories: List of risk categories to generate attack objectives for
+        :type risk_categories: List[str]
+        :param application_scenario: Optional description of the application scenario for context
+        :type application_scenario: str
+        :return: The attack objectives
+        :rtype: Any
+        """
+        # TODO: Replace with actual API call when endpoint is available
+        token = self.token_manager.get_token()
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+            "User-Agent": USER_AGENT,
+        }
+        
+        payload = {
+            "risk_categories": risk_categories
+        }
+        
+        if application_scenario:
+            payload["application_scenario"] = application_scenario
+            
+        session = self._create_async_client()
+        async with session:
+            # TODO: Update to use proper API endpoint once available
+            # For now returning mock data structure to unblock development
+            # response = await session.post(url=self.attack_objectives_endpoint, json=payload, headers=headers)
+            # if response.status_code == 200:
+            #     return response.json()
+            
+            # Mock response structure
+            return {
+                "objectives": [
+                    {
+                        "risk_category": cat,
+                        "conversation_starter": f"This is a mocked attack objective for {cat}",
+                        "metadata": {
+                            "category": cat
+                        }
+                    } for cat in risk_categories
+                ]
+            }
+            
+        # Error handling would go here in the actual implementation

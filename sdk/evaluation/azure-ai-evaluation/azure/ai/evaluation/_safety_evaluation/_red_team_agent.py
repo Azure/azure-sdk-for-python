@@ -5,21 +5,19 @@
 import asyncio
 from enum import Enum
 import os
-import inspect
 import logging
 from datetime import datetime
 from azure.ai.evaluation._common._experimental import experimental
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
-from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
-from azure.ai.evaluation.simulator import Simulator, AdversarialSimulator, AdversarialScenario, AdversarialScenarioJailbreak, IndirectAttackSimulator, DirectAttackSimulator
-from azure.ai.evaluation.simulator._utils import JsonLineList
+from typing import Callable, Dict, List, Optional, Union, cast
+from azure.ai.evaluation._model_configurations import EvaluationResult
+from azure.ai.evaluation.simulator import AdversarialScenario
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager, TokenScope, RAIClient, AdversarialTemplateHandler
-from azure.ai.evaluation._common.utils import validate_azure_ai_project
+from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._safety_evaluation._callback_chat_target import CallbackChatTarget
 from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
-from pyrit.orchestrator import ManyShotJailbreakOrchestrator, SkeletonKeyOrchestrator, Orchestrator
-from pyrit.prompt_converter import PromptConverter, MathPromptConverter, TenseConverter, Base64Converter, FlipConverter, MorseConverter, AnsiAttackConverter, AsciiArtConverter, AsciiSmugglerConverter, AtbashConverter, BinaryConverter, CaesarConverter, CharacterSpaceConverter, CharSwapGenerator, CharSwapGenerator, CharSwapGenerator, DiacriticConverter, DiacriticConverter, LeetspeakConverter, UrlConverter, UnicodeSubstitutionConverter, UnicodeConfusableConverter, SuffixAppendConverter, StringJoinConverter, ROT13Converter, RepeatTokenConverter
+from pyrit.orchestrator import Orchestrator
+from pyrit.prompt_converter import PromptConverter, MathPromptConverter, TenseConverter, Base64Converter, FlipConverter, MorseConverter, AnsiAttackConverter, AsciiArtConverter, AsciiSmugglerConverter, AtbashConverter, BinaryConverter, CaesarConverter, CharacterSpaceConverter, CharSwapGenerator, DiacriticConverter, LeetspeakConverter, UrlConverter, UnicodeSubstitutionConverter, UnicodeConfusableConverter, SuffixAppendConverter, StringJoinConverter, ROT13Converter, RepeatTokenConverter
 from pyrit.prompt_target import PromptChatTarget
 from azure.core.credentials import TokenCredential
 import json
@@ -27,10 +25,10 @@ from pathlib import Path
 import re
 import itertools
 from pyrit.common import initialize_pyrit, DUCK_DB
-from pyrit.orchestrator import PromptSendingOrchestrator
 from pyrit.prompt_target import OpenAIChatTarget
 from pyrit.models import ChatMessage
-from azure.ai.evaluation._safety_evaluation._safety_evaluation import _SafetyEvaluation, _SafetyEvaluator, DATA_EXT
+from azure.ai.evaluation._safety_evaluation._safety_evaluation import _SafetyEvaluation, DATA_EXT
+from azure.ai.evaluation._user_agent import USER_AGENT
 
 BASELINE_IDENTIFIER = "Baseline"
 
@@ -90,7 +88,6 @@ def _setup_logger():
 
     return logger
 
-
 @experimental
 class RedTeamAgent(_SafetyEvaluation):
     def __init__(self, azure_ai_project, credential):
@@ -103,6 +100,7 @@ class RedTeamAgent(_SafetyEvaluation):
         )
 
         self.rai_client = RAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
+        self.generated_rai_client = GeneratedRAIClient(azure_ai_project=self.azure_ai_project, token_manager=self.token_manager)
         self.adversarial_template_handler = AdversarialTemplateHandler(
             azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
         )
@@ -167,6 +165,34 @@ class RedTeamAgent(_SafetyEvaluation):
                 break
         return all_prompts
     
+    async def _get_attack_objectives(self, attack_objective_generator, application_scenario: Optional[str] = None, num_rows: int = 3) -> List[str]:
+        """Get attack objectives from the GeneratedRAIClient based on the risk categories in the attack objective generator.
+        
+        :param attack_objective_generator: The generator with risk categories to get attack objectives for
+        :type attack_objective_generator: ~azure.ai.evaluation.redteam.AttackObjectiveGenerator
+        :param application_scenario: Optional description of the application scenario for context
+        :type application_scenario: str
+        :param num_rows: The maximum number of objectives to retrieve
+        :type num_rows: int
+        :return: A list of attack objective prompts
+        :rtype: List[str]
+        """
+        risk_categories = [category.value for category in attack_objective_generator.risk_categories]
+        self.logger.info(f"Getting attack objectives for risk categories: {risk_categories}")
+        
+        # Use the GeneratedRAIClient implementation
+        objectives_response = await self.generated_rai_client.get_attack_objectives(
+            risk_categories=risk_categories,
+            application_scenario=application_scenario
+        )
+        import pdb; pdb.set_trace()
+        all_prompts = []
+        for objective in objectives_response["objectives"][:num_rows]:
+            all_prompts.append(objective["conversation_starter"])
+            
+        self.logger.info(f"Retrieved {len(all_prompts)} attack objectives")
+        return all_prompts
+
     def _message_to_dict(self, message: ChatMessage):
         return {
             "role": message.role,
@@ -317,12 +343,25 @@ class RedTeamAgent(_SafetyEvaluation):
             num_rows: int = 5,
             attack_strategy: List[Union[AttackStrategy, List[AttackStrategy]]] = [],
             data_only: bool = False, 
-            output_path: Optional[Union[str, os.PathLike]] = None) -> Union[Dict[str, EvaluationResult], Dict[str, Union[str, os.PathLike]]]:
+            output_path: Optional[Union[str, os.PathLike]] = None,
+            attack_objective_generator = None,
+            application_scenario: Optional[str] = None) -> Union[Dict[str, EvaluationResult], Dict[str, Union[str, os.PathLike]]]:
         
         chat_target = self._get_chat_target(target)
         self.chat_target = chat_target
         
-        all_prompts_list = await self._get_all_prompts(scenario=AdversarialScenario.ADVERSARIAL_QA, num_rows=num_rows)
+        # Get prompts from attack_objective_generator if provided, otherwise use the default method
+        if attack_objective_generator:
+            self.logger.info("Using AttackObjectiveGenerator to get attack objectives")
+            all_prompts_list = await self._get_attack_objectives(
+                attack_objective_generator=attack_objective_generator, 
+                application_scenario=application_scenario,
+                num_rows=num_rows
+            )
+        else:
+            self.logger.info("Using default method to get attack prompts")
+            all_prompts_list = await self._get_all_prompts(scenario=AdversarialScenario.ADVERSARIAL_QA, num_rows=num_rows)
+        
         self.logger.info(f"Configuring PyRIT based on attack strategy: {attack_strategy}")
 
         converters = self._get_converters_for_budget(attack_strategy)
