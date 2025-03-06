@@ -77,5 +77,8 @@ setup(
         "aio": [
             "aiohttp>=3.0",
         ],
+        "tracing": [
+            "opentelemetry-api~=1.26",
+        ],
     },
 )

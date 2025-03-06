@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -12,7 +11,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from ... import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -70,7 +68,7 @@ class WebtestsResource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Azure resource Id.
     :vartype id: str
@@ -114,12 +112,12 @@ class WebtestsResource(_serialization.Model):
         self.tags = tags
 
 
-class WebTest(WebtestsResource):  # pylint: disable=too-many-instance-attributes
+class WebTest(WebtestsResource):
     """An Application Insights WebTest definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Azure resource Id.
     :vartype id: str
@@ -300,7 +298,7 @@ class WebTestGeolocation(_serialization.Model):
 class WebTestListResult(_serialization.Model):
     """A list of 0 or more Application Insights WebTest definitions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Set of Application Insights WebTest definitions. Required.
     :vartype value: list[~azure.mgmt.applicationinsights.v2022_06_15.models.WebTest]
@@ -470,7 +468,7 @@ class WebTestPropertiesValidationRules(_serialization.Model):
         self.ignore_http_status_code = ignore_http_status_code
 
 
-class WebTestPropertiesValidationRulesContentValidation(_serialization.Model):
+class WebTestPropertiesValidationRulesContentValidation(_serialization.Model):  # pylint: disable=name-too-long
     """The collection of content validation properties.
 
     :ivar content_match: Content to look for in the return of the WebTest.  Must not be null or

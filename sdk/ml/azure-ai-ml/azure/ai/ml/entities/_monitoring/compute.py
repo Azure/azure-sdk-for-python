@@ -43,8 +43,8 @@ class ServerlessSparkCompute:
         )
 
     def _validate(self) -> None:
-        if self.runtime_version != "3.3":
-            msg = "Compute runtime version must be 3.3"
+        if self.runtime_version != "3.4":
+            msg = "Compute runtime version must be 3.4"
             err = ValidationException(
                 message=msg,
                 target=ErrorTarget.MODEL_MONITORING,

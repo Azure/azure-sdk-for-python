@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -15,10 +15,9 @@ from ... import _serialization
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -28,7 +27,7 @@ class ComponentsResource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Azure resource Id.
     :vartype id: str
@@ -72,12 +71,12 @@ class ComponentsResource(_serialization.Model):
         self.tags = tags
 
 
-class ApplicationInsightsComponent(ComponentsResource):  # pylint: disable=too-many-instance-attributes
+class ApplicationInsightsComponent(ComponentsResource):
     """An Application Insights component definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Azure resource Id.
     :vartype id: str
@@ -299,7 +298,7 @@ class ApplicationInsightsComponent(ComponentsResource):  # pylint: disable=too-m
 class ApplicationInsightsComponentListResult(_serialization.Model):
     """Describes the list of Application Insights Resources.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of Application Insights component definitions. Required.
     :vartype value:
@@ -334,7 +333,9 @@ class ApplicationInsightsComponentListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class ApplicationInsightsComponentProactiveDetectionConfiguration(_serialization.Model):
+class ApplicationInsightsComponentProactiveDetectionConfiguration(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """A ProactiveDetection configuration definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -361,7 +362,7 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(_serialization
     :ivar rule_definitions: Static definitions of the ProactiveDetection configuration rule (same
      values for all components).
     :vartype rule_definitions:
-     ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions
+     ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions  # pylint: disable=line-too-long
     """
 
     _validation = {
@@ -376,13 +377,13 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(_serialization
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "location": {"key": "location", "type": "str"},
-        "name_properties_name": {"key": "properties.Name", "type": "str"},
-        "enabled": {"key": "properties.Enabled", "type": "bool"},
-        "send_emails_to_subscription_owners": {"key": "properties.SendEmailsToSubscriptionOwners", "type": "bool"},
-        "custom_emails": {"key": "properties.CustomEmails", "type": "[str]"},
-        "last_updated_time": {"key": "properties.LastUpdatedTime", "type": "str"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "send_emails_to_subscription_owners": {"key": "properties.sendEmailsToSubscriptionOwners", "type": "bool"},
+        "custom_emails": {"key": "properties.customEmails", "type": "[str]"},
+        "last_updated_time": {"key": "properties.lastUpdatedTime", "type": "str"},
         "rule_definitions": {
-            "key": "properties.RuleDefinitions",
+            "key": "properties.ruleDefinitions",
             "type": "ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions",
         },
     }
@@ -415,7 +416,7 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(_serialization
         :keyword rule_definitions: Static definitions of the ProactiveDetection configuration rule
          (same values for all components).
         :paramtype rule_definitions:
-         ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions
+         ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions  # pylint: disable=line-too-long
         """
         super().__init__(**kwargs)
         self.id = None
@@ -430,7 +431,9 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(_serialization
         self.rule_definitions = rule_definitions
 
 
-class ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions(_serialization.Model):
+class ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Static definitions of the ProactiveDetection configuration rule (same values for all
     components).
 
@@ -510,7 +513,7 @@ class ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleD
 class ComponentPurgeBody(_serialization.Model):
     """Describes the body of a purge request for an App Insights component.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar table: Table from which to purge data. Required.
     :vartype table: str
@@ -601,7 +604,7 @@ class ComponentPurgeBodyFilters(_serialization.Model):
 class ComponentPurgeResponse(_serialization.Model):
     """Response containing operationId for a specific purge action.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operation_id: Id to use when querying for status for a particular purge operation.
      Required.
@@ -629,7 +632,7 @@ class ComponentPurgeResponse(_serialization.Model):
 class ComponentPurgeStatusResponse(_serialization.Model):
     """Response containing status for a specific purge operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar status: Status of the operation represented by the requested Id. Required. Known values
      are: "pending" and "completed".
@@ -854,7 +857,7 @@ class WebtestsResource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Azure resource Id.
     :vartype id: str
@@ -898,12 +901,12 @@ class WebtestsResource(_serialization.Model):
         self.tags = tags
 
 
-class WebTest(WebtestsResource):  # pylint: disable=too-many-instance-attributes
+class WebTest(WebtestsResource):
     """An Application Insights WebTest definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Azure resource Id.
     :vartype id: str
@@ -1089,7 +1092,7 @@ class WebTestGeolocation(_serialization.Model):
 class WebTestListResult(_serialization.Model):
     """A list of 0 or more Application Insights WebTest definitions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Set of Application Insights WebTest definitions. Required.
     :vartype value: list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTest]
@@ -1260,7 +1263,7 @@ class WebTestPropertiesValidationRules(_serialization.Model):
         self.ignore_https_status_code = ignore_https_status_code
 
 
-class WebTestPropertiesValidationRulesContentValidation(_serialization.Model):
+class WebTestPropertiesValidationRulesContentValidation(_serialization.Model):  # pylint: disable=name-too-long
     """The collection of content validation properties.
 
     :ivar content_match: Content to look for in the return of the WebTest.  Must not be null or

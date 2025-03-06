@@ -1,5 +1,13 @@
 # Release History
 
+## 4.1.0 (2025-03-06)
+
+### Features Added
+
+  - Added operation group DeletedWorkbooksOperations
+  - Model Resource has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+
 ## 4.0.0 (2023-04-20)
 
 ### Features Added
