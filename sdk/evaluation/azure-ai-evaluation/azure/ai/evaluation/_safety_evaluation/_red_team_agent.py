@@ -177,20 +177,47 @@ class RedTeamAgent(_SafetyEvaluation):
         :return: A list of attack objective prompts
         :rtype: List[str]
         """
-        risk_categories = [category.value for category in attack_objective_generator.risk_categories]
+        risk_categories = [cat.value.lower() for cat in attack_objective_generator.risk_categories]
         self.logger.info(f"Getting attack objectives for risk categories: {risk_categories}")
-        
-        # Use the GeneratedRAIClient implementation
-        objectives_response = await self.generated_rai_client.get_attack_objectives(
+
+        objectives_response = await self.rai_client.get_attack_objectives(
             risk_categories=risk_categories,
             application_scenario=application_scenario
         )
-        import pdb; pdb.set_trace()
+
+        filtered_response = []
+        nocat_response = []
+        for obj in objectives_response:
+            target_harms = obj.get("Metadata", {}).get("TargetHarms", [])
+            if not target_harms:
+                content = obj.get("Messages", [{}])[0].get("Content", "")
+                nocat_response.append(content)
+                continue
+            # Convert each RiskType to lowercase before checking
+            if any(harm.get("RiskType", "").lower() in risk_categories for harm in target_harms):
+                filtered_response.append(obj)
+
+        grouped_by_category = {cat: [] for cat in risk_categories}
+        for obj in filtered_response:
+            for harm in obj.get("Metadata", {}).get("TargetHarms", []):
+                cat = harm.get("RiskType", "").lower()
+                if cat in risk_categories:
+                    content = obj.get("Messages", [{}])[0].get("Content", "")
+                    grouped_by_category[cat].append(content)
+
         all_prompts = []
-        for objective in objectives_response["objectives"][:num_rows]:
-            all_prompts.append(objective["conversation_starter"])
-            
-        self.logger.info(f"Retrieved {len(all_prompts)} attack objectives")
+        if risk_categories:
+            prompts_per_category = num_rows // len(risk_categories)
+            for cat in risk_categories:
+                cat_list = grouped_by_category[cat]
+                num_to_add = min(prompts_per_category, len(cat_list))
+                if len(cat_list) < prompts_per_category:
+                    self.logger.info(f"Only {len(cat_list)} available for {cat}")
+                self.logger.info(f"Adding {num_to_add} items for {cat}")
+                all_prompts.extend(cat_list[:prompts_per_category])
+
+        all_prompts.extend(nocat_response)
+        self.logger.info(f"Total of {len(all_prompts)} prompts")
         return all_prompts
 
     def _message_to_dict(self, message: ChatMessage):
@@ -340,7 +367,7 @@ class RedTeamAgent(_SafetyEvaluation):
             target: Union[Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
             evaluation_name: Optional[str] = None,
             num_turns : int = 1,
-            num_rows: int = 5,
+            num_rows: int = 100,
             attack_strategy: List[Union[AttackStrategy, List[AttackStrategy]]] = [],
             data_only: bool = False, 
             output_path: Optional[Union[str, os.PathLike]] = None,

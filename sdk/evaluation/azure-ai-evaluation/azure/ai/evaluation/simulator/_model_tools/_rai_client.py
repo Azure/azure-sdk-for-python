@@ -63,7 +63,7 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         self.jailbreaks_json_endpoint = urljoin(self.api_url, "simulation/jailbreak")
         self.simulation_submit_endpoint = urljoin(self.api_url, "simulation/chat/completions/submit")
         self.xpia_jailbreaks_json_endpoint = urljoin(self.api_url, "simulation/jailbreak/xpia")
-        self.attack_objectives_endpoint = urljoin(self.api_url, "simulation/attack/objectives")
+        self.attack_objectives_endpoint = urljoin(self.api_url, "simulation/attackobjectives")
 
     def _get_service_discovery_url(self):
         bearer_token = self.token_manager.get_token()
@@ -226,7 +226,7 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             "Content-Type": "application/json",
             "User-Agent": USER_AGENT,
         }
-        
+        # TODO: replace with url ?riskTypes=risk_categories[0]&riskTypes=risk_categories[1]...
         payload = {
             "risk_categories": risk_categories
         }
@@ -236,23 +236,19 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             
         session = self._create_async_client()
         async with session:
-            # TODO: Update to use proper API endpoint once available
-            # For now returning mock data structure to unblock development
-            # response = await session.post(url=self.attack_objectives_endpoint, json=payload, headers=headers)
-            # if response.status_code == 200:
-            #     return response.json()
-            
-            # Mock response structure
-            return {
-                "objectives": [
-                    {
-                        "risk_category": cat,
-                        "conversation_starter": f"This is a mocked attack objective for {cat}",
-                        "metadata": {
-                            "category": cat
-                        }
-                    } for cat in risk_categories
-                ]
-            }
-            
-        # Error handling would go here in the actual implementation
+            response = await session.get(
+                url=self.attack_objectives_endpoint, headers=headers
+            )
+            if response.status_code != 200:
+                raise EvaluationException(
+                    message="Failed to get attack objectives",
+                    internal_message=response.text,
+                    target=ErrorTarget.RAI_CLIENT,
+                    category=ErrorCategory.UNKNOWN,
+                    blame=ErrorBlame.USER_ERROR,
+                )
+            else:
+                response_data = response.json()
+                # Process the response data as needed
+                # For now, just returning the raw response data
+                return response_data
