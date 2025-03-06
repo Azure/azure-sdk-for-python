@@ -20,7 +20,7 @@ class TestPolicyPolicySetDefinitionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_policy_set_definitions_create_or_update(self, resource_group):
         response = self.client.policy_set_definitions.create_or_update(
             policy_set_definition_name="str",
             parameters={
@@ -56,7 +56,9 @@ class TestPolicyPolicySetDefinitionsOperations(AzureMgmtRecordedTestCase):
                     {
                         "policyDefinitionId": "str",
                         "definitionVersion": "str",
+                        "effectiveDefinitionVersion": "str",
                         "groupNames": ["str"],
+                        "latestDefinitionVersion": "str",
                         "parameters": {"str": {"value": {}}},
                         "policyDefinitionReferenceId": "str",
                     }
@@ -82,7 +84,7 @@ class TestPolicyPolicySetDefinitionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_policy_set_definitions_delete(self, resource_group):
         response = self.client.policy_set_definitions.delete(
             policy_set_definition_name="str",
             api_version="2023-04-01",
@@ -93,7 +95,7 @@ class TestPolicyPolicySetDefinitionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_policy_set_definitions_get(self, resource_group):
         response = self.client.policy_set_definitions.get(
             policy_set_definition_name="str",
             api_version="2023-04-01",
@@ -104,7 +106,7 @@ class TestPolicyPolicySetDefinitionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_built_in(self, resource_group):
+    def test_policy_set_definitions_get_built_in(self, resource_group):
         response = self.client.policy_set_definitions.get_built_in(
             policy_set_definition_name="str",
             api_version="2023-04-01",
@@ -115,7 +117,7 @@ class TestPolicyPolicySetDefinitionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_policy_set_definitions_list(self, resource_group):
         response = self.client.policy_set_definitions.list(
             api_version="2023-04-01",
         )
@@ -125,7 +127,7 @@ class TestPolicyPolicySetDefinitionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_built_in(self, resource_group):
+    def test_policy_set_definitions_list_built_in(self, resource_group):
         response = self.client.policy_set_definitions.list_built_in(
             api_version="2023-04-01",
         )
@@ -135,7 +137,7 @@ class TestPolicyPolicySetDefinitionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update_at_management_group(self, resource_group):
+    def test_policy_set_definitions_create_or_update_at_management_group(self, resource_group):
         response = self.client.policy_set_definitions.create_or_update_at_management_group(
             management_group_id="str",
             policy_set_definition_name="str",
@@ -172,7 +174,9 @@ class TestPolicyPolicySetDefinitionsOperations(AzureMgmtRecordedTestCase):
                     {
                         "policyDefinitionId": "str",
                         "definitionVersion": "str",
+                        "effectiveDefinitionVersion": "str",
                         "groupNames": ["str"],
+                        "latestDefinitionVersion": "str",
                         "parameters": {"str": {"value": {}}},
                         "policyDefinitionReferenceId": "str",
                     }
@@ -198,7 +202,7 @@ class TestPolicyPolicySetDefinitionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete_at_management_group(self, resource_group):
+    def test_policy_set_definitions_delete_at_management_group(self, resource_group):
         response = self.client.policy_set_definitions.delete_at_management_group(
             management_group_id="str",
             policy_set_definition_name="str",
@@ -210,7 +214,7 @@ class TestPolicyPolicySetDefinitionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_at_management_group(self, resource_group):
+    def test_policy_set_definitions_get_at_management_group(self, resource_group):
         response = self.client.policy_set_definitions.get_at_management_group(
             management_group_id="str",
             policy_set_definition_name="str",
@@ -222,7 +226,7 @@ class TestPolicyPolicySetDefinitionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_management_group(self, resource_group):
+    def test_policy_set_definitions_list_by_management_group(self, resource_group):
         response = self.client.policy_set_definitions.list_by_management_group(
             management_group_id="str",
             api_version="2023-04-01",

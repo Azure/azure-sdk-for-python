@@ -7,6 +7,9 @@ import logging
 from typing import Any, Dict, List, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2025_01_01_preview.models import (
+    JobResourceConfiguration as RestJobResourceConfiguration202501,
+)
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
@@ -98,7 +101,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     :keyword docker_args: Extra arguments to pass to the Docker run command. This would override any
         parameters that have already been set by the system, or in this section. This parameter is only
         supported for Azure ML compute types.
-    :paramtype docker_args: Optional[str]
+    :paramtype docker_args: Optional[Union[str, List[str]]]
     :keyword shm_size: The size of the docker container's shared memory block. This should be in the
         format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
         b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
@@ -125,7 +128,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         instance_count: Optional[int] = None,
         instance_type: Optional[Union[str, List]] = None,
         properties: Optional[Union[Properties, Dict]] = None,
-        docker_args: Optional[str] = None,
+        docker_args: Optional[Union[str, List[str]]] = None,
         shm_size: Optional[str] = None,
         max_instance_count: Optional[int] = None,
         **kwargs: Any
@@ -162,7 +165,16 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         else:
             raise TypeError("properties must be a dict.")
 
-    def _to_rest_object(self) -> RestJobResourceConfiguration:
+    def _to_rest_object(self) -> Union[RestJobResourceConfiguration, RestJobResourceConfiguration202501]:
+        if self.docker_args and isinstance(self.docker_args, list):
+            return RestJobResourceConfiguration202501(
+                instance_count=self.instance_count,
+                instance_type=self.instance_type,
+                max_instance_count=self.max_instance_count,
+                properties=self.properties.as_dict() if isinstance(self.properties, Properties) else None,
+                docker_args_list=self.docker_args,
+                shm_size=self.shm_size,
+            )
         return RestJobResourceConfiguration(
             locations=self.locations,
             instance_count=self.instance_count,
@@ -174,18 +186,20 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: Optional[RestJobResourceConfiguration]) -> Optional["JobResourceConfiguration"]:
+    def _from_rest_object(
+        cls, obj: Optional[Union[RestJobResourceConfiguration, RestJobResourceConfiguration202501]]
+    ) -> Optional["JobResourceConfiguration"]:
         if obj is None:
             return None
         if isinstance(obj, dict):
             return cls(**obj)
         return JobResourceConfiguration(
-            locations=obj.locations,
+            locations=obj.locations if hasattr(obj, "locations") else None,
             instance_count=obj.instance_count,
             instance_type=obj.instance_type,
             max_instance_count=obj.max_instance_count if hasattr(obj, "max_instance_count") else None,
             properties=obj.properties,
-            docker_args=obj.docker_args,
+            docker_args=obj.docker_args_list if hasattr(obj, "docker_args_list") else obj.docker_args,
             shm_size=obj.shm_size,
             deserialize_properties=True,
         )
