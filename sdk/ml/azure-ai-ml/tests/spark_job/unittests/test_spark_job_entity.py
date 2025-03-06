@@ -189,7 +189,7 @@ class TestSparkJobEntity:
                 executor_memory="2g",
             )
             node._to_job()._to_rest_object()
-            assert ve.message == "runtime version should be either 3.4 or 3.4"
+            assert ve.message == "runtime version should 3.4"
 
     def test_resources_3_runtime_version(self):
         with pytest.raises(ValidationException) as ve:
@@ -205,6 +205,7 @@ class TestSparkJobEntity:
             node._to_job()._to_rest_object()
             assert ve.message == "runtime version should be 3.4"
 
+    @pytest.mark.skip(reason="The corresponding code for this test is removed")
     def test_resources_runtime_version_with_char(self):
         with pytest.raises(ValueError) as ve:
             node = spark(
@@ -215,6 +216,7 @@ class TestSparkJobEntity:
                 driver_memory="2g",
                 executor_cores=2,
                 executor_memory="2g",
+                executor_instances=2,
             )
             node._to_job()._to_rest_object()
             assert ve.message == "runtime_version should only contain numbers"
