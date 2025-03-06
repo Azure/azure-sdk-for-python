@@ -1,7 +1,3 @@
 The general guidelines for SDK in this repo are defined in this website: https://azure.github.io/azure-sdk/python_design.html. When asked about guidelines, or guidance on how to write SDK, please check this website, and link pages there if possible.
 
-For how to run pylint refer to this file: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md. 
-
-If you are not sure about a specific error, you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md, or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html. 
-
-If you are truly not sure about how to fix a specific error, please ask for help from an Azure SDK team member.
+For how to run pylint refer to this file: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md. When asked about how to run pylint, or given a command to run pylint, please check this website and guide the user based on the information you find there. If you are not sure about a specific pylint error, you can check the pylint specific guidelines from the readme: https://github.com/Azure/azure-sdk-tools/blob/5e36502f0161bf3e2bc824ac216d4c0d244f498a/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md, or the pylint documentation: https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html. If you are truly not sure about how to fix a specific pylint error, please ask for help from an Azure SDK team member.
