@@ -55,6 +55,7 @@ extends:
 
         - deployment: PublishPackage
           displayName: "Publish to PyPI"
+          environment: package-publish
           dependsOn: Download
 
           templateContext:
