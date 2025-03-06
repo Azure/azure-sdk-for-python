@@ -101,9 +101,7 @@ class TestMassEvaluate:
         # run the evaluation
         result = evaluate(
             data=data_file,
-            evaluators=evaluators,
-            evaluation_name="test_evaluate_singleton_inputs",
-            azure_ai_project=project_scope,
+            evaluators=evaluators
         )
 
         row_result_df = pd.DataFrame(result["rows"])
