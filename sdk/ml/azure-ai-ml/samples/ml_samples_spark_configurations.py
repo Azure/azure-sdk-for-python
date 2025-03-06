@@ -40,7 +40,7 @@ class SparkConfigurationOptions(object):
         )
 
         monitor_definition = MonitorDefinition(
-            compute=SparkResourceConfiguration(instance_type="standard_e4s_v3", runtime_version="3.3"),
+            compute=SparkResourceConfiguration(instance_type="standard_e4s_v3", runtime_version="3.4"),
             monitoring_target=MonitoringTarget(
                 ml_task="Classification",
                 endpoint_deployment_id="azureml:fraud_detection_endpoint:fraud_detection_deployment",
@@ -186,7 +186,7 @@ class SparkConfigurationOptions(object):
             args="--input1 ${{inputs.input1}} --output1 ${{outputs.output1}} --my_sample_rate 0.01",
             resources={
                 "instance_type": "Standard_E8S_V3",
-                "runtime_version": "3.3.0",
+                "runtime_version": "3.4.0",
             },
         )
 
@@ -204,7 +204,7 @@ class SparkConfigurationOptions(object):
             executor_instances=2,
             resources={
                 "instance_type": "Standard_E8S_V3",
-                "runtime_version": "3.3.0",
+                "runtime_version": "3.4.0",
             },
             identity={"type": "managed"},
         )
@@ -230,7 +230,7 @@ class SparkConfigurationOptions(object):
                 file_input=Input(path="/dataset/iris.csv", type=AssetTypes.URI_FILE, mode=InputOutputModes.DIRECT)
             ),
             args="--file_input ${{inputs.file_input}}",
-            resources={"instance_type": "standard_e4s_v3", "runtime_version": "3.3.0"},
+            resources={"instance_type": "standard_e4s_v3", "runtime_version": "3.4.0"},
         )
 
         second_step = spark(
@@ -248,7 +248,7 @@ class SparkConfigurationOptions(object):
             ),
             outputs=dict(output=Output(type="uri_folder", mode=InputOutputModes.DIRECT)),
             args="--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
-            resources={"instance_type": "standard_e4s_v3", "runtime_version": "3.3.0"},
+            resources={"instance_type": "standard_e4s_v3", "runtime_version": "3.4.0"},
         )
 
         # Define pipeline
@@ -296,7 +296,7 @@ class SparkConfigurationOptions(object):
                     mode="direct",
                 )
             },
-            resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.3.0"),
+            resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.4.0"),
         )
         # [END spark_resource_configuration]
 
