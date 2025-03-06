@@ -12,8 +12,7 @@ extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
     stages:
-      - stage:
-        dependsOn: ''
+      - stage: PartnerRelease
         displayName: 'Partner Release'
         variables:
           - name: Artifacts
