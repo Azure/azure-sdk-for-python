@@ -12,7 +12,7 @@
 
 ## 1.0.1 (2024-03-06)
 
-- Fix polling for `begin_copy_model_to()` to stop on success response from the "Operation-Location" endpoint.
+- Fix polling for `begin_copy_model_to()` to stop on success response from the "Operation-Location" endpoint and correctly parse the result.
 
 ## 1.0.0 (2024-12-17)
 
