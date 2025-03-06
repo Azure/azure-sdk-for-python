@@ -24,6 +24,7 @@ from azure.keyvault.keys import (
     KeyRotationPolicyAction,
 )
 from azure.keyvault.keys.aio import KeyClient
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
@@ -36,6 +37,7 @@ from _keys_test_case import KeysTestCase
 
 all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
+only_hsm_default = get_decorator(only_hsm=True, is_async=True, api_versions=[DEFAULT_VERSION])
 only_hsm_7_4_plus = get_decorator(
     only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5]
 )
@@ -811,6 +813,38 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         )
         response = await client.send_request(request)
         assert response.json()["key"]["kid"] == key.id
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm",only_hsm_default)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
+    async def test_get_key_attestation(self, client, **kwargs):
+        # create a key
+        key_name = self.get_resource_name("key-name")
+        key = await self._create_rsa_key(client, key_name)
+        # attestation info shouldn't be included unless requested with get_key_attestation
+        assert key.properties.attestation is None
+
+        # fetch the key we just created
+        fetched_key = await client.get_key_attestation(key_name)
+        attestation = fetched_key.properties.attestation
+        assert attestation is not None
+        assert attestation.certificate_pem_file is not None
+        assert attestation.private_key_attestation is not None
+        assert attestation.public_key_attestation is not None
+        assert attestation.version == key.properties.version
+
+        # create new key version to validate versioned fetching
+        updated_key = await client.update_key_properties(key_name, tags={"tag": "value"})
+        updated_attestation = await client.get_key_attestation(key_name).properties.attestation
+        assert updated_attestation is not None
+        assert updated_attestation.certificate_pem_file == attestation.certificate_pem_file
+        assert updated_attestation.private_key_attestation == attestation.private_key_attestation
+        assert updated_attestation.public_key_attestation == attestation.public_key_attestation
+        assert updated_attestation.version != updated_key.properties.version
+
+        original_attestation = await client.get_key_attestation(key_name, key.properties.version).properties.attestation
+        assert original_attestation.version == key.properties.version
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version,is_hsm", only_vault_7_4_plus)
