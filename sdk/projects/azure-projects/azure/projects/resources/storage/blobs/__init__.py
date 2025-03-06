@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Mapping, Self, Tuple, Union, Unpack, overload, Optional, Any, Type
+from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Mapping, Tuple, Union, Unpack, overload, Optional, Any, Type
 from typing_extensions import TypeVar
 from collections import defaultdict
 
@@ -10,7 +10,7 @@ from ...._resource import _ClientResource, ExtensionResources, ResourceReference
 from .. import StorageAccount, StorageAccountKwargs
 
 if TYPE_CHECKING:
-    from .types import BlobServiceResource, CorsRule
+    from .types import BlobServiceResource, BlobsCorsRule
     from azure.storage.blob import BlobServiceClient
 
 
@@ -27,7 +27,7 @@ class BlobStorageKwargs(StorageAccountKwargs):
     """Indicates the number of days that the deleted item should be retained."""
     container_delete_retention_policy_enabled: bool
     """The blob service properties for container soft delete. Indicates whether DeleteRetentionPolicy is enabled."""
-    cors_rules: Union[List[Union['CorsRule', Parameter['CorsRule']]], Parameter[List['CorsRule']]]
+    cors_rules: Union[List[Union['BlobsCorsRule', Parameter['BlobsCorsRule']]], Parameter[List['BlobsCorsRule']]]
     """Specifies CORS rules for the Blob service. You can include up to five CorsRule elements in the request. If no CorsRule elements are included in the request body, all CORS rules will be deleted, and CORS will be disabled for the Blob service."""
     default_service_version: str
     """Indicates the default version to use for requests to the Blob service if an incoming request's version is not specified. Possible values include version 2008-10-27 and all more recent versions."""

@@ -5,13 +5,13 @@
 # --------------------------------------------------------------------------
 
 from typing import Literal, Type, TYPE_CHECKING
-from enum import StrEnum
+from enum import Enum
 
 if TYPE_CHECKING:
     from .._resource import Resource
 
 
-class ResourceIdentifiers(StrEnum):
+class ResourceIdentifiers(Enum):
     resource_group: Literal['resourcegroup'] = 'resourcegroup'
     user_assigned_identity: Literal['userassignedidentity'] = 'userassignedidentity'
     role_assignment: Literal['roleassignment'] = 'roleassignment'
@@ -43,80 +43,80 @@ class ResourceIdentifiers(StrEnum):
     ai_connection: Literal['ai:connection'] = 'ai:connection'
 
     def resource(self) -> Type['Resource']:
-        if self.value == self.resource_group:
+        if self == self.resource_group:
             from .resourcegroup import ResourceGroup
             return ResourceGroup
-        if self.value == self.user_assigned_identity:
+        if self == self.user_assigned_identity:
             from .managedidentity import UserAssignedIdentity
             return UserAssignedIdentity
-        if self.value == self.role_assignment:
+        if self == self.role_assignment:
             from ._extension.roles import RoleAssignment
             return RoleAssignment
-        if self.value == self.storage_account:
+        if self == self.storage_account:
             from .storage import StorageAccount
             return StorageAccount
-        if self.value == self.blob_storage:
+        if self == self.blob_storage:
             from .storage.blobs import BlobStorage
             return BlobStorage
-        if self.value == self.datalake_storage:
+        if self == self.datalake_storage:
             raise NotImplementedError()
-        if self.value == self.blob_container:
+        if self == self.blob_container:
             from .storage.blobs.container import BlobContainer
             return BlobContainer
-        if self.value == self.file_system:
+        if self == self.file_system:
             raise NotImplementedError()
-        if self.value == self.table_storage:
+        if self == self.table_storage:
             from .storage.tables import TableStorage
             return TableStorage
-        if self.value == self.table:
+        if self == self.table:
             raise NotImplementedError()
-        if self.value == self.queue_storage:
+        if self == self.queue_storage:
             raise NotImplementedError()
-        if self.value == self.queue:
+        if self == self.queue:
             raise NotImplementedError()
-        if self.value == self.file_storage:
+        if self == self.file_storage:
             raise NotImplementedError()
-        if self.value == self.file_share:
+        if self == self.file_share:
             raise NotImplementedError()
-        if self.value == self.system_topic:
+        if self == self.system_topic:
             raise NotImplementedError()
-        if self.value == self.system_topic_subscription:
+        if self == self.system_topic_subscription:
             raise NotImplementedError()
-        if self.value == self.keyvault:
+        if self == self.keyvault:
             from .keyvault import KeyVault
             return KeyVault
-        if self.value == self.keyvault_key:
+        if self == self.keyvault_key:
             raise NotImplementedError()
-        if self.value == self.keyvault_secret:
+        if self == self.keyvault_secret:
             raise NotImplementedError()
-        if self.value == self.search:
+        if self == self.search:
             from .search import SearchService
             return SearchService
-        if self.value == self.cognitive_services:
+        if self == self.cognitive_services:
             from .ai import CognitiveServicesAccount
             return CognitiveServicesAccount
-        if self.value == self.ml_workspace:
+        if self == self.ml_workspace:
             from .foundry import MLWorkspace
             return MLWorkspace
-        if self.value == self.ai_services:
+        if self == self.ai_services:
             from .ai import AIServices
             return AIServices
-        if self.value == self.ai_project:
+        if self == self.ai_project:
             from .foundry import AIProject
             return AIProject
-        if self.value == self.ai_hub:
+        if self == self.ai_hub:
             from .foundry import AIHub
             return AIHub
-        if self.value == self.ai_deployment:
+        if self == self.ai_deployment:
             from .ai.deployment import AIDeployment
             return AIDeployment
-        if self.value == self.ai_chat_deployment:
+        if self == self.ai_chat_deployment:
             from .ai.deployment import AIChat
             return AIChat
-        if self.value == self.ai_embeddings_deployment:
+        if self == self.ai_embeddings_deployment:
             from .ai.deployment import AIEmbeddings
             return AIEmbeddings
-        if self.value == self.ai_connection:
+        if self == self.ai_connection:
             from .foundry._connection import AIConnection
             return AIConnection
         raise TypeError(f"Unknown resource identifier: {self}")

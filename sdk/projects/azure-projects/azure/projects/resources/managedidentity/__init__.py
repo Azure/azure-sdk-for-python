@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import TYPE_CHECKING, List, Literal, Self, TypedDict, Union, Unpack, overload, Optional, Dict
+from typing import TYPE_CHECKING, List, Literal, TypedDict, Union, Unpack, overload, Optional, Dict
 from typing_extensions import TypeVar
 
 from .._identifiers import ResourceIdentifiers

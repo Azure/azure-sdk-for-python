@@ -9,13 +9,13 @@ from ...._resource import _ClientResource, ExtensionResources, ResourceReference
 from .. import StorageAccount, StorageAccountKwargs
 
 if TYPE_CHECKING:
-    from .types import TableServiceResource, CorsRule
+    from .types import TableServiceResource, TablesCorsRule
     from azure.data.tables import TableServiceClient
 
 
 class TableStorageKwargs(StorageAccountKwargs):
-    cors_rules: Union[List[Union['CorsRule', Parameter['CorsRule']]], Parameter[List['CorsRule']]]
-    """Specifies CORS rules for the Blob service. You can include up to five CorsRule elements in the request. If no CorsRule elements are included in the request body, all CORS rules will be deleted, and CORS will be disabled for the Blob service."""
+    cors_rules: Union[List[Union['TablesCorsRule', Parameter['TablesCorsRule']]], Parameter[List['TablesCorsRule']]]
+    """Specifies CORS rules for the Table service. You can include up to five CorsRule elements in the request. If no CorsRule elements are included in the request body, all CORS rules will be deleted, and CORS will be disabled for the Table service."""
 
 
 _DEFAULT_TABLE_SERVICE: 'TableServiceResource' = {'name': 'default'}

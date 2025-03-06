@@ -15,7 +15,7 @@ class ChangeFeed(TypedDict, total=False):
     """Indicates the duration of changeFeed retention in days. Minimum value is 1 day and maximum value is 146000 days (400 years). A null value indicates an infinite retention of the change feed."""
 
 
-class CorsRule(TypedDict, total=False):
+class BlobsCorsRule(TypedDict, total=False):
     allowedHeaders: Required[Union[Parameter[List[str]], List[Union[str, Parameter[str]]]]]
     """A list of headers allowed to be part of the cross-origin request."""
     allowedMethods: Required[Union[Parameter[List[str]], List[Union[Literal['CONNECT', 'DELETE', 'GET', 'HEAD', 'MERGE', 'OPTIONS', 'PATCH', 'POST', 'PUT', 'TRACE'], Parameter[str]]]]]
@@ -28,8 +28,8 @@ class CorsRule(TypedDict, total=False):
     """The number of seconds that the client/browser should cache a preflight response."""
 
 
-class CorsRules(TypedDict, total=False):
-    corsRules: Union[Parameter[List[CorsRule]], List[Union[CorsRule, Parameter[CorsRule]]]]
+class BlobsCorsRules(TypedDict, total=False):
+    corsRules: Union[Parameter[List[BlobsCorsRule]], List[Union[BlobsCorsRule, Parameter[BlobsCorsRule]]]]
     """The List of CORS rules. You can include up to five CorsRule elements in the request."""
 
 
@@ -61,7 +61,7 @@ class BlobServiceProperties(TypedDict, total=False):
     """The blob service properties for change feed events."""
     containerDeleteRetentionPolicy: Union['DeleteRetentionPolicy', Parameter['DeleteRetentionPolicy']]
     """The blob service properties for container soft delete."""
-    cors: Union['CorsRules', Parameter['CorsRules']]
+    cors: Union['BlobsCorsRules', Parameter['BlobsCorsRules']]
     """Specifies CORS rules for the Blob service. You can include up to five CorsRule elements in the request. If no CorsRule elements are included in the request body, all CORS rules will be deleted, and CORS will be disabled for the Blob service."""
     defaultServiceVersion: Union[str, Parameter[str]]
     """DefaultServiceVersion indicates the default version to use for requests to the Blob service if an incoming request’s version is not specified. Possible values include version 2008-10-27 and all more recent versions."""

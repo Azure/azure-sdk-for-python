@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Callable, Dict, Generator, List, Literal, Mapping, Self, Tuple, TypedDict, Union, Unpack, Optional, overload
+from typing import TYPE_CHECKING, Any, Callable, Dict, Generator, List, Literal, Mapping, Tuple, TypedDict, Union, Unpack, Optional, overload
 from typing_extensions import TypeVar
 
 from azure.core.credentials import SupportsTokenInfo

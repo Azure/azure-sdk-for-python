@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Dict, List, Literal, Self, TypedDict, Union, Unpack, Optional, overload
+from typing import TYPE_CHECKING, Dict, List, Literal, TypedDict, Union, Unpack, Optional, overload
 from typing_extensions import TypeVar
 from collections import defaultdict
 

@@ -1,5 +1,5 @@
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Literal, Self, TypedDict, Union, Unpack, Optional, overload
-from typing_extensions import TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Literal, TypedDict, Union, Unpack, Optional, overload
+from typing_extensions import TypeVar, Self
 
 from ..._identifiers import ResourceIdentifiers
 from ...._resource import FieldType, Resource, ResourceReference

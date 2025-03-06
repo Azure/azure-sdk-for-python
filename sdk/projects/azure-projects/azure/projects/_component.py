@@ -16,12 +16,12 @@ from typing import (
     Generic,
     Mapping,
     Protocol,
-    Self,
     dataclass_transform,
     overload,
     TypeVar,
     Any, Union, Literal, Optional, Callable, Dict, List, Type, Unpack
 )
+from typing_extensions import Self
 
 from ._bicep.expressions import Parameter, MISSING, Default, ParameterType
 from ._resource import Resource, _load_dev_environment, ResourceReference

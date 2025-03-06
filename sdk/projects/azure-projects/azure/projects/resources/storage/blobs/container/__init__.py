@@ -1,7 +1,7 @@
 
 from collections import defaultdict
 import inspect
-from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Mapping, Self, Tuple, TypedDict, Union, Unpack, overload, Optional, Any, Type
+from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Mapping, Tuple, TypedDict, Union, Unpack, overload, Optional, Any, Type
 from typing_extensions import TypeVar
 
 from ....._component import ComponentField
