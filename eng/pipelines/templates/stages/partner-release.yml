@@ -12,21 +12,20 @@ extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
     stages:
-      - stage:
-        displayName: 'Partner Release'
-        variables:
-          - name: Artifacts
-            value: $(Pipeline.Workspace)/artifacts
-          - template: /eng/pipelines/templates/variables/image.yml
-
-        jobs:
-        - job:
+    - stage: PartnerRelease
+      displayName: 'Partner Release'
+      dependsOn: []
+      variables:
+        - name: Artifacts
+          value: $(Pipeline.Workspace)/artifacts
+        - template: /eng/pipelines/templates/variables/image.yml
+      jobs:
+        - job: Download
           displayName: 'Download and publish artifacts'
           pool:
             name: $(WINDOWSPOOL)
             image: $(WINDOWSVMIMAGE)
             os: windows
-
           steps:
           - task: AzurePowerShell@5
             displayName: 'Copy from azuresdkpartnerdrops'
@@ -34,38 +33,66 @@ extends:
             inputs:
               azureSubscription: 'azuresdkpartnerdrops - Storage Partner Drops'
               ScriptType: 'InlineScript'
-              azurePowerShellVersion: LatestVersion 
+              azurePowerShellVersion: LatestVersion
               pwsh: true
               Inline: |
                 echo "azcopy copy 'https://azuresdkpartnerdrops.blob.core.windows.net/drops/${{ parameters.BlobPath }}/*' '$(Artifacts)' --recursive=true"
                 azcopy copy 'https://azuresdkpartnerdrops.blob.core.windows.net/drops/${{ parameters.BlobPath }}/*' '$(Artifacts)' --recursive=true
                 $copiedFiles = (dir '$(Artifacts)' -r | % { $_.FullName })
                 echo "Copied files: $copiedFiles"
-                if (!$copiedFiles) { 
+                if (!$copiedFiles) {
                   echo "Failed to copy any files from 'https://azuresdkpartnerdrops.blob.core.windows.net/drops/${{ parameters.BlobPath }}/*' please double check they exist"
                   exit 1
                 }
-            env: 
+            env:
               AZCOPY_AUTO_LOGIN_TYPE: 'PSCRED'
-
           - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
             parameters:
               ArtifactName: 'artifacts-for-release'
               ArtifactPath: $(Artifacts)
-
-          - task: EsrpRelease@9
-            displayName: 'Publish via ESRP'
+        - deployment: PublishPackage
+          displayName: "Publish to PyPI"
+          environment: none
+          dependsOn: Download
+          templateContext:
+            type: releaseJob
+            isProduction: true
             inputs:
-              ConnectedServiceName: 'Azure SDK PME Managed Identity'
-              ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
-              DomainTenantId: '975f013f-7f24-47e8-a7d3-abc4752bf346'
-              UseManagedIdentity: true
-              KeyVaultName: 'kv-azuresdk-codesign'
-              SignCertName: 'azure-sdk-esrp-release-certificate'
-              Intent: 'PackageDistribution'
-              ContentType: 'PyPI'
-              FolderLocation: $(Artifacts)
-              Owners: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
-              Approvers: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
-              ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
-              MainPublisher: 'ESRPRELPACMANTEST'
+            - input: pipelineArtifact
+              artifactName: artifacts-for-release
+              targetPath: $(Artifacts)
+          pool:
+            image: azsdk-pool-mms-ubuntu-2004-1espt
+            name: azsdk-pool-mms-ubuntu-2004-general
+            os: linux
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - pwsh: |
+                      $esrpDirectory = "$(Pipeline.Workspace)/esrp-release/"
+                      New-Item -ItemType Directory -Force -Path $esrpDirectory
+
+                      Get-ChildItem -Path "$(Artifacts)" `
+                        | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
+                        | Copy-Item -Destination $esrpDirectory
+
+                      Get-ChildItem $esrpDirectory
+                    displayName: Isolate files for ESRP Publish
+
+                  - task: EsrpRelease@9
+                    displayName: 'Publish via ESRP'
+                    inputs:
+                      ConnectedServiceName: 'Azure SDK PME Managed Identity'
+                      ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
+                      DomainTenantId: '975f013f-7f24-47e8-a7d3-abc4752bf346'
+                      UseManagedIdentity: true
+                      KeyVaultName: 'kv-azuresdk-codesign'
+                      SignCertName: 'azure-sdk-esrp-release-certificate'
+                      Intent: 'PackageDistribution'
+                      ContentType: 'PyPI'
+                      FolderLocation: $(Pipeline.Workspace)/esrp-release/
+                      Owners: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
+                      Approvers: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
+                      ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
+                      MainPublisher: 'ESRPRELPACMANTEST'
