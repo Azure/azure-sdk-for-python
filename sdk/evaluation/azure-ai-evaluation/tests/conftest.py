@@ -9,7 +9,7 @@ import jwt
 from logging import Logger
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Final, Optional
+from typing import Any, Dict, Final, Literal, Optional
 from unittest.mock import patch
 
 import pytest
@@ -20,7 +20,7 @@ from devtools_testutils import (
     add_header_regex_sanitizer,
     is_live,
     remove_batch_sanitizers,
-    add_batch_sanitizers,
+    add_remove_header_sanitizer,
     Sanitizer,
 )
 from devtools_testutils.config import PROXY_URL
@@ -44,7 +44,7 @@ RECORDINGS_TEST_CONFIGS_ROOT = Path(PROMPTFLOW_ROOT / "azure-ai-evaluation/tests
 ZERO_GUID: Final[str] = "00000000-0000-0000-0000-000000000000"
 
 
-def pytest_configure(config):
+def pytest_configure(config: pytest.Config) -> None:
     # register Azure test markers to reduce spurious warnings on test runs
     config.addinivalue_line("markers", "azuretest: mark test as an Azure test.")
     config.addinivalue_line("markers", "localtest: mark test as a local test.")
@@ -196,9 +196,9 @@ def add_sanitizers(
         add_body_key_sanitizer(json_path="$..userTenantId", value=ZERO_GUID)
         add_body_key_sanitizer(json_path="$..upn", value="Sanitized")
 
-        # remove the stainless retry header and read timeout since it is causing some unnecessary mismatches in recordings
-        add_batch_sanitizers({Sanitizer.REMOVE_HEADER: [{"headers": "x-stainless-retry-count"}]})
-        add_batch_sanitizers({Sanitizer.REMOVE_HEADER: [{"headers": "x-stainless-read-timeout"}]})
+        # removes some stainless headers since they are causing some unnecessary mismatches in recordings
+        stainless_headers = ["x-stainless-retry-count", "x-stainless-read-timeout"]
+        add_remove_header_sanitizer(headers=",".join(stainless_headers))
 
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
@@ -210,7 +210,7 @@ def add_sanitizers(
 
 
 @pytest.fixture
-def redirect_asyncio_requests_traffic() -> None:
+def redirect_asyncio_requests_traffic():
     """Redirects requests sent through AsyncioRequestsTransport to the test proxy.
 
     .. note::
@@ -394,19 +394,23 @@ def project_scope(request, dev_connections: Dict[str, Any]) -> dict:
 
 
 @pytest.fixture
-def datastore_project_scopes(connection_file, project_scope, mock_project_scope):
-    conn_name = "azure_ai_entra_id_project_scope"
-    if not is_live():
-        entra_id = mock_project_scope
-    else:
-        entra_id = connection_file.get(conn_name)
-        if not entra_id:
-            raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
+def datastore_project_scopes(connection_file, project_scope, mock_project_scope) -> Dict[str, Any]:
+    keys = {"none": "azure_ai_entra_id_project_scope", "private": "azure_ai_private_connection_project_scope"}
 
-    return {
+    scopes: Dict[str, Any] = {
         "sas": project_scope,
-        "none": entra_id,
     }
+
+    if not is_live():
+        for key in keys.keys():
+            scopes[key] = mock_project_scope
+    else:
+        for key, value in keys.items():
+            if value not in connection_file:
+                raise ValueError(f"Connection '{value}' not found in dev connections.")
+            scopes[key] = connection_file[value]["value"]
+
+    return scopes
 
 
 @pytest.fixture
@@ -470,14 +474,14 @@ class MockSpawnProcess(SpawnProcess):
 @pytest.fixture
 def recording_injection(mocker: MockerFixture):
     original_process_class = multiprocessing.get_context("spawn").Process
-    multiprocessing.get_context("spawn").Process = MockSpawnProcess
+    multiprocessing.get_context("spawn").Process = MockSpawnProcess  # type: ignore
     if "spawn" == multiprocessing.get_start_method():
         multiprocessing.Process = MockSpawnProcess
 
     try:
         yield
     finally:
-        multiprocessing.get_context("spawn").Process = original_process_class
+        multiprocessing.get_context("spawn").Process = original_process_class  # type: ignore
         if "spawn" == multiprocessing.get_start_method():
             multiprocessing.Process = original_process_class
 
@@ -490,14 +494,12 @@ def _mock_create_spawned_fork_process_manager(*args, **kwargs):
     return create_spawned_fork_process_manager(*args, **kwargs)
 
 
-def package_scope_in_live_mode() -> str:
+def package_scope_in_live_mode() -> Literal["package", "function"]:
     """Determine the scope of some expected sharing fixtures.
-
     We have many tests against flows and runs, and it's very time consuming to create a new flow/run
     for each test. So we expect to leverage pytest fixture concept to share flows/runs across tests.
     However, we also have replay tests, which require function scope fixture as it will locate the
     recording YAML based on the test function info.
-
     Use this function to determine the scope of the fixtures dynamically. For those fixtures that
     will request dynamic scope fixture(s), they also need to be dynamic scope.
     """
@@ -600,6 +602,7 @@ def pytest_sessionfinish() -> None:
         stop_service()
 
     stop_promptflow_service()
+
 
 @pytest.fixture
 def run_from_temp_dir(tmp_path):
