@@ -1,14 +1,14 @@
 # Release History
 
-## 1.0.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.1 (2025-01-20)
 
 ### Bugs Fixed
 
+- Update API response enum typo for VALIDATION_FAILURE
+
 ### Other Changes
+
+- Add NOT_VALIDATED to the list of terminal states for the file validation poller
 
 ## 1.0.0 (2023-03-07)
 

@@ -20,7 +20,7 @@ class TestSubscriptionTenantsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_tenants_list(self, resource_group):
         response = self.client.tenants.list(
             api_version="2022-12-01",
         )

@@ -115,7 +115,7 @@ def _eventgrid_data_typecheck(event):
     if isinstance(data, bytes):
         raise TypeError(
             "Data in EventGridEvent cannot be bytes. Please refer to"
-            "https://docs.microsoft.com/en-us/azure/event-grid/event-schema"
+            "https://learn.microsoft.com/azure/event-grid/event-schema"
         )
 
 

@@ -12,6 +12,7 @@ import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
 from promptflow.client import PFClient
 from promptflow.entities import Run
+from promptflow._sdk._configuration import Configuration
 
 from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform_nan_safe
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
@@ -26,12 +27,13 @@ from .._constants import (
 )
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
 from .._user_agent import USER_AGENT
-from ._batch_run import EvalRunContext, CodeClient, ProxyClient, TargetRunContext
+from ._batch_run import EvalRunContext, CodeClient, ProxyClient, TargetRunContext, ProxyRun
 from ._utils import (
     _apply_column_mapping,
     _log_metrics_and_instance_results,
     _trace_destination_from_project_scope,
     _write_output,
+    DataLoaderFactory,
 )
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
@@ -145,6 +147,9 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
     """
     handled_metrics = [
         EvaluationMetrics.PROTECTED_MATERIAL,
+        EvaluationMetrics.FICTIONAL_CHARACTERS,
+        EvaluationMetrics.ARTWORK,
+        EvaluationMetrics.LOGOS_AND_BRANDS,
         _InternalEvaluationMetrics.ECI,
         EvaluationMetrics.XPIA,
     ]
@@ -430,10 +435,11 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
             )
 
     try:
-        initial_data_df = pd.read_json(data, lines=True)
+        data_loader = DataLoaderFactory.get_loader(data)
+        initial_data_df = data_loader.load()
     except Exception as e:
         raise EvaluationException(
-            message=f"Unable to load data from '{data}'. Please ensure the input is valid JSONL format. Detailed error: {e}.",
+            message=f"Unable to load data from '{data}'. Supported formats are JSONL and CSV. Detailed error: {e}.",
             target=ErrorTarget.EVALUATE,
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
@@ -445,7 +451,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
 def _apply_target_to_data(
     target: Callable,
     data: Union[str, os.PathLike],
-    pf_client: PFClient,
+    batch_client: TClient,
     initial_data: pd.DataFrame,
     evaluation_name: Optional[str] = None,
     **kwargs,
@@ -455,10 +461,10 @@ def _apply_target_to_data(
 
     :param target: The function to be applied to data.
     :type target: Callable
-    :param data: The path to input jsonl file.
+    :param data: The path to input jsonl or csv file.
     :type data: Union[str, os.PathLike]
-    :param pf_client: The promptflow client to be used.
-    :type pf_client: PFClient
+    :param batch_client: The promptflow client to be used.
+    :type batch_client: PFClient
     :param initial_data: The data frame with the loaded data.
     :type initial_data: pd.DataFrame
     :param evaluation_name: The name of the evaluation.
@@ -468,7 +474,7 @@ def _apply_target_to_data(
     """
     _run_name = kwargs.get("_run_name")
     with TargetRunContext():
-        run: Run = pf_client.run(
+        run: ProxyRun = batch_client.run(
             flow=target,
             display_name=evaluation_name,
             data=data,
@@ -476,7 +482,18 @@ def _apply_target_to_data(
             name=_run_name,
         )
 
-    target_output: pd.DataFrame = pf_client.runs.get_details(run, all_results=True)
+    target_output: pd.DataFrame = batch_client.get_details(run, all_results=True)
+    run_summary = batch_client.get_run_summary(run)
+
+    if run_summary["completed_lines"] == 0:
+        msg = (f"Evaluation target failed to produce any results."
+               f" Please check the logs at {run_summary['log_path']} for more details about cause of failure.")
+        raise EvaluationException(
+            message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.FAILED_EXECUTION,
+            blame=ErrorBlame.USER_ERROR,
+        )
     # Remove input and output prefix
     generated_columns = {
         col[len(Prefixes.OUTPUTS) :] for col in target_output.columns if col.startswith(Prefixes.OUTPUTS)
@@ -495,7 +512,7 @@ def _apply_target_to_data(
     # Concatenate output to input
     target_output = pd.concat([target_output, initial_data], axis=1)
 
-    return target_output, generated_columns, run
+    return target_output, generated_columns, run.run.result()
 
 
 def _process_column_mappings(
@@ -511,7 +528,7 @@ def _process_column_mappings(
 
     processed_config: Dict[str, Dict[str, str]] = {}
 
-    unexpected_references = re.compile(r"\${(?!target\.|data\.).+?}")
+    expected_references = re.compile(r"^\$\{(target|data)\.[a-zA-Z_]+\}$")
 
     if column_mapping:
         for evaluator, mapping_config in column_mapping.items():
@@ -520,7 +537,7 @@ def _process_column_mappings(
 
                 for map_to_key, map_value in mapping_config.items():
                     # Check if there's any unexpected reference other than ${target.} or ${data.}
-                    if unexpected_references.search(map_value):
+                    if not expected_references.search(map_value):
                         msg = "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
                         raise EvaluationException(
                             message=msg,
@@ -577,7 +594,7 @@ def evaluate(
         data will be run through target function and then results will be evaluated.
 
     :keyword data: Path to the data to be evaluated or passed to target if target is set.
-        Only .jsonl format files are supported.  `target` and `data` both cannot be None. Required.
+        JSONL and CSV files are supported.  `target` and `data` both cannot be None. Required.
     :paramtype data: str
     :keyword evaluators: Evaluators to be used for evaluation. It should be a dictionary with key as alias for evaluator
         and value as the evaluator function. Required.
@@ -711,6 +728,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if target is not None:
         _validate_columns_for_target(input_data_df, target)
 
+    Configuration.get_instance().set_config("trace.destination", "none")
     pf_client = PFClient(user_agent=USER_AGENT)
     target_run: Optional[Run] = None
 
@@ -723,7 +741,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     target_generated_columns: Set[str] = set()
     if data is not None and target is not None:
         input_data_df, target_generated_columns, target_run = _apply_target_to_data(
-            target, data, pf_client, input_data_df, evaluation_name, **kwargs
+            target, data, ProxyClient(pf_client), input_data_df, evaluation_name, **kwargs
         )
 
         for evaluator_name, mapping in column_mapping.items():

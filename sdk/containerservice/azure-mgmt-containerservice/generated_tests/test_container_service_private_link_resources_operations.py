@@ -20,11 +20,11 @@ class TestContainerServicePrivateLinkResourcesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_private_link_resources_list(self, resource_group):
         response = self.client.private_link_resources.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself

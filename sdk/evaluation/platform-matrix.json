@@ -9,7 +9,7 @@
       "macos-latest": { "OSVmImage": "env:MACVMIMAGE", "Pool": "env:MACPOOL" },	
       "ubuntu-20.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" }	
     },	
-    "PythonVersion": [ "3.8", "3.11", "3.10" ],	
+    "PythonVersion": [ "3.9", "3.11", "3.10" ],	
     "CoverageArg": "--disablecov",	
     "TestSamples": "false"	
   },	

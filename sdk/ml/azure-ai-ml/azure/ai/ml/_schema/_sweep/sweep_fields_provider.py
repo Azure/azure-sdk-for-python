@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument
-
 from marshmallow import fields
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import SamplingAlgorithmType

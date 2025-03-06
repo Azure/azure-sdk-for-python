@@ -21,11 +21,10 @@ from ._configuration import ContainerServiceClientConfiguration
 from .operations import OpenShiftManagedClustersOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class ContainerServiceClient:  # pylint: disable=client-accepts-api-version-keyword
+class ContainerServiceClient:
     """The Container Service Client.
 
     :ivar open_shift_managed_clusters: OpenShiftManagedClustersOperations operations

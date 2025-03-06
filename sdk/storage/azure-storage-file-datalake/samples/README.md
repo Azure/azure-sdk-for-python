@@ -40,7 +40,7 @@ Several DataLake Storage Python SDK samples are available to you in the SDK's Gi
 ## Prerequisites
 * Python 3.6 later is required to use this package
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
-[Azure storage account](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account) to run these samples.
+[Azure storage account](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account) to run these samples.
 
 ## Setup
 
@@ -61,5 +61,5 @@ pip install azure-storage-file-datalake --pre
 
 ## Next steps
 
-Check out the [API reference documentation](https://aka.ms/azsdk-python-storage-filedatalake-ref) to learn more about
+Check out the [API reference documentation](https://learn.microsoft.com/python/api/azure-storage-file-datalake/azure.storage.filedatalake?view=azure-python) to learn more about
 what you can do with the DataLake Storage client library.

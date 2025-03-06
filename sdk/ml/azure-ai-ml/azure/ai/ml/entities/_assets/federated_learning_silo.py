@@ -67,7 +67,6 @@ class FederatedLearningSilo:
         # JIT import to avoid experimental warnings on unrelated calls
         from azure.ai.ml._schema.assets.federated_learning_silo import FederatedLearningSiloSchema
 
-        # pylint: disable=no-member
         schema = FederatedLearningSiloSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
 
         return Dict(schema.dump(self))

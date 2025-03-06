@@ -11,7 +11,7 @@ FILE: sample_authentication.py
 DESCRIPTION:
     This sample demonstrates how to authenticate with the Azure Congnitive Search
     service with an API key. See more details about authentication here:
-    https://docs.microsoft.com/en-us/azure.search.documents/search-security-api-keys
+    https://learn.microsoft.com/azure.search.documents/search-security-api-keys
 USAGE:
     python sample_authentication.py
 

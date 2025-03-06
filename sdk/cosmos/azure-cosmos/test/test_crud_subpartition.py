@@ -9,6 +9,7 @@ import time
 import unittest
 import uuid
 
+import pytest
 import requests
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 
@@ -40,7 +41,7 @@ class TimeoutTransport(RequestsTransport):
         response = RequestsTransportResponse(None, output)
         return response
 
-
+@pytest.mark.cosmosLong
 class TestSubpartitionCrud(unittest.TestCase):
     """Python CRUD Tests.
     """

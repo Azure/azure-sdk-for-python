@@ -12,7 +12,8 @@ from devtools_testutils import (
     add_general_string_sanitizer,
     add_oauth_response_sanitizer,
     is_live,
-    remove_batch_sanitizers
+    remove_batch_sanitizers,
+    set_custom_default_matcher
 )
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION, ApiVersion
 
@@ -46,6 +47,7 @@ def add_sanitizers(test_proxy):
     add_general_string_sanitizer(target=azure_managedhsm_url, value="https://managedhsmvaultname.managedhsm.azure.net")
     add_general_string_sanitizer(target=azure_attestation_uri, value="https://fakeattestation.azurewebsites.net")
     add_oauth_response_sanitizer()
+    set_custom_default_matcher(compare_bodies=False, ignore_query_ordering=True)
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id

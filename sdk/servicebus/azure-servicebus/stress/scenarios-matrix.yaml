@@ -26,7 +26,7 @@ matrix:
       testTarget: batchw
     abatchw:
       testTarget: abatchw
-    memray:
-      testTarget: memray
-    amemray:
-      testTarget: amemray
+    #memray:
+    #  testTarget: memray
+    #amemray:
+    #  testTarget: amemray

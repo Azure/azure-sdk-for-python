@@ -271,7 +271,7 @@ class CommonRuntimeHelper:
             os.remove(tar_file)
         except docker.errors.APIError as e:
             msg = f"Copying {path_in_container} from container has failed. Detailed message: {e}"
-            raise MlException(message=msg, no_personal_data_message=msg) from e  # pylint: disable=W0718
+            raise MlException(message=msg, no_personal_data_message=msg) from e
 
     def get_common_runtime_info_from_response(self, response: Any) -> Tuple[Dict[str, str], str]:
         """Extract common-runtime info from Execution Service response.

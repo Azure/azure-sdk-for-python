@@ -8,7 +8,7 @@ from azure.keyvault.administration import KeyVaultSetting, KeyVaultSettingType
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. A managed HSM (https://docs.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli)
+# 1. A managed HSM (https://learn.microsoft.com/azure/key-vault/managed-hsm/quick-create-cli)
 #
 # 2. azure-keyvault-administration and azure-identity libraries (pip install these)
 #

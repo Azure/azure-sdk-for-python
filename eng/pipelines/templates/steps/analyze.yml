@@ -6,6 +6,7 @@ parameters:
   TestPipeline: false
   VerifyAutorest: false
   GenerateApiReviewForManualOnly: false
+  DevFeedName: 'public/azure-sdk-for-python'
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
@@ -18,6 +19,11 @@ steps:
       PackageName: "azure-template"
       ServiceDirectory: "template"
       TestPipeline: ${{ parameters.TestPipeline }}
+
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - template: ../steps/auth-dev-feed.yml
+      parameters:
+        DevFeedName: ${{ parameters.DevFeedName }}
 
   - task: PythonScript@0
     displayName: 'Set Tox Environment Skips'
@@ -128,8 +134,7 @@ steps:
 
   - template: /eng/pipelines/templates/steps/update_snippet.yml
     parameters:
-      ScanPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
-      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+      PackageInfoFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
   - template: ../steps/run_breaking_changes.yml
     parameters:
@@ -154,6 +159,16 @@ steps:
       ArtifactName: "packages_extended"
 
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
+
+  # the pip authenticate task sets PIP_INDEX_URL value to the internal feed URL
+  # we should reset it such that the next task uses public pypi
+  - pwsh: |
+      if (Test-Path "~/.pypirc") {
+        Remove-Item "~/.pypirc"
+      }
+
+      Write-Host "##vso[task.setvariable variable=PIP_INDEX_URL;]"
+    displayName: Reset PIP INDEX URL
 
   - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:

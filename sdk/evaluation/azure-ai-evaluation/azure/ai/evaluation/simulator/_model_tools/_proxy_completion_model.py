@@ -89,6 +89,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         self.tkey = template_key
         self.tparam = template_parameters
         self.result_url: Optional[str] = None
+        self.simulation_id: Optional[str] = kwargs.pop("simulation_id", "")
 
         super().__init__(name=name, **kwargs)
 
@@ -169,6 +170,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             "Content-Type": "application/json",
             "X-CV": f"{uuid.uuid4()}",
             "X-ModelType": self.model or "",
+            "x-ms-client-request-id": self.simulation_id,
         }
         # add all additional headers
         headers.update(self.additional_headers)  # type: ignore[arg-type]

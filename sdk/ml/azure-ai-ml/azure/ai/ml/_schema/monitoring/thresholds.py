@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument, line-too-long, name-too-long
+# pylint: disable=unused-argument, name-too-long
 
 from marshmallow import fields, post_load
 

@@ -15,6 +15,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     AggregationType,
     DerivedMetricInfo,
     DocumentIngress,
+    FilterConjunctionGroupInfo,
     TelemetryType,
 )
 
@@ -39,6 +40,7 @@ _QUICKPULSE_LAST_PROCESS_CPU = 0.0
 _QUICKPULSE_ETAG = ""
 _QUICKPULSE_DERIVED_METRIC_INFOS: Dict[TelemetryType, List[DerivedMetricInfo]] = {}
 _QUICKPULSE_PROJECTION_MAP: Dict[str, Tuple[AggregationType, float, int]] = {}
+_QUICKPULSE_DOC_STREAM_INFOS: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]] = {}
 
 
 def _set_global_quickpulse_state(state: _QuickpulseState) -> None:
@@ -94,7 +96,7 @@ def _is_post_state():
 
 
 def _append_quickpulse_document(document: DocumentIngress):
-    # pylint: disable=global-statement,global-variable-not-assigned
+    # pylint: disable=global-variable-not-assigned
     global _QUICKPULSE_DOCUMENTS
     # Limit risk of memory leak by limiting doc length to something manageable
     if len(_QUICKPULSE_DOCUMENTS) > 20:
@@ -127,8 +129,8 @@ def _get_quickpulse_etag() -> str:
     return _QUICKPULSE_ETAG
 
 
-# Used for updating filter configuration when etag has changed
-# Contains filter and projection to apply for each telemetry type if exists
+# Used for updating metric filter configuration when etag has changed
+# Contains filter and projection of metrics to apply for each telemetry type if exists
 def _set_quickpulse_derived_metric_infos(filters: Dict[TelemetryType, List[DerivedMetricInfo]]) -> None:
     # pylint: disable=global-statement
     global _QUICKPULSE_DERIVED_METRIC_INFOS
@@ -141,7 +143,6 @@ def _get_quickpulse_derived_metric_infos() -> Dict[TelemetryType, List[DerivedMe
 
 # Used for initializing and setting projections when span/logs are recorded
 def _set_quickpulse_projection_map(metric_id: str, aggregation_type: AggregationType, value: float, count: int):
-    # pylint: disable=global-statement
     # pylint: disable=global-variable-not-assigned
     global _QUICKPULSE_PROJECTION_MAP
     _QUICKPULSE_PROJECTION_MAP[metric_id] = (aggregation_type, value, count)
@@ -171,7 +172,19 @@ def _reset_quickpulse_projection_map():
 
 # clears the projection map, usually called when config changes
 def _clear_quickpulse_projection_map():
-    # pylint: disable=global-statement
     # pylint: disable=global-variable-not-assigned
     global _QUICKPULSE_PROJECTION_MAP
     _QUICKPULSE_PROJECTION_MAP.clear()
+
+
+# Used for updating doc filter configuration when etag has changed
+# Contains filter and projection of docs to apply for each telemetry type if exists
+# Format is Dict[TelemetryType, Dict[stream.id, List[FilterConjunctionGroupInfo]]]
+def _set_quickpulse_doc_stream_infos(filters: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]]) -> None:
+    # pylint: disable=global-statement
+    global _QUICKPULSE_DOC_STREAM_INFOS
+    _QUICKPULSE_DOC_STREAM_INFOS = filters
+
+
+def _get_quickpulse_doc_stream_infos() -> Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]]:
+    return _QUICKPULSE_DOC_STREAM_INFOS

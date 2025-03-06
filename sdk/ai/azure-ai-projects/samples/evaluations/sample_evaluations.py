@@ -25,7 +25,7 @@ import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration, ConnectionType
-from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, HateUnfairnessEvaluator
+from azure.ai.evaluation import F1ScoreEvaluator, RelevanceEvaluator, ViolenceEvaluator
 
 project_client = AIProjectClient.from_connection_string(
     credential=DefaultAzureCredential(),
@@ -47,12 +47,10 @@ evaluation = Evaluation(
     data=Dataset(id=data_id),
     evaluators={
         "f1_score": EvaluatorConfiguration(
-            # id=F1ScoreEvaluator.id,
-            id="azureml://registries/azureml-staging/models/F1Score-Evaluator/versions/3",
+            id=F1ScoreEvaluator.id,
         ),
         "relevance": EvaluatorConfiguration(
-            # id=RelevanceEvaluator.id,
-            id="azureml://registries/azureml-staging/models/Relevance-Evaluator/versions/3",
+            id=RelevanceEvaluator.id,
             init_params={
                 "model_config": default_connection.to_evaluator_model_config(
                     deployment_name=deployment_name, api_version=api_version
@@ -60,8 +58,7 @@ evaluation = Evaluation(
             },
         ),
         "violence": EvaluatorConfiguration(
-            # id=ViolenceEvaluator.id,
-            id="azureml://registries/azureml-staging/models/Violent-Content-Evaluator/versions/3",
+            id=ViolenceEvaluator.id,
             init_params={"azure_ai_project": project_client.scope},
         ),
     },

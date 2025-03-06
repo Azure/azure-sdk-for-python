@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -16,13 +16,14 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -30,8 +31,11 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -43,7 +47,7 @@ def build_get_request(resource_name: str, scope: str, **kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -68,7 +72,7 @@ def build_create_or_update_request(resource_name: str, scope: str, **kwargs: Any
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -96,7 +100,7 @@ def build_update_request(resource_name: str, scope: str, **kwargs: Any) -> HttpR
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -124,7 +128,7 @@ def build_list_request(scope: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -165,6 +169,7 @@ class QuotaOperations:
 
     @distributed_trace
     def get(self, resource_name: str, scope: str, **kwargs: Any) -> _models.CurrentQuotaLimitBase:
+        # pylint: disable=line-too-long
         """Get the quota limit of a resource. The response can be used to determine the remaining quota to
         calculate a new quota limit that can be submitted with a PUT request.
 
@@ -178,14 +183,14 @@ class QuotaOperations:
         :param scope: The target Azure resource URI. For example,
          ``/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qms-test/providers/Microsoft.Batch/batchAccounts/testAccount/``.
          This is the target Azure resource URI for the List GET operation. If a ``{resourceName}`` is
-         added after ``/quotas``\ , then it's the target Azure resource URI in the GET operation for the
-         specific resource. Required.
+         added after ``/quotas``\\ , then it's the target Azure resource URI in the GET operation for
+         the specific resource. Required.
         :type scope: str
         :return: CurrentQuotaLimitBase or the result of cls(response)
         :rtype: ~azure.mgmt.quota.models.CurrentQuotaLimitBase
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -206,7 +211,6 @@ class QuotaOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -224,7 +228,7 @@ class QuotaOperations:
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        deserialized = self._deserialize("CurrentQuotaLimitBase", pipeline_response)
+        deserialized = self._deserialize("CurrentQuotaLimitBase", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -237,8 +241,8 @@ class QuotaOperations:
         scope: str,
         create_quota_request: Union[_models.CurrentQuotaLimitBase, IO[bytes]],
         **kwargs: Any
-    ) -> Optional[_models.CurrentQuotaLimitBase]:
-        error_map = {
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -251,7 +255,7 @@ class QuotaOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.CurrentQuotaLimitBase]] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -271,10 +275,10 @@ class QuotaOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -282,13 +286,15 @@ class QuotaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("CurrentQuotaLimitBase", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -305,6 +311,7 @@ class QuotaOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.CurrentQuotaLimitBase]:
+        # pylint: disable=line-too-long
         """Create or update the quota limit for the specified resource with the requested value. To update
         the quota, follow these steps:
 
@@ -326,8 +333,8 @@ class QuotaOperations:
         :param scope: The target Azure resource URI. For example,
          ``/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qms-test/providers/Microsoft.Batch/batchAccounts/testAccount/``.
          This is the target Azure resource URI for the List GET operation. If a ``{resourceName}`` is
-         added after ``/quotas``\ , then it's the target Azure resource URI in the GET operation for the
-         specific resource. Required.
+         added after ``/quotas``\\ , then it's the target Azure resource URI in the GET operation for
+         the specific resource. Required.
         :type scope: str
         :param create_quota_request: Quota request payload. Required.
         :type create_quota_request: ~azure.mgmt.quota.models.CurrentQuotaLimitBase
@@ -350,6 +357,7 @@ class QuotaOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.CurrentQuotaLimitBase]:
+        # pylint: disable=line-too-long
         """Create or update the quota limit for the specified resource with the requested value. To update
         the quota, follow these steps:
 
@@ -371,8 +379,8 @@ class QuotaOperations:
         :param scope: The target Azure resource URI. For example,
          ``/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qms-test/providers/Microsoft.Batch/batchAccounts/testAccount/``.
          This is the target Azure resource URI for the List GET operation. If a ``{resourceName}`` is
-         added after ``/quotas``\ , then it's the target Azure resource URI in the GET operation for the
-         specific resource. Required.
+         added after ``/quotas``\\ , then it's the target Azure resource URI in the GET operation for
+         the specific resource. Required.
         :type scope: str
         :param create_quota_request: Quota request payload. Required.
         :type create_quota_request: IO[bytes]
@@ -393,6 +401,7 @@ class QuotaOperations:
         create_quota_request: Union[_models.CurrentQuotaLimitBase, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.CurrentQuotaLimitBase]:
+        # pylint: disable=line-too-long
         """Create or update the quota limit for the specified resource with the requested value. To update
         the quota, follow these steps:
 
@@ -414,8 +423,8 @@ class QuotaOperations:
         :param scope: The target Azure resource URI. For example,
          ``/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qms-test/providers/Microsoft.Batch/batchAccounts/testAccount/``.
          This is the target Azure resource URI for the List GET operation. If a ``{resourceName}`` is
-         added after ``/quotas``\ , then it's the target Azure resource URI in the GET operation for the
-         specific resource. Required.
+         added after ``/quotas``\\ , then it's the target Azure resource URI in the GET operation for
+         the specific resource. Required.
         :type scope: str
         :param create_quota_request: Quota request payload. Is either a CurrentQuotaLimitBase type or a
          IO[bytes] type. Required.
@@ -446,10 +455,11 @@ class QuotaOperations:
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("CurrentQuotaLimitBase", pipeline_response)
+            deserialized = self._deserialize("CurrentQuotaLimitBase", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -479,8 +489,8 @@ class QuotaOperations:
         scope: str,
         create_quota_request: Union[_models.CurrentQuotaLimitBase, IO[bytes]],
         **kwargs: Any
-    ) -> Optional[_models.CurrentQuotaLimitBase]:
-        error_map = {
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -493,7 +503,7 @@ class QuotaOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.CurrentQuotaLimitBase]] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -513,10 +523,10 @@ class QuotaOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -524,13 +534,15 @@ class QuotaOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ExceptionResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("CurrentQuotaLimitBase", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -547,6 +559,7 @@ class QuotaOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.CurrentQuotaLimitBase]:
+        # pylint: disable=line-too-long
         """Update the quota limit for a specific resource to the specified value:
 
 
@@ -567,8 +580,8 @@ class QuotaOperations:
         :param scope: The target Azure resource URI. For example,
          ``/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qms-test/providers/Microsoft.Batch/batchAccounts/testAccount/``.
          This is the target Azure resource URI for the List GET operation. If a ``{resourceName}`` is
-         added after ``/quotas``\ , then it's the target Azure resource URI in the GET operation for the
-         specific resource. Required.
+         added after ``/quotas``\\ , then it's the target Azure resource URI in the GET operation for
+         the specific resource. Required.
         :type scope: str
         :param create_quota_request: Quota requests payload. Required.
         :type create_quota_request: ~azure.mgmt.quota.models.CurrentQuotaLimitBase
@@ -591,6 +604,7 @@ class QuotaOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.CurrentQuotaLimitBase]:
+        # pylint: disable=line-too-long
         """Update the quota limit for a specific resource to the specified value:
 
 
@@ -611,8 +625,8 @@ class QuotaOperations:
         :param scope: The target Azure resource URI. For example,
          ``/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qms-test/providers/Microsoft.Batch/batchAccounts/testAccount/``.
          This is the target Azure resource URI for the List GET operation. If a ``{resourceName}`` is
-         added after ``/quotas``\ , then it's the target Azure resource URI in the GET operation for the
-         specific resource. Required.
+         added after ``/quotas``\\ , then it's the target Azure resource URI in the GET operation for
+         the specific resource. Required.
         :type scope: str
         :param create_quota_request: Quota requests payload. Required.
         :type create_quota_request: IO[bytes]
@@ -633,6 +647,7 @@ class QuotaOperations:
         create_quota_request: Union[_models.CurrentQuotaLimitBase, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.CurrentQuotaLimitBase]:
+        # pylint: disable=line-too-long
         """Update the quota limit for a specific resource to the specified value:
 
 
@@ -653,8 +668,8 @@ class QuotaOperations:
         :param scope: The target Azure resource URI. For example,
          ``/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qms-test/providers/Microsoft.Batch/batchAccounts/testAccount/``.
          This is the target Azure resource URI for the List GET operation. If a ``{resourceName}`` is
-         added after ``/quotas``\ , then it's the target Azure resource URI in the GET operation for the
-         specific resource. Required.
+         added after ``/quotas``\\ , then it's the target Azure resource URI in the GET operation for
+         the specific resource. Required.
         :type scope: str
         :param create_quota_request: Quota requests payload. Is either a CurrentQuotaLimitBase type or
          a IO[bytes] type. Required.
@@ -685,10 +700,11 @@ class QuotaOperations:
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("CurrentQuotaLimitBase", pipeline_response)
+            deserialized = self._deserialize("CurrentQuotaLimitBase", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -714,14 +730,15 @@ class QuotaOperations:
 
     @distributed_trace
     def list(self, scope: str, **kwargs: Any) -> Iterable["_models.CurrentQuotaLimitBase"]:
+        # pylint: disable=line-too-long
         """Get a list of current quota limits of all resources for the specified scope. The response from
         this GET operation can be leveraged to submit requests to update a quota.
 
         :param scope: The target Azure resource URI. For example,
          ``/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qms-test/providers/Microsoft.Batch/batchAccounts/testAccount/``.
          This is the target Azure resource URI for the List GET operation. If a ``{resourceName}`` is
-         added after ``/quotas``\ , then it's the target Azure resource URI in the GET operation for the
-         specific resource. Required.
+         added after ``/quotas``\\ , then it's the target Azure resource URI in the GET operation for
+         the specific resource. Required.
         :type scope: str
         :return: An iterator like instance of either CurrentQuotaLimitBase or the result of
          cls(response)
@@ -734,7 +751,7 @@ class QuotaOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.QuotaLimits] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -751,7 +768,6 @@ class QuotaOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -767,7 +783,6 @@ class QuotaOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request

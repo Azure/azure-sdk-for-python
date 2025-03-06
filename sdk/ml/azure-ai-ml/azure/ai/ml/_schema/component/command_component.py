@@ -2,8 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,protected-access,no-member
-
+# pylint: disable=unused-argument,protected-access
 from copy import deepcopy
 
 import yaml

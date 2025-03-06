@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -16,10 +16,9 @@ from ... import _serialization
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -724,7 +723,7 @@ class TrackedResource(Resource):
         self.tags = tags
 
 
-class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Cluster(TrackedResource):
     """Single Event Hubs Cluster resource in List or Get operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1101,7 +1100,7 @@ class Destination(_serialization.Model):
         self.data_lake_folder_path = data_lake_folder_path
 
 
-class EHNamespace(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class EHNamespace(TrackedResource):
     """Single Namespace item in List or Get Operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1503,7 +1502,7 @@ class ErrorResponse(_serialization.Model):
         self.error = error
 
 
-class Eventhub(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class Eventhub(ProxyResource):
     """Single item in List or Get Event Hub operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2788,7 +2787,7 @@ class RetentionDescription(_serialization.Model):
         self.tombstone_retention_time_in_hours = tombstone_retention_time_in_hours
 
 
-class SchemaGroup(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class SchemaGroup(ProxyResource):
     """Single item in List or Get Schema Group operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.

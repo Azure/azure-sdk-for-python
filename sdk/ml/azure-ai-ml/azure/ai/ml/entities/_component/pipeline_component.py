@@ -345,7 +345,8 @@ class PipelineComponent(Component):
                 for input_name, input_value in job.inputs.items():
                     try:
                         if (
-                            isinstance(input_value._data, Input)
+                            getattr(input_value, "_data", None)
+                            and isinstance(input_value._data, Input)
                             and input_value.path
                             and os.path.exists(input_value.path)
                         ):

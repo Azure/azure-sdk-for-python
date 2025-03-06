@@ -182,7 +182,6 @@ class TestEnvironment(AzureRecordedTestCase):
         client.environments.restore(name=name, version=version_archived)
         assert version_archived in get_environment_list()
 
-    @pytest.mark.skip(reason="Task 1791832: Inefficient, possibly causing testing pipeline to time out.")
     def test_environment_archive_restore_container(self, client: MLClient, env_name: Callable[[str], str]) -> None:
         name = env_name("name")
         params_override = [{"name": name}]

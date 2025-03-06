@@ -35,7 +35,7 @@ class ComputeTravelTime(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class DelayMagnitude(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The magnitude of delay caused by the incident. These values correspond to the values of the
     response field ty of the `Get Traffic Incident Detail API
-    <https://docs.microsoft.com/rest/api/maps/traffic/gettrafficincidentdetail>`_.
+    <https://learn.microsoft.com/rest/api/maps/traffic/gettrafficincidentdetail>`_.
     """
 
     UNKNOWN = "0"

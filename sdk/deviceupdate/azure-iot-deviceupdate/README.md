@@ -5,7 +5,7 @@ The library provides access to the Device Update for IoT Hub service that enable
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/deviceupdate/azure-iot-deviceupdate)
 | [Package (PyPI)](https://aka.ms/azsdk/python/deviceupdate-pypi)
 | [Package (Conda)](https://anaconda.org/microsoft/azure-iot-deviceupdate)
-| [Product documentation](https://docs.microsoft.com/azure/iot-hub-device-update/understand-device-update)
+| [Product documentation](https://learn.microsoft.com/azure/iot-hub-device-update/understand-device-update)
 
 ## _Disclaimer_
 

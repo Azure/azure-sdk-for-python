@@ -74,7 +74,7 @@ class DoWhileSchema(BaseLoopSchema):
         return result
 
     @pre_dump
-    def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable= unused-argument
+    def convert_control_flow_body_to_binding_str(self, data, **kwargs):
         return super(DoWhileSchema, self).convert_control_flow_body_to_binding_str(data, **kwargs)
 
 
@@ -109,7 +109,7 @@ class ParallelForSchema(BaseLoopSchema):
         return data
 
     @pre_dump
-    def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable= unused-argument
+    def convert_control_flow_body_to_binding_str(self, data, **kwargs):
         return super(ParallelForSchema, self).convert_control_flow_body_to_binding_str(data, **kwargs)
 
     @pre_dump

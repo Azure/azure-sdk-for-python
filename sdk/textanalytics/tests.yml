@@ -12,10 +12,6 @@ extends:
             - $(sub-config-text-analytics-azure-cloud-test-resources)
           MatrixReplace:
             - TestSamples=.*/true
-        UsGov:
-        China:
-          Location: chinanorth3
-      SupportedClouds: 'Public,UsGov,China'
       EnvVars:
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'

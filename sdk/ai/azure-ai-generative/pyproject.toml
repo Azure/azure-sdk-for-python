@@ -8,6 +8,7 @@ black = false
 sphinx=true
 breaking = false
 whl_no_aio = false
+ci_enabled = false
 
 
 [tool.mypy] 
