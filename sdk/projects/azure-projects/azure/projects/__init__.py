@@ -13,12 +13,12 @@ from ._version import VERSION
 
 __version__ = VERSION
 __all__ = [
-    'provision',
-    'export',
-    'field',
-    'Resource',
-    'AzureInfrastructure',
-    'AzureApp',
-    'Parameter',
-    'MISSING',
+    "provision",
+    "export",
+    "field",
+    "Resource",
+    "AzureInfrastructure",
+    "AzureApp",
+    "Parameter",
+    "MISSING",
 ]

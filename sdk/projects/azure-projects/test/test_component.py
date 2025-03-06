@@ -7,17 +7,12 @@ from azure.projects.resources.resourcegroup import ResourceGroup
 from azure.projects.resources.storage import StorageAccount
 from azure.projects.resources.storage.blobs import BlobStorage
 from azure.projects.resources.storage.blobs.container import BlobContainer
-from azure.projects import (
-    Parameter,
-    AzureApp,
-    AzureInfrastructure,
-    field,
-    MISSING
-)
+from azure.projects import Parameter, AzureApp, AzureInfrastructure, field, MISSING
 
 
-def test_component_infra_invalid():
-    ...
+def test_component_infra_invalid(): ...
+
+
 #     TODO
 #     test bad type hint string
 #     with pytest.raises(RuntimeError):
@@ -34,7 +29,7 @@ def test_component_infra_invalid():
 
 #     class Foo:
 #         test: BlobStorage = resource(default_factory=BlobStorage)
-    
+
 #     foo = Foo()
 #     with pytest.raises(TypeError):
 #         foo.test = 3
@@ -45,7 +40,7 @@ def test_component_infra_invalid():
 def test_component_infra_inheritance():
     class InfraA(AzureInfrastructure):
         storage: BlobStorage
-    
+
     with pytest.raises(TypeError):
         InfraA()
 
@@ -56,13 +51,13 @@ def test_component_infra_inheritance():
 
     class InfraC(InfraA):
         data: BlobContainer
-    
+
     with pytest.raises(TypeError):
         InfraC()
-    
+
     class InfraD(AzureInfrastructure):
         resource_group: ResourceGroup = field()
-    
+
     with pytest.raises(TypeError):
         InfraD()
 
@@ -87,6 +82,7 @@ def test_component_infra_linked():
 
 def test_component_infra_attr_references():
     with pytest.raises(NameError):
+
         class Infra(AzureInfrastructure):
             storage: BlobStorage
             data: BlobContainer = BlobContainer(account=storage)
@@ -105,8 +101,8 @@ def test_component_infra_attr_references():
         data: BlobContainer = BlobContainer(account=storage)
 
     infra = Infra(name="bar")
-    assert infra.storage.parent.properties.get('name').get(infra) == "bar"
-    assert infra.data.parent.parent.properties.get('name').get(infra) == "bar"
+    assert infra.storage.parent.properties.get("name").get(infra) == "bar"
+    assert infra.data.parent.parent.properties.get("name").get(infra) == "bar"
 
     class Infra(AzureInfrastructure):
         storage: BlobStorage = field()
@@ -114,19 +110,20 @@ def test_component_infra_attr_references():
 
     infra = Infra(storage=BlobStorage.reference(account="foo"))
     # TODO: How to unravel this???
-    assert infra.data.parent.parent.properties.get('name').get(infra) == BlobStorage(account="foo")
+    assert infra.data.parent.parent.properties.get("name").get(infra) == BlobStorage(account="foo")
 
 
-def test_component_infra_repr():
-    ...
+def test_component_infra_repr(): ...
 def test_component_infra_init():
     # TODO
     ...
-def test_component_infra_factory():
-    ...
+
+
+def test_component_infra_factory(): ...
 def test_component_infra_alias():
     # TODO
     ...
+
 
 def test_component_infra_basic():
 
@@ -138,7 +135,7 @@ def test_component_infra_basic():
 
     with pytest.raises(TypeError):
         Infra(foo="bar")
-    
+
     infra = Infra(test=BlobStorage(account="foo"))
     assert infra.test == BlobStorage(account="foo")
     assert infra.test.parent == StorageAccount(name="foo")
@@ -151,7 +148,7 @@ def test_component_infra_basic():
 
     with pytest.raises(TypeError):
         Infra(foo="bar")
-    
+
     infra = Infra(test=BlobStorage(account="foo"))
     assert infra.test == BlobStorage(account="foo")
     assert infra.test.parent == StorageAccount(name="foo")
@@ -164,13 +161,13 @@ def test_component_infra_basic():
 
     with pytest.raises(TypeError):
         Infra(foo="bar")
-    
+
     infra = Infra(test=BlobStorage(account="foo"))
     assert infra.test == BlobStorage(account="foo")
     assert infra.test.parent == StorageAccount(name="foo")
 
     class Infra(AzureInfrastructure):
-        test: BlobStorage = field(default=BlobStorage(account='test'))
+        test: BlobStorage = field(default=BlobStorage(account="test"))
 
     infra = Infra()
     assert infra.test == BlobStorage(account="test")
@@ -181,7 +178,7 @@ def test_component_infra_basic():
     assert infra.test.parent == StorageAccount(name="foo")
 
     class Infra(AzureInfrastructure):
-        test: BlobStorage[Any] = BlobStorage(account='test')
+        test: BlobStorage[Any] = BlobStorage(account="test")
 
     infra = Infra()
     assert infra.test == BlobStorage(account="test")
@@ -217,13 +214,13 @@ def test_component_infra_basic():
 
     class Infra(AzureInfrastructure):
         test: BlobStorage[ResourceReference]
-    
+
     with pytest.raises(TypeError):
         Infra()
-    
-    infra = Infra(test=BlobStorage.reference(account=StorageAccount.reference(name='foo')))
+
+    infra = Infra(test=BlobStorage.reference(account=StorageAccount.reference(name="foo")))
     assert infra.test == BlobStorage(account="foo")
-    assert infra.test.parent == StorageAccount(name="foo") 
+    assert infra.test.parent == StorageAccount(name="foo")
 
     class Infra(AzureInfrastructure):
         test: Union[BlobContainer, BlobStorage] = BlobContainer(name="data", account="data")
@@ -234,7 +231,7 @@ def test_component_infra_basic():
     assert infra.test.parent.parent == StorageAccount(name="data")
     infra.test = BlobStorage(account="foo")
     assert infra.test == BlobStorage(account="foo")
-    assert infra.test.parent == StorageAccount(name="foo") 
+    assert infra.test.parent == StorageAccount(name="foo")
 
 
 def test_component_infra_hybrid():
@@ -257,9 +254,10 @@ def test_component_infra_hybrid():
     assert infra.some_func() == "teststring"
     assert infra.resource == BlobContainer(name="A", account="B")
     assert infra.another_resource == BlobStorage()
-    assert infra.data['bar'].get(infra) == BlobStorage()
-    assert infra.data['foo'] == 'teststring'
+    assert infra.data["bar"].get(infra) == BlobStorage()
+    assert infra.data["foo"] == "teststring"
     assert repr(infra) == "TestInfra(number=7, resource=BlobContainer('A'), string='teststring')"
+
 
 def test_component_infra_export_config():
     # TODO: Test ComponentFields as parameters

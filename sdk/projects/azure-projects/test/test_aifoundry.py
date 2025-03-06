@@ -1,4 +1,3 @@
-
 from dataclasses import dataclass
 from uuid import uuid4
 
@@ -15,15 +14,14 @@ from azure.projects._bicep.expressions import ResourceSymbol, Output, ResourceGr
 from azure.projects import Parameter, field, AzureInfrastructure, export, AzureApp
 
 TEST_SUB = str(uuid4())
-RG = ResourceSymbol('resourcegroup')
-IDENTITY = {
-    'type': 'UserAssigned',
-    'userAssignedIdentities': {GLOBAL_PARAMS['managedIdentityId'].format(): {}}
-}
+RG = ResourceSymbol("resourcegroup")
+IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"].format(): {}}}
+
 
 def test_aifoundry_export(export_dir):
     class TestInfra(AzureInfrastructure):
         r: AIHub = AIHub()
+
     with pytest.raises(ValueError):
         export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
 

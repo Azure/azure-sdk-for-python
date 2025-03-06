@@ -11,70 +11,61 @@ from ._bicep.expressions import Parameter, UniqueString, Subscription, Variable
 
 
 LOCATION: Parameter[str] = Parameter(
-    'location',
-    type=str,
-    description="Primary location for all resources",
-    min_length=1,
-    varname="AZURE_LOCATION"
+    "location", type=str, description="Primary location for all resources", min_length=1, varname="AZURE_LOCATION"
 )
 ENV_NAME: Parameter[str] = Parameter(
-    'environmentName',
+    "environmentName",
     type=str,
     description="AZD environment name",
     min_length=1,
     max_length=64,
-    varname="AZURE_ENV_NAME"
+    varname="AZURE_ENV_NAME",
 )
-NAME_PREFIX: Parameter[str] = Parameter(
-    'defaultNamePrefix',
-    type=str,
-    default='azproj'
-)
+NAME_PREFIX: Parameter[str] = Parameter("defaultNamePrefix", type=str, default="azproj")
 DEFAULT_NAME: Parameter[str] = Parameter(
-    'defaultName',
+    "defaultName",
     type=str,
-    default=NAME_PREFIX.format() + UniqueString(Subscription().subscription_id,  ENV_NAME, LOCATION).format()
+    default=NAME_PREFIX.format() + UniqueString(Subscription().subscription_id, ENV_NAME, LOCATION).format(),
 )
 # TODO: Rename to something like "UserPrincipal"?
 LOCAL_PRINCIPAL: Parameter[str] = Parameter(
-    'principalId',
+    "principalId",
     type=str,
     description="ID of the user or app to assign application roles",
-    varname="AZURE_PRINCIPAL_ID"
+    varname="AZURE_PRINCIPAL_ID",
 )
 AZD_TAGS: Parameter[Dict[str, str]] = Variable(
-    'azdTags',
-    value={'azd-env-name': ENV_NAME},
-    description='Tags to apply to all resources in AZD environment.'
+    "azdTags", value={"azd-env-name": ENV_NAME}, description="Tags to apply to all resources in AZD environment."
 )
 TENANT_ID: Parameter[str] = Parameter(
-    'tenantId',
+    "tenantId",
     type=str,
     description="The Azure Active Directory tenant ID.",
     default=Subscription().tenant_id,
-    #varname="AZURE_TENANT_ID",
+    # varname="AZURE_TENANT_ID",
 )
 _MANAGED_IDENTITY_ID: Parameter[str] = Parameter(
-    'managedIdentityId',
+    "managedIdentityId",
     type=str,
-    description='ID of the managed identity to assign application roles',
+    description="ID of the managed identity to assign application roles",
     varname="AZURE_MANAGED_IDENTITY_ID",
-    default=""
+    default="",
 )
 _MANAGED_IDENTITY_PRINCIPAL_ID: Parameter[str] = Parameter(
-    'managedIdentityPrincipalId',
+    "managedIdentityPrincipalId",
     type=str,
-    description='Principal ID of the managed identity to assign application roles',
+    description="Principal ID of the managed identity to assign application roles",
     varname="AZURE_MANAGED_IDENTITY_PRINCIPAL_ID",
-    default=""
+    default="",
 )
 _MANAGED_IDENTITY_CLIENT_ID: Parameter[str] = Parameter(
-    'managedIdentityClientId',
+    "managedIdentityClientId",
     type=str,
-    description='Client ID of the managed identity to assign application roles',
+    description="Client ID of the managed identity to assign application roles",
     varname="AZURE_MANAGED_IDENTITY_CLIENT_ID",
-    default=""
+    default="",
 )
+
 
 class GlobalParamsType(TypedDict):
     location: Parameter[str]
@@ -90,14 +81,14 @@ class GlobalParamsType(TypedDict):
 
 
 GLOBAL_PARAMS: GlobalParamsType = {
-    'location': LOCATION,
-    'environmentName': ENV_NAME,
-    'defaultNamePrefix': NAME_PREFIX,
-    'defaultName': DEFAULT_NAME,
-    'principalId': LOCAL_PRINCIPAL,
-    'tenantId': TENANT_ID,
-    'azdTags': AZD_TAGS,
-    'managedIdentityId': _MANAGED_IDENTITY_ID,
-    'managedIdentityPrincipalId': _MANAGED_IDENTITY_PRINCIPAL_ID,
-    'managedIdentityClientId': _MANAGED_IDENTITY_CLIENT_ID,
+    "location": LOCATION,
+    "environmentName": ENV_NAME,
+    "defaultNamePrefix": NAME_PREFIX,
+    "defaultName": DEFAULT_NAME,
+    "principalId": LOCAL_PRINCIPAL,
+    "tenantId": TENANT_ID,
+    "azdTags": AZD_TAGS,
+    "managedIdentityId": _MANAGED_IDENTITY_ID,
+    "managedIdentityPrincipalId": _MANAGED_IDENTITY_PRINCIPAL_ID,
+    "managedIdentityClientId": _MANAGED_IDENTITY_CLIENT_ID,
 }

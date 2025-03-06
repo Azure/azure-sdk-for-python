@@ -11,17 +11,17 @@ def _get_infra_dir() -> str:
 def _compare_outputs(output_dir, ref_dir, test_dir):
     for _, _, files in os.walk(os.path.join(output_dir, ref_dir)):
         for filename in files:
-            with open(os.path.join(output_dir, ref_dir, filename), 'r') as _ref:
+            with open(os.path.join(output_dir, ref_dir, filename), "r") as _ref:
                 ref_file = _ref.readlines()
-            with open(os.path.join(output_dir, test_dir, filename), 'r') as _test:
+            with open(os.path.join(output_dir, test_dir, filename), "r") as _test:
                 test_file = _test.readlines()
             diff = difflib.unified_diff(
                 ref_file,
                 test_file,
-                fromfile=f'{ref_dir}/{filename}',
-                tofile=f'{test_dir}/{filename}',
+                fromfile=f"{ref_dir}/{filename}",
+                tofile=f"{test_dir}/{filename}",
             )
-            changes = ("".join(diff))
+            changes = "".join(diff)
             has_changes = bool(changes)
             assert not has_changes, "\n" + changes
             os.remove(os.path.join(output_dir, test_dir, filename))
@@ -44,4 +44,4 @@ def _record_exports(request):
     return output_dir, ref_dir, ref_dir
 
 
-export_dir = _record_exports if os.environ.get('TEST_EXPORT_RECORD', "").lower() == 'true' else _compare_exports
+export_dir = _record_exports if os.environ.get("TEST_EXPORT_RECORD", "").lower() == "true" else _compare_exports

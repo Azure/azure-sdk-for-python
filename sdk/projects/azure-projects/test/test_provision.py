@@ -8,10 +8,8 @@ from azure.projects.resources.ai import AIServices
 from azure.projects.resources.ai.deployment import AIDeployment, AIChat, AIEmbeddings
 
 
-
-
 # def test_export_resource(export_dir):
-    
+
 #     test_param = Parameter('TestAccessTier', varname='STORAGE_ACCESS_TIER', default="Hot")
 #     rg = ResourceGroup.reference(name='antisch-cmtest')
 #     ua = UserAssignedIdentity.reference(name='uatest', resource_group='foo')
@@ -22,4 +20,3 @@ from azure.projects.resources.ai.deployment import AIDeployment, AIChat, AIEmbed
 #         name="test",
 #         output_dir=export_dir,
 #     )
-

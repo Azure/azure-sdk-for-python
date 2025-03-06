@@ -27,23 +27,27 @@ class VirtualNetworkRule(TypedDict, total=False):
 
 
 class KeyVaultNetworkRuleSet(TypedDict, total=False):
-    bypass: Union[Parameter[str], Literal['AzureServices', 'None']]
+    bypass: Union[Parameter[str], Literal["AzureServices", "None"]]
     """Setting for trusted services."""
-    defaultAction: Union[Parameter[str], Literal['Allow', 'Deny']]
+    defaultAction: Union[Parameter[str], Literal["Allow", "Deny"]]
     """The default action when no rule from ipRules and from virtualNetworkRules match. This is only used after the bypass property has been evaluated."""
     ipRules: Union[Parameter[List[KeyVaultIpRule]], List[Union[KeyVaultIpRule, Parameter[KeyVaultIpRule]]]]
     """The list of IP address rules."""
-    virtualNetworkRules: Union[Parameter[List[VirtualNetworkRule]], List[Union[VirtualNetworkRule, Parameter[VirtualNetworkRule]]]]
+    virtualNetworkRules: Union[
+        Parameter[List[VirtualNetworkRule]], List[Union[VirtualNetworkRule, Parameter[VirtualNetworkRule]]]
+    ]
     """The list of virtual network rules."""
 
-#class VaultProperties(TypedDict, total=False):
+
+# class VaultProperties(TypedDict, total=False):
+
 
 class KeyVaultResource(TypedDict, total=False):
     location: Union[str, Parameter[str]]
     """The geo-location where the resource lives."""
     name: Union[str, Parameter[str]]
     """The resource name."""
-    properties:	'VaultProperties'
+    properties: "VaultProperties"
     """Properties of Cognitive Services account."""
     tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict[str, str]]]
     """Dictionary of tag names and values."""

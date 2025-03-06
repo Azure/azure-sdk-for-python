@@ -1,4 +1,3 @@
-
 from dataclasses import dataclass
 from uuid import uuid4
 
@@ -16,20 +15,25 @@ from azure.keyvault.secrets import SecretClient
 from azure.keyvault.secrets.aio import SecretClient as AsyncSecretClient
 
 TEST_SUB = str(uuid4())
-RG = ResourceSymbol('resourcegroup')
+RG = ResourceSymbol("resourcegroup")
 
 
 def _get_outputs(suffix="", rg=None):
     return {
-        'resource_id': Output(f"AZURE_KEYVAULT_ID{suffix.upper()}", "id", ResourceSymbol(f"vault{suffix}")),
-        'name': Output(f"AZURE_KEYVAULT_NAME{suffix.upper()}", "name", ResourceSymbol(f"vault{suffix}")),
-        'resource_group': Output(f"AZURE_KEYVAULT_RESOURCE_GROUP{suffix.upper()}", rg if rg else DefaultResourceGroup().name),
-        'endpoint': Output(f"AZURE_KEYVAULT_ENDPOINT{suffix.upper()}", "properties.vaultUri", ResourceSymbol(f"vault{suffix}"))
+        "resource_id": Output(f"AZURE_KEYVAULT_ID{suffix.upper()}", "id", ResourceSymbol(f"vault{suffix}")),
+        "name": Output(f"AZURE_KEYVAULT_NAME{suffix.upper()}", "name", ResourceSymbol(f"vault{suffix}")),
+        "resource_group": Output(
+            f"AZURE_KEYVAULT_RESOURCE_GROUP{suffix.upper()}", rg if rg else DefaultResourceGroup().name
+        ),
+        "endpoint": Output(
+            f"AZURE_KEYVAULT_ENDPOINT{suffix.upper()}", "properties.vaultUri", ResourceSymbol(f"vault{suffix}")
+        ),
     }
+
 
 def test_keyvault_properties():
     r = KeyVault()
-    assert r.properties == {'properties': {}}
+    assert r.properties == {"properties": {}}
     assert r.extensions == {}
     assert r._existing == False
     assert not r.parent
@@ -37,214 +41,248 @@ def test_keyvault_properties():
     assert r.version
     fields = {}
     symbols = r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    assert list(fields.keys()) == ['vault']
-    assert fields['vault'].resource == "Microsoft.KeyVault/vaults"
-    assert fields['vault'].properties == {'properties': {}}
-    assert fields['vault'].outputs == _get_outputs()
-    assert fields['vault'].extensions == {}
-    assert fields['vault'].existing == False
-    assert fields['vault'].version
-    assert fields['vault'].symbol == symbols[0]
-    assert fields['vault'].resource_group == None
-    assert not fields['vault'].name
-    assert fields['vault'].add_defaults
+    assert list(fields.keys()) == ["vault"]
+    assert fields["vault"].resource == "Microsoft.KeyVault/vaults"
+    assert fields["vault"].properties == {"properties": {}}
+    assert fields["vault"].outputs == _get_outputs()
+    assert fields["vault"].extensions == {}
+    assert fields["vault"].existing == False
+    assert fields["vault"].version
+    assert fields["vault"].symbol == symbols[0]
+    assert fields["vault"].resource_group == None
+    assert not fields["vault"].name
+    assert fields["vault"].add_defaults
 
-    r2 = KeyVault(location='westus', sku='premium')
-    assert r2.properties == {'location': 'westus', 'properties': {'sku': {'name': 'premium', 'family': 'A'}}}
+    r2 = KeyVault(location="westus", sku="premium")
+    assert r2.properties == {"location": "westus", "properties": {"sku": {"name": "premium", "family": "A"}}}
     r2.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    assert list(fields.keys()) == ['vault']
-    assert fields['vault'].resource == "Microsoft.KeyVault/vaults"
-    assert fields['vault'].properties == {'location': 'westus', 'properties': {'sku': {'name': 'premium', 'family': 'A'}}}
-    assert fields['vault'].outputs == _get_outputs()
-    assert fields['vault'].extensions == {}
-    assert fields['vault'].existing == False
-    assert fields['vault'].version
-    assert fields['vault'].symbol == symbols[0]
-    assert fields['vault'].resource_group == None
-    assert not fields['vault'].name
-    assert fields['vault'].add_defaults
+    assert list(fields.keys()) == ["vault"]
+    assert fields["vault"].resource == "Microsoft.KeyVault/vaults"
+    assert fields["vault"].properties == {
+        "location": "westus",
+        "properties": {"sku": {"name": "premium", "family": "A"}},
+    }
+    assert fields["vault"].outputs == _get_outputs()
+    assert fields["vault"].extensions == {}
+    assert fields["vault"].existing == False
+    assert fields["vault"].version
+    assert fields["vault"].symbol == symbols[0]
+    assert fields["vault"].resource_group == None
+    assert not fields["vault"].name
+    assert fields["vault"].add_defaults
 
-    r3 = KeyVault(sku='standard')
-    assert r3.properties == {'properties': {'sku': {'name': 'standard', 'family': 'A'}}}
+    r3 = KeyVault(sku="standard")
+    assert r3.properties == {"properties": {"sku": {"name": "standard", "family": "A"}}}
     with pytest.raises(ValueError):
         r3.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
 
-    r4 = KeyVault(name='foo', tags={'test': 'value'}, public_network_access='Disabled')
-    assert r4.properties == {'name': 'foo', 'tags': {'test': 'value'}, 'properties': {'publicNetworkAccess': 'Disabled'}}
+    r4 = KeyVault(name="foo", tags={"test": "value"}, public_network_access="Disabled")
+    assert r4.properties == {
+        "name": "foo",
+        "tags": {"test": "value"},
+        "properties": {"publicNetworkAccess": "Disabled"},
+    }
     symbols = r4.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    assert list(fields.keys()) == ['vault', 'vault_foo']
-    assert fields['vault_foo'].resource == "Microsoft.KeyVault/vaults"
-    assert fields['vault_foo'].properties == {'name': 'foo', 'tags': {'test': 'value'}, 'properties': {'publicNetworkAccess': 'Disabled'}}
-    assert fields['vault_foo'].outputs == _get_outputs("_foo")
-    assert fields['vault_foo'].extensions == {}
-    assert fields['vault_foo'].existing == False
-    assert fields['vault_foo'].version
-    assert fields['vault_foo'].symbol == symbols[0]
-    assert fields['vault_foo'].resource_group == None
-    assert fields['vault_foo'].name == 'foo'
-    assert fields['vault_foo'].add_defaults
+    assert list(fields.keys()) == ["vault", "vault_foo"]
+    assert fields["vault_foo"].resource == "Microsoft.KeyVault/vaults"
+    assert fields["vault_foo"].properties == {
+        "name": "foo",
+        "tags": {"test": "value"},
+        "properties": {"publicNetworkAccess": "Disabled"},
+    }
+    assert fields["vault_foo"].outputs == _get_outputs("_foo")
+    assert fields["vault_foo"].extensions == {}
+    assert fields["vault_foo"].existing == False
+    assert fields["vault_foo"].version
+    assert fields["vault_foo"].symbol == symbols[0]
+    assert fields["vault_foo"].resource_group == None
+    assert fields["vault_foo"].name == "foo"
+    assert fields["vault_foo"].add_defaults
 
     param1 = Parameter("testA")
     param2 = Parameter("testB")
     param3 = Parameter("testC")
     r5 = KeyVault(name=param1, sku=param2, public_network_access=param3)
-    assert r5.properties == {'name': param1, 'properties': {'sku': {'name': param2, 'family': 'A'}, 'publicNetworkAccess': param3}}
+    assert r5.properties == {
+        "name": param1,
+        "properties": {"sku": {"name": param2, "family": "A"}, "publicNetworkAccess": param3},
+    }
     params = dict(GLOBAL_PARAMS)
     fields = {}
     symbols = r5.__bicep__(fields, parameters=params)
-    assert list(fields.keys()) == ['vault_testa']
-    assert fields['vault_testa'].resource == "Microsoft.KeyVault/vaults"
-    assert fields['vault_testa'].properties == {'name': param1, 'properties': {'sku': {'name': param2, 'family': 'A'}, 'publicNetworkAccess': param3}}
-    assert fields['vault_testa'].outputs == _get_outputs("_testa")
-    assert fields['vault_testa'].extensions == {}
-    assert fields['vault_testa'].existing == False
-    assert fields['vault_testa'].version
-    assert fields['vault_testa'].symbol == symbols[0]
-    assert fields['vault_testa'].resource_group == None
-    assert fields['vault_testa'].name == param1
-    assert fields['vault_testa'].add_defaults
-    assert params.get('testA') == param1
-    assert params.get('testB') == param2
-    assert params.get('testC') == param3
+    assert list(fields.keys()) == ["vault_testa"]
+    assert fields["vault_testa"].resource == "Microsoft.KeyVault/vaults"
+    assert fields["vault_testa"].properties == {
+        "name": param1,
+        "properties": {"sku": {"name": param2, "family": "A"}, "publicNetworkAccess": param3},
+    }
+    assert fields["vault_testa"].outputs == _get_outputs("_testa")
+    assert fields["vault_testa"].extensions == {}
+    assert fields["vault_testa"].existing == False
+    assert fields["vault_testa"].version
+    assert fields["vault_testa"].symbol == symbols[0]
+    assert fields["vault_testa"].resource_group == None
+    assert fields["vault_testa"].name == param1
+    assert fields["vault_testa"].add_defaults
+    assert params.get("testA") == param1
+    assert params.get("testB") == param2
+    assert params.get("testC") == param3
 
 
 def test_keyvault_reference():
-    r = KeyVault.reference(name='foo')
-    assert r.properties == {'name': 'foo'}
+    r = KeyVault.reference(name="foo")
+    assert r.properties == {"name": "foo"}
     assert r._existing == True
     assert not r.parent
     assert r.extensions == {}
-    assert r._settings['name']() == 'foo'
+    assert r._settings["name"]() == "foo"
     with pytest.raises(RuntimeError):
-        r._settings['resource_group']()
+        r._settings["resource_group"]()
     with pytest.raises(RuntimeError):
-        r._settings['subscription']()
+        r._settings["subscription"]()
     with pytest.raises(RuntimeError):
-        r._settings['resource_id']()
+        r._settings["resource_id"]()
     fields = {}
     symbols = r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    assert list(fields.keys()) == ['vault_foo']
-    assert fields['vault_foo'].resource == "Microsoft.KeyVault/vaults"
-    assert fields['vault_foo'].properties == {'name': 'foo'}
-    assert fields['vault_foo'].outputs == _get_outputs("_foo")
-    assert fields['vault_foo'].extensions == {}
-    assert fields['vault_foo'].existing == True
-    assert fields['vault_foo'].version
-    assert fields['vault_foo'].symbol == symbols[0]
-    assert fields['vault_foo'].resource_group == None
-    assert fields['vault_foo'].name == 'foo'
-    assert not fields['vault_foo'].add_defaults
+    assert list(fields.keys()) == ["vault_foo"]
+    assert fields["vault_foo"].resource == "Microsoft.KeyVault/vaults"
+    assert fields["vault_foo"].properties == {"name": "foo"}
+    assert fields["vault_foo"].outputs == _get_outputs("_foo")
+    assert fields["vault_foo"].extensions == {}
+    assert fields["vault_foo"].existing == True
+    assert fields["vault_foo"].version
+    assert fields["vault_foo"].symbol == symbols[0]
+    assert fields["vault_foo"].resource_group == None
+    assert fields["vault_foo"].name == "foo"
+    assert not fields["vault_foo"].add_defaults
 
-    rg = ResourceSymbol('resourcegroup_bar')
-    r = KeyVault.reference(name='foo', resource_group='bar')
-    assert r.properties == {'name': 'foo', 'resource_group': ResourceGroup(name='bar')}
-    assert r._settings['resource_group']() == 'bar'
+    rg = ResourceSymbol("resourcegroup_bar")
+    r = KeyVault.reference(name="foo", resource_group="bar")
+    assert r.properties == {"name": "foo", "resource_group": ResourceGroup(name="bar")}
+    assert r._settings["resource_group"]() == "bar"
     fields = {}
     symbols = r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
-    assert list(fields.keys()) == ['resourcegroup_bar', 'vault_foo']
-    assert fields['vault_foo'].resource == "Microsoft.KeyVault/vaults"
-    assert fields['vault_foo'].properties == {'name': 'foo', 'scope': rg}
-    assert fields['vault_foo'].outputs == _get_outputs("_foo", 'bar')
-    assert fields['vault_foo'].extensions == {}
-    assert fields['vault_foo'].existing == True
-    assert fields['vault_foo'].version
-    assert fields['vault_foo'].symbol == symbols[0]
-    assert fields['vault_foo'].resource_group == rg
-    assert fields['vault_foo'].name == 'foo'
-    assert not fields['vault_foo'].add_defaults
+    assert list(fields.keys()) == ["resourcegroup_bar", "vault_foo"]
+    assert fields["vault_foo"].resource == "Microsoft.KeyVault/vaults"
+    assert fields["vault_foo"].properties == {"name": "foo", "scope": rg}
+    assert fields["vault_foo"].outputs == _get_outputs("_foo", "bar")
+    assert fields["vault_foo"].extensions == {}
+    assert fields["vault_foo"].existing == True
+    assert fields["vault_foo"].version
+    assert fields["vault_foo"].symbol == symbols[0]
+    assert fields["vault_foo"].resource_group == rg
+    assert fields["vault_foo"].name == "foo"
+    assert not fields["vault_foo"].add_defaults
 
-    r = KeyVault.reference(name='foo', resource_group=ResourceGroup.reference(name='bar', subscription=TEST_SUB))
-    assert r.properties == {'name': 'foo', 'resource_group': ResourceGroup(name='bar')}
-    assert r._settings['subscription']() == TEST_SUB
-    assert r._settings['resource_id']() == f"/subscriptions/{TEST_SUB}/resourceGroups/bar/providers/Microsoft.KeyVault/vaults/foo"
+    r = KeyVault.reference(name="foo", resource_group=ResourceGroup.reference(name="bar", subscription=TEST_SUB))
+    assert r.properties == {"name": "foo", "resource_group": ResourceGroup(name="bar")}
+    assert r._settings["subscription"]() == TEST_SUB
+    assert (
+        r._settings["resource_id"]()
+        == f"/subscriptions/{TEST_SUB}/resourceGroups/bar/providers/Microsoft.KeyVault/vaults/foo"
+    )
 
 
 def test_keyvault_defaults():
-    sku_param = Parameter('AISku', default='premium')
-    r = KeyVault(location='westus', sku=sku_param, public_network_access='Disabled')
+    sku_param = Parameter("AISku", default="premium")
+    r = KeyVault(location="westus", sku=sku_param, public_network_access="Disabled")
     fields = {}
     r.__bicep__(fields, parameters=dict(GLOBAL_PARAMS))
     field = fields.popitem()[1]
     r._add_defaults(field, parameters=dict(GLOBAL_PARAMS))
     assert field.properties == {
-        'name': GLOBAL_PARAMS['defaultName'],
-        'location': 'westus',
-        'properties': {
-            'sku': {
-                'name': sku_param,
-                'family': 'A'
-            },
-            'accessPolicies': [],
-            'enableRbacAuthorization': True,
-            'publicNetworkAccess': 'Disabled',
-            'tenantId': GLOBAL_PARAMS['tenantId']
+        "name": GLOBAL_PARAMS["defaultName"],
+        "location": "westus",
+        "properties": {
+            "sku": {"name": sku_param, "family": "A"},
+            "accessPolicies": [],
+            "enableRbacAuthorization": True,
+            "publicNetworkAccess": "Disabled",
+            "tenantId": GLOBAL_PARAMS["tenantId"],
         },
-        'tags': GLOBAL_PARAMS['azdTags']
+        "tags": GLOBAL_PARAMS["azdTags"],
     }
+
 
 def test_keyvault_export(export_dir):
     class TestInfra(AzureInfrastructure):
         r: KeyVault = KeyVault()
+
     export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
 
 
 def test_keyvault_export_existing(export_dir):
     class TestInfra(AzureInfrastructure):
-        r: KeyVault = field(default=KeyVault.reference(name='kvtest'))
-    export(TestInfra(resource_group=ResourceGroup.reference(name='kvtest'), identity=None), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+        r: KeyVault = field(default=KeyVault.reference(name="kvtest"))
+
+    export(
+        TestInfra(resource_group=ResourceGroup.reference(name="kvtest"), identity=None),
+        output_dir=export_dir[0],
+        infra_dir=export_dir[2],
+        name="test",
+    )
 
 
 def test_keyvault_export_with_properties(export_dir):
     class TestInfra(AzureInfrastructure):
-        r: KeyVault = field(default=KeyVault(sku='premium', location="westus", public_network_access='Disabled'))
+        r: KeyVault = field(default=KeyVault(sku="premium", location="westus", public_network_access="Disabled"))
+
     export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
 
 
 def test_keyvault_export_with_role_assignments(export_dir):
     user_role = Parameter("UserRole")
+
     class TestInfra(AzureInfrastructure):
-        r: KeyVault = KeyVault(roles=['Key Vault Administrator'], user_roles=['Key Vault Administrator'])
+        r: KeyVault = KeyVault(roles=["Key Vault Administrator"], user_roles=["Key Vault Administrator"])
+
     export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
 
 
 def test_keyvault_export_with_no_user_access(export_dir):
     class TestInfra(AzureInfrastructure):
-        r: KeyVault = field(default=KeyVault(roles=['Key Vault Administrator'], user_roles=['Key Vault Administrator']))
+        r: KeyVault = field(default=KeyVault(roles=["Key Vault Administrator"], user_roles=["Key Vault Administrator"]))
+
     export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test", user_access=False)
 
 
 def test_keyvault_export_multiple_vaults(export_dir):
-    # TODO: If these are ordered the other way around they are merged.... 
+    # TODO: If these are ordered the other way around they are merged....
     # Is that correct?
     class TestInfra(AzureInfrastructure):
         r1: KeyVault = KeyVault()
-        r2: KeyVault = KeyVault(name='foo', public_network_access='Enabled')
+        r2: KeyVault = KeyVault(name="foo", public_network_access="Enabled")
+
     export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
 
 
 def test_keyvault_export_duplicate_vaults(export_dir):
     class TestInfra(AzureInfrastructure):
-        r1: KeyVault = KeyVault(public_network_access='Enabled')
+        r1: KeyVault = KeyVault(public_network_access="Enabled")
         r2: KeyVault = KeyVault(public_network_access=Parameter("LocalAuth"))
+
     with pytest.raises(ValueError):
         export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
-    
+
     class TestInfra(AzureInfrastructure):
-        r1: KeyVault = KeyVault(public_network_access='Enabled')
+        r1: KeyVault = KeyVault(public_network_access="Enabled")
         r2: KeyVault = KeyVault()
+
     export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
+
 
 # TODO:
 # def test_keyvault_export_with_parameters(export_dir):
 
+
 def test_keyvault_client():
-    r = KeyVault.reference(name='test', resource_group='test')
+    r = KeyVault.reference(name="test", resource_group="test")
     with pytest.raises(TypeError):
         r.get_client()
 
-    assert r._settings['name']() == 'test'
-    r._settings['api_version'].set_value("v1.0")
-    r._settings['client_options'].set_value({'verify_challenge_resource': 'True'})
+    assert r._settings["name"]() == "test"
+    r._settings["api_version"].set_value("v1.0")
+    r._settings["client_options"].set_value({"verify_challenge_resource": "True"})
     client = r.get_client(SecretClient, api_version="1234")
     assert client.vault_url == "https://test.vault.azure.net"
     assert client.api_version == "1234"
@@ -258,21 +296,21 @@ def test_keyvault_client():
 def test_keyvault_infra():
     class TestInfra(AzureInfrastructure):
         kv: KeyVault
-    
+
     with pytest.raises(AttributeError):
         TestInfra.kv
     with pytest.raises(TypeError):
         infra = TestInfra()
     infra = TestInfra(kv=KeyVault())
     assert isinstance(infra.kv, KeyVault)
-    assert infra.kv.properties == {'properties': {}}
+    assert infra.kv.properties == {"properties": {}}
 
-    infra = TestInfra(kv=KeyVault(name='foo'))
-    assert infra.kv._settings['name']() == 'foo'
+    infra = TestInfra(kv=KeyVault(name="foo"))
+    assert infra.kv._settings["name"]() == "foo"
 
 
 def test_keyvault_app():
-    r = KeyVault.reference(name='test', resource_group='test')
+    r = KeyVault.reference(name="test", resource_group="test")
 
     class TestApp(AzureApp):
         client: KeyClient
@@ -302,7 +340,6 @@ def test_keyvault_app():
     app = TestApp(client=override_client)
     assert app.client.vault_url == "https://foobar.vault.azure.net"
 
-
     class TestApp(AzureApp):
         client: KeyClient = field(default=r, api_version="v1.0")
 
@@ -311,7 +348,9 @@ def test_keyvault_app():
     assert app.client.vault_url == "https://test.vault.azure.net"
     assert app.client.api_version == "v1.0"
 
-    override_client = KeyClient("https://foobar.vault.azure.net/", credential=DefaultAzureCredential(), api_version="v2.0")
+    override_client = KeyClient(
+        "https://foobar.vault.azure.net/", credential=DefaultAzureCredential(), api_version="v2.0"
+    )
     app = TestApp(client=override_client)
     assert app.client.vault_url == "https://foobar.vault.azure.net"
     assert app.client.api_version == "v2.0"
@@ -333,11 +372,10 @@ def test_keyvault_app():
 
     class TestApp(AzureApp):
         client: KeyClient = field(factory=client_builder, api_version="v3.0")
-    
+
     app = TestApp()
     assert app.client.vault_url == "https://different.vault.azure.net"
     assert app.client.api_version == "v3.0"
-
 
     class TestInfra(AzureInfrastructure):
         kv: KeyVault = KeyVault()

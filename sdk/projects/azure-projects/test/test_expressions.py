@@ -1,10 +1,11 @@
 import pytest
 from azure.projects._bicep import expressions as exp
 
+
 def test_expression():
-    e = exp.Expression('foo')
-    e2 = exp.Expression('foo')
-    e3 = exp.Expression('bar')
+    e = exp.Expression("foo")
+    e2 = exp.Expression("foo")
+    e3 = exp.Expression("bar")
     e4 = exp.Expression(e)
 
     assert str(e) == "foo"
@@ -83,11 +84,7 @@ def test_expression_parameter():
     assert param.__bicep__() == "@sys.maxValue(100)\n@sys.minValue(1)\nparam test int\n\n"
 
     param = exp.Parameter("test", varname="TEST_ENV_NAME")
-    assert param.__obj__() == {
-        "test": {"value": "${TEST_ENV_NAME}"}
-    }
+    assert param.__obj__() == {"test": {"value": "${TEST_ENV_NAME}"}}
 
     param = exp.Parameter("test", varname="TEST_ENV_NAME", default="foo")
-    assert param.__obj__() == {
-        "test": {"value": "${TEST_ENV_NAME=foo}"}
-    }
+    assert param.__obj__() == {"test": {"value": "${TEST_ENV_NAME=foo}"}}

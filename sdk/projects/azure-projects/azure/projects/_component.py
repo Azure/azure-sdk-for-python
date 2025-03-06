@@ -22,7 +22,7 @@ from typing import (
     Literal,
     Optional,
     List,
-    Type
+    Type,
 )
 from typing_extensions import Self, dataclass_transform
 
@@ -41,6 +41,7 @@ def get_annotations(cls: Type) -> Mapping[str, Any]:
     """This is needed for Python <3.10"""
     try:
         from inspect import get_annotations
+
         return get_annotations(cls)
     except ImportError:
         pass
@@ -52,23 +53,21 @@ def get_annotations(cls: Type) -> Mapping[str, Any]:
 
 
 class DefaultFactory(Protocol, Generic[ParameterType]):
-    def __call__(self, **kwargs) -> ParameterType:
-        ...
+    def __call__(self, **kwargs) -> ParameterType: ...
 class ResourceFactory(Protocol):
-    def __call__(self, **kwargs) -> Resource:
-        ...
+    def __call__(self, **kwargs) -> Resource: ...
 
 
 class ComponentField(Parameter[ParameterType]):
     def __init__(
-            self,
-            *,
-            default: ParameterType,
-            factory: Union[Literal[Default.MISSING], DefaultFactory[ParameterType]],
-            repr: bool,
-            init: bool,
-            alias: Optional[str],
-            **kwargs
+        self,
+        *,
+        default: ParameterType,
+        factory: Union[Literal[Default.MISSING], DefaultFactory[ParameterType]],
+        repr: bool,
+        init: bool,
+        alias: Optional[str],
+        **kwargs,
     ):
         self._factory = factory
         self._kwargs = kwargs
@@ -89,8 +88,8 @@ class ComponentField(Parameter[ParameterType]):
 
     @property
     def default(self) -> Any:
-        return self._default   
-        
+        return self._default
+
     def __repr__(self) -> str:
         if self._default is not MISSING:
             return f"ComponentField(default={repr(self._default)})"
@@ -101,7 +100,7 @@ class ComponentField(Parameter[ParameterType]):
     def __set_name__(self, owner: Type, name: str) -> None:
         self._owner = owner
         self._name = name
-        self._attrname = '_field__' + name
+        self._attrname = "_field__" + name
         try:
             self._type = get_annotations(owner)[name]
         except KeyError:
@@ -116,35 +115,28 @@ class ComponentField(Parameter[ParameterType]):
             raise AttributeError(f"No default value provided for '{self._owner.__name__}.{self._name}'.")
         return getattr(obj, self._attrname)
 
-    def __set__(self, obj: 'AzureInfrastructure', value: ParameterType):
+    def __set__(self, obj: "AzureInfrastructure", value: ParameterType):
         setattr(obj, self._attrname, value)
 
-    def get(self, obj: Optional['AzureInfrastructure'] = None, /) -> ParameterType:
+    def get(self, obj: Optional["AzureInfrastructure"] = None, /) -> ParameterType:
         return self.__get__(obj, obj.__class__)
 
 
 def field(
-        *,
-        default: Union[Any, Literal[Default.MISSING]] = MISSING,
-        factory: Union[DefaultFactory, Literal[Default.MISSING]] = MISSING,
-        repr: bool = True,
-        # init: bool = True,
-        alias: Optional[str] = None,
-        **kwargs
+    *,
+    default: Union[Any, Literal[Default.MISSING]] = MISSING,
+    factory: Union[DefaultFactory, Literal[Default.MISSING]] = MISSING,
+    repr: bool = True,
+    # init: bool = True,
+    alias: Optional[str] = None,
+    **kwargs,
 ) -> ComponentField:
     if default is not MISSING and factory is not MISSING:
         raise ValueError("Cannot specify both 'default' and 'factory'.")
-    return ComponentField(
-        default=default,
-        factory=factory,
-        repr=repr,
-        init=True,
-        alias=alias,
-        **kwargs
-    )
+    return ComponentField(default=default, factory=factory, repr=repr, init=True, alias=alias, **kwargs)
 
 
-def _parameter(*, default = None, default_factory = None, **kwargs):
+def _parameter(*, default=None, default_factory=None, **kwargs):
     # TODO not sure how we should handle this yet
     if default:
         return default
@@ -165,7 +157,7 @@ class AzureInfraComponent(type):
         mro = cls.mro()
         # We want to skip objects in the heirachy above AzureInfrastructure, which should
         # only be 'object', but just in case that changes, we'll strip everything.
-        for cls_type in mro[:mro.index(AzureInfrastructure) + 1]:
+        for cls_type in mro[: mro.index(AzureInfrastructure) + 1]:
             for attr in get_annotations(cls_type):
                 if attr in instance_kwargs:
                     continue
@@ -173,7 +165,11 @@ class AzureInfraComponent(type):
                     try:
                         instance_kwargs[attr] = kwargs.pop(attr)
                     except KeyError:
-                        if attr in cls.__dict__ and isinstance(cls.__dict__[attr], ComponentField) and cls.__dict__[attr].alias in kwargs:
+                        if (
+                            attr in cls.__dict__
+                            and isinstance(cls.__dict__[attr], ComponentField)
+                            and cls.__dict__[attr].alias in kwargs
+                        ):
                             # TODO: Should we be resolving the alias here, or in the init?
                             instance_kwargs[attr] = kwargs.pop(cls.__dict__[attr].alias)
                         else:
@@ -187,18 +183,18 @@ class AzureInfraComponent(type):
                     missing_kwargs.append(attr)
         if kwargs:
             argument = "argument" if len(missing_kwargs) == 1 else "arguments"
-            args = ', '.join([f"'{arg}'" for arg in kwargs])
+            args = ", ".join([f"'{arg}'" for arg in kwargs])
             raise TypeError(f"{cls.__name__} got unexpected keyword {argument}: {args}")
         if missing_kwargs:
             missing = set(missing_kwargs)
             argument = "argument" if len(missing) == 1 else "arguments"
-            attrs = ', '.join([f"'{attr}'" for attr in missing])
+            attrs = ", ".join([f"'{attr}'" for attr in missing])
             raise TypeError(f"{cls.__name__} missing required keyword {argument}: {attrs}.")
         kwargs.update(instance_kwargs)
         # Because the order of resources is important, we always want to make
         # 'resource_group' and 'identity' first.
-        resource_group = kwargs.pop('resource_group')
-        identity=kwargs.pop('identity')
+        resource_group = kwargs.pop("resource_group")
+        identity = kwargs.pop("identity")
         value = super().__call__(resource_group=resource_group, identity=identity, **kwargs)
         # This is used for internal linking of infra components, it should only matter if infra components
         # are instantiated in a field default.
@@ -208,7 +204,7 @@ class AzureInfraComponent(type):
 
 
 class AzureInfrastructure(metaclass=AzureInfraComponent):
-    _parent: Optional['AzureInfrastructure'] = None
+    _parent: Optional["AzureInfrastructure"] = None
     resource_group: ResourceGroup = field(default=ResourceGroup(), repr=False)
     identity: Optional[UserAssignedIdentity] = field(default=UserAssignedIdentity(), repr=False)
 
@@ -254,21 +250,24 @@ def make_infra(cls_name, fields, *, bases=(), namespace=None, module=None) -> Ty
     for item in fields:
         if isinstance(item, str):
             name = item
-            tp = 'typing.Any'
+            tp = "typing.Any"
         elif len(item) == 2:
-            name, tp, = item
+            (
+                name,
+                tp,
+            ) = item
         elif len(item) == 3:
             name, tp, spec = item
             defaults[name] = spec
         else:
-            raise TypeError(f'Invalid field: {item!r}')
+            raise TypeError(f"Invalid field: {item!r}")
 
         if not isinstance(name, str) or not name.isidentifier():
-            raise TypeError(f'Field names must be valid identifiers: {name!r}')
+            raise TypeError(f"Field names must be valid identifiers: {name!r}")
         if keyword.iskeyword(name):
-            raise TypeError(f'Field names must not be keywords: {name!r}')
+            raise TypeError(f"Field names must not be keywords: {name!r}")
         if name in seen:
-            raise TypeError(f'Field name duplicated: {name!r}')
+            raise TypeError(f"Field name duplicated: {name!r}")
 
         seen.add(name)
         annotations[name] = tp
@@ -277,7 +276,7 @@ def make_infra(cls_name, fields, *, bases=(), namespace=None, module=None) -> Ty
     def exec_body_callback(ns):
         ns.update(namespace)
         ns.update(defaults)
-        ns['__annotations__'] = annotations
+        ns["__annotations__"] = annotations
 
     # We use `types.new_class()` instead of simply `type()` to allow dynamic creation
     # of generic dataclasses.
@@ -287,10 +286,10 @@ def make_infra(cls_name, fields, *, bases=(), namespace=None, module=None) -> Ty
     # where the dataclass is created.
     if module is None:
         try:
-            module = sys._getframemodulename(1) or '__main__'
+            module = sys._getframemodulename(1) or "__main__"
         except AttributeError:
             try:
-                module = sys._getframe(1).f_globals.get('__name__', '__main__')
+                module = sys._getframe(1).f_globals.get("__name__", "__main__")
             except (AttributeError, ValueError):
                 pass
     if module is not None:
@@ -302,20 +301,20 @@ def make_infra(cls_name, fields, *, bases=(), namespace=None, module=None) -> Ty
 class AzureAppComponent(type):
     def __call__(cls, **kwargs):
         instance_kwargs = {}
-        instance_kwargs['env_name'] = kwargs.pop('env_name', None)
-        if instance_kwargs['env_name']:
-            instance_kwargs['config_store'] = kwargs.pop('config_store', None)
-            if instance_kwargs['config_store'] is not None:
+        instance_kwargs["env_name"] = kwargs.pop("env_name", None)
+        if instance_kwargs["env_name"]:
+            instance_kwargs["config_store"] = kwargs.pop("config_store", None)
+            if instance_kwargs["config_store"] is not None:
                 raise ValueError("Cannot specify both 'env_name' and 'config_store'.")
-            instance_kwargs['config_store'] = _load_dev_environment(instance_kwargs['env_name'])
+            instance_kwargs["config_store"] = _load_dev_environment(instance_kwargs["env_name"])
         else:
-            instance_kwargs['config_store'] = kwargs.pop('config_store', {})
+            instance_kwargs["config_store"] = kwargs.pop("config_store", {})
         missing_kwargs = []
         mro = cls.mro()
         client_annotations = {}
         # We want to skip objects in the heirachy from AzureApp and above, which should
         # only be 'object', but just in case that changes, we'll strip everything.
-        for cls_type in mro[:mro.index(AzureApp)]:
+        for cls_type in mro[: mro.index(AzureApp)]:
             for attr, annotation in get_annotations(cls_type).items():
                 if annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION:
                     # TODO: Currently this doesn't support other type hints like Union/Optional
@@ -327,7 +326,11 @@ class AzureAppComponent(type):
                     try:
                         instance_kwargs[attr] = kwargs.pop(attr)
                     except KeyError:
-                        if attr in cls.__dict__ and isinstance(cls.__dict__[attr], ComponentField) and cls.__dict__[attr].alias in kwargs:
+                        if (
+                            attr in cls.__dict__
+                            and isinstance(cls.__dict__[attr], ComponentField)
+                            and cls.__dict__[attr].alias in kwargs
+                        ):
                             instance_kwargs[attr] = kwargs.pop(cls.__dict__[attr].alias)
                         else:
                             instance_kwargs[attr] = getattr(cls, attr)
@@ -337,22 +340,25 @@ class AzureAppComponent(type):
                     missing_kwargs.append(attr)
         if kwargs:
             argument = "argument" if len(missing_kwargs) == 1 else "arguments"
-            args = ', '.join([f"'{arg}'" for arg in kwargs])
+            args = ", ".join([f"'{arg}'" for arg in kwargs])
             raise TypeError(f"{cls.__name__} got unexpected keyword {argument}: {args}")
         if missing_kwargs:
             missing = set(missing_kwargs)
             argument = "argument" if len(missing) == 1 else "arguments"
-            attrs = ', '.join([f"'{attr}'" for attr in missing])
+            attrs = ", ".join([f"'{attr}'" for attr in missing])
             raise TypeError(f"{cls.__name__} missing required keyword {argument}: {attrs}.")
-        instance_kwargs['_client_annotations'] = client_annotations
+        instance_kwargs["_client_annotations"] = client_annotations
         return super().__call__(**instance_kwargs)
 
 
 T = TypeVar("T")
+
+
 def run_coroutine_sync(coroutine: Coroutine[Any, Any, T], timeout: float = 30) -> T:
     """TODO: Found this on StackOverflow - needs further inspection
     https://stackoverflow.com/questions/55647753/call-async-function-from-sync-function-while-the-synchronous-function-continues
     """
+
     def run_in_new_loop():
         new_loop = asyncio.new_event_loop()
         asyncio.set_event_loop(new_loop)
@@ -360,6 +366,7 @@ def run_coroutine_sync(coroutine: Coroutine[Any, Any, T], timeout: float = 30) -
             return new_loop.run_until_complete(coroutine)
         finally:
             new_loop.close()
+
     try:
         loop = asyncio.get_running_loop()
     except RuntimeError:
@@ -380,12 +387,12 @@ class AzureApp(metaclass=AzureAppComponent):
     # TODO: As these will have classattribute defaults, need to test behaviour
     # Might need to build a specifier object or use field
     _config_store: Mapping[str, Any] = _parameter(alias="config_store", default_factory=dict)
-    _env_name: Optional[str] = _parameter(alias="env_name", default=None) # TODO: Remove
+    _env_name: Optional[str] = _parameter(alias="env_name", default=None)  # TODO: Remove
 
     def __init__(self, **kwargs):
-        self._config_store = kwargs.pop('config_store')
-        self._env_name = kwargs.pop('env_name')
-        self._client_annotations = kwargs.pop('_client_annotations')
+        self._config_store = kwargs.pop("config_store")
+        self._env_name = kwargs.pop("env_name")
+        self._client_annotations = kwargs.pop("_client_annotations")
         for key, value in kwargs.items():
             setattr(self, key, value)
 
@@ -396,10 +403,10 @@ class AzureApp(metaclass=AzureAppComponent):
         attr_map: Optional[Mapping[str, str]] = None,
         /,
         config_store: Optional[Mapping[str, Any]] = None,
-        env_name: Optional[str] = None
+        env_name: Optional[str] = None,
     ) -> Self:
         if attr_map and not infra:
-            raise ValueError('Cannot specify attr_map without providing infrastructure object.')
+            raise ValueError("Cannot specify attr_map without providing infrastructure object.")
         attr_map = attr_map or {}
         if not infra:
             env_name = env_name or cls.__name__
@@ -419,7 +426,10 @@ class AzureApp(metaclass=AzureAppComponent):
                 # TODO: Duplicate annotation traversal - needs revising
                 # TODO: Currently this doesn't support other type hints like Union/Optional
                 # TODO: This doesn't support alias
-                if annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION and RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__] in infra_resources:
+                if (
+                    annotation.__name__ in RESOURCE_FROM_CLIENT_ANNOTATION
+                    and RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__] in infra_resources
+                ):
                     kwargs[attr] = infra_resources[RESOURCE_FROM_CLIENT_ANNOTATION[annotation.__name__]]
 
         if config_store is None and not env_name:
@@ -434,11 +444,12 @@ class AzureApp(metaclass=AzureAppComponent):
         /,
         config_store: Optional[Mapping[str, Any]] = None,
         env_name: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> Self:
         if attr_map and not infra:
-            raise ValueError('Cannot specify attr_map without providing infrastructure object.')
+            raise ValueError("Cannot specify attr_map without providing infrastructure object.")
         from ._provision import provision
+
         if not infra:
             env_name = env_name or cls.__name__
             attr_map = {}
@@ -453,7 +464,7 @@ class AzureApp(metaclass=AzureAppComponent):
         return cls.load(infra, attr_map, config_store=config_store, env_name=env_name)
 
     def __setattr__(self, name, value):
-        if name.startswith('_field__') or name in ['_config_store', '_env_name', '_client_annotations']:
+        if name.startswith("_field__") or name in ["_config_store", "_env_name", "_client_annotations"]:
             return super().__setattr__(name, value)
         if isinstance(value, Resource):
             kwargs = {}
@@ -463,7 +474,7 @@ class AzureApp(metaclass=AzureAppComponent):
             # TODO: Need to reduce the number of times get_annotations is called.
             value = value.get_client(cls_type, config_store=self._config_store, **kwargs)
         return super().__setattr__(name, value)
-    
+
     def __enter__(self) -> Self:
         return self
 

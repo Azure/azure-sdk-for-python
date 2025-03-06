@@ -41,7 +41,9 @@ class StoredPrioritizedSetting(PrioritizedSetting[ValidInputType, ValueType]):
         self._user_value = user_value
         self._env_vars = env_vars or []
 
-    def __call__(self, value: Optional[ValidInputType] = None, *, config_store: Optional[Mapping[str, Any]] = None) -> ValueType:
+    def __call__(
+        self, value: Optional[ValidInputType] = None, *, config_store: Optional[Mapping[str, Any]] = None
+    ) -> ValueType:
         """Return the setting value according to the standard precedence.
 
         :param value: value

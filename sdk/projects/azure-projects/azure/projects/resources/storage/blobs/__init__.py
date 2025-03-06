@@ -33,7 +33,7 @@ class BlobStorageKwargs(StorageAccountKwargs):
     """Indicates the number of days that the deleted item should be retained."""
     container_delete_retention_policy_enabled: bool
     """The blob service properties for container soft delete. Indicates whether DeleteRetentionPolicy is enabled."""
-    cors_rules: Union[List[Union['BlobsCorsRule', Parameter['BlobsCorsRule']]], Parameter[List['BlobsCorsRule']]]
+    cors_rules: Union[List[Union["BlobsCorsRule", Parameter["BlobsCorsRule"]]], Parameter[List["BlobsCorsRule"]]]
     """Specifies CORS rules for the Blob service. You can include up to five CorsRule elements in the request. If no CorsRule elements are included in the request body, all CORS rules will be deleted, and CORS will be disabled for the Blob service."""
     default_service_version: str
     """Indicates the default version to use for requests to the Blob service if an incoming request's version is not specified. Possible values include version 2008-10-27 and all more recent versions."""
@@ -53,41 +53,43 @@ class BlobStorageKwargs(StorageAccountKwargs):
     """The blob service properties for blob restore policy. If point-in-time restore is enabled, then versioning, change feed, and blob soft delete must also be enabled."""
 
 
-_DEFAULT_BLOB_SERVICE: 'BlobServiceResource' = {'name': 'default'}
+_DEFAULT_BLOB_SERVICE: "BlobServiceResource" = {"name": "default"}
 _DEFAULT_BLOB_SERVICE_EXTENSIONS: ExtensionResources = {
-    'managed_identity_roles': ['Storage Blob Data Contributor'],
-    'user_roles': ['Storage Blob Data Contributor']
+    "managed_identity_roles": ["Storage Blob Data Contributor"],
+    "user_roles": ["Storage Blob Data Contributor"],
 }
-BlobServiceResourceType = TypeVar('BlobServiceResourceType', default='BlobServiceResource')
-ClientType = TypeVar("ClientType", default='BlobServiceClient')
- 
- 
+BlobServiceResourceType = TypeVar("BlobServiceResourceType", default="BlobServiceResource")
+ClientType = TypeVar("ClientType", default="BlobServiceClient")
+
+
 class BlobStorage(_ClientResource[BlobServiceResourceType]):
-    DEFAULTS: 'BlobServiceResource' = _DEFAULT_BLOB_SERVICE
+    DEFAULTS: "BlobServiceResource" = _DEFAULT_BLOB_SERVICE
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_BLOB_SERVICE_EXTENSIONS
     resource: Literal["Microsoft.Storage/storageAccounts/blobServices"]
     properties: BlobServiceResourceType
 
     def __init__(
-            self,
-            properties: Optional['BlobServiceResource'] = None,
-            /,
-            account: Optional[Union[str, Parameter[str], ComponentField, StorageAccount]] = None,
-            **kwargs: Unpack['BlobStorageKwargs']
+        self,
+        properties: Optional["BlobServiceResource"] = None,
+        /,
+        account: Optional[Union[str, Parameter[str], ComponentField, StorageAccount]] = None,
+        **kwargs: Unpack["BlobStorageKwargs"],
     ) -> None:
-        existing = kwargs.pop('existing', False)
+        existing = kwargs.pop("existing", False)
         extensions: ExtensionResources = defaultdict(list)
-        if 'roles' in kwargs:
-            extensions['managed_identity_roles'] = kwargs.pop('roles')
-        if 'user_roles' in kwargs:
-            extensions['user_roles'] = kwargs.pop('user_roles')
+        if "roles" in kwargs:
+            extensions["managed_identity_roles"] = kwargs.pop("roles")
+        if "user_roles" in kwargs:
+            extensions["user_roles"] = kwargs.pop("user_roles")
         if not existing:
             properties = properties or {}
-            if 'properties' not in properties:
-                properties['properties'] = {}
+            if "properties" not in properties:
+                properties["properties"] = {}
             # TODO: Finish full typing
-            if 'automatic_snapshot_policy_enabled' in kwargs:
-                properties['properties']['automaticSnapshotPolicyEnabled'] = kwargs.pop('automatic_snapshot_policy_enabled')
+            if "automatic_snapshot_policy_enabled" in kwargs:
+                properties["properties"]["automaticSnapshotPolicyEnabled"] = kwargs.pop(
+                    "automatic_snapshot_policy_enabled"
+                )
             # if 'change_feed_enabled' in kwargs:
             #     blob_service_params['changeFeedEnabled'] = kwargs.pop('change_feed_enabled')
             # if 'change_feed_retention_in_days' in kwargs:
@@ -98,9 +100,9 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
             #     blob_service_params['containerDeleteRetentionPolicyDays'] = kwargs.pop('container_delete_retention_policy_days')
             # if 'container_delete_retention_policy_enabled' in kwargs:
             #     blob_service_params['containerDeleteRetentionPolicyEnabled'] = kwargs.pop('container_delete_retention_policy_enabled')
-            if 'cors_rules' in kwargs:
-                properties['properties']['cors'] = {}
-                properties['properties']['cors']['corsRules'] = kwargs.pop('cors_rules')
+            if "cors_rules" in kwargs:
+                properties["properties"]["cors"] = {}
+                properties["properties"]["cors"]["corsRules"] = kwargs.pop("cors_rules")
             #     blob_service_params['corsRules'] = kwargs.pop('cors_rules')
             # if 'default_service_version' in kwargs:
             #     blob_service_params['defaultServiceVersion'] = kwargs.pop('default_service_version')
@@ -112,8 +114,8 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
             #     blob_service_params['deleteRetentionPolicyEnabled'] = kwargs.pop('delete_retention_policy_enabled')
             # if 'diagnostic_settings' in kwargs:
             #     blob_service_params['diagnosticSettings'] = kwargs.pop('diagnostic_settings')
-            if 'is_versioning_enabled' in kwargs:
-                properties['properties']['isVersioningEnabled'] = kwargs.pop('is_versioning_enabled')
+            if "is_versioning_enabled" in kwargs:
+                properties["properties"]["isVersioningEnabled"] = kwargs.pop("is_versioning_enabled")
             # if 'last_access_time_tracking_policy_enabled' in kwargs:
             #     blob_service_params['lastAccessTimeTrackingPolicyEnabled'] = kwargs.pop('last_access_time_tracking_policy_enabled')
             # if 'restore_policy_days' in kwargs:
@@ -121,8 +123,8 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
             # if 'restore_policy_enabled' in kwargs:
             #     blob_service_params['restorePolicyEnabled'] = kwargs.pop('restore_policy_enabled')
 
-        parent = kwargs.pop('parent', None)
-        if account and 'parent' in kwargs:
+        parent = kwargs.pop("parent", None)
+        if account and "parent" in kwargs:
             raise ValueError("Cannot specify both 'account' and 'parent'.")
         if not parent:
             parent = account if isinstance(account, StorageAccount) else StorageAccount(name=account, **kwargs)
@@ -136,7 +138,7 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
             subresource="blobServices",
             service_prefix=["blobs", "storage"],
             identifier=ResourceIdentifiers.blob_storage,
-            **kwargs
+            **kwargs,
         )
 
     @property
@@ -144,6 +146,7 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
         if self._resource:
             return self._resource
         from .types import RESOURCE
+
         self._resource = RESOURCE
         return self._resource
 
@@ -152,17 +155,19 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
         if self._version:
             return self._version
         from .types import VERSION
+
         self._version = VERSION
         return self._version
 
     @classmethod
     def reference(
-            cls,
-            *,
-            account: Union[str, Parameter[str], StorageAccount, ComponentField],
-            resource_group: Optional[Union[str, Parameter[str], ResourceGroup]] = None,
-    ) -> 'BlobStorage[ResourceReference]':
+        cls,
+        *,
+        account: Union[str, Parameter[str], StorageAccount, ComponentField],
+        resource_group: Optional[Union[str, Parameter[str], ResourceGroup]] = None,
+    ) -> "BlobStorage[ResourceReference]":
         from .types import RESOURCE, VERSION
+
         resource = f"{RESOURCE}@{VERSION}"
         if isinstance(account, (str, Parameter)):
             parent = StorageAccount.reference(
@@ -177,43 +182,44 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
             resource=resource,
             parent=parent,
         )
-        existing._settings['name'].set_value('default')
+        existing._settings["name"].set_value("default")
         return existing
 
     def __repr__(self) -> str:
-        name = f'\'{self.parent.properties["name"]}\'' if 'name' in self.parent.properties else "<default>"
+        name = f'\'{self.parent.properties["name"]}\'' if "name" in self.parent.properties else "<default>"
         return f"{self.__class__.__name__}({name})"
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
         return f"https://{self.parent._settings['name'](config_store=config_store)}.blob.core.windows.net/"
 
-    def _outputs(
-            self,
-             *,
-             parents: Tuple[ResourceSymbol, ...],
-             **kwargs
-    ) -> Dict[str, Output]:
-        return {'endpoint': Output(f"AZURE_BLOBS_ENDPOINT{self.parent._suffix}", "properties.primaryEndpoints.blob", parents[0])}
+    def _outputs(self, *, parents: Tuple[ResourceSymbol, ...], **kwargs) -> Dict[str, Output]:
+        return {
+            "endpoint": Output(
+                f"AZURE_BLOBS_ENDPOINT{self.parent._suffix}", "properties.primaryEndpoints.blob", parents[0]
+            )
+        }
 
     def get_client(
-            self,
-            cls: Optional[Callable[..., ClientType]] = None,
-            /,
-            *,
-            transport: Any = None,
-            api_version: Optional[str] = None,
-            audience: Optional[str] = None,
-            config_store: Optional[Mapping[str, Any]] = None,
-            env_name: Optional[str] = None,
-            use_async: Optional[bool] = None,
-            **client_options,
+        self,
+        cls: Optional[Callable[..., ClientType]] = None,
+        /,
+        *,
+        transport: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
+        env_name: Optional[str] = None,
+        use_async: Optional[bool] = None,
+        **client_options,
     ) -> ClientType:
         if cls is None:
             if use_async:
                 from azure.storage.blob.aio import BlobServiceClient
+
                 cls = BlobServiceClient
             else:
                 from azure.storage.blob import BlobServiceClient
+
                 cls = BlobServiceClient
                 use_async = False
         return super().get_client(
@@ -223,5 +229,5 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
             audience=audience,
             config_store=config_store,
             env_name=env_name,
-            **client_options
+            **client_options,
         )

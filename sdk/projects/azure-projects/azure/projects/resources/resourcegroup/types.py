@@ -14,6 +14,7 @@ VERSION = "2021-04-01"
 
 class ResourceGroupResource(TypedDict, total=False):
     """"""
+
     name: Union[str, Parameter[str]]
     """The name of the Resource Group."""
     location: Union[str, Parameter[str]]

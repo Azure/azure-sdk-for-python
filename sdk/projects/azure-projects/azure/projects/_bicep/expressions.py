@@ -14,14 +14,16 @@ from .utils import resolve_value, serialize
 BicepDataTypes = Literal["string", "array", "object", "int", "bool"]
 _type = type
 
+
 class Default(Enum):
-    MISSING = 'NoDefault'
+    MISSING = "NoDefault"
+
 
 MISSING = Default.MISSING
 
 
 class Expression:
-    def __init__(self, value: Union['Expression', str], /) -> None:
+    def __init__(self, value: Union["Expression", str], /) -> None:
         self._value = value
 
     def __eq__(self, value: Any) -> bool:
@@ -39,13 +41,13 @@ class Expression:
     def __hash__(self):
         return hash(self.value)
 
-    def _resolve_expression(self, expression: Union['Expression', str]):
+    def _resolve_expression(self, expression: Union["Expression", str]):
         try:
             return expression.value
         except AttributeError:
             return expression
 
-    def _resolve_obj(self, value: Union['Expression', Any]):
+    def _resolve_obj(self, value: Union["Expression", Any]):
         try:
             return value.value
         except AttributeError:
@@ -54,10 +56,10 @@ class Expression:
     @property
     def value(self) -> str:
         return self._resolve_expression(self._value)
-    
+
     def format(self, format_str: Optional[str] = None, /) -> str:
         if format_str:
-            return format_str.format(f'${{{self.value}}}')
+            return format_str.format(f"${{{self.value}}}")
         return f"${{{self.value}}}"
 
 
@@ -111,13 +113,13 @@ class ResourceGroup(Expression):
 
 class ResourceSymbol(Expression):
     def __init__(
-            self,
-            value: str,
-            *,
-            principal_id: bool = False,
+        self,
+        value: str,
+        *,
+        principal_id: bool = False,
     ) -> None:
         self._value = value
-        self._principal_id_output = principal_id 
+        self._principal_id_output = principal_id
 
     def __repr__(self) -> str:
         return f"resource({self._value})"
@@ -127,21 +129,23 @@ class ResourceSymbol(Expression):
         return self._value
 
     @property
-    def name(self) -> 'Output[str]':
+    def name(self) -> "Output[str]":
         return Output(None, "name", self)
 
     @property
-    def id(self) -> 'Output[str]':
+    def id(self) -> "Output[str]":
         return Output(None, "id", self)
 
     @property
-    def principal_id(self) -> 'Output[str]':
+    def principal_id(self) -> "Output[str]":
         if not self._principal_id_output:
             raise ValueError("Module has no principal ID output.")
         return Output(None, "properties.principalId", self)
 
 
 ParameterType = TypeVar("ParameterType", str, int, bool, dict, list, default=str)
+
+
 class Parameter(Expression, Generic[ParameterType]):
     name: str
     type: str
@@ -149,20 +153,20 @@ class Parameter(Expression, Generic[ParameterType]):
     default: Union[ParameterType, Literal[Default.MISSING]]
 
     def __init__(
-            self,
-            name: str,
-            *,
-            type: Optional[Type[ParameterType]] = None,
-            default: ParameterType = MISSING,
-            secure: bool = False,
-            description: Optional[str] = None,
-            varname: Optional[str] = None,
-            allowed: Optional[List[int]] = None,
-            max_value: Optional[int] = None,
-            min_value: Optional[int] = None,
-            max_length: Optional[int] = None,
-            min_length: Optional[int] = None,
-            module: str = 'main'
+        self,
+        name: str,
+        *,
+        type: Optional[Type[ParameterType]] = None,
+        default: ParameterType = MISSING,
+        secure: bool = False,
+        description: Optional[str] = None,
+        varname: Optional[str] = None,
+        allowed: Optional[List[int]] = None,
+        max_value: Optional[int] = None,
+        min_value: Optional[int] = None,
+        max_length: Optional[int] = None,
+        min_length: Optional[int] = None,
+        module: str = "main",
     ):
         self.name = name
         self.default = default
@@ -239,34 +243,24 @@ class Parameter(Expression, Generic[ParameterType]):
         if self.default not in (None, MISSING, ""):
             value = f"${{{self._varname}={self.default}}}"
         else:
-            value =f"${{{self._varname}}}"
-        return {
-            self.name: {
-                "value": value
-            }
-        }
+            value = f"${{{self._varname}}}"
+        return {self.name: {"value": value}}
 
 
 class Variable(Parameter[ParameterType]):
     def __init__(
-            self,
-            name: str,
-            value: ParameterType,
-            *,
-            description: Optional[str] = None,
-            module: str = 'main',
+        self,
+        name: str,
+        value: ParameterType,
+        *,
+        description: Optional[str] = None,
+        module: str = "main",
     ):
         self._value = value
-        super().__init__(
-            name=name,
-            type=type(value),
-            description=description,
-            module=module
-        )
+        super().__init__(name=name, type=type(value), description=description, module=module)
 
     def __repr__(self) -> str:
         return f"var({self.name})"
-
 
     def __bicep__(self, default: Optional[ParameterType] = None, /) -> str:
         declaration = ""
@@ -280,13 +274,13 @@ class Variable(Parameter[ParameterType]):
 
 class Output(Parameter[ParameterType]):
     def __init__(
-            self,
-            name: str,
-            value: Union[Expression, str],
-            symbol: Optional[ResourceSymbol] = None,
-            *,
-            type: Type[ParameterType] = str,
-            description: Optional[str] = None
+        self,
+        name: str,
+        value: Union[Expression, str],
+        symbol: Optional[ResourceSymbol] = None,
+        *,
+        type: Type[ParameterType] = str,
+        description: Optional[str] = None,
     ) -> None:
         self.symbol = symbol
         self._path = value
@@ -312,9 +306,9 @@ class Output(Parameter[ParameterType]):
 
 class Guid(Expression):
     def __init__(
-            self,
-            basestr: Union[Expression, str],
-            *args: Union[Expression, str],
+        self,
+        basestr: Union[Expression, str],
+        *args: Union[Expression, str],
     ) -> None:
         self._args = [basestr] + list(args)
 
@@ -329,9 +323,9 @@ class Guid(Expression):
 
 class UniqueString(Expression):
     def __init__(
-            self,
-            basestr: Union[Expression, str],
-            *args: Union[Expression, str],
+        self,
+        basestr: Union[Expression, str],
+        *args: Union[Expression, str],
     ) -> None:
         self._args = [basestr] + list(args)
 
@@ -354,4 +348,6 @@ class RoleDefinition(Expression):
 
     @property
     def value(self) -> str:
-        return f"subscriptionResourceId(\n      'Microsoft.Authorization/roleDefinitions',\n      '{self._guid}'\n    )\n"
+        return (
+            f"subscriptionResourceId(\n      'Microsoft.Authorization/roleDefinitions',\n      '{self._guid}'\n    )\n"
+        )

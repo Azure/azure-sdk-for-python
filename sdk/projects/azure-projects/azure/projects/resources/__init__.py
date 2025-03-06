@@ -6,7 +6,4 @@
 
 from ._identifiers import ResourceIdentifiers, RESOURCE_FROM_CLIENT_ANNOTATION
 
-__all__ = [
-    'ResourceIdentifiers',
-    'RESOURCE_FROM_CLIENT_ANNOTATION'
-]
+__all__ = ["ResourceIdentifiers", "RESOURCE_FROM_CLIENT_ANNOTATION"]

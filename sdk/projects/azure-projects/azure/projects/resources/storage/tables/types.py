@@ -17,7 +17,17 @@ VERSION = "2024-01-01"
 class TablesCorsRule(TypedDict, total=False):
     allowedHeaders: Required[Union[Parameter[List[str]], List[Union[str, Parameter[str]]]]]
     """A list of headers allowed to be part of the cross-origin request."""
-    allowedMethods: Required[Union[Parameter[List[str]], List[Union[Literal['CONNECT', 'DELETE', 'GET', 'HEAD', 'MERGE', 'OPTIONS', 'PATCH', 'POST', 'PUT', 'TRACE'], Parameter[str]]]]]
+    allowedMethods: Required[
+        Union[
+            Parameter[List[str]],
+            List[
+                Union[
+                    Literal["CONNECT", "DELETE", "GET", "HEAD", "MERGE", "OPTIONS", "PATCH", "POST", "PUT", "TRACE"],
+                    Parameter[str],
+                ]
+            ],
+        ]
+    ]
     """A list of HTTP methods that are allowed to be executed by the origin."""
     allowedOrigins: Required[Union[Parameter[List[str]], List[Union[str, Parameter[str]]]]]
     """A list of origin domains that will be allowed via CORS, or "*" to allow all domains."""
@@ -38,7 +48,7 @@ class TableServiceProperties(TypedDict, total=False):
 
 
 class TableServiceResource(TypedDict, total=False):
-    name: Union[Literal['default'], Parameter[str]]
+    name: Union[Literal["default"], Parameter[str]]
     """The resource name."""
     properties: Union[TableServiceProperties, Parameter[TableServiceProperties]]
     """The properties of a storage account's Table service."""

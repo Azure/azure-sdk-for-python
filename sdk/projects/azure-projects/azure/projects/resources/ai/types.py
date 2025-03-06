@@ -14,7 +14,9 @@ VERSION = "2024-10-01"
 
 
 class CognitiveServicesIdentity(TypedDict, total=False):
-    type: Required[Union[Literal['None', 'SystemAssigned', 'SystemAssigned,UserAssigned','UserAssigned'], Parameter[str]]]
+    type: Required[
+        Union[Literal["None", "SystemAssigned", "SystemAssigned,UserAssigned", "UserAssigned"], Parameter[str]]
+    ]
     """The identity type."""
     userAssignedIdentities: Dict[Union[str, Parameter[str]], Dict]
     """The set of user assigned identities associated with the resource."""
@@ -34,7 +36,7 @@ class CognitiveServicesSku(TypedDict, total=False):
     """The name of the SKU. Ex - P3. It is typically a letter+number code."""
     size: Union[str, Parameter[str]]
     """The SKU size. When the name field is the combination of tier and some other value, this would be the standalone code."""
-    tier: Union[Parameter[str], Literal['Basic', 'Enterprise', 'Free', 'Premium', 'Standard']]
+    tier: Union[Parameter[str], Literal["Basic", "Enterprise", "Free", "Premium", "Standard"]]
     """This field is required to be implemented by the Resource Provider if the service has more than one tier, but is not required on a PUT."""
 
 
@@ -50,7 +52,7 @@ class KeyVaultProperties(TypedDict, total=False):
 
 
 class CognitiveServicesEncryption(TypedDict, total=False):
-    keySource: Union[Parameter[str], Literal['Microsoft.CognitiveServices', 'Microsoft.KeyVault']]
+    keySource: Union[Parameter[str], Literal["Microsoft.CognitiveServices", "Microsoft.KeyVault"]]
     """Enumerates the possible value of keySource for Encryption."""
     keyVaultProperties: Union[Parameter[KeyVaultProperties], KeyVaultProperties]
     """Properties of KeyVault."""
@@ -64,13 +66,18 @@ class VirtualNetworkRule(TypedDict, total=False):
 
 
 class CognitiveServicesNetworkRuleSet(TypedDict, total=False):
-    bypass: Union[Parameter[str], Literal['AzureServices', 'None']]
+    bypass: Union[Parameter[str], Literal["AzureServices", "None"]]
     """Setting for trusted services."""
-    defaultAction: Union[Parameter[str], Literal['Allow', 'Deny']]
+    defaultAction: Union[Parameter[str], Literal["Allow", "Deny"]]
     """The default action when no rule from ipRules and from virtualNetworkRules match. This is only used after the bypass property has been evaluated."""
-    ipRules: Union[Parameter[List[CognitiveServicesIpRule]], List[Union[CognitiveServicesIpRule, Parameter[CognitiveServicesIpRule]]]]
+    ipRules: Union[
+        Parameter[List[CognitiveServicesIpRule]],
+        List[Union[CognitiveServicesIpRule, Parameter[CognitiveServicesIpRule]]],
+    ]
     """The list of IP address rules."""
-    virtualNetworkRules: Union[Parameter[List[VirtualNetworkRule]], List[Union[VirtualNetworkRule, Parameter[VirtualNetworkRule]]]]
+    virtualNetworkRules: Union[
+        Parameter[List[VirtualNetworkRule]], List[Union[VirtualNetworkRule, Parameter[VirtualNetworkRule]]]
+    ]
     """The list of virtual network rules."""
 
 
@@ -85,7 +92,7 @@ class RegionSetting(TypedDict, total=False):
 
 class MultiRegionSettings(TypedDict, total=False):
     regions: Union[Parameter[List[RegionSetting]], List[Union[Parameter[RegionSetting], RegionSetting]]]
-    routingMethod: Union[Parameter[str], Literal['Performance', 'Priority', 'Weighted']]
+    routingMethod: Union[Parameter[str], Literal["Performance", "Priority", "Weighted"]]
     """Multiregion routing methods."""
 
 
@@ -154,7 +161,7 @@ class CognitiveServicesAccountProperties(TypedDict, total=False):
     """Resource migration token."""
     networkAcls: Union[CognitiveServicesNetworkRuleSet, Parameter[CognitiveServicesNetworkRuleSet]]
     """A collection of rules governing the accessibility from specific network locations."""
-    publicNetworkAccess: Union[Literal['Disabled', 'Enabled'], Parameter[str]]
+    publicNetworkAccess: Union[Literal["Disabled", "Enabled"], Parameter[str]]
     """Whether or not public endpoint access is allowed for this account."""
     raiMonitorConfig: Union[RaiMonitorConfig, Parameter[RaiMonitorConfig]]
     """Cognitive Services Rai Monitor Config."""
@@ -162,22 +169,52 @@ class CognitiveServicesAccountProperties(TypedDict, total=False):
     """Restore a soft-deleted cognitive service at deployment time. Will fail if no such soft-deleted resource exists."""
     restrictOutboundNetworkAccess: Union[bool, Parameter[bool]]
     """Restrict outbound network access."""
-    userOwnedStorage: Union[List[Union[UserOwnedStorage, Parameter[UserOwnedStorage]]], Parameter[List[UserOwnedStorage]]]
+    userOwnedStorage: Union[
+        List[Union[UserOwnedStorage, Parameter[UserOwnedStorage]]], Parameter[List[UserOwnedStorage]]
+    ]
     """The storage accounts for this resource."""
 
 
 class CognitiveServicesAccountResource(TypedDict, total=False):
-    identity: 'CognitiveServicesIdentity'
+    identity: "CognitiveServicesIdentity"
     """Identity for the resource."""
-    kind: Union[Literal['AIServices', 'AnomalyDetector', 'CognitiveServices', 'ComputerVision', 'ContentModerator', 'ContentSafety', 'ConversationalLanguageUnderstanding', 'CustomVision.Prediction', 'CustomVision.Training', 'Face', 'FormRecognizer', 'HealthInsights', 'ImmersiveReader', 'Internal.AllInOne', 'LanguageAuthoring', 'LUIS', 'LUIS.Authoring', 'MetricsAdvisor', 'OpenAI', 'Personalizer', 'QnAMaker.v2', 'SpeechServices', 'TextAnalytics', 'TextTranslation'], Parameter[str]]
+    kind: Union[
+        Literal[
+            "AIServices",
+            "AnomalyDetector",
+            "CognitiveServices",
+            "ComputerVision",
+            "ContentModerator",
+            "ContentSafety",
+            "ConversationalLanguageUnderstanding",
+            "CustomVision.Prediction",
+            "CustomVision.Training",
+            "Face",
+            "FormRecognizer",
+            "HealthInsights",
+            "ImmersiveReader",
+            "Internal.AllInOne",
+            "LanguageAuthoring",
+            "LUIS",
+            "LUIS.Authoring",
+            "MetricsAdvisor",
+            "OpenAI",
+            "Personalizer",
+            "QnAMaker.v2",
+            "SpeechServices",
+            "TextAnalytics",
+            "TextTranslation",
+        ],
+        Parameter[str],
+    ]
     """The Kind of the resource."""
     location: Union[str, Parameter[str]]
     """The geo-location where the resource lives."""
     name: Union[str, Parameter[str]]
     """The resource name."""
-    properties:	'CognitiveServicesAccountProperties'
+    properties: "CognitiveServicesAccountProperties"
     """Properties of Cognitive Services account."""
-    sku: Union['CognitiveServicesSku', Parameter['CognitiveServicesSku']]
+    sku: Union["CognitiveServicesSku", Parameter["CognitiveServicesSku"]]
     """The resource model definition representing SKU"""
     tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict[str, str]]]
     """Dictionary of tag names and values. See Tags in templates"""

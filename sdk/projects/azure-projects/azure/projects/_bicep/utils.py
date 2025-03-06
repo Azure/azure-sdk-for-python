@@ -26,19 +26,18 @@ def resolve_key(key: Any) -> str:
             return key
         return f"'{key}'"
 
+
 def clean_name(name: str) -> str:
-    return ''.join(c for c in name if c.isalnum())
+    return "".join(c for c in name if c.isalnum())
 
 
 def generate_suffix(length: int = 5, /) -> str:
-    return ''.join(
-        random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(length)
-    ).lower()
+    return "".join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(length)).lower()
 
 
 def generate_name(seed: str, max_length: int = 20) -> str:
     random_gen = random.Random(resolve_value(seed))
-    return ''.join([random_gen.choice(string.ascii_lowercase) for _ in range(max_length)])
+    return "".join([random_gen.choice(string.ascii_lowercase) for _ in range(max_length)])
 
 
 def serialize(value: Any, indent: str = "") -> str:
@@ -61,11 +60,11 @@ def serialize_list(list_val: List[Any], indent: str) -> str:
     for item in list_val:
         if isinstance(item, dict):
             bicep += f"{indent}{{\n"
-            bicep += serialize_dict(item, indent + '  ')
+            bicep += serialize_dict(item, indent + "  ")
             bicep += f"{indent}}}\n"
         elif isinstance(item, list):
             bicep += f"{indent}[\n"
-            bicep += serialize_list(item, indent + '  ')
+            bicep += serialize_list(item, indent + "  ")
             bicep += f"{indent}]\n"
         else:
             bicep += f"{indent}{resolve_value(item)}\n"
@@ -77,11 +76,11 @@ def serialize_dict(dict_val: Dict[str, Any], indent: str) -> str:
     for key, value in dict_val.items():
         if isinstance(value, dict) and value:
             bicep += f"{indent}{key}: {{\n"
-            bicep += serialize_dict(value, indent + '  ')
+            bicep += serialize_dict(value, indent + "  ")
             bicep += f"{indent}}}\n"
         elif isinstance(value, list) and value:
             bicep += f"{indent}{key}: [\n"
-            bicep += serialize_list(value, indent + '  ')
+            bicep += serialize_list(value, indent + "  ")
             bicep += f"{indent}]\n"
         else:
             bicep += f"{indent}{resolve_key(key)}: {resolve_value(value)}\n"

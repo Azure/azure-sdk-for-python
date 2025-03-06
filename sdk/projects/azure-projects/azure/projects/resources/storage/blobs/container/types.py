@@ -30,11 +30,11 @@ class ContainerProperties(TypedDict, total=False):
     """Enable NFSv3 root squash on blob container."""
     immutabilityPolicyName: Union[bool, Parameter[bool]]
     """Name of the immutable policy."""
-    immutableStorageWithVersioning: Union['ImmutableStorageWithVersioning', Parameter['ImmutableStorageWithVersioning']]
+    immutableStorageWithVersioning: Union["ImmutableStorageWithVersioning", Parameter["ImmutableStorageWithVersioning"]]
     """The object level immutability property of the container. The property is immutable and can only be set to true at the container creation time. Existing containers must undergo a migration process."""
     metadata: Dict[str, str]
     """A name-value pair to associate with the container as metadata."""
-    publicAccess: Union[Literal['Blob', 'Container', 'None'], Parameter[str]]
+    publicAccess: Union[Literal["Blob", "Container", "None"], Parameter[str]]
     """Specifies whether data in the container may be accessed publicly and the level of access."""
 
 

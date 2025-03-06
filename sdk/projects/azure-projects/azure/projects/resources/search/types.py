@@ -20,21 +20,26 @@ class SearchIpRule(TypedDict, total=False):
 
 
 class SearchNetworkRuleSet(TypedDict, total=False):
-    bypass: Union[Parameter[str], Literal['AzurePortal', 'AzureServices', 'None']]
+    bypass: Union[Parameter[str], Literal["AzurePortal", "AzureServices", "None"]]
     """Possible origins of inbound traffic that can bypass the rules defined in the 'ipRules' section."""
     ipRules: Union[Parameter[List[SearchIpRule]], List[Union[SearchIpRule, Parameter[SearchIpRule]]]]
     """A list of IP restriction rules that defines the inbound network(s) with allowing access to the search service endpoint. At the meantime, all other public IP networks are blocked by the firewall. These restriction rules are applied only when the 'publicNetworkAccess' of the search service is 'enabled'; otherwise, traffic over public interface is not allowed even with any public IP rules, and private endpoint connections would be the exclusive access method."""
 
 
 class SearchIdentity(TypedDict, total=False):
-    type: Required[Union[Literal['None', 'SystemAssigned', 'SystemAssigned,UserAssigned','UserAssigned'], Parameter[str]]]
+    type: Required[
+        Union[Literal["None", "SystemAssigned", "SystemAssigned,UserAssigned", "UserAssigned"], Parameter[str]]
+    ]
     """The identity type."""
     userAssignedIdentities: Dict[Union[str, Parameter[str]], Dict]
     """The set of user assigned identities associated with the resource."""
 
 
 class SearchSku(TypedDict, total=False):
-    name: Union[Literal['basic', 'free', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2'], Parameter[str]]
+    name: Union[
+        Literal["basic", "free", "standard", "standard2", "standard3", "storage_optimized_l1", "storage_optimized_l2"],
+        Parameter[str],
+    ]
     """The SKU of the search service. Valid values include: 'free': Shared service. 'basic': Dedicated service with up to 3 replicas. 'standard': Dedicated service with up to 12 partitions and 12 replicas. 'standard2': Similar to standard, but with more capacity per search unit. 'standard3': The largest Standard offering with up to 12 partitions and 12 replicas (or up to 3 partitions with more indexes if you also set the hostingMode property to 'highDensity'). 'storage_optimized_l1': Supports 1TB per partition, up to 12 partitions. 'storage_optimized_l2': Supports 2TB per partition, up to 12 partitions."""
 
 
@@ -45,7 +50,7 @@ class SearchServiceResource(TypedDict, total=False):
     """The geo-location where the resource lives."""
     name: Union[str, Parameter[str]]
     """The resource name."""
-    properties:	'SearchServiceProperties'
+    properties: "SearchServiceProperties"
     """Properties of Cognitive Services account."""
     sku: Union[SearchSku, Parameter[SearchSku]]
     """The SKU of the search service, which determines price tier and capacity limits. This property is required when creating a new search service."""

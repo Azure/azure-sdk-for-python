@@ -5,3 +5,6 @@ verifytypes = true
 pyright = true
 pylint = true
 black = true
+sphinx = true
+absolute_cov = true
+absolute_cov_percent = 90.00
