@@ -69,9 +69,17 @@ extends:
             runOnce:
               deploy:
                 steps:
-                - pwsh: |
-                    Get-ChildItem -R -Path "$(Artifacts)"
-                  displayName: Dump Artifacts
+                  - pwsh: |
+                      $esrpDirectory = "$(Pipeline.Workspace)/esrp-release/"
+                      New-Item -ItemType Directory -Force -Path $esrpDirectory
+
+                      Get-ChildItem -Path "$(Artifacts)" `
+                        | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
+                        | Copy-Item -Destination $esrpDirectory
+
+                      Get-ChildItem $esrpDirectory
+                    displayName: Isolate files for ESRP Publish
+
                 # - task: EsrpRelease@9
                 #   displayName: 'Publish via ESRP'
                 #   inputs:
@@ -83,7 +91,7 @@ extends:
                 #     SignCertName: 'azure-sdk-esrp-release-certificate'
                 #     Intent: 'PackageDistribution'
                 #     ContentType: 'PyPI'
-                #     FolderLocation: $(Artifacts)
+                #     FolderLocation: $(Pipeline.Workspace)/esrp-release/
                 #     Owners: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
                 #     Approvers: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
                 #     ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
