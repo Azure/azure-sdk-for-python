@@ -2,6 +2,7 @@ trigger: none
 pr: none
 
 parameters:
+
 - name: BlobPath
   displayName: 'Container relative blob path'
   type: string
@@ -25,6 +26,7 @@ extends:
             image: $(WINDOWSVMIMAGE)
             os: windows
           steps:
+          - checkout: none
           - task: AzurePowerShell@5
             displayName: 'Copy from azuresdkpartnerdrops'
             condition: and(succeeded(), ne(variables['SkipCopyFromPartnerDrops'], 'true'))
@@ -44,32 +46,32 @@ extends:
                 }
             env:
               AZCOPY_AUTO_LOGIN_TYPE: 'PSCRED'
-              #            - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
-              #              parameters:
-              #                ArtifactName: 'artifacts-for-release'
-              #                ArtifactPath: $(Artifacts)
-              #          - deployment: PublishPackage
-              #            displayName: "Publish to PyPI"
-              #            environment: none
-              #            dependsOn: Download
-              #            templateContext:
-              #              type: releaseJob
-              #              isProduction: true
-              #              inputs:
-              #              - input: pipelineArtifact
-              #                artifactName: artifacts-for-release
-              #                targetPath: $(Artifacts)
-              #            pool:
-              #              image: azsdk-pool-mms-ubuntu-2004-1espt
-              #              name: azsdk-pool-mms-ubuntu-2004-general
-              #              os: linux
-              #            strategy:
-              #              runOnce:
-              #                deploy:
-              #                  steps:
-              #                  - pwsh: |
-              #                      Get-ChildItem -R -Path "$(Artifacts)"
-              #                    displayName: Dump Artifacts
+          - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+            parameters:
+              ArtifactName: 'artifacts-for-release'
+              ArtifactPath: $(Artifacts)
+        - deployment: PublishPackage
+          displayName: "Publish to PyPI"
+          environment: none
+          dependsOn: Download
+          templateContext:
+            type: releaseJob
+            isProduction: true
+            inputs:
+            - input: pipelineArtifact
+              artifactName: artifacts-for-release
+              targetPath: $(Artifacts)
+          pool:
+            image: azsdk-pool-mms-ubuntu-2004-1espt
+            name: azsdk-pool-mms-ubuntu-2004-general
+            os: linux
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                - pwsh: |
+                    Get-ChildItem -R -Path "$(Artifacts)"
+                  displayName: Dump Artifacts
                 # - task: EsrpRelease@9
                 #   displayName: 'Publish via ESRP'
                 #   inputs:
