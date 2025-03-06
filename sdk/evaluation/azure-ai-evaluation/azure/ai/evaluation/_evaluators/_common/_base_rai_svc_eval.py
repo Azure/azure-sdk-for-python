@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, TypeVar, Union
+from typing import Dict, TypeVar, Union, Optional
 
 from typing_extensions import override
 
@@ -16,6 +16,7 @@ from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._common.utils import validate_conversation
 from azure.ai.evaluation._constants import _AggregationType
+from azure.ai.evaluation._model_configurations import EvaluatorConfig
 from azure.core.credentials import TokenCredential
 
 from . import EvaluatorBase
@@ -40,6 +41,11 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         to produce a single result.
         Default is ~azure.ai.evaluation._AggregationType.MEAN.
     :type conversation_aggregation_type: ~azure.ai.evaluation._AggregationType
+    :param evaluator_config: Optional configuration for the evaluator, which can include a threshold override.
+    :type evaluator_config: Optional[EvaluatorConfig]
+    :param threshold: Optional threshold value for determining pass/fail status of evaluation results.
+        Default is "Medium" for safety evaluators.
+    :type threshold: Optional[Union[int, float, str]]
     """
 
     @override
@@ -50,8 +56,15 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         credential: TokenCredential,
         eval_last_turn: bool = False,
         conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,
+        evaluator_config: Optional[EvaluatorConfig] = None,
+        threshold: str = "Medium",
     ):
-        super().__init__(eval_last_turn=eval_last_turn, conversation_aggregation_type=conversation_aggregation_type)
+        super().__init__(
+            eval_last_turn=eval_last_turn, 
+            conversation_aggregation_type=conversation_aggregation_type,
+            threshold=threshold,
+            evaluator_config=evaluator_config
+        )
         self._eval_metric = eval_metric
         self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential

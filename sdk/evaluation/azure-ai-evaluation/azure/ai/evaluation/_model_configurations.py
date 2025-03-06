@@ -100,10 +100,19 @@ class AzureAIProject(TypedDict):
 
 
 class EvaluatorConfig(TypedDict, total=False):
-    """Configuration for an evaluator"""
-
+    """Configuration for an evaluator
+    
+    :param column_mapping: Dictionary mapping evaluator input name to column in data
+    :type column_mapping: Dict[str, str]
+    :param threshold: Optional threshold value for determining pass/fail status of evaluation results.
+        For quality-based evaluators, this is typically a number (default: 3).
+        For safety evaluators, this is typically a string severity level (default: "Medium").
+    :type threshold: Union[int, float, str, None]
+    """
     column_mapping: Dict[str, str]
     """Dictionary mapping evaluator input name to column in data"""
+    threshold: Union[int, float, str, None]
+    """Optional threshold value for determining pass/fail status of evaluation results"""
 
 
 class Message(TypedDict):

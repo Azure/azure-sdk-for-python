@@ -12,7 +12,7 @@ from typing_extensions import ParamSpec, TypeAlias, get_overloads
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._common.utils import remove_optional_singletons
 from azure.ai.evaluation._constants import _AggregationType
-from azure.ai.evaluation._model_configurations import Conversation
+from azure.ai.evaluation._model_configurations import Conversation, EvaluatorConfig
 from azure.ai.evaluation._common._experimental import experimental
 
 from ._conversation_aggregators import GetAggregator, GetAggregatorType
@@ -80,6 +80,13 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     :param conversation_aggregator_override: A function that will be used to aggregate per-turn results. If provided,
         overrides the standard aggregator implied by conversation_aggregation_type. None by default.
     :type conversation_aggregator_override: Optional[Callable[[List[float]], float]]
+    :param threshold: Optional threshold value for determining pass/fail status of evaluation results.
+        For quality-based evaluators, this is typically a number (default: 3).
+        For safety evaluators, this is typically a string severity level (default: "Medium").
+        This can be overridden by the evaluator config.
+    :type threshold: Optional[Union[int, float, str]]
+    :param evaluator_config: Optional configuration for the evaluator, which can include a threshold override.
+    :type evaluator_config: Optional[EvaluatorConfig]
     """
 
     # ~~~ METHODS THAT ALMOST ALWAYS NEED TO BE OVERRIDDEN BY CHILDREN~~~
@@ -93,6 +100,8 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         eval_last_turn: bool = False,
         conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,
         conversation_aggregator_override: Optional[Callable[[List[float]], float]] = None,
+        threshold: Optional[Union[int, float, str]] = None,
+        evaluator_config: Optional[EvaluatorConfig] = None,
     ):
         self._not_singleton_inputs = not_singleton_inputs
         self._eval_last_turn = eval_last_turn
@@ -102,6 +111,13 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         if conversation_aggregator_override is not None:
             # Type ignore since we already checked for None, but mypy doesn't know that.
             self._conversation_aggregation_function = conversation_aggregator_override  # type: ignore[assignment]
+            
+        # Set the default threshold value
+        self._threshold = threshold
+        
+        # Override threshold with evaluator_config if provided
+        if evaluator_config is not None and "threshold" in evaluator_config:
+            self._threshold = evaluator_config.get("threshold")
 
     # This needs to be overridden just to change the function header into something more informative,
     # and to be able to add a more specific docstring. The actual function contents should just be
@@ -380,6 +396,86 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         aggregated["evaluation_per_turn"] = evaluation_per_turn
         return aggregated
 
+    def _process_evaluation_results(self, results: Dict[str, Any]) -> Dict[str, Any]:
+        """Process evaluation results to add threshold and pass/fail status.
+        
+        :param results: The evaluation results to process
+        :type results: Dict[str, Any]
+        :return: Evaluation results with threshold and pass/fail status added
+        :rtype: Dict[str, Any]
+        """
+        # If there's no threshold set, return the original results
+        if self._threshold is None:
+            return results
+            
+        processed_results = dict(results)
+        
+        # Process all numeric or string results with a threshold
+        for key, value in results.items():
+            # Skip the evaluation_per_turn and non-score values
+            if key == "evaluation_per_turn" or not isinstance(value, (int, float, str)):
+                continue
+                
+            # Add threshold value to the results
+            threshold_key = f"{key}_threshold"
+            processed_results[threshold_key] = self._threshold
+            
+            # Add pass/fail result
+            result_key = f"{key}_result"
+            
+            # Handle different types of thresholds based on the evaluator type
+            if isinstance(value, (int, float)) and isinstance(self._threshold, (int, float)):
+                # For numeric thresholds (quality evaluators)
+                processed_results[result_key] = "Pass" if value >= self._threshold else "Fail"
+            elif isinstance(value, str) and isinstance(self._threshold, str):
+                # For string thresholds (safety evaluators)
+                # Assuming severity levels like ["Low", "Medium", "High"] where lower is safer
+                severity_levels = ["Low", "Medium", "High"]
+                if value not in severity_levels or self._threshold not in severity_levels:
+                    processed_results[result_key] = "Unknown"
+                else:
+                    value_index = severity_levels.index(value)
+                    threshold_index = severity_levels.index(self._threshold)
+                    processed_results[result_key] = "Pass" if value_index <= threshold_index else "Fail"
+            else:
+                # For mismatched types or unsupported comparison
+                processed_results[result_key] = "Unknown"
+                
+        # Process evaluation_per_turn if it exists
+        if "evaluation_per_turn" in results:
+            per_turn_results = results["evaluation_per_turn"]
+            processed_per_turn = {}
+            
+            for metric, values in per_turn_results.items():
+                processed_per_turn[metric] = values
+                
+                # Add threshold for each turn
+                threshold_values = [self._threshold] * len(values)
+                processed_per_turn[f"{metric}_threshold"] = threshold_values
+                
+                # Add pass/fail for each turn
+                result_values = []
+                for value in values:
+                    if isinstance(value, (int, float)) and isinstance(self._threshold, (int, float)):
+                        result = "Pass" if value >= self._threshold else "Fail"
+                    elif isinstance(value, str) and isinstance(self._threshold, str):
+                        severity_levels = ["Low", "Medium", "High"]
+                        if value not in severity_levels or self._threshold not in severity_levels:
+                            result = "Unknown"
+                        else:
+                            value_index = severity_levels.index(value)
+                            threshold_index = severity_levels.index(self._threshold)
+                            result = "Pass" if value_index <= threshold_index else "Fail"
+                    else:
+                        result = "Unknown"
+                    result_values.append(result)
+                    
+                processed_per_turn[f"{metric}_result"] = result_values
+                
+            processed_results["evaluation_per_turn"] = processed_per_turn
+            
+        return processed_results
+
     async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
@@ -397,11 +493,13 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         # Return results as-is if only one result was produced.
 
         if len(per_turn_results) == 1:
-            return per_turn_results[0]
+            results = per_turn_results[0]
+            return self._process_evaluation_results(results)
         if len(per_turn_results) == 0:
             return {}  # TODO raise something?
         # Otherwise, aggregate results.
-        return self._aggregate_results(per_turn_results=per_turn_results)
+        results = self._aggregate_results(per_turn_results=per_turn_results)
+        return self._process_evaluation_results(results)
 
     # ~~~ METHODS THAT SHOULD NOT BE OVERRIDDEN BY CHILDREN~~~``
 
