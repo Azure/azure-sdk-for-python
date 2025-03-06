@@ -7,14 +7,14 @@
 import json
 from typing import Dict, List, Type, Generic, Literal, Optional, Any, Union
 from typing_extensions import TypeVar
-from enum import StrEnum
+from enum import Enum
 
 from .utils import resolve_value, serialize
 
 BicepDataTypes = Literal["string", "array", "object", "int", "bool"]
 _type = type
 
-class Default(StrEnum):
+class Default(Enum):
     MISSING = 'NoDefault'
 
 MISSING = Default.MISSING

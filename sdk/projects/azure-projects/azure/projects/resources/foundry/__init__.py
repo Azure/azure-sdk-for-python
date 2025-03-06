@@ -1,6 +1,12 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Callable, Dict, Generator, List, Literal, Mapping, Tuple, TypedDict, Union, Unpack, Optional, overload
-from typing_extensions import TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Dict, Generator, List, Literal, Mapping, Tuple, TypedDict, Union, Optional, overload
+from typing_extensions import TypeVar, Unpack
 
 from azure.core.credentials import SupportsTokenInfo
 from azure.core.credentials_async import AsyncSupportsTokenInfo
@@ -79,7 +85,7 @@ class MachineLearningWorkspaceKwargs(TypedDict, total=False):
     """Configuration for workspace hub settings."""
 
 
-MachineLearningWorkspaceResourceType = TypeVar('CognitiveServicesAccountResourceType', default='MachineLearningWorkspaceResource')
+MachineLearningWorkspaceResourceType = TypeVar('MachineLearningWorkspaceResourceType', default='MachineLearningWorkspaceResource')
 _DEFAULT_ML_WORKSPACE: 'MachineLearningWorkspaceResource' = {
     'name': GLOBAL_PARAMS['defaultName'],
     'location': GLOBAL_PARAMS['location'],

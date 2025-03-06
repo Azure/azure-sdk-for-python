@@ -1,8 +1,13 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 
 from collections import defaultdict
 import inspect
-from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Mapping, Tuple, TypedDict, Union, Unpack, overload, Optional, Any, Type
-from typing_extensions import TypeVar
+from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Mapping, Tuple, TypedDict, Union, overload, Optional, Any, Type
+from typing_extensions import TypeVar, Unpack
 
 from ....._component import ComponentField
 from ....._parameters import GLOBAL_PARAMS

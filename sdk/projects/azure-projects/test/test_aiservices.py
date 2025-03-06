@@ -6,8 +6,7 @@ import pytest
 from azure.projects.resources.ai import AIServices, CognitiveServicesAccount
 from azure.projects.resources.resourcegroup import ResourceGroup
 from azure.projects._parameters import GLOBAL_PARAMS
-from azure.projects.resources._identifiers import ResourceIdentifiers
-from azure.projects._component import RESOURCE_FROM_CLIENT_ANNOTATION
+from azure.projects.resources import RESOURCE_FROM_CLIENT_ANNOTATION, ResourceIdentifiers
 from azure.projects._bicep.expressions import ResourceSymbol, Output, ResourceGroup as DefaultResourceGroup
 from azure.projects import Parameter, field, AzureInfrastructure, export, AzureApp
 
@@ -17,7 +16,7 @@ IDENTITY = {
     'type': 'UserAssigned',
     'userAssignedIdentities': {GLOBAL_PARAMS['managedIdentityId'].format(): {}}
 }
-RESOURCE_FROM_CLIENT_ANNOTATION['EmptyClient'] = "ai"
+RESOURCE_FROM_CLIENT_ANNOTATION['EmptyClient'] = ResourceIdentifiers.ai_services
 
 
 class EmptyClient:

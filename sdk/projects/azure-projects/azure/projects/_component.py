@@ -19,47 +19,19 @@ from typing import (
     dataclass_transform,
     overload,
     TypeVar,
-    Any, Union, Literal, Optional, Callable, Dict, List, Type, Unpack
+    Any, Union, Literal, Optional, Callable, Dict, List, Type
 )
-from typing_extensions import Self
+from typing_extensions import Self, Unpack
 
 from ._bicep.expressions import Parameter, MISSING, Default, ParameterType
 from ._resource import Resource, _load_dev_environment, ResourceReference
-from .resources._identifiers import ResourceIdentifiers
+from .resources import ResourceIdentifiers, RESOURCE_FROM_CLIENT_ANNOTATION
 from .resources.resourcegroup import ResourceGroup
 from .resources.managedidentity import UserAssignedIdentity
 
 if TYPE_CHECKING:
     from .resources.resourcegroup.types import ResourceGroupResource
     from .resources.managedidentity.types import UserAssignedIdentityResource
-
-
-RESOURCE_FROM_CLIENT_ANNOTATION: Dict[str, ResourceIdentifiers] = {
-    'BlobServiceClient': ResourceIdentifiers.blob_storage,
-    'DataLakeServiceClient': ResourceIdentifiers.blob_storage,
-    'ContainerClient': ResourceIdentifiers.blob_container,
-    'FileSystemClient': ResourceIdentifiers.blob_container,
-    'TableServiceClient': ResourceIdentifiers.table_storage,
-    'ShareServiceClient': ResourceIdentifiers.file_share,
-    'ShareClient': ResourceIdentifiers.file_share,
-    'QueueServiceClient': ResourceIdentifiers.queue_storage,
-    'KeyClient': ResourceIdentifiers.keyvault,
-    'SecretClient': ResourceIdentifiers.keyvault,
-    'CertificateClient': ResourceIdentifiers.keyvault,
-    'ChatCompletionsClient': ResourceIdentifiers.ai_chat_deployment,
-    'Chat': ResourceIdentifiers.ai_chat_deployment,
-    'AsyncChat': ResourceIdentifiers.ai_chat_deployment,
-    'EmbeddingsClient': ResourceIdentifiers.ai_embeddings_deployment,
-    'Embeddings': ResourceIdentifiers.ai_embeddings_deployment,
-    'AsyncEmbeddings': ResourceIdentifiers.ai_embeddings_deployment,
-    'AIServices': ResourceIdentifiers.ai_services,
-    'AIHub': ResourceIdentifiers.ai_hub,
-    'AIProject': ResourceIdentifiers.ai_project,
-    'AIProjectClient': ResourceIdentifiers.ai_project,
-    'SearchIndexerClient': ResourceIdentifiers.search,
-    'SearchIndexClient': ResourceIdentifiers.search,
-    'SearchClient': ResourceIdentifiers.search,
-}
 
 
 def get_annotations(cls: Type) -> Mapping[str, Any]:

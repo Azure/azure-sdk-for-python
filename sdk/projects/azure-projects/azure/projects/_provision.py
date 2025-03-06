@@ -4,15 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from inspect import get_annotations
-import inspect
-from typing import IO, Any, Callable, Iterable, List, Literal, Mapping, MutableMapping, Optional, Type, Dict, Tuple, TYPE_CHECKING, TypeVar, Union, Unpack, overload
+from typing import IO, Any, Callable, Iterable, List, Literal, Mapping, MutableMapping, Optional, Type, Dict, Tuple, TYPE_CHECKING, TypeVar, Union, overload
 import os
 import json
 import subprocess
 from collections import defaultdict
-
-from dotenv import dotenv_values
 
 from ._version import VERSION
 from ._component import AzureInfrastructure, ComponentField

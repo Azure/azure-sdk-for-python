@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Literal, Type, TYPE_CHECKING
+from typing import Dict, Literal, Type, TYPE_CHECKING
 from enum import Enum
 
 if TYPE_CHECKING:
@@ -120,3 +120,31 @@ class ResourceIdentifiers(Enum):
             from .foundry._connection import AIConnection
             return AIConnection
         raise TypeError(f"Unknown resource identifier: {self}")
+
+
+RESOURCE_FROM_CLIENT_ANNOTATION: Dict[str, ResourceIdentifiers] = {
+    'BlobServiceClient': ResourceIdentifiers.blob_storage,
+    'DataLakeServiceClient': ResourceIdentifiers.blob_storage,
+    'ContainerClient': ResourceIdentifiers.blob_container,
+    'FileSystemClient': ResourceIdentifiers.blob_container,
+    'TableServiceClient': ResourceIdentifiers.table_storage,
+    'ShareServiceClient': ResourceIdentifiers.file_share,
+    'ShareClient': ResourceIdentifiers.file_share,
+    'QueueServiceClient': ResourceIdentifiers.queue_storage,
+    'KeyClient': ResourceIdentifiers.keyvault,
+    'SecretClient': ResourceIdentifiers.keyvault,
+    'CertificateClient': ResourceIdentifiers.keyvault,
+    'ChatCompletionsClient': ResourceIdentifiers.ai_chat_deployment,
+    'Chat': ResourceIdentifiers.ai_chat_deployment,
+    'AsyncChat': ResourceIdentifiers.ai_chat_deployment,
+    'EmbeddingsClient': ResourceIdentifiers.ai_embeddings_deployment,
+    'Embeddings': ResourceIdentifiers.ai_embeddings_deployment,
+    'AsyncEmbeddings': ResourceIdentifiers.ai_embeddings_deployment,
+    'AIServices': ResourceIdentifiers.ai_services,
+    'AIHub': ResourceIdentifiers.ai_hub,
+    'AIProject': ResourceIdentifiers.ai_project,
+    'AIProjectClient': ResourceIdentifiers.ai_project,
+    'SearchIndexerClient': ResourceIdentifiers.search,
+    'SearchIndexClient': ResourceIdentifiers.search,
+    'SearchClient': ResourceIdentifiers.search,
+}

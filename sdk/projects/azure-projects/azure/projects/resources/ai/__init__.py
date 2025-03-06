@@ -1,6 +1,12 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any, Callable, Dict, Generator, List, Literal, Mapping, Type, TypedDict, Union, Unpack, Optional, overload
-from typing_extensions import TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Dict, Generator, List, Literal, Mapping, Type, TypedDict, Union, Optional, overload
+from typing_extensions import TypeVar, Unpack
 
 from ..resourcegroup import ResourceGroup
 from .._identifiers import ResourceIdentifiers
