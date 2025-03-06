@@ -36,7 +36,6 @@ extends:
         - 1ES.PT.Tag-refs/tags/canary
     settings:
       skipBuildTagsForGitHubPullRequests: true
-      skipSDLSourcesWhenCheckoutIsNoneForAllJobs: true
     sdl:
       ${{ if and(eq(variables['Build.DefinitionName'], 'python - core'), eq(variables['Build.SourceBranchName'], 'main'), eq(variables['System.TeamProject'], 'internal')) }}:
         autobaseline:
