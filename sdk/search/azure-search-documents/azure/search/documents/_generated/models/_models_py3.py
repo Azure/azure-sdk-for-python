@@ -458,6 +458,8 @@ class FacetResult(_serialization.Model):
     :ivar count: The approximate count of documents falling within the bucket described by this
      facet.
     :vartype count: int
+    :ivar sum: The resulting total sum for the facet when a sum metric is requested.
+    :vartype sum: float
     :ivar facets: The nested facet query results for the search operation, organized as a
      collection of buckets for each faceted field; null if the query did not contain any nested
      facets.
@@ -466,12 +468,14 @@ class FacetResult(_serialization.Model):
 
     _validation = {
         "count": {"readonly": True},
+        "sum": {"readonly": True},
         "facets": {"readonly": True},
     }
 
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "count": {"key": "count", "type": "int"},
+        "sum": {"key": "sum", "type": "float"},
         "facets": {"key": "@search\\.facets", "type": "{[FacetResult]}"},
     }
 
@@ -484,6 +488,7 @@ class FacetResult(_serialization.Model):
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
         self.count: Optional[int] = None
+        self.sum: Optional[float] = None
         self.facets: Optional[Dict[str, List["_models.FacetResult"]]] = None
 
 
@@ -956,8 +961,8 @@ class SearchDocumentsResult(_serialization.Model):
     :ivar answers: The answers query results for the search operation; null if the answers query
      parameter was not specified or set to 'none'.
     :vartype answers: list[~azure.search.documents.models.QueryAnswerResult]
-    :ivar debug: Debug information that applies to the search results as a whole.
-    :vartype debug: ~azure.search.documents.models.DebugInfo
+    :ivar debug_info: Debug information that applies to the search results as a whole.
+    :vartype debug_info: ~azure.search.documents.models.DebugInfo
     :ivar next_page_parameters: Continuation JSON payload returned when the query can't return all
      the requested results in a single response. You can use this JSON along with @odata.nextLink to
      formulate another POST Search request to get the next part of the search response.
@@ -989,7 +994,7 @@ class SearchDocumentsResult(_serialization.Model):
         "coverage": {"readonly": True},
         "facets": {"readonly": True},
         "answers": {"readonly": True},
-        "debug": {"readonly": True},
+        "debug_info": {"readonly": True},
         "next_page_parameters": {"readonly": True},
         "results": {"required": True, "readonly": True},
         "next_link": {"readonly": True},
@@ -1003,7 +1008,7 @@ class SearchDocumentsResult(_serialization.Model):
         "coverage": {"key": "@search\\.coverage", "type": "float"},
         "facets": {"key": "@search\\.facets", "type": "{[FacetResult]}"},
         "answers": {"key": "@search\\.answers", "type": "[QueryAnswerResult]"},
-        "debug": {"key": "@search\\.debug", "type": "DebugInfo"},
+        "debug_info": {"key": "@search\\.debug", "type": "DebugInfo"},
         "next_page_parameters": {"key": "@search\\.nextPageParameters", "type": "SearchRequest"},
         "results": {"key": "value", "type": "[SearchResult]"},
         "next_link": {"key": "@odata\\.nextLink", "type": "str"},
@@ -1019,7 +1024,7 @@ class SearchDocumentsResult(_serialization.Model):
         self.coverage: Optional[float] = None
         self.facets: Optional[Dict[str, List["_models.FacetResult"]]] = None
         self.answers: Optional[List["_models.QueryAnswerResult"]] = None
-        self.debug: Optional["_models.DebugInfo"] = None
+        self.debug_info: Optional["_models.DebugInfo"] = None
         self.next_page_parameters: Optional["_models.SearchRequest"] = None
         self.results: Optional[List["_models.SearchResult"]] = None
         self.next_link: Optional[str] = None
