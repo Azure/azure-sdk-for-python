@@ -10,6 +10,10 @@
 
 ### Other Changes
 
+## 1.0.1 (2024-03-06)
+
+- Fix polling for `begin_copy_model_to()` to stop on success response from the "Operation-Location" endpoint.
+
 ## 1.0.0 (2024-12-17)
 
 ### Features Added
