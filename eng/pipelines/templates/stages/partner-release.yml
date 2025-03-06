@@ -20,7 +20,7 @@ extends:
           - template: /eng/pipelines/templates/variables/image.yml
 
         jobs:
-        - job:
+        - job: 'Download'
           displayName: 'Download and publish artifacts'
           pool:
             name: $(WINDOWSPOOL)
@@ -55,9 +55,7 @@ extends:
 
         - deployment: PublishPackage
           displayName: "Publish to PyPI"
-          condition: and(succeeded(), ne(variables['Skip.PublishPackage'], 'true'))
-          environment: package-publish
-          dependsOn: TagRepository
+          dependsOn: Download
 
           templateContext:
             type: releaseJob
