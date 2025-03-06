@@ -34,18 +34,18 @@ extends:
             inputs:
               azureSubscription: 'azuresdkpartnerdrops - Storage Partner Drops'
               ScriptType: 'InlineScript'
-              azurePowerShellVersion: LatestVersion 
+              azurePowerShellVersion: LatestVersion
               pwsh: true
               Inline: |
                 echo "azcopy copy 'https://azuresdkpartnerdrops.blob.core.windows.net/drops/${{ parameters.BlobPath }}/*' '$(Artifacts)' --recursive=true"
                 azcopy copy 'https://azuresdkpartnerdrops.blob.core.windows.net/drops/${{ parameters.BlobPath }}/*' '$(Artifacts)' --recursive=true
                 $copiedFiles = (dir '$(Artifacts)' -r | % { $_.FullName })
                 echo "Copied files: $copiedFiles"
-                if (!$copiedFiles) { 
+                if (!$copiedFiles) {
                   echo "Failed to copy any files from 'https://azuresdkpartnerdrops.blob.core.windows.net/drops/${{ parameters.BlobPath }}/*' please double check they exist"
                   exit 1
                 }
-            env: 
+            env:
               AZCOPY_AUTO_LOGIN_TYPE: 'PSCRED'
 
           - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
@@ -53,19 +53,47 @@ extends:
               ArtifactName: 'artifacts-for-release'
               ArtifactPath: $(Artifacts)
 
-          - task: EsrpRelease@9
-            displayName: 'Publish via ESRP'
+        - deployment: PublishPackage
+          displayName: "Publish to PyPI"
+          condition: and(succeeded(), ne(variables['Skip.PublishPackage'], 'true'))
+          environment: package-publish
+          dependsOn: TagRepository
+
+          templateContext:
+            type: releaseJob
+            isProduction: true
             inputs:
-              ConnectedServiceName: 'Azure SDK PME Managed Identity'
-              ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
-              DomainTenantId: '975f013f-7f24-47e8-a7d3-abc4752bf346'
-              UseManagedIdentity: true
-              KeyVaultName: 'kv-azuresdk-codesign'
-              SignCertName: 'azure-sdk-esrp-release-certificate'
-              Intent: 'PackageDistribution'
-              ContentType: 'PyPI'
-              FolderLocation: $(Artifacts)
-              Owners: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
-              Approvers: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
-              ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
-              MainPublisher: 'ESRPRELPACMANTEST'
+            - input: pipelineArtifact
+              artifactName: artifacts-for-release
+              targetPath: $(Pipeline.Workspace)/artifacts
+
+          pool:
+            image: azsdk-pool-mms-ubuntu-2004-1espt
+            name: azsdk-pool-mms-ubuntu-2004-general
+            os: linux
+
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+
+                - pwsh: |
+                    Get-ChildItem -R -Path "$(Artifacts)"
+                  displayName: Dump Artifacts
+
+                # - task: EsrpRelease@9
+                #   displayName: 'Publish via ESRP'
+                #   inputs:
+                #     ConnectedServiceName: 'Azure SDK PME Managed Identity'
+                #     ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
+                #     DomainTenantId: '975f013f-7f24-47e8-a7d3-abc4752bf346'
+                #     UseManagedIdentity: true
+                #     KeyVaultName: 'kv-azuresdk-codesign'
+                #     SignCertName: 'azure-sdk-esrp-release-certificate'
+                #     Intent: 'PackageDistribution'
+                #     ContentType: 'PyPI'
+                #     FolderLocation: $(Artifacts)
+                #     Owners: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
+                #     Approvers: ${{ coalesce(variables['Build.RequestedForEmail'], 'azuresdk@microsoft.com') }}
+                #     ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
+                #     MainPublisher: 'ESRPRELPACMANTEST'
