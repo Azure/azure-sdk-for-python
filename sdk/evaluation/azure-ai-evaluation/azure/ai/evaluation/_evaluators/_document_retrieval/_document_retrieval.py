@@ -29,11 +29,11 @@ DocumentRetrievalEvaluationData = TypedDict(
 DocumentRetrievalMetrics = TypedDict(
     'DocumentRetrievalMetrics',
     {
-        "ndcg@3": float,
-        "xdcg@3": float,
+        "ndcg@{self.k}": float,
+        "xdcg@{self.k}": float,
         "fidelity": float,
         "top1_relevance": float,
-        "topk_max_relevance@3": float,
+        "topk_max_relevance@{self.k}": float,
         "holes": int,
         "holes_ratio": float,
         "total_document_results": int,
@@ -51,7 +51,7 @@ class DocumentRetrievalEvaluator:
         xdcg_discount_factor: float = 0.6
     ):
         super().__init__()
-
+        self.k = 3
         self.ndcg_score_linear = ndcg_score_linear  # TODO: pick an NDCG implementation to avoid setting this value
         self.xdcg_discount_factor = xdcg_discount_factor  # TODO: should we expose this, or just pick a recommended value?
 
@@ -140,9 +140,15 @@ class DocumentRetrievalEvaluator:
 
         return weighted_sum_by_rating_results / float(weighted_sum_by_rating_index)
     
-    def __call__(self, *, evaluation_data: DocumentRetrievalEvaluationData) -> DocumentRetrievalMetrics:
+    def __call__(self, *, evaluation_data: dict) -> DocumentRetrievalMetrics:
+        # input validation
+        DocumentRetrievalEvaluationData(**evaluation_data)
+
         qrels = evaluation_data["groundtruth_documents_labels"]
         results = evaluation_data["retrieved_documents_labels"]
+
+        if len(qrels) > 1000 or len(results) > 1000:
+            raise ValueError("The results and ground-truth sets should contain no more than 1000 items.")
 
         # if the qrels are empty, no meaningful evaluation is possible
         if len(qrels) == 0:
@@ -151,11 +157,11 @@ class DocumentRetrievalEvaluator:
         # if the results set is empty, results are all zero
         if len(results) == 0:
             return DocumentRetrievalMetrics(**{
-                "ndcg@3": 0,
-                "xdcg@3": 0,
+                f"ndcg@{self.k}": 0,
+                f"xdcg@{self.k}": 0,
                 "fidelity": 0,
                 "top1_relevance": 0,
-                "topk_max_relevance@3": 0,
+                f"topk_max_relevance@{self.k}": 0,
                 "holes": 0,
                 "ratioholes": 0,
                 "total_document_results": len(results),
@@ -181,11 +187,11 @@ class DocumentRetrievalEvaluator:
         # if none of the retrieved docs are labeled, report holes only
         if not any(result_docs_groundtruth_labels):
             return DocumentRetrievalMetrics(**{
-                "ndcg@3": 0,
-                "xdcg@3": 0,
+                f"ndcg@{self.k}": 0,
+                f"xdcg@{self.k}": 0,
                 "fidelity": 0,
                 "top1_relevance": 0,
-                "topk_max_relevance@3": 0,
+                f"topk_max_relevance@{self.k}": 0,
                 "holes": holes,
                 "ratioholes": ratioholes,
                 "total_document_results": len(results),
@@ -193,11 +199,11 @@ class DocumentRetrievalEvaluator:
             })
 
         return DocumentRetrievalMetrics(**{
-            "ndcg@3": self.__compute_ndcg(result_docs_groundtruth_labels[:3], ideal_docs_groundtruth_labels[:3]),
-            "xdcg@3": self.__compute_xdcg(result_docs_groundtruth_labels[:3]),
+            f"ndcg@{self.k}": self.__compute_ndcg(result_docs_groundtruth_labels[:self.k], ideal_docs_groundtruth_labels[:self.k]),
+            f"xdcg@{self.k}": self.__compute_xdcg(result_docs_groundtruth_labels[:self.k]),
             "fidelity": self.__compute_fidelity(result_docs_groundtruth_labels, ideal_docs_groundtruth_labels),
             "top1_relevance": result_docs_groundtruth_labels[0],
-            "topk_max_relevance@3": max(result_docs_groundtruth_labels[:3]),
+            f"topk_max_relevance@{self.k}": max(result_docs_groundtruth_labels[:self.k]),
             "holes": holes,
             "ratioholes": ratioholes,
             "total_document_results": len(results),
