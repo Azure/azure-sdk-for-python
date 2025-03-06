@@ -188,6 +188,12 @@ class AdversarialSimulator:
             )
         self._ensure_service_dependencies()
         templates = await self.adversarial_template_handler._get_content_harm_template_collections(scenario.value)
+        if len(templates) == 0:
+            raise EvaluationException(
+                message="Templates not found. Please check https://aka.ms/azureaiadvsimulator-regionsupport for region support.",
+                internal_message="Please check https://aka.ms/azureaiadvsimulator-regionsupport for region support.",
+                target=ErrorTarget.ADVERSARIAL_SIMULATOR,
+            )
         simulation_id = str(uuid.uuid4())
         logger.warning("Use simulation_id to help debug the issue: %s", str(simulation_id))
         concurrent_async_task = min(concurrent_async_task, 1000)
