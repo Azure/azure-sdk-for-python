@@ -70,7 +70,6 @@ extends:
             runOnce:
               deploy:
                 steps:
-                - checkout: none
                 - pwsh: |
                     Get-ChildItem -R -Path "$(Artifacts)"
                   displayName: Dump Artifacts
