@@ -50,6 +50,7 @@ def sample_chat_completions():
     )
 
     print(response.choices[0].message.content)
+    print(f"\nToken usage: {response.usage}")
     # [END chat_completions]
 
 

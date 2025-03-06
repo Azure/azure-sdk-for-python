@@ -1017,6 +1017,7 @@ def _archive_or_restore(
             )
         )
         version_resource.properties.is_archived = is_archived
+        version_resource.properties.stage = None
         (  # pylint: disable=expression-not-assigned
             version_operation.begin_create_or_update(
                 name=name,
