@@ -27,7 +27,6 @@ extends:
             image: $(WINDOWSVMIMAGE)
             os: windows
           steps:
-          - checkout: none
           - task: AzurePowerShell@5
             displayName: 'Copy from azuresdkpartnerdrops'
             condition: and(succeeded(), ne(variables['SkipCopyFromPartnerDrops'], 'true'))
