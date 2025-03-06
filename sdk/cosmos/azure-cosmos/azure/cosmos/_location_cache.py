@@ -230,7 +230,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 write_location = self.account_write_locations[location_index]
                 if (self.account_write_regional_routing_contexts_by_location
                         and write_location in self.account_write_regional_routing_contexts_by_location):
-                    write_regional_routing_context = self.account_write_regional_routing_contexts_by_location[write_location]
+                    write_regional_routing_context = (
+                        self.account_write_regional_routing_contexts_by_location)[write_location]
                     if (
                             request.last_routed_location_endpoint_within_region is not None
                             and request.last_routed_location_endpoint_within_region

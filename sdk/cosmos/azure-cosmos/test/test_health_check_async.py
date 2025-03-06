@@ -133,7 +133,6 @@ class TestHealthCheckAsync:
     async def test_health_check_background_fail(self, setup):
         self.original_health_check = _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check
         _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check = self.mock_health_check_failure
-        _Constants.DefaultEndpointsRefreshTime = 1000
         try:
             setup[COLLECTION].client_connection._global_endpoint_manager.startup = False
             for i in range(20):
