@@ -361,7 +361,7 @@ def _parse_content_harm_response(
         if "label" in harm_response:
             try:
                 # Handle "n/a" or other non-numeric values
-                if isinstance(harm_response["label"], str) and harm_response["label"].lower() == "n/a":
+                if isinstance(harm_response["label"], str) and harm_response["label"].strip().lower() == "n/a":
                     metric_value = math.nan
                 else:
                     metric_value = float(harm_response["label"])
