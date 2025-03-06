@@ -4,7 +4,7 @@ import tempfile
 
 from devtools_testutils import (
     AzureRecordedTestCase,
-    PowerShellPreparer,
+    EnvironmentVariableLoader,
 )
 
 from azure.confidentialledger.certificate import (
@@ -18,7 +18,7 @@ from .constants import USER_CERTIFICATE
 
 
 ConfidentialLedgerPreparer = functools.partial(
-    PowerShellPreparer,
+    EnvironmentVariableLoader,
     "confidentialledger",
     confidentialledger_id="fake",
     confidentialledger_endpoint="https://fake.confidential-ledger.azure.com",
