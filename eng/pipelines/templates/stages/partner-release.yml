@@ -13,6 +13,7 @@ extends:
   parameters:
     stages:
       - stage:
+        dependsOn: ''
         displayName: 'Partner Release'
         variables:
           - name: Artifacts
