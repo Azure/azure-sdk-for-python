@@ -61,10 +61,7 @@ def _default_network_span_namer(http_request: HTTPRequestType) -> str:
     :returns: The string to use as network span name
     :rtype: str
     """
-    path = urllib.parse.urlparse(http_request.url).path
-    if not path:
-        path = "/"
-    return path
+    return http_request.method
 
 
 class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
@@ -93,7 +90,9 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
 
     # Azure attributes
     _REQUEST_ID = "x-ms-client-request-id"
+    _REQUEST_ID_ATTR = "az.client_request_id"
     _RESPONSE_ID = "x-ms-request-id"
+    _RESPONSE_ID_ATTR = "az.service_request_id"
 
     def __init__(self, *, instrumentation_config: Optional[Mapping[str, Any]] = None, **kwargs: Any):
         self._network_span_namer = kwargs.get("network_span_namer", _default_network_span_namer)
@@ -190,9 +189,9 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         if request.context.get("retry_count"):
             attributes[self._HTTP_RESEND_COUNT] = request.context["retry_count"]
         if http_request.headers.get(self._REQUEST_ID):
-            attributes[self._REQUEST_ID] = http_request.headers[self._REQUEST_ID]
+            attributes[self._REQUEST_ID_ATTR] = http_request.headers[self._REQUEST_ID]
         if response and self._RESPONSE_ID in response.headers:
-            attributes[self._RESPONSE_ID] = response.headers[self._RESPONSE_ID]
+            attributes[self._RESPONSE_ID_ATTR] = response.headers[self._RESPONSE_ID]
 
         # We'll determine if the span is from a plugin or the core tracing library based on the presence of the
         # `set_http_attributes` method.
