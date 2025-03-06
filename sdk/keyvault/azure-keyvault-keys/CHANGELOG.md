@@ -4,6 +4,8 @@
 
 ### Features Added
 - Added support for service API version `7.6-preview.2`
+- `KeyClient` has a `get_key_attestation` method that can be used to retrieve a key along with its attestation blob
+  from a managed HSM. [#37507](https://github.com/Azure/azure-sdk-for-python/pull/37507)
 
 ### Breaking Changes
 
