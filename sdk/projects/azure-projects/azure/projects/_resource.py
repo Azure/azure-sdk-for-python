@@ -7,21 +7,15 @@
 from __future__ import annotations
 
 import inspect
-from itertools import takewhile, product, accumulate
-from enum import Enum
-from copy import deepcopy
+from itertools import product
 from collections import defaultdict
-import re
 import os
-import json
 from typing import (
     Generator,
     Generic,
     Mapping,
     Tuple,
     TypedDict,
-    runtime_checkable,
-    Type,
     Optional,
     Callable,
     Union,
@@ -30,28 +24,21 @@ from typing import (
     Any,
     TypeVar,
     Literal,
-    overload,
-    NamedTuple,
     TYPE_CHECKING
 )
-from typing_extensions import Self, Required
+from typing_extensions import Self, NamedTuple
 
 from dotenv import dotenv_values
 
-from azure.core.credentials import (
-    SupportsTokenInfo,
-    AzureKeyCredential,
-    AzureSasCredential,
-    AzureNamedKeyCredential
-)
+from azure.core.credentials import SupportsTokenInfo
 from azure.core.credentials_async import AsyncSupportsTokenInfo
-from azure.core.settings import PrioritizedSetting, _unset
+from azure.core.settings import _unset
 
 from .resources._identifiers import ResourceIdentifiers
 from ._parameters import DEFAULT_NAME, LOCATION, AZD_TAGS
 from ._setting import StoredPrioritizedSetting
-from ._bicep.expressions import Guid, Output, Expression, Parameter, ResourceSymbol, ResourceGroup, Default, MISSING
-from ._bicep.utils import serialize, generate_suffix, resolve_value, serialize_dict, clean_name
+from ._bicep.expressions import Output, Expression, Parameter, ResourceSymbol, ResourceGroup
+from ._bicep.utils import clean_name
 
 if TYPE_CHECKING:
     from .resources.resourcegroup import ResourceGroup
@@ -126,7 +113,7 @@ class FieldType(NamedTuple, Generic[ResourcePropertiesType]):
     existing: bool
     name: Optional[Union[str, Parameter[str]]]
     add_defaults: Optional[Callable[[FieldType, Dict[str, Parameter]], None]]  # TODO: Clean this up?
-    
+
 
 FieldsType = Dict[str, FieldType]
 
