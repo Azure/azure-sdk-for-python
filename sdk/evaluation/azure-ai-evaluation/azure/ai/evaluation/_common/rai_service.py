@@ -359,7 +359,14 @@ def _parse_content_harm_response(
 
         # get content harm metric_value
         if "label" in harm_response:
-            metric_value = float(harm_response["label"])
+            try:
+                # Handle "n/a" or other non-numeric values
+                if isinstance(harm_response["label"], str) and harm_response["label"].strip().lower() == "n/a":
+                    metric_value = math.nan
+                else:
+                    metric_value = float(harm_response["label"])
+            except (ValueError, TypeError):
+                metric_value = math.nan
         elif "valid" in harm_response:
             metric_value = 0 if harm_response["valid"] else math.nan
         else:
@@ -390,8 +397,7 @@ def _parse_content_harm_response(
         reason = ""
 
     harm_score = metric_value
-    if metric_value == "n/a":
-        return result
+    # We've already handled the "n/a" case by converting to math.nan
     if not math.isnan(metric_value):
         # int(math.nan) causes a value error, and math.nan is already handled
         # by get_harm_severity_level
