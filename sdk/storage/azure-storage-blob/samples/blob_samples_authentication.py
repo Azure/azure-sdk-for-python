@@ -24,6 +24,7 @@ USAGE:
 
 import os
 import sys
+import logging
 
 class AuthSamples(object):
     url = "https://{}.blob.core.windows.net".format(
@@ -136,6 +137,7 @@ class AuthSamples(object):
         account_info = blob_service_client.get_service_properties()
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     sample = AuthSamples()
     sample.auth_connection_string()
     sample.auth_shared_access_signature()
