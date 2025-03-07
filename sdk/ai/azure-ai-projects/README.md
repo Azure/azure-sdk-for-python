@@ -533,7 +533,7 @@ agent = await project_client.agents.create_agent(
 
 <!-- END SNIPPET -->
 
-#### Create Agent With Azure Function
+#### Create Agent With Azure Function Call
 
 The AI agent leverages Azure Functions triggered asynchronously via Azure Storage Queues. To enable the agent to perform Azure Function calls, you must set up the corresponding `AzureFunctionTool`, specifying input and output queues as well as parameter definitions.
 
