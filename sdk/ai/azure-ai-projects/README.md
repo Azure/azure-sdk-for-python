@@ -542,6 +542,8 @@ Example Python snippet illustrating how you create an agent utilizing the Azure 
 <!-- SNIPPET sample_agents_azure_functions.create_agent_with_azure_function_tool -->
 
 ```python
+storage_service_endpoint = "https://<your-storage>.queue.core.windows.net"
+
 azure_function_tool = AzureFunctionTool(
     name="get_weather",
     description="Get weather information using Azure Function",
