@@ -490,9 +490,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             value = await self._process_key_value(config)
             configuration_settings_processed[key] = value
         if self._feature_flag_enabled and FEATURE_MANAGEMENT_KEY in self._dict:
-            configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = self._dict[
-                FEATURE_MANAGEMENT_KEY
-            ]
+            configuration_settings_processed[FEATURE_MANAGEMENT_KEY] = self._dict[FEATURE_MANAGEMENT_KEY]
         return configuration_settings_processed
 
     async def _process_key_value(self, config):
