@@ -12,10 +12,8 @@ import traceback
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from typing_extensions import Self
-from ._core import Prompty
-from ._mustache import render
-from ._parsers import invoke_parser
-from ._prompty_utils import load, prepare
+from prompty import headless, InvokerFactory, Prompty
+from prompty import load, prepare
 from ._utils import remove_leading_empty_space
 
 
@@ -42,6 +40,7 @@ class PromptTemplate:
         abs_file_path = Path(caller.parent / Path(file_path)).resolve().absolute()
 
         prompty = load(str(abs_file_path))
+        prompty.template.type = "mustache"  # For Azure, default to mustache instead of Jinja2
         return cls(prompty=prompty)
 
     @classmethod
@@ -57,11 +56,14 @@ class PromptTemplate:
         :return: The PromptTemplate object.
         :rtype: PromptTemplate
         """
+        prompt_template = remove_leading_empty_space(prompt_template)
+        prompty = headless(api="chat", content=prompt_template)
+        prompty.template.type = "mustache"  # For Azure, default to mustache instead of Jinja2
+        prompty.template.parser = "prompty"
         return cls(
             api=api,
-            prompt_template=prompt_template,
             model_name=model_name,
-            prompty=None,
+            prompty=prompty,
         )
 
     def __init__(
@@ -105,11 +107,6 @@ class PromptTemplate:
 
         if self.prompty is not None:
             parsed = prepare(self.prompty, data)
-            return parsed
-        elif "prompt_template" in self._config:
-            prompt_template = remove_leading_empty_space(self._config["prompt_template"])
-            system_prompt_str = render(prompt_template, data)
-            parsed = invoke_parser(None, system_prompt_str)
             return parsed
         else:
             raise ValueError("Please provide valid prompt template")
