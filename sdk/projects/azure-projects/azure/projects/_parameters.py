@@ -4,80 +4,76 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, TypedDict
+from typing import TypedDict
 from typing_extensions import NotRequired
 
 from ._bicep.expressions import Parameter, UniqueString, Subscription, Variable
 
 
-LOCATION: Parameter[str] = Parameter(
-    "location", type=str, description="Primary location for all resources", min_length=1, varname="AZURE_LOCATION"
+LOCATION = Parameter(
+    "location", description="Primary location for all resources", min_length=1, env_var="AZURE_LOCATION"
 )
-ENV_NAME: Parameter[str] = Parameter(
+ENV_NAME = Parameter(
     "environmentName",
-    type=str,
     description="AZD environment name",
     min_length=1,
     max_length=64,
-    varname="AZURE_ENV_NAME",
+    env_var="AZURE_ENV_NAME",
 )
-NAME_PREFIX: Parameter[str] = Parameter("defaultNamePrefix", type=str, default="azproj")
-DEFAULT_NAME: Parameter[str] = Parameter(
+NAME_PREFIX = Parameter("defaultNamePrefix", default="azproj")
+DEFAULT_NAME = Parameter(
     "defaultName",
-    type=str,
     default=NAME_PREFIX.format() + UniqueString(Subscription().subscription_id, ENV_NAME, LOCATION).format(),
 )
 # TODO: Rename to something like "UserPrincipal"?
-LOCAL_PRINCIPAL: Parameter[str] = Parameter(
+LOCAL_PRINCIPAL = Parameter(
     "principalId",
-    type=str,
     description="ID of the user or app to assign application roles",
-    varname="AZURE_PRINCIPAL_ID",
+    env_var="AZURE_PRINCIPAL_ID",
 )
-AZD_TAGS: Parameter[Dict[str, str]] = Variable(
+AZD_TAGS = Variable(
     "azdTags", value={"azd-env-name": ENV_NAME}, description="Tags to apply to all resources in AZD environment."
 )
-TENANT_ID: Parameter[str] = Parameter(
+TENANT_ID = Parameter(
     "tenantId",
-    type=str,
     description="The Azure Active Directory tenant ID.",
     default=Subscription().tenant_id,
-    # varname="AZURE_TENANT_ID",
+    secure=True,
+    env_var="AZURE_TENANT_ID",
 )
-_MANAGED_IDENTITY_ID: Parameter[str] = Parameter(
+_MANAGED_IDENTITY_ID: Parameter = Parameter(
     "managedIdentityId",
-    type=str,
     description="ID of the managed identity to assign application roles",
-    varname="AZURE_MANAGED_IDENTITY_ID",
+    env_var="AZURE_MANAGED_IDENTITY_ID",
     default="",
 )
-_MANAGED_IDENTITY_PRINCIPAL_ID: Parameter[str] = Parameter(
+_MANAGED_IDENTITY_PRINCIPAL_ID = Parameter(
     "managedIdentityPrincipalId",
-    type=str,
     description="Principal ID of the managed identity to assign application roles",
-    varname="AZURE_MANAGED_IDENTITY_PRINCIPAL_ID",
+    env_var="AZURE_MANAGED_IDENTITY_PRINCIPAL_ID",
+    secure=True,
     default="",
 )
-_MANAGED_IDENTITY_CLIENT_ID: Parameter[str] = Parameter(
+_MANAGED_IDENTITY_CLIENT_ID = Parameter(
     "managedIdentityClientId",
-    type=str,
     description="Client ID of the managed identity to assign application roles",
-    varname="AZURE_MANAGED_IDENTITY_CLIENT_ID",
+    env_var="AZURE_MANAGED_IDENTITY_CLIENT_ID",
+    secure=True,
     default="",
 )
 
 
 class GlobalParamsType(TypedDict):
-    location: Parameter[str]
-    environmentName: Parameter[str]
-    defaultNamePrefix: Parameter[str]
-    defaultName: Parameter[str]
-    principalId: Parameter[str]
-    tenantId: Parameter[str]
-    azdTags: Parameter[str]
-    managedIdentityId: NotRequired[Parameter[str]]
-    managedIdentityPrincipalId: NotRequired[Parameter[str]]
-    managedIdentityClientId: NotRequired[Parameter[str]]
+    location: Parameter
+    environmentName: Parameter
+    defaultNamePrefix: Parameter
+    defaultName: Parameter
+    principalId: Parameter
+    tenantId: Parameter
+    azdTags: Parameter
+    managedIdentityId: NotRequired[Parameter]
+    managedIdentityPrincipalId: NotRequired[Parameter]
+    managedIdentityClientId: NotRequired[Parameter]
 
 
 GLOBAL_PARAMS: GlobalParamsType = {

@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=arguments-differ
 
 from collections import defaultdict
 from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Mapping, Tuple, Union, Optional, Any
@@ -20,8 +21,11 @@ if TYPE_CHECKING:
 
 
 class TableStorageKwargs(StorageAccountKwargs):
-    cors_rules: Union[List[Union["TablesCorsRule", Parameter["TablesCorsRule"]]], Parameter[List["TablesCorsRule"]]]
-    """Specifies CORS rules for the Table service. You can include up to five CorsRule elements in the request. If no CorsRule elements are included in the request body, all CORS rules will be deleted, and CORS will be disabled for the Table service."""
+    cors_rules: Union[List[Union["TablesCorsRule", Parameter]], Parameter]
+    """Specifies CORS rules for the Table service. You can include up to five CorsRule elements in the request.
+    If no CorsRule elements are included in the request body, all CORS rules will be deleted, and CORS will be
+    disabled for the Table service.
+    """
 
 
 _DEFAULT_TABLE_SERVICE: "TableServiceResource" = {"name": "default"}
@@ -43,7 +47,7 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
         self,
         properties: Optional["TableServiceResource"] = None,
         /,
-        account: Optional[Union[str, StorageAccount, Parameter[str]]] = None,
+        account: Optional[Union[str, StorageAccount, Parameter]] = None,
         **kwargs: Unpack["TableStorageKwargs"],
     ) -> None:
         existing = kwargs.pop("existing", False)
@@ -101,8 +105,8 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
     def reference(
         cls,
         *,
-        account: Union[str, Parameter[str], StorageAccount],
-        resource_group: Optional[Union[str, Parameter[str], ResourceGroup]] = None,
+        account: Union[str, Parameter, StorageAccount],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup]] = None,
     ) -> "TableStorage[ResourceReference]":
         from .types import RESOURCE, VERSION
 
@@ -120,7 +124,7 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
             resource=resource,
             parent=parent,
         )
-        existing._settings["name"].set_value("default")
+        existing._settings["name"].set_value("default")  # pylint: disable=protected-access
         return existing
 
     def __repr__(self) -> str:
@@ -128,12 +132,14 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
         return f"{self.__class__.__name__}({name})"
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
-        return f"https://{self.parent._settings['name'](config_store=config_store)}.table.core.windows.net/"
+        return f"https://{self.parent._settings['name'](config_store=config_store)}.table.core.windows.net/"  # pylint: disable=protected-access
 
     def _outputs(self, *, parents: Tuple[ResourceSymbol, ...], **kwargs) -> Dict[str, Output]:
         return {
             "endpoint": Output(
-                f"AZURE_TABLES_ENDPOINT{self.parent._suffix}", "properties.primaryEndpoints.table", parents[0]
+                f"AZURE_TABLES_ENDPOINT{self.parent._suffix}",
+                "properties.primaryEndpoints.table",
+                parents[0],  # pylint: disable=protected-access
             )
         }
 

@@ -3,22 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=arguments-differ
 
 from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
     Dict,
     Generator,
     List,
     Literal,
     Mapping,
-    Type,
     TypedDict,
     Union,
     Optional,
-    overload,
 )
 from typing_extensions import TypeVar, Unpack
 
@@ -34,35 +32,39 @@ if TYPE_CHECKING:
 
 
 class CognitiveServicesKwargs(TypedDict, total=False):
-    custom_subdomain_name: Union[str, Parameter[str]]
+    custom_subdomain_name: Union[str, Parameter]
     """Subdomain name used for token-based authentication. Required if 'networkAcls' or 'privateEndpoints' are set."""
-    allowed_fqdn_list: Union[List[Union[str, Parameter[str]]], Parameter[List[str]]]
+    allowed_fqdn_list: Union[List[Union[str, Parameter]], Parameter]
     """List of allowed FQDN."""
-    api_properties: Union["ApiProperties", Parameter["ApiProperties"]]
+    api_properties: Union["ApiProperties", Parameter]
     """The API properties for special APIs."""
-    disable_local_auth: Union[bool, Parameter[bool]]
+    disable_local_auth: Union[bool, Parameter]
     """Allow only Azure AD authentication. Should be enabled for security reasons."""
-    dynamic_throttling_enabled: Union[bool, Parameter[bool]]
+    dynamic_throttling_enabled: Union[bool, Parameter]
     """The flag to enable dynamic throttling."""
-    location: Union[str, Parameter[str]]
+    location: Union[str, Parameter]
     """Location for all Resources."""
     managed_identities: "ManagedIdentity"
     """The managed identity definition for this resource."""
-    migration_token: Union[str, Parameter[str]]
+    migration_token: Union[str, Parameter]
     """Resource migration token."""
-    network_acls: Union["CognitiveServicesNetworkRuleSet", Parameter["CognitiveServicesNetworkRuleSet"]]
+    network_acls: Union["CognitiveServicesNetworkRuleSet", Parameter]
     """A collection of rules governing the accessibility from specific network locations."""
-    public_network_access: Union[Literal["Disabled", "Enabled"], Parameter[str]]
-    """Whether or not public network access is allowed for this resource. For security reasons it should be disabled. If not specified, it will be disabled by default if private endpoints are set and networkAcls are not set."""
-    restore: Union[bool, Parameter[bool]]
-    """Restore a soft-deleted cognitive service at deployment time. Will fail if no such soft-deleted resource exists."""
-    restrict_outbound_network_access: Union[bool, Parameter[bool]]
+    public_network_access: Union[Literal["Disabled", "Enabled"], Parameter]
+    """Whether or not public network access is allowed for this resource. For security reasons it should be disabled.
+    If not specified, it will be disabled by default if private endpoints are set and networkAcls are not set.
+    """
+    restore: Union[bool, Parameter]
+    """Restore a soft-deleted cognitive service at deployment time. Will fail if no such soft-deleted resource
+    exists.
+    """
+    restrict_outbound_network_access: Union[bool, Parameter]
     """Restrict outbound network access."""
     roles: Union[
-        Parameter[List[Union[str, "RoleAssignment"]]],
+        Parameter,
         List[
             Union[
-                Parameter[Union[str, "RoleAssignment"]],
+                Parameter,
                 "RoleAssignment",
                 Literal[
                     "Cognitive Services Contributor",
@@ -100,10 +102,10 @@ class CognitiveServicesKwargs(TypedDict, total=False):
     ]
     """Array of role assignments to create."""
     user_roles: Union[
-        Parameter[List[Union[str, "RoleAssignment"]]],
+        Parameter,
         List[
             Union[
-                Parameter[Union[str, "RoleAssignment"]],
+                Parameter,
                 "RoleAssignment",
                 Literal[
                     "Cognitive Services Contributor",
@@ -142,10 +144,12 @@ class CognitiveServicesKwargs(TypedDict, total=False):
     """Array of Role assignments to create for user principal ID"""
     sku: Union[
         Literal["C2", "C3", "C4", "F0", "F1", "S", "S0", "S1", "S10", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9"],
-        Parameter[str],
+        Parameter,
     ]
-    """SKU of the Cognitive Services account. Use 'Get-AzCognitiveServicesAccountSku' to determine a valid combinations of 'kind' and 'SKU' for your Azure region."""
-    tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict[str, str]]]
+    """SKU of the Cognitive Services account. Use 'Get-AzCognitiveServicesAccountSku' to determine a valid
+    combinations of 'kind' and 'SKU' for your Azure region.
+    """
+    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Tags of the resource."""
     # storage: List[object]
     # """The storage accounts for this resource."""
@@ -175,7 +179,7 @@ class CognitiveServicesAccount(_ClientResource[CognitiveServicesAccountResourceT
         name: Optional[str] = None,
         *,
         kind: Union[
-            Parameter[str],
+            Parameter,
             Literal[
                 "AIServices",
                 "AnomalyDetector",
@@ -262,8 +266,8 @@ class CognitiveServicesAccount(_ClientResource[CognitiveServicesAccountResourceT
     def reference(
         cls,
         *,
-        name: Union[str, Parameter[str]],
-        resource_group: Optional[Union[str, Parameter[str], ResourceGroup]] = None,
+        name: Union[str, Parameter],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup]] = None,
     ) -> "CognitiveServicesAccount[ResourceReference]":
         from .types import RESOURCE, VERSION
 
@@ -292,9 +296,12 @@ class CognitiveServicesAccount(_ClientResource[CognitiveServicesAccountResourceT
         self._version = VERSION
         return self._version
 
+    def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:  # pylint: disable=unused-argument
+        raise RuntimeError("No deterministic endpoint.")
+
     def _build_symbol(self) -> ResourceSymbol:
         symbol = super()._build_symbol()
-        symbol._value = f"{self.properties['kind'].lower()}_" + symbol._value
+        symbol._value = f"{self.properties['kind'].lower()}_" + symbol._value  # pylint: disable=protected-access
         return symbol
 
     def _find_all_resource_match(
@@ -337,35 +344,37 @@ class CognitiveServicesAccount(_ClientResource[CognitiveServicesAccountResourceT
 
 
 class AIServicesKwargs(TypedDict, total=False):
-    """"""
-
-    custom_subdomain_name: Union[str, Parameter[str]]
+    custom_subdomain_name: Union[str, Parameter]
     """Subdomain name used for token-based authentication. Required if 'networkAcls' or 'privateEndpoints' are set."""
-    allowed_fqdn_list: Union[List[Union[str, Parameter[str]]], Parameter[List[str]]]
+    allowed_fqdn_list: Union[List[Union[str, Parameter]], Parameter]
     """List of allowed FQDN."""
-    disable_local_auth: Union[bool, Parameter[bool]]
+    disable_local_auth: Union[bool, Parameter]
     """Allow only Azure AD authentication. Should be enabled for security reasons."""
-    dynamic_throttling_enabled: Union[bool, Parameter[bool]]
+    dynamic_throttling_enabled: Union[bool, Parameter]
     """The flag to enable dynamic throttling."""
-    location: Union[str, Parameter[str]]
+    location: Union[str, Parameter]
     """Location for all Resources."""
     managed_identities: "ManagedIdentity"
     """The managed identity definition for this resource."""
-    migration_token: Union[str, Parameter[str]]
+    migration_token: Union[str, Parameter]
     """Resource migration token."""
-    network_acls: Union["NetworkRuleSet", Parameter["NetworkRuleSet"]]
+    network_acls: Union["CognitiveServicesNetworkRuleSet", Parameter]
     """A collection of rules governing the accessibility from specific network locations."""
-    public_network_access: Union[Literal["Disabled", "Enabled"], Parameter[str]]
-    """Whether or not public network access is allowed for this resource. For security reasons it should be disabled. If not specified, it will be disabled by default if private endpoints are set and networkAcls are not set."""
-    restore: Union[bool, Parameter[bool]]
-    """Restore a soft-deleted cognitive service at deployment time. Will fail if no such soft-deleted resource exists."""
-    restrict_outbound_network_access: Union[bool, Parameter[bool]]
+    public_network_access: Union[Literal["Disabled", "Enabled"], Parameter]
+    """Whether or not public network access is allowed for this resource. For security reasons it should be disabled.
+    If not specified, it will be disabled by default if private endpoints are set and networkAcls are not set.
+    """
+    restore: Union[bool, Parameter]
+    """Restore a soft-deleted cognitive service at deployment time. Will fail if no such soft-deleted resource
+    exists.
+    """
+    restrict_outbound_network_access: Union[bool, Parameter]
     """Restrict outbound network access."""
     roles: Union[
-        Parameter[List[Union[str, "RoleAssignment"]]],
+        Parameter,
         List[
             Union[
-                Parameter[Union[str, "RoleAssignment"]],
+                Parameter,
                 "RoleAssignment",
                 Literal[
                     "Cognitive Services Contributor",
@@ -403,10 +412,10 @@ class AIServicesKwargs(TypedDict, total=False):
     ]
     """Array of role assignments to create."""
     user_roles: Union[
-        Parameter[List[Union[str, "RoleAssignment"]]],
+        Parameter,
         List[
             Union[
-                Parameter[Union[str, "RoleAssignment"]],
+                Parameter,
                 "RoleAssignment",
                 Literal[
                     "Cognitive Services Contributor",
@@ -445,10 +454,12 @@ class AIServicesKwargs(TypedDict, total=False):
     """Array of Role assignments to create for user principal ID"""
     sku: Union[
         Literal["C2", "C3", "C4", "F0", "F1", "S", "S0", "S1", "S10", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9"],
-        Parameter[str],
+        Parameter,
     ]
-    """SKU of the Cognitive Services account. Use 'Get-AzCognitiveServicesAccountSku' to determine a valid combinations of 'kind' and 'SKU' for your Azure region."""
-    tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict]]
+    """SKU of the Cognitive Services account. Use 'Get-AzCognitiveServicesAccountSku' to determine a valid
+    combinations of 'kind' and 'SKU' for your Azure region.
+    """
+    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Tags of the resource."""
     # storage: List[object]
     # """The storage accounts for this resource."""

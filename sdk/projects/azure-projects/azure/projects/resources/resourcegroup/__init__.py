@@ -3,28 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Dict, List, Literal, Mapping, Tuple, Type, TypedDict, Union, Optional, Any, overload
+from typing import TYPE_CHECKING, Dict, Literal, Mapping, Tuple, TypedDict, Union, Optional, Any
 from typing_extensions import TypeVar, Unpack
 
 from .._identifiers import ResourceIdentifiers
 from ..._parameters import GLOBAL_PARAMS
-from ..._bicep.expressions import (
-    Expression,
-    Output,
-    Parameter,
-    ResourceSymbol,
-    Variable,
-    UniqueString,
-    Subscription,
-)
-from ..._bicep.utils import generate_name, generate_suffix
-from ..._parameters import LOCATION, DEFAULT_NAME, AZD_TAGS
+from ..._bicep.expressions import Parameter, ResourceSymbol, Subscription
 from ..._resource import Resource, FieldsType, FieldType, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
     from .types import ResourceGroupResource
+    from ..._component import AzureInfrastructure
 
 
 _DEFAULT_RESOURCE_GROUP: "ResourceGroupResource" = {
@@ -37,9 +29,9 @@ _DEFAULT_RESOURCE_GROUP: "ResourceGroupResource" = {
 class ResourceGroupKwargs(TypedDict, total=False):
     # lock: 'Lock'
     # """The lock settings of the service."""
-    location: Union[str, Parameter[str]]
+    location: Union[str, Parameter]
     """Location of the Resource Group. It uses the deployment's location when not provided."""
-    tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict[str, str]]]
+    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Tags of the Resource Group."""
 
 
@@ -55,7 +47,7 @@ class ResourceGroup(Resource[ResourceGroupResourceType]):
         self,
         properties: Optional["ResourceGroupResource"] = None,
         /,
-        name: Optional[Union[str, Parameter[str]]] = None,
+        name: Optional[Union[str, Parameter]] = None,
         **kwargs: Unpack["ResourceGroupKwargs"],
     ) -> None:
         extensions: ExtensionResources = defaultdict(list)
@@ -81,8 +73,8 @@ class ResourceGroup(Resource[ResourceGroupResourceType]):
     def reference(
         cls,
         *,
-        name: Union[str, Parameter[str]],
-        subscription: Optional[Union[str, Parameter[str]]] = None,
+        name: Union[str, Parameter],
+        subscription: Optional[Union[str, Parameter]] = None,
     ) -> "ResourceGroup[ResourceReference]":
         from .types import RESOURCE, VERSION
 
@@ -112,7 +104,7 @@ class ResourceGroup(Resource[ResourceGroupResourceType]):
         prefix = f"/subscriptions/{self._settings['subscription'](config_store=config_store)}/providers/"
         return prefix + f"{self._resource}/{self._settings['name'](config_store=config_store)}"
 
-    def __bicep__(
+    def __bicep__(  # pylint: disable=unused-argument
         self,
         fields: FieldsType,
         *,

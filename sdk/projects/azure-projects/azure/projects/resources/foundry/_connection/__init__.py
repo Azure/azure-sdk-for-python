@@ -3,42 +3,31 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=arguments-differ
 
 from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
-    Callable,
     Dict,
     List,
     Literal,
-    Mapping,
-    Tuple,
     TypedDict,
     Union,
-    overload,
     Optional,
-    Any,
-    Type,
 )
 from typing_extensions import TypeVar, Unpack
 
 from ..._identifiers import ResourceIdentifiers
-from ...resourcegroup import ResourceGroup
-from ...._parameters import GLOBAL_PARAMS
 from ...._bicep.utils import generate_name
-from ...._bicep.expressions import Expression, Output, Parameter, ResourceSymbol
-from ...._setting import StoredPrioritizedSetting
-from ...._resource import ExtensionResources, ResourceReference, _ClientResource, _build_envs, FieldType, FieldsType
+from ...._bicep.expressions import Output, Parameter
+from ...._resource import ExtensionResources, Resource
 
 if TYPE_CHECKING:
-    from .. import AIHub
-    from ...._component import AzureInfrastructure
+    from .. import AIHub, AIProject
     from .types import ConnectionResource
 
 
 class ConnectionKwargs(TypedDict, total=False):
-    """"""
-
     category: Literal[
         "ADLSGen2",
         "AIServices",
@@ -164,7 +153,7 @@ _DEFAULT_CONNECTION: "ConnectionResource" = {
 ConnectionResourceType = TypeVar("ConnectionResourceType", default="ConnectionResource")
 
 
-class AIConnection(_ClientResource[ConnectionResourceType]):
+class AIConnection(Resource[ConnectionResourceType]):
     DEFAULTS: "ConnectionResource" = _DEFAULT_CONNECTION
     resource: Literal["Microsoft.MachineLearningServices/workspaces/connections"]
     properties: ConnectionResourceType
@@ -223,38 +212,11 @@ class AIConnection(_ClientResource[ConnectionResourceType]):
         self._version = VERSION
         return self._version
 
-    def _build_suffix(self, name):
-        return "_" + generate_name(name.value)
+    def _build_suffix(self, value: Optional[Union[str, Parameter]]) -> str:
+        try:
+            return "_" + generate_name(value.value)
+        except AttributeError:
+            return "_" + generate_name(value)
 
     def _outputs(self, **kwargs) -> Dict[str, Output]:
         return {}
-
-    # def _merge_properties(
-    #         self,
-    #         current_properties: 'ConnectionResource',
-    #         new_properties: 'ConnectionResource',
-    #         *,
-    #         parameters: Dict[str, Parameter],
-    #         symbol: ResourceSymbol,
-    #         fields: FieldsType,
-    #         resource_group: ResourceSymbol,
-    #         **kwargs
-    #     ) -> Dict[str, Any]:
-    #     output_config = super()._merge_properties(
-    #         current_properties,
-    #         new_properties,
-    #         symbol=symbol,
-    #         fields=fields,
-    #         resource_group=resource_group,
-    #         parameters=parameters,
-    #         **kwargs
-    #     )
-    #     if 'properties' in current_properties:
-    #         # TODO: Fix this recursive call problem....
-    #         # We only want to run this on the first call, not subsequent ones.
-    #         if not current_properties['properties'].get('authType') and not current_properties['properties'].get('credentials'):
-    #             current_properties['properties']['credentials'] = {
-    #                 'clientId': parameters['managedIdentityClientId'],
-    #                 'resourceId': parameters['managedIdentityId']
-    #             }
-    #     return output_config

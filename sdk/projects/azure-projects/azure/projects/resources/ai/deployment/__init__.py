@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=arguments-differ
 
 from collections import defaultdict
 from typing import (
@@ -14,17 +15,15 @@ from typing import (
     Tuple,
     TypedDict,
     Union,
-    overload,
     Optional,
     Any,
-    Type,
 )
 from typing_extensions import TypeVar, Unpack
 
 from ..._identifiers import ResourceIdentifiers
 from ...resourcegroup import ResourceGroup
 from ...._parameters import GLOBAL_PARAMS
-from ...._bicep.expressions import Expression, Output, Parameter, ResourceSymbol
+from ...._bicep.expressions import Output, Parameter, ResourceSymbol
 from ...._setting import StoredPrioritizedSetting
 from ...._resource import (
     ExtensionResources,
@@ -41,19 +40,21 @@ if TYPE_CHECKING:
 
 
 class DeploymentKwargs(TypedDict, total=False):
-    model: Union[str, Parameter[str]]
+    model: Union[str, Parameter]
     """Deployment model name."""
-    format: Union[str, Parameter[str]]
+    format: Union[str, Parameter]
     """Deployment model format."""
-    version: Union[str, Parameter[str]]
+    version: Union[str, Parameter]
     """Deployment model version."""
-    sku: Union[str, Parameter[str]]
+    sku: Union[str, Parameter]
     """The name of the SKU. Ex - P3. It is typically a letter+number code."""
-    capacity: Union[int, Parameter[int]]
-    """If the SKU supports scale out/in then the capacity integer should be included. If scale out/in is not possible for the resource this may be omitted."""
-    rai_policy: Union[str, Parameter[str]]
+    capacity: Union[int, Parameter]
+    """If the SKU supports scale out/in then the capacity integer should be included. If scale out/in is not possible
+    for the resource this may be omitted.
+    """
+    rai_policy: Union[str, Parameter]
     """The name of RAI policy."""
-    tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict]]
+    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Tags of the resource."""
 
 
@@ -145,9 +146,9 @@ class AIDeployment(_ClientResource[AIDeploymentResourceType]):
     def reference(
         cls,
         *,
-        name: Union[str, Parameter[str]],
-        account: Union[str, Parameter[str], AIServices],
-        resource_group: Optional[Union[str, Parameter[str], "ResourceGroup"]] = None,
+        name: Union[str, Parameter],
+        account: Union[str, Parameter, AIServices],
+        resource_group: Optional[Union[str, Parameter, "ResourceGroup"]] = None,
     ) -> "AIDeployment[ResourceReference]":
         from .types import RESOURCE, VERSION
 
@@ -162,7 +163,10 @@ class AIDeployment(_ClientResource[AIDeploymentResourceType]):
         return super().reference(resource=resource, name=name, parent=parent)
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
-        return f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/deployments/{self._settings['name'](config_store=config_store)}"
+        return (
+            f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"
+            + f"deployments/{self._settings['name'](config_store=config_store)}"
+        )  # pylint: disable=protected-access
 
     def _outputs(
         self,
@@ -188,14 +192,14 @@ _DEFAULT_AI_CHAT: "DeploymentResource" = {
     "name": GLOBAL_PARAMS["defaultName"].format("{}-chat-deployment"),
     "properties": {
         "model": {
-            "name": Parameter("aiChatModel", type=str, default="gpt-4o-mini"),
-            "format": Parameter("aiChatModelFormat", type=str, default="OpenAI"),
-            "version": Parameter("aiChatModelVersion", type=str, default="2024-07-18"),
+            "name": Parameter("aiChatModel", default="gpt-4o-mini"),
+            "format": Parameter("aiChatModelFormat", default="OpenAI"),
+            "version": Parameter("aiChatModelVersion", default="2024-07-18"),
         }
     },
     "sku": {
-        "name": Parameter("aiChatModelSku", type=str, default="Standard"),
-        "capacity": Parameter("aiChatModelCapacity", type=int, default=30),
+        "name": Parameter("aiChatModelSku", default="Standard"),
+        "capacity": Parameter("aiChatModelCapacity", default=30),
     },
 }
 
@@ -212,7 +216,7 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
         /,
         account: Optional[Union[str, AIServices]] = None,
         *,
-        deployment_name: Optional[Union[str, Parameter[str]]] = None,
+        deployment_name: Optional[Union[str, Parameter]] = None,
         **kwargs: Unpack["DeploymentKwargs"],
     ) -> None:
         super().__init__(
@@ -230,19 +234,22 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
     def reference(
         cls,
         *,
-        name: Union[str, Parameter[str]],
-        account: Union[str, Parameter[str], AIServices],
+        name: Union[str, Parameter],
+        account: Union[str, Parameter, AIServices],
         resource_group: Optional[Union[str, "ResourceGroup"]] = None,
     ) -> "AIChat[ResourceReference]":
         existing = super().reference(name=name, account=account, resource_group=resource_group)
         return existing
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
-        return f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/deployments/{self._settings['name'](config_store=config_store)}/chat/completions"
+        return (
+            f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"
+            + f"deployments/{self._settings['name'](config_store=config_store)}/chat/completions"
+        )  # pylint: disable=protected-access
 
     def _build_symbol(self) -> ResourceSymbol:
         symbol = super()._build_symbol()
-        symbol._value = f"chat_" + symbol._value
+        symbol._value = "chat_" + symbol._value  # pylint: disable=protected-access
         return symbol
 
     def _outputs(
@@ -349,14 +356,14 @@ _DEFAULT_AI_TEXT_EMBEDDINGS: "DeploymentResource" = {
     "name": GLOBAL_PARAMS["defaultName"].format("{}-embeddings-deployment"),
     "properties": {
         "model": {
-            "name": Parameter("aiEmbeddingsModel", type=str, default="text-embedding-ada-002"),
-            "format": Parameter("aiEmbeddingsModelFormat", type=str, default="OpenAI"),
-            "version": Parameter("aiEmbeddingsModelVersion", type=str, default="2"),
+            "name": Parameter("aiEmbeddingsModel", default="text-embedding-ada-002"),
+            "format": Parameter("aiEmbeddingsModelFormat", default="OpenAI"),
+            "version": Parameter("aiEmbeddingsModelVersion", default="2"),
         }
     },
     "sku": {
-        "name": Parameter("aiEmbeddingsModelSku", type=str, default="Standard"),
-        "capacity": Parameter("aiEmbeddingsModelCapacity", type=int, default=30),
+        "name": Parameter("aiEmbeddingsModelSku", default="Standard"),
+        "capacity": Parameter("aiEmbeddingsModelCapacity", default=30),
     },
 }
 
@@ -372,7 +379,7 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
         /,
         account: Optional[Union[str, AIServices]] = None,
         *,
-        deployment_name: Optional[Union[str, Parameter[str]]] = None,
+        deployment_name: Optional[Union[str, Parameter]] = None,
         **kwargs: Unpack["DeploymentKwargs"],
     ) -> None:
         super().__init__(
@@ -389,18 +396,21 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
     def reference(
         cls,
         *,
-        name: Union[str, Parameter[str]],
+        name: Union[str, Parameter],
         account: Optional[Union[str, AIServices]] = None,
         resource_group: Optional[Union[str, "ResourceGroup"]] = None,
     ) -> "AIEmbeddings[ResourceReference]":
         return super().reference(name=name, account=account, resource_group=resource_group)
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
-        return f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/deployments/{self._settings['name'](config_store=config_store)}/embeddings"
+        return (
+            f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"
+            + f"deployments/{self._settings['name'](config_store=config_store)}/embeddings"
+        )  # pylint: disable=protected-access
 
     def _build_symbol(self) -> ResourceSymbol:
         symbol = super()._build_symbol()
-        symbol._value = f"embeddings_" + symbol._value
+        symbol._value = "embeddings_" + symbol._value  # pylint: disable=protected-access
         return symbol
 
     def _outputs(

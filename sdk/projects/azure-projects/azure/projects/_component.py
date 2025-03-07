@@ -11,9 +11,7 @@ import threading
 import keyword
 import types
 from typing import (
-    TYPE_CHECKING,
     Coroutine,
-    Generic,
     Mapping,
     Protocol,
     TypeVar,
@@ -26,23 +24,19 @@ from typing import (
 )
 from typing_extensions import Self, dataclass_transform
 
-from ._bicep.expressions import Parameter, MISSING, Default, ParameterType
-from ._resource import Resource, _load_dev_environment, ResourceReference
-from .resources import ResourceIdentifiers, RESOURCE_FROM_CLIENT_ANNOTATION
+from ._bicep.expressions import Parameter, MISSING, Default
+from ._resource import Resource, _load_dev_environment
+from .resources import RESOURCE_FROM_CLIENT_ANNOTATION
 from .resources.resourcegroup import ResourceGroup
 from .resources.managedidentity import UserAssignedIdentity
 
-if TYPE_CHECKING:
-    from .resources.resourcegroup.types import ResourceGroupResource
-    from .resources.managedidentity.types import UserAssignedIdentityResource
-
 
 def get_annotations(cls: Type) -> Mapping[str, Any]:
-    """This is needed for Python <3.10"""
+    # This is needed for Python <3.10
     try:
-        from inspect import get_annotations
+        from inspect import get_annotations as _get_annotations
 
-        return get_annotations(cls)
+        return _get_annotations(cls)
     except ImportError:
         pass
     try:
@@ -52,33 +46,32 @@ def get_annotations(cls: Type) -> Mapping[str, Any]:
     return {}
 
 
-class DefaultFactory(Protocol, Generic[ParameterType]):
-    def __call__(self, **kwargs) -> ParameterType: ...
-class ResourceFactory(Protocol):
-    def __call__(self, **kwargs) -> Resource: ...
+class DefaultFactory(Protocol):
+    def __call__(self, **kwargs) -> Any: ...
 
 
-class ComponentField(Parameter[ParameterType]):
+class ComponentField(Parameter):
     def __init__(
         self,
         *,
-        default: ParameterType,
-        factory: Union[Literal[Default.MISSING], DefaultFactory[ParameterType]],
+        default: Any,
+        factory: Union[Literal[Default.MISSING], DefaultFactory],
         repr: bool,
         init: bool,
         alias: Optional[str],
         **kwargs,
     ):
+        # TODO: make Parameter name optional?
+        super().__init__("", default=default)
         self._factory = factory
         self._kwargs = kwargs
-        self._default = default
         self._owner: Optional[Type] = None
         self._attrname: Optional[str] = None
         self._name: Optional[str] = None
+        self._type: Optional[Type] = None
         self.repr = repr
         self.init = init
         self.alias = alias
-        self.module = "main"  # TODO: refactor this away
 
     @property
     def name(self) -> str:
@@ -86,13 +79,9 @@ class ComponentField(Parameter[ParameterType]):
             raise ValueError("ComponentField not used in component class.")
         return f"{self._owner.__name__}.{self._name}"
 
-    @property
-    def default(self) -> Any:
-        return self._default
-
     def __repr__(self) -> str:
-        if self._default is not MISSING:
-            return f"ComponentField(default={repr(self._default)})"
+        if self.default is not MISSING:
+            return f"ComponentField(default={repr(self.default)})"
         if self._factory is not MISSING:
             return f"ComponentField(default={self._factory.__name__}(**kwargs))"
         return "ComponentField()"
@@ -106,19 +95,23 @@ class ComponentField(Parameter[ParameterType]):
         except KeyError:
             raise RuntimeError(f"'{owner.__name__}.{name}' is missing type hint.") from None
 
-    def __get__(self, obj, obj_type) -> ParameterType:
+    def __get__(
+        self,
+        obj,
+        _,
+    ):
         if obj is None:
-            if self._default is not MISSING:
-                return self._default
+            if self.default is not MISSING:
+                return self.default
             if self._factory is not MISSING:
                 return self._factory(**self._kwargs)
             raise AttributeError(f"No default value provided for '{self._owner.__name__}.{self._name}'.")
         return getattr(obj, self._attrname)
 
-    def __set__(self, obj: "AzureInfrastructure", value: ParameterType):
+    def __set__(self, obj: "AzureInfrastructure", value: Any) -> None:
         setattr(obj, self._attrname, value)
 
-    def get(self, obj: Optional["AzureInfrastructure"] = None, /) -> ParameterType:
+    def get(self, obj: Optional["AzureInfrastructure"] = None, /) -> Any:
         return self.__get__(obj, obj.__class__)
 
 
@@ -136,16 +129,7 @@ def field(
     return ComponentField(default=default, factory=factory, repr=repr, init=True, alias=alias, **kwargs)
 
 
-def _parameter(*, default=None, default_factory=None, **kwargs):
-    # TODO not sure how we should handle this yet
-    if default:
-        return default
-    if default_factory:
-        return default_factory()
-    return None
-
-
-@dataclass_transform(field_specifiers=(field, _parameter), kw_only_default=True)
+@dataclass_transform(field_specifiers=(field,), kw_only_default=True)
 class AzureInfraComponent(type):
     # TODO: The typing of the __call__ function is breaking
     # typing when kwargs are passed into the constructor.
@@ -237,7 +221,7 @@ class AzureInfrastructure(metaclass=AzureInfraComponent):
 
 
 def make_infra(cls_name, fields, *, bases=(), namespace=None, module=None) -> Type[AzureInfrastructure]:
-    """This code is taken from stdlib dataclasses.make_dataclass"""
+    # This code is taken from stdlib dataclasses.make_dataclass.
     if namespace is None:
         namespace = {}
     # TODO: Are the bases ordered backwards?
@@ -286,10 +270,10 @@ def make_infra(cls_name, fields, *, bases=(), namespace=None, module=None) -> Ty
     # where the dataclass is created.
     if module is None:
         try:
-            module = sys._getframemodulename(1) or "__main__"
+            module = sys._getframemodulename(1) or "__main__"  # pylint: disable=protected-access
         except AttributeError:
             try:
-                module = sys._getframe(1).f_globals.get("__name__", "__main__")
+                module = sys._getframe(1).f_globals.get("__name__", "__main__")  # pylint: disable=protected-access
             except (AttributeError, ValueError):
                 pass
     if module is not None:
@@ -297,7 +281,7 @@ def make_infra(cls_name, fields, *, bases=(), namespace=None, module=None) -> Ty
     return cls
 
 
-@dataclass_transform(field_specifiers=(_parameter, field), kw_only_default=True)
+@dataclass_transform(field_specifiers=(field,), kw_only_default=True)
 class AzureAppComponent(type):
     def __call__(cls, **kwargs):
         instance_kwargs = {}
@@ -355,9 +339,8 @@ T = TypeVar("T")
 
 
 def run_coroutine_sync(coroutine: Coroutine[Any, Any, T], timeout: float = 30) -> T:
-    """TODO: Found this on StackOverflow - needs further inspection
-    https://stackoverflow.com/questions/55647753/call-async-function-from-sync-function-while-the-synchronous-function-continues
-    """
+    # TODO: Found this on StackOverflow - needs further inspection
+    # https://stackoverflow.com/questions/55647753/call-async-function-from-sync-function-while-the-synchronous-function-continues
 
     def run_in_new_loop():
         new_loop = asyncio.new_event_loop()
@@ -375,10 +358,9 @@ def run_coroutine_sync(coroutine: Coroutine[Any, Any, T], timeout: float = 30) -
     if threading.current_thread() is threading.main_thread():
         if not loop.is_running():
             return loop.run_until_complete(coroutine)
-        else:
-            with ThreadPoolExecutor() as pool:
-                future = pool.submit(run_in_new_loop)
-                return future.result(timeout=timeout)
+        with ThreadPoolExecutor() as pool:
+            future = pool.submit(run_in_new_loop)
+            return future.result(timeout=timeout)
     else:
         return asyncio.run_coroutine_threadsafe(coroutine, loop).result()
 
@@ -386,8 +368,8 @@ def run_coroutine_sync(coroutine: Coroutine[Any, Any, T], timeout: float = 30) -
 class AzureApp(metaclass=AzureAppComponent):
     # TODO: As these will have classattribute defaults, need to test behaviour
     # Might need to build a specifier object or use field
-    _config_store: Mapping[str, Any] = _parameter(alias="config_store", default_factory=dict)
-    _env_name: Optional[str] = _parameter(alias="env_name", default=None)  # TODO: Remove
+    _config_store: Mapping[str, Any] = field(alias="config_store", default_factory=dict)
+    _env_name: Optional[str] = field(alias="env_name", default=None)  # TODO: Remove
 
     def __init__(self, **kwargs):
         self._config_store = kwargs.pop("config_store")

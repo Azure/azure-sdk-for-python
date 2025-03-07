@@ -3,10 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=arguments-differ
 
-from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Mapping, Tuple, Union, overload, Optional, Any, Type
-from typing_extensions import TypeVar, Unpack
 from collections import defaultdict
+from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Mapping, Tuple, Union, Optional, Any
+from typing_extensions import TypeVar, Unpack
 
 from ...._component import ComponentField
 from ..._identifiers import ResourceIdentifiers
@@ -21,36 +22,55 @@ if TYPE_CHECKING:
 
 
 class BlobStorageKwargs(StorageAccountKwargs):
-    automatic_snapshot_policy_enabled: Union[bool, Parameter[bool]]
+    automatic_snapshot_policy_enabled: Union[bool, Parameter]
     """Automatic Snapshot is enabled if set to true."""
     change_feed_enabled: bool
-    """The blob service properties for change feed events. Indicates whether change feed event logging is enabled for the Blob service."""
+    """The blob service properties for change feed events. Indicates whether change feed event logging is
+    enabled for the Blob service.
+    """
     change_feed_retention_in_days: int
-    """Indicates whether change feed event logging is enabled for the Blob service. Indicates the duration of changeFeed retention in days. If left blank, it indicates an infinite retention of the change feed."""
+    """Indicates whether change feed event logging is enabled for the Blob service. Indicates the duration of
+    changeFeed retention in days. If left blank, it indicates an infinite retention of the change feed.
+    """
     container_delete_retention_policy_allow_permanent_delete: bool
-    """This property when set to true allows deletion of the soft deleted blob versions and snapshots. This property cannot be used with blob restore policy. This property only applies to blob service and does not apply to containers or file share."""
+    """This property when set to true allows deletion of the soft deleted blob versions and snapshots. This property
+    cannot be used with blob restore policy. This property only applies to blob service and does not apply to
+    containers or file share.
+    """
     container_delete_retention_policy_days: int
     """Indicates the number of days that the deleted item should be retained."""
     container_delete_retention_policy_enabled: bool
     """The blob service properties for container soft delete. Indicates whether DeleteRetentionPolicy is enabled."""
-    cors_rules: Union[List[Union["BlobsCorsRule", Parameter["BlobsCorsRule"]]], Parameter[List["BlobsCorsRule"]]]
-    """Specifies CORS rules for the Blob service. You can include up to five CorsRule elements in the request. If no CorsRule elements are included in the request body, all CORS rules will be deleted, and CORS will be disabled for the Blob service."""
+    cors_rules: Union[List[Union["BlobsCorsRule", Parameter]], Parameter]
+    """Specifies CORS rules for the Blob service. You can include up to five CorsRule elements in the request. If no
+    CorsRule elements are included in the request body, all CORS rules will be deleted, and CORS will be disabled
+    for the Blob service.
+    """
     default_service_version: str
-    """Indicates the default version to use for requests to the Blob service if an incoming request's version is not specified. Possible values include version 2008-10-27 and all more recent versions."""
+    """Indicates the default version to use for requests to the Blob service if an incoming request's version is not
+    specified. Possible values include version 2008-10-27 and all more recent versions.
+    """
     delete_retention_policy_allow_permanent_delete: bool
-    """This property when set to true allows deletion of the soft deleted blob versions and snapshots. This property cannot be used with blob restore policy. This property only applies to blob service and does not apply to containers or file share."""
+    """This property when set to true allows deletion of the soft deleted blob versions and snapshots. This property
+    cannot be used with blob restore policy. This property only applies to blob service and does not apply to
+    containers or file share.
+    """
     delete_retention_policy_days: int
     """Indicates the number of days that the deleted blob should be retained."""
     delete_retention_policy_enabled: bool
     """The blob service properties for blob soft delete."""
-    is_versioning_enabled: Union[bool, Parameter[bool]]
+    is_versioning_enabled: Union[bool, Parameter]
     """Use versioning to automatically maintain previous versions of your blobs."""
     last_access_time_tracking_policy_enabled: bool
-    """The blob service property to configure last access time based tracking policy. When set to true last access time based tracking is enabled."""
+    """The blob service property to configure last access time based tracking policy. When set to true last access
+    time based tracking is enabled.
+    """
     restore_policy_days: int
     """How long this blob can be restored. It should be less than DeleteRetentionPolicy days."""
     restore_policy_enabled: bool
-    """The blob service properties for blob restore policy. If point-in-time restore is enabled, then versioning, change feed, and blob soft delete must also be enabled."""
+    """The blob service properties for blob restore policy. If point-in-time restore is enabled, then versioning,
+    change feed, and blob soft delete must also be enabled.
+    """
 
 
 _DEFAULT_BLOB_SERVICE: "BlobServiceResource" = {"name": "default"}
@@ -72,7 +92,7 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
         self,
         properties: Optional["BlobServiceResource"] = None,
         /,
-        account: Optional[Union[str, Parameter[str], ComponentField, StorageAccount]] = None,
+        account: Optional[Union[str, Parameter, ComponentField, StorageAccount]] = None,
         **kwargs: Unpack["BlobStorageKwargs"],
     ) -> None:
         existing = kwargs.pop("existing", False)
@@ -91,23 +111,28 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
                     "automatic_snapshot_policy_enabled"
                 )
             # if 'change_feed_enabled' in kwargs:
-            #     blob_service_params['changeFeedEnabled'] = kwargs.pop('change_feed_enabled')
+            #     properties['changeFeedEnabled'] = kwargs.pop('change_feed_enabled')
             # if 'change_feed_retention_in_days' in kwargs:
-            #     blob_service_params['changeFeedRetentionInDays'] = kwargs.pop('change_feed_retention_in_days')
+            #     properties['changeFeedRetentionInDays'] = kwargs.pop('change_feed_retention_in_days')
             # if 'container_delete_retention_policy_allow_permanent_delete' in kwargs:
-            #     blob_service_params['containerDeleteRetentionPolicyAllowPermanentDelete'] = kwargs.pop('container_delete_retention_policy_allow_permanent_delete')
+            # properties['containerDeleteRetentionPolicyAllowPermanentDelete'] = kwargs.pop(
+            #     'container_delete_retention_policy_allow_permanent_delete'
+            # )
             # if 'container_delete_retention_policy_days' in kwargs:
-            #     blob_service_params['containerDeleteRetentionPolicyDays'] = kwargs.pop('container_delete_retention_policy_days')
+            #     properties['containerDeleteRetentionPolicyDays']=kwargs.pop('container_delete_retention_policy_days')
             # if 'container_delete_retention_policy_enabled' in kwargs:
-            #     blob_service_params['containerDeleteRetentionPolicyEnabled'] = kwargs.pop('container_delete_retention_policy_enabled')
+            # properties['containerDeleteRetentionPolicyEnabled'] = kwargs.pop(
+            #     'container_delete_retention_policy_enabled'
+            # )
             if "cors_rules" in kwargs:
                 properties["properties"]["cors"] = {}
                 properties["properties"]["cors"]["corsRules"] = kwargs.pop("cors_rules")
-            #     blob_service_params['corsRules'] = kwargs.pop('cors_rules')
             # if 'default_service_version' in kwargs:
-            #     blob_service_params['defaultServiceVersion'] = kwargs.pop('default_service_version')
+            #     properties['defaultServiceVersion'] = kwargs.pop('default_service_version')
             # if 'delete_retention_policy_allow_permanent_delete' in kwargs:
-            #     blob_service_params['deleteRetentionPolicyAllowPermanentDelete'] = kwargs.pop('delete_retention_policy_allow_permanent_delete')
+            # properties['deleteRetentionPolicyAllowPermanentDelete'] = kwargs.pop(
+            #     'delete_retention_policy_allow_permanent_delete'
+            # )
             # if 'delete_retention_policy_days' in kwargs:
             #     blob_service_params['deleteRetentionPolicyDays'] = kwargs.pop('delete_retention_policy_days')
             # if 'delete_retention_policy_enabled' in kwargs:
@@ -117,7 +142,9 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
             if "is_versioning_enabled" in kwargs:
                 properties["properties"]["isVersioningEnabled"] = kwargs.pop("is_versioning_enabled")
             # if 'last_access_time_tracking_policy_enabled' in kwargs:
-            #     blob_service_params['lastAccessTimeTrackingPolicyEnabled'] = kwargs.pop('last_access_time_tracking_policy_enabled')
+            # properties['lastAccessTimeTrackingPolicyEnabled'] = kwargs.pop(
+            #     'last_access_time_tracking_policy_enabled'
+            # )
             # if 'restore_policy_days' in kwargs:
             #     blob_service_params['restorePolicyDays'] = kwargs.pop('restore_policy_days')
             # if 'restore_policy_enabled' in kwargs:
@@ -163,8 +190,8 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
     def reference(
         cls,
         *,
-        account: Union[str, Parameter[str], StorageAccount, ComponentField],
-        resource_group: Optional[Union[str, Parameter[str], ResourceGroup]] = None,
+        account: Union[str, Parameter, StorageAccount, ComponentField],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup]] = None,
     ) -> "BlobStorage[ResourceReference]":
         from .types import RESOURCE, VERSION
 
@@ -182,7 +209,7 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
             resource=resource,
             parent=parent,
         )
-        existing._settings["name"].set_value("default")
+        existing._settings["name"].set_value("default")  # pylint: disable=protected-access
         return existing
 
     def __repr__(self) -> str:
@@ -190,12 +217,14 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
         return f"{self.__class__.__name__}({name})"
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
-        return f"https://{self.parent._settings['name'](config_store=config_store)}.blob.core.windows.net/"
+        return f"https://{self.parent._settings['name'](config_store=config_store)}.blob.core.windows.net/"  # pylint: disable=protected-access
 
     def _outputs(self, *, parents: Tuple[ResourceSymbol, ...], **kwargs) -> Dict[str, Output]:
         return {
             "endpoint": Output(
-                f"AZURE_BLOBS_ENDPOINT{self.parent._suffix}", "properties.primaryEndpoints.blob", parents[0]
+                f"AZURE_BLOBS_ENDPOINT{self.parent._suffix}",
+                "properties.primaryEndpoints.blob",
+                parents[0],  # pylint: disable=protected-access
             )
         }
 

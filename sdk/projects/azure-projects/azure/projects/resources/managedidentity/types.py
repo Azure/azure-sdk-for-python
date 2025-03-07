@@ -13,9 +13,9 @@ VERSION = "2023-07-31-preview"
 
 
 class UserAssignedIdentityResource(TypedDict, total=False):
-    name: Union[str, Parameter[str]]
+    name: Union[str, Parameter]
     """The name of the User Assigned Identity."""
-    location: Union[str, Parameter[str]]
+    location: Union[str, Parameter]
     """Location of the identity. It uses the deployment's location when not provided."""
-    tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict[str, str]]]
+    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Tags of the resource."""

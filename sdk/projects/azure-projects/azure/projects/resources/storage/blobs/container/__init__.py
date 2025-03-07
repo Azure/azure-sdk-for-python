@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=arguments-differ
 
 from collections import defaultdict
 import inspect
@@ -16,18 +17,16 @@ from typing import (
     Tuple,
     TypedDict,
     Union,
-    overload,
     Optional,
     Any,
-    Type,
 )
 from typing_extensions import TypeVar, Unpack
 
 from ....._component import ComponentField
 from ....._parameters import GLOBAL_PARAMS
 from ...._identifiers import ResourceIdentifiers
-from ....._bicep.expressions import Output, Parameter, ResourceSymbol, Expression
-from ....._resource import Resource, _ClientResource, _build_envs, ExtensionResources, ResourceReference
+from ....._bicep.expressions import Output, Parameter, ResourceSymbol
+from ....._resource import _ClientResource, ExtensionResources, ResourceReference
 from .. import BlobStorage
 
 
@@ -52,16 +51,19 @@ class ContainerKwargs(TypedDict, total=False):
     # immutability_policy_properties: Dict[str, object]
     # """Configure immutability policy."""
     immutable_storage_with_versioning_enabled: bool
-    """This is an immutable property, when set to true it enables object level immutability at the container level. The property is immutable and can only be set to true at the container creation time. Existing containers must undergo a migration process."""
+    """This is an immutable property, when set to true it enables object level immutability at the container level.
+    The property is immutable and can only be set to true at the container creation time. Existing containers must
+    undergo a migration process.
+    """
     metadata: Dict[str, object]
     """A name-value pair to associate with the container as metadata."""
     public_access: Literal["Blob", "Container", "None"]
     """Specifies whether data in the container may be accessed publicly and the level of access."""
     roles: Union[
-        Parameter[List[Union["RoleAssignment", str]]],
+        Parameter,
         List[
             Union[
-                Parameter[Union[str, "RoleAssignment"]],
+                Parameter,
                 "RoleAssignment",
                 Literal[
                     "Contributor",
@@ -83,10 +85,10 @@ class ContainerKwargs(TypedDict, total=False):
     ]
     """Array of role assignments to create for user-assigned identity."""
     user_roles: Union[
-        Parameter[List[Union["RoleAssignment", str]]],
+        Parameter,
         List[
             Union[
-                Parameter[Union[str, "RoleAssignment"]],
+                Parameter,
                 "RoleAssignment",
                 Literal[
                     "Contributor",
@@ -126,7 +128,7 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
         properties: Optional["ContainerResource"] = None,
         /,
         name: Optional[str] = None,
-        account: Optional[Union[str, Parameter[str], BlobStorage, ComponentField]] = None,
+        account: Optional[Union[str, Parameter, BlobStorage, ComponentField]] = None,
         **kwargs: Unpack["ContainerKwargs"],
     ) -> None:
         existing = kwargs.pop("existing", False)
@@ -193,9 +195,9 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
     def reference(
         cls,
         *,
-        name: Union[str, Parameter[str]],
-        account: Optional[Union[str, Parameter[str], BlobStorage]] = None,
-        resource_group: Optional[Union[str, Parameter[str], "ResourceGroup"]] = None,
+        name: Union[str, Parameter],
+        account: Optional[Union[str, Parameter, BlobStorage]] = None,
+        resource_group: Optional[Union[str, Parameter, "ResourceGroup"]] = None,
     ) -> "BlobContainer[ResourceReference]":
         from .types import RESOURCE, VERSION
 
@@ -211,7 +213,10 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
         return super().reference(resource=resource, name=name, parent=parent)
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
-        return f"https://{self.parent.parent._settings['name'](config_store=config_store)}.blob.core.windows.net/{self._settings['name'](config_store=config_store)}"
+        return (
+            f"https://{self.parent.parent._settings['name'](config_store=config_store)}.blob.core.windows.net"
+            + f"/{self._settings['name'](config_store=config_store)}"
+        )  # pylint: disable=protected-access
 
     def _outputs(
         self,

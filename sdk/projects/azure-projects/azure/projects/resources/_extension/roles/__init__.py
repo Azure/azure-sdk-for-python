@@ -4,12 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Literal, TypedDict, Union, Optional, overload
-from typing_extensions import TypeVar, Self, Unpack
+from typing import TYPE_CHECKING, Dict, Literal, Union, Optional
+from typing_extensions import TypeVar
 
 from ..._identifiers import ResourceIdentifiers
-from ...._resource import FieldType, Resource, ResourceReference
-from ...._bicep.utils import generate_suffix, generate_name
+from ...._resource import Resource, ResourceReference
+from ...._bicep.utils import generate_name
 from ...._bicep.expressions import Output, RoleDefinition, Parameter
 from ....resources.resourcegroup import ResourceGroup
 
@@ -62,8 +62,11 @@ class RoleAssignment(Resource[RoleAssignmentResourceType]):
     def _outputs(self, **kwargs) -> Dict[str, Output]:
         return {}
 
-    def _build_suffix(self, name):
-        return "_" + generate_name(name.value)
+    def _build_suffix(self, value: Optional[Union[str, Parameter]]) -> str:
+        try:
+            return "_" + generate_name(value.value)
+        except AttributeError:
+            return "_" + generate_name(value)
 
 
 BUILT_IN_ROLES: Dict[str, RoleDefinition] = {
@@ -91,7 +94,6 @@ BUILT_IN_ROLES: Dict[str, RoleDefinition] = {
     "Storage Queue Data Reader": RoleDefinition("19e7f393-937e-4f77-808e-94535e297925"),
     "Storage Table Data Contributor": RoleDefinition("0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3"),
     "Storage Table Data Reader": RoleDefinition("76199698-9eea-4c19-bc75-cec21354c6b6"),
-    "User Access Administrator": RoleDefinition("18d7d88d-d35e-4fb5-a5c3-7773c20a72d9"),
     "Cognitive Services Contributor": RoleDefinition("25fbc0a9-bd7c-42a3-aa1a-3b75d497ee68"),
     "Cognitive Services Custom Vision Contributor": RoleDefinition("c1ff6cc2-c111-46fe-8896-e0ef812ad9f3"),
     "Cognitive Services Custom Vision Deployment": RoleDefinition("5c4089e1-6d96-4d2f-b296-c1bc7137275f"),

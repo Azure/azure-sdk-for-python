@@ -3,68 +3,87 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=arguments-differ
 
-from typing import TYPE_CHECKING, Dict, List, Literal, TypedDict, Union, Optional, overload
-from typing_extensions import TypeVar, Unpack
 from collections import defaultdict
+from typing import TYPE_CHECKING, Dict, List, Literal, TypedDict, Union, Optional
+from typing_extensions import TypeVar, Unpack
 
 from .._identifiers import ResourceIdentifiers
-from ..._resource import Resource, ExtensionResources, ResourceReference, FieldType
+from ..._resource import Resource, ExtensionResources, ResourceReference
 from ..._bicep.expressions import Parameter
 from .._extension import convert_managed_identities, ManagedIdentity, RoleAssignment
 from ..resourcegroup import ResourceGroup
 from ..._parameters import GLOBAL_PARAMS
 
 if TYPE_CHECKING:
-    from .types import StorageAccountResource, StorageNetworkRuleSet, AzureFilesIdentityBasedAuthentication, Encryption
+    from .types import StorageAccountResource, StorageNetworkRuleSet, AzureFilesIdentityBasedAuthentication
 
 
 class StorageAccountKwargs(TypedDict, total=False):
-    access_tier: Union[Literal["Cool", "Hot", "Premium"], Parameter[str]]
-    """Required if the Storage Account kind is set to BlobStorage. The access tier is used for billing. The "Premium" access tier is the default value for premium block blobs storage account type and it cannot be changed for the premium block blobs storage account type."""
-    enable_hierarchical_namespace: Union[bool, Parameter[bool]]
-    """If true, enables Hierarchical Namespace for the storage account. Required if enableSftp or enableNfsV3 is set to true."""
-    allow_blob_public_access: Union[bool, Parameter[bool]]
-    """Indicates whether public access is enabled for all blobs or containers in the storage account. For security reasons, it is recommended to set it to false."""
-    allow_cross_tenant_replication: Union[bool, Parameter[bool]]
+    access_tier: Union[Literal["Cool", "Hot", "Premium"], Parameter]
+    """Required if the Storage Account kind is set to BlobStorage. The access tier is used for billing. The "Premium"
+    access tier is the default value for premium block blobs storage account type and it cannot be changed for the
+    premium block blobs storage account type.
+    """
+    enable_hierarchical_namespace: Union[bool, Parameter]
+    """If true, enables Hierarchical Namespace for the storage account. Required if enableSftp or enableNfsV3 is
+    set to true.
+    """
+    allow_blob_public_access: Union[bool, Parameter]
+    """Indicates whether public access is enabled for all blobs or containers in the storage account. For security
+    reasons, it is recommended to set it to false.
+    """
+    allow_cross_tenant_replication: Union[bool, Parameter]
     """Allow or disallow cross AAD tenant object replication."""
-    allowed_copy_scope: Union[Literal["", "AAD", "PrivateLink"], Parameter[str]]
+    allowed_copy_scope: Union[Literal["", "AAD", "PrivateLink"], Parameter]
     """Restrict copy to and from Storage Accounts within an AAD tenant or with Private Links to the same VNet."""
-    allow_shared_key_access: Union[bool, Parameter[bool]]
-    """Indicates whether the storage account permits requests to be authorized with the account access key via Shared Key. If false, then all requests, including shared access signatures, must be authorized with Azure Active Directory (Azure AD). The default value is null, which is equivalent to true."""
+    allow_shared_key_access: Union[bool, Parameter]
+    """Indicates whether the storage account permits requests to be authorized with the account access key via Shared
+    Key. If false, then all requests, including shared access signatures, must be authorized with Azure Active
+    Directory (Azure AD). The default value is null, which is equivalent to true.
+    """
     azure_files_identity_auth: "AzureFilesIdentityBasedAuthentication"
     """Provides the identity based authentication settings for Azure Files."""
-    custom_domain_name: Union[str, Parameter[str]]
+    custom_domain_name: Union[str, Parameter]
     """Sets the custom domain name assigned to the storage account. Name is the CNAME source."""
-    custom_domain_use_subdomain_name: Union[bool, Parameter[bool]]
+    custom_domain_use_subdomain_name: Union[bool, Parameter]
     """Indicates whether indirect CName validation is enabled. This should only be set on updates."""
     # TODO: Configure default encryption
     # customer_managed_key: 'CustomerManagedKey'
     # """The customer managed key definition."""
-    default_to_oauth_authentication: Union[bool, Parameter[bool]]
+    default_to_oauth_authentication: Union[bool, Parameter]
     """A boolean flag which indicates whether the default authentication is OAuth or not."""
     # TODO: support diagnostics
     # diagnostic_settings: List['DiagnosticSetting']
     # """The diagnostic settings of the service."""
-    dns_endpoint_type: Union[Literal["", "AzureDnsZone", "Standard"], Parameter[str]]
-    """Allows you to specify the type of endpoint. Set this to AzureDNSZone to create a large number of accounts in a single subscription, which creates accounts in an Azure DNS Zone and the endpoint URL will have an alphanumeric DNS Zone identifier."""
-    enable_nfs_v3: Union[bool, Parameter[bool]]
+    dns_endpoint_type: Union[Literal["", "AzureDnsZone", "Standard"], Parameter]
+    """Allows you to specify the type of endpoint. Set this to AzureDNSZone to create a large number of accounts in a
+    single subscription, which creates accounts in an Azure DNS Zone and the endpoint URL will have an alphanumeric
+    DNS Zone identifier.
+    """
+    enable_nfs_v3: Union[bool, Parameter]
     """If true, enables NFS 3.0 support for the storage account. Requires enableHierarchicalNamespace to be true."""
-    enable_sftp: Union[bool, Parameter[bool]]
-    """If true, enables Secure File Transfer Protocol for the storage account. Requires enableHierarchicalNamespace to be true."""
-    # enable_telemetry: Union[bool, Parameter[bool]]
+    enable_sftp: Union[bool, Parameter]
+    """If true, enables Secure File Transfer Protocol for the storage account. Requires enableHierarchicalNamespace
+    to be true.
+    """
+    # enable_telemetry: Union[bool, Parameter]
     # """Enable/Disable usage telemetry for module."""
-    encryption: Union["Encryption", Parameter["Encryption"]]
+    encryption: Union["Encryption", Parameter]
     """Encryption settings to be used for server-side encryption for the storage account."""
-    is_local_user_enabled: Union[bool, Parameter[bool]]
+    is_local_user_enabled: Union[bool, Parameter]
     """Enables local users feature, if set to true."""
     # key_type: Literal['Account', 'Service']
     # """The keyType to use with Queue & Table services."""
-    kind: Union[Literal["BlobStorage", "BlockBlobStorage", "FileStorage", "Storage", "StorageV2"], Parameter[str]]
+    kind: Union[Literal["BlobStorage", "BlockBlobStorage", "FileStorage", "Storage", "StorageV2"], Parameter]
     """Type of Storage Account to create."""
-    large_file_shares_state: Union[Literal["Disabled", "Enabled"], Parameter[str]]
-    """Allow large file shares if sets to 'Enabled'. It cannot be disabled once it is enabled. Only supported on locally redundant and zone redundant file shares. It cannot be set on FileStorage storage accounts (storage accounts for premium file shares)."""
-    location: Union[str, Parameter[str]]
+    large_file_shares_state: Union[Literal["Disabled", "Enabled"], Parameter]
+    """Allow large file shares if sets to 'Enabled'. It cannot be disabled once it is enabled. Only supported on
+    locally redundant and zone redundant file shares. It cannot be set on FileStorage storage accounts (storage
+    accounts for premium file shares).
+    """
+    location: Union[str, Parameter]
     """Location for all resources."""
     # TODO: support locks
     # lock: 'Lock'
@@ -74,22 +93,32 @@ class StorageAccountKwargs(TypedDict, total=False):
     # TODO: support management policies
     # management_policy_rules: List[object]
     # """The Storage Account ManagementPolicies Rules."""
-    minimum_tls_version: Union[Literal["TLS1_2", "TLS1_3"], Parameter[str]]
-    """Set the minimum TLS version on request to storage. The TLS versions 1.0 and 1.1 are deprecated and not supported anymore."""
-    network_acls: Union["StorageNetworkRuleSet", Parameter["StorageNetworkRuleSet"]]
-    """Networks ACLs, this value contains IPs to whitelist and/or Subnet information. If in use, bypass needs to be supplied. For security reasons, it is recommended to set the DefaultAction Deny."""
+    minimum_tls_version: Union[Literal["TLS1_2", "TLS1_3"], Parameter]
+    """Set the minimum TLS version on request to storage. The TLS versions 1.0 and 1.1 are deprecated and not
+    supported anymore.
+    """
+    network_acls: Union["StorageNetworkRuleSet", Parameter]
+    """Networks ACLs, this value contains IPs to whitelist and/or Subnet information. If in use, bypass needs to be
+    supplied. For security reasons, it is recommended to set the DefaultAction Deny.
+    """
     # TODO: support private endpoints
     # private_endpoints: List['PrivateEndpoint']
-    # """Configuration details for private endpoints. For security reasons, it is recommended to use private endpoints whenever possible."""
-    public_network_access: Union[Literal["", "Disabled", "Enabled"], Parameter[str]]
-    """Whether or not public network access is allowed for this resource. For security reasons it should be disabled. If not specified, it will be disabled by default if private endpoints are set and networkAcls are not set."""
-    require_infrastructure_encryption: Union[bool, Parameter[bool]]
-    """A Boolean indicating whether or not the service applies a secondary layer of encryption with platform managed keys for data at rest. For security reasons, it is recommended to set it to true."""
+    # """Configuration details for private endpoints. For security reasons, it is recommended to use private
+    # endpoints whenever possible.
+    # """
+    public_network_access: Union[Literal["", "Disabled", "Enabled"], Parameter]
+    """Whether or not public network access is allowed for this resource. For security reasons it should be disabled.
+    If not specified, it will be disabled by default if private endpoints are set and networkAcls are not set.
+    """
+    require_infrastructure_encryption: Union[bool, Parameter]
+    """A Boolean indicating whether or not the service applies a secondary layer of encryption with platform managed
+    keys for data at rest. For security reasons, it is recommended to set it to true.
+    """
     roles: Union[
-        Parameter[List[Union["RoleAssignment", str]]],
+        Parameter,
         List[
             Union[
-                Parameter[Union[str, "RoleAssignment"]],
+                Parameter,
                 "RoleAssignment",
                 Literal[
                     "Contributor",
@@ -122,10 +151,10 @@ class StorageAccountKwargs(TypedDict, total=False):
     ]
     """Array of role assignments to create for user-assigned identity."""
     user_roles: Union[
-        Parameter[List[Union["RoleAssignment", str]]],
+        Parameter,
         List[
             Union[
-                Parameter[Union[str, "RoleAssignment"]],
+                Parameter,
                 "RoleAssignment",
                 Literal[
                     "Contributor",
@@ -158,7 +187,7 @@ class StorageAccountKwargs(TypedDict, total=False):
     ]
     """Array or role assignments to create for user principal ID"""
     # TODO: support timedelta
-    sas_expiration_period: Union[str, Parameter[str]]
+    sas_expiration_period: Union[str, Parameter]
     """The SAS expiration period. DD.HH:MM:SS."""
     sku: Union[
         Literal[
@@ -171,12 +200,12 @@ class StorageAccountKwargs(TypedDict, total=False):
             "Standard_RAGZRS",
             "Standard_ZRS",
         ],
-        Parameter[str],
+        Parameter,
     ]
     """Storage Account Sku Name."""
-    supports_https_traffic_only: Union[bool, Parameter[bool]]
+    supports_https_traffic_only: Union[bool, Parameter]
     """Allows HTTPS traffic only to storage service if sets to true."""
-    tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict]]
+    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Tags of the resource."""
 
 
@@ -197,11 +226,11 @@ class StorageAccount(Resource[StorageAccountResourceType]):
     resource: Literal["Microsoft.Storage/storageAccounts"]
     properties: StorageAccountResourceType
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-branches,too-many-statements
         self,
         properties: Optional["StorageAccountResource"] = None,
         /,
-        name: Optional[Union[str, Parameter[str]]] = None,
+        name: Optional[Union[str, Parameter]] = None,
         **kwargs: Unpack[StorageAccountKwargs],
     ) -> None:
         existing = kwargs.pop("existing", False)

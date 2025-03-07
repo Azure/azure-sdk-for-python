@@ -3,70 +3,76 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=arguments-differ
 
 from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
     Dict,
     List,
     Literal,
     Mapping,
-    Type,
     TypedDict,
     Union,
     Optional,
-    overload,
 )
 from typing_extensions import TypeVar, Unpack
 
 from ..resourcegroup import ResourceGroup
 from .._identifiers import ResourceIdentifiers
 from ..._component import ComponentField
-from .._extension import convert_managed_identities, ManagedIdentity, RoleAssignment
+from .._extension import RoleAssignment
 from ..._parameters import GLOBAL_PARAMS
-from ..._bicep.expressions import Output, Expression, ResourceSymbol, Parameter
-from ..._resource import _ClientResource, FieldsType, FieldType, ResourceReference, ExtensionResources
+from ..._bicep.expressions import Output, ResourceSymbol, Parameter
+from ..._resource import _ClientResource, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
     from .types import KeyVaultResource, KeyVaultNetworkRuleSet
 
 
 class KeyVaultKwargs(TypedDict, total=False):
-    access_policies: Union[List[Union["AccessPolicy", Parameter["AccessPolicy"]]], Parameter[List["AccessPolicy"]]]
+    access_policies: Union[List[Union["AccessPolicy", Parameter]], Parameter]
     """All access policies to create."""
-    create_mode: Union[Literal["default", "recover"], Parameter[str]]
+    create_mode: Union[Literal["default", "recover"], Parameter]
     """The vault's create mode to indicate whether the vault need to be recovered or not. - recover or default."""
     # diagnostic_settings: List['DiagnosticSetting']
     # """The diagnostic settings of the service."""
-    enable_purge_protection: Union[bool, Parameter[bool]]
+    enable_purge_protection: Union[bool, Parameter]
     """Provide 'true' to enable Key Vault's purge protection feature."""
-    enable_rbac_authorization: Union[bool, Parameter[bool]]
-    """Property that controls how data actions are authorized. When true, the key vault will use Role Based Access Control (RBAC) for authorization of data actions, and the access policies specified in vault properties will be ignored. When false, the key vault will use the access policies specified in vault properties, and any policy stored on Azure Resource Manager will be ignored. Note that management actions are always authorized with RBAC."""
-    enable_soft_delete: Union[bool, Parameter[bool]]
+    enable_rbac_authorization: Union[bool, Parameter]
+    """Property that controls how data actions are authorized. When true, the key vault will use Role Based Access
+    Control (RBAC) for authorization of data actions, and the access policies specified in vault properties will be
+    ignored. When false, the key vault will use the access policies specified in vault properties, and any policy
+    stored on Azure Resource Manager will be ignored. Note that management actions are always authorized with RBAC.
+    """
+    enable_soft_delete: Union[bool, Parameter]
     """Switch to enable/disable Key Vault's soft delete feature."""
-    enable_vault_for_deployment: Union[bool, Parameter[bool]]
+    enable_vault_for_deployment: Union[bool, Parameter]
     """Specifies if the vault is enabled for deployment by script or compute."""
-    enable_vault_for_disk_encryption: Union[bool, Parameter[bool]]
+    enable_vault_for_disk_encryption: Union[bool, Parameter]
     """Specifies if the azure platform has access to the vault for enabling disk encryption scenarios."""
-    enable_vault_for_template_deployment: Union[bool, Parameter[bool]]
+    enable_vault_for_template_deployment: Union[bool, Parameter]
     """Specifies if the vault is enabled for a template deployment."""
-    location: Union[bool, Parameter[str]]
+    location: Union[bool, Parameter]
     """Location for all resources."""
     # lock: 'Lock'
     # """The lock settings of the service."""
-    network_acls: Union["KeyVaultNetworkRuleSet", Parameter["KeyVaultNetworkRuleSet"]]
+    network_acls: Union["KeyVaultNetworkRuleSet", Parameter]
     """A collection of rules governing the accessibility from specific network locations."""
     # private_endpoints: List['PrivateEndpoint']
-    # """Configuration details for private endpoints. For security reasons, it is recommended to use private endpoints whenever possible."""
+    # """Configuration details for private endpoints. For security reasons, it is recommended to use private endpoints
+    # whenever possible.
+    # """
     public_network_access: Literal["", "Disabled", "Enabled"]
-    """Whether or not public network access is allowed for this resource. For security reasons it should be disabled. If not specified, it will be disabled by default if private endpoints are set and networkAcls are not set."""
+    """Whether or not public network access is allowed for this resource. For security reasons it should be disabled.
+    If not specified, it will be disabled by default if private endpoints are set and networkAcls are not set.
+    """
     roles: Union[
-        Parameter[List[Union[str, "RoleAssignment"]]],
+        Parameter,
         List[
             Union[
-                Parameter[Union[str, "RoleAssignment"]],
+                Parameter,
                 "RoleAssignment",
                 Literal[
                     "Contributor",
@@ -85,10 +91,10 @@ class KeyVaultKwargs(TypedDict, total=False):
     ]
     """Array of role assignments to create."""
     user_roles: Union[
-        Parameter[List[Union[str, "RoleAssignment"]]],
+        Parameter,
         List[
             Union[
-                Parameter[Union[str, "RoleAssignment"]],
+                Parameter,
                 "RoleAssignment",
                 Literal[
                     "Contributor",
@@ -106,11 +112,11 @@ class KeyVaultKwargs(TypedDict, total=False):
         ],
     ]
     """Array of Role assignments to create for user principal ID"""
-    sku: Union[Literal["premium", "standard"], Parameter[str]]
+    sku: Union[Literal["premium", "standard"], Parameter]
     """Specifies the SKU for the vault."""
-    soft_delete_retention: Union[bool, Parameter[int]]
+    soft_delete_retention: Union[bool, Parameter]
     """softDelete data retention days. It accepts >=7 and <=90."""
-    tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict[str, str]]]
+    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Resource tags."""
 
 
@@ -201,8 +207,8 @@ class KeyVault(_ClientResource[KeyVaultResourceType]):
     def reference(
         cls,
         *,
-        name: Union[str, Parameter[str], ComponentField[str]],
-        resource_group: Optional[Union[str, Parameter[str], ResourceGroup]] = None,
+        name: Union[str, Parameter, ComponentField],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup]] = None,
     ) -> "KeyVault[ResourceReference]":
         from .types import RESOURCE, VERSION
 

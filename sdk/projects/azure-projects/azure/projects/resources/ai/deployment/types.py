@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=line-too-long
 
-from typing import TYPE_CHECKING, TypedDict, Literal, List, Dict, Union
+from typing import TypedDict, Literal, Dict, Union
 from typing_extensions import Required
 
 from ...._bicep.expressions import Parameter
@@ -15,76 +16,76 @@ VERSION = "2024-10-01"
 
 
 class DeploymentCapacitySettings(TypedDict, total=False):
-    designatedCapacity: Union[int, Parameter[int]]
+    designatedCapacity: Union[int, Parameter]
     """The designated capacity."""
-    priority: Union[int, Parameter[int]]
+    priority: Union[int, Parameter]
     """The priority of this capacity setting."""
 
 
 class DeploymentScaleSettings(TypedDict, total=False):
-    capacity: Union[int, Parameter[int]]
+    capacity: Union[int, Parameter]
     """Deployment capacity."""
-    scaleType: Union[Parameter[str], Literal["Manual", "Standard"]]
+    scaleType: Union[Parameter, Literal["Manual", "Standard"]]
     """Deployment scale type."""
 
 
 class DeploymentModel(TypedDict, total=False):
     """Properties of Cognitive Services account deployment model."""
 
-    format: Required[Union[str, Parameter[str]]]
+    format: Required[Union[str, Parameter]]
     """Deployment model format."""
-    name: Required[Union[str, Parameter[str]]]
+    name: Required[Union[str, Parameter]]
     """Deployment model name."""
-    version: Union[str, Parameter[str]]
+    version: Union[str, Parameter]
     """Deployment model version. If version is not specified, a default version will be assigned. The default version is different for different models and might change when there is new version available for a model. Default version for a model could be found from list models API."""
-    publisher: Union[str, Parameter[str]]
+    publisher: Union[str, Parameter]
     """Deployment model publisher."""
-    source: Union[str, Parameter[str]]
+    source: Union[str, Parameter]
     """Deployment model source ARM resource ID."""
-    sourceAccount: Union[str, Parameter[str]]
+    sourceAccount: Union[str, Parameter]
     """Source of the model, another Microsoft.CognitiveServices accounts ARM resource ID."""
 
 
 class DeploymentSku(TypedDict, total=False):
     """The resource model definition representing SKU."""
 
-    name: Required[Union[str, Parameter[str]]]
+    name: Required[Union[str, Parameter]]
     """The name of the SKU. Ex - P3. It is typically a letter+number code."""
-    capacity: Union[int, Parameter[int]]
+    capacity: Union[int, Parameter]
     """If the SKU supports scale out/in then the capacity integer should be included. If scale out/in is not possible for the resource this may be omitted."""
-    family: Union[str, Parameter[str]]
+    family: Union[str, Parameter]
     """If the service has different generations of hardware, for the same SKU, then that can be captured here."""
-    size: Union[str, Parameter[str]]
+    size: Union[str, Parameter]
     """The SKU size. When the name field is the combination of tier and some other value, this would be the standalone code."""
-    tier: Union[Parameter[str], Literal["Basic", "Enterprise", "Free", "Premium", "Standard"]]
+    tier: Union[Parameter, Literal["Basic", "Enterprise", "Free", "Premium", "Standard"]]
     """This field is required to be implemented by the Resource Provider if the service has more than one tier, but is not required on a PUT."""
 
 
 class DeploymentProperties(TypedDict, total=False):
-    capacitySettings: Union[DeploymentCapacitySettings, Parameter[DeploymentCapacitySettings]]
+    capacitySettings: Union[DeploymentCapacitySettings, Parameter]
     """Internal use only."""
-    currentCapacity: Union[int, Parameter[int]]
+    currentCapacity: Union[int, Parameter]
     """The current capacity."""
-    model: Union[DeploymentModel, Parameter[DeploymentModel]]
+    model: Union[DeploymentModel, Parameter]
     """Properties of Cognitive Services account deployment model."""
-    parentDeploymentName: Union[str, Parameter[str]]
+    parentDeploymentName: Union[str, Parameter]
     """The name of parent deployment."""
-    raiPolicyName: Union[str, Parameter[str]]
+    raiPolicyName: Union[str, Parameter]
     """The name of RAI policy."""
-    scaleSettings: Union[DeploymentScaleSettings, Parameter[DeploymentScaleSettings]]
+    scaleSettings: Union[DeploymentScaleSettings, Parameter]
     """Properties of Cognitive Services account deployment model. (Deprecated, please use Deployment.sku instead.)"""
     versionUpgradeOption: Union[
-        Parameter[str], Literal["NoAutoUpgrade", "OnceCurrentVersionExpired", "OnceNewDefaultVersionAvailable"]
+        Parameter, Literal["NoAutoUpgrade", "OnceCurrentVersionExpired", "OnceNewDefaultVersionAvailable"]
     ]
     """Deployment model version upgrade option."""
 
 
 class DeploymentResource(TypedDict, total=False):
-    name: Union[str, Parameter[str]]
+    name: Union[str, Parameter]
     """The resource name."""
     properties: "DeploymentProperties"
     """Properties of Cognitive Services account deployment."""
-    sku: Union["DeploymentSku", Parameter["DeploymentSku"]]
+    sku: Union["DeploymentSku", Parameter]
     """The resource model definition representing SKU"""
-    tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict[str, str]]]
+    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Dictionary of tag names and values. See Tags in templates"""

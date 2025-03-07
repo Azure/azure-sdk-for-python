@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=arguments-differ
 
 from collections import defaultdict
 from typing import (
@@ -13,7 +14,6 @@ from typing import (
     List,
     Literal,
     Mapping,
-    Type,
     TypedDict,
     Union,
     Optional,
@@ -26,8 +26,8 @@ from .._identifiers import ResourceIdentifiers
 from ..._component import ComponentField
 from .._extension import convert_managed_identities, ManagedIdentity, RoleAssignment
 from ..._parameters import GLOBAL_PARAMS
-from ..._bicep.expressions import Output, Expression, ResourceSymbol, Parameter
-from ..._resource import _ClientResource, FieldsType, FieldType, ResourceReference, ExtensionResources
+from ..._bicep.expressions import Output, ResourceSymbol, Parameter
+from ..._resource import _ClientResource, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
     from .types import SearchServiceResource, SearchNetworkRuleSet
@@ -37,15 +37,24 @@ if TYPE_CHECKING:
 
 class SearchServiceKwargs(TypedDict, total=False):
     auth_options: "AuthOption"
-    """Defines the options for how the data plane API of a Search service authenticates requests. Must remain an empty object {} if 'disableLocalAuth' is set to true."""
+    """Defines the options for how the data plane API of a Search service authenticates requests. Must remain an
+    empty object {} if 'disableLocalAuth' is set to true.
+    """
     cmk_enforcement: Literal["Disabled", "Enabled", "Unspecified"]
-    """Describes a policy that determines how resources within the search service are to be encrypted with Customer Managed Keys."""
+    """Describes a policy that determines how resources within the search service are to be encrypted with Customer
+    Managed Keys.
+    """
     # diagnostic_settings: List['DiagnosticSetting']
     # """The diagnostic settings of the service."""
     disable_local_auth: bool
-    """When set to true, calls to the search service will not be permitted to utilize API keys for authentication. This cannot be set to true if 'authOptions' are defined."""
+    """When set to true, calls to the search service will not be permitted to utilize API keys for authentication.
+    This cannot be set to true if 'authOptions' are defined.
+    """
     hosting_mode: Literal["default", "highDensity"]
-    """Applicable only for the standard3 SKU. You can set this property to enable up to 3 high density partitions that allow up to 1000 indexes, which is much higher than the maximum indexes allowed for any other SKU. For the standard3 SKU, the value is either 'default' or 'highDensity'. For all other SKUs, this value must be 'default'."""
+    """Applicable only for the standard3 SKU. You can set this property to enable up to 3 high density partitions that
+    allow up to 1000 indexes, which is much higher than the maximum indexes allowed for any other SKU. For the
+    standard3 SKU, the value is either 'default' or 'highDensity'. For all other SKUs, this value must be 'default'.
+    """
     location: str
     """Location for all Resources."""
     # lock: 'Lock'
@@ -55,18 +64,28 @@ class SearchServiceKwargs(TypedDict, total=False):
     network_acls: "SearchNetworkRuleSet"
     """Network specific rules that determine how the Azure Cognitive Search service may be reached."""
     partition_count: int
-    """The number of partitions in the search service; if specified, it can be 1, 2, 3, 4, 6, or 12. Values greater than 1 are only valid for standard SKUs. For 'standard3' services with hostingMode set to 'highDensity', the allowed values are between 1 and 3."""
+    """The number of partitions in the search service; if specified, it can be 1, 2, 3, 4, 6, or 12. Values greater
+    than 1 are only valid for standard SKUs. For 'standard3' services with hostingMode set to 'highDensity', the
+    allowed values are between 1 and 3.
+    """
     # private_endpoints: List['PrivateEndpoint']
-    # """Configuration details for private endpoints. For security reasons, it is recommended to use private endpoints whenever possible."""
+    # """Configuration details for private endpoints. For security reasons, it is recommended to use private endpoints
+    # whenever possible.
+    # """
     public_network_access: Literal["Disabled", "Enabled"]
-    """This value can be set to 'Enabled' to avoid breaking changes on existing customer resources and templates. If set to 'Disabled', traffic over public interface is not allowed, and private endpoint connections would be the exclusive access method."""
+    """This value can be set to 'Enabled' to avoid breaking changes on existing customer resources and templates. If
+    set to 'Disabled', traffic over public interface is not allowed, and private endpoint connections would be the
+    exclusive access method.
+    """
     replica_count: int
-    """The number of replicas in the search service. If specified, it must be a value between 1 and 12 inclusive for standard SKUs or between 1 and 3 inclusive for basic SKU."""
+    """The number of replicas in the search service. If specified, it must be a value between 1 and 12 inclusive for
+    standard SKUs or between 1 and 3 inclusive for basic SKU.
+    """
     roles: Union[
-        Parameter[List[Union[str, "RoleAssignment"]]],
+        Parameter,
         List[
             Union[
-                Parameter[Union[str, "RoleAssignment"]],
+                Parameter,
                 "RoleAssignment",
                 Literal[
                     "Contributor",
@@ -83,10 +102,10 @@ class SearchServiceKwargs(TypedDict, total=False):
     ]
     """Array of role assignments to create."""
     user_roles: Union[
-        Parameter[List[Union[str, "RoleAssignment"]]],
+        Parameter,
         List[
             Union[
-                Parameter[Union[str, "RoleAssignment"]],
+                Parameter,
                 "RoleAssignment",
                 Literal[
                     "Contributor",
@@ -103,7 +122,9 @@ class SearchServiceKwargs(TypedDict, total=False):
     ]
     """Array of Role assignments to create for user principal ID"""
     semantic_search: Literal["disabled", "free", "standard"]
-    """Sets options that control the availability of semantic search. This configuration is only possible for certain search SKUs in certain locations."""
+    """Sets options that control the availability of semantic search. This configuration is only possible for certain
+    search SKUs in certain locations.
+    """
     # shared_private_link_resources: List['SharedPrivateLinkResource']
     # """The sharedPrivateLinkResources to create as part of the search Service."""
     sku: Literal["basic", "free", "standard", "standard2", "standard3", "storage_optimized_l1", "storage_optimized_l2"]
@@ -144,7 +165,7 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
         self,
         properties: Optional["SearchServiceResource"] = None,
         /,
-        name: Optional[Union[str, Parameter[str]]] = None,
+        name: Optional[Union[str, Parameter]] = None,
         **kwargs: Unpack[SearchServiceKwargs],
     ) -> None:
         existing = kwargs.pop("existing", False)
@@ -204,8 +225,8 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
     def reference(
         cls,
         *,
-        name: Union[str, Parameter[str], ComponentField[str]],
-        resource_group: Optional[Union[str, Parameter[str], ResourceGroup]] = None,
+        name: Union[str, Parameter, ComponentField],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup]] = None,
     ) -> "SearchService[ResourceReference]":
         from .types import RESOURCE, VERSION
 

@@ -3,16 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, List, Literal, TypedDict, Union, overload, Optional, Dict
+from typing import TYPE_CHECKING, Literal, TypedDict, Union, Optional, Dict
 from typing_extensions import TypeVar, Unpack
 
 from .._identifiers import ResourceIdentifiers
 from ...resources.resourcegroup import ResourceGroup
 from ..._bicep.expressions import Output, ResourceSymbol, Parameter, Variable
 from ..._parameters import GLOBAL_PARAMS
-from ..._resource import FieldType, Resource, ResourceReference, ExtensionResources
+from ..._resource import Resource, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
     from .types import UserAssignedIdentityResource
@@ -21,9 +22,9 @@ if TYPE_CHECKING:
 class UserAssignedIdentityKwargs(TypedDict, total=False):
     # lock: 'Lock'
     # """The lock settings of the service."""
-    location: Union[str, Parameter[str]]
+    location: Union[str, Parameter]
     """Location of the Resource Group. It uses the deployment's location when not provided."""
-    tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict[str, str]]]
+    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Tags of the Resource Group."""
 
 
@@ -44,7 +45,7 @@ class UserAssignedIdentity(Resource[UserAssignedIdentityResourceType]):
         self,
         properties: Optional["UserAssignedIdentityResource"] = None,
         /,
-        name: Optional[Union[str, Parameter[str]]] = None,
+        name: Optional[Union[str, Parameter]] = None,
         **kwargs: Unpack["UserAssignedIdentityKwargs"],
     ) -> None:
         extensions: ExtensionResources = defaultdict(list)
@@ -105,7 +106,7 @@ class UserAssignedIdentity(Resource[UserAssignedIdentityResourceType]):
         symbol = f"{resource_ref}{self._suffix.lower()}" if self._suffix else resource_ref
         return ResourceSymbol(symbol, principal_id=True)
 
-    def _outputs(self, symbol, **kwargs) -> Dict[str, Output]:
+    def _outputs(self, symbol, **kwargs) -> Dict[str, Output]:  # pylint: disable=unused-argument
         # TODO: This results in duplicate outputs if there's multiple identities.
         # Not sure if it's really needed as most people wont be using managedidentitycredential locally.
         # return {'client_id': Output("AZURE_CLIENT_ID", "properties.clientId", symbol)}
@@ -115,11 +116,12 @@ class UserAssignedIdentity(Resource[UserAssignedIdentityResourceType]):
         symbols = super().__bicep__(
             fields, parameters=parameters, infra_component=infra_component, module_name=module_name, **kwargs
         )
-        parameters["managedIdentityId"] = Variable("managedIdentityId", Output(None, "id", symbols[0]), module="")
+        # TODO: This will get overwritten with subsequence managed identities....
+        parameters["managedIdentityId"] = Variable("managedIdentityId", Output(None, "id", symbols[0]))
         parameters["managedIdentityPrincipalId"] = Variable(
-            "managedIdentityPrincipalId", Output(None, "properties.principalId", symbols[0]), module=""
+            "managedIdentityPrincipalId", Output(None, "properties.principalId", symbols[0])
         )
         parameters["managedIdentityClientId"] = Variable(
-            "managedIdentityClientId", Output(None, "properties.clientId", symbols[0]), module=""
+            "managedIdentityClientId", Output(None, "properties.clientId", symbols[0])
         )
         return symbols

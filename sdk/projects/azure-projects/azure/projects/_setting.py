@@ -12,7 +12,7 @@ from azure.core.settings import _unset, _Unset, PrioritizedSetting, ValidInputTy
 
 from ._bicep.expressions import Parameter, MISSING, Expression
 
-_formatted_param = re.compile("\$\{(.*?)\}")
+_formatted_param = re.compile(r"\$\{(.*?)\}")
 
 
 class StoredPrioritizedSetting(PrioritizedSetting[ValidInputType, ValueType]):
@@ -44,33 +44,27 @@ class StoredPrioritizedSetting(PrioritizedSetting[ValidInputType, ValueType]):
     def __call__(
         self, value: Optional[ValidInputType] = None, *, config_store: Optional[Mapping[str, Any]] = None
     ) -> ValueType:
-        """Return the setting value according to the standard precedence.
-
-        :param value: value
-        :type value: str or int or float or None
-        :returns: the value of the setting
-        :rtype: str or int or float
-        :raises: RuntimeError if no value can be determined
-        """
         settingvalue = self._raw_value(value, config_store=config_store)
         if isinstance(settingvalue, str):
             for parameter in _formatted_param.findall(settingvalue):
                 try:
                     settingvalue = settingvalue.replace(f"${{{parameter}}}", config_store[parameter])
-                except KeyError:
-                    raise RuntimeError(f"Unable to resolve parameterized value: '{settingvalue}'")
+                except KeyError as e:
+                    raise RuntimeError(f"Unable to resolve parameterized value: '{settingvalue}'") from e
         return self._convert(settingvalue)
 
-    def _convert_parameter(self, value: Parameter[ValidInputType], *, config_store) -> ValidInputType:
+    def _convert_parameter(self, value: Parameter, *, config_store) -> ValidInputType:
         if value.name in config_store:
             return config_store[value.name]
-        if value._varname and os.environ.get(value._varname) not in [None, ""]:
-            return os.environ[value._varname]
+        if value.env_var and os.environ.get(value.env_var) not in [None, ""]:
+            return os.environ[value.env_var]
         if value.default is not MISSING and not isinstance(value.default, Expression):
             return value.default
         raise RuntimeError(f"No value for parameter {value.name} found in config store.")
 
-    def _raw_value(self, value: Optional[ValidInputType] = None, *, config_store) -> ValidInputType:
+    def _raw_value(
+        self, value: Optional[ValidInputType] = None, *, config_store
+    ) -> ValidInputType:  # pylint: disable=too-many-return-statements
         # 5. immediate values
         if value is not None:
             if isinstance(value, Parameter):
@@ -120,7 +114,7 @@ class StoredPrioritizedSetting(PrioritizedSetting[ValidInputType, ValueType]):
         if self._env_var:
             all_vars += f"{self._env_var}\n"
         message = f"No configured value found for setting {self._name!r}.\nChecked the following settings:\n{all_vars}"
-        message += f"\nYou may need to run the 'provision' command to populate resource settings."
+        message += "\nYou may need to run the 'provision' command to populate resource settings."
         raise RuntimeError(message)
 
     def set_value(self, value: Union[PrioritizedSetting[ValidInputType, ValueType], ValidInputType]) -> None:
@@ -133,6 +127,6 @@ class StoredPrioritizedSetting(PrioritizedSetting[ValidInputType, ValueType]):
         :type value: str or int or float
         """
         if isinstance(value, PrioritizedSetting):
-            self._user_value = value._user_value
+            self._user_value = value._user_value  # pylint: disable=protected-access
         else:
             self._user_value = value

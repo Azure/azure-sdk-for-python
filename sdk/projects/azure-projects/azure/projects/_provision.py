@@ -7,31 +7,23 @@
 from typing import (
     IO,
     Any,
-    Callable,
-    Iterable,
     List,
-    Literal,
     Mapping,
     MutableMapping,
     Optional,
     Type,
     Dict,
-    Tuple,
-    TYPE_CHECKING,
-    TypeVar,
     Union,
-    overload,
 )
 import os
 import json
 import subprocess
-from collections import defaultdict
 
 from ._version import VERSION
-from ._component import AzureInfrastructure, ComponentField
+from ._component import AzureInfrastructure
 from ._parameters import GLOBAL_PARAMS
-from ._bicep.utils import generate_name, resolve_value, serialize_dict, generate_suffix, serialize_list
-from ._bicep.expressions import Expression, Output, Parameter, ResourceSymbol, Subscription, UniqueString, Variable
+from ._bicep.utils import resolve_value, serialize_dict
+from ._bicep.expressions import Output, Parameter, ResourceSymbol
 from ._resource import FieldType, Resource, FieldsType, _load_dev_environment
 from .resources._extension import add_extensions
 
@@ -46,7 +38,7 @@ def _provision_project(name: str, label: Optional[str] = None) -> None:
     project_name = name + (f"-{label}" if label else "")
     args = ["azd", "provision", "-e", project_name]
     print("Running: ", args)
-    output = subprocess.run(args)
+    output = subprocess.run(args, check=False)
     print(output)
     return output.returncode
 
@@ -69,9 +61,9 @@ def _init_project(
     # Needs to properly set code root
     # Shouldn't overwrite on every run
     if not os.path.isfile(azure_yaml):
-        with open(azure_yaml, "w") as config:
+        with open(azure_yaml, "w", encoding="utf-8") as config:
             config.write(
-                "# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json\n\n"
+                "# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/miain/schemas/v1.0/azure.yaml.json\n\n"  # pylint: disable=line-too-long
             )
             config.write(f"name: {project_name}\n")
             config.write("metadata:\n")
@@ -86,11 +78,11 @@ def _init_project(
     returncode = 0
     if not os.path.isdir(azure_dir) or not os.path.isdir(project_dir):
         print(f"Adding environment: {project_name}.")
-        output = subprocess.run(["azd", "env", "new", project_name])
+        output = subprocess.run(["azd", "env", "new", project_name], check=False)
         print(output)
         returncode = output.returncode
     if location:
-        output = subprocess.run(["azd", "env", "set", "AZURE_LOCATION", location, "-e", project_name])
+        output = subprocess.run(["azd", "env", "set", "AZURE_LOCATION", location, "-e", project_name], check=False)
         print(output)
         returncode = output.returncode
     print("Finished environment setup.")
@@ -181,16 +173,14 @@ def export(
     except FileExistsError:
         pass
     bicep_main = os.path.join(infra_dir, f"{main_bicep}.bicep")
-    with open(bicep_main, "w") as main:
+    with open(bicep_main, "w", encoding="utf-8") as main:
         main.write("targetScope = 'subscription'\n\n")
-        module_params = {k: v for k, v in parameters.items() if v.module == "main"}
-        for parameter in module_params.values():
+        for parameter in parameters.values():
             main.write(parameter.__bicep__(config_store.get(parameter.name)))
         _write_resources(
             bicep=main,
             fields=list(fields.values()),
             parameters=parameters,
-            module_parameters=module_params,
             deployment_name=deployment_name,
             infra_dir=infra_dir,
             config=config_store,
@@ -203,7 +193,7 @@ def export(
     for parameter in parameters.values():
         if isinstance(parameter, Parameter):
             params_content["parameters"].update(parameter.__obj__())
-    with open(main_parameters, "w") as params_json:
+    with open(main_parameters, "w", encoding="utf-8") as params_json:
         json.dump(params_content, params_json, indent=4)
 
 
@@ -232,11 +222,10 @@ def _parse_module(
             )
 
 
-def _write_resources(
+def _write_resources(  # pylint: disable=too-many-statements
     bicep: IO[str],
     fields: List[FieldType],
     parameters: Dict[str, Parameter],
-    module_parameters: Dict[str, Parameter],
     infra_dir: str,
     deployment_name: str,
     config: Dict[str, Any],
@@ -269,16 +258,16 @@ def _write_resources(
                 bicep.write(f"  name: '${{deployment().name}}_{deployment_name}'\n")
                 bicep.write(f"  scope: {field.symbol.value}\n")
                 bicep.write("  params: {\n")
-                for parameter in module_parameters.values():
+                for parameter in parameters.values():
                     bicep.write(f"    {parameter.value}: {parameter.value}\n")
                 bicep.write("  }\n")
                 bicep.write("}\n")
                 bicep_module = os.path.join(infra_dir, f"{deployment_name}.bicep")
-                with open(bicep_module, "w") as module:
-                    for parameter in module_parameters.values():
+                with open(bicep_module, "w", encoding="utf-8") as module:
+                    for parameter in parameters.values():
                         module.write(f"param {parameter.name} {parameter.type}\n")
-                    for name, parameter in parameters.items():
-                        if name not in module_parameters and not isinstance(parameter, Output):
+                    for parameter in parameters.values():
+                        if not isinstance(parameter, Output):
                             module.write(parameter.__bicep__())
 
                     module.write("\n")
@@ -288,7 +277,6 @@ def _write_resources(
                         parameters=parameters,
                         infra_dir=infra_dir,
                         config=config,
-                        module_parameters=module_parameters,
                         resource_group_scope=field.symbol,
                         deployment_name=None,  # TODO: support submodules/resource groups
                     )

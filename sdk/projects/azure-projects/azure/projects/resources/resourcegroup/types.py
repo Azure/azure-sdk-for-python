@@ -13,11 +13,9 @@ VERSION = "2021-04-01"
 
 
 class ResourceGroupResource(TypedDict, total=False):
-    """"""
-
-    name: Union[str, Parameter[str]]
+    name: Union[str, Parameter]
     """The name of the Resource Group."""
-    location: Union[str, Parameter[str]]
+    location: Union[str, Parameter]
     """Location of the Resource Group. It uses the deployment's location when not provided."""
-    tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict[str, str]]]
+    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Tags of the Resource Group."""

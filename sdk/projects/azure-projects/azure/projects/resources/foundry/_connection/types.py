@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=line-too-long
 
-from typing import TYPE_CHECKING, TypedDict, Literal, List, Dict, Union
+from typing import TypedDict, Literal, List, Dict, Union
 from typing_extensions import Required
 
 from ...._bicep.expressions import Parameter
@@ -144,7 +145,7 @@ class ConnectionProperties(TypedDict, total=False):
 
 
 class ConnectionResource(TypedDict, total=False):
-    name: Union[str, Parameter[str]]
+    name: Union[str, Parameter]
     """The resource name."""
     properties: "ConnectionProperties"
     """Properties of Connection."""

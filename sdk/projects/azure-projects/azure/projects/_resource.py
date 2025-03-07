@@ -35,9 +35,8 @@ from azure.core.credentials_async import AsyncSupportsTokenInfo
 from azure.core.settings import _unset
 
 from .resources._identifiers import ResourceIdentifiers
-from ._parameters import DEFAULT_NAME, LOCATION, AZD_TAGS
 from ._setting import StoredPrioritizedSetting
-from ._bicep.expressions import Output, Expression, Parameter, ResourceSymbol, ResourceGroup
+from ._bicep.expressions import Output, Expression, Parameter, ResourceSymbol, ResourceGroup as RGSymbol
 from ._bicep.utils import clean_name
 
 if TYPE_CHECKING:
@@ -86,19 +85,20 @@ _EMPTY_DEFAULT_EXTENSIONS = {}
 
 
 class ResourceReference(TypedDict, total=False):
-    name: Union[str, Parameter[str]]
+    name: Union[str, Parameter]
     resource_group: "ResourceGroup"
-    subscription: Union[str, Parameter[str]]
+    subscription: Union[str, Parameter]
+    parent: Resource
 
 
 class ExtensionResources(TypedDict, total=False):
     managed_identity_roles: Union[
-        Parameter[List[Union["RoleAssignment", str]]],
-        List[Union[Parameter[Union[str, "RoleAssignment"]], "RoleAssignment", str]],
+        Parameter,
+        List[Union[Parameter, "RoleAssignment", str]],
     ]
     user_roles: Union[
-        Parameter[List[Union["RoleAssignment", str]]],
-        List[Union[Parameter[Union[str, "RoleAssignment"]], "RoleAssignment", str]],
+        Parameter,
+        List[Union[Parameter, "RoleAssignment", str]],
     ]
     # lock
     # diagnostics
@@ -118,14 +118,14 @@ class FieldType(NamedTuple, Generic[ResourcePropertiesType]):
     resource_group: Optional[ResourceSymbol]
     extensions: ExtensionResources
     existing: bool
-    name: Optional[Union[str, Parameter[str]]]
+    name: Optional[Union[str, Parameter]]
     add_defaults: Optional[Callable[[FieldType, Dict[str, Parameter]], None]]  # TODO: Clean this up?
 
 
 FieldsType = Dict[str, FieldType]
 
 
-class Resource(Generic[ResourcePropertiesType]):
+class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-instance-attributes
     DEFAULTS: Mapping[str, Any] = _EMPTY_DEFAULT
     DEFAULT_EXTENSIONS = _EMPTY_DEFAULT_EXTENSIONS
     identifier: ResourceIdentifiers
@@ -199,7 +199,7 @@ class Resource(Generic[ResourcePropertiesType]):
         return f"{self.__class__.__name__}({name})"
 
     def __eq__(self, value: Any) -> bool:
-        """Resources are considered equal if they (and their parents) have the same type and same name."""
+        # Resources are considered equal if they (and their parents) have the same type and same name.
         try:
             parent_eq = True
             if self.parent:
@@ -209,7 +209,7 @@ class Resource(Generic[ResourcePropertiesType]):
                 and value.resource == self.resource
                 and value.properties.get("name") == self.properties.get("name")
             )
-        except:
+        except Exception:  # pylint: disable=broad-exception-caught
             return False
 
     @property
@@ -225,9 +225,9 @@ class Resource(Generic[ResourcePropertiesType]):
         cls,
         resource: str,
         *,
-        name: Optional[Union[str, Parameter[str]]] = None,
-        resource_group: Optional[Union[str, Parameter[str], "ResourceGroup"]] = None,
-        subscription: Optional[Union[str, Parameter[str]]] = None,
+        name: Optional[Union[str, Parameter]] = None,
+        resource_group: Optional[Union[str, Parameter, "ResourceGroup"]] = None,
+        subscription: Optional[Union[str, Parameter]] = None,
         parent: Optional[Resource] = None,
     ) -> Self[ResourceReference]:
         if parent and resource_group:
@@ -248,6 +248,7 @@ class Resource(Generic[ResourcePropertiesType]):
         return cls(properties, resource=resource_type, resource_version=resource_version, parent=parent, existing=True)
 
     def _build_suffix(self, value: Optional[Union[str, Parameter]]) -> str:
+        # pylint: disable=protected-access
         if value:
             if isinstance(value, str):
                 if self.parent:
@@ -256,7 +257,7 @@ class Resource(Generic[ResourcePropertiesType]):
             if self.parent:
                 return self.parent._suffix + "_" + clean_name(value.value).upper()
             return "_" + clean_name(value.value).upper()
-        elif self.parent:
+        if self.parent:
             return self.parent._suffix
         return ""
 
@@ -279,12 +280,12 @@ class Resource(Generic[ResourcePropertiesType]):
             raise ValueError("No resource specified.")
         name = self._settings["name"](config_store=config_store)
         if self.parent:
-            return f"{self.parent._build_resource_id(config_store=config_store)}/{self._subresource}/{name}"
+            return f"{self.parent._build_resource_id(config_store=config_store)}/{self._subresource}/{name}"  # pylint: disable=protected-access
         sub_prefix = f"/subscriptions/{self._settings['subscription'](config_store=config_store)}"
         rg_prefix = f"/resourceGroups/{self._settings['resource_group'](config_store=config_store)}"
         return sub_prefix + rg_prefix + f"/providers/{self._resource}/{name}"
 
-    def _get_default_name(self, *, config_store: Mapping[str, Any]) -> str:
+    def _get_default_name(self, *, config_store: Mapping[str, Any]) -> str:  # pylint: disable=unused-argument
         try:
             return self.properties["name"]
         except KeyError:
@@ -296,14 +297,16 @@ class Resource(Generic[ResourcePropertiesType]):
             pass
         raise RuntimeError("Resource name not known.")
 
-    def _outputs(self, *, symbol: ResourceSymbol, suffix: Optional[str] = None, **kwargs) -> Dict[str, Output]:
+    def _outputs(
+        self, *, symbol: ResourceSymbol, suffix: Optional[str] = None, **kwargs
+    ) -> Dict[str, Output]:  # pylint: disable=unused-argument
         suffix = suffix or self._suffix
         outputs = {
             "resource_id": Output(f"AZURE_{self._prefixes[0].upper()}_ID{suffix}", "id", symbol),
             "name": Output(f"AZURE_{self._prefixes[0].upper()}_NAME{suffix}", "name", symbol),
         }
         rg_output = f"AZURE_{self._prefixes[0].upper()}_RESOURCE_GROUP{suffix}"
-        outputs["resource_group"] = Output(rg_output, ResourceGroup().name)
+        outputs["resource_group"] = Output(rg_output, RGSymbol().name)
         if self._existing:
             try:
                 rg_name = self._settings["resource_group"]()  # TODO: Is it a problem that there's no config?
@@ -376,10 +379,8 @@ class Resource(Generic[ResourcePropertiesType]):
     def _find_resource_group(
         self,
         fields: FieldsType,
-        parameters: Dict[str, Parameter],
         *,
         name: Optional[str] = None,
-        module_name: Optional[str] = None,
     ) -> Optional[ResourceSymbol]:
         # TODO: This might be no longer needed, always one resource group per deployment
         match = self._find_last_resource_match(fields, resource="Microsoft.Resources/resourceGroups", name=name)
@@ -387,25 +388,9 @@ class Resource(Generic[ResourcePropertiesType]):
             return match.symbol
         return None
 
-    def _find_identity(
-        self,
-        fields: FieldsType,
-        parameters: Dict[str, Parameter],
-        *,
-        module_name: Optional[str] = None,
-    ) -> Optional[ResourceSymbol]:
-        # TODO: This is probably no longer needed - use default parameters instead.
-        match = self._find_last_resource_match(
-            fields,
-            resource="Microsoft.ManagedIdentity/userAssignedIdentities",
-        )
-        if match:
-            return match.symbol
-        return None
-
     def _get_field_id(self, symbol: ResourceSymbol, parents: Tuple[ResourceSymbol, ...]) -> str:
         if self.parent:
-            prefix = self.parent._get_field_id(parents[0], parents[1:])
+            prefix = self.parent._get_field_id(parents[0], parents[1:])  # pylint: disable=protected-access
             return f"{prefix}.{symbol.value}"
         return symbol.value
 
@@ -416,7 +401,7 @@ class Resource(Generic[ResourcePropertiesType]):
         if isinstance(name, ComponentField):
             resolved = name.get(component)
             if isinstance(resolved, Resource):
-                return resolved._resolve_resource(parameters, component)
+                return resolved._resolve_resource(parameters, component)  # pylint: disable=protected-access
         return self._resolve_properties(self.properties, parameters, component)
 
     def _resolve_properties(
@@ -477,7 +462,7 @@ class Resource(Generic[ResourcePropertiesType]):
         if "user_roles" not in field.extensions:
             field.extensions["user_roles"] = self.DEFAULT_EXTENSIONS.get("user_roles", [])
 
-    def __bicep__(
+    def __bicep__(  # pylint: disable=too-many-statements
         self,
         fields: FieldsType,
         *,
@@ -542,7 +527,7 @@ class Resource(Generic[ResourcePropertiesType]):
             fields[self._get_field_id(symbol, parents)] = field
             return (symbol, *parents)
 
-        rg = self._find_resource_group(fields, parameters, module_name=module_name)
+        rg = self._find_resource_group(fields)
         if not parents:
             field = self._find_last_resource_match(fields, resource_group=rg, name=properties.get("name"))
         else:
@@ -632,7 +617,7 @@ class _ClientResource(Resource[ResourcePropertiesType]):
                 }
             )
 
-    def _build_endpoint(self) -> str:
+    def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
         raise NotImplementedError("This must be implemented by child resources.")
 
     def _build_credential(
@@ -693,7 +678,9 @@ class _ClientResource(Resource[ResourcePropertiesType]):
         if hasattr(cls, "from_resource"):
             return cls.from_resource(self, config_store, transport=transport, **client_options)
         if hasattr(cls, "_from_resource"):
-            return cls._from_resource(self, config_store, transport=transport, **client_options)
+            return cls._from_resource(
+                self, config_store, transport=transport, **client_options
+            )  # pylint: disable=protected-access
 
         endpoint: str = self._settings["endpoint"](config_store=config_store)
         # TODO: AI endpoints!!!
@@ -717,8 +704,9 @@ class _ClientResource(Resource[ResourcePropertiesType]):
                     use_async = inspect.iscoroutinefunction(getattr(cls, "close"))
                 except AttributeError:
                     raise TypeError(
-                        f"Cannot determine whether cls type '{cls.__name__}' is async or not. Please specify 'use_async' keyword argument."
-                    )
+                        f"Cannot determine whether cls type '{cls.__name__}' is async or not. "
+                        "Please specify 'use_async' keyword argument."
+                    ) from None
             client_kwargs["credential"] = self._build_credential(use_async, config_store=config_store)
         client = cls(endpoint, **client_kwargs)
         client.__resource_settings__ = self

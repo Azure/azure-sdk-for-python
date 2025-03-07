@@ -5,14 +5,10 @@
 # --------------------------------------------------------------------------
 
 import json
-from typing import Dict, List, Type, Generic, Literal, Optional, Any, Union
-from typing_extensions import TypeVar
+from typing import Dict, Iterable, List, Mapping, Optional, Any, Union
 from enum import Enum
 
 from .utils import resolve_value, serialize
-
-BicepDataTypes = Literal["string", "array", "object", "int", "bool"]
-_type = type
 
 
 class Default(Enum):
@@ -23,8 +19,8 @@ MISSING = Default.MISSING
 
 
 class Expression:
-    def __init__(self, value: Union["Expression", str], /) -> None:
-        self._value = value
+    def __init__(self, value: Union["Expression", str, None], /) -> None:
+        self._value = value or ""
 
     def __eq__(self, value: Any) -> bool:
         try:
@@ -47,12 +43,6 @@ class Expression:
         except AttributeError:
             return expression
 
-    def _resolve_obj(self, value: Union["Expression", Any]):
-        try:
-            return value.value
-        except AttributeError:
-            return serialize(value)
-
     @property
     def value(self) -> str:
         return self._resolve_expression(self._value)
@@ -65,17 +55,17 @@ class Expression:
 
 class Subscription(Expression):
     def __init__(self, subscription: Optional[Union[Expression, str]] = None, /):
-        self._sub = subscription
+        super().__init__(subscription)
 
     def __repr__(self) -> str:
-        sub = self._sub or "<default>"
+        sub = self._value or "<default>"
         return f"subscription({sub})"
 
     @property
     def value(self) -> str:
-        if self._sub:
-            return f"subscription({resolve_value(self._sub)})"
-        return f"subscription()"
+        if self._value:
+            return f"subscription({resolve_value(self._value)})"
+        return "subscription()"
 
     @property
     def subscription_id(self) -> Expression:
@@ -88,22 +78,22 @@ class Subscription(Expression):
 
 class ResourceGroup(Expression):
     def __init__(self, resource_group: Optional[Union[Expression, str]] = None, /):
-        self._rg = resource_group
+        super().__init__(resource_group)
 
     def __repr__(self) -> str:
-        sub = self._rg or "<default>"
-        return f"resourcegroup({sub})"
+        rg = self._value or "<default>"
+        return f"resourcegroup({rg})"
 
     @property
     def value(self) -> str:
-        if self._rg:
-            return f"resourceGroup({resolve_value(self._rg)})"
-        return f"resourceGroup()"
+        if self._value:
+            return f"resourceGroup({resolve_value(self._value)})"
+        return "resourceGroup()"
 
     @property
     def name(self) -> Union[str, Expression]:
-        if self._rg:
-            return self._rg
+        if self._value:
+            return self._value
         return Expression(f"{self.value}.name")
 
     @property
@@ -118,7 +108,7 @@ class ResourceSymbol(Expression):
         *,
         principal_id: bool = False,
     ) -> None:
-        self._value = value
+        super().__init__(value)
         self._principal_id_output = principal_id
 
     def __repr__(self) -> str:
@@ -129,57 +119,44 @@ class ResourceSymbol(Expression):
         return self._value
 
     @property
-    def name(self) -> "Output[str]":
+    def name(self) -> "Output":
         return Output(None, "name", self)
 
     @property
-    def id(self) -> "Output[str]":
+    def id(self) -> "Output":
         return Output(None, "id", self)
 
     @property
-    def principal_id(self) -> "Output[str]":
+    def principal_id(self) -> "Output":
         if not self._principal_id_output:
             raise ValueError("Module has no principal ID output.")
         return Output(None, "properties.principalId", self)
 
 
-ParameterType = TypeVar("ParameterType", str, int, bool, dict, list, default=str)
-
-
-class Parameter(Expression, Generic[ParameterType]):
+class Parameter(Expression):
     name: str
-    type: str
-    module: str
-    default: Union[ParameterType, Literal[Default.MISSING]]
+    env_var: Optional[str]
+    default: Any
 
     def __init__(
         self,
         name: str,
         *,
-        type: Optional[Type[ParameterType]] = None,
-        default: ParameterType = MISSING,
+        default: Any = MISSING,
         secure: bool = False,
         description: Optional[str] = None,
-        varname: Optional[str] = None,
+        env_var: Optional[str] = None,
         allowed: Optional[List[int]] = None,
         max_value: Optional[int] = None,
         min_value: Optional[int] = None,
         max_length: Optional[int] = None,
         min_length: Optional[int] = None,
-        module: str = "main",
     ):
-        self.name = name
+        super().__init__(name)
+        self.env_var = env_var
         self.default = default
-        self.module = module
-        if type:
-            self._type = type
-        elif default and default is not MISSING:
-            self._type = _type(default)
-        else:
-            self._type = str
         self._secure = secure
         self._description = description
-        self._varname = varname
         self._allowed = allowed
         self._max_value = max_value
         self._min_value = min_value
@@ -187,27 +164,32 @@ class Parameter(Expression, Generic[ParameterType]):
         self._min_length = min_length
 
     @property
-    def value(self) -> str:
-        return self.name
+    def name(self) -> str:
+        return self._value
 
     @property
-    def type(self) -> str:
-        if self._type is str:
+    def value(self) -> str:
+        return self._value
+
+    def _get_type(self, value: Any) -> str:
+        if value is MISSING or isinstance(value, str):
             return "string"
-        if self._type is bool:
+        if value in [True, False]:
             return "boolean"
-        if self._type is list:
-            return "array"
-        if self._type is int:
+        if isinstance(value, int):
             return "int"
-        return "object"
+        if isinstance(value, Mapping):
+            return "object"
+        if isinstance(value, Iterable):
+            return "array"
+        raise TypeError("Parameter value incompatible with supported parameter types.")
 
     def __repr__(self) -> str:
         if self.default not in (None, MISSING, ""):
             return f"parameter({self.name}={self.default})"
         return f"parameter({self.name})"
 
-    def __bicep__(self, default: Optional[ParameterType] = None, /) -> str:
+    def __bicep__(self, default: Any = MISSING, /) -> str:
         declaration = ""
         if self._secure:
             declaration += "@sys.secure()\n"
@@ -230,61 +212,67 @@ class Parameter(Expression, Generic[ParameterType]):
             declaration += f"@sys.maxLength({self._max_length})\n"
         if self._min_length is not None:
             declaration += f"@sys.minLength({self._min_length})\n"
-        declaration += f"param {self.name} {self.type}"
-        if default or self.default is not MISSING:
+        value = default if default is not MISSING else self.default
+        param_type = self._get_type(value)
+        declaration += f"param {self.name} {param_type}"
+        # TODO: What happens with when value=None? What's the correct bicep?
+        if value is not MISSING:
             declaration += " = "
             declaration += serialize(default or self.default)
         declaration += "\n\n"
         return declaration
 
     def __obj__(self) -> Dict[str, Dict[str, str]]:
-        if not self._varname:
-            return {}
-        if self.default not in (None, MISSING, ""):
-            value = f"${{{self._varname}={self.default}}}"
-        else:
-            value = f"${{{self._varname}}}"
-        return {self.name: {"value": value}}
+        if self.env_var:
+            if self.default not in (None, MISSING, ""):
+                # TODO: Is this correct formatting for different default types? Objects?
+                value = f"${{{self.env_var}={self.default}}}"
+            else:
+                value = f"${{{self.env_var}}}"
+            return {self.name: {"value": value}}
+        if self.default is not MISSING:
+            return {self.name: {"value": self.default}}
+        return {}
 
 
-class Variable(Parameter[ParameterType]):
+class Variable(Parameter):
     def __init__(
         self,
         name: str,
-        value: ParameterType,
+        value: Any,
         *,
         description: Optional[str] = None,
-        module: str = "main",
     ):
-        self._value = value
-        super().__init__(name=name, type=type(value), description=description, module=module)
+        super().__init__(name=name, default=value, description=description)
 
     def __repr__(self) -> str:
         return f"var({self.name})"
 
-    def __bicep__(self, default: Optional[ParameterType] = None, /) -> str:
+    def __bicep__(self, value: Any = MISSING, /) -> str:
         declaration = ""
         if self._description:
             declaration += f"@sys.description('{self._description}')\n"
         declaration += f"var {self.name} = "
-        declaration += serialize(default or self._value)
+        declaration += serialize(value if value is not MISSING else self.default)
         declaration += "\n"
         return declaration
 
+    def __obj__(self) -> Dict[str, Dict[str, str]]:
+        return {}
 
-class Output(Parameter[ParameterType]):
+
+class Output(Parameter):
     def __init__(
         self,
         name: str,
         value: Union[Expression, str],
         symbol: Optional[ResourceSymbol] = None,
         *,
-        type: Type[ParameterType] = str,
         description: Optional[str] = None,
     ) -> None:
         self.symbol = symbol
         self._path = value
-        super().__init__(name=name, type=type, description=description, module="")
+        super().__init__(name=name, description=description)
 
     def __repr__(self) -> str:
         return f"output({self.value})"
@@ -296,12 +284,16 @@ class Output(Parameter[ParameterType]):
         value = resolve_value(self._path)
         return value
 
-    def __bicep__(self, *args) -> str:
+    def __bicep__(self) -> str:  # pylint:disable=arguments-differ
         declaration = ""
         if self._description:
             declaration += f"@sys.description('{self._description}')\n"
-        declaration += f"output {self.name} {self.type} = {self.value}\n"
+        # TODO: We're only supporting string outputs for now....
+        declaration += f"output {self.name} string = {self.value}\n"
         return declaration
+
+    def __obj__(self) -> Dict[str, Dict[str, str]]:
+        return {}
 
 
 class Guid(Expression):
@@ -310,6 +302,7 @@ class Guid(Expression):
         basestr: Union[Expression, str],
         *args: Union[Expression, str],
     ) -> None:
+        super().__init__(basestr)
         self._args = [basestr] + list(args)
 
     def __repr__(self):
@@ -327,6 +320,7 @@ class UniqueString(Expression):
         basestr: Union[Expression, str],
         *args: Union[Expression, str],
     ) -> None:
+        super().__init__(basestr)
         self._args = [basestr] + list(args)
 
     def __repr__(self):
@@ -340,14 +334,14 @@ class UniqueString(Expression):
 
 class RoleDefinition(Expression):
     def __init__(self, guid: str) -> None:
-        self._guid = guid
+        super().__init__(guid)
         self.description: Optional[str] = None
 
     def __repr__(self):
-        return f"roleDefinition({self._guid})"
+        return f"roleDefinition({self._value})"
 
     @property
     def value(self) -> str:
         return (
-            f"subscriptionResourceId(\n      'Microsoft.Authorization/roleDefinitions',\n      '{self._guid}'\n    )\n"
+            f"subscriptionResourceId(\n      'Microsoft.Authorization/roleDefinitions',\n      '{self._value}'\n    )\n"
         )

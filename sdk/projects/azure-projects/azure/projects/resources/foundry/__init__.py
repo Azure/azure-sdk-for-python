@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=arguments-differ
 
 from collections import defaultdict
 from typing import (
@@ -14,11 +15,9 @@ from typing import (
     List,
     Literal,
     Mapping,
-    Tuple,
     TypedDict,
     Union,
     Optional,
-    overload,
 )
 from typing_extensions import TypeVar, Unpack
 
@@ -48,10 +47,8 @@ if TYPE_CHECKING:
 
 
 class MachineLearningWorkspaceKwargs(TypedDict, total=False):
-    """"""
-
-    friendly_name: Union[str, Parameter[str]]
-    """"""
+    friendly_name: Union[str, Parameter]
+    """Fiendly name of the workspace."""
     sku: Literal["Basic", "Free", "Premium", "Standard"]
     """Specifies the SKU, also referred as 'edition' of the Azure Machine Learning workspace."""
     application_insights: str
@@ -65,7 +62,9 @@ class MachineLearningWorkspaceKwargs(TypedDict, total=False):
     hub: str
     """The resource ID of the hub to associate with the workspace. Required if 'kind' is set to 'Project'."""
     primary_user_assigned_identity: str
-    """The user assigned identity resource ID that represents the workspace identity. Required if 'userAssignedIdentities' is not empty and may not be used if 'systemAssignedIdentity' is enabled."""
+    """The user assigned identity resource ID that represents the workspace identity. Required if
+    'userAssignedIdentities' is not empty and may not be used if 'systemAssignedIdentity' is enabled.
+    """
     container_registry: str
     """The resource ID of the associated Container Registry."""
     description: str
@@ -87,14 +86,18 @@ class MachineLearningWorkspaceKwargs(TypedDict, total=False):
     managed_network: "ManagedNetworkSetting"
     """Managed Network settings for a machine learning workspace."""
     # private_endpoints: List['PrivateEndpoint']
-    # """Configuration details for private endpoints. For security reasons, it is recommended to use private endpoints whenever possible."""
+    # """Configuration details for private endpoints. For security reasons, it is recommended to use private endpoints
+    # whenever possible.
+    # """
     public_network_access: Literal["Disabled", "Enabled"]
-    """Whether or not public network access is allowed for this resource. For security reasons it should be disabled."""
+    """Whether or not public network access is allowed for this resource. For security reasons it should be
+    disabled.
+    """
     roles: Union[
-        Parameter[List[Union[str, "RoleAssignment"]]],
+        Parameter,
         List[
             Union[
-                Parameter[Union[str, "RoleAssignment"]],
+                Parameter,
                 "RoleAssignment",
                 Literal[
                     "AzureML Compute Operator",
@@ -112,10 +115,10 @@ class MachineLearningWorkspaceKwargs(TypedDict, total=False):
     ]
     """Array of role assignments to create."""
     user_roles: Union[
-        Parameter[List[Union[str, "RoleAssignment"]]],
+        Parameter,
         List[
             Union[
-                Parameter[Union[str, "RoleAssignment"]],
+                Parameter,
                 "RoleAssignment",
                 Literal[
                     "AzureML Compute Operator",
@@ -140,7 +143,7 @@ class MachineLearningWorkspaceKwargs(TypedDict, total=False):
     """The list of shared private link resources in this workspace. Note: This property is not idempotent."""
     system_datastores_auth_mode: Literal["accessKey", "identity"]
     """The authentication mode used by the workspace when connecting to the default storage account."""
-    tags: Union[Dict[str, Union[str, Parameter[str]]], Parameter[Dict[str, str]]]
+    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Tags of the resource."""
     workspacehub_config: "WorkspaceHubConfig"
     """Configuration for workspace hub settings."""
@@ -173,7 +176,7 @@ class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
         /,
         name: Optional[str] = None,
         *,
-        kind: Union[Parameter[str], Literal["Default", "FeatureStore", "Hub", "Project"]],
+        kind: Union[Parameter, Literal["Default", "FeatureStore", "Hub", "Project"]],
         **kwargs: Unpack[MachineLearningWorkspaceKwargs],
     ) -> None:
         existing = kwargs.pop("existing", False)
@@ -219,8 +222,8 @@ class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
     def reference(
         cls,
         *,
-        name: Union[str, Parameter[str]],
-        resource_group: Optional[Union[str, Parameter[str], ResourceGroup]] = None,
+        name: Union[str, Parameter],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup]] = None,
     ) -> "MLWorkspace[ResourceReference]":
         from .types import RESOURCE, VERSION
 
@@ -251,7 +254,7 @@ class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
 
     def _build_symbol(self) -> ResourceSymbol:
         symbol = super()._build_symbol()
-        symbol._value = f"{self.properties['kind'].lower()}_" + symbol._value
+        symbol._value = f"{self.properties['kind'].lower()}_" + symbol._value  # pylint: disable=protected-access
         return symbol
 
     def _find_all_resource_match(
@@ -552,7 +555,7 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
         self, use_async: bool, *, config_store: Mapping[str, Any]
     ) -> Union[SupportsTokenInfo, AsyncSupportsTokenInfo]:
         # TODO
-        value = "default"  # self._settings['credential'](config_store=config_store)
+        value = self._settings["credential"](config_store=config_store)
         try:
             value = value.lower()
             if value == "default":
@@ -574,7 +577,7 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
         except AttributeError:
             pass
         try:
-            constructed_value = value()
+            constructed_value = value()  # pylint: disable=not-callable
             # self._settings['credential'].set_value(constructed_value)
             return constructed_value
         except TypeError:
@@ -603,15 +606,17 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
         if hasattr(cls, "from_resource"):
             return cls.from_resource(self, config_store, transport=transport, **client_options)
         if hasattr(cls, "_from_resource"):
-            return cls._from_resource(self, config_store, transport=transport, **client_options)
+            return cls._from_resource(
+                self, config_store, transport=transport, **client_options
+            )  # pylint: disable=protected-access
 
         if cls is None:
             if use_async:
-                from azure.ai.projects.aio import AIProjectClient
+                from azure.ai.projects.aio import AIProjectClient  # pylint: disable=no-name-in-module,import-error
 
                 cls = AIProjectClient
             else:
-                from azure.ai.projects import AIProjectClient
+                from azure.ai.projects import AIProjectClient  # pylint: disable=no-name-in-module,import-error
 
                 cls = AIProjectClient
                 use_async = False
