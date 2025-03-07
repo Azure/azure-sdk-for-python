@@ -1,16 +1,8 @@
 # Release History
 
-## 1.0.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.1 (2025-03-11)
 
 ### Bugs Fixed
-
-### Other Changes
-
-## 1.0.1 (2025-03-11)
 
 - Fix polling for `begin_copy_model_to()` to stop on success response from the "Operation-Location" endpoint and correctly parse the result.
 
