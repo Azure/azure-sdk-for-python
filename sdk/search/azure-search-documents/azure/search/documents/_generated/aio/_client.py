@@ -18,14 +18,14 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from .._serialization import Deserializer, Serializer
 from ._configuration import SearchClientConfiguration
 from .operations import (
-    AliasesOperationsOperations,
-    DataSourcesOperationsOperations,
-    DocumentsOperationsOperations,
-    IndexersOperationsOperations,
-    IndexesOperationsOperations,
+    AliasesOperations,
+    DataSourcesOperations,
+    DocumentsOperations,
+    IndexersOperations,
+    IndexesOperations,
     SearchClientOperationsMixin,
-    SkillsetsOperationsOperations,
-    SynonymMapsOperationsOperations,
+    SkillsetsOperations,
+    SynonymMapsOperations,
 )
 
 if TYPE_CHECKING:
@@ -36,33 +36,28 @@ class SearchClient(SearchClientOperationsMixin):  # pylint: disable=too-many-ins
     """Client that can be used to manage and query indexes and documents, as well as
     manage other resources, on a search service.
 
-    :ivar data_sources_operations: DataSourcesOperationsOperations operations
-    :vartype data_sources_operations:
-     azure.search.documents.aio.operations.DataSourcesOperationsOperations
-    :ivar indexers_operations: IndexersOperationsOperations operations
-    :vartype indexers_operations:
-     azure.search.documents.aio.operations.IndexersOperationsOperations
-    :ivar skillsets_operations: SkillsetsOperationsOperations operations
-    :vartype skillsets_operations:
-     azure.search.documents.aio.operations.SkillsetsOperationsOperations
-    :ivar synonym_maps_operations: SynonymMapsOperationsOperations operations
-    :vartype synonym_maps_operations:
-     azure.search.documents.aio.operations.SynonymMapsOperationsOperations
-    :ivar indexes_operations: IndexesOperationsOperations operations
-    :vartype indexes_operations: azure.search.documents.aio.operations.IndexesOperationsOperations
-    :ivar aliases_operations: AliasesOperationsOperations operations
-    :vartype aliases_operations: azure.search.documents.aio.operations.AliasesOperationsOperations
-    :ivar documents_operations: DocumentsOperationsOperations operations
-    :vartype documents_operations:
-     azure.search.documents.aio.operations.DocumentsOperationsOperations
+    :ivar data_sources: DataSourcesOperations operations
+    :vartype data_sources: azure.search.documents.aio.operations.DataSourcesOperations
+    :ivar indexers: IndexersOperations operations
+    :vartype indexers: azure.search.documents.aio.operations.IndexersOperations
+    :ivar skillsets: SkillsetsOperations operations
+    :vartype skillsets: azure.search.documents.aio.operations.SkillsetsOperations
+    :ivar synonym_maps: SynonymMapsOperations operations
+    :vartype synonym_maps: azure.search.documents.aio.operations.SynonymMapsOperations
+    :ivar indexes: IndexesOperations operations
+    :vartype indexes: azure.search.documents.aio.operations.IndexesOperations
+    :ivar aliases: AliasesOperations operations
+    :vartype aliases: azure.search.documents.aio.operations.AliasesOperations
+    :ivar documents: DocumentsOperations operations
+    :vartype documents: azure.search.documents.aio.operations.DocumentsOperations
     :param endpoint: Service host. Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-11-01-preview". Note that overriding this default value may result in unsupported
+     "2025-03-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -94,27 +89,13 @@ class SearchClient(SearchClientOperationsMixin):  # pylint: disable=too-many-ins
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.data_sources_operations = DataSourcesOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.indexers_operations = IndexersOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.skillsets_operations = SkillsetsOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.synonym_maps_operations = SynonymMapsOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.indexes_operations = IndexesOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.aliases_operations = AliasesOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.documents_operations = DocumentsOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.data_sources = DataSourcesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.indexers = IndexersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.skillsets = SkillsetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.synonym_maps = SynonymMapsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.aliases = AliasesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.documents = DocumentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -40,9 +40,9 @@ class CognitiveServicesAccount(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    odata_type: str = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])
     """The discriminator for derived types. Required. Default value is None."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Description of the Azure AI service resource attached to a skillset."""
 
     @overload
@@ -83,14 +83,16 @@ class AIServicesAccountIdentity(CognitiveServicesAccount, discriminator="#Micros
     :vartype odata_type: str
     """
 
-    identity: "_models.SearchIndexerDataIdentity" = rest_field()
+    identity: "_models.SearchIndexerDataIdentity" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user-assigned managed identity used for connections to AI Service. If not
      specified, the system-assigned managed identity is used. On updates to the
      skillset, if the identity is unspecified, the value remains unchanged. If set
      to \"none\", the value of this property is cleared. Required."""
-    subdomain_url: str = rest_field(name="subdomainUrl")
+    subdomain_url: str = rest_field(name="subdomainUrl", visibility=["read", "create", "update", "delete", "query"])
     """The subdomain url for the corresponding AI Service. Required."""
-    odata_type: Literal["#Microsoft.Azure.Search.AIServicesByIdentity"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.AIServicesByIdentity"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of Azure AI service resource attached to a
      skillset. Required. Default value is \"#Microsoft.Azure.Search.AIServicesByIdentity\"."""
 
@@ -131,11 +133,11 @@ class AIServicesAccountKey(CognitiveServicesAccount, discriminator="#Microsoft.A
     :vartype odata_type: str
     """
 
-    key: str = rest_field()
+    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The key used to provision the Azure AI service resource attached to a skillset. Required."""
-    subdomain_url: str = rest_field(name="subdomainUrl")
+    subdomain_url: str = rest_field(name="subdomainUrl", visibility=["read", "create", "update", "delete", "query"])
     """The subdomain url for the corresponding AI Service. Required."""
-    odata_type: Literal["#Microsoft.Azure.Search.AIServicesByKey"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.AIServicesByKey"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of Azure AI service resource attached to a
      skillset. Required. Default value is \"#Microsoft.Azure.Search.AIServicesByKey\"."""
 
@@ -180,14 +182,16 @@ class AIServicesVisionParameters(_model_base.Model):
     :vartype auth_identity: ~azure.search.documents.models.SearchIndexerDataIdentity
     """
 
-    model_version: str = rest_field(name="modelVersion")
+    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
     """The version of the model to use when calling the AI Services Vision service. It
      will default to the latest available when not specified. Required."""
-    resource_uri: str = rest_field(name="resourceUri")
+    resource_uri: str = rest_field(name="resourceUri", visibility=["read", "create", "update", "delete", "query"])
     """The resource URI of the AI Services resource. Required."""
-    api_key: Optional[str] = rest_field(name="apiKey")
+    api_key: Optional[str] = rest_field(name="apiKey", visibility=["read", "create", "update", "delete", "query"])
     """API key of the designated AI Services resource."""
-    auth_identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(name="authIdentity")
+    auth_identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(
+        name="authIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user-assigned managed identity used for outbound connections. If an
      authResourceId is provided and it's not specified, the system-assigned managed
      identity is used. On updates to the index, if the identity is unspecified, the
@@ -232,9 +236,9 @@ class VectorSearchVectorizer(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    vectorizer_name: str = rest_field(name="name")
+    vectorizer_name: str = rest_field(name="name", visibility=["read", "create", "update", "delete", "query"])
     """The name to associate with this particular vectorization method. Required."""
-    kind: str = rest_discriminator(name="kind")
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """Type of VectorSearchVectorizer. Required. Known values are: \"azureOpenAI\", \"customWebApi\",
      \"aiServicesVision\", and \"aml\"."""
 
@@ -258,8 +262,7 @@ class VectorSearchVectorizer(_model_base.Model):
 
 
 class AIServicesVisionVectorizer(VectorSearchVectorizer, discriminator="aiServicesVision"):
-    """Specifies the AI Services Vision parameters for vectorizing a query image or
-    text.
+    """Clears the identity property of a datasource.
 
 
     :ivar vectorizer_name: The name to associate with this particular vectorization method.
@@ -270,17 +273,17 @@ class AIServicesVisionVectorizer(VectorSearchVectorizer, discriminator="aiServic
     :vartype ai_services_vision_parameters:
      ~azure.search.documents.models.AIServicesVisionParameters
     :ivar kind: The name of the kind of vectorization method being configured for use with
-     vector search. Required. Generate embeddings for an image or text input at query time using
-     the Azure AI
+     vector search. Required. Generate embeddings for an image or text input at query time using the
+     Azure AI
      Services Vision Vectorize API.
     :vartype kind: str or ~azure.search.documents.models.AI_SERVICES_VISION
     """
 
     ai_services_vision_parameters: Optional["_models.AIServicesVisionParameters"] = rest_field(
-        name="AIServicesVisionParameters"
+        name="AIServicesVisionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Contains the parameters specific to AI Services Vision embedding vectorization."""
-    kind: Literal[VectorSearchVectorizerKind.AI_SERVICES_VISION] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorSearchVectorizerKind.AI_SERVICES_VISION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the kind of vectorization method being configured for use with
      vector search. Required. Generate embeddings for an image or text input at query time using the
      Azure AI
@@ -308,8 +311,6 @@ class AIServicesVisionVectorizer(VectorSearchVectorizer, discriminator="aiServic
 class AnalyzedTokenInfo(_model_base.Model):
     """Information about a token returned by an analyzer.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar token: The token returned by the analyzer. Required.
     :vartype token: str
@@ -324,17 +325,37 @@ class AnalyzedTokenInfo(_model_base.Model):
     :vartype position: int
     """
 
-    token: str = rest_field(visibility=["read"])
+    token: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The token returned by the analyzer. Required."""
-    start_offset: int = rest_field(name="startOffset", visibility=["read"])
+    start_offset: int = rest_field(name="startOffset", visibility=["read", "create", "update", "delete", "query"])
     """The index of the first character of the token in the input text. Required."""
-    end_offset: int = rest_field(name="endOffset", visibility=["read"])
+    end_offset: int = rest_field(name="endOffset", visibility=["read", "create", "update", "delete", "query"])
     """The index of the last character of the token in the input text. Required."""
-    position: int = rest_field(visibility=["read"])
+    position: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The position of the token in the input text relative to other tokens. The first
      token in the input text has position 0, the next has position 1, and so on.
      Depending on the analyzer used, some tokens might have the same position, for
      example if they are synonyms of each other. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        token: str,
+        start_offset: int,
+        end_offset: int,
+        position: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class AnalyzeRequest(_model_base.Model):
@@ -383,9 +404,11 @@ class AnalyzeRequest(_model_base.Model):
     :vartype char_filters: list[str or ~azure.search.documents.models.CharFilterName]
     """
 
-    text: str = rest_field()
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text to break into tokens. Required."""
-    analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = rest_field()
+    analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the analyzer to use to break the given text. If this parameter is
      not specified, you must specify a tokenizer instead. The tokenizer and analyzer
      parameters are mutually exclusive. Known values are: \"ar.microsoft\", \"ar.lucene\",
@@ -408,20 +431,28 @@ class AnalyzeRequest(_model_base.Model):
      \"tr.microsoft\", \"tr.lucene\", \"uk.microsoft\", \"ur.microsoft\", \"vi.microsoft\",
      \"standard.lucene\", \"standardasciifolding.lucene\", \"keyword\", \"pattern\", \"simple\",
      \"stop\", and \"whitespace\"."""
-    tokenizer: Optional[Union[str, "_models.LexicalTokenizerName"]] = rest_field()
+    tokenizer: Optional[Union[str, "_models.LexicalTokenizerName"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the tokenizer to use to break the given text. If this parameter is
      not specified, you must specify an analyzer instead. The tokenizer and analyzer
      parameters are mutually exclusive. Known values are: \"classic\", \"edgeNGram\",
      \"keyword_v2\", \"letter\", \"lowercase\", \"microsoft_language_tokenizer\",
      \"microsoft_language_stemming_tokenizer\", \"nGram\", \"path_hierarchy_v2\", \"pattern\",
      \"standard_v2\", \"uax_url_email\", and \"whitespace\"."""
-    normalizer: Optional[Union[str, "_models.LexicalNormalizerName"]] = rest_field()
+    normalizer: Optional[Union[str, "_models.LexicalNormalizerName"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the normalizer to use to normalize the given text. Known values are:
      \"asciifolding\", \"elision\", \"lowercase\", \"standard\", and \"uppercase\"."""
-    token_filters: Optional[List[Union[str, "_models.TokenFilterName"]]] = rest_field(name="tokenFilters")
+    token_filters: Optional[List[Union[str, "_models.TokenFilterName"]]] = rest_field(
+        name="tokenFilters", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An optional list of token filters to use when breaking the given text. This
      parameter can only be set when using the tokenizer parameter."""
-    char_filters: Optional[List[Union[str, "_models.CharFilterName"]]] = rest_field(name="charFilters")
+    char_filters: Optional[List[Union[str, "_models.CharFilterName"]]] = rest_field(
+        name="charFilters", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An optional list of character filters to use when breaking the given text. This
      parameter can only be set when using the tokenizer parameter."""
 
@@ -456,7 +487,7 @@ class AnalyzeResult(_model_base.Model):
     :vartype tokens: list[~azure.search.documents.models.AnalyzedTokenInfo]
     """
 
-    tokens: List["_models.AnalyzedTokenInfo"] = rest_field()
+    tokens: List["_models.AnalyzedTokenInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of tokens returned by the analyzer specified in the request. Required."""
 
     @overload
@@ -482,12 +513,11 @@ class TokenFilter(_model_base.Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AsciiFoldingTokenFilter, CjkBigramTokenFilter, CommonGramTokenFilter,
-    DictionaryDecompounderTokenFilter, EdgeNGramTokenFilter, EdgeNGramTokenFilterV2,
-    ElisionTokenFilter, KeepTokenFilter, KeywordMarkerTokenFilter, LengthTokenFilter,
-    LimitTokenFilter, NGramTokenFilter, NGramTokenFilterV2, PatternCaptureTokenFilter,
-    PatternReplaceTokenFilter, PhoneticTokenFilter, ShingleTokenFilter, SnowballTokenFilter,
-    StemmerOverrideTokenFilter, StemmerTokenFilter, StopwordsTokenFilter, SynonymTokenFilter,
-    TruncateTokenFilter, UniqueTokenFilter, WordDelimiterTokenFilter
+    DictionaryDecompounderTokenFilter, EdgeNGramTokenFilterV2, ElisionTokenFilter, KeepTokenFilter,
+    KeywordMarkerTokenFilter, LengthTokenFilter, LimitTokenFilter, NGramTokenFilterV2,
+    PatternCaptureTokenFilter, PatternReplaceTokenFilter, PhoneticTokenFilter, ShingleTokenFilter,
+    SnowballTokenFilter, StemmerOverrideTokenFilter, StemmerTokenFilter, StopwordsTokenFilter,
+    SynonymTokenFilter, TruncateTokenFilter, UniqueTokenFilter, WordDelimiterTokenFilter
 
 
     :ivar odata_type: The discriminator for derived types. Required. Default value is None.
@@ -499,9 +529,9 @@ class TokenFilter(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    odata_type: str = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])
     """The discriminator for derived types. Required. Default value is None."""
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the token filter. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and
      is limited to 128 characters. Required."""
@@ -544,9 +574,11 @@ class AsciiFoldingTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Searc
     :vartype odata_type: str
     """
 
-    preserve_original: Optional[bool] = rest_field(name="preserveOriginal")
+    preserve_original: Optional[bool] = rest_field(
+        name="preserveOriginal", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether the original token will be kept. Default is false."""
-    odata_type: Literal["#Microsoft.Azure.Search.AsciiFoldingTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.AsciiFoldingTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.AsciiFoldingTokenFilter\"."""
 
@@ -572,8 +604,6 @@ class AsciiFoldingTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Searc
 class AutocompleteItem(_model_base.Model):
     """The result of Autocomplete requests.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar text: The completed term. Required.
     :vartype text: str
@@ -581,10 +611,28 @@ class AutocompleteItem(_model_base.Model):
     :vartype query_plus_text: str
     """
 
-    text: str = rest_field(visibility=["read"])
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The completed term. Required."""
-    query_plus_text: str = rest_field(name="queryPlusText", visibility=["read"])
+    query_plus_text: str = rest_field(name="queryPlusText", visibility=["read", "create", "update", "delete", "query"])
     """The query along with the completed term. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+        query_plus_text: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class AutocompleteRequest(_model_base.Model):
@@ -635,41 +683,53 @@ class AutocompleteRequest(_model_base.Model):
     :vartype top: int
     """
 
-    search_text: str = rest_field(name="search")
+    search_text: str = rest_field(name="search", visibility=["read", "create", "update", "delete", "query"])
     """The search text on which to base autocomplete results. Required."""
-    autocomplete_mode: Optional[Union[str, "_models.AutocompleteMode"]] = rest_field(name="autocompleteMode")
+    autocomplete_mode: Optional[Union[str, "_models.AutocompleteMode"]] = rest_field(
+        name="autocompleteMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies the mode for Autocomplete. The default is 'oneTerm'. Use 'twoTerms'
      to get shingles and 'oneTermWithContext' to use the current context while
      producing auto-completed terms. Known values are: \"oneTerm\", \"twoTerms\", and
      \"oneTermWithContext\"."""
-    filter: Optional[str] = rest_field()
+    filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An OData expression that filters the documents used to produce completed terms
      for the Autocomplete result."""
-    use_fuzzy_matching: Optional[bool] = rest_field(name="fuzzy")
+    use_fuzzy_matching: Optional[bool] = rest_field(
+        name="fuzzy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to use fuzzy matching for the autocomplete query.
      Default is false. When set to true, the query will autocomplete terms even if
      there's a substituted or missing character in the search text. While this
      provides a better experience in some scenarios, it comes at a performance cost
      as fuzzy autocomplete queries are slower and consume more resources."""
-    highlight_post_tag: Optional[str] = rest_field(name="highlightPostTag")
+    highlight_post_tag: Optional[str] = rest_field(
+        name="highlightPostTag", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A string tag that is appended to hit highlights. Must be set with
      highlightPreTag. If omitted, hit highlighting is disabled."""
-    highlight_pre_tag: Optional[str] = rest_field(name="highlightPreTag")
+    highlight_pre_tag: Optional[str] = rest_field(
+        name="highlightPreTag", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A string tag that is prepended to hit highlights. Must be set with
      highlightPostTag. If omitted, hit highlighting is disabled."""
-    minimum_coverage: Optional[float] = rest_field(name="minimumCoverage")
+    minimum_coverage: Optional[float] = rest_field(
+        name="minimumCoverage", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A number between 0 and 100 indicating the percentage of the index that must be
      covered by an autocomplete query in order for the query to be reported as a
      success. This parameter can be useful for ensuring search availability even for
      services with only one replica. The default is 80."""
-    search_fields: Optional[str] = rest_field(name="searchFields")
+    search_fields: Optional[str] = rest_field(
+        name="searchFields", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The comma-separated list of field names to consider when querying for
      auto-completed terms. Target fields must be included in the specified
      suggester."""
-    suggester_name: str = rest_field(name="suggesterName")
+    suggester_name: str = rest_field(name="suggesterName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the suggester as specified in the suggesters collection that's part
      of the index definition. Required."""
-    top: Optional[int] = rest_field()
+    top: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of auto-completed terms to retrieve. This must be a value between 1
      and 100. The default is 5."""
 
@@ -703,8 +763,6 @@ class AutocompleteRequest(_model_base.Model):
 class AutocompleteResult(_model_base.Model):
     """The result of Autocomplete query.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar coverage: A value indicating the percentage of the index that was considered by the
      autocomplete request, or null if minimumCoverage was not specified in the
@@ -714,12 +772,34 @@ class AutocompleteResult(_model_base.Model):
     :vartype results: list[~azure.search.documents.models.AutocompleteItem]
     """
 
-    coverage: Optional[float] = rest_field(name="@search.coverage", visibility=["read"])
+    coverage: Optional[float] = rest_field(
+        name="@search.coverage", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating the percentage of the index that was considered by the
      autocomplete request, or null if minimumCoverage was not specified in the
      request."""
-    results: List["_models.AutocompleteItem"] = rest_field(name="value", visibility=["read"])
+    results: List["_models.AutocompleteItem"] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of returned Autocompleted items. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        results: List["_models.AutocompleteItem"],
+        coverage: Optional[float] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class AzureActiveDirectoryApplicationCredentials(_model_base.Model):  # pylint: disable=name-too-long
@@ -737,12 +817,14 @@ class AzureActiveDirectoryApplicationCredentials(_model_base.Model):  # pylint: 
     :vartype application_secret: str
     """
 
-    application_id: str = rest_field(name="applicationId")
+    application_id: str = rest_field(name="applicationId", visibility=["read", "create", "update", "delete", "query"])
     """An AAD Application ID that was granted the required access permissions to the
      Azure Key Vault that is to be used when encrypting your data at rest. The
      Application ID should not be confused with the Object ID for your AAD
      Application. Required."""
-    application_secret: Optional[str] = rest_field(name="applicationSecret")
+    application_secret: Optional[str] = rest_field(
+        name="applicationSecret", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The authentication key of the specified AAD application."""
 
     @overload
@@ -778,7 +860,7 @@ class AzureMachineLearningParameters(_model_base.Model):
     :ivar resource_id: (Required for token authentication). The Azure Resource Manager resource ID
      of
      the AML service. It should be in the format
-     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.  # pylint: disable=line-too-long
+     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.
     :vartype resource_id: str
     :ivar timeout: (Optional) When specified, indicates the timeout for the http client making the
      API call.
@@ -791,25 +873,31 @@ class AzureMachineLearningParameters(_model_base.Model):
      "OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336",
      "Facebook-DinoV2-Image-Embeddings-ViT-Base", "Facebook-DinoV2-Image-Embeddings-ViT-Giant",
      "Cohere-embed-v3-english", and "Cohere-embed-v3-multilingual".
-    :vartype model_name: str or ~azure.search.documents.models.AIStudioModelCatalogName
+    :vartype model_name: str or ~azure.search.documents.models.AIFoundryModelCatalogName
     """
 
-    scoring_uri: str = rest_field(name="uri")
+    scoring_uri: str = rest_field(name="uri", visibility=["read", "create", "update", "delete", "query"])
     """(Required for no authentication or key authentication) The scoring URI of the
      AML service to which the JSON payload will be sent. Only the https URI scheme
      is allowed. Required."""
-    authentication_key: Optional[str] = rest_field(name="key")
+    authentication_key: Optional[str] = rest_field(
+        name="key", visibility=["read", "create", "update", "delete", "query"]
+    )
     """(Required for key authentication) The key for the AML service."""
-    resource_id: Optional[str] = rest_field(name="resourceId")
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """(Required for token authentication). The Azure Resource Manager resource ID of
      the AML service. It should be in the format
-     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.  # pylint: disable=line-too-long"""
-    timeout: Optional[datetime.timedelta] = rest_field()
+     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}."""
+    timeout: Optional[datetime.timedelta] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """(Optional) When specified, indicates the timeout for the http client making the
      API call."""
-    region: Optional[str] = rest_field()
+    region: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """(Optional for token authentication). The region the AML service is deployed in."""
-    model_name: Optional[Union[str, "_models.AIStudioModelCatalogName"]] = rest_field(name="modelName")
+    model_name: Optional[Union[str, "_models.AIFoundryModelCatalogName"]] = rest_field(
+        name="modelName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the embedding model from the Azure AI Studio Catalog that is
      deployed at the provided endpoint. Known values are:
      \"OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32\",
@@ -826,7 +914,7 @@ class AzureMachineLearningParameters(_model_base.Model):
         resource_id: Optional[str] = None,
         timeout: Optional[datetime.timedelta] = None,
         region: Optional[str] = None,
-        model_name: Optional[Union[str, "_models.AIStudioModelCatalogName"]] = None,
+        model_name: Optional[Union[str, "_models.AIFoundryModelCatalogName"]] = None,
     ) -> None: ...
 
     @overload
@@ -875,23 +963,27 @@ class SearchIndexerSkill(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    odata_type: str = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])
     """The discriminator for derived types. Required. Default value is None."""
-    name: Optional[str] = rest_field()
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the
      skills array, prefixed with the character '#'."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the skill which describes the inputs, outputs, and usage of
      the skill."""
-    context: Optional[str] = rest_field()
+    context: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Represents the level at which operations take place, such as the document root
      or document content (for example, /document or /document/content). The default
      is /document."""
-    inputs: List["_models.InputFieldMappingEntry"] = rest_field()
+    inputs: List["_models.InputFieldMappingEntry"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Inputs of the skills could be a column in the source data set, or the output of
      an upstream skill. Required."""
-    outputs: List["_models.OutputFieldMappingEntry"] = rest_field()
+    outputs: List["_models.OutputFieldMappingEntry"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The output of a skill is either a field in a search index, or a value that can
      be consumed as an input by another skill. Required."""
 
@@ -952,7 +1044,7 @@ class AzureMachineLearningSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
     :ivar resource_id: (Required for token authentication). The Azure Resource Manager resource ID
      of
      the AML service. It should be in the format
-     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.  # pylint: disable=line-too-long
+     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.
     :vartype resource_id: str
     :ivar timeout: (Optional) When specified, indicates the timeout for the http client making the
      API call.
@@ -972,29 +1064,35 @@ class AzureMachineLearningSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
     :vartype odata_type: str
     """
 
-    scoring_uri: Optional[str] = rest_field(name="uri")
+    scoring_uri: Optional[str] = rest_field(name="uri", visibility=["read", "create", "update", "delete", "query"])
     """(Required for no authentication or key authentication) The scoring URI of the
      AML service to which the JSON payload will be sent. Only the https URI scheme
      is allowed."""
-    authentication_key: Optional[str] = rest_field(name="key")
+    authentication_key: Optional[str] = rest_field(
+        name="key", visibility=["read", "create", "update", "delete", "query"]
+    )
     """(Required for key authentication) The key for the AML service."""
-    resource_id: Optional[str] = rest_field(name="resourceId")
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """(Required for token authentication). The Azure Resource Manager resource ID of
      the AML service. It should be in the format
-     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.  # pylint: disable=line-too-long"""
-    timeout: Optional[datetime.timedelta] = rest_field()
+     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}."""
+    timeout: Optional[datetime.timedelta] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """(Optional) When specified, indicates the timeout for the http client making the
      API call."""
-    region: Optional[str] = rest_field()
+    region: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """(Optional for token authentication). The region the AML service is deployed in."""
-    degree_of_parallelism: Optional[int] = rest_field(name="degreeOfParallelism")
+    degree_of_parallelism: Optional[int] = rest_field(
+        name="degreeOfParallelism", visibility=["read", "create", "update", "delete", "query"]
+    )
     """(Optional) When specified, indicates the number of calls the indexer will make
      in parallel to the endpoint you have provided. You can decrease this value if
      your endpoint is failing under too high of a request load, or raise it if your
      endpoint is able to accept more requests and you would like an increase in the
      performance of the indexer. If not set, a default value of 5 is used. The
      degreeOfParallelism can be set to a maximum of 10 and a minimum of 1."""
-    odata_type: Literal["#Microsoft.Skills.Custom.AmlSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    odata_type: Literal["#Microsoft.Skills.Custom.AmlSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Custom.AmlSkill\"."""
 
@@ -1043,9 +1141,11 @@ class AzureMachineLearningVectorizer(VectorSearchVectorizer, discriminator="aml"
     :vartype kind: str or ~azure.search.documents.models.AML
     """
 
-    aml_parameters: Optional["_models.AzureMachineLearningParameters"] = rest_field(name="AMLParameters")
+    aml_parameters: Optional["_models.AzureMachineLearningParameters"] = rest_field(
+        name="amlParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies the properties of the AML vectorizer."""
-    kind: Literal[VectorSearchVectorizerKind.AML] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorSearchVectorizerKind.AML] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the kind of vectorization method being configured for use with
      vector search. Required. Generate embeddings using an Azure Machine Learning endpoint deployed
      via the
@@ -1113,22 +1213,30 @@ class AzureOpenAIEmbeddingSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
     :vartype odata_type: str
     """
 
-    resource_url: Optional[str] = rest_field(name="resourceUri")
+    resource_url: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource URI of the Azure OpenAI resource."""
-    deployment_name: Optional[str] = rest_field(name="deploymentId")
+    deployment_name: Optional[str] = rest_field(
+        name="deploymentId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ID of the Azure OpenAI model deployment on the designated resource."""
-    api_key: Optional[str] = rest_field(name="apiKey")
+    api_key: Optional[str] = rest_field(name="apiKey", visibility=["read", "create", "update", "delete", "query"])
     """API key of the designated Azure OpenAI resource."""
-    auth_identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(name="authIdentity")
+    auth_identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(
+        name="authIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user-assigned managed identity used for outbound connections."""
-    model_name: Optional[Union[str, "_models.AzureOpenAIModelName"]] = rest_field(name="modelName")
+    model_name: Optional[Union[str, "_models.AzureOpenAIModelName"]] = rest_field(
+        name="modelName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the embedding model that is deployed at the provided deploymentId
      path. Known values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", and
      \"text-embedding-3-small\"."""
-    dimensions: Optional[int] = rest_field()
+    dimensions: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of dimensions the resulting output embeddings should have. Only
      supported in text-embedding-3 and later models."""
-    odata_type: Literal["#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill\"."""
 
@@ -1164,8 +1272,8 @@ class AzureOpenAITokenizerParameters(_model_base.Model):
     """Azure OpenAI Tokenizer parameters.
 
     :ivar encoder_model_name: Only applies if the unit is set to azureOpenAITokens. Options include
-     'R50k_base', 'P50k_base', 'P50k_edit' and 'CL100k_base'. The default value is
-     'CL100k_base'. Known values are: "r50k_base", "p50k_base", "p50k_edit", and "cl100k_base".
+     'R50k_base', 'P50k_base', 'P50k_edit' and 'CL100k_base'. The default value is 'CL100k_base'.
+     Known values are: "r50k_base", "p50k_base", "p50k_edit", and "cl100k_base".
     :vartype encoder_model_name: str or ~azure.search.documents.models.SplitSkillEncoderModelName
     :ivar allowed_special_tokens: (Optional) Only applies if the unit is set to azureOpenAITokens.
      This parameter
@@ -1174,12 +1282,15 @@ class AzureOpenAITokenizerParameters(_model_base.Model):
     :vartype allowed_special_tokens: list[str]
     """
 
-    encoder_model_name: Optional[Union[str, "_models.SplitSkillEncoderModelName"]] = rest_field(name="encoderModelName")
+    encoder_model_name: Optional[Union[str, "_models.SplitSkillEncoderModelName"]] = rest_field(
+        name="encoderModelName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Only applies if the unit is set to azureOpenAITokens. Options include
-     'R50k_base', 'P50k_base', 'P50k_edit' and 'CL100k_base'. The default value is
-     'CL100k_base'. Known values are: \"r50k_base\", \"p50k_base\", \"p50k_edit\", and
-     \"cl100k_base\"."""
-    allowed_special_tokens: Optional[List[str]] = rest_field(name="allowedSpecialTokens")
+     'R50k_base', 'P50k_base', 'P50k_edit' and 'CL100k_base'. The default value is 'CL100k_base'.
+     Known values are: \"r50k_base\", \"p50k_base\", \"p50k_edit\", and \"cl100k_base\"."""
+    allowed_special_tokens: Optional[List[str]] = rest_field(
+        name="allowedSpecialTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
     """(Optional) Only applies if the unit is set to azureOpenAITokens. This parameter
      defines a collection of special tokens that are permitted within the
      tokenization process."""
@@ -1217,9 +1328,11 @@ class AzureOpenAIVectorizer(VectorSearchVectorizer, discriminator="azureOpenAI")
     :vartype kind: str or ~azure.search.documents.models.AZURE_OPEN_AI
     """
 
-    parameters: Optional["_models.AzureOpenAIVectorizerParameters"] = rest_field(name="azureOpenAIParameters")
+    parameters: Optional["_models.AzureOpenAIVectorizerParameters"] = rest_field(
+        name="azureOpenAIParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Contains the parameters specific to Azure OpenAI embedding vectorization."""
-    kind: Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorSearchVectorizerKind.AZURE_OPEN_AI] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the kind of vectorization method being configured for use with
      vector search. Required. Generate embeddings using an Azure OpenAI resource at query time."""
 
@@ -1259,15 +1372,23 @@ class AzureOpenAIVectorizerParameters(_model_base.Model):
     :vartype model_name: str or ~azure.search.documents.models.AzureOpenAIModelName
     """
 
-    resource_url: Optional[str] = rest_field(name="resourceUri")
+    resource_url: Optional[str] = rest_field(
+        name="resourceUri", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The resource URI of the Azure OpenAI resource."""
-    deployment_name: Optional[str] = rest_field(name="deploymentId")
+    deployment_name: Optional[str] = rest_field(
+        name="deploymentId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """ID of the Azure OpenAI model deployment on the designated resource."""
-    api_key: Optional[str] = rest_field(name="apiKey")
+    api_key: Optional[str] = rest_field(name="apiKey", visibility=["read", "create", "update", "delete", "query"])
     """API key of the designated Azure OpenAI resource."""
-    auth_identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(name="authIdentity")
+    auth_identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(
+        name="authIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user-assigned managed identity used for outbound connections."""
-    model_name: Optional[Union[str, "_models.AzureOpenAIModelName"]] = rest_field(name="modelName")
+    model_name: Optional[Union[str, "_models.AzureOpenAIModelName"]] = rest_field(
+        name="modelName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the embedding model that is deployed at the provided deploymentId
      path. Known values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", and
      \"text-embedding-3-small\"."""
@@ -1335,23 +1456,31 @@ class VectorSearchCompression(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    compression_name: str = rest_field(name="name")
+    compression_name: str = rest_field(name="name", visibility=["read", "create", "update", "delete", "query"])
     """The name to associate with this particular configuration. Required."""
-    rerank_with_original_vectors: Optional[bool] = rest_field(name="rerankWithOriginalVectors")
+    rerank_with_original_vectors: Optional[bool] = rest_field(
+        name="rerankWithOriginalVectors", visibility=["read", "create", "update", "delete", "query"]
+    )
     """If set to true, once the ordered set of results calculated using compressed
      vectors are obtained, they will be reranked again by recalculating the
      full-precision similarity scores. This will improve recall at the expense of
      latency."""
-    default_oversampling: Optional[float] = rest_field(name="defaultOversampling")
+    default_oversampling: Optional[float] = rest_field(
+        name="defaultOversampling", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Default oversampling factor. Oversampling will internally request more
      documents (specified by this multiplier) in the initial search. This increases
      the set of results that will be reranked using recomputed similarity scores
      from full-precision vectors. Minimum value is 1, meaning no oversampling (1x).
      This parameter can only be set when rerankWithOriginalVectors is true. Higher
      values improve recall at the expense of latency."""
-    rescoring_options: Optional["_models.RescoringOptions"] = rest_field(name="rescoringOptions")
+    rescoring_options: Optional["_models.RescoringOptions"] = rest_field(
+        name="rescoringOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Contains the options for rescoring."""
-    truncation_dimension: Optional[int] = rest_field(name="truncationDimension")
+    truncation_dimension: Optional[int] = rest_field(
+        name="truncationDimension", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of dimensions to truncate the vectors to. Truncating the vectors
      reduces the size of the vectors and the amount of data that needs to be
      transferred during search. This can save storage cost and improve search
@@ -1359,7 +1488,7 @@ class VectorSearchCompression(_model_base.Model):
      trained with Matryoshka Representation Learning (MRL) such as OpenAI
      text-embedding-3-large (small). The default value is null, which means no
      truncation."""
-    kind: str = rest_discriminator(name="kind")
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """Type of VectorSearchCompression. Required. Known values are: \"scalarQuantization\" and
      \"binaryQuantization\"."""
 
@@ -1421,18 +1550,18 @@ class BinaryQuantizationCompression(VectorSearchCompression, discriminator="bina
     :ivar kind: The name of the kind of compression method being configured for use with vector
      search. Required. Binary Quantization, a type of compression method. In binary quantization,
      the
-     original vectors values are compressed to the narrower binary type by
-     discretizing and representing each component of a vector using binary values,
+     original vectors values are compressed to the narrower binary type by discretizing
+     and representing each component of a vector using binary values,
      thereby reducing the overall data size.
     :vartype kind: str or ~azure.search.documents.models.BINARY_QUANTIZATION
     """
 
-    kind: Literal[VectorSearchCompressionKind.BINARY_QUANTIZATION] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorSearchCompressionKind.BINARY_QUANTIZATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the kind of compression method being configured for use with vector
      search. Required. Binary Quantization, a type of compression method. In binary quantization,
      the
-     original vectors values are compressed to the narrower binary type by
-     discretizing and representing each component of a vector using binary values,
+     original vectors values are compressed to the narrower binary type by discretizing
+     and representing each component of a vector using binary values,
      thereby reducing the overall data size."""
 
     @overload
@@ -1472,7 +1601,7 @@ class SimilarityAlgorithm(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    odata_type: str = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])
     """The discriminator for derived types. Required. Default value is None."""
 
     @overload
@@ -1510,22 +1639,24 @@ class BM25SimilarityAlgorithm(SimilarityAlgorithm, discriminator="#Microsoft.Azu
      normalization is applied, while a value of 1.0 means the score is fully
      normalized by the length of the document.
     :vartype b: float
-    :ivar odata_type: Required. Default value is "#Microsoft.Azure.Search.BM25Similarity".
+    :ivar odata_type: The discriminator for derived types. Required. Default value is
+     "#Microsoft.Azure.Search.BM25Similarity".
     :vartype odata_type: str
     """
 
-    k1: Optional[float] = rest_field()
+    k1: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """This property controls the scaling function between the term frequency of each
      matching terms and the final relevance score of a document-query pair. By
      default, a value of 1.2 is used. A value of 0.0 means the score does not scale
      with an increase in term frequency."""
-    b: Optional[float] = rest_field()
+    b: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """This property controls how the length of a document affects the relevance
      score. By default, a value of 0.75 is used. A value of 0.0 means no length
      normalization is applied, while a value of 1.0 means the score is fully
      normalized by the length of the document."""
-    odata_type: Literal["#Microsoft.Azure.Search.BM25Similarity"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
-    """Required. Default value is \"#Microsoft.Azure.Search.BM25Similarity\"."""
+    odata_type: Literal["#Microsoft.Azure.Search.BM25Similarity"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator for derived types. Required. Default value is
+     \"#Microsoft.Azure.Search.BM25Similarity\"."""
 
     @overload
     def __init__(
@@ -1562,9 +1693,9 @@ class CharFilter(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    odata_type: str = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])
     """The discriminator for derived types. Required. Default value is None."""
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the char filter. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and
      is limited to 128 characters. Required."""
@@ -1609,12 +1740,16 @@ class CjkBigramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.C
     :vartype odata_type: str
     """
 
-    ignore_scripts: Optional[List[Union[str, "_models.CjkBigramTokenFilterScripts"]]] = rest_field(name="ignoreScripts")
+    ignore_scripts: Optional[List[Union[str, "_models.CjkBigramTokenFilterScripts"]]] = rest_field(
+        name="ignoreScripts", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The scripts to ignore."""
-    output_unigrams: Optional[bool] = rest_field(name="outputUnigrams")
+    output_unigrams: Optional[bool] = rest_field(
+        name="outputUnigrams", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to output both unigrams and bigrams (if true), or
      just bigrams (if false). Default is false."""
-    odata_type: Literal["#Microsoft.Azure.Search.CjkBigramTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.CjkBigramTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.CjkBigramTokenFilter\"."""
 
@@ -1645,12 +1780,14 @@ class ClassicSimilarityAlgorithm(SimilarityAlgorithm, discriminator="#Microsoft.
     that only partially match the searched queries.
 
 
-    :ivar odata_type: Required. Default value is "#Microsoft.Azure.Search.ClassicSimilarity".
+    :ivar odata_type: The discriminator for derived types. Required. Default value is
+     "#Microsoft.Azure.Search.ClassicSimilarity".
     :vartype odata_type: str
     """
 
-    odata_type: Literal["#Microsoft.Azure.Search.ClassicSimilarity"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
-    """Required. Default value is \"#Microsoft.Azure.Search.ClassicSimilarity\"."""
+    odata_type: Literal["#Microsoft.Azure.Search.ClassicSimilarity"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator for derived types. Required. Default value is
+     \"#Microsoft.Azure.Search.ClassicSimilarity\"."""
 
     @overload
     def __init__(
@@ -1672,10 +1809,9 @@ class LexicalTokenizer(_model_base.Model):
     """Base type for tokenizers.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ClassicTokenizer, EdgeNGramTokenizer, KeywordTokenizer, KeywordTokenizerV2,
-    MicrosoftLanguageStemmingTokenizer, MicrosoftLanguageTokenizer, NGramTokenizer,
-    PathHierarchyTokenizerV2, PatternTokenizer, LuceneStandardTokenizer, LuceneStandardTokenizerV2,
-    UaxUrlEmailTokenizer
+    ClassicTokenizer, EdgeNGramTokenizer, KeywordTokenizerV2, MicrosoftLanguageStemmingTokenizer,
+    MicrosoftLanguageTokenizer, NGramTokenizer, PathHierarchyTokenizerV2, PatternTokenizer,
+    LuceneStandardTokenizerV2, UaxUrlEmailTokenizer
 
 
     :ivar odata_type: The discriminator for derived types. Required. Default value is None.
@@ -1687,9 +1823,9 @@ class LexicalTokenizer(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    odata_type: str = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])
     """The discriminator for derived types. Required. Default value is None."""
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the tokenizer. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters. Required."""
@@ -1731,10 +1867,12 @@ class ClassicTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
     :vartype odata_type: str
     """
 
-    max_token_length: Optional[int] = rest_field(name="maxTokenLength")
+    max_token_length: Optional[int] = rest_field(
+        name="maxTokenLength", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum token length. Default is 255. Tokens longer than the maximum length
      are split. The maximum token length that can be used is 300 characters."""
-    odata_type: Literal["#Microsoft.Azure.Search.ClassicTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.ClassicTokenizer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.ClassicTokenizer\"."""
 
@@ -1774,9 +1912,9 @@ class CognitiveServicesAccountKey(
     :vartype odata_type: str
     """
 
-    key: str = rest_field()
+    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The key used to provision the Azure AI service resource attached to a skillset. Required."""
-    odata_type: Literal["#Microsoft.Azure.Search.CognitiveServicesByKey"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.CognitiveServicesByKey"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of Azure AI service resource attached to a
      skillset. Required. Default value is \"#Microsoft.Azure.Search.CognitiveServicesByKey\"."""
 
@@ -1824,16 +1962,20 @@ class CommonGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.
     :vartype odata_type: str
     """
 
-    common_words: List[str] = rest_field(name="commonWords")
+    common_words: List[str] = rest_field(name="commonWords", visibility=["read", "create", "update", "delete", "query"])
     """The set of common words. Required."""
-    ignore_case: Optional[bool] = rest_field(name="ignoreCase")
+    ignore_case: Optional[bool] = rest_field(
+        name="ignoreCase", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether common words matching will be case insensitive.
      Default is false."""
-    use_query_mode: Optional[bool] = rest_field(name="queryMode")
+    use_query_mode: Optional[bool] = rest_field(
+        name="queryMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value that indicates whether the token filter is in query mode. When in query
      mode, the token filter generates bigrams and then removes common words and
      single terms followed by a common word. Default is false."""
-    odata_type: Literal["#Microsoft.Azure.Search.CommonGramTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.CommonGramTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.CommonGramTokenFilter\"."""
 
@@ -1886,7 +2028,7 @@ class ConditionalSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util
     :vartype odata_type: str
     """
 
-    odata_type: Literal["#Microsoft.Skills.Util.ConditionalSkill"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Skills.Util.ConditionalSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Util.ConditionalSkill\"."""
 
@@ -1928,12 +2070,16 @@ class CorsOptions(_model_base.Model):
     :vartype max_age_in_seconds: int
     """
 
-    allowed_origins: List[str] = rest_field(name="allowedOrigins")
+    allowed_origins: List[str] = rest_field(
+        name="allowedOrigins", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of origins from which JavaScript code will be granted access to your
      index. Can contain a list of hosts of the form
      {protocol}://{fully-qualified-domain-name}[:{port#}], or a single '*' to allow
      all origins (not recommended). Required."""
-    max_age_in_seconds: Optional[int] = rest_field(name="maxAgeInSeconds")
+    max_age_in_seconds: Optional[int] = rest_field(
+        name="maxAgeInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The duration for which browsers should cache CORS preflight responses. Defaults
      to 5 minutes."""
 
@@ -1972,9 +2118,9 @@ class LexicalAnalyzer(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    odata_type: str = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])
     """The discriminator for derived types. Required. Default value is None."""
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the analyzer. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters. Required."""
@@ -2032,22 +2178,28 @@ class CustomAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Cus
     :vartype odata_type: str
     """
 
-    tokenizer: Union[str, "_models.LexicalTokenizerName"] = rest_field()
+    tokenizer: Union[str, "_models.LexicalTokenizerName"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the tokenizer to use to divide continuous text into a sequence of
      tokens, such as breaking a sentence into words. Required. Known values are: \"classic\",
      \"edgeNGram\", \"keyword_v2\", \"letter\", \"lowercase\", \"microsoft_language_tokenizer\",
      \"microsoft_language_stemming_tokenizer\", \"nGram\", \"path_hierarchy_v2\", \"pattern\",
      \"standard_v2\", \"uax_url_email\", and \"whitespace\"."""
-    token_filters: Optional[List[Union[str, "_models.TokenFilterName"]]] = rest_field(name="tokenFilters")
+    token_filters: Optional[List[Union[str, "_models.TokenFilterName"]]] = rest_field(
+        name="tokenFilters", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of token filters used to filter out or modify the tokens generated by a
      tokenizer. For example, you can specify a lowercase filter that converts all
      characters to lowercase. The filters are run in the order in which they are
      listed."""
-    char_filters: Optional[List[Union[str, "_models.CharFilterName"]]] = rest_field(name="charFilters")
+    char_filters: Optional[List[Union[str, "_models.CharFilterName"]]] = rest_field(
+        name="charFilters", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of character filters used to prepare input text before it is processed
      by the tokenizer. For instance, they can replace certain characters or symbols.
      The filters are run in the order in which they are listed."""
-    odata_type: Literal["#Microsoft.Azure.Search.CustomAnalyzer"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.CustomAnalyzer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of analyzer. Required. Default value is
      \"#Microsoft.Azure.Search.CustomAnalyzer\"."""
 
@@ -2132,50 +2284,64 @@ class CustomEntity(_model_base.Model):
     :vartype aliases: list[~azure.search.documents.models.CustomEntityAlias]
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The top-level entity descriptor. Matches in the skill output will be grouped by
      this name, and it should represent the \"normalized\" form of the text being
      found. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """This field can be used as a passthrough for custom metadata about the matched
      text(s). The value of this field will appear with every match of its entity in
      the skill output."""
-    type: Optional[str] = rest_field()
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """This field can be used as a passthrough for custom metadata about the matched
      text(s). The value of this field will appear with every match of its entity in
      the skill output."""
-    subtype: Optional[str] = rest_field()
+    subtype: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """This field can be used as a passthrough for custom metadata about the matched
      text(s). The value of this field will appear with every match of its entity in
      the skill output."""
-    id: Optional[str] = rest_field()
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """This field can be used as a passthrough for custom metadata about the matched
      text(s). The value of this field will appear with every match of its entity in
      the skill output."""
-    case_sensitive: Optional[bool] = rest_field(name="caseSensitive")
+    case_sensitive: Optional[bool] = rest_field(
+        name="caseSensitive", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defaults to false. Boolean value denoting whether comparisons with the entity
      name should be sensitive to character casing. Sample case insensitive matches
      of \"Microsoft\" could be: microsoft, microSoft, MICROSOFT."""
-    accent_sensitive: Optional[bool] = rest_field(name="accentSensitive")
+    accent_sensitive: Optional[bool] = rest_field(
+        name="accentSensitive", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defaults to false. Boolean value denoting whether comparisons with the entity
      name should be sensitive to accent."""
-    fuzzy_edit_distance: Optional[int] = rest_field(name="fuzzyEditDistance")
+    fuzzy_edit_distance: Optional[int] = rest_field(
+        name="fuzzyEditDistance", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defaults to 0. Maximum value of 5. Denotes the acceptable number of divergent
      characters that would still constitute a match with the entity name. The
      smallest possible fuzziness for any given match is returned. For instance, if
      the edit distance is set to 3, \"Windows10\" would still match \"Windows\",
      \"Windows10\" and \"Windows 7\". When case sensitivity is set to false, case
      differences do NOT count towards fuzziness tolerance, but otherwise do."""
-    default_case_sensitive: Optional[bool] = rest_field(name="defaultCaseSensitive")
+    default_case_sensitive: Optional[bool] = rest_field(
+        name="defaultCaseSensitive", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Changes the default case sensitivity value for this entity. It be used to
      change the default value of all aliases caseSensitive values."""
-    default_accent_sensitive: Optional[bool] = rest_field(name="defaultAccentSensitive")
+    default_accent_sensitive: Optional[bool] = rest_field(
+        name="defaultAccentSensitive", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Changes the default accent sensitivity value for this entity. It be used to
      change the default value of all aliases accentSensitive values."""
-    default_fuzzy_edit_distance: Optional[int] = rest_field(name="defaultFuzzyEditDistance")
+    default_fuzzy_edit_distance: Optional[int] = rest_field(
+        name="defaultFuzzyEditDistance", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Changes the default fuzzy edit distance value for this entity. It can be used
      to change the default value of all aliases fuzzyEditDistance values."""
-    aliases: Optional[List["_models.CustomEntityAlias"]] = rest_field()
+    aliases: Optional[List["_models.CustomEntityAlias"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An array of complex objects that can be used to specify alternative spellings
      or synonyms to the root entity name."""
 
@@ -2223,13 +2389,19 @@ class CustomEntityAlias(_model_base.Model):
     :vartype fuzzy_edit_distance: int
     """
 
-    text: str = rest_field()
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text of the alias. Required."""
-    case_sensitive: Optional[bool] = rest_field(name="caseSensitive")
+    case_sensitive: Optional[bool] = rest_field(
+        name="caseSensitive", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determine if the alias is case sensitive."""
-    accent_sensitive: Optional[bool] = rest_field(name="accentSensitive")
+    accent_sensitive: Optional[bool] = rest_field(
+        name="accentSensitive", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determine if the alias is accent sensitive."""
-    fuzzy_edit_distance: Optional[int] = rest_field(name="fuzzyEditDistance")
+    fuzzy_edit_distance: Optional[int] = rest_field(
+        name="fuzzyEditDistance", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determine the fuzzy edit distance of the alias."""
 
     @overload
@@ -2305,27 +2477,37 @@ class CustomEntityLookupSkill(SearchIndexerSkill, discriminator="#Microsoft.Skil
     """
 
     default_language_code: Optional[Union[str, "_models.CustomEntityLookupSkillLanguage"]] = rest_field(
-        name="defaultLanguageCode"
+        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
     )
     """A value indicating which language code to use. Default is ``en``. Known values are: \"da\",
      \"de\", \"en\", \"es\", \"fi\", \"fr\", \"it\", \"ko\", and \"pt\"."""
-    entities_definition_uri: Optional[str] = rest_field(name="entitiesDefinitionUri")
+    entities_definition_uri: Optional[str] = rest_field(
+        name="entitiesDefinitionUri", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Path to a JSON or CSV file containing all the target text to match against.
      This entity definition is read at the beginning of an indexer run. Any updates
      to this file during an indexer run will not take effect until subsequent runs.
      This config must be accessible over HTTPS."""
-    inline_entities_definition: Optional[List["_models.CustomEntity"]] = rest_field(name="inlineEntitiesDefinition")
+    inline_entities_definition: Optional[List["_models.CustomEntity"]] = rest_field(
+        name="inlineEntitiesDefinition", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The inline CustomEntity definition."""
-    global_default_case_sensitive: Optional[bool] = rest_field(name="globalDefaultCaseSensitive")
+    global_default_case_sensitive: Optional[bool] = rest_field(
+        name="globalDefaultCaseSensitive", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A global flag for CaseSensitive. If CaseSensitive is not set in CustomEntity,
      this value will be the default value."""
-    global_default_accent_sensitive: Optional[bool] = rest_field(name="globalDefaultAccentSensitive")
+    global_default_accent_sensitive: Optional[bool] = rest_field(
+        name="globalDefaultAccentSensitive", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A global flag for AccentSensitive. If AccentSensitive is not set in
      CustomEntity, this value will be the default value."""
-    global_default_fuzzy_edit_distance: Optional[int] = rest_field(name="globalDefaultFuzzyEditDistance")
+    global_default_fuzzy_edit_distance: Optional[int] = rest_field(
+        name="globalDefaultFuzzyEditDistance", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A global flag for FuzzyEditDistance. If FuzzyEditDistance is not set in
      CustomEntity, this value will be the default value."""
-    odata_type: Literal["#Microsoft.Skills.Text.CustomEntityLookupSkill"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Skills.Text.CustomEntityLookupSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.CustomEntityLookupSkill\"."""
 
@@ -2373,9 +2555,9 @@ class LexicalNormalizer(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    odata_type: str = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])
     """The discriminator for derived types. Required. Default value is None."""
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the char filter. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and
      is limited to 128 characters. Required."""
@@ -2424,15 +2606,19 @@ class CustomNormalizer(LexicalNormalizer, discriminator="#Microsoft.Azure.Search
     :vartype odata_type: str
     """
 
-    token_filters: Optional[List[Union[str, "_models.TokenFilterName"]]] = rest_field(name="tokenFilters")
+    token_filters: Optional[List[Union[str, "_models.TokenFilterName"]]] = rest_field(
+        name="tokenFilters", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of token filters used to filter out or modify the input token. For
      example, you can specify a lowercase filter that converts all characters to
      lowercase. The filters are run in the order in which they are listed."""
-    char_filters: Optional[List[Union[str, "_models.CharFilterName"]]] = rest_field(name="charFilters")
+    char_filters: Optional[List[Union[str, "_models.CharFilterName"]]] = rest_field(
+        name="charFilters", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of character filters used to prepare input text before it is processed.
      For instance, they can replace certain characters or symbols. The filters are
      run in the order in which they are listed."""
-    odata_type: Literal["#Microsoft.Azure.Search.CustomNormalizer"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.CustomNormalizer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of normalizer. Required. Default value is
      \"#Microsoft.Azure.Search.CustomNormalizer\"."""
 
@@ -2468,7 +2654,7 @@ class DataChangeDetectionPolicy(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    odata_type: str = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])
     """The discriminator for derived types. Required. Default value is None."""
 
     @overload
@@ -2501,7 +2687,7 @@ class DataDeletionDetectionPolicy(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    odata_type: str = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])
     """The discriminator for derived types. Required. Default value is None."""
 
     @overload
@@ -2532,7 +2718,9 @@ class DataSourceCredentials(_model_base.Model):
     :vartype connection_string: str
     """
 
-    connection_string: Optional[str] = rest_field(name="connectionString")
+    connection_string: Optional[str] = rest_field(
+        name="connectionString", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The connection string for the datasource. Set to ``<unchanged>`` (with brackets)
      if you don't want the connection string updated. Set to ``<redacted>`` if you
      want to remove the connection string value from the datasource."""
@@ -2583,7 +2771,7 @@ class DefaultCognitiveServicesAccount(
     :vartype odata_type: str
     """
 
-    odata_type: Literal["#Microsoft.Azure.Search.DefaultCognitiveServices"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.DefaultCognitiveServices"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of Azure AI service resource attached to a
      skillset. Required. Default value is \"#Microsoft.Azure.Search.DefaultCognitiveServices\"."""
 
@@ -2639,21 +2827,29 @@ class DictionaryDecompounderTokenFilter(
     :vartype odata_type: str
     """
 
-    word_list: List[str] = rest_field(name="wordList")
+    word_list: List[str] = rest_field(name="wordList", visibility=["read", "create", "update", "delete", "query"])
     """The list of words to match against. Required."""
-    min_word_size: Optional[int] = rest_field(name="minWordSize")
+    min_word_size: Optional[int] = rest_field(
+        name="minWordSize", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The minimum word size. Only words longer than this get processed. Default is 5.
      Maximum is 300."""
-    min_subword_size: Optional[int] = rest_field(name="minSubwordSize")
+    min_subword_size: Optional[int] = rest_field(
+        name="minSubwordSize", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The minimum subword size. Only subwords longer than this are outputted. Default
      is 2. Maximum is 300."""
-    max_subword_size: Optional[int] = rest_field(name="maxSubwordSize")
+    max_subword_size: Optional[int] = rest_field(
+        name="maxSubwordSize", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum subword size. Only subwords shorter than this are outputted.
      Default is 15. Maximum is 300."""
-    only_longest_match: Optional[bool] = rest_field(name="onlyLongestMatch")
+    only_longest_match: Optional[bool] = rest_field(
+        name="onlyLongestMatch", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to add only the longest matching subword to the
      output. Default is false."""
-    odata_type: Literal["#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    odata_type: Literal["#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter\"."""
 
@@ -2701,15 +2897,17 @@ class ScoringFunction(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    field_name: str = rest_field(name="fieldName")
+    field_name: str = rest_field(name="fieldName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the field used as input to the scoring function. Required."""
-    boost: float = rest_field()
+    boost: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A multiplier for the raw score. Must be a positive number not equal to 1.0. Required."""
-    interpolation: Optional[Union[str, "_models.ScoringFunctionInterpolation"]] = rest_field()
+    interpolation: Optional[Union[str, "_models.ScoringFunctionInterpolation"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating how boosting will be interpolated across document scores;
      defaults to \"Linear\". Known values are: \"linear\", \"constant\", \"quadratic\", and
      \"logarithmic\"."""
-    type: str = rest_discriminator(name="type")
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Type of ScoringFunction. Required. Default value is None."""
 
     @overload
@@ -2755,9 +2953,11 @@ class DistanceScoringFunction(ScoringFunction, discriminator="distance"):
     :vartype type: str
     """
 
-    parameters: "_models.DistanceScoringParameters" = rest_field(name="distance")
+    parameters: "_models.DistanceScoringParameters" = rest_field(
+        name="distance", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Parameter values for the distance scoring function. Required."""
-    type: Literal["distance"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["distance"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Indicates the type of function to use. Valid values include magnitude,
      freshness, distance, and tag. The function type must be lower case. Required. Default value is
      \"distance\"."""
@@ -2797,10 +2997,14 @@ class DistanceScoringParameters(_model_base.Model):
     :vartype boosting_distance: float
     """
 
-    reference_point_parameter: str = rest_field(name="referencePointParameter")
+    reference_point_parameter: str = rest_field(
+        name="referencePointParameter", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the parameter passed in search queries to specify the reference
      location. Required."""
-    boosting_distance: float = rest_field(name="boostingDistance")
+    boosting_distance: float = rest_field(
+        name="boostingDistance", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The distance in kilometers from the reference location where the boosting range
      ends. Required."""
 
@@ -2875,14 +3079,18 @@ class DocumentExtractionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skil
     :vartype odata_type: str
     """
 
-    parsing_mode: Optional[str] = rest_field(name="parsingMode")
+    parsing_mode: Optional[str] = rest_field(
+        name="parsingMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The parsingMode for the skill. Will be set to 'default' if not defined."""
-    data_to_extract: Optional[str] = rest_field(name="dataToExtract")
-    """The type of data to be extracted for the skill. Will be set to
-     'contentAndMetadata' if not defined."""
-    configuration: Optional[Dict[str, Any]] = rest_field()
+    data_to_extract: Optional[str] = rest_field(
+        name="dataToExtract", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of data to be extracted for the skill. Will be set to 'contentAndMetadata' if not
+     defined."""
+    configuration: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A dictionary of configurations for the skill."""
-    odata_type: Literal["#Microsoft.Skills.Util.DocumentExtractionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Skills.Util.DocumentExtractionSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Util.DocumentExtractionSkill\"."""
 
@@ -2950,16 +3158,16 @@ class DocumentIntelligenceLayoutSkill(
     """
 
     output_mode: Optional[Union[str, "_models.DocumentIntelligenceLayoutSkillOutputMode"]] = rest_field(
-        name="outputMode"
+        name="outputMode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Controls the cardinality of the output produced by the skill. Default is
-     'oneToMany'. \"oneToMany\""""
+    """Controls the cardinality of the output produced by the skill. Default is 'oneToMany'.
+     \"oneToMany\""""
     markdown_header_depth: Optional[Union[str, "_models.DocumentIntelligenceLayoutSkillMarkdownHeaderDepth"]] = (
-        rest_field(name="markdownHeaderDepth")
+        rest_field(name="markdownHeaderDepth", visibility=["read", "create", "update", "delete", "query"])
     )
     """The depth of headers in the markdown output. Default is h6. Known values are: \"h1\", \"h2\",
      \"h3\", \"h4\", \"h5\", and \"h6\"."""
-    odata_type: Literal["#Microsoft.Skills.Util.DocumentIntelligenceLayoutSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    odata_type: Literal["#Microsoft.Skills.Util.DocumentIntelligenceLayoutSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Util.DocumentIntelligenceLayoutSkill\"."""
 
@@ -2998,9 +3206,13 @@ class DocumentKeysOrIds(_model_base.Model):
     :vartype datasource_document_ids: list[str]
     """
 
-    document_keys: Optional[List[str]] = rest_field(name="documentKeys")
+    document_keys: Optional[List[str]] = rest_field(
+        name="documentKeys", visibility=["read", "create", "update", "delete", "query"]
+    )
     """document keys to be reset."""
-    datasource_document_ids: Optional[List[str]] = rest_field(name="datasourceDocumentIds")
+    datasource_document_ids: Optional[List[str]] = rest_field(
+        name="datasourceDocumentIds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """datasource document identifiers to be reset."""
 
     @overload
@@ -3020,60 +3232,6 @@ class DocumentKeysOrIds(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class EdgeNGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.EdgeNGramTokenFilter"):
-    """Generates n-grams of the given size(s) starting from the front or the back of
-    an input token. This token filter is implemented using Apache Lucene.
-
-
-    :ivar name: The name of the token filter. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and
-     is limited to 128 characters. Required.
-    :vartype name: str
-    :ivar min_gram: The minimum n-gram length. Default is 1. Must be less than the value of
-     maxGram.
-    :vartype min_gram: int
-    :ivar max_gram: The maximum n-gram length. Default is 2.
-    :vartype max_gram: int
-    :ivar side: Specifies which side of the input the n-gram should be generated from. Default
-     is "front". Known values are: "front" and "back".
-    :vartype side: str or ~azure.search.documents.models.EdgeNGramTokenFilterSide
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
-     is "#Microsoft.Azure.Search.EdgeNGramTokenFilter".
-    :vartype odata_type: str
-    """
-
-    min_gram: Optional[int] = rest_field(name="minGram")
-    """The minimum n-gram length. Default is 1. Must be less than the value of maxGram."""
-    max_gram: Optional[int] = rest_field(name="maxGram")
-    """The maximum n-gram length. Default is 2."""
-    side: Optional[Union[str, "_models.EdgeNGramTokenFilterSide"]] = rest_field()
-    """Specifies which side of the input the n-gram should be generated from. Default
-     is \"front\". Known values are: \"front\" and \"back\"."""
-    odata_type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
-    """A URI fragment specifying the type of token filter. Required. Default value is
-     \"#Microsoft.Azure.Search.EdgeNGramTokenFilter\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        min_gram: Optional[int] = None,
-        max_gram: Optional[int] = None,
-        side: Optional[Union[str, "_models.EdgeNGramTokenFilterSide"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.EdgeNGramTokenFilter", **kwargs)
 
 
 class EdgeNGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"):
@@ -3098,15 +3256,17 @@ class EdgeNGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search
     :vartype odata_type: str
     """
 
-    min_gram: Optional[int] = rest_field(name="minGram")
+    min_gram: Optional[int] = rest_field(name="minGram", visibility=["read", "create", "update", "delete", "query"])
     """The minimum n-gram length. Default is 1. Maximum is 300. Must be less than the
      value of maxGram."""
-    max_gram: Optional[int] = rest_field(name="maxGram")
+    max_gram: Optional[int] = rest_field(name="maxGram", visibility=["read", "create", "update", "delete", "query"])
     """The maximum n-gram length. Default is 2. Maximum is 300."""
-    side: Optional[Union[str, "_models.EdgeNGramTokenFilterSide"]] = rest_field()
+    side: Optional[Union[str, "_models.EdgeNGramTokenFilterSide"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies which side of the input the n-gram should be generated from. Default
      is \"front\". Known values are: \"front\" and \"back\"."""
-    odata_type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.EdgeNGramTokenFilterV2\"."""
 
@@ -3152,14 +3312,16 @@ class EdgeNGramTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Searc
     :vartype odata_type: str
     """
 
-    min_gram: Optional[int] = rest_field(name="minGram")
+    min_gram: Optional[int] = rest_field(name="minGram", visibility=["read", "create", "update", "delete", "query"])
     """The minimum n-gram length. Default is 1. Maximum is 300. Must be less than the
      value of maxGram."""
-    max_gram: Optional[int] = rest_field(name="maxGram")
+    max_gram: Optional[int] = rest_field(name="maxGram", visibility=["read", "create", "update", "delete", "query"])
     """The maximum n-gram length. Default is 2. Maximum is 300."""
-    token_chars: Optional[List[Union[str, "_models.TokenCharacterKind"]]] = rest_field(name="tokenChars")
+    token_chars: Optional[List[Union[str, "_models.TokenCharacterKind"]]] = rest_field(
+        name="tokenChars", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Character classes to keep in the tokens."""
-    odata_type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenizer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.EdgeNGramTokenizer\"."""
 
@@ -3200,9 +3362,9 @@ class ElisionTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Eli
     :vartype odata_type: str
     """
 
-    articles: Optional[List[str]] = rest_field()
+    articles: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The set of articles to remove."""
-    odata_type: Literal["#Microsoft.Azure.Search.ElisionTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.ElisionTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.ElisionTokenFilter\"."""
 
@@ -3264,17 +3426,23 @@ class EntityLinkingSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Te
     :vartype odata_type: str
     """
 
-    default_language_code: Optional[str] = rest_field(name="defaultLanguageCode")
+    default_language_code: Optional[str] = rest_field(
+        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating which language code to use. Default is ``en``."""
-    minimum_precision: Optional[float] = rest_field(name="minimumPrecision")
+    minimum_precision: Optional[float] = rest_field(
+        name="minimumPrecision", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value between 0 and 1 that be used to only include entities whose confidence
      score is greater than the value specified. If not set (default), or if
      explicitly set to null, all entities will be included."""
-    model_version: Optional[str] = rest_field(name="modelVersion")
+    model_version: Optional[str] = rest_field(
+        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of the model to use when calling the Text Analytics service. It
      will default to the latest available when not specified. We recommend you do
      not specify this value unless absolutely necessary."""
-    odata_type: Literal["#Microsoft.Skills.Text.V3.EntityLinkingSkill"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Skills.Text.V3.EntityLinkingSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.V3.EntityLinkingSkill\"."""
 
@@ -3348,25 +3516,31 @@ class EntityRecognitionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skill
     :vartype odata_type: str
     """
 
-    categories: Optional[List[Union[str, "_models.EntityCategory"]]] = rest_field()
+    categories: Optional[List[Union[str, "_models.EntityCategory"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of entity categories that should be extracted."""
     default_language_code: Optional[Union[str, "_models.EntityRecognitionSkillLanguage"]] = rest_field(
-        name="defaultLanguageCode"
+        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
     )
     """A value indicating which language code to use. Default is ``en``. Known values are: \"ar\",
      \"cs\", \"zh-Hans\", \"zh-Hant\", \"da\", \"nl\", \"en\", \"fi\", \"fr\", \"de\", \"el\",
      \"hu\", \"it\", \"ja\", \"ko\", \"no\", \"pl\", \"pt-PT\", \"pt-BR\", \"ru\", \"es\", \"sv\",
      and \"tr\"."""
-    include_typeless_entities: Optional[bool] = rest_field(name="includeTypelessEntities")
+    include_typeless_entities: Optional[bool] = rest_field(
+        name="includeTypelessEntities", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines whether or not to include entities which are well known but don't
      conform to a pre-defined type. If this configuration is not set (default), set
      to null or set to false, entities which don't conform to one of the pre-defined
      types will not be surfaced."""
-    minimum_precision: Optional[float] = rest_field(name="minimumPrecision")
+    minimum_precision: Optional[float] = rest_field(
+        name="minimumPrecision", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value between 0 and 1 that be used to only include entities whose confidence
      score is greater than the value specified. If not set (default), or if
      explicitly set to null, all entities will be included."""
-    odata_type: Literal["#Microsoft.Skills.Text.EntityRecognitionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Skills.Text.EntityRecognitionSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.EntityRecognitionSkill\"."""
 
@@ -3437,19 +3611,25 @@ class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Ski
     :vartype odata_type: str
     """
 
-    categories: Optional[List[str]] = rest_field()
+    categories: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of entity categories that should be extracted."""
-    default_language_code: Optional[str] = rest_field(name="defaultLanguageCode")
+    default_language_code: Optional[str] = rest_field(
+        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating which language code to use. Default is ``en``."""
-    minimum_precision: Optional[float] = rest_field(name="minimumPrecision")
+    minimum_precision: Optional[float] = rest_field(
+        name="minimumPrecision", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value between 0 and 1 that be used to only include entities whose confidence
      score is greater than the value specified. If not set (default), or if
      explicitly set to null, all entities will be included."""
-    model_version: Optional[str] = rest_field(name="modelVersion")
+    model_version: Optional[str] = rest_field(
+        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of the model to use when calling the Text Analytics API. It will
      default to the latest available when not specified. We recommend you do not
      specify this value unless absolutely necessary."""
-    odata_type: Literal["#Microsoft.Skills.Text.V3.EntityRecognitionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Skills.Text.V3.EntityRecognitionSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.V3.EntityRecognitionSkill\"."""
 
@@ -3482,24 +3662,38 @@ class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Ski
 class ErrorAdditionalInfo(_model_base.Model):
     """The resource management error additional info.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
     :vartype info: dict[str, str]
     """
 
-    type: Optional[str] = rest_field(visibility=["read"])
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The additional info type."""
-    info: Optional[Dict[str, str]] = rest_field(visibility=["read"])
+    info: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The additional info."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[str] = None,
+        info: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ErrorDetail(_model_base.Model):
     """The error detail.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar code: The error code.
     :vartype code: str
@@ -3513,18 +3707,41 @@ class ErrorDetail(_model_base.Model):
     :vartype additional_info: list[~azure.search.documents.models.ErrorAdditionalInfo]
     """
 
-    code: Optional[str] = rest_field(visibility=["read"])
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error code."""
-    message: Optional[str] = rest_field(visibility=["read"])
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error message."""
-    target: Optional[str] = rest_field(visibility=["read"])
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[List["_models.ErrorDetail"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The error details."""
     additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
-        name="additionalInfo", visibility=["read"]
+        name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
     )
     """The error additional info."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        message: Optional[str] = None,
+        target: Optional[str] = None,
+        details: Optional[List["_models.ErrorDetail"]] = None,
+        additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ErrorResponse(_model_base.Model):
@@ -3536,7 +3753,7 @@ class ErrorResponse(_model_base.Model):
     :vartype error: ~azure.search.documents.models.ErrorDetail
     """
 
-    error: Optional["_models.ErrorDetail"] = rest_field()
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error object."""
 
     @overload
@@ -3573,9 +3790,9 @@ class VectorSearchAlgorithmConfiguration(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name to associate with this particular configuration. Required."""
-    kind: str = rest_discriminator(name="kind")
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """Type of VectorSearchAlgorithmConfiguration. Required. Known values are: \"hnsw\" and
      \"exhaustiveKnn\"."""
 
@@ -3613,9 +3830,11 @@ class ExhaustiveKnnAlgorithmConfiguration(VectorSearchAlgorithmConfiguration, di
     :vartype kind: str or ~azure.search.documents.models.EXHAUSTIVE_KNN
     """
 
-    parameters: Optional["_models.ExhaustiveKnnParameters"] = rest_field(name="exhaustiveKnnParameters")
+    parameters: Optional["_models.ExhaustiveKnnParameters"] = rest_field(
+        name="exhaustiveKnnParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Contains the parameters specific to exhaustive KNN algorithm."""
-    kind: Literal[VectorSearchAlgorithmKind.EXHAUSTIVE_KNN] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorSearchAlgorithmKind.EXHAUSTIVE_KNN] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the kind of algorithm being configured for use with vector search. Required.
      Exhaustive KNN algorithm which will perform brute-force search."""
 
@@ -3646,7 +3865,9 @@ class ExhaustiveKnnParameters(_model_base.Model):
     :vartype metric: str or ~azure.search.documents.models.VectorSearchAlgorithmMetric
     """
 
-    metric: Optional[Union[str, "_models.VectorSearchAlgorithmMetric"]] = rest_field()
+    metric: Optional[Union[str, "_models.VectorSearchAlgorithmMetric"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The similarity metric to use for vector comparisons. Known values are: \"cosine\",
      \"euclidean\", \"dotProduct\", and \"hamming\"."""
 
@@ -3684,13 +3905,30 @@ class FacetResult(_model_base.Model):
     :vartype facets: dict[str, list[~azure.search.documents.models.FacetResult]]
     """
 
-    count: Optional[int] = rest_field(visibility=["read"])
+    count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The approximate count of documents falling within the bucket described by this
      facet."""
     facets: Optional[Dict[str, List["_models.FacetResult"]]] = rest_field(name="@search.facets", visibility=["read"])
     """The nested facet query results for the search operation, organized as a
      collection of buckets for each faceted field; null if the query did not contain
      any nested facets."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class FieldMapping(_model_base.Model):
@@ -3708,12 +3946,18 @@ class FieldMapping(_model_base.Model):
     :vartype mapping_function: ~azure.search.documents.models.FieldMappingFunction
     """
 
-    source_field_name: str = rest_field(name="sourceFieldName")
+    source_field_name: str = rest_field(
+        name="sourceFieldName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the field in the data source. Required."""
-    target_field_name: Optional[str] = rest_field(name="targetFieldName")
+    target_field_name: Optional[str] = rest_field(
+        name="targetFieldName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the target field in the index. Same as the source field name by
      default."""
-    mapping_function: Optional["_models.FieldMappingFunction"] = rest_field(name="mappingFunction")
+    mapping_function: Optional["_models.FieldMappingFunction"] = rest_field(
+        name="mappingFunction", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A function to apply to each source field value before indexing."""
 
     @overload
@@ -3749,9 +3993,9 @@ class FieldMappingFunction(_model_base.Model):
     :vartype parameters: dict[str, any]
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the field mapping function. Required."""
-    parameters: Optional[Dict[str, Any]] = rest_field()
+    parameters: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A dictionary of parameter name/value pairs to pass to the function. Each value
      must be of a primitive type."""
 
@@ -3795,9 +4039,11 @@ class FreshnessScoringFunction(ScoringFunction, discriminator="freshness"):
     :vartype type: str
     """
 
-    parameters: "_models.FreshnessScoringParameters" = rest_field(name="freshness")
+    parameters: "_models.FreshnessScoringParameters" = rest_field(
+        name="freshness", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Parameter values for the freshness scoring function. Required."""
-    type: Literal["freshness"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["freshness"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Indicates the type of function to use. Valid values include magnitude,
      freshness, distance, and tag. The function type must be lower case. Required. Default value is
      \"freshness\"."""
@@ -3832,7 +4078,9 @@ class FreshnessScoringParameters(_model_base.Model):
     :vartype boosting_duration: ~datetime.timedelta
     """
 
-    boosting_duration: datetime.timedelta = rest_field(name="boostingDuration")
+    boosting_duration: datetime.timedelta = rest_field(
+        name="boostingDuration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The expiration period after which boosting will stop for a particular document. Required."""
 
     @overload
@@ -3857,8 +4105,6 @@ class GetIndexStatisticsResult(_model_base.Model):
     """Statistics for a given index. Statistics are collected periodically and are not
     guaranteed to always be up-to-date.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar document_count: The number of documents in the index. Required.
     :vartype document_count: int
@@ -3869,12 +4115,33 @@ class GetIndexStatisticsResult(_model_base.Model):
     :vartype vector_index_size: int
     """
 
-    document_count: int = rest_field(name="documentCount", visibility=["read"])
+    document_count: int = rest_field(name="documentCount", visibility=["read", "create", "update", "delete", "query"])
     """The number of documents in the index. Required."""
-    storage_size: int = rest_field(name="storageSize", visibility=["read"])
+    storage_size: int = rest_field(name="storageSize", visibility=["read", "create", "update", "delete", "query"])
     """The amount of storage in bytes consumed by the index. Required."""
-    vector_index_size: int = rest_field(name="vectorIndexSize", visibility=["read"])
+    vector_index_size: int = rest_field(
+        name="vectorIndexSize", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The amount of memory in bytes consumed by vectors in the index. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        document_count: int,
+        storage_size: int,
+        vector_index_size: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class HighWaterMarkChangeDetectionPolicy(
@@ -3891,9 +4158,11 @@ class HighWaterMarkChangeDetectionPolicy(
     :vartype odata_type: str
     """
 
-    high_water_mark_column_name: str = rest_field(name="highWaterMarkColumnName")
+    high_water_mark_column_name: str = rest_field(
+        name="highWaterMarkColumnName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the high water mark column. Required."""
-    odata_type: Literal["#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy"] = rest_discriminator(name="@odata.type")  # type: ignore
+    odata_type: Literal["#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of data change detection policy. Required. Default value is
      \"#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy\"."""
 
@@ -3931,9 +4200,11 @@ class HnswAlgorithmConfiguration(VectorSearchAlgorithmConfiguration, discriminat
     :vartype kind: str or ~azure.search.documents.models.HNSW
     """
 
-    parameters: Optional["_models.HnswParameters"] = rest_field(name="hnswParameters")
+    parameters: Optional["_models.HnswParameters"] = rest_field(
+        name="hnswParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Contains the parameters specific to HNSW algorithm."""
-    kind: Literal[VectorSearchAlgorithmKind.HNSW] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorSearchAlgorithmKind.HNSW] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the kind of algorithm being configured for use with vector search. Required. HNSW
      (Hierarchical Navigable Small World), a type of approximate nearest
      neighbors algorithm."""
@@ -3981,22 +4252,26 @@ class HnswParameters(_model_base.Model):
     :vartype metric: str or ~azure.search.documents.models.VectorSearchAlgorithmMetric
     """
 
-    m: Optional[int] = rest_field()
+    m: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of bi-directional links created for every new element during
      construction. Increasing this parameter value may improve recall and reduce
      retrieval times for datasets with high intrinsic dimensionality at the expense
      of increased memory consumption and longer indexing time."""
-    ef_construction: Optional[int] = rest_field(name="efConstruction")
+    ef_construction: Optional[int] = rest_field(
+        name="efConstruction", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The size of the dynamic list containing the nearest neighbors, which is used
      during index time. Increasing this parameter may improve index quality, at the
      expense of increased indexing time. At a certain point, increasing this
      parameter leads to diminishing returns."""
-    ef_search: Optional[int] = rest_field(name="efSearch")
+    ef_search: Optional[int] = rest_field(name="efSearch", visibility=["read", "create", "update", "delete", "query"])
     """The size of the dynamic list containing the nearest neighbors, which is used
      during search time. Increasing this parameter may improve search results, at
      the expense of slower search. At a certain point, increasing this parameter
      leads to diminishing returns."""
-    metric: Optional[Union[str, "_models.VectorSearchAlgorithmMetric"]] = rest_field()
+    metric: Optional[Union[str, "_models.VectorSearchAlgorithmMetric"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The similarity metric to use for vector comparisons. Known values are: \"cosine\",
      \"euclidean\", \"dotProduct\", and \"hamming\"."""
 
@@ -4040,7 +4315,9 @@ class HybridSearch(_model_base.Model):
     :vartype count_and_facet_mode: str or ~azure.search.documents.models.HybridCountAndFacetMode
     """
 
-    max_text_recall_size: Optional[int] = rest_field(name="maxTextRecallSize")
+    max_text_recall_size: Optional[int] = rest_field(
+        name="maxTextRecallSize", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines the maximum number of documents to be retrieved by the text query
      portion of a hybrid search request. Those documents will be combined with the
      documents matching the vector queries to produce a single final list of
@@ -4048,7 +4325,9 @@ class HybridSearch(_model_base.Model):
      paging through more documents (using the top and skip parameters), at the cost
      of higher resource utilization and higher latency. The value needs to be
      between 1 and 10,000. Default is 1000."""
-    count_and_facet_mode: Optional[Union[str, "_models.HybridCountAndFacetMode"]] = rest_field(name="countAndFacetMode")
+    count_and_facet_mode: Optional[Union[str, "_models.HybridCountAndFacetMode"]] = rest_field(
+        name="countAndFacetMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines whether the count and facets should includes all documents that
      matched the search query, or only the documents that are retrieved within the
      'maxTextRecallSize' window. Known values are: \"countRetrievableResults\" and
@@ -4113,7 +4392,7 @@ class ImageAnalysisSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vi
     """
 
     default_language_code: Optional[Union[str, "_models.ImageAnalysisSkillLanguage"]] = rest_field(
-        name="defaultLanguageCode"
+        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
     )
     """A value indicating which language code to use. Default is ``en``. Known values are: \"ar\",
      \"az\", \"bg\", \"bs\", \"ca\", \"cs\", \"cy\", \"da\", \"de\", \"el\", \"en\", \"es\", \"et\",
@@ -4121,11 +4400,15 @@ class ImageAnalysisSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vi
      \"kk\", \"ko\", \"lt\", \"lv\", \"mk\", \"ms\", \"nb\", \"nl\", \"pl\", \"prs\", \"pt-BR\",
      \"pt\", \"pt-PT\", \"ro\", \"ru\", \"sk\", \"sl\", \"sr-Cyrl\", \"sr-Latn\", \"sv\", \"th\",
      \"tr\", \"uk\", \"vi\", \"zh\", \"zh-Hans\", and \"zh-Hant\"."""
-    visual_features: Optional[List[Union[str, "_models.VisualFeature"]]] = rest_field(name="visualFeatures")
+    visual_features: Optional[List[Union[str, "_models.VisualFeature"]]] = rest_field(
+        name="visualFeatures", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of visual features."""
-    details: Optional[List[Union[str, "_models.ImageDetail"]]] = rest_field()
+    details: Optional[List[Union[str, "_models.ImageDetail"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A string indicating which domain-specific details to return."""
-    odata_type: Literal["#Microsoft.Skills.Vision.ImageAnalysisSkill"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Skills.Vision.ImageAnalysisSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Vision.ImageAnalysisSkill\"."""
 
@@ -4162,7 +4445,9 @@ class IndexAction(_model_base.Model):
     :vartype action_type: str or ~azure.search.documents.models.IndexActionType
     """
 
-    action_type: Optional[Union[str, "_models.IndexActionType"]] = rest_field(name="@search.action")
+    action_type: Optional[Union[str, "_models.IndexActionType"]] = rest_field(
+        name="@search.action", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The operation to perform on a document in an indexing batch. Known values are: \"upload\",
      \"merge\", \"mergeOrUpload\", and \"delete\"."""
 
@@ -4193,7 +4478,9 @@ class IndexBatch(_model_base.Model):
     :vartype actions: list[~azure.search.documents.models.IndexAction]
     """
 
-    actions: List["_models.IndexAction"] = rest_field(name="value")
+    actions: List["_models.IndexAction"] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The actions in the batch. Required."""
 
     @overload
@@ -4218,16 +4505,33 @@ class IndexDocumentsResult(_model_base.Model):
     """Response containing the status of operations for all documents in the indexing
     request.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar results: The list of status information for each document in the indexing request.
      Required.
     :vartype results: list[~azure.search.documents.models.IndexingResult]
     """
 
-    results: List["_models.IndexingResult"] = rest_field(name="value", visibility=["read"])
+    results: List["_models.IndexingResult"] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of status information for each document in the indexing request. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        results: List["_models.IndexingResult"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class IndexerCurrentState(_model_base.Model):
@@ -4339,7 +4643,9 @@ class IndexerExecutionResult(_model_base.Model):
     :vartype final_tracking_state: str
     """
 
-    status: Union[str, "_models.IndexerExecutionStatus"] = rest_field(visibility=["read"])
+    status: Union[str, "_models.IndexerExecutionStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The outcome of this indexer execution. Required. Known values are: \"transientFailure\",
      \"success\", \"inProgress\", and \"reset\"."""
     status_detail: Optional[Union[str, "_models.IndexerExecutionStatusDetail"]] = rest_field(
@@ -4348,26 +4654,64 @@ class IndexerExecutionResult(_model_base.Model):
     """The outcome of this indexer execution. \"resetDocs\""""
     current_state: Optional["_models.IndexerCurrentState"] = rest_field(name="currentState", visibility=["read"])
     """All of the state that defines and dictates the indexer's current execution."""
-    error_message: Optional[str] = rest_field(name="errorMessage", visibility=["read"])
+    error_message: Optional[str] = rest_field(
+        name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The error message indicating the top-level error, if any."""
-    start_time: Optional[datetime.datetime] = rest_field(name="startTime", visibility=["read"], format="rfc3339")
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The start time of this indexer execution."""
-    end_time: Optional[datetime.datetime] = rest_field(name="endTime", visibility=["read"], format="rfc3339")
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The end time of this indexer execution, if the execution has already completed."""
-    errors: List["_models.SearchIndexerError"] = rest_field(visibility=["read"])
+    errors: List["_models.SearchIndexerError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The item-level indexing errors. Required."""
-    warnings: List["_models.SearchIndexerWarning"] = rest_field(visibility=["read"])
+    warnings: List["_models.SearchIndexerWarning"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The item-level indexing warnings. Required."""
-    item_count: int = rest_field(name="itemsProcessed", visibility=["read"])
+    item_count: int = rest_field(name="itemsProcessed", visibility=["read", "create", "update", "delete", "query"])
     """The number of items that were processed during this indexer execution. This
      includes both successfully processed items and items where indexing was
      attempted but failed. Required."""
-    failed_item_count: int = rest_field(name="itemsFailed", visibility=["read"])
+    failed_item_count: int = rest_field(name="itemsFailed", visibility=["read", "create", "update", "delete", "query"])
     """The number of items that failed to be indexed during this indexer execution. Required."""
-    initial_tracking_state: Optional[str] = rest_field(name="initialTrackingState", visibility=["read"])
+    initial_tracking_state: Optional[str] = rest_field(
+        name="initialTrackingState", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Change tracking state with which an indexer execution started."""
-    final_tracking_state: Optional[str] = rest_field(name="finalTrackingState", visibility=["read"])
+    final_tracking_state: Optional[str] = rest_field(
+        name="finalTrackingState", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Change tracking state with which an indexer execution finished."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Union[str, "_models.IndexerExecutionStatus"],
+        errors: List["_models.SearchIndexerError"],
+        warnings: List["_models.SearchIndexerWarning"],
+        item_count: int,
+        failed_item_count: int,
+        error_message: Optional[str] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        initial_tracking_state: Optional[str] = None,
+        final_tracking_state: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class IndexingParameters(_model_base.Model):
@@ -4392,17 +4736,23 @@ class IndexingParameters(_model_base.Model):
     :vartype configuration: ~azure.search.documents.models.IndexingParametersConfiguration
     """
 
-    batch_size: Optional[int] = rest_field(name="batchSize")
+    batch_size: Optional[int] = rest_field(name="batchSize", visibility=["read", "create", "update", "delete", "query"])
     """The number of items that are read from the data source and indexed as a single
      batch in order to improve performance. The default depends on the data source
      type."""
-    max_failed_items: Optional[int] = rest_field(name="maxFailedItems")
+    max_failed_items: Optional[int] = rest_field(
+        name="maxFailedItems", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum number of items that can fail indexing for indexer execution to
      still be considered successful. -1 means no limit. Default is 0."""
-    max_failed_items_per_batch: Optional[int] = rest_field(name="maxFailedItemsPerBatch")
+    max_failed_items_per_batch: Optional[int] = rest_field(
+        name="maxFailedItemsPerBatch", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum number of items in a single batch that can fail indexing for the
      batch to still be considered successful. -1 means no limit. Default is 0."""
-    configuration: Optional["_models.IndexingParametersConfiguration"] = rest_field()
+    configuration: Optional["_models.IndexingParametersConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A dictionary of indexer-specific configuration properties. Each name is the
      name of a specific property. Each value must be of a primitive type."""
 
@@ -4517,82 +4867,110 @@ class IndexingParametersConfiguration(_model_base.Model):
     :vartype query_timeout: str
     """
 
-    parsing_mode: Optional[Union[str, "_models.BlobIndexerParsingMode"]] = rest_field(name="parsingMode")
+    parsing_mode: Optional[Union[str, "_models.BlobIndexerParsingMode"]] = rest_field(
+        name="parsingMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Represents the parsing mode for indexing from an Azure blob data source. Known values are:
      \"default\", \"text\", \"delimitedText\", \"json\", \"jsonArray\", \"jsonLines\", and
      \"markdown\"."""
-    excluded_file_name_extensions: Optional[str] = rest_field(name="excludedFileNameExtensions")
+    excluded_file_name_extensions: Optional[str] = rest_field(
+        name="excludedFileNameExtensions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Comma-delimited list of filename extensions to ignore when processing from
      Azure blob storage.  For example, you could exclude \".png, .mp4\" to skip over
      those files during indexing."""
-    indexed_file_name_extensions: Optional[str] = rest_field(name="indexedFileNameExtensions")
+    indexed_file_name_extensions: Optional[str] = rest_field(
+        name="indexedFileNameExtensions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Comma-delimited list of filename extensions to select when processing from
      Azure blob storage.  For example, you could focus indexing on specific
      application files \".docx, .pptx, .msg\" to specifically include those file
      types."""
-    fail_on_unsupported_content_type: Optional[bool] = rest_field(name="failOnUnsupportedContentType")
+    fail_on_unsupported_content_type: Optional[bool] = rest_field(
+        name="failOnUnsupportedContentType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """For Azure blobs, set to false if you want to continue indexing when an
      unsupported content type is encountered, and you don't know all the content
      types (file extensions) in advance."""
-    fail_on_unprocessable_document: Optional[bool] = rest_field(name="failOnUnprocessableDocument")
+    fail_on_unprocessable_document: Optional[bool] = rest_field(
+        name="failOnUnprocessableDocument", visibility=["read", "create", "update", "delete", "query"]
+    )
     """For Azure blobs, set to false if you want to continue indexing if a document
      fails indexing."""
     index_storage_metadata_only_for_oversized_documents: Optional[bool] = rest_field(
-        name="indexStorageMetadataOnlyForOversizedDocuments"
+        name="indexStorageMetadataOnlyForOversizedDocuments", visibility=["read", "create", "update", "delete", "query"]
     )
     """For Azure blobs, set this property to true to still index storage metadata for
      blob content that is too large to process. Oversized blobs are treated as
      errors by default. For limits on blob size, see
      https://learn.microsoft.com/azure/search/search-limits-quotas-capacity."""
-    delimited_text_headers: Optional[str] = rest_field(name="delimitedTextHeaders")
+    delimited_text_headers: Optional[str] = rest_field(
+        name="delimitedTextHeaders", visibility=["read", "create", "update", "delete", "query"]
+    )
     """For CSV blobs, specifies a comma-delimited list of column headers, useful for
      mapping source fields to destination fields in an index."""
-    delimited_text_delimiter: Optional[str] = rest_field(name="delimitedTextDelimiter")
+    delimited_text_delimiter: Optional[str] = rest_field(
+        name="delimitedTextDelimiter", visibility=["read", "create", "update", "delete", "query"]
+    )
     """For CSV blobs, specifies the end-of-line single-character delimiter for CSV
      files where each line starts a new document (for example, \"|\")."""
-    first_line_contains_headers: Optional[bool] = rest_field(name="firstLineContainsHeaders")
+    first_line_contains_headers: Optional[bool] = rest_field(
+        name="firstLineContainsHeaders", visibility=["read", "create", "update", "delete", "query"]
+    )
     """For CSV blobs, indicates that the first (non-blank) line of each blob contains
      headers."""
     markdown_parsing_submode: Optional[Union[str, "_models.MarkdownParsingSubmode"]] = rest_field(
-        name="markdownParsingSubmode"
+        name="markdownParsingSubmode", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the submode that will determine whether a markdown file will be
      parsed into exactly one search document or multiple search documents. Default
      is ``oneToMany``. Known values are: \"oneToMany\" and \"oneToOne\"."""
-    markdown_header_depth: Optional[Union[str, "_models.MarkdownHeaderDepth"]] = rest_field(name="markdownHeaderDepth")
+    markdown_header_depth: Optional[Union[str, "_models.MarkdownHeaderDepth"]] = rest_field(
+        name="markdownHeaderDepth", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies the max header depth that will be considered while grouping markdown
      content. Default is ``h6``. Known values are: \"h1\", \"h2\", \"h3\", \"h4\", \"h5\", and
      \"h6\"."""
-    document_root: Optional[str] = rest_field(name="documentRoot")
+    document_root: Optional[str] = rest_field(
+        name="documentRoot", visibility=["read", "create", "update", "delete", "query"]
+    )
     """For JSON arrays, given a structured or semi-structured document, you can
      specify a path to the array using this property."""
-    data_to_extract: Optional[Union[str, "_models.BlobIndexerDataToExtract"]] = rest_field(name="dataToExtract")
+    data_to_extract: Optional[Union[str, "_models.BlobIndexerDataToExtract"]] = rest_field(
+        name="dataToExtract", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies the data to extract from Azure blob storage and tells the indexer
      which data to extract from image content when \"imageAction\" is set to a value
      other than \"none\".  This applies to embedded image content in a .PDF or other
      application, or image files such as .jpg and .png, in Azure blobs. Known values are:
      \"storageMetadata\", \"allMetadata\", and \"contentAndMetadata\"."""
-    image_action: Optional[Union[str, "_models.BlobIndexerImageAction"]] = rest_field(name="imageAction")
+    image_action: Optional[Union[str, "_models.BlobIndexerImageAction"]] = rest_field(
+        name="imageAction", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines how to process embedded images and image files in Azure blob
      storage.  Setting the \"imageAction\" configuration to any value other than
      \"none\" requires that a skillset also be attached to that indexer. Known values are: \"none\",
      \"generateNormalizedImages\", and \"generateNormalizedImagePerPage\"."""
-    allow_skillset_to_read_file_data: Optional[bool] = rest_field(name="allowSkillsetToReadFileData")
+    allow_skillset_to_read_file_data: Optional[bool] = rest_field(
+        name="allowSkillsetToReadFileData", visibility=["read", "create", "update", "delete", "query"]
+    )
     """If true, will create a path //document//file_data that is an object
      representing the original file data downloaded from your blob data source.
      This allows you to pass the original file data to a custom skill for processing
      within the enrichment pipeline, or to the Document Extraction skill."""
     pdf_text_rotation_algorithm: Optional[Union[str, "_models.BlobIndexerPDFTextRotationAlgorithm"]] = rest_field(
-        name="pdfTextRotationAlgorithm"
+        name="pdfTextRotationAlgorithm", visibility=["read", "create", "update", "delete", "query"]
     )
     """Determines algorithm for text extraction from PDF files in Azure blob storage. Known values
      are: \"none\" and \"detectAngles\"."""
     execution_environment: Optional[Union[str, "_models.IndexerExecutionEnvironment"]] = rest_field(
-        name="executionEnvironment"
+        name="executionEnvironment", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the environment in which the indexer should execute. Known values are: \"standard\"
      and \"private\"."""
-    query_timeout: Optional[str] = rest_field(name="queryTimeout")
+    query_timeout: Optional[str] = rest_field(
+        name="queryTimeout", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Increases the timeout beyond the 5-minute default for Azure SQL database data
      sources, specified in the format \"hh:mm:ss\"."""
 
@@ -4634,8 +5012,6 @@ class IndexingParametersConfiguration(_model_base.Model):
 class IndexingResult(_model_base.Model):
     """Status of an indexing operation for a single document.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar key: The key of a document that was in the indexing request. Required.
     :vartype key: str
@@ -4655,20 +5031,42 @@ class IndexingResult(_model_base.Model):
     :vartype status_code: int
     """
 
-    key: str = rest_field(visibility=["read"])
+    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The key of a document that was in the indexing request. Required."""
-    error_message: Optional[str] = rest_field(name="errorMessage", visibility=["read"])
+    error_message: Optional[str] = rest_field(
+        name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The error message explaining why the indexing operation failed for the document
      identified by the key; null if indexing succeeded."""
-    succeeded: bool = rest_field(name="status", visibility=["read"])
+    succeeded: bool = rest_field(name="status", visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether the indexing operation succeeded for the document
      identified by the key. Required."""
-    status_code: int = rest_field(name="statusCode", visibility=["read"])
+    status_code: int = rest_field(name="statusCode", visibility=["read", "create", "update", "delete", "query"])
     """The status code of the indexing operation. Possible values include: 200 for a
      successful update or delete, 201 for successful document creation, 400 for a
      malformed input document, 404 for document not found, 409 for a version
      conflict, 422 when the index is temporarily unavailable, or 503 for when the
      service is too busy. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key: str,
+        succeeded: bool,
+        status_code: int,
+        error_message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class IndexingSchedule(_model_base.Model):
@@ -4681,9 +5079,11 @@ class IndexingSchedule(_model_base.Model):
     :vartype start_time: ~datetime.datetime
     """
 
-    interval: datetime.timedelta = rest_field()
+    interval: datetime.timedelta = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The interval of time between indexer executions. Required."""
-    start_time: Optional[datetime.datetime] = rest_field(name="startTime", format="rfc3339")
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """The time when an indexer should start running."""
 
     @overload
@@ -4705,6 +5105,33 @@ class IndexingSchedule(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class IndexStatisticsSummary(_model_base.Model):
+    """Statistics for a given index. Statistics are collected periodically and are not guaranteed to
+    always be up-to-date.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar name: The name of the index. Required.
+    :vartype name: str
+    :ivar document_count: The number of documents in the index. Required.
+    :vartype document_count: int
+    :ivar storage_size: The amount of storage in bytes consumed by the index. Required.
+    :vartype storage_size: int
+    :ivar vector_index_size: The amount of memory in bytes consumed by vectors in the index.
+    :vartype vector_index_size: int
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The name of the index. Required."""
+    document_count: int = rest_field(name="documentCount", visibility=["read"])
+    """The number of documents in the index. Required."""
+    storage_size: int = rest_field(name="storageSize", visibility=["read"])
+    """The amount of storage in bytes consumed by the index. Required."""
+    vector_index_size: Optional[int] = rest_field(name="vectorIndexSize", visibility=["read"])
+    """The amount of memory in bytes consumed by vectors in the index."""
+
+
 class InputFieldMappingEntry(_model_base.Model):
     """Input field mapping for a skill.
 
@@ -4719,13 +5146,17 @@ class InputFieldMappingEntry(_model_base.Model):
     :vartype inputs: list[~azure.search.documents.models.InputFieldMappingEntry]
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the input. Required."""
-    source: Optional[str] = rest_field()
+    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The source of the input."""
-    source_context: Optional[str] = rest_field(name="sourceContext")
+    source_context: Optional[str] = rest_field(
+        name="sourceContext", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The source context used for selecting recursive inputs."""
-    inputs: Optional[List["_models.InputFieldMappingEntry"]] = rest_field()
+    inputs: Optional[List["_models.InputFieldMappingEntry"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The recursive inputs used when creating a complex type."""
 
     @overload
@@ -4768,11 +5199,13 @@ class KeepTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.KeepTo
     :vartype odata_type: str
     """
 
-    keep_words: List[str] = rest_field(name="keepWords")
+    keep_words: List[str] = rest_field(name="keepWords", visibility=["read", "create", "update", "delete", "query"])
     """The list of words to keep. Required."""
-    lower_case_keep_words: Optional[bool] = rest_field(name="keepWordsCase")
+    lower_case_keep_words: Optional[bool] = rest_field(
+        name="keepWordsCase", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to lower case all words first. Default is false."""
-    odata_type: Literal["#Microsoft.Azure.Search.KeepTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.KeepTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.KeepTokenFilter\"."""
 
@@ -4838,19 +5271,23 @@ class KeyPhraseExtractionSkill(SearchIndexerSkill, discriminator="#Microsoft.Ski
     """
 
     default_language_code: Optional[Union[str, "_models.KeyPhraseExtractionSkillLanguage"]] = rest_field(
-        name="defaultLanguageCode"
+        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
     )
     """A value indicating which language code to use. Default is ``en``. Known values are: \"da\",
      \"nl\", \"en\", \"fi\", \"fr\", \"de\", \"it\", \"ja\", \"ko\", \"no\", \"pl\", \"pt-PT\",
      \"pt-BR\", \"ru\", \"es\", and \"sv\"."""
-    max_key_phrase_count: Optional[int] = rest_field(name="maxKeyPhraseCount")
+    max_key_phrase_count: Optional[int] = rest_field(
+        name="maxKeyPhraseCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A number indicating how many key phrases to return. If absent, all identified
      key phrases will be returned."""
-    model_version: Optional[str] = rest_field(name="modelVersion")
+    model_version: Optional[str] = rest_field(
+        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of the model to use when calling the Text Analytics service. It
      will default to the latest available when not specified. We recommend you do
      not specify this value unless absolutely necessary."""
-    odata_type: Literal["#Microsoft.Skills.Text.KeyPhraseExtractionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Skills.Text.KeyPhraseExtractionSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.KeyPhraseExtractionSkill\"."""
 
@@ -4898,12 +5335,14 @@ class KeywordMarkerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sear
     :vartype odata_type: str
     """
 
-    keywords: List[str] = rest_field()
+    keywords: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of words to mark as keywords. Required."""
-    ignore_case: Optional[bool] = rest_field(name="ignoreCase")
+    ignore_case: Optional[bool] = rest_field(
+        name="ignoreCase", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to ignore case. If true, all words are converted to
      lower case first. Default is false."""
-    odata_type: Literal["#Microsoft.Azure.Search.KeywordMarkerTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.KeywordMarkerTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.KeywordMarkerTokenFilter\"."""
 
@@ -4927,47 +5366,6 @@ class KeywordMarkerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sear
         super().__init__(*args, odata_type="#Microsoft.Azure.Search.KeywordMarkerTokenFilter", **kwargs)
 
 
-class KeywordTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.KeywordTokenizer"):
-    """Emits the entire input as a single token. This tokenizer is implemented using
-    Apache Lucene.
-
-
-    :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes
-     or underscores, can only start and end with alphanumeric characters, and is
-     limited to 128 characters. Required.
-    :vartype name: str
-    :ivar buffer_size: The read buffer size in bytes. Default is 256.
-    :vartype buffer_size: int
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
-     "#Microsoft.Azure.Search.KeywordTokenizer".
-    :vartype odata_type: str
-    """
-
-    buffer_size: Optional[int] = rest_field(name="bufferSize")
-    """The read buffer size in bytes. Default is 256."""
-    odata_type: Literal["#Microsoft.Azure.Search.KeywordTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
-    """A URI fragment specifying the type of tokenizer. Required. Default value is
-     \"#Microsoft.Azure.Search.KeywordTokenizer\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        buffer_size: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.KeywordTokenizer", **kwargs)
-
-
 class KeywordTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.KeywordTokenizerV2"):
     """Emits the entire input as a single token. This tokenizer is implemented using
     Apache Lucene.
@@ -4986,10 +5384,12 @@ class KeywordTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Searc
     :vartype odata_type: str
     """
 
-    max_token_length: Optional[int] = rest_field(name="maxTokenLength")
+    max_token_length: Optional[int] = rest_field(
+        name="maxTokenLength", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum token length. Default is 256. Tokens longer than the maximum length
      are split. The maximum token length that can be used is 300 characters."""
-    odata_type: Literal["#Microsoft.Azure.Search.KeywordTokenizerV2"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.KeywordTokenizerV2"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.KeywordTokenizerV2\"."""
 
@@ -5050,14 +5450,18 @@ class LanguageDetectionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skill
     :vartype odata_type: str
     """
 
-    default_country_hint: Optional[str] = rest_field(name="defaultCountryHint")
+    default_country_hint: Optional[str] = rest_field(
+        name="defaultCountryHint", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A country code to use as a hint to the language detection model if it cannot
      disambiguate the language."""
-    model_version: Optional[str] = rest_field(name="modelVersion")
+    model_version: Optional[str] = rest_field(
+        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of the model to use when calling the Text Analytics service. It
      will default to the latest available when not specified. We recommend you do
      not specify this value unless absolutely necessary."""
-    odata_type: Literal["#Microsoft.Skills.Text.LanguageDetectionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Skills.Text.LanguageDetectionSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.LanguageDetectionSkill\"."""
 
@@ -5104,12 +5508,12 @@ class LengthTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Leng
     :vartype odata_type: str
     """
 
-    min_length: Optional[int] = rest_field(name="min")
+    min_length: Optional[int] = rest_field(name="min", visibility=["read", "create", "update", "delete", "query"])
     """The minimum length in characters. Default is 0. Maximum is 300. Must be less
      than the value of max."""
-    max_length: Optional[int] = rest_field(name="max")
+    max_length: Optional[int] = rest_field(name="max", visibility=["read", "create", "update", "delete", "query"])
     """The maximum length in characters. Default and maximum is 300."""
-    odata_type: Literal["#Microsoft.Azure.Search.LengthTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.LengthTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.LengthTokenFilter\"."""
 
@@ -5153,12 +5557,16 @@ class LimitTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Limit
     :vartype odata_type: str
     """
 
-    max_token_count: Optional[int] = rest_field(name="maxTokenCount")
+    max_token_count: Optional[int] = rest_field(
+        name="maxTokenCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum number of tokens to produce. Default is 1."""
-    consume_all_tokens: Optional[bool] = rest_field(name="consumeAllTokens")
+    consume_all_tokens: Optional[bool] = rest_field(
+        name="consumeAllTokens", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether all tokens from the input must be consumed even if
      maxTokenCount is reached. Default is false."""
-    odata_type: Literal["#Microsoft.Azure.Search.LimitTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.LimitTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.LimitTokenFilter\"."""
 
@@ -5186,60 +5594,148 @@ class ListDataSourcesResult(_model_base.Model):
     """Response from a List Datasources request. If successful, it includes the full
     definitions of all datasources.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar data_sources: The datasources in the Search service. Required.
     :vartype data_sources: list[~azure.search.documents.models.SearchIndexerDataSource]
     """
 
-    data_sources: List["_models.SearchIndexerDataSource"] = rest_field(name="value", visibility=["read"])
+    data_sources: List["_models.SearchIndexerDataSource"] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The datasources in the Search service. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data_sources: List["_models.SearchIndexerDataSource"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ListIndexersResult(_model_base.Model):
     """Response from a List Indexers request. If successful, it includes the full
     definitions of all indexers.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar indexers: The indexers in the Search service. Required.
     :vartype indexers: list[~azure.search.documents.models.SearchIndexer]
     """
 
-    indexers: List["_models.SearchIndexer"] = rest_field(name="value", visibility=["read"])
+    indexers: List["_models.SearchIndexer"] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The indexers in the Search service. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        indexers: List["_models.SearchIndexer"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ListIndexStatsSummary(_model_base.Model):
+    """Response from a request to retrieve stats summary of all indexes. If successful, it includes
+    the stats of each index in the service.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar indexes_statistics: The Statistics summary of all indexes in the Search service.
+     Required.
+    :vartype indexes_statistics: list[~azure.search.documents.models.IndexStatisticsSummary]
+    """
+
+    indexes_statistics: List["_models.IndexStatisticsSummary"] = rest_field(name="value", visibility=["read"])
+    """The Statistics summary of all indexes in the Search service. Required."""
 
 
 class ListSkillsetsResult(_model_base.Model):
     """Response from a list skillset request. If successful, it includes the full
     definitions of all skillsets.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar skillsets: The skillsets defined in the Search service. Required.
     :vartype skillsets: list[~azure.search.documents.models.SearchIndexerSkillset]
     """
 
-    skillsets: List["_models.SearchIndexerSkillset"] = rest_field(name="value", visibility=["read"])
+    skillsets: List["_models.SearchIndexerSkillset"] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The skillsets defined in the Search service. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        skillsets: List["_models.SearchIndexerSkillset"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ListSynonymMapsResult(_model_base.Model):
     """Response from a List SynonymMaps request. If successful, it includes the full
     definitions of all synonym maps.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar synonym_maps: The synonym maps in the Search service. Required.
     :vartype synonym_maps: list[~azure.search.documents.models.SynonymMap]
     """
 
-    synonym_maps: List["_models.SynonymMap"] = rest_field(name="value", visibility=["read"])
+    synonym_maps: List["_models.SynonymMap"] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The synonym maps in the Search service. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        synonym_maps: List["_models.SynonymMap"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LookupDocument(_model_base.Model):
+    """A document retrieved via a document lookup operation."""
 
 
 class LuceneStandardAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.StandardAnalyzer"):
@@ -5262,12 +5758,14 @@ class LuceneStandardAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Se
     :vartype odata_type: str
     """
 
-    max_token_length: Optional[int] = rest_field(name="maxTokenLength")
+    max_token_length: Optional[int] = rest_field(
+        name="maxTokenLength", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum token length. Default is 255. Tokens longer than the maximum length
      are split. The maximum token length that can be used is 300 characters."""
-    stopwords: Optional[List[str]] = rest_field()
+    stopwords: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of stopwords."""
-    odata_type: Literal["#Microsoft.Azure.Search.StandardAnalyzer"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.StandardAnalyzer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of analyzer. Required. Default value is
      \"#Microsoft.Azure.Search.StandardAnalyzer\"."""
 
@@ -5291,50 +5789,6 @@ class LuceneStandardAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Se
         super().__init__(*args, odata_type="#Microsoft.Azure.Search.StandardAnalyzer", **kwargs)
 
 
-class LuceneStandardTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.StandardTokenizer"):
-    """Breaks text following the Unicode Text Segmentation rules. This tokenizer is
-    implemented using Apache Lucene.
-
-
-    :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes
-     or underscores, can only start and end with alphanumeric characters, and is
-     limited to 128 characters. Required.
-    :vartype name: str
-    :ivar max_token_length: The maximum token length. Default is 255. Tokens longer than the
-     maximum length
-     are split.
-    :vartype max_token_length: int
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
-     "#Microsoft.Azure.Search.StandardTokenizer".
-    :vartype odata_type: str
-    """
-
-    max_token_length: Optional[int] = rest_field(name="maxTokenLength")
-    """The maximum token length. Default is 255. Tokens longer than the maximum length
-     are split."""
-    odata_type: Literal["#Microsoft.Azure.Search.StandardTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
-    """A URI fragment specifying the type of tokenizer. Required. Default value is
-     \"#Microsoft.Azure.Search.StandardTokenizer\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        max_token_length: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.StandardTokenizer", **kwargs)
-
-
 class LuceneStandardTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.StandardTokenizerV2"):
     """Breaks text following the Unicode Text Segmentation rules. This tokenizer is
     implemented using Apache Lucene.
@@ -5353,10 +5807,12 @@ class LuceneStandardTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azur
     :vartype odata_type: str
     """
 
-    max_token_length: Optional[int] = rest_field(name="maxTokenLength")
+    max_token_length: Optional[int] = rest_field(
+        name="maxTokenLength", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum token length. Default is 255. Tokens longer than the maximum length
      are split. The maximum token length that can be used is 300 characters."""
-    odata_type: Literal["#Microsoft.Azure.Search.StandardTokenizerV2"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.StandardTokenizerV2"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.StandardTokenizerV2\"."""
 
@@ -5400,9 +5856,11 @@ class MagnitudeScoringFunction(ScoringFunction, discriminator="magnitude"):
     :vartype type: str
     """
 
-    parameters: "_models.MagnitudeScoringParameters" = rest_field(name="magnitude")
+    parameters: "_models.MagnitudeScoringParameters" = rest_field(
+        name="magnitude", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Parameter values for the magnitude scoring function. Required."""
-    type: Literal["magnitude"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["magnitude"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Indicates the type of function to use. Valid values include magnitude,
      freshness, distance, and tag. The function type must be lower case. Required. Default value is
      \"magnitude\"."""
@@ -5442,11 +5900,17 @@ class MagnitudeScoringParameters(_model_base.Model):
     :vartype should_boost_beyond_range_by_constant: bool
     """
 
-    boosting_range_start: float = rest_field(name="boostingRangeStart")
+    boosting_range_start: float = rest_field(
+        name="boostingRangeStart", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The field value at which boosting starts. Required."""
-    boosting_range_end: float = rest_field(name="boostingRangeEnd")
+    boosting_range_end: float = rest_field(
+        name="boostingRangeEnd", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The field value at which boosting ends. Required."""
-    should_boost_beyond_range_by_constant: Optional[bool] = rest_field(name="constantBoostBeyondRange")
+    should_boost_beyond_range_by_constant: Optional[bool] = rest_field(
+        name="constantBoostBeyondRange", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to apply a constant boost for field values beyond
      the range end value; default is false."""
 
@@ -5489,10 +5953,10 @@ class MappingCharFilter(CharFilter, discriminator="#Microsoft.Azure.Search.Mappi
     :vartype odata_type: str
     """
 
-    mappings: List[str] = rest_field()
+    mappings: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of mappings of the following format: \"a=>b\" (all occurrences of the
      character \"a\" will be replaced with character \"b\"). Required."""
-    odata_type: Literal["#Microsoft.Azure.Search.MappingCharFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.MappingCharFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of char filter. Required. Default value is
      \"#Microsoft.Azure.Search.MappingCharFilter\"."""
 
@@ -5551,13 +6015,17 @@ class MergeSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.Merge
     :vartype odata_type: str
     """
 
-    insert_pre_tag: Optional[str] = rest_field(name="insertPreTag")
+    insert_pre_tag: Optional[str] = rest_field(
+        name="insertPreTag", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The tag indicates the start of the merged text. By default, the tag is an empty
      space."""
-    insert_post_tag: Optional[str] = rest_field(name="insertPostTag")
+    insert_post_tag: Optional[str] = rest_field(
+        name="insertPostTag", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The tag indicates the end of the merged text. By default, the tag is an empty
      space."""
-    odata_type: Literal["#Microsoft.Skills.Text.MergeSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    odata_type: Literal["#Microsoft.Skills.Text.MergeSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.MergeSkill\"."""
 
@@ -5619,15 +6087,21 @@ class MicrosoftLanguageStemmingTokenizer(
     :vartype odata_type: str
     """
 
-    max_token_length: Optional[int] = rest_field(name="maxTokenLength")
+    max_token_length: Optional[int] = rest_field(
+        name="maxTokenLength", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum token length. Tokens longer than the maximum length are split.
      Maximum token length that can be used is 300 characters. Tokens longer than 300
      characters are first split into tokens of length 300 and then each of those
      tokens is split based on the max token length set. Default is 255."""
-    is_search_tokenizer: Optional[bool] = rest_field(name="isSearchTokenizer")
+    is_search_tokenizer: Optional[bool] = rest_field(
+        name="isSearchTokenizer", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating how the tokenizer is used. Set to true if used as the search
      tokenizer, set to false if used as the indexing tokenizer. Default is false."""
-    language: Optional[Union[str, "_models.MicrosoftStemmingTokenizerLanguage"]] = rest_field()
+    language: Optional[Union[str, "_models.MicrosoftStemmingTokenizerLanguage"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The language to use. The default is English. Known values are: \"arabic\", \"bangla\",
      \"bulgarian\", \"catalan\", \"croatian\", \"czech\", \"danish\", \"dutch\", \"english\",
      \"estonian\", \"finnish\", \"french\", \"german\", \"greek\", \"gujarati\", \"hebrew\",
@@ -5636,7 +6110,7 @@ class MicrosoftLanguageStemmingTokenizer(
      \"portuguese\", \"portugueseBrazilian\", \"punjabi\", \"romanian\", \"russian\",
      \"serbianCyrillic\", \"serbianLatin\", \"slovak\", \"slovenian\", \"spanish\", \"swedish\",
      \"tamil\", \"telugu\", \"turkish\", \"ukrainian\", and \"urdu\"."""
-    odata_type: Literal["#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
+    odata_type: Literal["#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer\"."""
 
@@ -5692,15 +6166,21 @@ class MicrosoftLanguageTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azu
     :vartype odata_type: str
     """
 
-    max_token_length: Optional[int] = rest_field(name="maxTokenLength")
+    max_token_length: Optional[int] = rest_field(
+        name="maxTokenLength", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum token length. Tokens longer than the maximum length are split.
      Maximum token length that can be used is 300 characters. Tokens longer than 300
      characters are first split into tokens of length 300 and then each of those
      tokens is split based on the max token length set. Default is 255."""
-    is_search_tokenizer: Optional[bool] = rest_field(name="isSearchTokenizer")
+    is_search_tokenizer: Optional[bool] = rest_field(
+        name="isSearchTokenizer", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating how the tokenizer is used. Set to true if used as the search
      tokenizer, set to false if used as the indexing tokenizer. Default is false."""
-    language: Optional[Union[str, "_models.MicrosoftTokenizerLanguage"]] = rest_field()
+    language: Optional[Union[str, "_models.MicrosoftTokenizerLanguage"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The language to use. The default is English. Known values are: \"bangla\", \"bulgarian\",
      \"catalan\", \"chineseSimplified\", \"chineseTraditional\", \"croatian\", \"czech\",
      \"danish\", \"dutch\", \"english\", \"french\", \"german\", \"greek\", \"gujarati\", \"hindi\",
@@ -5709,7 +6189,7 @@ class MicrosoftLanguageTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azu
      \"portugueseBrazilian\", \"punjabi\", \"romanian\", \"russian\", \"serbianCyrillic\",
      \"serbianLatin\", \"slovenian\", \"spanish\", \"swedish\", \"tamil\", \"telugu\", \"thai\",
      \"ukrainian\", \"urdu\", and \"vietnamese\"."""
-    odata_type: Literal["#Microsoft.Azure.Search.MicrosoftLanguageTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.MicrosoftLanguageTokenizer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.MicrosoftLanguageTokenizer\"."""
 
@@ -5747,7 +6227,7 @@ class NativeBlobSoftDeleteDeletionDetectionPolicy(
     :vartype odata_type: str
     """
 
-    odata_type: Literal["#Microsoft.Azure.Search.NativeBlobSoftDeleteDeletionDetectionPolicy"] = rest_discriminator(name="@odata.type")  # type: ignore
+    odata_type: Literal["#Microsoft.Azure.Search.NativeBlobSoftDeleteDeletionDetectionPolicy"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of data deletion detection policy. Required. Default value
      is \"#Microsoft.Azure.Search.NativeBlobSoftDeleteDeletionDetectionPolicy\"."""
 
@@ -5769,53 +6249,6 @@ class NativeBlobSoftDeleteDeletionDetectionPolicy(
         )
 
 
-class NGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.NGramTokenFilter"):
-    """Generates n-grams of the given size(s). This token filter is implemented using
-    Apache Lucene.
-
-
-    :ivar name: The name of the token filter. It must only contain letters, digits, spaces,
-     dashes or underscores, can only start and end with alphanumeric characters, and
-     is limited to 128 characters. Required.
-    :vartype name: str
-    :ivar min_gram: The minimum n-gram length. Default is 1. Must be less than the value of
-     maxGram.
-    :vartype min_gram: int
-    :ivar max_gram: The maximum n-gram length. Default is 2.
-    :vartype max_gram: int
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
-     is "#Microsoft.Azure.Search.NGramTokenFilter".
-    :vartype odata_type: str
-    """
-
-    min_gram: Optional[int] = rest_field(name="minGram")
-    """The minimum n-gram length. Default is 1. Must be less than the value of maxGram."""
-    max_gram: Optional[int] = rest_field(name="maxGram")
-    """The maximum n-gram length. Default is 2."""
-    odata_type: Literal["#Microsoft.Azure.Search.NGramTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
-    """A URI fragment specifying the type of token filter. Required. Default value is
-     \"#Microsoft.Azure.Search.NGramTokenFilter\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        min_gram: Optional[int] = None,
-        max_gram: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.NGramTokenFilter", **kwargs)
-
-
 class NGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search.NGramTokenFilterV2"):
     """Generates n-grams of the given size(s). This token filter is implemented using
     Apache Lucene.
@@ -5835,12 +6268,12 @@ class NGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search.NGr
     :vartype odata_type: str
     """
 
-    min_gram: Optional[int] = rest_field(name="minGram")
+    min_gram: Optional[int] = rest_field(name="minGram", visibility=["read", "create", "update", "delete", "query"])
     """The minimum n-gram length. Default is 1. Maximum is 300. Must be less than the
      value of maxGram."""
-    max_gram: Optional[int] = rest_field(name="maxGram")
+    max_gram: Optional[int] = rest_field(name="maxGram", visibility=["read", "create", "update", "delete", "query"])
     """The maximum n-gram length. Default is 2. Maximum is 300."""
-    odata_type: Literal["#Microsoft.Azure.Search.NGramTokenFilterV2"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.NGramTokenFilterV2"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.NGramTokenFilterV2\"."""
 
@@ -5885,14 +6318,16 @@ class NGramTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.NG
     :vartype odata_type: str
     """
 
-    min_gram: Optional[int] = rest_field(name="minGram")
+    min_gram: Optional[int] = rest_field(name="minGram", visibility=["read", "create", "update", "delete", "query"])
     """The minimum n-gram length. Default is 1. Maximum is 300. Must be less than the
      value of maxGram."""
-    max_gram: Optional[int] = rest_field(name="maxGram")
+    max_gram: Optional[int] = rest_field(name="maxGram", visibility=["read", "create", "update", "delete", "query"])
     """The maximum n-gram length. Default is 2. Maximum is 300."""
-    token_chars: Optional[List[Union[str, "_models.TokenCharacterKind"]]] = rest_field(name="tokenChars")
+    token_chars: Optional[List[Union[str, "_models.TokenCharacterKind"]]] = rest_field(
+        name="tokenChars", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Character classes to keep in the tokens."""
-    odata_type: Literal["#Microsoft.Azure.Search.NGramTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.NGramTokenizer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.NGramTokenizer\"."""
 
@@ -5967,7 +6402,9 @@ class OcrSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vision.OcrSk
     :vartype odata_type: str
     """
 
-    default_language_code: Optional[Union[str, "_models.OcrSkillLanguage"]] = rest_field(name="defaultLanguageCode")
+    default_language_code: Optional[Union[str, "_models.OcrSkillLanguage"]] = rest_field(
+        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating which language code to use. Default is ``en``. Known values are: \"af\",
      \"sq\", \"anp\", \"ar\", \"ast\", \"awa\", \"az\", \"bfy\", \"eu\", \"be\", \"be-cyrl\",
      \"be-latn\", \"bho\", \"bi\", \"brx\", \"bs\", \"bra\", \"br\", \"bg\", \"bns\", \"bua\",
@@ -5986,13 +6423,17 @@ class OcrSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vision.OcrSk
      \"sw\", \"sv\", \"tg\", \"tt\", \"tet\", \"thf\", \"to\", \"tr\", \"tk\", \"tyv\", \"hsb\",
      \"ur\", \"ug\", \"uz-arab\", \"uz-cyrl\", \"uz\", \"vo\", \"wae\", \"cy\", \"fy\", \"yua\",
      \"za\", \"zu\", and \"unk\"."""
-    should_detect_orientation: Optional[bool] = rest_field(name="detectOrientation")
+    should_detect_orientation: Optional[bool] = rest_field(
+        name="detectOrientation", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating to turn orientation detection on or not. Default is false."""
-    line_ending: Optional[Union[str, "_models.OcrLineEnding"]] = rest_field(name="lineEnding")
+    line_ending: Optional[Union[str, "_models.OcrLineEnding"]] = rest_field(
+        name="lineEnding", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defines the sequence of characters to use between the lines of text recognized
      by the OCR skill. The default value is \"space\". Known values are: \"space\",
      \"carriageReturn\", \"lineFeed\", and \"carriageReturnLineFeed\"."""
-    odata_type: Literal["#Microsoft.Skills.Vision.OcrSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    odata_type: Literal["#Microsoft.Skills.Vision.OcrSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Vision.OcrSkill\"."""
 
@@ -6031,9 +6472,11 @@ class OutputFieldMappingEntry(_model_base.Model):
     :vartype target_name: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the output defined by the skill. Required."""
-    target_name: Optional[str] = rest_field(name="targetName")
+    target_name: Optional[str] = rest_field(
+        name="targetName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The target name of the output. It is optional and default to name."""
 
     @overload
@@ -6081,18 +6524,24 @@ class PathHierarchyTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure
     :vartype odata_type: str
     """
 
-    delimiter: Optional[str] = rest_field()
+    delimiter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The delimiter character to use. Default is \"/\"."""
-    replacement: Optional[str] = rest_field()
+    replacement: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value that, if set, replaces the delimiter character. Default is \"/\"."""
-    max_token_length: Optional[int] = rest_field(name="maxTokenLength")
+    max_token_length: Optional[int] = rest_field(
+        name="maxTokenLength", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum token length. Default and maximum is 300."""
-    reverse_token_order: Optional[bool] = rest_field(name="reverse")
+    reverse_token_order: Optional[bool] = rest_field(
+        name="reverse", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to generate tokens in reverse order. Default is
      false."""
-    number_of_tokens_to_skip: Optional[int] = rest_field(name="skip")
+    number_of_tokens_to_skip: Optional[int] = rest_field(
+        name="skip", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of initial tokens to skip. Default is 0."""
-    odata_type: Literal["#Microsoft.Azure.Search.PathHierarchyTokenizerV2"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.PathHierarchyTokenizerV2"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.PathHierarchyTokenizerV2\"."""
 
@@ -6144,17 +6593,21 @@ class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Pa
     :vartype odata_type: str
     """
 
-    lower_case_terms: Optional[bool] = rest_field(name="lowercase")
+    lower_case_terms: Optional[bool] = rest_field(
+        name="lowercase", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether terms should be lower-cased. Default is true."""
-    pattern: Optional[str] = rest_field()
+    pattern: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A regular expression pattern to match token separators. Default is an
      expression that matches one or more non-word characters."""
-    flags: Optional[Union[str, "_models.RegexFlags"]] = rest_field()
+    flags: Optional[Union[str, "_models.RegexFlags"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Regular expression flags. Known values are: \"CANON_EQ\", \"CASE_INSENSITIVE\", \"COMMENTS\",
      \"DOTALL\", \"LITERAL\", \"MULTILINE\", \"UNICODE_CASE\", and \"UNIX_LINES\"."""
-    stopwords: Optional[List[str]] = rest_field()
+    stopwords: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of stopwords."""
-    odata_type: Literal["#Microsoft.Azure.Search.PatternAnalyzer"] = rest_discriminator(name="odataType")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.PatternAnalyzer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of analyzer. Required. Default value is
      \"#Microsoft.Azure.Search.PatternAnalyzer\"."""
 
@@ -6200,12 +6653,14 @@ class PatternCaptureTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sea
     :vartype odata_type: str
     """
 
-    patterns: List[str] = rest_field()
+    patterns: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of patterns to match against each token. Required."""
-    preserve_original: Optional[bool] = rest_field(name="preserveOriginal")
+    preserve_original: Optional[bool] = rest_field(
+        name="preserveOriginal", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to return the original token even if one of the
      patterns matches. Default is true."""
-    odata_type: Literal["#Microsoft.Azure.Search.PatternCaptureTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.PatternCaptureTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.PatternCaptureTokenFilter\"."""
 
@@ -6251,11 +6706,11 @@ class PatternReplaceCharFilter(CharFilter, discriminator="#Microsoft.Azure.Searc
     :vartype odata_type: str
     """
 
-    pattern: str = rest_field()
+    pattern: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A regular expression pattern. Required."""
-    replacement: str = rest_field()
+    replacement: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The replacement text. Required."""
-    odata_type: Literal["#Microsoft.Azure.Search.PatternReplaceCharFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.PatternReplaceCharFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of char filter. Required. Default value is
      \"#Microsoft.Azure.Search.PatternReplaceCharFilter\"."""
 
@@ -6301,11 +6756,11 @@ class PatternReplaceTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sea
     :vartype odata_type: str
     """
 
-    pattern: str = rest_field()
+    pattern: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A regular expression pattern. Required."""
-    replacement: str = rest_field()
+    replacement: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The replacement text. Required."""
-    odata_type: Literal["#Microsoft.Azure.Search.PatternReplaceTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.PatternReplaceTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.PatternReplaceTokenFilter\"."""
 
@@ -6353,17 +6808,19 @@ class PatternTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
     :vartype odata_type: str
     """
 
-    pattern: Optional[str] = rest_field()
+    pattern: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A regular expression pattern to match token separators. Default is an
      expression that matches one or more non-word characters."""
-    flags: Optional[Union[str, "_models.RegexFlags"]] = rest_field()
+    flags: Optional[Union[str, "_models.RegexFlags"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Regular expression flags. Known values are: \"CANON_EQ\", \"CASE_INSENSITIVE\", \"COMMENTS\",
      \"DOTALL\", \"LITERAL\", \"MULTILINE\", \"UNICODE_CASE\", and \"UNIX_LINES\"."""
-    group: Optional[int] = rest_field()
+    group: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The zero-based ordinal of the matching group in the regular expression pattern
      to extract into tokens. Use -1 if you want to use the entire pattern to split
      the input into tokens, irrespective of matching groups. Default is -1."""
-    odata_type: Literal["#Microsoft.Azure.Search.PatternTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.PatternTokenizer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.PatternTokenizer\"."""
 
@@ -6410,14 +6867,18 @@ class PhoneticTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Ph
     :vartype odata_type: str
     """
 
-    encoder: Optional[Union[str, "_models.PhoneticEncoder"]] = rest_field()
+    encoder: Optional[Union[str, "_models.PhoneticEncoder"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The phonetic encoder to use. Default is \"metaphone\". Known values are: \"metaphone\",
      \"doubleMetaphone\", \"soundex\", \"refinedSoundex\", \"caverphone1\", \"caverphone2\",
      \"cologne\", \"nysiis\", \"koelnerPhonetik\", \"haasePhonetik\", and \"beiderMorse\"."""
-    replace_original_tokens: Optional[bool] = rest_field(name="replace")
+    replace_original_tokens: Optional[bool] = rest_field(
+        name="replace", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether encoded tokens should replace original tokens. If
      false, encoded tokens are added as synonyms. Default is true."""
-    odata_type: Literal["#Microsoft.Azure.Search.PhoneticTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.PhoneticTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.PhoneticTokenFilter\"."""
 
@@ -6492,28 +6953,40 @@ class PIIDetectionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Tex
     :vartype odata_type: str
     """
 
-    default_language_code: Optional[str] = rest_field(name="defaultLanguageCode")
+    default_language_code: Optional[str] = rest_field(
+        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating which language code to use. Default is ``en``."""
-    minimum_precision: Optional[float] = rest_field(name="minimumPrecision")
+    minimum_precision: Optional[float] = rest_field(
+        name="minimumPrecision", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value between 0 and 1 that be used to only include entities whose confidence
      score is greater than the value specified. If not set (default), or if
      explicitly set to null, all entities will be included."""
-    masking_mode: Optional[Union[str, "_models.PIIDetectionSkillMaskingMode"]] = rest_field(name="maskingMode")
+    masking_mode: Optional[Union[str, "_models.PIIDetectionSkillMaskingMode"]] = rest_field(
+        name="maskingMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A parameter that provides various ways to mask the personal information
      detected in the input text. Default is 'none'. Known values are: \"none\" and \"replace\"."""
-    mask: Optional[str] = rest_field(name="maskingCharacter")
+    mask: Optional[str] = rest_field(
+        name="maskingCharacter", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The character used to mask the text if the maskingMode parameter is set to
      replace. Default is '*'."""
-    model_version: Optional[str] = rest_field(name="modelVersion")
+    model_version: Optional[str] = rest_field(
+        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of the model to use when calling the Text Analytics service. It
      will default to the latest available when not specified. We recommend you do
      not specify this value unless absolutely necessary."""
-    pii_categories: Optional[List[str]] = rest_field(name="piiCategories")
+    pii_categories: Optional[List[str]] = rest_field(
+        name="piiCategories", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of PII entity categories that should be extracted and masked."""
-    domain: Optional[str] = rest_field()
+    domain: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """If specified, will set the PII domain to include only a subset of the entity
      categories. Possible values include: 'phi', 'none'. Default is 'none'."""
-    odata_type: Literal["#Microsoft.Skills.Text.PIIDetectionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Skills.Text.PIIDetectionSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.PIIDetectionSkill\"."""
 
@@ -6551,8 +7024,6 @@ class QueryAnswerResult(_model_base.Model):
     documents that matched the query. Answers are extracted from the top search
     results. Answer candidates are scored and the top answers are selected.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar score: The score value represents how relevant the answer is to the query relative to
      other answers returned for the query.
     :vartype score: float
@@ -6565,24 +7036,42 @@ class QueryAnswerResult(_model_base.Model):
     :vartype highlights: str
     """
 
-    score: Optional[float] = rest_field(visibility=["read"])
+    score: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The score value represents how relevant the answer is to the query relative to
      other answers returned for the query."""
-    key: Optional[str] = rest_field(visibility=["read"])
+    key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The key of the document the answer was extracted from."""
-    text: Optional[str] = rest_field(visibility=["read"])
+    text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text passage extracted from the document contents as the answer."""
-    highlights: Optional[str] = rest_field(visibility=["read"])
+    highlights: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Same text passage as in the Text property with highlighted text phrases most
      relevant to the query."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        score: Optional[float] = None,
+        key: Optional[str] = None,
+        text: Optional[str] = None,
+        highlights: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class QueryCaptionResult(_model_base.Model):
     """Captions are the most representative passages from the document relatively to
     the search query. They are often used as document summary. Captions are only
     returned for queries of type ``semantic``.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar text: A representative text passage extracted from the document most relevant to the
      search query.
@@ -6592,12 +7081,30 @@ class QueryCaptionResult(_model_base.Model):
     :vartype highlights: str
     """
 
-    text: Optional[str] = rest_field(visibility=["read"])
+    text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A representative text passage extracted from the document most relevant to the
      search query."""
-    highlights: Optional[str] = rest_field(visibility=["read"])
+    highlights: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Same text passage as in the Text property with highlighted phrases most
      relevant to the query."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: Optional[str] = None,
+        highlights: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class QueryResultDocumentRerankerInput(_model_base.Model):
@@ -6715,9 +7222,8 @@ class RescoringOptions(_model_base.Model):
      of potential
      documents to offset the resolution loss due to quantization. This increases the
      set of results that will be rescored on full-precision vectors. Minimum value
-     is 1, meaning no oversampling (1x). This parameter can only be set when
-     'enableRescoring' is true. Higher values improve recall at the expense of
-     latency.
+     is 1, meaning no oversampling (1x). This parameter can only be set when 'enableRescoring'
+     is true. Higher values improve recall at the expense of latency.
     :vartype default_oversampling: float
     :ivar rescore_storage_method: Controls the storage method for original vectors. This setting is
      immutable. Known values are: "preserveOriginals" and "discardOriginals".
@@ -6725,19 +7231,22 @@ class RescoringOptions(_model_base.Model):
      ~azure.search.documents.models.VectorSearchCompressionRescoreStorageMethod
     """
 
-    enable_rescoring: Optional[bool] = rest_field(name="enableRescoring")
+    enable_rescoring: Optional[bool] = rest_field(
+        name="enableRescoring", visibility=["read", "create", "update", "delete", "query"]
+    )
     """If set to true, after the initial search on the compressed vectors, the
      similarity scores are recalculated using the full-precision vectors. This will
      improve recall at the expense of latency."""
-    default_oversampling: Optional[float] = rest_field(name="defaultOversampling")
+    default_oversampling: Optional[float] = rest_field(
+        name="defaultOversampling", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Default oversampling factor. Oversampling retrieves a greater set of potential
      documents to offset the resolution loss due to quantization. This increases the
      set of results that will be rescored on full-precision vectors. Minimum value
-     is 1, meaning no oversampling (1x). This parameter can only be set when
-     'enableRescoring' is true. Higher values improve recall at the expense of
-     latency."""
+     is 1, meaning no oversampling (1x). This parameter can only be set when 'enableRescoring'
+     is true. Higher values improve recall at the expense of latency."""
     rescore_storage_method: Optional[Union[str, "_models.VectorSearchCompressionRescoreStorageMethod"]] = rest_field(
-        name="rescoreStorageMethod"
+        name="rescoreStorageMethod", visibility=["read", "create", "update", "delete", "query"]
     )
     """Controls the storage method for original vectors. This setting is immutable. Known values are:
      \"preserveOriginals\" and \"discardOriginals\"."""
@@ -6772,9 +7281,9 @@ class ResourceCounter(_model_base.Model):
     :vartype quota: int
     """
 
-    usage: int = rest_field()
+    usage: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The resource usage amount. Required."""
-    quota: Optional[int] = rest_field()
+    quota: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The resource amount quota."""
 
     @overload
@@ -6839,9 +7348,11 @@ class ScalarQuantizationCompression(VectorSearchCompression, discriminator="scal
     :vartype kind: str or ~azure.search.documents.models.SCALAR_QUANTIZATION
     """
 
-    parameters: Optional["_models.ScalarQuantizationParameters"] = rest_field(name="scalarQuantizationParameters")
+    parameters: Optional["_models.ScalarQuantizationParameters"] = rest_field(
+        name="scalarQuantizationParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Contains the parameters specific to Scalar Quantization."""
-    kind: Literal[VectorSearchCompressionKind.SCALAR_QUANTIZATION] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorSearchCompressionKind.SCALAR_QUANTIZATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the kind of compression method being configured for use with vector
      search. Required. Scalar Quantization, a type of compression method. In scalar quantization,
      the
@@ -6881,7 +7392,7 @@ class ScalarQuantizationParameters(_model_base.Model):
     """
 
     quantized_data_type: Optional[Union[str, "_models.VectorSearchCompressionTarget"]] = rest_field(
-        name="quantizedDataType"
+        name="quantizedDataType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The quantized data type of compressed vector values. \"int8\""""
 
@@ -6921,14 +7432,18 @@ class ScoringProfile(_model_base.Model):
     :vartype function_aggregation: str or ~azure.search.documents.models.ScoringFunctionAggregation
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the scoring profile. Required."""
-    text_weights: Optional["_models.TextWeights"] = rest_field(name="text")
+    text_weights: Optional["_models.TextWeights"] = rest_field(
+        name="text", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Parameters that boost scoring based on text matches in certain index fields."""
-    functions: Optional[List["_models.ScoringFunction"]] = rest_field()
+    functions: Optional[List["_models.ScoringFunction"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The collection of functions that influence the scoring of documents."""
     function_aggregation: Optional[Union[str, "_models.ScoringFunctionAggregation"]] = rest_field(
-        name="functionAggregation"
+        name="functionAggregation", visibility=["read", "create", "update", "delete", "query"]
     )
     """A value indicating how the results of individual scoring functions should be
      combined. Defaults to \"Sum\". Ignored if there are no scoring functions. Known values are:
@@ -6970,11 +7485,11 @@ class SearchAlias(_model_base.Model):
     :vartype e_tag: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the alias. Required."""
-    indexes: List[str] = rest_field()
+    indexes: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the index this alias maps to. Only one index name may be specified. Required."""
-    e_tag: Optional[str] = rest_field(name="@odata.etag")
+    e_tag: Optional[str] = rest_field(name="@odata.etag", visibility=["read", "create", "update", "delete", "query"])
     """The ETag of the alias."""
 
     @overload
@@ -7023,9 +7538,7 @@ class SearchDocumentsResult(_model_base.Model):
     :vartype debug_info: ~azure.search.documents.models.DebugInfo
     :ivar next_page_parameters: Continuation JSON payload returned when the query can't return all
      the
-     requested results in a single response. You can use this JSON along with
-     @odata.nextLink to formulate another POST Search request to get the next part
-     of the search response.
+     requested results in a single response. You can use this JSON along with.
     :vartype next_page_parameters: ~azure.search.documents.models.SearchRequest
     :ivar results: The sequence of results returned by the query. Required.
     :vartype results: list[~azure.search.documents.models.SearchResult]
@@ -7050,45 +7563,53 @@ class SearchDocumentsResult(_model_base.Model):
      ~azure.search.documents.models.SemanticQueryRewritesResultType
     """
 
-    count: Optional[int] = rest_field(name="@odata.count", visibility=["read"])
+    count: Optional[int] = rest_field(name="@odata.count", visibility=["read", "create", "update", "delete", "query"])
     """The total count of results found by the search operation, or null if the count
      was not requested. If present, the count may be greater than the number of
      results in this response. This can happen if you use the $top or $skip
      parameters, or if the query can't return all the requested documents in a
      single response."""
-    coverage: Optional[float] = rest_field(name="@search.coverage", visibility=["read"])
+    coverage: Optional[float] = rest_field(
+        name="@search.coverage", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating the percentage of the index that was included in the query,
      or null if minimumCoverage was not specified in the request."""
-    facets: Optional[Dict[str, List["_models.FacetResult"]]] = rest_field(name="@search.facets", visibility=["read"])
+    facets: Optional[Dict[str, List["_models.FacetResult"]]] = rest_field(
+        name="@search.facets", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The facet query results for the search operation, organized as a collection of
      buckets for each faceted field; null if the query did not include any facet
      expressions."""
-    answers: Optional[List["_models.QueryAnswerResult"]] = rest_field(name="@search.answers", visibility=["read"])
+    answers: Optional[List["_models.QueryAnswerResult"]] = rest_field(
+        name="@search.answers", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The answers query results for the search operation; null if the answers query
      parameter was not specified or set to 'none'."""
-    debug_info: Optional["_models.DebugInfo"] = rest_field(name="@search.debugInfo", visibility=["read"])
+    debug_info: Optional["_models.DebugInfo"] = rest_field(name="@search.debug", visibility=["read"])
     """Debug information that applies to the search results as a whole."""
     next_page_parameters: Optional["_models.SearchRequest"] = rest_field(
-        name="@search.nextPageParameters", visibility=["read"]
+        name="@search.nextPageParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Continuation JSON payload returned when the query can't return all the
-     requested results in a single response. You can use this JSON along with
-     @odata.nextLink to formulate another POST Search request to get the next part
-     of the search response."""
-    results: List["_models.SearchResult"] = rest_field(name="value", visibility=["read"])
+     requested results in a single response. You can use this JSON along with."""
+    results: List["_models.SearchResult"] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The sequence of results returned by the query. Required."""
-    next_link: Optional[str] = rest_field(name="@odata.nextLink", visibility=["read"])
+    next_link: Optional[str] = rest_field(
+        name="@odata.nextLink", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Continuation URL returned when the query can't return all the requested results
      in a single response. You can use this URL to formulate another GET or POST
      Search request to get the next part of the search response. Make sure to use
      the same verb (GET or POST) as the request that produced this response."""
     semantic_partial_response_reason: Optional[Union[str, "_models.SemanticErrorReason"]] = rest_field(
-        name="@search.semanticPartialResponseReason", visibility=["read"]
+        name="@search.semanticPartialResponseReason", visibility=["read", "create", "update", "delete", "query"]
     )
     """Reason that a partial response was returned for a semantic ranking request. Known values are:
      \"maxWaitExceeded\", \"capacityOverloaded\", and \"transient\"."""
     semantic_partial_response_type: Optional[Union[str, "_models.SemanticSearchResultsType"]] = rest_field(
-        name="@search.semanticPartialResponseType", visibility=["read"]
+        name="@search.semanticPartialResponseType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Type of partial response that was returned for a semantic ranking request. Known values are:
      \"baseResults\" and \"rerankedResults\"."""
@@ -7096,6 +7617,31 @@ class SearchDocumentsResult(_model_base.Model):
         name="@search.semanticQueryRewritesResultType", visibility=["read"]
     )
     """Type of query rewrite that was used to retrieve documents. \"originalQueryOnly\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        results: List["_models.SearchResult"],
+        count: Optional[int] = None,
+        coverage: Optional[float] = None,
+        facets: Optional[Dict[str, List["_models.FacetResult"]]] = None,
+        answers: Optional[List["_models.QueryAnswerResult"]] = None,
+        next_page_parameters: Optional["_models.SearchRequest"] = None,
+        next_link: Optional[str] = None,
+        semantic_partial_response_reason: Optional[Union[str, "_models.SemanticErrorReason"]] = None,
+        semantic_partial_response_type: Optional[Union[str, "_models.SemanticSearchResultsType"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SearchField(_model_base.Model):
@@ -7273,21 +7819,23 @@ class SearchField(_model_base.Model):
     :vartype fields: list[~azure.search.documents.models.SearchField]
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the field, which must be unique within the fields collection of the
      index or parent field. Required."""
-    type: Union[str, "_models.SearchFieldDataType"] = rest_field()
+    type: Union[str, "_models.SearchFieldDataType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The data type of the field. Required. Known values are: \"Edm.String\", \"Edm.Int32\",
      \"Edm.Int64\", \"Edm.Double\", \"Edm.Boolean\", \"Edm.DateTimeOffset\", \"Edm.GeographyPoint\",
      \"Edm.ComplexType\", \"Edm.Single\", \"Edm.Half\", \"Edm.Int16\", \"Edm.SByte\", and
      \"Edm.Byte\"."""
-    key: Optional[bool] = rest_field()
+    key: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether the field uniquely identifies documents in the
      index. Exactly one top-level field in each index must be chosen as the key
      field and it must be of type Edm.String. Key fields can be used to look up
      documents directly and update or delete specific documents. Default is false
      for simple fields and null for complex fields."""
-    retrievable: Optional[bool] = rest_field()
+    retrievable: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether the field can be returned in a search result. You
      can disable this option if you want to use a field (for example, margin) as a
      filter, sorting, or scoring mechanism but do not want the field to be visible
@@ -7296,7 +7844,7 @@ class SearchField(_model_base.Model):
      this property does not cause any increase in index storage requirements.
      Default is true for simple fields, false for vector fields, and null for
      complex fields."""
-    stored: Optional[bool] = rest_field()
+    stored: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An immutable value indicating whether the field will be persisted separately on
      disk to be returned in a search result. You can disable this option if you
      don't plan to return the field contents in a search response to save on storage
@@ -7307,7 +7855,7 @@ class SearchField(_model_base.Model):
      new fields, and for non-vector fields, and it must be null for complex fields.
      Disabling this property will reduce index storage requirements. The default is
      true for vector fields."""
-    searchable: Optional[bool] = rest_field()
+    searchable: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether the field is full-text searchable. This means it
      will undergo analysis such as word-breaking during indexing. If you set a
      searchable field to a value like \"sunny day\", internally it will be split into
@@ -7319,7 +7867,7 @@ class SearchField(_model_base.Model):
      of the field value for full-text searches. If you want to save space in your
      index and you don't need a field to be included in searches, set searchable to
      false."""
-    filterable: Optional[bool] = rest_field()
+    filterable: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether to enable the field to be referenced in $filter
      queries. filterable differs from searchable in how strings are handled. Fields
      of type Edm.String or Collection(Edm.String) that are filterable do not undergo
@@ -7327,7 +7875,7 @@ class SearchField(_model_base.Model):
      set such a field f to \"sunny day\", $filter=f eq 'sunny' will find no matches,
      but $filter=f eq 'sunny day' will. This property must be null for complex
      fields. Default is true for simple fields and null for complex fields."""
-    sortable: Optional[bool] = rest_field()
+    sortable: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether to enable the field to be referenced in $orderby
      expressions. By default, the search engine sorts results by score, but in many
      experiences users will want to sort by fields in the documents. A simple field
@@ -7339,7 +7887,7 @@ class SearchField(_model_base.Model):
      Complex fields cannot be sortable and the sortable property must be null for
      such fields. The default for sortable is true for single-valued simple fields,
      false for multi-valued simple fields, and null for complex fields."""
-    facetable: Optional[bool] = rest_field()
+    facetable: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether to enable the field to be referenced in facet
      queries. Typically used in a presentation of search results that includes hit
      count by category (for example, search for digital cameras and see hits by
@@ -7347,7 +7895,9 @@ class SearchField(_model_base.Model):
      complex fields. Fields of type Edm.GeographyPoint or
      Collection(Edm.GeographyPoint) cannot be facetable. Default is true for all
      other simple fields."""
-    analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = rest_field()
+    analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the analyzer to use for the field. This option can be used only
      with searchable fields and it can't be set together with either searchAnalyzer
      or indexAnalyzer. Once the analyzer is chosen, it cannot be changed for the
@@ -7371,7 +7921,9 @@ class SearchField(_model_base.Model):
      \"tr.microsoft\", \"tr.lucene\", \"uk.microsoft\", \"ur.microsoft\", \"vi.microsoft\",
      \"standard.lucene\", \"standardasciifolding.lucene\", \"keyword\", \"pattern\", \"simple\",
      \"stop\", and \"whitespace\"."""
-    search_analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = rest_field(name="searchAnalyzer")
+    search_analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = rest_field(
+        name="searchAnalyzer", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the analyzer used at search time for the field. This option can be
      used only with searchable fields. It must be set together with indexAnalyzer
      and it cannot be set together with the analyzer option. This property cannot be
@@ -7397,7 +7949,9 @@ class SearchField(_model_base.Model):
      \"tr.microsoft\", \"tr.lucene\", \"uk.microsoft\", \"ur.microsoft\", \"vi.microsoft\",
      \"standard.lucene\", \"standardasciifolding.lucene\", \"keyword\", \"pattern\", \"simple\",
      \"stop\", and \"whitespace\"."""
-    index_analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = rest_field(name="indexAnalyzer")
+    index_analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = rest_field(
+        name="indexAnalyzer", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the analyzer used at indexing time for the field. This option can
      be used only with searchable fields. It must be set together with
      searchAnalyzer and it cannot be set together with the analyzer option.  This
@@ -7423,27 +7977,39 @@ class SearchField(_model_base.Model):
      \"th.lucene\", \"tr.microsoft\", \"tr.lucene\", \"uk.microsoft\", \"ur.microsoft\",
      \"vi.microsoft\", \"standard.lucene\", \"standardasciifolding.lucene\", \"keyword\",
      \"pattern\", \"simple\", \"stop\", and \"whitespace\"."""
-    normalizer: Optional[Union[str, "_models.LexicalNormalizerName"]] = rest_field()
+    normalizer: Optional[Union[str, "_models.LexicalNormalizerName"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the normalizer to use for the field. This option can be used only
      with fields with filterable, sortable, or facetable enabled. Once the
      normalizer is chosen, it cannot be changed for the field. Must be null for
      complex fields. Known values are: \"asciifolding\", \"elision\", \"lowercase\", \"standard\",
      and \"uppercase\"."""
-    vector_search_dimensions: Optional[int] = rest_field(name="dimensions")
+    vector_search_dimensions: Optional[int] = rest_field(
+        name="dimensions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The dimensionality of the vector field."""
-    vector_search_profile_name: Optional[str] = rest_field(name="vectorSearchProfile")
+    vector_search_profile_name: Optional[str] = rest_field(
+        name="vectorSearchProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the vector search profile that specifies the algorithm and
      vectorizer to use when searching the vector field."""
-    vector_encoding_format: Optional[Union[str, "_models.VectorEncodingFormat"]] = rest_field(name="vectorEncoding")
+    vector_encoding_format: Optional[Union[str, "_models.VectorEncodingFormat"]] = rest_field(
+        name="vectorEncoding", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The encoding format to interpret the field contents. \"packedBit\""""
-    synonym_maps: Optional[List[str]] = rest_field(name="synonymMaps")
+    synonym_maps: Optional[List[str]] = rest_field(
+        name="synonymMaps", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of the names of synonym maps to associate with this field. This option
      can be used only with searchable fields. Currently only one synonym map per
      field is supported. Assigning a synonym map to a field ensures that query terms
      targeting that field are expanded at query-time using the rules in the synonym
      map. This attribute can be changed on existing fields. Must be null or an empty
      collection for complex fields."""
-    fields: Optional[List["_models.SearchField"]] = rest_field()
+    fields: Optional[List["_models.SearchField"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of sub-fields if this is a field of type Edm.ComplexType or
      Collection(Edm.ComplexType). Must be null or empty for simple fields."""
 
@@ -7537,31 +8103,51 @@ class SearchIndex(_model_base.Model):
     :vartype e_tag: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the index. Required."""
-    fields: List["_models.SearchField"] = rest_field()
+    fields: List["_models.SearchField"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The fields of the index. Required."""
-    scoring_profiles: Optional[List["_models.ScoringProfile"]] = rest_field(name="scoringProfiles")
+    scoring_profiles: Optional[List["_models.ScoringProfile"]] = rest_field(
+        name="scoringProfiles", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The scoring profiles for the index."""
-    default_scoring_profile: Optional[str] = rest_field(name="defaultScoringProfile")
+    default_scoring_profile: Optional[str] = rest_field(
+        name="defaultScoringProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the scoring profile to use if none is specified in the query. If
      this property is not set and no scoring profile is specified in the query, then
      default scoring (tf-idf) will be used."""
-    cors_options: Optional["_models.CorsOptions"] = rest_field(name="corsOptions")
+    cors_options: Optional["_models.CorsOptions"] = rest_field(
+        name="corsOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Options to control Cross-Origin Resource Sharing (CORS) for the index."""
-    suggesters: Optional[List["_models.SearchSuggester"]] = rest_field()
+    suggesters: Optional[List["_models.SearchSuggester"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The suggesters for the index."""
-    analyzers: Optional[List["_models.LexicalAnalyzer"]] = rest_field()
+    analyzers: Optional[List["_models.LexicalAnalyzer"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The analyzers for the index."""
-    tokenizers: Optional[List["_models.LexicalTokenizer"]] = rest_field()
+    tokenizers: Optional[List["_models.LexicalTokenizer"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The tokenizers for the index."""
-    token_filters: Optional[List["_models.TokenFilter"]] = rest_field(name="tokenFilters")
+    token_filters: Optional[List["_models.TokenFilter"]] = rest_field(
+        name="tokenFilters", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The token filters for the index."""
-    char_filters: Optional[List["_models.CharFilter"]] = rest_field(name="charFilters")
+    char_filters: Optional[List["_models.CharFilter"]] = rest_field(
+        name="charFilters", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The character filters for the index."""
-    normalizers: Optional[List["_models.LexicalNormalizer"]] = rest_field()
+    normalizers: Optional[List["_models.LexicalNormalizer"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The normalizers for the index."""
-    encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(name="encryptionKey")
+    encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(
+        name="encryptionKey", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A description of an encryption key that you create in Azure Key Vault. This key
      is used to provide an additional level of encryption-at-rest for your data when
      you want full assurance that no one, not even Microsoft, can decrypt your data.
@@ -7571,16 +8157,22 @@ class SearchIndex(_model_base.Model):
      unaffected. Encryption with customer-managed keys is not available for free
      search services, and is only available for paid services created on or after
      January 1, 2019."""
-    similarity: Optional["_models.SimilarityAlgorithm"] = rest_field()
+    similarity: Optional["_models.SimilarityAlgorithm"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of similarity algorithm to be used when scoring and ranking the
      documents matching a search query. The similarity algorithm can only be defined
      at index creation time and cannot be modified on existing indexes. If null, the
      ClassicSimilarity algorithm is used."""
-    semantic_search: Optional["_models.SemanticSearch"] = rest_field(name="semantic")
+    semantic_search: Optional["_models.SemanticSearch"] = rest_field(
+        name="semantic", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defines parameters for a search index that influence semantic capabilities."""
-    vector_search: Optional["_models.VectorSearch"] = rest_field(name="vectorSearch")
+    vector_search: Optional["_models.VectorSearch"] = rest_field(
+        name="vectorSearch", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Contains configuration options related to vector search."""
-    e_tag: Optional[str] = rest_field(name="@odata.etag")
+    e_tag: Optional[str] = rest_field(name="@odata.etag", visibility=["read", "create", "update", "delete", "query"])
     """The ETag of the index."""
 
     @overload
@@ -7664,31 +8256,49 @@ class SearchIndexer(_model_base.Model):
     :vartype cache: ~azure.search.documents.models.SearchIndexerCache
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the indexer. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the indexer."""
-    data_source_name: str = rest_field(name="dataSourceName")
+    data_source_name: str = rest_field(
+        name="dataSourceName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the datasource from which this indexer reads data. Required."""
-    skillset_name: Optional[str] = rest_field(name="skillsetName")
+    skillset_name: Optional[str] = rest_field(
+        name="skillsetName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the skillset executing with this indexer."""
-    target_index_name: str = rest_field(name="targetIndexName")
+    target_index_name: str = rest_field(
+        name="targetIndexName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the index to which this indexer writes data. Required."""
-    schedule: Optional["_models.IndexingSchedule"] = rest_field()
+    schedule: Optional["_models.IndexingSchedule"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The schedule for this indexer."""
-    parameters: Optional["_models.IndexingParameters"] = rest_field()
+    parameters: Optional["_models.IndexingParameters"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Parameters for indexer execution."""
-    field_mappings: Optional[List["_models.FieldMapping"]] = rest_field(name="fieldMappings")
+    field_mappings: Optional[List["_models.FieldMapping"]] = rest_field(
+        name="fieldMappings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defines mappings between fields in the data source and corresponding target
      fields in the index."""
-    output_field_mappings: Optional[List["_models.FieldMapping"]] = rest_field(name="outputFieldMappings")
+    output_field_mappings: Optional[List["_models.FieldMapping"]] = rest_field(
+        name="outputFieldMappings", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Output field mappings are applied after enrichment and immediately before
      indexing."""
-    is_disabled: Optional[bool] = rest_field(name="disabled")
+    is_disabled: Optional[bool] = rest_field(
+        name="disabled", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether the indexer is disabled. Default is false."""
-    e_tag: Optional[str] = rest_field(name="@odata.etag")
+    e_tag: Optional[str] = rest_field(name="@odata.etag", visibility=["read", "create", "update", "delete", "query"])
     """The ETag of the indexer."""
-    encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(name="encryptionKey")
+    encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(
+        name="encryptionKey", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A description of an encryption key that you create in Azure Key Vault. This key
      is used to provide an additional level of encryption-at-rest for your indexer
      definition (as well as indexer execution status) when you want full assurance
@@ -7699,7 +8309,9 @@ class SearchIndexer(_model_base.Model):
      indexer execution status) will be unaffected. Encryption with customer-managed
      keys is not available for free search services, and is only available for paid
      services created on or after January 1, 2019."""
-    cache: Optional["_models.SearchIndexerCache"] = rest_field()
+    cache: Optional["_models.SearchIndexerCache"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Adds caching to an enrichment pipeline to allow for incremental modification
      steps without having to rebuild the index every time."""
 
@@ -7750,12 +8362,18 @@ class SearchIndexerCache(_model_base.Model):
     :vartype identity: ~azure.search.documents.models.SearchIndexerDataIdentity
     """
 
-    storage_connection_string: Optional[str] = rest_field(name="storageConnectionString")
+    storage_connection_string: Optional[str] = rest_field(
+        name="storageConnectionString", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The connection string to the storage account where the cache data will be
      persisted."""
-    enable_reprocessing: Optional[bool] = rest_field(name="enableReprocessing")
+    enable_reprocessing: Optional[bool] = rest_field(
+        name="enableReprocessing", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies whether incremental reprocessing is enabled."""
-    identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field()
+    identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user-assigned managed identity used for connections to the enrichment
      cache.  If the connection string indicates an identity (ResourceId) and it's
      not specified, the system-assigned managed identity is used. On updates to the
@@ -7795,10 +8413,10 @@ class SearchIndexerDataContainer(_model_base.Model):
     :vartype query: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the table or view (for Azure SQL data source) or collection (for
      CosmosDB data source) that will be indexed. Required."""
-    query: Optional[str] = rest_field()
+    query: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A query that is applied to this data container. The syntax and meaning of this
      parameter is datasource-specific. Not supported by Azure SQL datasources."""
 
@@ -7828,13 +8446,14 @@ class SearchIndexerDataIdentity(_model_base.Model):
     SearchIndexerDataNoneIdentity, SearchIndexerDataUserAssignedIdentity
 
 
-    :ivar odata_type: The discriminator for derived types. Required. Default value is None.
+    :ivar odata_type: A URI fragment specifying the type of identity. Required. Default value is
+     None.
     :vartype odata_type: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
-    """The discriminator for derived types. Required. Default value is None."""
+    odata_type: str = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])
+    """A URI fragment specifying the type of identity. Required. Default value is None."""
 
     @overload
     def __init__(
@@ -7860,13 +8479,13 @@ class SearchIndexerDataNoneIdentity(
     """Clears the identity property of a datasource.
 
 
-    :ivar odata_type: A URI fragment specifying the type of identity. Required. Default value is
+    :ivar odata_type: The discriminator for derived types. Required. Default value is
      "#Microsoft.Azure.Search.DataNoneIdentity".
     :vartype odata_type: str
     """
 
-    odata_type: Literal["#Microsoft.Azure.Search.DataNoneIdentity"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
-    """A URI fragment specifying the type of identity. Required. Default value is
+    odata_type: Literal["#Microsoft.Azure.Search.DataNoneIdentity"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator for derived types. Required. Default value is
      \"#Microsoft.Azure.Search.DataNoneIdentity\"."""
 
     @overload
@@ -7926,33 +8545,43 @@ class SearchIndexerDataSource(_model_base.Model):
     :vartype encryption_key: ~azure.search.documents.models.SearchResourceEncryptionKey
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the datasource. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the datasource."""
-    type: Union[str, "_models.SearchIndexerDataSourceType"] = rest_field()
+    type: Union[str, "_models.SearchIndexerDataSourceType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The type of the datasource. Required. Known values are: \"azuresql\", \"cosmosdb\",
      \"azureblob\", \"azuretable\", \"mysql\", \"adlsgen2\", and \"onelake\"."""
-    credentials: "_models.DataSourceCredentials" = rest_field()
+    credentials: "_models.DataSourceCredentials" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Credentials for the datasource. Required."""
-    container: "_models.SearchIndexerDataContainer" = rest_field()
+    container: "_models.SearchIndexerDataContainer" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The data container for the datasource. Required."""
-    identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field()
+    identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An explicit managed identity to use for this datasource. If not specified and
      the connection string is a managed identity, the system-assigned managed
      identity is used. If not specified, the value remains unchanged. If \"none\" is
      specified, the value of this property is cleared."""
     data_change_detection_policy: Optional["_models.DataChangeDetectionPolicy"] = rest_field(
-        name="dataChangeDetectionPolicy"
+        name="dataChangeDetectionPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
     """The data change detection policy for the datasource."""
     data_deletion_detection_policy: Optional["_models.DataDeletionDetectionPolicy"] = rest_field(
-        name="dataDeletionDetectionPolicy"
+        name="dataDeletionDetectionPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
     """The data deletion detection policy for the datasource."""
-    e_tag: Optional[str] = rest_field(name="@odata.etag")
+    e_tag: Optional[str] = rest_field(name="@odata.etag", visibility=["read", "create", "update", "delete", "query"])
     """The ETag of the data source."""
-    encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(name="encryptionKey")
+    encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(
+        name="encryptionKey", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A description of an encryption key that you create in Azure Key Vault. This key
      is used to provide an additional level of encryption-at-rest for your
      datasource definition when you want full assurance that no one, not even
@@ -7999,7 +8628,7 @@ class SearchIndexerDataUserAssignedIdentity(
 
     :ivar resource_id: The fully qualified Azure resource Id of a user assigned managed identity
      typically in the form
-     "/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId"  # pylint: disable=line-too-long
+     "/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId"
      that should have been assigned to the search service. Required.
     :vartype resource_id: str
     :ivar odata_type: A URI fragment specifying the type of identity. Required. Default value is
@@ -8007,12 +8636,14 @@ class SearchIndexerDataUserAssignedIdentity(
     :vartype odata_type: str
     """
 
-    resource_id: str = rest_field(name="userAssignedIdentity")
+    resource_id: str = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The fully qualified Azure resource Id of a user assigned managed identity
      typically in the form
-     \"/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId\"  # pylint: disable=line-too-long
+     \"/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId\"
      that should have been assigned to the search service. Required."""
-    odata_type: Literal["#Microsoft.Azure.Search.DataUserAssignedIdentity"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.DataUserAssignedIdentity"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of identity. Required. Default value is
      \"#Microsoft.Azure.Search.DataUserAssignedIdentity\"."""
 
@@ -8036,8 +8667,6 @@ class SearchIndexerDataUserAssignedIdentity(
 
 class SearchIndexerError(_model_base.Model):
     """Represents an item- or document-level indexing error.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
     :ivar key: The key of the item for which indexing failed.
@@ -8064,25 +8693,49 @@ class SearchIndexerError(_model_base.Model):
     :vartype documentation_link: str
     """
 
-    key: Optional[str] = rest_field(visibility=["read"])
+    key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The key of the item for which indexing failed."""
-    error_message: str = rest_field(name="errorMessage", visibility=["read"])
+    error_message: str = rest_field(name="errorMessage", visibility=["read", "create", "update", "delete", "query"])
     """The message describing the error that occurred while processing the item. Required."""
-    status_code: int = rest_field(name="statusCode", visibility=["read"])
+    status_code: int = rest_field(name="statusCode", visibility=["read", "create", "update", "delete", "query"])
     """The status code indicating why the indexing operation failed. Possible values
      include: 400 for a malformed input document, 404 for document not found, 409
      for a version conflict, 422 when the index is temporarily unavailable, or 503
      for when the service is too busy. Required."""
-    name: Optional[str] = rest_field(visibility=["read"])
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the source at which the error originated. For example, this could
      refer to a particular skill in the attached skillset. This may not be always
      available."""
-    details: Optional[str] = rest_field(visibility=["read"])
+    details: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Additional, verbose details about the error to assist in debugging the indexer.
      This may not be always available."""
-    documentation_link: Optional[str] = rest_field(name="documentationLink", visibility=["read"])
+    documentation_link: Optional[str] = rest_field(
+        name="documentationLink", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A link to a troubleshooting guide for these classes of errors. This may not be
      always available."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error_message: str,
+        status_code: int,
+        key: Optional[str] = None,
+        name: Optional[str] = None,
+        details: Optional[str] = None,
+        documentation_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SearchIndexerIndexProjection(_model_base.Model):
@@ -8096,9 +8749,13 @@ class SearchIndexerIndexProjection(_model_base.Model):
     :vartype parameters: ~azure.search.documents.models.SearchIndexerIndexProjectionsParameters
     """
 
-    selectors: List["_models.SearchIndexerIndexProjectionSelector"] = rest_field()
+    selectors: List["_models.SearchIndexerIndexProjectionSelector"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of projections to be performed to secondary search indexes. Required."""
-    parameters: Optional["_models.SearchIndexerIndexProjectionsParameters"] = rest_field()
+    parameters: Optional["_models.SearchIndexerIndexProjectionsParameters"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A dictionary of index projection-specific configuration properties. Each name
      is the name of a specific property. Each value must be of a primitive type."""
 
@@ -8141,16 +8798,22 @@ class SearchIndexerIndexProjectionSelector(_model_base.Model):
     :vartype mappings: list[~azure.search.documents.models.InputFieldMappingEntry]
     """
 
-    target_index_name: str = rest_field(name="targetIndexName")
-    """Name of the search index to project to. Must have a key field with the
-     'keyword' analyzer set. Required."""
-    parent_key_field_name: str = rest_field(name="parentKeyFieldName")
+    target_index_name: str = rest_field(
+        name="targetIndexName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the search index to project to. Must have a key field with the 'keyword' analyzer set.
+     Required."""
+    parent_key_field_name: str = rest_field(
+        name="parentKeyFieldName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Name of the field in the search index to map the parent document's key value
      to. Must be a string field that is filterable and not the key field. Required."""
-    source_context: str = rest_field(name="sourceContext")
+    source_context: str = rest_field(name="sourceContext", visibility=["read", "create", "update", "delete", "query"])
     """Source context for the projections. Represents the cardinality at which the
      document will be split into multiple sub documents. Required."""
-    mappings: List["_models.InputFieldMappingEntry"] = rest_field()
+    mappings: List["_models.InputFieldMappingEntry"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Mappings for the projection, or which source should be mapped to which field in
      the target index. Required."""
 
@@ -8184,7 +8847,9 @@ class SearchIndexerIndexProjectionsParameters(_model_base.Model):
     :vartype projection_mode: str or ~azure.search.documents.models.IndexProjectionMode
     """
 
-    projection_mode: Optional[Union[str, "_models.IndexProjectionMode"]] = rest_field(name="projectionMode")
+    projection_mode: Optional[Union[str, "_models.IndexProjectionMode"]] = rest_field(
+        name="projectionMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defines behavior of the index projections in relation to the rest of the
      indexer. Known values are: \"skipIndexingParentDocuments\" and
      \"includeIndexingParentDocuments\"."""
@@ -8231,18 +8896,26 @@ class SearchIndexerKnowledgeStore(_model_base.Model):
     :vartype parameters: ~azure.search.documents.models.SearchIndexerKnowledgeStoreParameters
     """
 
-    storage_connection_string: str = rest_field(name="storageConnectionString")
+    storage_connection_string: str = rest_field(
+        name="storageConnectionString", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The connection string to the storage account projections will be stored in. Required."""
-    projections: List["_models.SearchIndexerKnowledgeStoreProjection"] = rest_field()
+    projections: List["_models.SearchIndexerKnowledgeStoreProjection"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of additional projections to perform during indexing. Required."""
-    identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field()
+    identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user-assigned managed identity used for connections to Azure Storage when
      writing knowledge store projections. If the connection string indicates an
      identity (ResourceId) and it's not specified, the system-assigned managed
      identity is used. On updates to the indexer, if the identity is unspecified,
      the value remains unchanged. If set to \"none\", the value of this property is
      cleared."""
-    parameters: Optional["_models.SearchIndexerKnowledgeStoreParameters"] = rest_field()
+    parameters: Optional["_models.SearchIndexerKnowledgeStoreParameters"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A dictionary of knowledge store-specific configuration properties. Each name is
      the name of a specific property. Each value must be of a primitive type."""
 
@@ -8282,15 +8955,23 @@ class SearchIndexerKnowledgeStoreProjectionSelector(_model_base.Model):  # pylin
     :vartype inputs: list[~azure.search.documents.models.InputFieldMappingEntry]
     """
 
-    reference_key_name: Optional[str] = rest_field(name="referenceKeyName")
+    reference_key_name: Optional[str] = rest_field(
+        name="referenceKeyName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Name of reference key to different projection."""
-    generated_key_name: Optional[str] = rest_field(name="generatedKeyName")
+    generated_key_name: Optional[str] = rest_field(
+        name="generatedKeyName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Name of generated key to store projection under."""
-    source: Optional[str] = rest_field()
+    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Source data to project."""
-    source_context: Optional[str] = rest_field(name="sourceContext")
+    source_context: Optional[str] = rest_field(
+        name="sourceContext", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Source context for complex projections."""
-    inputs: Optional[List["_models.InputFieldMappingEntry"]] = rest_field()
+    inputs: Optional[List["_models.InputFieldMappingEntry"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Nested inputs for complex projections."""
 
     @overload
@@ -8335,7 +9016,9 @@ class SearchIndexerKnowledgeStoreBlobProjectionSelector(
     :vartype storage_container: str
     """
 
-    storage_container: str = rest_field(name="storageContainer")
+    storage_container: str = rest_field(
+        name="storageContainer", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Blob container to store projections in. Required."""
 
     @overload
@@ -8457,7 +9140,9 @@ class SearchIndexerKnowledgeStoreParameters(_model_base.Model):
     :vartype synthesize_generated_key_name: bool
     """
 
-    synthesize_generated_key_name: Optional[bool] = rest_field(name="synthesizeGeneratedKeyName")
+    synthesize_generated_key_name: Optional[bool] = rest_field(
+        name="synthesizeGeneratedKeyName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Whether or not projections should synthesize a generated key name if one isn't
      already present."""
 
@@ -8493,11 +9178,17 @@ class SearchIndexerKnowledgeStoreProjection(_model_base.Model):
      list[~azure.search.documents.models.SearchIndexerKnowledgeStoreFileProjectionSelector]
     """
 
-    tables: Optional[List["_models.SearchIndexerKnowledgeStoreTableProjectionSelector"]] = rest_field()
+    tables: Optional[List["_models.SearchIndexerKnowledgeStoreTableProjectionSelector"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Projections to Azure Table storage."""
-    objects: Optional[List["_models.SearchIndexerKnowledgeStoreObjectProjectionSelector"]] = rest_field()
+    objects: Optional[List["_models.SearchIndexerKnowledgeStoreObjectProjectionSelector"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Projections to Azure Blob storage."""
-    files: Optional[List["_models.SearchIndexerKnowledgeStoreFileProjectionSelector"]] = rest_field()
+    files: Optional[List["_models.SearchIndexerKnowledgeStoreFileProjectionSelector"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Projections to Azure File storage."""
 
     @overload
@@ -8540,7 +9231,7 @@ class SearchIndexerKnowledgeStoreTableProjectionSelector(
     :vartype table_name: str
     """
 
-    table_name: str = rest_field(name="tableName")
+    table_name: str = rest_field(name="tableName", visibility=["read", "create", "update", "delete", "query"])
     """Name of the Azure table to store projected data in. Required."""
 
     @overload
@@ -8569,8 +9260,6 @@ class SearchIndexerKnowledgeStoreTableProjectionSelector(
 class SearchIndexerLimits(_model_base.Model):
     """Represents the limits that can be applied to an indexer.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar max_run_time: The maximum duration that the indexer is permitted to run for one
      execution.
     :vartype max_run_time: ~datetime.timedelta
@@ -8584,16 +9273,39 @@ class SearchIndexerLimits(_model_base.Model):
     :vartype max_document_content_characters_to_extract: int
     """
 
-    max_run_time: Optional[datetime.timedelta] = rest_field(name="maxRunTime", visibility=["read"])
+    max_run_time: Optional[datetime.timedelta] = rest_field(
+        name="maxRunTime", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum duration that the indexer is permitted to run for one execution."""
-    max_document_extraction_size: Optional[int] = rest_field(name="maxDocumentExtractionSize", visibility=["read"])
+    max_document_extraction_size: Optional[int] = rest_field(
+        name="maxDocumentExtractionSize", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum size of a document, in bytes, which will be considered valid for
      indexing."""
     max_document_content_characters_to_extract: Optional[int] = rest_field(
-        name="maxDocumentContentCharactersToExtract", visibility=["read"]
+        name="maxDocumentContentCharactersToExtract", visibility=["read", "create", "update", "delete", "query"]
     )
     """The maximum number of characters that will be extracted from a document picked
      up for indexing."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_run_time: Optional[datetime.timedelta] = None,
+        max_document_extraction_size: Optional[int] = None,
+        max_document_content_characters_to_extract: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SearchIndexerSkillset(_model_base.Model):
@@ -8630,22 +9342,30 @@ class SearchIndexerSkillset(_model_base.Model):
     :vartype encryption_key: ~azure.search.documents.models.SearchResourceEncryptionKey
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the skillset. Required."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the skillset."""
-    skills: List["_models.SearchIndexerSkill"] = rest_field()
+    skills: List["_models.SearchIndexerSkill"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of skills in the skillset. Required."""
-    cognitive_services_account: Optional["_models.CognitiveServicesAccount"] = rest_field(name="cognitiveServices")
+    cognitive_services_account: Optional["_models.CognitiveServicesAccount"] = rest_field(
+        name="cognitiveServices", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Details about the Azure AI service to be used when running skills."""
-    knowledge_store: Optional["_models.SearchIndexerKnowledgeStore"] = rest_field(name="knowledgeStore")
+    knowledge_store: Optional["_models.SearchIndexerKnowledgeStore"] = rest_field(
+        name="knowledgeStore", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Definition of additional projections to Azure blob, table, or files, of
      enriched data."""
-    index_projection: Optional["_models.SearchIndexerIndexProjection"] = rest_field(name="indexProjections")
+    index_projection: Optional["_models.SearchIndexerIndexProjection"] = rest_field(
+        name="indexProjections", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Definition of additional projections to secondary search index(es)."""
-    e_tag: Optional[str] = rest_field(name="@odata.etag")
+    e_tag: Optional[str] = rest_field(name="@odata.etag", visibility=["read", "create", "update", "delete", "query"])
     """The ETag of the skillset."""
-    encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(name="encryptionKey")
+    encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(
+        name="encryptionKey", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A description of an encryption key that you create in Azure Key Vault. This key
      is used to provide an additional level of encryption-at-rest for your skillset
      definition when you want full assurance that no one, not even Microsoft, can
@@ -8685,8 +9405,6 @@ class SearchIndexerSkillset(_model_base.Model):
 class SearchIndexerStatus(_model_base.Model):
     """Represents the current status and execution history of an indexer.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar status: Overall indexer status. Required. Known values are: "unknown", "error", and
      "running".
@@ -8700,20 +9418,42 @@ class SearchIndexerStatus(_model_base.Model):
     :vartype limits: ~azure.search.documents.models.SearchIndexerLimits
     """
 
-    status: Union[str, "_models.IndexerStatus"] = rest_field(visibility=["read"])
+    status: Union[str, "_models.IndexerStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Overall indexer status. Required. Known values are: \"unknown\", \"error\", and \"running\"."""
-    last_result: Optional["_models.IndexerExecutionResult"] = rest_field(name="lastResult", visibility=["read"])
+    last_result: Optional["_models.IndexerExecutionResult"] = rest_field(
+        name="lastResult", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The result of the most recent or an in-progress indexer execution."""
-    execution_history: List["_models.IndexerExecutionResult"] = rest_field(name="executionHistory", visibility=["read"])
+    execution_history: List["_models.IndexerExecutionResult"] = rest_field(
+        name="executionHistory", visibility=["read", "create", "update", "delete", "query"]
+    )
     """History of the recent indexer executions, sorted in reverse chronological order. Required."""
-    limits: "_models.SearchIndexerLimits" = rest_field(visibility=["read"])
+    limits: "_models.SearchIndexerLimits" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The execution limits for the indexer. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Union[str, "_models.IndexerStatus"],
+        execution_history: List["_models.IndexerExecutionResult"],
+        limits: "_models.SearchIndexerLimits",
+        last_result: Optional["_models.IndexerExecutionResult"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SearchIndexerWarning(_model_base.Model):
     """Represents an item-level warning.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
     :ivar key: The key of the item which generated a warning.
@@ -8734,20 +9474,43 @@ class SearchIndexerWarning(_model_base.Model):
     :vartype documentation_link: str
     """
 
-    key: Optional[str] = rest_field(visibility=["read"])
+    key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The key of the item which generated a warning."""
-    message: str = rest_field(visibility=["read"])
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The message describing the warning that occurred while processing the item. Required."""
-    name: Optional[str] = rest_field(visibility=["read"])
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the source at which the warning originated. For example, this could
      refer to a particular skill in the attached skillset. This may not be always
      available."""
-    details: Optional[str] = rest_field(visibility=["read"])
+    details: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Additional, verbose details about the warning to assist in debugging the
      indexer. This may not be always available."""
-    documentation_link: Optional[str] = rest_field(name="documentationLink", visibility=["read"])
+    documentation_link: Optional[str] = rest_field(
+        name="documentationLink", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A link to a troubleshooting guide for these classes of warnings. This may not
      be always available."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message: str,
+        key: Optional[str] = None,
+        name: Optional[str] = None,
+        details: Optional[str] = None,
+        documentation_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SearchRequest(_model_base.Model):
@@ -8902,31 +9665,41 @@ class SearchRequest(_model_base.Model):
     :vartype hybrid_search: ~azure.search.documents.models.HybridSearch
     """
 
-    include_total_result_count: Optional[bool] = rest_field(name="count")
+    include_total_result_count: Optional[bool] = rest_field(
+        name="count", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value that specifies whether to fetch the total count of results. Default is
      false. Setting this value to true may have a performance impact. Note that the
      count returned is an approximation."""
-    facets: Optional[List[str]] = rest_field()
+    facets: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of facet expressions to apply to the search query. Each facet
      expression contains a field name, optionally followed by a comma-separated list
      of name:value pairs."""
-    filter: Optional[str] = rest_field()
+    filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The OData $filter expression to apply to the search query."""
-    highlight_fields: Optional[str] = rest_field(name="highlight")
+    highlight_fields: Optional[str] = rest_field(
+        name="highlight", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The comma-separated list of field names to use for hit highlights. Only
      searchable fields can be used for hit highlighting."""
-    highlight_post_tag: Optional[str] = rest_field(name="highlightPostTag")
+    highlight_post_tag: Optional[str] = rest_field(
+        name="highlightPostTag", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A string tag that is appended to hit highlights. Must be set with
      highlightPreTag. Default is &lt;/em&gt;."""
-    highlight_pre_tag: Optional[str] = rest_field(name="highlightPreTag")
+    highlight_pre_tag: Optional[str] = rest_field(
+        name="highlightPreTag", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A string tag that is prepended to hit highlights. Must be set with
      highlightPostTag. Default is &lt;em&gt;."""
-    minimum_coverage: Optional[float] = rest_field(name="minimumCoverage")
+    minimum_coverage: Optional[float] = rest_field(
+        name="minimumCoverage", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A number between 0 and 100 indicating the percentage of the index that must be
      covered by a search query in order for the query to be reported as a success.
      This parameter can be useful for ensuring search availability even for services
      with only one replica. The default is 100."""
-    order_by: Optional[str] = rest_field(name="orderby")
+    order_by: Optional[str] = rest_field(name="orderby", visibility=["read", "create", "update", "delete", "query"])
     """The comma-separated list of OData $orderby expressions by which to sort the
      results. Each expression can be either a field name or a call to either the
      geo.distance() or the search.score() functions. Each expression can be followed
@@ -8934,47 +9707,63 @@ class SearchRequest(_model_base.Model):
      ascending order. Ties will be broken by the match scores of documents. If no
      $orderby is specified, the default sort order is descending by document match
      score. There can be at most 32 $orderby clauses."""
-    query_type: Optional[Union[str, "_models.QueryType"]] = rest_field(name="queryType")
+    query_type: Optional[Union[str, "_models.QueryType"]] = rest_field(
+        name="queryType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value that specifies the syntax of the search query. The default is 'simple'.
      Use 'full' if your query uses the Lucene query syntax. Known values are: \"simple\", \"full\",
      and \"semantic\"."""
-    scoring_statistics: Optional[Union[str, "_models.ScoringStatistics"]] = rest_field(name="scoringStatistics")
+    scoring_statistics: Optional[Union[str, "_models.ScoringStatistics"]] = rest_field(
+        name="scoringStatistics", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value that specifies whether we want to calculate scoring statistics (such as
      document frequency) globally for more consistent scoring, or locally, for lower
      latency. The default is 'local'. Use 'global' to aggregate scoring statistics
      globally before scoring. Using global scoring statistics can increase latency
      of search queries. Known values are: \"local\" and \"global\"."""
-    session_id: Optional[str] = rest_field(name="sessionId")
+    session_id: Optional[str] = rest_field(name="sessionId", visibility=["read", "create", "update", "delete", "query"])
     """A value to be used to create a sticky session, which can help getting more
      consistent results. As long as the same sessionId is used, a best-effort
      attempt will be made to target the same replica set. Be wary that reusing the
      same sessionID values repeatedly can interfere with the load balancing of the
      requests across replicas and adversely affect the performance of the search
      service. The value used as sessionId cannot start with a '_' character."""
-    scoring_parameters: Optional[List[str]] = rest_field(name="scoringParameters")
+    scoring_parameters: Optional[List[str]] = rest_field(
+        name="scoringParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of parameter values to be used in scoring functions (for example,
      referencePointParameter) using the format name-values. For example, if the
      scoring profile defines a function with a parameter called 'mylocation' the
      parameter string would be \"mylocation--122.2,44.8\" (without the quotes)."""
-    scoring_profile: Optional[str] = rest_field(name="scoringProfile")
+    scoring_profile: Optional[str] = rest_field(
+        name="scoringProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of a scoring profile to evaluate match scores for matching documents
      in order to sort the results."""
-    debug: Optional[Union[str, "_models.QueryDebugMode"]] = rest_field()
+    debug: Optional[Union[str, "_models.QueryDebugMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Enables a debugging tool that can be used to further explore your reranked
      results. Known values are: \"disabled\", \"semantic\", \"vector\", \"queryRewrites\", and
      \"all\"."""
-    search_text: Optional[str] = rest_field(name="search")
+    search_text: Optional[str] = rest_field(name="search", visibility=["read", "create", "update", "delete", "query"])
     """A full-text search query expression; Use \"*\" or omit this parameter to match
      all documents."""
-    search_fields: Optional[str] = rest_field(name="searchFields")
+    search_fields: Optional[str] = rest_field(
+        name="searchFields", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The comma-separated list of field names to which to scope the full-text search.
      When using fielded search (fieldName:searchExpression) in a full Lucene query,
      the field names of each fielded search expression take precedence over any
      field names listed in this parameter."""
-    search_mode: Optional[Union[str, "_models.SearchMode"]] = rest_field(name="searchMode")
+    search_mode: Optional[Union[str, "_models.SearchMode"]] = rest_field(
+        name="searchMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value that specifies whether any or all of the search terms must be matched
      in order to count the document as a match. Known values are: \"any\" and \"all\"."""
-    query_language: Optional[Union[str, "_models.QueryLanguage"]] = rest_field(name="queryLanguage")
+    query_language: Optional[Union[str, "_models.QueryLanguage"]] = rest_field(
+        name="queryLanguage", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value that specifies the language of the search query. Known values are: \"none\", \"en-us\",
      \"en-gb\", \"en-in\", \"en-ca\", \"en-au\", \"fr-fr\", \"fr-ca\", \"de-de\", \"es-es\",
      \"es-mx\", \"zh-cn\", \"zh-tw\", \"pt-br\", \"pt-pt\", \"it-it\", \"ja-jp\", \"ko-kr\",
@@ -8985,58 +9774,80 @@ class SearchRequest(_model_base.Model):
      \"et-ee\", \"ca-es\", \"fi-fi\", \"sr-ba\", \"sr-me\", \"sr-rs\", \"sk-sk\", \"nb-no\",
      \"hy-am\", \"bn-in\", \"eu-es\", \"gl-es\", \"gu-in\", \"he-il\", \"ga-ie\", \"kn-in\",
      \"ml-in\", \"mr-in\", \"fa-ae\", \"pa-in\", \"te-in\", and \"ur-pk\"."""
-    speller: Optional[Union[str, "_models.QuerySpellerType"]] = rest_field()
+    speller: Optional[Union[str, "_models.QuerySpellerType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value that specified the type of the speller to use to spell-correct
      individual search query terms. Known values are: \"none\" and \"lexicon\"."""
-    select: Optional[str] = rest_field()
+    select: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The comma-separated list of fields to retrieve. If unspecified, all fields
      marked as retrievable in the schema are included."""
-    skip: Optional[int] = rest_field()
+    skip: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of search results to skip. This value cannot be greater than
      100,000. If you need to scan documents in sequence, but cannot use skip due to
      this limitation, consider using orderby on a totally-ordered key and filter
      with a range query instead."""
-    top: Optional[int] = rest_field()
+    top: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of search results to retrieve. This can be used in conjunction with
      $skip to implement client-side paging of search results. If results are
      truncated due to server-side paging, the response will include a continuation
      token that can be used to issue another Search request for the next page of
      results."""
-    semantic_configuration: Optional[str] = rest_field(name="semanticConfiguration")
+    semantic_configuration: Optional[str] = rest_field(
+        name="semanticConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of a semantic configuration that will be used when processing
      documents for queries of type semantic."""
     semantic_error_handling: Optional[Union[str, "_models.SemanticErrorMode"]] = rest_field(
-        name="semanticErrorHandling"
+        name="semanticErrorHandling", visibility=["read", "create", "update", "delete", "query"]
     )
     """Allows the user to choose whether a semantic call should fail completely
      (default / current behavior), or to return partial results. Known values are: \"partial\" and
      \"fail\"."""
-    semantic_max_wait_in_milliseconds: Optional[int] = rest_field(name="semanticMaxWaitInMilliseconds")
+    semantic_max_wait_in_milliseconds: Optional[int] = rest_field(
+        name="semanticMaxWaitInMilliseconds", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Allows the user to set an upper bound on the amount of time it takes for
      semantic enrichment to finish processing before the request fails."""
-    semantic_query: Optional[str] = rest_field(name="semanticQuery")
+    semantic_query: Optional[str] = rest_field(
+        name="semanticQuery", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Allows setting a separate search query that will be solely used for semantic
      reranking, semantic captions and semantic answers. Is useful for scenarios
      where there is a need to use different queries between the base retrieval and
      ranking phase, and the L2 semantic phase."""
-    answers: Optional[Union[str, "_models.QueryAnswerType"]] = rest_field()
+    answers: Optional[Union[str, "_models.QueryAnswerType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value that specifies whether answers should be returned as part of the search
      response. Known values are: \"none\" and \"extractive\"."""
-    captions: Optional[Union[str, "_models.QueryCaptionType"]] = rest_field()
+    captions: Optional[Union[str, "_models.QueryCaptionType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value that specifies whether captions should be returned as part of the
      search response. Known values are: \"none\" and \"extractive\"."""
-    query_rewrites: Optional[Union[str, "_models.QueryRewritesType"]] = rest_field(name="queryRewrites")
+    query_rewrites: Optional[Union[str, "_models.QueryRewritesType"]] = rest_field(
+        name="queryRewrites", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value that specifies whether query rewrites should be generated to augment
      the search query. Known values are: \"none\" and \"generative\"."""
-    semantic_fields: Optional[str] = rest_field(name="semanticFields")
+    semantic_fields: Optional[str] = rest_field(
+        name="semanticFields", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The comma-separated list of field names used for semantic ranking."""
-    vector_queries: Optional[List["_models.VectorQuery"]] = rest_field(name="vectorQueries")
+    vector_queries: Optional[List["_models.VectorQuery"]] = rest_field(
+        name="vectorQueries", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The query parameters for vector and hybrid search queries."""
-    vector_filter_mode: Optional[Union[str, "_models.VectorFilterMode"]] = rest_field(name="vectorFilterMode")
+    vector_filter_mode: Optional[Union[str, "_models.VectorFilterMode"]] = rest_field(
+        name="vectorFilterMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Determines whether or not filters are applied before or after the vector search
      is performed. Default is 'preFilter' for new indexes. Known values are: \"postFilter\" and
      \"preFilter\"."""
-    hybrid_search: Optional["_models.HybridSearch"] = rest_field(name="hybridSearch")
+    hybrid_search: Optional["_models.HybridSearch"] = rest_field(
+        name="hybridSearch", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The query parameters to configure hybrid search behaviors."""
 
     @overload
@@ -9118,20 +9929,22 @@ class SearchResourceEncryptionKey(_model_base.Model):
     :vartype identity: ~azure.search.documents.models.SearchIndexerDataIdentity
     """
 
-    key_name: str = rest_field(name="keyVaultKeyName")
+    key_name: str = rest_field(name="keyVaultKeyName", visibility=["read", "create", "update", "delete", "query"])
     """The name of your Azure Key Vault key to be used to encrypt your data at rest. Required."""
-    key_version: str = rest_field(name="keyVaultKeyVersion")
+    key_version: str = rest_field(name="keyVaultKeyVersion", visibility=["read", "create", "update", "delete", "query"])
     """The version of your Azure Key Vault key to be used to encrypt your data at rest. Required."""
-    vault_uri: str = rest_field(name="keyVaultUri")
+    vault_uri: str = rest_field(name="keyVaultUri", visibility=["read", "create", "update", "delete", "query"])
     """The URI of your Azure Key Vault, also referred to as DNS name, that contains
      the key to be used to encrypt your data at rest. An example URI might be
      ``https://my-keyvault-name.vault.azure.net``. Required."""
     access_credentials: Optional["_models.AzureActiveDirectoryApplicationCredentials"] = rest_field(
-        name="accessCredentials"
+        name="accessCredentials", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional Azure Active Directory credentials used for accessing your Azure Key
      Vault. Not required if using managed identity instead."""
-    identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field()
+    identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An explicit managed identity to use for this encryption key. If not specified
      and the access credentials property is null, the system-assigned managed
      identity is used. On update to the resource, if the explicit identity is
@@ -9188,18 +10001,24 @@ class SearchResult(_model_base.Model):
     :vartype document_debug_info: list[~azure.search.documents.models.DocumentDebugInfo]
     """
 
-    score: float = rest_field(name="@search.score", visibility=["read"])
+    score: float = rest_field(name="@search.score", visibility=["read", "create", "update", "delete", "query"])
     """The relevance score of the document compared to other documents returned by the
      query. Required."""
-    reranker_score: Optional[float] = rest_field(name="@search.rerankerScore", visibility=["read"])
+    reranker_score: Optional[float] = rest_field(
+        name="@search.rerankerScore", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The relevance score computed by the semantic ranker for the top search results.
      Search results are sorted by the RerankerScore first and then by the Score.
      RerankerScore is only returned for queries of type 'semantic'."""
-    highlights: Optional[Dict[str, List[str]]] = rest_field(name="@search.highlights", visibility=["read"])
+    highlights: Optional[Dict[str, List[str]]] = rest_field(
+        name="@search.highlights", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Text fragments from the document that indicate the matching search terms,
      organized by each applicable field; null if hit highlighting was not enabled
      for the query."""
-    captions: Optional[List["_models.QueryCaptionResult"]] = rest_field(name="@search.captions", visibility=["read"])
+    captions: Optional[List["_models.QueryCaptionResult"]] = rest_field(
+        name="@search.captions", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Captions are the most representative passages from the document relatively to
      the search query. They are often used as document summary. Captions are only
      returned for queries of type 'semantic'."""
@@ -9208,6 +10027,26 @@ class SearchResult(_model_base.Model):
     )
     """Contains debugging information that can be used to further explore your search
      results."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        score: float,
+        reranker_score: Optional[float] = None,
+        highlights: Optional[Dict[str, List[str]]] = None,
+        captions: Optional[List["_models.QueryCaptionResult"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class VectorThreshold(_model_base.Model):
@@ -9223,7 +10062,7 @@ class VectorThreshold(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    kind: str = rest_discriminator(name="kind")
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """Type of threshold. Required. Known values are: \"vectorSimilarity\" and \"searchScore\"."""
 
     @overload
@@ -9261,11 +10100,11 @@ class SearchScoreThreshold(VectorThreshold, discriminator="searchScore"):
     :vartype kind: str or ~azure.search.documents.models.SEARCH_SCORE
     """
 
-    value: float = rest_field()
+    value: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The threshold will filter based on the '@search.score' value. Note this is the
      @search.score returned as part of the search response. The threshold direction
      will be chosen for higher @search.score. Required."""
-    kind: Literal[VectorThresholdKind.SEARCH_SCORE] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorThresholdKind.SEARCH_SCORE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The kind of threshold used to filter vector queries. Required. The results of the vector query
      will filter based on the '@search.score' value.
      Note this is the @search.score returned as part of the search response. The
@@ -9293,6 +10132,8 @@ class SearchServiceCounters(_model_base.Model):
     """Represents service-level resource counters and quotas.
 
 
+    :ivar alias_counter: Total number of aliases. Required.
+    :vartype alias_counter: ~azure.search.documents.models.ResourceCounter
     :ivar document_counter: Total number of documents across all indexes in the service. Required.
     :vartype document_counter: ~azure.search.documents.models.ResourceCounter
     :ivar index_counter: Total number of indexes. Required.
@@ -9312,27 +10153,48 @@ class SearchServiceCounters(_model_base.Model):
     :vartype vector_index_size_counter: ~azure.search.documents.models.ResourceCounter
     """
 
-    document_counter: "_models.ResourceCounter" = rest_field(name="documentCount")
+    alias_counter: "_models.ResourceCounter" = rest_field(
+        name="aliasesCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total number of aliases. Required."""
+    document_counter: "_models.ResourceCounter" = rest_field(
+        name="documentCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Total number of documents across all indexes in the service. Required."""
-    index_counter: "_models.ResourceCounter" = rest_field(name="indexesCount")
+    index_counter: "_models.ResourceCounter" = rest_field(
+        name="indexesCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Total number of indexes. Required."""
-    indexer_counter: "_models.ResourceCounter" = rest_field(name="indexersCount")
+    indexer_counter: "_models.ResourceCounter" = rest_field(
+        name="indexersCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Total number of indexers. Required."""
-    data_source_counter: "_models.ResourceCounter" = rest_field(name="dataSourcesCount")
+    data_source_counter: "_models.ResourceCounter" = rest_field(
+        name="dataSourcesCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Total number of data sources. Required."""
-    storage_size_counter: "_models.ResourceCounter" = rest_field(name="storageSize")
+    storage_size_counter: "_models.ResourceCounter" = rest_field(
+        name="storageSize", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Total size of used storage in bytes. Required."""
-    synonym_map_counter: "_models.ResourceCounter" = rest_field(name="synonymMaps")
+    synonym_map_counter: "_models.ResourceCounter" = rest_field(
+        name="synonymMaps", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Total number of synonym maps. Required."""
-    skillset_counter: "_models.ResourceCounter" = rest_field(name="skillsetCount")
+    skillset_counter: "_models.ResourceCounter" = rest_field(
+        name="skillsetCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Total number of skillsets. Required."""
-    vector_index_size_counter: "_models.ResourceCounter" = rest_field(name="vectorIndexSize")
+    vector_index_size_counter: "_models.ResourceCounter" = rest_field(
+        name="vectorIndexSize", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Total memory consumption of all vector indexes within the service, in bytes. Required."""
 
     @overload
     def __init__(
         self,
         *,
+        alias_counter: "_models.ResourceCounter",
         document_counter: "_models.ResourceCounter",
         index_counter: "_models.ResourceCounter",
         indexer_counter: "_models.ResourceCounter",
@@ -9374,19 +10236,27 @@ class SearchServiceLimits(_model_base.Model):
     :vartype max_storage_per_index_in_bytes: int
     """
 
-    max_fields_per_index: Optional[int] = rest_field(name="maxFieldsPerIndex")
+    max_fields_per_index: Optional[int] = rest_field(
+        name="maxFieldsPerIndex", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum allowed fields per index."""
-    max_field_nesting_depth_per_index: Optional[int] = rest_field(name="maxFieldNestingDepthPerIndex")
+    max_field_nesting_depth_per_index: Optional[int] = rest_field(
+        name="maxFieldNestingDepthPerIndex", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum depth which you can nest sub-fields in an index, including the
      top-level complex field. For example, a/b/c has a nesting depth of 3."""
-    max_complex_collection_fields_per_index: Optional[int] = rest_field(name="maxComplexCollectionFieldsPerIndex")
+    max_complex_collection_fields_per_index: Optional[int] = rest_field(
+        name="maxComplexCollectionFieldsPerIndex", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum number of fields of type Collection(Edm.ComplexType) allowed in an
      index."""
     max_complex_objects_in_collections_per_document: Optional[int] = rest_field(
-        name="maxComplexObjectsInCollectionsPerDocument"
+        name="maxComplexObjectsInCollectionsPerDocument", visibility=["read", "create", "update", "delete", "query"]
     )
     """The maximum number of objects in complex collections allowed per document."""
-    max_storage_per_index_in_bytes: Optional[int] = rest_field(name="maxStoragePerIndex")
+    max_storage_per_index_in_bytes: Optional[int] = rest_field(
+        name="maxStoragePerIndex", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum amount of storage in bytes allowed per index."""
 
     @overload
@@ -9422,9 +10292,9 @@ class SearchServiceStatistics(_model_base.Model):
     :vartype limits: ~azure.search.documents.models.SearchServiceLimits
     """
 
-    counters: "_models.SearchServiceCounters" = rest_field()
+    counters: "_models.SearchServiceCounters" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Service level resource counters. Required."""
-    limits: "_models.SearchServiceLimits" = rest_field()
+    limits: "_models.SearchServiceLimits" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Service level general limits. Required."""
 
     @overload
@@ -9462,12 +10332,16 @@ class SearchSuggester(_model_base.Model):
     :vartype source_fields: list[str]
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the suggester. Required."""
-    search_mode: Literal["analyzingInfixMatching"] = rest_field(name="searchMode")
+    search_mode: Literal["analyzingInfixMatching"] = rest_field(
+        name="searchMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating the capabilities of the suggester. Required. Default value is
      \"analyzingInfixMatching\"."""
-    source_fields: List[str] = rest_field(name="sourceFields")
+    source_fields: List[str] = rest_field(
+        name="sourceFields", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The list of field names to which the suggester applies. Each field must be
      searchable. Required."""
 
@@ -9506,9 +10380,11 @@ class SemanticConfiguration(_model_base.Model):
     :vartype prioritized_fields: ~azure.search.documents.models.SemanticPrioritizedFields
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the semantic configuration. Required."""
-    prioritized_fields: "_models.SemanticPrioritizedFields" = rest_field(name="prioritizedFields")
+    prioritized_fields: "_models.SemanticPrioritizedFields" = rest_field(
+        name="prioritizedFields", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Describes the title, content, and keyword fields to be used for semantic
      ranking, captions, highlights, and answers. At least one of the three sub
      properties (titleField, prioritizedKeywordsFields and prioritizedContentFields)
@@ -9583,7 +10459,7 @@ class SemanticField(_model_base.Model):
     :vartype field_name: str
     """
 
-    field_name: str = rest_field(name="fieldName")
+    field_name: str = rest_field(name="fieldName", visibility=["read", "create", "update", "delete", "query"])
     """File name. Required."""
 
     @overload
@@ -9626,16 +10502,22 @@ class SemanticPrioritizedFields(_model_base.Model):
     :vartype keywords_fields: list[~azure.search.documents.models.SemanticField]
     """
 
-    title_field: Optional["_models.SemanticField"] = rest_field(name="titleField")
+    title_field: Optional["_models.SemanticField"] = rest_field(
+        name="titleField", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defines the title field to be used for semantic ranking, captions, highlights,
      and answers. If you don't have a title field in your index, leave this blank."""
-    content_fields: Optional[List["_models.SemanticField"]] = rest_field(name="prioritizedContentFields")
+    content_fields: Optional[List["_models.SemanticField"]] = rest_field(
+        name="prioritizedContentFields", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defines the content fields to be used for semantic ranking, captions,
      highlights, and answers. For the best result, the selected fields should
      contain text in natural language form. The order of the fields in the array
      represents their priority. Fields with lower priority may get truncated if the
      content is long."""
-    keywords_fields: Optional[List["_models.SemanticField"]] = rest_field(name="prioritizedKeywordsFields")
+    keywords_fields: Optional[List["_models.SemanticField"]] = rest_field(
+        name="prioritizedKeywordsFields", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defines the keyword fields to be used for semantic ranking, captions,
      highlights, and answers. For the best result, the selected fields should
      contain a list of keywords. The order of the fields in the array represents
@@ -9673,10 +10555,14 @@ class SemanticSearch(_model_base.Model):
     :vartype configurations: list[~azure.search.documents.models.SemanticConfiguration]
     """
 
-    default_configuration_name: Optional[str] = rest_field(name="defaultConfiguration")
+    default_configuration_name: Optional[str] = rest_field(
+        name="defaultConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Allows you to set the name of a default semantic configuration in your index,
      making it optional to pass it on as a query parameter every time."""
-    configurations: Optional[List["_models.SemanticConfiguration"]] = rest_field()
+    configurations: Optional[List["_models.SemanticConfiguration"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The semantic configurations for the index."""
 
     @overload
@@ -9730,12 +10616,12 @@ class SentimentSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.S
     """
 
     default_language_code: Optional[Union[str, "_models.SentimentSkillLanguage"]] = rest_field(
-        name="defaultLanguageCode"
+        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
     )
     """A value indicating which language code to use. Default is ``en``. Known values are: \"da\",
      \"nl\", \"en\", \"fi\", \"fr\", \"de\", \"el\", \"it\", \"no\", \"pl\", \"pt-PT\", \"ru\",
      \"es\", \"sv\", and \"tr\"."""
-    odata_type: Literal["#Microsoft.Skills.Text.SentimentSkill"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Skills.Text.SentimentSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.SentimentSkill\"."""
 
@@ -9804,17 +10690,23 @@ class SentimentSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text
     :vartype odata_type: str
     """
 
-    default_language_code: Optional[str] = rest_field(name="defaultLanguageCode")
+    default_language_code: Optional[str] = rest_field(
+        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating which language code to use. Default is ``en``."""
-    include_opinion_mining: Optional[bool] = rest_field(name="includeOpinionMining")
+    include_opinion_mining: Optional[bool] = rest_field(
+        name="includeOpinionMining", visibility=["read", "create", "update", "delete", "query"]
+    )
     """If set to true, the skill output will include information from Text Analytics
      for opinion mining, namely targets (nouns or verbs) and their associated
      assessment (adjective) in the text. Default is false."""
-    model_version: Optional[str] = rest_field(name="modelVersion")
+    model_version: Optional[str] = rest_field(
+        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The version of the model to use when calling the Text Analytics service. It
      will default to the latest available when not specified. We recommend you do
      not specify this value unless absolutely necessary."""
-    odata_type: Literal["#Microsoft.Skills.Text.V3.SentimentSkill"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Skills.Text.V3.SentimentSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.V3.SentimentSkill\"."""
 
@@ -9871,7 +10763,7 @@ class ShaperSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.Shap
     :vartype odata_type: str
     """
 
-    odata_type: Literal["#Microsoft.Skills.Util.ShaperSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    odata_type: Literal["#Microsoft.Skills.Util.ShaperSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Util.ShaperSkill\"."""
 
@@ -9934,25 +10826,37 @@ class ShingleTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Shi
     :vartype odata_type: str
     """
 
-    max_shingle_size: Optional[int] = rest_field(name="maxShingleSize")
+    max_shingle_size: Optional[int] = rest_field(
+        name="maxShingleSize", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum shingle size. Default and minimum value is 2."""
-    min_shingle_size: Optional[int] = rest_field(name="minShingleSize")
+    min_shingle_size: Optional[int] = rest_field(
+        name="minShingleSize", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The minimum shingle size. Default and minimum value is 2. Must be less than the
      value of maxShingleSize."""
-    output_unigrams: Optional[bool] = rest_field(name="outputUnigrams")
+    output_unigrams: Optional[bool] = rest_field(
+        name="outputUnigrams", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether the output stream will contain the input tokens
      (unigrams) as well as shingles. Default is true."""
-    output_unigrams_if_no_shingles: Optional[bool] = rest_field(name="outputUnigramsIfNoShingles")
+    output_unigrams_if_no_shingles: Optional[bool] = rest_field(
+        name="outputUnigramsIfNoShingles", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to output unigrams for those times when no shingles
      are available. This property takes precedence when outputUnigrams is set to
      false. Default is false."""
-    token_separator: Optional[str] = rest_field(name="tokenSeparator")
+    token_separator: Optional[str] = rest_field(
+        name="tokenSeparator", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The string to use when joining adjacent tokens to form a shingle. Default is a
      single space (\" \")."""
-    filter_token: Optional[str] = rest_field(name="filterToken")
+    filter_token: Optional[str] = rest_field(
+        name="filterToken", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The string to insert for each position at which there is no token. Default is
      an underscore (\"_\")."""
-    odata_type: Literal["#Microsoft.Azure.Search.ShingleTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.ShingleTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.ShingleTokenFilter\"."""
 
@@ -10013,7 +10917,9 @@ class SkillNames(_model_base.Model):
     :vartype skill_names: list[str]
     """
 
-    skill_names: Optional[List[str]] = rest_field(name="skillNames")
+    skill_names: Optional[List[str]] = rest_field(
+        name="skillNames", visibility=["read", "create", "update", "delete", "query"]
+    )
     """the names of skills to be reset."""
 
     @overload
@@ -10053,12 +10959,14 @@ class SnowballTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Sn
     :vartype odata_type: str
     """
 
-    language: Union[str, "_models.SnowballTokenFilterLanguage"] = rest_field()
+    language: Union[str, "_models.SnowballTokenFilterLanguage"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The language to use. Required. Known values are: \"armenian\", \"basque\", \"catalan\",
      \"danish\", \"dutch\", \"english\", \"finnish\", \"french\", \"german\", \"german2\",
      \"hungarian\", \"italian\", \"kp\", \"lovins\", \"norwegian\", \"porter\", \"portuguese\",
      \"romanian\", \"russian\", \"spanish\", \"swedish\", and \"turkish\"."""
-    odata_type: Literal["#Microsoft.Azure.Search.SnowballTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.SnowballTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.SnowballTokenFilter\"."""
 
@@ -10098,11 +11006,15 @@ class SoftDeleteColumnDeletionDetectionPolicy(
     :vartype odata_type: str
     """
 
-    soft_delete_column_name: Optional[str] = rest_field(name="softDeleteColumnName")
+    soft_delete_column_name: Optional[str] = rest_field(
+        name="softDeleteColumnName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the column to use for soft-deletion detection."""
-    soft_delete_marker_value: Optional[str] = rest_field(name="softDeleteMarkerValue")
+    soft_delete_marker_value: Optional[str] = rest_field(
+        name="softDeleteMarkerValue", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The marker value that identifies an item as deleted."""
-    odata_type: Literal["#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy"] = rest_discriminator(name="@odata.type")  # type: ignore
+    odata_type: Literal["#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of data deletion detection policy. Required. Default value
      is \"#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy\"."""
 
@@ -10163,8 +11075,8 @@ class SplitSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.Split
     :vartype page_overlap_length: int
     :ivar maximum_pages_to_take: Only applicable when textSplitMode is set to 'pages'. If
      specified, the
-     SplitSkill will discontinue splitting after processing the first
-     'maximumPagesToTake' pages, in order to improve performance when only a few
+     SplitSkill will discontinue splitting after processing the first 'maximumPagesToTake'
+     pages, in order to improve performance when only a few
      initial pages are needed from each document.
     :vartype maximum_pages_to_take: int
     :ivar unit: Only applies if textSplitMode is set to pages. There are two possible values.
@@ -10175,8 +11087,7 @@ class SplitSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.Split
     :ivar azure_open_ai_tokenizer_parameters: Only applies if the unit is set to azureOpenAITokens.
      If specified, the
      splitSkill will use these parameters when performing the tokenization. The
-     parameters are a valid 'encoderModelName' and an optional
-     'allowedSpecialTokens' property.
+     parameters are a valid 'encoderModelName' and an optional 'allowedSpecialTokens' property.
     :vartype azure_open_ai_tokenizer_parameters:
      ~azure.search.documents.models.AzureOpenAITokenizerParameters
     :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
@@ -10184,37 +11095,48 @@ class SplitSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.Split
     :vartype odata_type: str
     """
 
-    default_language_code: Optional[Union[str, "_models.SplitSkillLanguage"]] = rest_field(name="defaultLanguageCode")
+    default_language_code: Optional[Union[str, "_models.SplitSkillLanguage"]] = rest_field(
+        name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating which language code to use. Default is ``en``. Known values are: \"am\",
      \"bs\", \"cs\", \"da\", \"de\", \"en\", \"es\", \"et\", \"fi\", \"fr\", \"he\", \"hi\", \"hr\",
      \"hu\", \"id\", \"is\", \"it\", \"ja\", \"ko\", \"lv\", \"nb\", \"nl\", \"pl\", \"pt\",
      \"pt-br\", \"ru\", \"sk\", \"sl\", \"sr\", \"sv\", \"tr\", \"ur\", and \"zh\"."""
-    text_split_mode: Optional[Union[str, "_models.TextSplitMode"]] = rest_field(name="textSplitMode")
+    text_split_mode: Optional[Union[str, "_models.TextSplitMode"]] = rest_field(
+        name="textSplitMode", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating which split mode to perform. Known values are: \"pages\" and \"sentences\"."""
-    maximum_page_length: Optional[int] = rest_field(name="maximumPageLength")
+    maximum_page_length: Optional[int] = rest_field(
+        name="maximumPageLength", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The desired maximum page length. Default is 10000."""
-    page_overlap_length: Optional[int] = rest_field(name="pageOverlapLength")
+    page_overlap_length: Optional[int] = rest_field(
+        name="pageOverlapLength", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Only applicable when textSplitMode is set to 'pages'. If specified, n+1th chunk
      will start with this number of characters/tokens from the end of the nth chunk."""
-    maximum_pages_to_take: Optional[int] = rest_field(name="maximumPagesToTake")
+    maximum_pages_to_take: Optional[int] = rest_field(
+        name="maximumPagesToTake", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Only applicable when textSplitMode is set to 'pages'. If specified, the
-     SplitSkill will discontinue splitting after processing the first
-     'maximumPagesToTake' pages, in order to improve performance when only a few
+     SplitSkill will discontinue splitting after processing the first 'maximumPagesToTake'
+     pages, in order to improve performance when only a few
      initial pages are needed from each document."""
-    unit: Optional[Union[str, "_models.SplitSkillUnit"]] = rest_field()
+    unit: Optional[Union[str, "_models.SplitSkillUnit"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Only applies if textSplitMode is set to pages. There are two possible values.
      The choice of the values will decide the length (maximumPageLength and
      pageOverlapLength) measurement. The default is 'characters', which means the
      length will be measured by character. Known values are: \"characters\" and
      \"azureOpenAITokens\"."""
     azure_open_ai_tokenizer_parameters: Optional["_models.AzureOpenAITokenizerParameters"] = rest_field(
-        name="azureOpenAITokenizerParameters"
+        name="azureOpenAITokenizerParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """Only applies if the unit is set to azureOpenAITokens. If specified, the
      splitSkill will use these parameters when performing the tokenization. The
-     parameters are a valid 'encoderModelName' and an optional
-     'allowedSpecialTokens' property."""
-    odata_type: Literal["#Microsoft.Skills.Text.SplitSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+     parameters are a valid 'encoderModelName' and an optional 'allowedSpecialTokens' property."""
+    odata_type: Literal["#Microsoft.Skills.Text.SplitSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.SplitSkill\"."""
 
@@ -10259,7 +11181,7 @@ class SqlIntegratedChangeTrackingPolicy(
     :vartype odata_type: str
     """
 
-    odata_type: Literal["#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy"] = rest_discriminator(name="@odata.type")  # type: ignore
+    odata_type: Literal["#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of data change detection policy. Required. Default value is
      \"#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy\"."""
 
@@ -10299,10 +11221,10 @@ class StemmerOverrideTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Se
     :vartype odata_type: str
     """
 
-    rules: List[str] = rest_field()
+    rules: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of stemming rules in the following format: \"word => stem\", for example:
      \"ran => run\". Required."""
-    odata_type: Literal["#Microsoft.Azure.Search.StemmerOverrideTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.StemmerOverrideTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.StemmerOverrideTokenFilter\"."""
 
@@ -10349,7 +11271,9 @@ class StemmerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Ste
     :vartype odata_type: str
     """
 
-    language: Union[str, "_models.StemmerTokenFilterLanguage"] = rest_field()
+    language: Union[str, "_models.StemmerTokenFilterLanguage"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The language to use. Required. Known values are: \"arabic\", \"armenian\", \"basque\",
      \"brazilian\", \"bulgarian\", \"catalan\", \"czech\", \"danish\", \"dutch\", \"dutchKp\",
      \"english\", \"lightEnglish\", \"minimalEnglish\", \"possessiveEnglish\", \"porter2\",
@@ -10361,7 +11285,7 @@ class StemmerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Ste
      \"lightPortuguese\", \"minimalPortuguese\", \"portugueseRslp\", \"romanian\", \"russian\",
      \"lightRussian\", \"spanish\", \"lightSpanish\", \"swedish\", \"lightSwedish\", and
      \"turkish\"."""
-    odata_type: Literal["#Microsoft.Azure.Search.StemmerTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.StemmerTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.StemmerTokenFilter\"."""
 
@@ -10400,9 +11324,9 @@ class StopAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.StopA
     :vartype odata_type: str
     """
 
-    stopwords: Optional[List[str]] = rest_field()
+    stopwords: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of stopwords."""
-    odata_type: Literal["#Microsoft.Azure.Search.StopAnalyzer"] = rest_discriminator(name="@odata.type")  # type: ignore
+    odata_type: Literal["#Microsoft.Azure.Search.StopAnalyzer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of analyzer. Required. Default value is
      \"#Microsoft.Azure.Search.StopAnalyzer\"."""
 
@@ -10458,10 +11382,12 @@ class StopwordsTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.S
     :vartype odata_type: str
     """
 
-    stopwords: Optional[List[str]] = rest_field()
+    stopwords: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of stopwords. This property and the stopwords list property cannot
      both be set."""
-    stopwords_list: Optional[Union[str, "_models.StopwordsList"]] = rest_field(name="stopwordsList")
+    stopwords_list: Optional[Union[str, "_models.StopwordsList"]] = rest_field(
+        name="stopwordsList", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A predefined list of stopwords to use. This property and the stopwords property
      cannot both be set. Default is English. Known values are: \"arabic\", \"armenian\", \"basque\",
      \"brazilian\", \"bulgarian\", \"catalan\", \"czech\", \"danish\", \"dutch\", \"english\",
@@ -10469,13 +11395,17 @@ class StopwordsTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.S
      \"indonesian\", \"irish\", \"italian\", \"latvian\", \"norwegian\", \"persian\",
      \"portuguese\", \"romanian\", \"russian\", \"sorani\", \"spanish\", \"swedish\", \"thai\", and
      \"turkish\"."""
-    ignore_case: Optional[bool] = rest_field(name="ignoreCase")
+    ignore_case: Optional[bool] = rest_field(
+        name="ignoreCase", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to ignore case. If true, all words are converted to
      lower case first. Default is false."""
-    remove_trailing_stop_words: Optional[bool] = rest_field(name="removeTrailing")
+    remove_trailing_stop_words: Optional[bool] = rest_field(
+        name="removeTrailing", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to ignore the last search term if it's a stop word.
      Default is true."""
-    odata_type: Literal["#Microsoft.Azure.Search.StopwordsTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.StopwordsTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.StopwordsTokenFilter\"."""
 
@@ -10504,8 +11434,6 @@ class StopwordsTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.S
 class SuggestDocumentsResult(_model_base.Model):
     """Response containing suggestion query results from an index.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar results: The sequence of results returned by the query. Required.
     :vartype results: list[~azure.search.documents.models.SuggestResult]
@@ -10514,11 +11442,33 @@ class SuggestDocumentsResult(_model_base.Model):
     :vartype coverage: float
     """
 
-    results: List["_models.SuggestResult"] = rest_field(name="value", visibility=["read"])
+    results: List["_models.SuggestResult"] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The sequence of results returned by the query. Required."""
-    coverage: Optional[float] = rest_field(name="@search.coverage", visibility=["read"])
+    coverage: Optional[float] = rest_field(
+        name="@search.coverage", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating the percentage of the index that was included in the query,
      or null if minimumCoverage was not set in the request."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        results: List["_models.SuggestResult"],
+        coverage: Optional[float] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SuggestRequest(_model_base.Model):
@@ -10575,26 +11525,34 @@ class SuggestRequest(_model_base.Model):
     :vartype top: int
     """
 
-    filter: Optional[str] = rest_field()
+    filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An OData expression that filters the documents considered for suggestions."""
-    use_fuzzy_matching: Optional[bool] = rest_field(name="fuzzy")
+    use_fuzzy_matching: Optional[bool] = rest_field(
+        name="fuzzy", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to use fuzzy matching for the suggestion query.
      Default is false. When set to true, the query will find suggestions even if
      there's a substituted or missing character in the search text. While this
      provides a better experience in some scenarios, it comes at a performance cost
      as fuzzy suggestion searches are slower and consume more resources."""
-    highlight_post_tag: Optional[str] = rest_field(name="highlightPostTag")
+    highlight_post_tag: Optional[str] = rest_field(
+        name="highlightPostTag", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A string tag that is appended to hit highlights. Must be set with
      highlightPreTag. If omitted, hit highlighting of suggestions is disabled."""
-    highlight_pre_tag: Optional[str] = rest_field(name="highlightPreTag")
+    highlight_pre_tag: Optional[str] = rest_field(
+        name="highlightPreTag", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A string tag that is prepended to hit highlights. Must be set with
      highlightPostTag. If omitted, hit highlighting of suggestions is disabled."""
-    minimum_coverage: Optional[float] = rest_field(name="minimumCoverage")
+    minimum_coverage: Optional[float] = rest_field(
+        name="minimumCoverage", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A number between 0 and 100 indicating the percentage of the index that must be
      covered by a suggestion query in order for the query to be reported as a
      success. This parameter can be useful for ensuring search availability even for
      services with only one replica. The default is 80."""
-    order_by: Optional[str] = rest_field(name="orderby")
+    order_by: Optional[str] = rest_field(name="orderby", visibility=["read", "create", "update", "delete", "query"])
     """The comma-separated list of OData $orderby expressions by which to sort the
      results. Each expression can be either a field name or a call to either the
      geo.distance() or the search.score() functions. Each expression can be followed
@@ -10602,19 +11560,21 @@ class SuggestRequest(_model_base.Model):
      ascending order. Ties will be broken by the match scores of documents. If no
      $orderby is specified, the default sort order is descending by document match
      score. There can be at most 32 $orderby clauses."""
-    search_text: str = rest_field(name="search")
+    search_text: str = rest_field(name="search", visibility=["read", "create", "update", "delete", "query"])
     """The search text to use to suggest documents. Must be at least 1 character, and
      no more than 100 characters. Required."""
-    search_fields: Optional[str] = rest_field(name="searchFields")
+    search_fields: Optional[str] = rest_field(
+        name="searchFields", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The comma-separated list of field names to search for the specified search
      text. Target fields must be included in the specified suggester."""
-    select: Optional[str] = rest_field()
+    select: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The comma-separated list of fields to retrieve. If unspecified, only the key
      field will be included in the results."""
-    suggester_name: str = rest_field(name="suggesterName")
+    suggester_name: str = rest_field(name="suggesterName", visibility=["read", "create", "update", "delete", "query"])
     """The name of the suggester as specified in the suggesters collection that's part
      of the index definition. Required."""
-    top: Optional[int] = rest_field()
+    top: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of suggestions to retrieve. This must be a value between 1 and 100.
      The default is 5."""
 
@@ -10650,15 +11610,30 @@ class SuggestResult(_model_base.Model):
     """A result containing a document found by a suggestion query, plus associated
     metadata.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar text: The text of the suggestion result. Required.
     :vartype text: str
     """
 
-    text: str = rest_field(name="@search.text", visibility=["read"])
+    text: str = rest_field(name="@search.text", visibility=["read", "create", "update", "delete", "query"])
     """The text of the suggestion result. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SynonymMap(_model_base.Model):
@@ -10690,15 +11665,17 @@ class SynonymMap(_model_base.Model):
     :vartype e_tag: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the synonym map. Required."""
-    format: Literal["solr"] = rest_field()
+    format: Literal["solr"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The format of the synonym map. Only the 'solr' format is currently supported. Required. Default
      value is \"solr\"."""
-    synonyms: str = rest_field()
+    synonyms: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A series of synonym rules in the specified synonym map format. The rules must
      be separated by newlines. Required."""
-    encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(name="encryptionKey")
+    encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(
+        name="encryptionKey", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A description of an encryption key that you create in Azure Key Vault. This key
      is used to provide an additional level of encryption-at-rest for your data when
      you want full assurance that no one, not even Microsoft, can decrypt your data.
@@ -10708,7 +11685,7 @@ class SynonymMap(_model_base.Model):
      unaffected. Encryption with customer-managed keys is not available for free
      search services, and is only available for paid services created on or after
      January 1, 2019."""
-    e_tag: Optional[str] = rest_field(name="@odata.etag")
+    e_tag: Optional[str] = rest_field(name="@odata.etag", visibility=["read", "create", "update", "delete", "query"])
     """The ETag of the synonym map."""
 
     @overload
@@ -10765,15 +11742,17 @@ class SynonymTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Syn
     :vartype odata_type: str
     """
 
-    synonyms: List[str] = rest_field()
+    synonyms: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of synonyms in following one of two formats: 1. incredible,
      unbelievable, fabulous => amazing - all terms on the left side of => symbol
      will be replaced with all terms on its right side; 2. incredible, unbelievable,
      fabulous, amazing - comma separated list of equivalent words. Set the expand
      option to change how this list is interpreted. Required."""
-    ignore_case: Optional[bool] = rest_field(name="ignoreCase")
+    ignore_case: Optional[bool] = rest_field(
+        name="ignoreCase", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to case-fold input for matching. Default is false."""
-    expand: Optional[bool] = rest_field()
+    expand: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether all words in the list of synonyms (if => notation is
      not used) will map to one another. If true, all words in the list of synonyms
      (if => notation is not used) will map to one another. The following list:
@@ -10782,7 +11761,7 @@ class SynonymTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Syn
      If false, the following list: incredible, unbelievable, fabulous, amazing will
      be equivalent to: incredible, unbelievable, fabulous, amazing => incredible.
      Default is true."""
-    odata_type: Literal["#Microsoft.Azure.Search.SynonymTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.SynonymTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.SynonymTokenFilter\"."""
 
@@ -10829,9 +11808,11 @@ class TagScoringFunction(ScoringFunction, discriminator="tag"):
     :vartype type: str
     """
 
-    parameters: "_models.TagScoringParameters" = rest_field(name="tag")
+    parameters: "_models.TagScoringParameters" = rest_field(
+        name="tag", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Parameter values for the tag scoring function. Required."""
-    type: Literal["tag"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["tag"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Indicates the type of function to use. Valid values include magnitude,
      freshness, distance, and tag. The function type must be lower case. Required. Default value is
      \"tag\"."""
@@ -10867,7 +11848,7 @@ class TagScoringParameters(_model_base.Model):
     :vartype tags_parameter: str
     """
 
-    tags_parameter: str = rest_field(name="tagsParameter")
+    tags_parameter: str = rest_field(name="tagsParameter", visibility=["read", "create", "update", "delete", "query"])
     """The name of the parameter passed in search queries to specify the list of tags
      to compare against the target field. Required."""
 
@@ -10960,7 +11941,7 @@ class TextTranslationSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.
     """
 
     default_to_language_code: Union[str, "_models.TextTranslationSkillLanguage"] = rest_field(
-        name="defaultToLanguageCode"
+        name="defaultToLanguageCode", visibility=["read", "create", "update", "delete", "query"]
     )
     """The language code to translate documents into for documents that don't specify
      the to language explicitly. Required. Known values are: \"af\", \"ar\", \"bn\", \"bs\", \"bg\",
@@ -10972,7 +11953,7 @@ class TextTranslationSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.
      \"ta\", \"te\", \"th\", \"to\", \"tr\", \"uk\", \"ur\", \"vi\", \"cy\", \"yua\", \"ga\",
      \"kn\", \"mi\", \"ml\", and \"pa\"."""
     default_from_language_code: Optional[Union[str, "_models.TextTranslationSkillLanguage"]] = rest_field(
-        name="defaultFromLanguageCode"
+        name="defaultFromLanguageCode", visibility=["read", "create", "update", "delete", "query"]
     )
     """The language code to translate documents from for documents that don't specify
      the from language explicitly. Known values are: \"af\", \"ar\", \"bn\", \"bs\", \"bg\",
@@ -10983,7 +11964,9 @@ class TextTranslationSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.
      \"ro\", \"ru\", \"sm\", \"sr-Cyrl\", \"sr-Latn\", \"sk\", \"sl\", \"es\", \"sv\", \"ty\",
      \"ta\", \"te\", \"th\", \"to\", \"tr\", \"uk\", \"ur\", \"vi\", \"cy\", \"yua\", \"ga\",
      \"kn\", \"mi\", \"ml\", and \"pa\"."""
-    suggested_from: Optional[Union[str, "_models.TextTranslationSkillLanguage"]] = rest_field(name="suggestedFrom")
+    suggested_from: Optional[Union[str, "_models.TextTranslationSkillLanguage"]] = rest_field(
+        name="suggestedFrom", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The language code to translate documents from when neither the fromLanguageCode
      input nor the defaultFromLanguageCode parameter are provided, and the automatic
      language detection is unsuccessful. Default is ``en``. Known values are: \"af\", \"ar\",
@@ -10994,7 +11977,7 @@ class TextTranslationSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.
      \"pt-br\", \"pt-PT\", \"otq\", \"ro\", \"ru\", \"sm\", \"sr-Cyrl\", \"sr-Latn\", \"sk\",
      \"sl\", \"es\", \"sv\", \"ty\", \"ta\", \"te\", \"th\", \"to\", \"tr\", \"uk\", \"ur\", \"vi\",
      \"cy\", \"yua\", \"ga\", \"kn\", \"mi\", \"ml\", and \"pa\"."""
-    odata_type: Literal["#Microsoft.Skills.Text.TranslationSkill"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Skills.Text.TranslationSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.TranslationSkill\"."""
 
@@ -11033,7 +12016,7 @@ class TextWeights(_model_base.Model):
     :vartype weights: dict[str, float]
     """
 
-    weights: Dict[str, float] = rest_field()
+    weights: Dict[str, float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The dictionary of per-field weights to boost document scoring. The keys are
      field names and the values are the weights for each field. Required."""
 
@@ -11071,9 +12054,9 @@ class TruncateTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Tr
     :vartype odata_type: str
     """
 
-    length: Optional[int] = rest_field()
+    length: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The length at which terms will be truncated. Default and maximum is 300."""
-    odata_type: Literal["#Microsoft.Azure.Search.TruncateTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.TruncateTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.TruncateTokenFilter\"."""
 
@@ -11114,10 +12097,12 @@ class UaxUrlEmailTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Sea
     :vartype odata_type: str
     """
 
-    max_token_length: Optional[int] = rest_field(name="maxTokenLength")
+    max_token_length: Optional[int] = rest_field(
+        name="maxTokenLength", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The maximum token length. Default is 255. Tokens longer than the maximum length
      are split. The maximum token length that can be used is 300 characters."""
-    odata_type: Literal["#Microsoft.Azure.Search.UaxUrlEmailTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.UaxUrlEmailTokenizer"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.UaxUrlEmailTokenizer\"."""
 
@@ -11158,10 +12143,12 @@ class UniqueTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Uniq
     :vartype odata_type: str
     """
 
-    only_on_same_position: Optional[bool] = rest_field(name="onlyOnSamePosition")
+    only_on_same_position: Optional[bool] = rest_field(
+        name="onlyOnSamePosition", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to remove duplicates only at the same position.
      Default is false."""
-    odata_type: Literal["#Microsoft.Azure.Search.UniqueTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.UniqueTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.UniqueTokenFilter\"."""
 
@@ -11204,7 +12191,8 @@ class VectorQuery(_model_base.Model):
     :ivar oversampling: Oversampling factor. Minimum value is 1. It overrides the
      'defaultOversampling'
      parameter configured in the index definition. It can be set only when
-     'rerankWithOriginalVectors' is true. This parameter is only permitted when a
+     'rerankWithOriginalVectors'
+     is true. This parameter is only permitted when a
      compression method is used on the underlying vector field.
     :vartype oversampling: float
     :ivar weight: Relative weight of the vector query when compared to other vector query and/or
@@ -11229,21 +12217,24 @@ class VectorQuery(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    k_nearest_neighbors: Optional[int] = rest_field(name="k")
+    k_nearest_neighbors: Optional[int] = rest_field(
+        name="k", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Number of nearest neighbors to return as top hits."""
-    fields: Optional[str] = rest_field()
+    fields: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched."""
-    exhaustive: Optional[bool] = rest_field()
+    exhaustive: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """When true, triggers an exhaustive k-nearest neighbor search across all vectors
      within the vector index. Useful for scenarios where exact matches are critical,
      such as determining ground truth values."""
-    oversampling: Optional[float] = rest_field()
+    oversampling: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Oversampling factor. Minimum value is 1. It overrides the 'defaultOversampling'
      parameter configured in the index definition. It can be set only when
-     'rerankWithOriginalVectors' is true. This parameter is only permitted when a
+     'rerankWithOriginalVectors'
+     is true. This parameter is only permitted when a
      compression method is used on the underlying vector field."""
-    weight: Optional[float] = rest_field()
+    weight: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Relative weight of the vector query when compared to other vector query and/or
      the text query within the same search request. This value is used when
      combining the results of multiple ranking lists produced by the different
@@ -11251,14 +12242,18 @@ class VectorQuery(_model_base.Model):
      the weight, the higher the documents that matched that query will be in the
      final ranking. Default is 1.0 and the value needs to be a positive number
      larger than zero."""
-    threshold: Optional["_models.VectorThreshold"] = rest_field()
-    """The threshold used for vector queries. Note this can only be set if all
-     'fields' use the same similarity metric."""
-    filter_override: Optional[str] = rest_field(name="filterOverride")
+    threshold: Optional["_models.VectorThreshold"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The threshold used for vector queries. Note this can only be set if all 'fields' use the same
+     similarity metric."""
+    filter_override: Optional[str] = rest_field(
+        name="filterOverride", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The OData filter expression to apply to this specific vector query. If no
      filter expression is defined at the vector level, the expression defined in the
      top level filter parameter is used instead."""
-    kind: str = rest_discriminator(name="kind")
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """Type of query. Required. Known values are: \"vector\", \"text\", \"imageUrl\", and
      \"imageBinary\"."""
 
@@ -11305,7 +12300,8 @@ class VectorizableImageBinaryQuery(VectorQuery, discriminator="imageBinary"):
     :ivar oversampling: Oversampling factor. Minimum value is 1. It overrides the
      'defaultOversampling'
      parameter configured in the index definition. It can be set only when
-     'rerankWithOriginalVectors' is true. This parameter is only permitted when a
+     'rerankWithOriginalVectors'
+     is true. This parameter is only permitted when a
      compression method is used on the underlying vector field.
     :vartype oversampling: float
     :ivar weight: Relative weight of the vector query when compared to other vector query and/or
@@ -11333,10 +12329,12 @@ class VectorizableImageBinaryQuery(VectorQuery, discriminator="imageBinary"):
     :vartype kind: str or ~azure.search.documents.models.IMAGE_BINARY
     """
 
-    base64_image: Optional[str] = rest_field(name="base64Image")
+    base64_image: Optional[str] = rest_field(
+        name="base64Image", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The base 64 encoded binary of an image to be vectorized to perform a vector
      search query."""
-    kind: Literal[VectorQueryKind.IMAGE_BINARY] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorQueryKind.IMAGE_BINARY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The kind of vector query being performed. Required. Vector query where a base 64 encoded binary
      of an image that needs to be
      vectorized is provided."""
@@ -11384,7 +12382,8 @@ class VectorizableImageUrlQuery(VectorQuery, discriminator="imageUrl"):
     :ivar oversampling: Oversampling factor. Minimum value is 1. It overrides the
      'defaultOversampling'
      parameter configured in the index definition. It can be set only when
-     'rerankWithOriginalVectors' is true. This parameter is only permitted when a
+     'rerankWithOriginalVectors'
+     is true. This parameter is only permitted when a
      compression method is used on the underlying vector field.
     :vartype oversampling: float
     :ivar weight: Relative weight of the vector query when compared to other vector query and/or
@@ -11411,9 +12410,9 @@ class VectorizableImageUrlQuery(VectorQuery, discriminator="imageUrl"):
     :vartype kind: str or ~azure.search.documents.models.IMAGE_URL
     """
 
-    url: Optional[str] = rest_field()
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The URL of an image to be vectorized to perform a vector search query."""
-    kind: Literal[VectorQueryKind.IMAGE_URL] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorQueryKind.IMAGE_URL] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The kind of vector query being performed. Required. Vector query where an url that represents
      an image value that needs to be
      vectorized is provided."""
@@ -11461,7 +12460,8 @@ class VectorizableTextQuery(VectorQuery, discriminator="text"):
     :ivar oversampling: Oversampling factor. Minimum value is 1. It overrides the
      'defaultOversampling'
      parameter configured in the index definition. It can be set only when
-     'rerankWithOriginalVectors' is true. This parameter is only permitted when a
+     'rerankWithOriginalVectors'
+     is true. This parameter is only permitted when a
      compression method is used on the underlying vector field.
     :vartype oversampling: float
     :ivar weight: Relative weight of the vector query when compared to other vector query and/or
@@ -11491,12 +12491,14 @@ class VectorizableTextQuery(VectorQuery, discriminator="text"):
     :vartype kind: str or ~azure.search.documents.models.TEXT
     """
 
-    text: str = rest_field()
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text to be vectorized to perform a vector search query. Required."""
-    query_rewrites: Optional[Union[str, "_models.QueryRewritesType"]] = rest_field(name="queryRewrites")
+    query_rewrites: Optional[Union[str, "_models.QueryRewritesType"]] = rest_field(
+        name="queryRewrites", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Can be configured to let a generative model rewrite the query before sending it
      to be vectorized. Known values are: \"none\" and \"generative\"."""
-    kind: Literal[VectorQueryKind.TEXT] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorQueryKind.TEXT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The kind of vector query being performed. Required. Vector query where a text value that needs
      to be vectorized is provided."""
 
@@ -11544,7 +12546,8 @@ class VectorizedQuery(VectorQuery, discriminator="vector"):
     :ivar oversampling: Oversampling factor. Minimum value is 1. It overrides the
      'defaultOversampling'
      parameter configured in the index definition. It can be set only when
-     'rerankWithOriginalVectors' is true. This parameter is only permitted when a
+     'rerankWithOriginalVectors'
+     is true. This parameter is only permitted when a
      compression method is used on the underlying vector field.
     :vartype oversampling: float
     :ivar weight: Relative weight of the vector query when compared to other vector query and/or
@@ -11570,9 +12573,9 @@ class VectorizedQuery(VectorQuery, discriminator="vector"):
     :vartype kind: str or ~azure.search.documents.models.VECTOR
     """
 
-    vector: List[float] = rest_field()
+    vector: List[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The vector representation of a search query. Required."""
-    kind: Literal[VectorQueryKind.VECTOR] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorQueryKind.VECTOR] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The kind of vector query being performed. Required. Vector query where a raw vector value is
      provided."""
 
@@ -11602,7 +12605,7 @@ class VectorizedQuery(VectorQuery, discriminator="vector"):
 
 
 class VectorsDebugInfo(_model_base.Model):
-    """Contains debugging information specific to vector and hybrid search.
+    """ "Contains debugging information specific to vector and hybrid search.").
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -11632,14 +12635,22 @@ class VectorSearch(_model_base.Model):
     :vartype compressions: list[~azure.search.documents.models.VectorSearchCompression]
     """
 
-    profiles: Optional[List["_models.VectorSearchProfile"]] = rest_field()
+    profiles: Optional[List["_models.VectorSearchProfile"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Defines combinations of configurations to use with vector search."""
-    algorithms: Optional[List["_models.VectorSearchAlgorithmConfiguration"]] = rest_field()
+    algorithms: Optional[List["_models.VectorSearchAlgorithmConfiguration"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Contains configuration options specific to the algorithm used during indexing
      or querying."""
-    vectorizers: Optional[List["_models.VectorSearchVectorizer"]] = rest_field()
+    vectorizers: Optional[List["_models.VectorSearchVectorizer"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Contains configuration options on how to vectorize text vector queries."""
-    compressions: Optional[List["_models.VectorSearchCompression"]] = rest_field()
+    compressions: Optional[List["_models.VectorSearchCompression"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Contains configuration options specific to the compression method used during
      indexing or querying."""
 
@@ -11683,14 +12694,20 @@ class VectorSearchProfile(_model_base.Model):
     :vartype compression_name: str
     """
 
-    name: str = rest_field()
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name to associate with this particular vector search profile. Required."""
-    algorithm_configuration_name: str = rest_field(name="algorithm")
+    algorithm_configuration_name: str = rest_field(
+        name="algorithm", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the vector search algorithm configuration that specifies the
      algorithm and optional parameters. Required."""
-    vectorizer_name: Optional[str] = rest_field(name="vectorizer")
+    vectorizer_name: Optional[str] = rest_field(
+        name="vectorizer", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the vectorization being configured for use with vector search."""
-    compression_name: Optional[str] = rest_field(name="compression")
+    compression_name: Optional[str] = rest_field(
+        name="compression", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The name of the compression method configuration that specifies the compression
      method and optional parameters."""
 
@@ -11717,8 +12734,8 @@ class VectorSearchProfile(_model_base.Model):
 
 class VectorSimilarityThreshold(VectorThreshold, discriminator="vectorSimilarity"):
     """The results of the vector query will be filtered based on the vector similarity
-    metric. Note this is the canonical definition of similarity metric, not the
-    'distance' version. The threshold direction (larger or smaller) will be chosen
+    metric. Note this is the canonical definition of similarity metric, not the 'distance'
+    version. The threshold direction (larger or smaller) will be chosen
     automatically according to the metric used by the field.
 
 
@@ -11729,22 +12746,22 @@ class VectorSimilarityThreshold(VectorThreshold, discriminator="vectorSimilarity
     :vartype value: float
     :ivar kind: The kind of threshold used to filter vector queries. Required. The results of the
      vector query will be filtered based on the vector similarity
-     metric. Note this is the canonical definition of similarity metric, not the
-     'distance' version. The threshold direction (larger or smaller) will be chosen
+     metric. Note this is the canonical definition of similarity metric, not the 'distance'
+     version. The threshold direction (larger or smaller) will be chosen
      automatically according to the metric used by the field.
     :vartype kind: str or ~azure.search.documents.models.VECTOR_SIMILARITY
     """
 
-    value: float = rest_field()
+    value: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The threshold will filter based on the similarity metric value. Note this is
      the canonical definition of similarity metric, not the 'distance' version. The
      threshold direction (larger or smaller) will be chosen automatically according
      to the metric used by the field. Required."""
-    kind: Literal[VectorThresholdKind.VECTOR_SIMILARITY] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorThresholdKind.VECTOR_SIMILARITY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The kind of threshold used to filter vector queries. Required. The results of the vector query
      will be filtered based on the vector similarity
-     metric. Note this is the canonical definition of similarity metric, not the
-     'distance' version. The threshold direction (larger or smaller) will be chosen
+     metric. Note this is the canonical definition of similarity metric, not the 'distance'
+     version. The threshold direction (larger or smaller) will be chosen
      automatically according to the metric used by the field."""
 
     @overload
@@ -11797,10 +12814,10 @@ class VisionVectorizeSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.
     :vartype odata_type: str
     """
 
-    model_version: str = rest_field(name="modelVersion")
+    model_version: str = rest_field(name="modelVersion", visibility=["read", "create", "update", "delete", "query"])
     """The version of the model to use when calling the AI Services Vision service. It
      will default to the latest available when not specified. Required."""
-    odata_type: Literal["#Microsoft.Skills.Vision.VectorizeSkill"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Skills.Vision.VectorizeSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Vision.VectorizeSkill\"."""
 
@@ -11883,19 +12900,27 @@ class WebApiSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Custom.We
     :vartype odata_type: str
     """
 
-    uri: str = rest_field()
+    uri: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The url for the Web API. Required."""
-    http_headers: Optional[Dict[str, str]] = rest_field(name="httpHeaders")
+    http_headers: Optional[Dict[str, str]] = rest_field(
+        name="httpHeaders", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The headers required to make the http request."""
-    http_method: Optional[str] = rest_field(name="httpMethod")
+    http_method: Optional[str] = rest_field(
+        name="httpMethod", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The method for the http request."""
-    timeout: Optional[datetime.timedelta] = rest_field()
+    timeout: Optional[datetime.timedelta] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The desired timeout for the request. Default is 30 seconds."""
-    batch_size: Optional[int] = rest_field(name="batchSize")
+    batch_size: Optional[int] = rest_field(name="batchSize", visibility=["read", "create", "update", "delete", "query"])
     """The desired batch size which indicates number of documents."""
-    degree_of_parallelism: Optional[int] = rest_field(name="degreeOfParallelism")
+    degree_of_parallelism: Optional[int] = rest_field(
+        name="degreeOfParallelism", visibility=["read", "create", "update", "delete", "query"]
+    )
     """If set, the number of parallel calls that can be made to the Web API."""
-    auth_resource_id: Optional[str] = rest_field(name="authResourceId")
+    auth_resource_id: Optional[str] = rest_field(
+        name="authResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Applies to custom skills that connect to external code in an Azure function or
      some other application that provides the transformations. This value should be
      the application ID created for the function or app when it was registered with
@@ -11903,13 +12928,15 @@ class WebApiSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Custom.We
      function or app using a managed ID (either system or user-assigned) of the
      search service and the access token of the function or app, using this value as
      the resource id for creating the scope of the access token."""
-    auth_identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(name="authIdentity")
+    auth_identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(
+        name="authIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user-assigned managed identity used for outbound connections. If an
      authResourceId is provided and it's not specified, the system-assigned managed
      identity is used. On updates to the indexer, if the identity is unspecified,
      the value remains unchanged. If set to \"none\", the value of this property is
      cleared."""
-    odata_type: Literal["#Microsoft.Skills.Custom.WebApiSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    odata_type: Literal["#Microsoft.Skills.Custom.WebApiSkill"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Custom.WebApiSkill\"."""
 
@@ -11959,9 +12986,11 @@ class WebApiVectorizer(VectorSearchVectorizer, discriminator="customWebApi"):
     :vartype kind: str or ~azure.search.documents.models.CUSTOM_WEB_API
     """
 
-    web_api_parameters: Optional["_models.WebApiVectorizerParameters"] = rest_field(name="customWebApiParameters")
+    web_api_parameters: Optional["_models.WebApiVectorizerParameters"] = rest_field(
+        name="customWebApiParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Specifies the properties of the user-defined vectorizer."""
-    kind: Literal[VectorSearchVectorizerKind.CUSTOM_WEB_API] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[VectorSearchVectorizerKind.CUSTOM_WEB_API] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The name of the kind of vectorization method being configured for use with
      vector search. Required. Generate embeddings using a custom web endpoint at query time."""
 
@@ -12012,15 +13041,21 @@ class WebApiVectorizerParameters(_model_base.Model):
     :vartype auth_identity: ~azure.search.documents.models.SearchIndexerDataIdentity
     """
 
-    url: Optional[str] = rest_field(name="uri")
+    url: Optional[str] = rest_field(name="uri", visibility=["read", "create", "update", "delete", "query"])
     """The URI of the Web API providing the vectorizer."""
-    http_headers: Optional[Dict[str, str]] = rest_field(name="httpHeaders")
+    http_headers: Optional[Dict[str, str]] = rest_field(
+        name="httpHeaders", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The headers required to make the HTTP request."""
-    http_method: Optional[str] = rest_field(name="httpMethod")
+    http_method: Optional[str] = rest_field(
+        name="httpMethod", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The method for the HTTP request."""
-    timeout: Optional[datetime.timedelta] = rest_field()
+    timeout: Optional[datetime.timedelta] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The desired timeout for the request. Default is 30 seconds."""
-    auth_resource_id: Optional[str] = rest_field(name="authResourceId")
+    auth_resource_id: Optional[str] = rest_field(
+        name="authResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Applies to custom endpoints that connect to external code in an Azure function
      or some other application that provides the transformations. This value should
      be the application ID created for the function or app when it was registered
@@ -12028,7 +13063,9 @@ class WebApiVectorizerParameters(_model_base.Model):
      function or app using a managed ID (either system or user-assigned) of the
      search service and the access token of the function or app, using this value as
      the resource id for creating the scope of the access token."""
-    auth_identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(name="authIdentity")
+    auth_identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(
+        name="authIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The user-assigned managed identity used for outbound connections. If an
      authResourceId is provided and it's not specified, the system-assigned managed
      identity is used. On updates to the indexer, if the identity is unspecified,
@@ -12111,37 +13148,57 @@ class WordDelimiterTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sear
     :vartype odata_type: str
     """
 
-    generate_word_parts: Optional[bool] = rest_field(name="generateWordParts")
+    generate_word_parts: Optional[bool] = rest_field(
+        name="generateWordParts", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to generate part words. If set, causes parts of
      words to be generated; for example \"AzureSearch\" becomes \"Azure\" \"Search\".
      Default is true."""
-    generate_number_parts: Optional[bool] = rest_field(name="generateNumberParts")
+    generate_number_parts: Optional[bool] = rest_field(
+        name="generateNumberParts", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to generate number subwords. Default is true."""
-    catenate_words: Optional[bool] = rest_field(name="catenateWords")
+    catenate_words: Optional[bool] = rest_field(
+        name="catenateWords", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether maximum runs of word parts will be catenated. For
      example, if this is set to true, \"Azure-Search\" becomes \"AzureSearch\". Default
      is false."""
-    catenate_numbers: Optional[bool] = rest_field(name="catenateNumbers")
+    catenate_numbers: Optional[bool] = rest_field(
+        name="catenateNumbers", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether maximum runs of number parts will be catenated. For
      example, if this is set to true, \"1-2\" becomes \"12\". Default is false."""
-    catenate_all: Optional[bool] = rest_field(name="catenateAll")
+    catenate_all: Optional[bool] = rest_field(
+        name="catenateAll", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether all subword parts will be catenated. For example, if
      this is set to true, \"Azure-Search-1\" becomes \"AzureSearch1\". Default is false."""
-    split_on_case_change: Optional[bool] = rest_field(name="splitOnCaseChange")
+    split_on_case_change: Optional[bool] = rest_field(
+        name="splitOnCaseChange", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to split words on caseChange. For example, if this
      is set to true, \"AzureSearch\" becomes \"Azure\" \"Search\". Default is true."""
-    preserve_original: Optional[bool] = rest_field(name="preserveOriginal")
+    preserve_original: Optional[bool] = rest_field(
+        name="preserveOriginal", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether original words will be preserved and added to the
      subword list. Default is false."""
-    split_on_numerics: Optional[bool] = rest_field(name="splitOnNumerics")
+    split_on_numerics: Optional[bool] = rest_field(
+        name="splitOnNumerics", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to split on numbers. For example, if this is set to
      true, \"Azure1Search\" becomes \"Azure\" \"1\" \"Search\". Default is true."""
-    stem_english_possessive: Optional[bool] = rest_field(name="stemEnglishPossessive")
+    stem_english_possessive: Optional[bool] = rest_field(
+        name="stemEnglishPossessive", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A value indicating whether to remove trailing \"'s\" for each subword. Default is
      true."""
-    protected_words: Optional[List[str]] = rest_field(name="protectedWords")
+    protected_words: Optional[List[str]] = rest_field(
+        name="protectedWords", visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of tokens to protect from being delimited."""
-    odata_type: Literal["#Microsoft.Azure.Search.WordDelimiterTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore # pylint: disable=line-too-long
+    odata_type: Literal["#Microsoft.Azure.Search.WordDelimiterTokenFilter"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.WordDelimiterTokenFilter\"."""
 

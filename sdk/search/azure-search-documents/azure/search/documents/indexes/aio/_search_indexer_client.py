@@ -349,7 +349,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         # pylint:disable=protected-access
         packed_data_source = data_source_connection._to_generated()
-        result = await self._client.data_sources_operations.create(packed_data_source, **kwargs)
+        result = await self._client.data_sources.create(packed_data_source, **kwargs)
         return cast(SearchIndexerDataSourceConnection, SearchIndexerDataSourceConnection._from_generated(result))
 
     @distributed_trace_async
@@ -376,7 +376,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         name = data_source_connection.name
         # pylint:disable=protected-access
         packed_data_source = data_source_connection._to_generated()
-        result = await self._client.data_sources_operations.create_or_update(
+        result = await self._client.data_sources.create_or_update(
             data_source_name=name,
             data_source=packed_data_source,
             prefer="return=representation",
@@ -422,7 +422,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             etag = data_source_connection.e_tag  # type: ignore
         except AttributeError:
             name = data_source_connection
-        await self._client.data_sources_operations.delete(
+        await self._client.data_sources.delete(
             data_source_name=name, etag=etag, match_condition=match_condition, **kwargs
         )
 
@@ -451,7 +451,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:
             kwargs["select"] = ",".join(select)
-        result = await self._client.data_sources_operations.get(name, **kwargs)
+        result = await self._client.data_sources.get(name, **kwargs)
         # pylint:disable=protected-access
         return cast(SearchIndexerDataSourceConnection, SearchIndexerDataSourceConnection._from_generated(result))
 
@@ -472,7 +472,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: List all SearchIndexerDataSourceConnections
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.data_sources_operations.list(**kwargs)
+        result = await self._client.data_sources.list(**kwargs)
         assert result.data_sources is not None  # Hint for mypy
         # pylint:disable=protected-access
         return [
@@ -489,7 +489,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.data_sources_operations.list(**kwargs)
+        result = await self._client.data_sources.list(**kwargs)
         assert result.data_sources is not None  # Hint for mypy
         return [x.name for x in result.data_sources]
 
@@ -509,7 +509,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:
             kwargs["select"] = ",".join(select)
-        result = await self._client.skillsets_operations.list(**kwargs)
+        result = await self._client.skillsets.list(**kwargs)
         assert result.skillsets is not None  # Hint for mypy
         return [
             cast(SearchIndexerSkillset, SearchIndexerSkillset._from_generated(skillset))
@@ -526,7 +526,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.skillsets_operations.list(**kwargs)
+        result = await self._client.skillsets.list(**kwargs)
         assert result.skillsets is not None  # Hint for mypy
         return [x.name for x in result.skillsets]
 
@@ -541,7 +541,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :raises ~azure.core.exceptions.ResourceNotFoundError: If the skillset doesn't exist.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.skillsets_operations.get(name, **kwargs)
+        result = await self._client.skillsets.get(name, **kwargs)
         # pylint:disable=protected-access
         return cast(SearchIndexerSkillset, SearchIndexerSkillset._from_generated(result))
 
@@ -571,7 +571,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             etag = skillset.e_tag  # type: ignore
         except AttributeError:
             name = skillset
-        await self._client.skillsets_operations.delete(name, etag=etag, match_condition=match_condition, **kwargs)
+        await self._client.skillsets.delete(name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace_async
     async def create_skillset(self, skillset: SearchIndexerSkillset, **kwargs: Any) -> SearchIndexerSkillset:
@@ -618,7 +618,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         skillset_gen = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
 
-        result = await self._client.skillsets_operations.create_or_update(
+        result = await self._client.skillsets.create_or_update(
             skillset_name=skillset.name,
             skillset=skillset_gen,  # type: ignore
             prefer="return=representation",
@@ -648,5 +648,5 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         except AttributeError:
             name = skillset
         names = SkillNames(skill_names=skill_names)
-        await self._client.skillsets_operations.reset_skills(skillset_name=name, skill_names=names, **kwargs)
+        await self._client.skillsets.reset_skills(skillset_name=name, skill_names=names, **kwargs)
         return

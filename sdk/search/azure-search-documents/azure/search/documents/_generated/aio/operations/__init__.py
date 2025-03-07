@@ -12,13 +12,13 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._operations import DataSourcesOperationsOperations  # type: ignore
-from ._operations import IndexersOperationsOperations  # type: ignore
-from ._operations import SkillsetsOperationsOperations  # type: ignore
-from ._operations import SynonymMapsOperationsOperations  # type: ignore
-from ._operations import IndexesOperationsOperations  # type: ignore
-from ._operations import AliasesOperationsOperations  # type: ignore
-from ._operations import DocumentsOperationsOperations  # type: ignore
+from ._operations import DataSourcesOperations  # type: ignore
+from ._operations import IndexersOperations  # type: ignore
+from ._operations import SkillsetsOperations  # type: ignore
+from ._operations import SynonymMapsOperations  # type: ignore
+from ._operations import IndexesOperations  # type: ignore
+from ._operations import AliasesOperations  # type: ignore
+from ._operations import DocumentsOperations  # type: ignore
 from ._operations import SearchClientOperationsMixin  # type: ignore
 
 from ._patch import __all__ as _patch_all
@@ -26,13 +26,13 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "DataSourcesOperationsOperations",
-    "IndexersOperationsOperations",
-    "SkillsetsOperationsOperations",
-    "SynonymMapsOperationsOperations",
-    "IndexesOperationsOperations",
-    "AliasesOperationsOperations",
-    "DocumentsOperationsOperations",
+    "DataSourcesOperations",
+    "IndexersOperations",
+    "SkillsetsOperations",
+    "SynonymMapsOperations",
+    "IndexesOperations",
+    "AliasesOperations",
+    "DocumentsOperations",
     "SearchClientOperationsMixin",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

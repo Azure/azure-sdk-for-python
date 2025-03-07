@@ -111,7 +111,7 @@ class SearchClient(HeadersMixin):
         :rtype: int
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        return int(self._client.documents_operations.count(index_name=self._index_name, **kwargs))
+        return int(self._client.documents.count(index_name=self._index_name, **kwargs))
 
     @distributed_trace
     def get_document(self, key: str, selected_fields: Optional[List[str]] = None, **kwargs: Any) -> Dict:
@@ -134,7 +134,7 @@ class SearchClient(HeadersMixin):
                 :caption: Get a specific document from the search index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.documents_operations.get(
+        result = self._client.documents.get(
             index_name=self._index_name, key=key, selected_fields=selected_fields, **kwargs
         )
         return cast(dict, result)
@@ -481,7 +481,7 @@ class SearchClient(HeadersMixin):
             query.order_by(order_by)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         request = cast(SuggestRequest, query.request)
-        response = self._client.documents_operations.suggest_post(
+        response = self._client.documents.suggest_post(
             index_name=self._index_name, suggest_request=request, **kwargs
         )
         assert response.results is not None  # Hint for mypy
@@ -562,7 +562,7 @@ class SearchClient(HeadersMixin):
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         request = cast(AutocompleteRequest, query.request)
-        response = self._client.documents_operations.autocomplete_post(
+        response = self._client.documents.autocomplete_post(
             index_name=self._index_name, autocomplete_request=request, **kwargs
         )
         assert response.results is not None  # Hint for mypy
@@ -702,7 +702,7 @@ class SearchClient(HeadersMixin):
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = self._client.documents_operations.index(
+            batch_response = self._client.documents.index(
                 index_name=self._index_name, batch=batch, error_map=error_map, **kwargs
             )
             return cast(List[IndexingResult], batch_response.results)

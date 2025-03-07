@@ -12,7 +12,7 @@ import sys
 from typing import Any, Callable, Dict, IO, Iterable, List, Literal, Optional, TypeVar, Union, overload
 import urllib.parse
 
-from azure.core import MatchConditions
+from azure.core import MatchConditions, PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -31,8 +31,9 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._model_base import SdkJSONEncoder, _deserialize
-from .._serialization import Serializer
+from .._configuration import SearchClientConfiguration
+from .._model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from .._serialization import Deserializer, Serializer
 from .._validation import api_version_validation
 from .._vendor import SearchClientMixinABC, prep_if_match, prep_if_none_match
 
@@ -48,7 +49,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_data_sources_operations_create_or_update_request(  # pylint: disable=name-too-long
+def build_data_sources_create_or_update_request(  # pylint: disable=name-too-long
     data_source_name: str,
     *,
     skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
@@ -61,7 +62,7 @@ def build_data_sources_operations_create_or_update_request(  # pylint: disable=n
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -94,7 +95,7 @@ def build_data_sources_operations_create_or_update_request(  # pylint: disable=n
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_sources_operations_delete_request(  # pylint: disable=name-too-long
+def build_data_sources_delete_request(
     data_source_name: str,
     *,
     etag: Optional[str] = None,
@@ -104,7 +105,7 @@ def build_data_sources_operations_delete_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -130,13 +131,11 @@ def build_data_sources_operations_delete_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_sources_operations_get_request(  # pylint: disable=name-too-long
-    data_source_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_data_sources_get_request(data_source_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -156,13 +155,11 @@ def build_data_sources_operations_get_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_sources_operations_list_request(  # pylint: disable=name-too-long
-    *, _select: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
+def build_data_sources_list_request(*, select: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -170,8 +167,8 @@ def build_data_sources_operations_list_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if _select is not None:
-        _params["$select"] = _SERIALIZER.query("select", _select, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -179,12 +176,12 @@ def build_data_sources_operations_list_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_sources_operations_create_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_data_sources_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -201,11 +198,11 @@ def build_data_sources_operations_create_request(**kwargs: Any) -> HttpRequest: 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexers_operations_reset_request(indexer_name: str, **kwargs: Any) -> HttpRequest:
+def build_indexers_reset_request(indexer_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -225,14 +222,14 @@ def build_indexers_operations_reset_request(indexer_name: str, **kwargs: Any) ->
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexers_operations_reset_docs_request(  # pylint: disable=name-too-long
+def build_indexers_reset_docs_request(
     indexer_name: str, *, overwrite: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -256,11 +253,11 @@ def build_indexers_operations_reset_docs_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexers_operations_run_request(indexer_name: str, **kwargs: Any) -> HttpRequest:
+def build_indexers_run_request(indexer_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -280,7 +277,7 @@ def build_indexers_operations_run_request(indexer_name: str, **kwargs: Any) -> H
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexers_operations_create_or_update_request(  # pylint: disable=name-too-long
+def build_indexers_create_or_update_request(
     indexer_name: str,
     *,
     skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
@@ -294,7 +291,7 @@ def build_indexers_operations_create_or_update_request(  # pylint: disable=name-
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -331,13 +328,13 @@ def build_indexers_operations_create_or_update_request(  # pylint: disable=name-
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexers_operations_delete_request(
+def build_indexers_delete_request(
     indexer_name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -363,11 +360,11 @@ def build_indexers_operations_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexers_operations_get_request(indexer_name: str, **kwargs: Any) -> HttpRequest:
+def build_indexers_get_request(indexer_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -387,11 +384,11 @@ def build_indexers_operations_get_request(indexer_name: str, **kwargs: Any) -> H
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexers_operations_list_request(*, _select: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_indexers_list_request(*, select: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -399,8 +396,8 @@ def build_indexers_operations_list_request(*, _select: Optional[str] = None, **k
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if _select is not None:
-        _params["$select"] = _SERIALIZER.query("select", _select, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -408,12 +405,12 @@ def build_indexers_operations_list_request(*, _select: Optional[str] = None, **k
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexers_operations_create_request(**kwargs: Any) -> HttpRequest:
+def build_indexers_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -430,13 +427,11 @@ def build_indexers_operations_create_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexers_operations_get_status_request(  # pylint: disable=name-too-long
-    indexer_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_indexers_get_status_request(indexer_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -456,7 +451,7 @@ def build_indexers_operations_get_status_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_skillsets_operations_create_or_update_request(  # pylint: disable=name-too-long
+def build_skillsets_create_or_update_request(
     skillset_name: str,
     *,
     skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
@@ -470,7 +465,7 @@ def build_skillsets_operations_create_or_update_request(  # pylint: disable=name
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -507,13 +502,13 @@ def build_skillsets_operations_create_or_update_request(  # pylint: disable=name
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_skillsets_operations_delete_request(  # pylint: disable=name-too-long
+def build_skillsets_delete_request(
     skillset_name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -539,11 +534,11 @@ def build_skillsets_operations_delete_request(  # pylint: disable=name-too-long
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_skillsets_operations_get_request(skillset_name: str, **kwargs: Any) -> HttpRequest:
+def build_skillsets_get_request(skillset_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -563,11 +558,11 @@ def build_skillsets_operations_get_request(skillset_name: str, **kwargs: Any) ->
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_skillsets_operations_list_request(*, _select: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_skillsets_list_request(*, select: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -575,8 +570,8 @@ def build_skillsets_operations_list_request(*, _select: Optional[str] = None, **
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if _select is not None:
-        _params["$select"] = _SERIALIZER.query("select", _select, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -584,12 +579,12 @@ def build_skillsets_operations_list_request(*, _select: Optional[str] = None, **
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_skillsets_operations_create_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_skillsets_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -606,14 +601,12 @@ def build_skillsets_operations_create_request(**kwargs: Any) -> HttpRequest:  # 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_skillsets_operations_reset_skills_request(  # pylint: disable=name-too-long
-    skillset_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_skillsets_reset_skills_request(skillset_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -635,7 +628,7 @@ def build_skillsets_operations_reset_skills_request(  # pylint: disable=name-too
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_synonym_maps_operations_create_or_update_request(  # pylint: disable=name-too-long
+def build_synonym_maps_create_or_update_request(  # pylint: disable=name-too-long
     synonym_map_name: str,
     *,
     etag: Optional[str] = None,
@@ -647,7 +640,7 @@ def build_synonym_maps_operations_create_or_update_request(  # pylint: disable=n
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -676,7 +669,7 @@ def build_synonym_maps_operations_create_or_update_request(  # pylint: disable=n
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_synonym_maps_operations_delete_request(  # pylint: disable=name-too-long
+def build_synonym_maps_delete_request(
     synonym_map_name: str,
     *,
     etag: Optional[str] = None,
@@ -686,7 +679,7 @@ def build_synonym_maps_operations_delete_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -712,13 +705,11 @@ def build_synonym_maps_operations_delete_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_synonym_maps_operations_get_request(  # pylint: disable=name-too-long
-    synonym_map_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_synonym_maps_get_request(synonym_map_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -738,13 +729,11 @@ def build_synonym_maps_operations_get_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_synonym_maps_operations_list_request(  # pylint: disable=name-too-long
-    *, _select: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
+def build_synonym_maps_list_request(*, select: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -752,8 +741,8 @@ def build_synonym_maps_operations_list_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if _select is not None:
-        _params["$select"] = _SERIALIZER.query("select", _select, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -761,12 +750,12 @@ def build_synonym_maps_operations_list_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_synonym_maps_operations_create_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_synonym_maps_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -783,12 +772,12 @@ def build_synonym_maps_operations_create_request(**kwargs: Any) -> HttpRequest: 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_operations_create_request(**kwargs: Any) -> HttpRequest:
+def build_indexes_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -805,11 +794,11 @@ def build_indexes_operations_create_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_operations_list_request(*, _select: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_indexes_list_request(*, select: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -817,8 +806,8 @@ def build_indexes_operations_list_request(*, _select: Optional[str] = None, **kw
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if _select is not None:
-        _params["$select"] = _SERIALIZER.query("select", _select, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -826,7 +815,7 @@ def build_indexes_operations_list_request(*, _select: Optional[str] = None, **kw
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_operations_create_or_update_request(  # pylint: disable=name-too-long
+def build_indexes_create_or_update_request(
     index_name: str,
     *,
     allow_index_downtime: Optional[bool] = None,
@@ -839,7 +828,7 @@ def build_indexes_operations_create_or_update_request(  # pylint: disable=name-t
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -870,13 +859,13 @@ def build_indexes_operations_create_or_update_request(  # pylint: disable=name-t
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_operations_delete_request(
+def build_indexes_delete_request(
     index_name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -902,11 +891,11 @@ def build_indexes_operations_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_operations_get_request(index_name: str, **kwargs: Any) -> HttpRequest:
+def build_indexes_get_request(index_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -926,13 +915,11 @@ def build_indexes_operations_get_request(index_name: str, **kwargs: Any) -> Http
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_operations_get_statistics_request(  # pylint: disable=name-too-long
-    index_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_indexes_get_statistics_request(index_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -952,12 +939,12 @@ def build_indexes_operations_get_statistics_request(  # pylint: disable=name-too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_operations_analyze_request(index_name: str, **kwargs: Any) -> HttpRequest:
+def build_indexes_analyze_request(index_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -979,12 +966,12 @@ def build_indexes_operations_analyze_request(index_name: str, **kwargs: Any) -> 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_aliases_operations_create_request(**kwargs: Any) -> HttpRequest:
+def build_aliases_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1001,11 +988,11 @@ def build_aliases_operations_create_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_aliases_operations_list_request(**kwargs: Any) -> HttpRequest:
+def build_aliases_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1020,7 +1007,7 @@ def build_aliases_operations_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_aliases_operations_create_or_update_request(  # pylint: disable=name-too-long
+def build_aliases_create_or_update_request(
     alias_name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1028,7 +1015,7 @@ def build_aliases_operations_create_or_update_request(  # pylint: disable=name-t
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1057,13 +1044,13 @@ def build_aliases_operations_create_or_update_request(  # pylint: disable=name-t
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_aliases_operations_delete_request(
+def build_aliases_delete_request(
     alias_name: str, *, etag: Optional[str] = None, match_condition: Optional[MatchConditions] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1089,11 +1076,11 @@ def build_aliases_operations_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_aliases_operations_get_request(alias_name: str, **kwargs: Any) -> HttpRequest:
+def build_aliases_get_request(alias_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1113,11 +1100,11 @@ def build_aliases_operations_get_request(alias_name: str, **kwargs: Any) -> Http
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_documents_operations_count_request(index_name: str, **kwargs: Any) -> HttpRequest:
+def build_documents_count_request(index_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1137,13 +1124,13 @@ def build_documents_operations_count_request(index_name: str, **kwargs: Any) -> 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_documents_operations_search_get_request(  # pylint: disable=name-too-long
+def build_documents_search_get_request(
     index_name: str,
     *,
     search_text: Optional[str] = None,
     include_total_result_count: Optional[bool] = None,
     facets: Optional[List[str]] = None,
-    _filter: Optional[str] = None,
+    filter: Optional[str] = None,
     highlight_fields: Optional[List[str]] = None,
     highlight_post_tag: Optional[str] = None,
     highlight_pre_tag: Optional[str] = None,
@@ -1156,9 +1143,9 @@ def build_documents_operations_search_get_request(  # pylint: disable=name-too-l
     search_mode: Optional[Union[str, _models.SearchMode]] = None,
     scoring_statistics: Optional[Union[str, _models.ScoringStatistics]] = None,
     session_id: Optional[str] = None,
-    _select: Optional[List[str]] = None,
-    _skip: Optional[int] = None,
-    _top: Optional[int] = None,
+    select: Optional[List[str]] = None,
+    skip: Optional[int] = None,
+    top: Optional[int] = None,
     semantic_configuration: Optional[str] = None,
     semantic_error_handling: Optional[Union[str, _models.SemanticErrorMode]] = None,
     semantic_max_wait_in_milliseconds: Optional[int] = None,
@@ -1175,7 +1162,7 @@ def build_documents_operations_search_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1194,8 +1181,8 @@ def build_documents_operations_search_get_request(  # pylint: disable=name-too-l
         _params["$count"] = _SERIALIZER.query("include_total_result_count", include_total_result_count, "bool")
     if facets is not None:
         _params["facet"] = [_SERIALIZER.query("facets", q, "str") if q is not None else "" for q in facets]
-    if _filter is not None:
-        _params["$filter"] = _SERIALIZER.query("filter", _filter, "str")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
     if highlight_fields is not None:
         _params["highlight"] = _SERIALIZER.query("highlight_fields", highlight_fields, "[str]", div=",")
     if highlight_post_tag is not None:
@@ -1222,12 +1209,12 @@ def build_documents_operations_search_get_request(  # pylint: disable=name-too-l
         _params["scoringStatistics"] = _SERIALIZER.query("scoring_statistics", scoring_statistics, "str")
     if session_id is not None:
         _params["sessionId"] = _SERIALIZER.query("session_id", session_id, "str")
-    if _select is not None:
-        _params["$select"] = _SERIALIZER.query("select", _select, "[str]", div=",")
-    if _skip is not None:
-        _params["$skip"] = _SERIALIZER.query("skip", _skip, "int")
-    if _top is not None:
-        _params["$top"] = _SERIALIZER.query("top", _top, "int")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if skip is not None:
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
     if semantic_configuration is not None:
         _params["semanticConfiguration"] = _SERIALIZER.query("semantic_configuration", semantic_configuration, "str")
     if semantic_error_handling is not None:
@@ -1259,14 +1246,12 @@ def build_documents_operations_search_get_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_documents_operations_search_post_request(  # pylint: disable=name-too-long
-    index_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_documents_search_post_request(index_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1288,13 +1273,13 @@ def build_documents_operations_search_post_request(  # pylint: disable=name-too-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_documents_operations_get_request(
+def build_documents_get_request(
     key: str, index_name: str, *, selected_fields: Optional[List[str]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1317,26 +1302,26 @@ def build_documents_operations_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_documents_operations_suggest_get_request(  # pylint: disable=name-too-long
+def build_documents_suggest_get_request(
     index_name: str,
     *,
     search_text: str,
     suggester_name: str,
-    _filter: Optional[str] = None,
+    filter: Optional[str] = None,
     use_fuzzy_matching: Optional[bool] = None,
     highlight_post_tag: Optional[str] = None,
     highlight_pre_tag: Optional[str] = None,
     minimum_coverage: Optional[float] = None,
     order_by: Optional[List[str]] = None,
     search_fields: Optional[List[str]] = None,
-    _select: Optional[List[str]] = None,
-    _top: Optional[int] = None,
+    select: Optional[List[str]] = None,
+    top: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1351,8 +1336,8 @@ def build_documents_operations_suggest_get_request(  # pylint: disable=name-too-
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     _params["search"] = _SERIALIZER.query("search_text", search_text, "str")
     _params["suggesterName"] = _SERIALIZER.query("suggester_name", suggester_name, "str")
-    if _filter is not None:
-        _params["$filter"] = _SERIALIZER.query("filter", _filter, "str")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
     if use_fuzzy_matching is not None:
         _params["fuzzy"] = _SERIALIZER.query("use_fuzzy_matching", use_fuzzy_matching, "bool")
     if highlight_post_tag is not None:
@@ -1365,10 +1350,10 @@ def build_documents_operations_suggest_get_request(  # pylint: disable=name-too-
         _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "[str]", div=",")
     if search_fields is not None:
         _params["searchFields"] = _SERIALIZER.query("search_fields", search_fields, "[str]", div=",")
-    if _select is not None:
-        _params["$select"] = _SERIALIZER.query("select", _select, "[str]", div=",")
-    if _top is not None:
-        _params["$top"] = _SERIALIZER.query("top", _top, "int")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1376,14 +1361,12 @@ def build_documents_operations_suggest_get_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_documents_operations_suggest_post_request(  # pylint: disable=name-too-long
-    index_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_documents_suggest_post_request(index_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1405,12 +1388,12 @@ def build_documents_operations_suggest_post_request(  # pylint: disable=name-too
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_documents_operations_index_request(index_name: str, **kwargs: Any) -> HttpRequest:
+def build_documents_index_request(index_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1432,25 +1415,25 @@ def build_documents_operations_index_request(index_name: str, **kwargs: Any) -> 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_documents_operations_autocomplete_get_request(  # pylint: disable=name-too-long
+def build_documents_autocomplete_get_request(
     index_name: str,
     *,
     search_text: str,
     suggester_name: str,
     autocomplete_mode: Optional[Union[str, _models.AutocompleteMode]] = None,
-    _filter: Optional[str] = None,
+    filter: Optional[str] = None,
     use_fuzzy_matching: Optional[bool] = None,
     highlight_post_tag: Optional[str] = None,
     highlight_pre_tag: Optional[str] = None,
     minimum_coverage: Optional[float] = None,
     search_fields: Optional[List[str]] = None,
-    _top: Optional[int] = None,
+    top: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1467,8 +1450,8 @@ def build_documents_operations_autocomplete_get_request(  # pylint: disable=name
     _params["suggesterName"] = _SERIALIZER.query("suggester_name", suggester_name, "str")
     if autocomplete_mode is not None:
         _params["autocompleteMode"] = _SERIALIZER.query("autocomplete_mode", autocomplete_mode, "str")
-    if _filter is not None:
-        _params["$filter"] = _SERIALIZER.query("filter", _filter, "str")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
     if use_fuzzy_matching is not None:
         _params["fuzzy"] = _SERIALIZER.query("use_fuzzy_matching", use_fuzzy_matching, "bool")
     if highlight_post_tag is not None:
@@ -1479,8 +1462,8 @@ def build_documents_operations_autocomplete_get_request(  # pylint: disable=name
         _params["minimumCoverage"] = _SERIALIZER.query("minimum_coverage", minimum_coverage, "float")
     if search_fields is not None:
         _params["searchFields"] = _SERIALIZER.query("search_fields", search_fields, "[str]", div=",")
-    if _top is not None:
-        _params["$top"] = _SERIALIZER.query("top", _top, "int")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1488,14 +1471,14 @@ def build_documents_operations_autocomplete_get_request(  # pylint: disable=name
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_documents_operations_autocomplete_post_request(  # pylint: disable=name-too-long
+def build_documents_autocomplete_post_request(  # pylint: disable=name-too-long
     index_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1521,7 +1504,7 @@ def build_search_get_service_statistics_request(**kwargs: Any) -> HttpRequest:  
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1536,22 +1519,41 @@ def build_search_get_service_statistics_request(**kwargs: Any) -> HttpRequest:  
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class DataSourcesOperationsOperations:
+def build_search_get_index_stats_summary_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/indexstats"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class DataSourcesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.search.documents.SearchClient`'s
-        :attr:`data_sources_operations` attribute.
+        :attr:`data_sources` attribute.
     """
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: SearchClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
     def create_or_update(
@@ -1657,7 +1659,7 @@ class DataSourcesOperationsOperations:
 
     @distributed_trace
     @api_version_validation(
-        params_added_on={"2024-11-01-preview": ["skip_indexer_reset_requirement_for_cache"]},
+        params_added_on={"2025-03-01-preview": ["skip_indexer_reset_requirement_for_cache"]},
     )
     def create_or_update(
         self,
@@ -1716,7 +1718,7 @@ class DataSourcesOperationsOperations:
         else:
             _content = json.dumps(data_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_data_sources_operations_create_or_update_request(
+        _request = build_data_sources_create_or_update_request(
             data_source_name=data_source_name,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             etag=etag,
@@ -1747,7 +1749,7 @@ class DataSourcesOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1801,7 +1803,7 @@ class DataSourcesOperationsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_data_sources_operations_delete_request(
+        _request = build_data_sources_delete_request(
             data_source_name=data_source_name,
             etag=etag,
             match_condition=match_condition,
@@ -1821,9 +1823,9 @@ class DataSourcesOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -1852,71 +1854,8 @@ class DataSourcesOperationsOperations:
 
         cls: ClsType[_models.SearchIndexerDataSource] = kwargs.pop("cls", None)
 
-        _request = build_data_sources_operations_get_request(
+        _request = build_data_sources_get_request(
             data_source_name=data_source_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.SearchIndexerDataSource, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(self, *, _select: Optional[str] = None, **kwargs: Any) -> _models.ListDataSourcesResult:
-        """Lists all datasources available for a search service.
-
-        :keyword _select: Selects which top-level properties to retrieve.
-         Specified as a comma-separated list of JSON property names,
-         or '*' for all properties. The default is all properties. Default value is None.
-        :paramtype _select: str
-        :return: ListDataSourcesResult. The ListDataSourcesResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.ListDataSourcesResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ListDataSourcesResult] = kwargs.pop("cls", None)
-
-        _request = build_data_sources_operations_list_request(
-            _select=_select,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1940,7 +1879,70 @@ class DataSourcesOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.SearchIndexerDataSource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(self, *, select: Optional[str] = None, **kwargs: Any) -> _models.ListDataSourcesResult:
+        """Lists all datasources available for a search service.
+
+        :keyword select: Selects which top-level properties to retrieve.
+         Specified as a comma-separated list of JSON property names,
+         or '*' for all properties. The default is all properties. Default value is None.
+        :paramtype select: str
+        :return: ListDataSourcesResult. The ListDataSourcesResult is compatible with MutableMapping
+        :rtype: ~azure.search.documents.models.ListDataSourcesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ListDataSourcesResult] = kwargs.pop("cls", None)
+
+        _request = build_data_sources_list_request(
+            select=select,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2035,7 +2037,7 @@ class DataSourcesOperationsOperations:
         else:
             _content = json.dumps(data_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_data_sources_operations_create_request(
+        _request = build_data_sources_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2054,14 +2056,14 @@ class DataSourcesOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [201]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2075,22 +2077,22 @@ class DataSourcesOperationsOperations:
         return deserialized  # type: ignore
 
 
-class IndexersOperationsOperations:
+class IndexersOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.search.documents.SearchClient`'s
-        :attr:`indexers_operations` attribute.
+        :attr:`indexers` attribute.
     """
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: SearchClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def reset(self, indexer_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -2115,7 +2117,7 @@ class IndexersOperationsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_indexers_operations_reset_request(
+        _request = build_indexers_reset_request(
             indexer_name=indexer_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2135,7 +2137,7 @@ class IndexersOperationsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -2239,9 +2241,9 @@ class IndexersOperationsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2024-11-01-preview",
+        method_added_on="2025-03-01-preview",
         params_added_on={
-            "2024-11-01-preview": [
+            "2025-03-01-preview": [
                 "api_version",
                 "overwrite",
                 "client_request_id",
@@ -2302,7 +2304,7 @@ class IndexersOperationsOperations:
             else:
                 _content = None
 
-        _request = build_indexers_operations_reset_docs_request(
+        _request = build_indexers_reset_docs_request(
             indexer_name=indexer_name,
             overwrite=overwrite,
             content_type=content_type,
@@ -2325,7 +2327,7 @@ class IndexersOperationsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -2354,7 +2356,7 @@ class IndexersOperationsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_indexers_operations_run_request(
+        _request = build_indexers_run_request(
             indexer_name=indexer_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2372,9 +2374,9 @@ class IndexersOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -2497,7 +2499,7 @@ class IndexersOperationsOperations:
     @distributed_trace
     @api_version_validation(
         params_added_on={
-            "2024-11-01-preview": [
+            "2025-03-01-preview": [
                 "skip_indexer_reset_requirement_for_cache",
                 "disable_cache_reprocessing_change_detection",
             ]
@@ -2564,7 +2566,7 @@ class IndexersOperationsOperations:
         else:
             _content = json.dumps(indexer, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_indexers_operations_create_or_update_request(
+        _request = build_indexers_create_or_update_request(
             indexer_name=indexer_name,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
@@ -2596,7 +2598,7 @@ class IndexersOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2650,7 +2652,7 @@ class IndexersOperationsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_indexers_operations_delete_request(
+        _request = build_indexers_delete_request(
             indexer_name=indexer_name,
             etag=etag,
             match_condition=match_condition,
@@ -2670,9 +2672,9 @@ class IndexersOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -2701,71 +2703,8 @@ class IndexersOperationsOperations:
 
         cls: ClsType[_models.SearchIndexer] = kwargs.pop("cls", None)
 
-        _request = build_indexers_operations_get_request(
+        _request = build_indexers_get_request(
             indexer_name=indexer_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.SearchIndexer, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(self, *, _select: Optional[str] = None, **kwargs: Any) -> _models.ListIndexersResult:
-        """Lists all indexers available for a search service.
-
-        :keyword _select: Selects which top-level properties to retrieve.
-         Specified as a comma-separated list of JSON property names,
-         or '*' for all properties. The default is all properties. Default value is None.
-        :paramtype _select: str
-        :return: ListIndexersResult. The ListIndexersResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.ListIndexersResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ListIndexersResult] = kwargs.pop("cls", None)
-
-        _request = build_indexers_operations_list_request(
-            _select=_select,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2789,7 +2728,70 @@ class IndexersOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.SearchIndexer, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(self, *, select: Optional[str] = None, **kwargs: Any) -> _models.ListIndexersResult:
+        """Lists all indexers available for a search service.
+
+        :keyword select: Selects which top-level properties to retrieve.
+         Specified as a comma-separated list of JSON property names,
+         or '*' for all properties. The default is all properties. Default value is None.
+        :paramtype select: str
+        :return: ListIndexersResult. The ListIndexersResult is compatible with MutableMapping
+        :rtype: ~azure.search.documents.models.ListIndexersResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ListIndexersResult] = kwargs.pop("cls", None)
+
+        _request = build_indexers_list_request(
+            select=select,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2880,7 +2882,7 @@ class IndexersOperationsOperations:
         else:
             _content = json.dumps(indexer, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_indexers_operations_create_request(
+        _request = build_indexers_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2899,14 +2901,14 @@ class IndexersOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [201]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2942,7 +2944,7 @@ class IndexersOperationsOperations:
 
         cls: ClsType[_models.SearchIndexerStatus] = kwargs.pop("cls", None)
 
-        _request = build_indexers_operations_get_status_request(
+        _request = build_indexers_get_status_request(
             indexer_name=indexer_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2967,7 +2969,7 @@ class IndexersOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2981,22 +2983,22 @@ class IndexersOperationsOperations:
         return deserialized  # type: ignore
 
 
-class SkillsetsOperationsOperations:
+class SkillsetsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.search.documents.SearchClient`'s
-        :attr:`skillsets_operations` attribute.
+        :attr:`skillsets` attribute.
     """
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: SearchClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
     def create_or_update(
@@ -3121,7 +3123,7 @@ class SkillsetsOperationsOperations:
     @distributed_trace
     @api_version_validation(
         params_added_on={
-            "2024-11-01-preview": [
+            "2025-03-01-preview": [
                 "skip_indexer_reset_requirement_for_cache",
                 "disable_cache_reprocessing_change_detection",
             ]
@@ -3189,7 +3191,7 @@ class SkillsetsOperationsOperations:
         else:
             _content = json.dumps(skillset, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_skillsets_operations_create_or_update_request(
+        _request = build_skillsets_create_or_update_request(
             skillset_name=skillset_name,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
@@ -3221,7 +3223,7 @@ class SkillsetsOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3275,7 +3277,7 @@ class SkillsetsOperationsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_skillsets_operations_delete_request(
+        _request = build_skillsets_delete_request(
             skillset_name=skillset_name,
             etag=etag,
             match_condition=match_condition,
@@ -3295,9 +3297,9 @@ class SkillsetsOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -3326,71 +3328,8 @@ class SkillsetsOperationsOperations:
 
         cls: ClsType[_models.SearchIndexerSkillset] = kwargs.pop("cls", None)
 
-        _request = build_skillsets_operations_get_request(
+        _request = build_skillsets_get_request(
             skillset_name=skillset_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.SearchIndexerSkillset, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(self, *, _select: Optional[str] = None, **kwargs: Any) -> _models.ListSkillsetsResult:
-        """List all skillsets in a search service.
-
-        :keyword _select: Selects which top-level properties to retrieve.
-         Specified as a comma-separated list of JSON property names,
-         or '*' for all properties. The default is all properties. Default value is None.
-        :paramtype _select: str
-        :return: ListSkillsetsResult. The ListSkillsetsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.ListSkillsetsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ListSkillsetsResult] = kwargs.pop("cls", None)
-
-        _request = build_skillsets_operations_list_request(
-            _select=_select,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3414,7 +3353,70 @@ class SkillsetsOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.SearchIndexerSkillset, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(self, *, select: Optional[str] = None, **kwargs: Any) -> _models.ListSkillsetsResult:
+        """List all skillsets in a search service.
+
+        :keyword select: Selects which top-level properties to retrieve.
+         Specified as a comma-separated list of JSON property names,
+         or '*' for all properties. The default is all properties. Default value is None.
+        :paramtype select: str
+        :return: ListSkillsetsResult. The ListSkillsetsResult is compatible with MutableMapping
+        :rtype: ~azure.search.documents.models.ListSkillsetsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ListSkillsetsResult] = kwargs.pop("cls", None)
+
+        _request = build_skillsets_list_request(
+            select=select,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3512,7 +3514,7 @@ class SkillsetsOperationsOperations:
         else:
             _content = json.dumps(skillset, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_skillsets_operations_create_request(
+        _request = build_skillsets_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3531,14 +3533,14 @@ class SkillsetsOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [201]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3618,9 +3620,9 @@ class SkillsetsOperationsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2024-11-01-preview",
+        method_added_on="2025-03-01-preview",
         params_added_on={
-            "2024-11-01-preview": ["api_version", "client_request_id", "skillset_name", "content_type", "accept"]
+            "2025-03-01-preview": ["api_version", "client_request_id", "skillset_name", "content_type", "accept"]
         },
     )
     def reset_skills(  # pylint: disable=inconsistent-return-statements
@@ -3659,7 +3661,7 @@ class SkillsetsOperationsOperations:
         else:
             _content = json.dumps(skill_names, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_skillsets_operations_reset_skills_request(
+        _request = build_skillsets_reset_skills_request(
             skillset_name=skillset_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3681,29 +3683,29 @@ class SkillsetsOperationsOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SynonymMapsOperationsOperations:
+class SynonymMapsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.search.documents.SearchClient`'s
-        :attr:`synonym_maps_operations` attribute.
+        :attr:`synonym_maps` attribute.
     """
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: SearchClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
     def create_or_update(
@@ -3849,7 +3851,7 @@ class SynonymMapsOperationsOperations:
         else:
             _content = json.dumps(synonym_map, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_synonym_maps_operations_create_or_update_request(
+        _request = build_synonym_maps_create_or_update_request(
             synonym_map_name=synonym_map_name,
             etag=etag,
             match_condition=match_condition,
@@ -3879,7 +3881,7 @@ class SynonymMapsOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -3933,7 +3935,7 @@ class SynonymMapsOperationsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_synonym_maps_operations_delete_request(
+        _request = build_synonym_maps_delete_request(
             synonym_map_name=synonym_map_name,
             etag=etag,
             match_condition=match_condition,
@@ -3953,9 +3955,9 @@ class SynonymMapsOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -3984,71 +3986,8 @@ class SynonymMapsOperationsOperations:
 
         cls: ClsType[_models.SynonymMap] = kwargs.pop("cls", None)
 
-        _request = build_synonym_maps_operations_get_request(
+        _request = build_synonym_maps_get_request(
             synonym_map_name=synonym_map_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.SynonymMap, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(self, *, _select: Optional[str] = None, **kwargs: Any) -> _models.ListSynonymMapsResult:
-        """Lists all synonym maps available for a search service.
-
-        :keyword _select: Selects which top-level properties to retrieve.
-         Specified as a comma-separated list of JSON property names,
-         or '*' for all properties. The default is all properties. Default value is None.
-        :paramtype _select: str
-        :return: ListSynonymMapsResult. The ListSynonymMapsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.ListSynonymMapsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ListSynonymMapsResult] = kwargs.pop("cls", None)
-
-        _request = build_synonym_maps_operations_list_request(
-            _select=_select,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4072,7 +4011,70 @@ class SynonymMapsOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.SynonymMap, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(self, *, select: Optional[str] = None, **kwargs: Any) -> _models.ListSynonymMapsResult:
+        """Lists all synonym maps available for a search service.
+
+        :keyword select: Selects which top-level properties to retrieve.
+         Specified as a comma-separated list of JSON property names,
+         or '*' for all properties. The default is all properties. Default value is None.
+        :paramtype select: str
+        :return: ListSynonymMapsResult. The ListSynonymMapsResult is compatible with MutableMapping
+        :rtype: ~azure.search.documents.models.ListSynonymMapsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ListSynonymMapsResult] = kwargs.pop("cls", None)
+
+        _request = build_synonym_maps_list_request(
+            select=select,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -4163,7 +4165,7 @@ class SynonymMapsOperationsOperations:
         else:
             _content = json.dumps(synonym_map, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_synonym_maps_operations_create_request(
+        _request = build_synonym_maps_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4182,14 +4184,14 @@ class SynonymMapsOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [201]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -4203,22 +4205,22 @@ class SynonymMapsOperationsOperations:
         return deserialized  # type: ignore
 
 
-class IndexesOperationsOperations:
+class IndexesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.search.documents.SearchClient`'s
-        :attr:`indexes_operations` attribute.
+        :attr:`indexes` attribute.
     """
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: SearchClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
     def create(
@@ -4296,7 +4298,7 @@ class IndexesOperationsOperations:
         else:
             _content = json.dumps(index, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_indexes_operations_create_request(
+        _request = build_indexes_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4315,14 +4317,14 @@ class IndexesOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [201]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -4336,13 +4338,13 @@ class IndexesOperationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, *, _select: Optional[str] = None, **kwargs: Any) -> Iterable["_models.SearchIndex"]:
+    def list(self, *, select: Optional[str] = None, **kwargs: Any) -> Iterable["_models.SearchIndex"]:
         """Lists all indexes available for a search service.
 
-        :keyword _select: Selects which top-level properties to retrieve.
+        :keyword select: Selects which top-level properties to retrieve.
          Specified as a comma-separated list of JSON property names,
          or '*' for all properties. The default is all properties. Default value is None.
-        :paramtype _select: str
+        :paramtype select: str
         :return: An iterator like instance of SearchIndex
         :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.models.SearchIndex]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4363,8 +4365,8 @@ class IndexesOperationsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_indexes_operations_list_request(
-                    _select=_select,
+                _request = build_indexes_list_request(
+                    select=select,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4416,7 +4418,7 @@ class IndexesOperationsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -4599,7 +4601,7 @@ class IndexesOperationsOperations:
         else:
             _content = json.dumps(index, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_indexes_operations_create_or_update_request(
+        _request = build_indexes_create_or_update_request(
             index_name=index_name,
             allow_index_downtime=allow_index_downtime,
             etag=etag,
@@ -4630,7 +4632,7 @@ class IndexesOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -4687,7 +4689,7 @@ class IndexesOperationsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_indexes_operations_delete_request(
+        _request = build_indexes_delete_request(
             index_name=index_name,
             etag=etag,
             match_condition=match_condition,
@@ -4707,9 +4709,9 @@ class IndexesOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -4738,7 +4740,7 @@ class IndexesOperationsOperations:
 
         cls: ClsType[_models.SearchIndex] = kwargs.pop("cls", None)
 
-        _request = build_indexes_operations_get_request(
+        _request = build_indexes_get_request(
             index_name=index_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4756,14 +4758,14 @@ class IndexesOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -4801,7 +4803,7 @@ class IndexesOperationsOperations:
 
         cls: ClsType[_models.GetIndexStatisticsResult] = kwargs.pop("cls", None)
 
-        _request = build_indexes_operations_get_statistics_request(
+        _request = build_indexes_get_statistics_request(
             index_name=index_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4826,7 +4828,7 @@ class IndexesOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -4929,7 +4931,7 @@ class IndexesOperationsOperations:
         else:
             _content = json.dumps(request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_indexes_operations_analyze_request(
+        _request = build_indexes_analyze_request(
             index_name=index_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4956,7 +4958,7 @@ class IndexesOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -4970,22 +4972,22 @@ class IndexesOperationsOperations:
         return deserialized  # type: ignore
 
 
-class AliasesOperationsOperations:
+class AliasesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.search.documents.SearchClient`'s
-        :attr:`aliases_operations` attribute.
+        :attr:`aliases` attribute.
     """
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: SearchClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
     def create(
@@ -5033,8 +5035,8 @@ class AliasesOperationsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2024-11-01-preview",
-        params_added_on={"2024-11-01-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        method_added_on="2025-03-01-preview",
+        params_added_on={"2025-03-01-preview": ["api_version", "client_request_id", "content_type", "accept"]},
     )
     def create(self, alias: Union[_models.SearchAlias, JSON, IO[bytes]], **kwargs: Any) -> _models.SearchAlias:
         """Creates a new search alias.
@@ -5067,7 +5069,7 @@ class AliasesOperationsOperations:
         else:
             _content = json.dumps(alias, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_aliases_operations_create_request(
+        _request = build_aliases_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5086,14 +5088,14 @@ class AliasesOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [201]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5108,8 +5110,8 @@ class AliasesOperationsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2024-11-01-preview",
-        params_added_on={"2024-11-01-preview": ["api_version", "client_request_id", "accept"]},
+        method_added_on="2025-03-01-preview",
+        params_added_on={"2025-03-01-preview": ["api_version", "client_request_id", "accept"]},
     )
     def list(self, **kwargs: Any) -> Iterable["_models.SearchAlias"]:
         """Lists all aliases available for a search service.
@@ -5134,7 +5136,7 @@ class AliasesOperationsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_aliases_operations_list_request(
+                _request = build_aliases_list_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5186,7 +5188,7 @@ class AliasesOperationsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -5285,9 +5287,9 @@ class AliasesOperationsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2024-11-01-preview",
+        method_added_on="2025-03-01-preview",
         params_added_on={
-            "2024-11-01-preview": [
+            "2025-03-01-preview": [
                 "api_version",
                 "prefer",
                 "client_request_id",
@@ -5352,7 +5354,7 @@ class AliasesOperationsOperations:
         else:
             _content = json.dumps(alias, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_aliases_operations_create_or_update_request(
+        _request = build_aliases_create_or_update_request(
             alias_name=alias_name,
             etag=etag,
             match_condition=match_condition,
@@ -5382,7 +5384,7 @@ class AliasesOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5397,9 +5399,9 @@ class AliasesOperationsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2024-11-01-preview",
+        method_added_on="2025-03-01-preview",
         params_added_on={
-            "2024-11-01-preview": [
+            "2025-03-01-preview": [
                 "api_version",
                 "client_request_id",
                 "alias_name",
@@ -5451,7 +5453,7 @@ class AliasesOperationsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_aliases_operations_delete_request(
+        _request = build_aliases_delete_request(
             alias_name=alias_name,
             etag=etag,
             match_condition=match_condition,
@@ -5471,9 +5473,9 @@ class AliasesOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [204, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -5481,8 +5483,8 @@ class AliasesOperationsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2024-11-01-preview",
-        params_added_on={"2024-11-01-preview": ["api_version", "client_request_id", "alias_name", "accept"]},
+        method_added_on="2025-03-01-preview",
+        params_added_on={"2025-03-01-preview": ["api_version", "client_request_id", "alias_name", "accept"]},
     )
     def get(self, alias_name: str, **kwargs: Any) -> _models.SearchAlias:
         """Retrieves an alias definition.
@@ -5506,7 +5508,7 @@ class AliasesOperationsOperations:
 
         cls: ClsType[_models.SearchAlias] = kwargs.pop("cls", None)
 
-        _request = build_aliases_operations_get_request(
+        _request = build_aliases_get_request(
             alias_name=alias_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5524,14 +5526,14 @@ class AliasesOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5545,22 +5547,22 @@ class AliasesOperationsOperations:
         return deserialized  # type: ignore
 
 
-class DocumentsOperationsOperations:
+class DocumentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.search.documents.SearchClient`'s
-        :attr:`documents_operations` attribute.
+        :attr:`documents` attribute.
     """
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: SearchClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def count(self, index_name: str, **kwargs: Any) -> int:
@@ -5585,7 +5587,7 @@ class DocumentsOperationsOperations:
 
         cls: ClsType[int] = kwargs.pop("cls", None)
 
-        _request = build_documents_operations_count_request(
+        _request = build_documents_count_request(
             index_name=index_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5610,7 +5612,7 @@ class DocumentsOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -5626,7 +5628,7 @@ class DocumentsOperationsOperations:
     @distributed_trace
     @api_version_validation(
         params_added_on={
-            "2024-11-01-preview": ["query_rewrites", "debug", "query_language", "speller", "semantic_fields"]
+            "2025-03-01-preview": ["query_rewrites", "debug", "query_language", "speller", "semantic_fields"]
         },
     )
     def search_get(
@@ -5636,7 +5638,7 @@ class DocumentsOperationsOperations:
         search_text: Optional[str] = None,
         include_total_result_count: Optional[bool] = None,
         facets: Optional[List[str]] = None,
-        _filter: Optional[str] = None,
+        filter: Optional[str] = None,
         highlight_fields: Optional[List[str]] = None,
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
@@ -5649,9 +5651,9 @@ class DocumentsOperationsOperations:
         search_mode: Optional[Union[str, _models.SearchMode]] = None,
         scoring_statistics: Optional[Union[str, _models.ScoringStatistics]] = None,
         session_id: Optional[str] = None,
-        _select: Optional[List[str]] = None,
-        _skip: Optional[int] = None,
-        _top: Optional[int] = None,
+        select: Optional[List[str]] = None,
+        skip: Optional[int] = None,
+        top: Optional[int] = None,
         semantic_configuration: Optional[str] = None,
         semantic_error_handling: Optional[Union[str, _models.SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
@@ -5682,9 +5684,9 @@ class DocumentsOperationsOperations:
          expression contains a field name, optionally followed by a comma-separated list
          of name:value pairs. Default value is None.
         :paramtype facets: list[str]
-        :keyword _filter: The OData $filter expression to apply to the search query. Default value is
+        :keyword filter: The OData $filter expression to apply to the search query. Default value is
          None.
-        :paramtype _filter: str
+        :paramtype filter: str
         :keyword highlight_fields: The list of field names to use for hit highlights. Only searchable
          fields can
          be used for hit highlighting. Default value is None.
@@ -5748,20 +5750,20 @@ class DocumentsOperationsOperations:
          requests across replicas and adversely affect the performance of the search
          service. The value used as sessionId cannot start with a '_' character. Default value is None.
         :paramtype session_id: str
-        :keyword _select: The list of fields to retrieve. If unspecified, all fields marked as
+        :keyword select: The list of fields to retrieve. If unspecified, all fields marked as
          retrievable in the schema are included. Default value is None.
-        :paramtype _select: list[str]
-        :keyword _skip: The number of search results to skip. This value cannot be greater than
+        :paramtype select: list[str]
+        :keyword skip: The number of search results to skip. This value cannot be greater than
          100,000. If you need to scan documents in sequence, but cannot use $skip due to
          this limitation, consider using $orderby on a totally-ordered key and $filter
          with a range query instead. Default value is None.
-        :paramtype _skip: int
-        :keyword _top: The number of search results to retrieve. This can be used in conjunction with
+        :paramtype skip: int
+        :keyword top: The number of search results to retrieve. This can be used in conjunction with
          $skip to implement client-side paging of search results. If results are
          truncated due to server-side paging, the response will include a continuation
          token that can be used to issue another Search request for the next page of
          results. Default value is None.
-        :paramtype _top: int
+        :paramtype top: int
         :keyword semantic_configuration: The name of the semantic configuration that lists which fields
          should be used
          for semantic ranking, captions, highlights, and answers. Default value is None.
@@ -5785,7 +5787,7 @@ class DocumentsOperationsOperations:
          followed by the ``threshold-<confidence threshold>`` option after the answers
          parameter value, such as ``extractive|threshold-0.9``. Default threshold is 0.7.
          The maximum character length of answers can be configured by appending the pipe
-         character '|' followed by the 'count-:code:`<number of maximum character length>`',
+         character '|' followed by the 'count-\\ :code:`<number of maximum character length>`',
          such as 'extractive|maxcharlength-600'. Known values are: "none" and "extractive". Default
          value is None.
         :paramtype answers: str or ~azure.search.documents.models.QueryAnswerType
@@ -5796,7 +5798,7 @@ class DocumentsOperationsOperations:
          can be configured by appending the pipe character ``|`` followed by the
          ``highlight-<true/false>`` option, such as ``extractive|highlight-true``. Defaults
          to ``None``. The maximum character length of captions can be configured by
-         appending the pipe character '|' followed by the 'count-:code:`<number of maximum
+         appending the pipe character '|' followed by the 'count-\\ :code:`<number of maximum
          character length>`', such as 'extractive|maxcharlength-600'. Known values are: "none" and
          "extractive". Default value is None.
         :paramtype captions: str or ~azure.search.documents.models.QueryCaptionType
@@ -5851,12 +5853,12 @@ class DocumentsOperationsOperations:
 
         cls: ClsType[_models.SearchDocumentsResult] = kwargs.pop("cls", None)
 
-        _request = build_documents_operations_search_get_request(
+        _request = build_documents_search_get_request(
             index_name=index_name,
             search_text=search_text,
             include_total_result_count=include_total_result_count,
             facets=facets,
-            _filter=_filter,
+            filter=filter,
             highlight_fields=highlight_fields,
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
@@ -5869,9 +5871,9 @@ class DocumentsOperationsOperations:
             search_mode=search_mode,
             scoring_statistics=scoring_statistics,
             session_id=session_id,
-            _select=_select,
-            _skip=_skip,
-            _top=_top,
+            select=select,
+            skip=skip,
+            top=top,
             semantic_configuration=semantic_configuration,
             semantic_error_handling=semantic_error_handling,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
@@ -5906,7 +5908,7 @@ class DocumentsOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -6014,7 +6016,7 @@ class DocumentsOperationsOperations:
         else:
             _content = json.dumps(search_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_documents_operations_search_post_request(
+        _request = build_documents_search_post_request(
             index_name=index_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6041,7 +6043,7 @@ class DocumentsOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -6057,7 +6059,7 @@ class DocumentsOperationsOperations:
     @distributed_trace
     def get(
         self, key: str, index_name: str, *, selected_fields: Optional[List[str]] = None, **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> _models.LookupDocument:
         """Retrieves a document from the index.
 
         :param key: The key of the document to retrieve. Required.
@@ -6068,8 +6070,8 @@ class DocumentsOperationsOperations:
          retrieved will
          be missing from the returned document. Default value is None.
         :paramtype selected_fields: list[str]
-        :return: dict mapping str to any
-        :rtype: dict[str, any]
+        :return: LookupDocument. The LookupDocument is compatible with MutableMapping
+        :rtype: ~azure.search.documents.models.LookupDocument
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6083,9 +6085,9 @@ class DocumentsOperationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.LookupDocument] = kwargs.pop("cls", None)
 
-        _request = build_documents_operations_get_request(
+        _request = build_documents_get_request(
             key=key,
             index_name=index_name,
             selected_fields=selected_fields,
@@ -6112,13 +6114,13 @@ class DocumentsOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(Dict[str, Any], response.json())
+            deserialized = _deserialize(_models.LookupDocument, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6132,15 +6134,15 @@ class DocumentsOperationsOperations:
         *,
         search_text: str,
         suggester_name: str,
-        _filter: Optional[str] = None,
+        filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
         order_by: Optional[List[str]] = None,
         search_fields: Optional[List[str]] = None,
-        _select: Optional[List[str]] = None,
-        _top: Optional[int] = None,
+        select: Optional[List[str]] = None,
+        top: Optional[int] = None,
         **kwargs: Any
     ) -> _models.SuggestDocumentsResult:
         """Suggests documents in the index that match the given partial query text.
@@ -6155,9 +6157,9 @@ class DocumentsOperationsOperations:
          that's part
          of the index definition. Required.
         :paramtype suggester_name: str
-        :keyword _filter: An OData expression that filters the documents considered for suggestions.
+        :keyword filter: An OData expression that filters the documents considered for suggestions.
          Default value is None.
-        :paramtype _filter: str
+        :paramtype filter: str
         :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
          suggestions query.
          Default is false. When set to true, the query will find terms even if there's a
@@ -6191,14 +6193,14 @@ class DocumentsOperationsOperations:
          fields
          must be included in the specified suggester. Default value is None.
         :paramtype search_fields: list[str]
-        :keyword _select: The list of fields to retrieve. If unspecified, only the key field will be
+        :keyword select: The list of fields to retrieve. If unspecified, only the key field will be
          included in the results. Default value is None.
-        :paramtype _select: list[str]
-        :keyword _top: The number of suggestions to retrieve. The value must be a number between 1 and
+        :paramtype select: list[str]
+        :keyword top: The number of suggestions to retrieve. The value must be a number between 1 and
 
 
          #. The default is 5. Default value is None.
-        :paramtype _top: int
+        :paramtype top: int
         :return: SuggestDocumentsResult. The SuggestDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models.SuggestDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6216,19 +6218,19 @@ class DocumentsOperationsOperations:
 
         cls: ClsType[_models.SuggestDocumentsResult] = kwargs.pop("cls", None)
 
-        _request = build_documents_operations_suggest_get_request(
+        _request = build_documents_suggest_get_request(
             index_name=index_name,
             search_text=search_text,
             suggester_name=suggester_name,
-            _filter=_filter,
+            filter=filter,
             use_fuzzy_matching=use_fuzzy_matching,
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
             minimum_coverage=minimum_coverage,
             order_by=order_by,
             search_fields=search_fields,
-            _select=_select,
-            _top=_top,
+            select=select,
+            top=top,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6252,7 +6254,7 @@ class DocumentsOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -6360,7 +6362,7 @@ class DocumentsOperationsOperations:
         else:
             _content = json.dumps(suggest_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_documents_operations_suggest_post_request(
+        _request = build_documents_suggest_post_request(
             index_name=index_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6387,7 +6389,7 @@ class DocumentsOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -6490,7 +6492,7 @@ class DocumentsOperationsOperations:
         else:
             _content = json.dumps(batch, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_documents_operations_index_request(
+        _request = build_documents_index_request(
             index_name=index_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6517,7 +6519,7 @@ class DocumentsOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -6538,13 +6540,13 @@ class DocumentsOperationsOperations:
         search_text: str,
         suggester_name: str,
         autocomplete_mode: Optional[Union[str, _models.AutocompleteMode]] = None,
-        _filter: Optional[str] = None,
+        filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
         search_fields: Optional[List[str]] = None,
-        _top: Optional[int] = None,
+        top: Optional[int] = None,
         **kwargs: Any
     ) -> _models.AutocompleteResult:
         """Autocompletes incomplete query terms based on input text and matching terms in
@@ -6564,10 +6566,9 @@ class DocumentsOperationsOperations:
          producing auto-completed terms. Known values are: "oneTerm", "twoTerms", and
          "oneTermWithContext". Default value is None.
         :paramtype autocomplete_mode: str or ~azure.search.documents.models.AutocompleteMode
-        :keyword _filter: An OData expression that filters the documents used to produce completed
-         terms
+        :keyword filter: An OData expression that filters the documents used to produce completed terms
          for the Autocomplete result. Default value is None.
-        :paramtype _filter: str
+        :paramtype filter: str
         :keyword use_fuzzy_matching: A value indicating whether to use fuzzy matching for the
          autocomplete query.
          Default is false. When set to true, the query will find terms even if there's a
@@ -6591,9 +6592,9 @@ class DocumentsOperationsOperations:
          terms.
          Target fields must be included in the specified suggester. Default value is None.
         :paramtype search_fields: list[str]
-        :keyword _top: The number of auto-completed terms to retrieve. This must be a value between 1
+        :keyword top: The number of auto-completed terms to retrieve. This must be a value between 1
          and 100. The default is 5. Default value is None.
-        :paramtype _top: int
+        :paramtype top: int
         :return: AutocompleteResult. The AutocompleteResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models.AutocompleteResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6611,18 +6612,18 @@ class DocumentsOperationsOperations:
 
         cls: ClsType[_models.AutocompleteResult] = kwargs.pop("cls", None)
 
-        _request = build_documents_operations_autocomplete_get_request(
+        _request = build_documents_autocomplete_get_request(
             index_name=index_name,
             search_text=search_text,
             suggester_name=suggester_name,
             autocomplete_mode=autocomplete_mode,
-            _filter=_filter,
+            filter=filter,
             use_fuzzy_matching=use_fuzzy_matching,
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
             minimum_coverage=minimum_coverage,
             search_fields=search_fields,
-            _top=_top,
+            top=top,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6646,7 +6647,7 @@ class DocumentsOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -6759,7 +6760,7 @@ class DocumentsOperationsOperations:
         else:
             _content = json.dumps(autocomplete_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_documents_operations_autocomplete_post_request(
+        _request = build_documents_autocomplete_post_request(
             index_name=index_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6786,7 +6787,7 @@ class DocumentsOperationsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -6847,13 +6848,75 @@ class SearchClientOperationsMixin(SearchClientMixinABC):
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.SearchServiceStatistics, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-03-01-preview",
+        params_added_on={"2025-03-01-preview": ["api_version", "client_request_id", "accept"]},
+    )
+    def get_index_stats_summary(self, **kwargs: Any) -> _models.ListIndexStatsSummary:
+        """Gets service level statistics for a search service.
+
+        :return: ListIndexStatsSummary. The ListIndexStatsSummary is compatible with MutableMapping
+        :rtype: ~azure.search.documents.models.ListIndexStatsSummary
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ListIndexStatsSummary] = kwargs.pop("cls", None)
+
+        _request = build_search_get_index_stats_summary_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ListIndexStatsSummary, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

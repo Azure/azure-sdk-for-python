@@ -11,7 +11,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AIStudioModelCatalogName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AIFoundryModelCatalogName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The name of the embedding model from the Azure AI Studio Catalog that will be
     called.
     """
@@ -42,13 +42,12 @@ class AutocompleteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     could include 'medicaid', 'medicare', and 'medicine'."""
     TWO_TERMS = "twoTerms"
     """Matching two-term phrases in the index will be suggested. For example, if the
-    input is 'medic', the suggested terms could include 'medicare coverage' and
-    'medical assistant'."""
+    input is 'medic', the suggested terms could include 'medicare coverage' and 'medical
+    assistant'."""
     ONE_TERM_WITH_CONTEXT = "oneTermWithContext"
     """Completes the last term in a query with two or more terms, where the last two
-    terms are a phrase that exists in the index. For example, if the input is
-    'washington medic', the suggested terms could include 'washington medicaid' and
-    'washington medical'."""
+    terms are a phrase that exists in the index. For example, if the input is 'washington medic',
+    the suggested terms could include 'washington medicaid' and 'washington medical'."""
 
 
 class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -198,9 +197,7 @@ class DocumentIntelligenceLayoutSkillMarkdownHeaderDepth(str, Enum, metaclass=Ca
 
 
 class DocumentIntelligenceLayoutSkillOutputMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Controls the cardinality of the output produced by the skill. Default is
-    'oneToMany'.
-    """
+    """Controls the cardinality of the output produced by the skill. Default is 'oneToMany'."""
 
     ONE_TO_MANY = "oneToMany"
     """Specify the deepest markdown header section to parse."""
@@ -290,15 +287,16 @@ class EntityRecognitionSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMet
 class HybridCountAndFacetMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines whether the count and facets should includes all documents that
     matched the search query, or only the documents that are retrieved within the
-    'maxTextRecallSize' window. The default value is 'countAllResults'.
+    'maxTextRecallSize'
+    window. The default value is 'countAllResults'.
     """
 
     COUNT_RETRIEVABLE_RESULTS = "countRetrievableResults"
     """Only include documents that were matched within the 'maxTextRecallSize'
     retrieval window when computing 'count' and 'facets'."""
     COUNT_ALL_RESULTS = "countAllResults"
-    """Include all documents that were matched by the search query when computing
-    'count' and 'facets', regardless of whether or not those documents are within
+    """Include all documents that were matched by the search query when computing 'count'
+    and 'facets', regardless of whether or not those documents are within
     the 'maxTextRecallSize' retrieval window."""
 
 
@@ -1451,7 +1449,7 @@ class QueryAnswerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     followed by the ``threshold-<confidence threshold>`` option after the answers
     parameter value, such as ``extractive|threshold-0.9``. Default threshold is 0.7.
     The maximum character length of answers can be configured by appending the pipe
-    character '|' followed by the 'count-:code:`<number of maximum character length>`',
+    character '|' followed by the 'count-\\ :code:`<number of maximum character length>`',
     such as 'extractive|maxcharlength-600'.
     """
 
@@ -1469,7 +1467,7 @@ class QueryCaptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     can be configured by appending the pipe character ``|`` followed by the
     ``highlight-<true/false>`` option, such as ``extractive|highlight-true``. Defaults
     to ``None``. The maximum character length of captions can be configured by
-    appending the pipe character '|' followed by the 'count-:code:`<number of maximum
+    appending the pipe character '|' followed by the 'count-\\ :code:`<number of maximum
     character length>`', such as 'extractive|maxcharlength-600'.
     """
 
@@ -2635,8 +2633,8 @@ class VectorSearchCompressionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     values, thereby reducing the overall data size."""
     BINARY_QUANTIZATION = "binaryQuantization"
     """Binary Quantization, a type of compression method. In binary quantization, the
-    original vectors values are compressed to the narrower binary type by
-    discretizing and representing each component of a vector using binary values,
+    original vectors values are compressed to the narrower binary type by discretizing
+    and representing each component of a vector using binary values,
     thereby reducing the overall data size."""
 
 
@@ -2682,8 +2680,8 @@ class VectorThresholdKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     VECTOR_SIMILARITY = "vectorSimilarity"
     """The results of the vector query will be filtered based on the vector similarity
-    metric. Note this is the canonical definition of similarity metric, not the
-    'distance' version. The threshold direction (larger or smaller) will be chosen
+    metric. Note this is the canonical definition of similarity metric, not the 'distance'
+    version. The threshold direction (larger or smaller) will be chosen
     automatically according to the metric used by the field."""
     SEARCH_SCORE = "searchScore"
     """The results of the vector query will filter based on the '@search.score' value.

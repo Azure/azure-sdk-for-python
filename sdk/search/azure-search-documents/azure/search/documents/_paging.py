@@ -135,13 +135,13 @@ class SearchPageIterator(PageIterator):
 
     def _get_next_cb(self, continuation_token):
         if continuation_token is None:
-            return self._client.documents_operations.search_post(
+            return self._client.documents.search_post(
                 index_name=self._index_name, search_request=self._initial_query.request, **self._kwargs
             )
 
         _next_link, next_page_request = unpack_continuation_token(continuation_token)
 
-        return self._client.documents_operations.search_post(
+        return self._client.documents.search_post(
             index_name=self._index_name, search_request=next_page_request, **self._kwargs
         )
 

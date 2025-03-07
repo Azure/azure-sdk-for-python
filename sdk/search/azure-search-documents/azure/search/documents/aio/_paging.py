@@ -118,13 +118,13 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
 
     async def _get_next_cb(self, continuation_token):
         if continuation_token is None:
-            return await self._client.documents_operations.search_post(
+            return await self._client.documents.search_post(
                 index_name=self._index_name, search_request=self._initial_query.request, **self._kwargs
             )
 
         _next_link, next_page_request = unpack_continuation_token(continuation_token)
 
-        return await self._client.documents_operations.search_post(
+        return await self._client.documents.search_post(
             index_name=self._index_name, search_request=next_page_request, **self._kwargs
         )
 

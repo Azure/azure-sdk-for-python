@@ -273,7 +273,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = self._client.documents_operations.index(
+            batch_response = self._client.documents.index(
                 index_name=self._index_name, batch=batch, error_map=error_map, **kwargs
             )
             return cast(List[IndexingResult], batch_response.results)
