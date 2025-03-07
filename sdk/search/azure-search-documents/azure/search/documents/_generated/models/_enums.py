@@ -12,7 +12,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AIFoundryModelCatalogName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The name of the embedding model from the Azure AI Studio Catalog that will be
+    """The name of the embedding model from the Azure AI Foundry Catalog that will be
     called.
     """
 
@@ -2459,7 +2459,7 @@ class TokenFilterName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Forms bigrams of CJK terms that are generated from the standard tokenizer. See
     http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/cjk/CJKBigramFilter.html"""
     CJK_WIDTH = "cjk_width"
-    """Normalizes CJK width differences. Folds fullwidth ASCII variants into the
+    """Normalizes CJK width differences. Folds full-width ASCII variants into the
     equivalent basic Latin, and half-width Katakana variants into the equivalent
     Kana. See
     http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/cjk/CJKWidthFilter.html"""
@@ -2672,7 +2672,7 @@ class VectorSearchVectorizerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Services Vision Vectorize API."""
     AML = "aml"
     """Generate embeddings using an Azure Machine Learning endpoint deployed via the
-    Azure AI Studio Model Catalog at query time."""
+    Azure AI Foundry Model Catalog at query time."""
 
 
 class VectorThresholdKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):

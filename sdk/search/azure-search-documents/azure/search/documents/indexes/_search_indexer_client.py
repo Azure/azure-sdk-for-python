@@ -99,7 +99,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_indexer = indexer._to_generated()  # pylint:disable=protected-access
-        result = self._client.indexers_operations.create(patched_indexer, **kwargs)
+        result = self._client.indexers.create(patched_indexer, **kwargs)
         return cast(SearchIndexer, SearchIndexer._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace
@@ -129,7 +129,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         name = indexer.name
         patched_indexer = indexer._to_generated()  # pylint:disable=protected-access
-        result = self._client.indexers_operations.create_or_update(
+        result = self._client.indexers.create_or_update(
             indexer_name=name,
             indexer=patched_indexer,
             prefer="return=representation",
@@ -160,7 +160,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Retrieve a SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.indexers_operations.get(name, **kwargs)
+        result = self._client.indexers.get(name, **kwargs)
         return cast(SearchIndexer, SearchIndexer._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace
@@ -186,7 +186,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:
             kwargs["select"] = ",".join(select)
-        result = self._client.indexers_operations.list(**kwargs)
+        result = self._client.indexers.list(**kwargs)
         assert result.indexers is not None  # Hint for mypy
         # pylint:disable=protected-access
         return [cast(SearchIndexer, SearchIndexer._from_generated(index)) for index in result.indexers]
@@ -208,7 +208,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: List all the SearchIndexers
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.indexers_operations.list(**kwargs)
+        result = self._client.indexers.list(**kwargs)
         assert result.indexers is not None  # Hint for mypy
         return [x.name for x in result.indexers]
 
@@ -247,7 +247,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             etag = indexer.e_tag  # type: ignore
         except AttributeError:
             name = indexer
-        self._client.indexers_operations.delete(name, etag=etag, match_condition=match_condition, **kwargs)
+        self._client.indexers.delete(name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace
     def run_indexer(self, name: str, **kwargs: Any) -> None:
@@ -266,7 +266,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Run a SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        self._client.indexers_operations.run(name, **kwargs)
+        self._client.indexers.run(name, **kwargs)
 
     @distributed_trace
     def reset_indexer(self, name: str, **kwargs: Any) -> None:
@@ -285,7 +285,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Reset a SearchIndexer's change tracking state
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        self._client.indexers_operations.reset(name, **kwargs)
+        self._client.indexers.reset(name, **kwargs)
 
     @distributed_trace
     def reset_documents(
@@ -315,7 +315,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             name = indexer.name  # type: ignore
         except AttributeError:
             name = indexer
-        return self._client.indexers_operations.reset_docs(name, overwrite=overwrite, **kwargs)
+        return self._client.indexers.reset_docs(name, overwrite=overwrite, **kwargs)
 
     @distributed_trace
     def get_indexer_status(self, name: str, **kwargs: Any) -> SearchIndexerStatus:
@@ -337,7 +337,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Get a SearchIndexer's status
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        return self._client.indexers_operations.get_status(name, **kwargs)
+        return self._client.indexers.get_status(name, **kwargs)
 
     @distributed_trace
     def create_data_source_connection(

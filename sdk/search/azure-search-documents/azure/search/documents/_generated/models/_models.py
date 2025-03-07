@@ -74,7 +74,7 @@ class AIServicesAccountIdentity(CognitiveServicesAccount, discriminator="#Micros
     :ivar identity: The user-assigned managed identity used for connections to AI Service. If not
      specified, the system-assigned managed identity is used. On updates to the
      skillset, if the identity is unspecified, the value remains unchanged. If set
-     to "none", the value of this property is cleared. Required.
+     to "none", the value of this property is cleared.
     :vartype identity: ~azure.search.documents.models.SearchIndexerDataIdentity
     :ivar subdomain_url: The subdomain url for the corresponding AI Service. Required.
     :vartype subdomain_url: str
@@ -83,13 +83,13 @@ class AIServicesAccountIdentity(CognitiveServicesAccount, discriminator="#Micros
     :vartype odata_type: str
     """
 
-    identity: "_models.SearchIndexerDataIdentity" = rest_field(
+    identity: Optional["_models.SearchIndexerDataIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The user-assigned managed identity used for connections to AI Service. If not
      specified, the system-assigned managed identity is used. On updates to the
      skillset, if the identity is unspecified, the value remains unchanged. If set
-     to \"none\", the value of this property is cleared. Required."""
+     to \"none\", the value of this property is cleared."""
     subdomain_url: str = rest_field(name="subdomainUrl", visibility=["read", "create", "update", "delete", "query"])
     """The subdomain url for the corresponding AI Service. Required."""
     odata_type: Literal["#Microsoft.Azure.Search.AIServicesByIdentity"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -100,9 +100,9 @@ class AIServicesAccountIdentity(CognitiveServicesAccount, discriminator="#Micros
     def __init__(
         self,
         *,
-        identity: "_models.SearchIndexerDataIdentity",
         subdomain_url: str,
         description: Optional[str] = None,
+        identity: Optional["_models.SearchIndexerDataIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -867,7 +867,7 @@ class AzureMachineLearningParameters(_model_base.Model):
     :vartype timeout: ~datetime.timedelta
     :ivar region: (Optional for token authentication). The region the AML service is deployed in.
     :vartype region: str
-    :ivar model_name: The name of the embedding model from the Azure AI Studio Catalog that is
+    :ivar model_name: The name of the embedding model from the Azure AI Foundry Catalog that is
      deployed at the provided endpoint. Known values are:
      "OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32",
      "OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336",
@@ -898,7 +898,7 @@ class AzureMachineLearningParameters(_model_base.Model):
     model_name: Optional[Union[str, "_models.AIFoundryModelCatalogName"]] = rest_field(
         name="modelName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The name of the embedding model from the Azure AI Studio Catalog that is
+    """The name of the embedding model from the Azure AI Foundry Catalog that is
      deployed at the provided endpoint. Known values are:
      \"OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32\",
      \"OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336\",
@@ -1125,7 +1125,7 @@ class AzureMachineLearningSkill(SearchIndexerSkill, discriminator="#Microsoft.Sk
 
 
 class AzureMachineLearningVectorizer(VectorSearchVectorizer, discriminator="aml"):
-    """Specifies an Azure Machine Learning endpoint deployed via the Azure AI Studio
+    """Specifies an Azure Machine Learning endpoint deployed via the Azure AI Foundry
     Model Catalog for generating the vector embedding of a query string.
 
 
@@ -1137,7 +1137,7 @@ class AzureMachineLearningVectorizer(VectorSearchVectorizer, discriminator="aml"
     :ivar kind: The name of the kind of vectorization method being configured for use with
      vector search. Required. Generate embeddings using an Azure Machine Learning endpoint deployed
      via the
-     Azure AI Studio Model Catalog at query time.
+     Azure AI Foundry Model Catalog at query time.
     :vartype kind: str or ~azure.search.documents.models.AML
     """
 
@@ -1149,7 +1149,7 @@ class AzureMachineLearningVectorizer(VectorSearchVectorizer, discriminator="aml"
     """The name of the kind of vectorization method being configured for use with
      vector search. Required. Generate embeddings using an Azure Machine Learning endpoint deployed
      via the
-     Azure AI Studio Model Catalog at query time."""
+     Azure AI Foundry Model Catalog at query time."""
 
     @overload
     def __init__(
@@ -3903,6 +3903,8 @@ class FacetResult(_model_base.Model):
      collection of buckets for each faceted field; null if the query did not contain
      any nested facets.
     :vartype facets: dict[str, list[~azure.search.documents.models.FacetResult]]
+    :ivar sum: The resulting total sum for the facet when a sum metric is requested.
+    :vartype sum: int
     """
 
     count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3912,6 +3914,8 @@ class FacetResult(_model_base.Model):
     """The nested facet query results for the search operation, organized as a
      collection of buckets for each faceted field; null if the query did not contain
      any nested facets."""
+    sum: Optional[int] = rest_field(visibility=["read"])
+    """The resulting total sum for the facet when a sum metric is requested."""
 
     @overload
     def __init__(
@@ -5652,22 +5656,6 @@ class ListIndexersResult(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ListIndexStatsSummary(_model_base.Model):
-    """Response from a request to retrieve stats summary of all indexes. If successful, it includes
-    the stats of each index in the service.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
-    :ivar indexes_statistics: The Statistics summary of all indexes in the Search service.
-     Required.
-    :vartype indexes_statistics: list[~azure.search.documents.models.IndexStatisticsSummary]
-    """
-
-    indexes_statistics: List["_models.IndexStatisticsSummary"] = rest_field(name="value", visibility=["read"])
-    """The Statistics summary of all indexes in the Search service. Required."""
 
 
 class ListSkillsetsResult(_model_base.Model):
@@ -8360,6 +8348,8 @@ class SearchIndexerCache(_model_base.Model):
      indexer, if the identity is unspecified, the value remains unchanged. If set to
      "none", the value of this property is cleared.
     :vartype identity: ~azure.search.documents.models.SearchIndexerDataIdentity
+    :ivar id: A guid for the SearchIndexerCache.
+    :vartype id: str
     """
 
     storage_connection_string: Optional[str] = rest_field(
@@ -8379,6 +8369,8 @@ class SearchIndexerCache(_model_base.Model):
      not specified, the system-assigned managed identity is used. On updates to the
      indexer, if the identity is unspecified, the value remains unchanged. If set to
      \"none\", the value of this property is cleared."""
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A guid for the SearchIndexerCache."""
 
     @overload
     def __init__(
@@ -8387,6 +8379,7 @@ class SearchIndexerCache(_model_base.Model):
         storage_connection_string: Optional[str] = None,
         enable_reprocessing: Optional[bool] = None,
         identity: Optional["_models.SearchIndexerDataIdentity"] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 
     @overload
@@ -9910,7 +9903,7 @@ class SearchResourceEncryptionKey(_model_base.Model):
      Required.
     :vartype key_name: str
     :ivar key_version: The version of your Azure Key Vault key to be used to encrypt your data at
-     rest. Required.
+     rest.
     :vartype key_version: str
     :ivar vault_uri: The URI of your Azure Key Vault, also referred to as DNS name, that contains
      the key to be used to encrypt your data at rest. An example URI might be
@@ -9931,8 +9924,10 @@ class SearchResourceEncryptionKey(_model_base.Model):
 
     key_name: str = rest_field(name="keyVaultKeyName", visibility=["read", "create", "update", "delete", "query"])
     """The name of your Azure Key Vault key to be used to encrypt your data at rest. Required."""
-    key_version: str = rest_field(name="keyVaultKeyVersion", visibility=["read", "create", "update", "delete", "query"])
-    """The version of your Azure Key Vault key to be used to encrypt your data at rest. Required."""
+    key_version: Optional[str] = rest_field(
+        name="keyVaultKeyVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The version of your Azure Key Vault key to be used to encrypt your data at rest."""
     vault_uri: str = rest_field(name="keyVaultUri", visibility=["read", "create", "update", "delete", "query"])
     """The URI of your Azure Key Vault, also referred to as DNS name, that contains
      the key to be used to encrypt your data at rest. An example URI might be
@@ -9956,8 +9951,8 @@ class SearchResourceEncryptionKey(_model_base.Model):
         self,
         *,
         key_name: str,
-        key_version: str,
         vault_uri: str,
+        key_version: Optional[str] = None,
         access_credentials: Optional["_models.AzureActiveDirectoryApplicationCredentials"] = None,
         identity: Optional["_models.SearchIndexerDataIdentity"] = None,
     ) -> None: ...
@@ -10378,6 +10373,9 @@ class SemanticConfiguration(_model_base.Model):
      properties (titleField, prioritizedKeywordsFields and prioritizedContentFields)
      need to be set. Required.
     :vartype prioritized_fields: ~azure.search.documents.models.SemanticPrioritizedFields
+    :ivar flighting_opt_in: Determines how which semantic or query rewrite models to use during
+     model flighting/upgrades.
+    :vartype flighting_opt_in: bool
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -10389,6 +10387,10 @@ class SemanticConfiguration(_model_base.Model):
      ranking, captions, highlights, and answers. At least one of the three sub
      properties (titleField, prioritizedKeywordsFields and prioritizedContentFields)
      need to be set. Required."""
+    flighting_opt_in: Optional[bool] = rest_field(
+        name="flightingOptIn", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Determines how which semantic or query rewrite models to use during model flighting/upgrades."""
 
     @overload
     def __init__(
@@ -10396,6 +10398,7 @@ class SemanticConfiguration(_model_base.Model):
         *,
         name: str,
         prioritized_fields: "_models.SemanticPrioritizedFields",
+        flighting_opt_in: Optional[bool] = None,
     ) -> None: ...
 
     @overload
