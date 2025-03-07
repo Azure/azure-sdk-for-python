@@ -691,7 +691,6 @@ class RedTeamAgent(_SafetyEvaluation):
             output_path: Optional[Union[str, os.PathLike]] = None) -> Union[Dict[str, EvaluationResult], Dict[str, str], Dict[str, Union[str,os.PathLike]]]:
         orchestrator = await call_orchestrator(self.chat_target, all_prompts, converter)
         data_path = self._write_pyrit_outputs_to_file(orchestrator, converter)
-        import pdb; pdb.set_trace()
         return await super().__call__(
             target=target,
             evaluation_name=evaluation_name,
