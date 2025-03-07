@@ -361,6 +361,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                         )
                         configuration_settings_processed = {}
                         for config in configuration_settings:
+                            if isinstance(config, FeatureFlagConfigurationSetting):
+                                # Feature flags are not processed like other settings
+                                continue
                             key = self._process_key_name(config)
                             value = self._process_key_value(config)
                             configuration_settings_processed[key] = value
@@ -431,6 +434,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 )
                 configuration_settings_processed = {}
                 for config in configuration_settings:
+                    if isinstance(config, FeatureFlagConfigurationSetting):
+                        # Feature flags are not processed like other settings
+                        continue
                     key = self._process_key_name(config)
                     value = self._process_key_value(config)
                     configuration_settings_processed[key] = value
