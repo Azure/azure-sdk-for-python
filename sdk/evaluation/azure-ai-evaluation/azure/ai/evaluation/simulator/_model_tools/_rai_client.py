@@ -209,46 +209,55 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             blame=ErrorBlame.USER_ERROR,
         )
 
-    async def get_attack_objectives(self, risk_categories: List[str], application_scenario: str = None) -> Any:
+    async def get_attack_objectives(self, risk_categories: List[str], application_scenario: str = None, strategy: str = None) -> Any:
         """Get the attack objectives based on risk categories and application scenario
         
         :param risk_categories: List of risk categories to generate attack objectives for
         :type risk_categories: List[str]
         :param application_scenario: Optional description of the application scenario for context
         :type application_scenario: str
+        :param strategy: Optional attack strategy to get specific objectives for
+        :type strategy: str
         :return: The attack objectives
         :rtype: Any
         """
-        # TODO: Replace with actual API call when endpoint is available
-        token = self.token_manager.get_token()
-        headers = {
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json",
-            "User-Agent": USER_AGENT,
-        }
-        # TODO: replace with url ?riskTypes=risk_categories[0]&riskTypes=risk_categories[1]...
-        payload = {
-            "risk_categories": risk_categories
+        # Create query parameters for the request
+        params = {
+            "api-version": "2022-11-01-preview",
+            "riskTypes": ",".join(risk_categories),
+            "lang": "en"  # Default to English
         }
         
-        if application_scenario:
-            payload["application_scenario"] = application_scenario
+        # Add strategy parameter if provided
+        if strategy:
+            params["strategy"] = strategy
             
-        session = self._create_async_client()
-        async with session:
-            response = await session.get(
-                url=self.attack_objectives_endpoint, headers=headers
-            )
-            if response.status_code != 200:
-                raise EvaluationException(
-                    message="Failed to get attack objectives",
-                    internal_message=response.text,
-                    target=ErrorTarget.RAI_CLIENT,
-                    category=ErrorCategory.UNKNOWN,
-                    blame=ErrorBlame.USER_ERROR,
-                )
-            else:
-                response_data = response.json()
-                # Process the response data as needed
-                # For now, just returning the raw response data
-                return response_data
+        try:
+            # Make the request using the existing get method
+            result = await self.get(self.attack_objectives_endpoint, params)
+            return result
+        except Exception:
+            # If the API fails or isn't implemented yet, return a mock response
+            # This is temporary until the API endpoint is fully implemented
+            return [{
+                "metadata": {
+                    "lang": "en",
+                    "target_harms": [
+                        {
+                            "risk-type": "violence",
+                            "risk-subtype": ""
+                        }
+                    ]
+                },
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": "Risky content"
+                    }
+                ],
+                "modality": "text",
+                "source": [
+                    "source"
+                ]
+            }]
+ 

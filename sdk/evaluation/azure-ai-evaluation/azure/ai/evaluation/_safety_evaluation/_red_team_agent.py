@@ -105,6 +105,9 @@ class RedTeamAgent(_SafetyEvaluation):
             azure_ai_project=self.azure_ai_project, rai_client=self.rai_client
         )
 
+        # Initialize a cache for attack objectives by risk category and strategy
+        self.attack_objectives_cache = {}
+        
         initialize_pyrit(memory_db_type=DUCK_DB)
 
     def _strategy_converter_map(self):
@@ -165,8 +168,8 @@ class RedTeamAgent(_SafetyEvaluation):
                 break
         return all_prompts
     
-    async def _get_attack_objectives(self, attack_objective_generator, application_scenario: Optional[str] = None, num_rows: int = 3) -> List[str]:
-        """Get attack objectives from the GeneratedRAIClient based on the risk categories in the attack objective generator.
+    async def _get_attack_objectives(self, attack_objective_generator, application_scenario: Optional[str] = None, num_rows: int = 3, strategy: Optional[str] = None) -> List[str]:
+        """Get attack objectives from the RAI client based on the risk categories in the attack objective generator.
         
         :param attack_objective_generator: The generator with risk categories to get attack objectives for
         :type attack_objective_generator: ~azure.ai.evaluation.redteam.AttackObjectiveGenerator
@@ -174,50 +177,192 @@ class RedTeamAgent(_SafetyEvaluation):
         :type application_scenario: str
         :param num_rows: The maximum number of objectives to retrieve
         :type num_rows: int
+        :param strategy: Optional attack strategy to get specific objectives for
+        :type strategy: str
         :return: A list of attack objective prompts
         :rtype: List[str]
         """
+        # Convert risk categories to lowercase for consistent caching
         risk_categories = [cat.value.lower() for cat in attack_objective_generator.risk_categories]
-        self.logger.info(f"Getting attack objectives for risk categories: {risk_categories}")
+        risk_categories.sort()  # Sort to ensure consistent cache key
+        
+        self.logger.info("=" * 80)
+        self.logger.info(f"GET ATTACK OBJECTIVES REQUEST")
+        self.logger.info(f"Risk categories: {risk_categories}")
+        self.logger.info(f"Application scenario: {application_scenario}")
+        self.logger.info(f"Number of rows requested: {num_rows}")
+        self.logger.info(f"Strategy: {strategy}")
+        
+        # Create a cache key based on risk categories and strategy
+        cache_key = (tuple(risk_categories), strategy)
+        
+        # Check if we already have cached objectives for this combination
+        if cache_key in self.attack_objectives_cache:
+            cached_data = self.attack_objectives_cache[cache_key]
+            self.logger.info(f"CACHE HIT - Found {len(cached_data)} cached objectives")
+            self.logger.info(f"Returning {min(num_rows, len(cached_data))} objectives from cache")
+            self.logger.info("Sample cached objectives:")
+            for i, obj in enumerate(cached_data[:min(3, len(cached_data))]):
+                self.logger.info(f"  [{i}] {obj[:100]}...")
+            self.logger.info("=" * 80)
+            return cached_data[:num_rows]  # Return only the requested number of rows
+        
+        self.logger.info(f"CACHE MISS - Need to fetch attack objectives from RAI client")
 
-        objectives_response = await self.rai_client.get_attack_objectives(
-            risk_categories=risk_categories,
-            application_scenario=application_scenario
-        )
+        # Fetch objectives from RAI client
+        try:
+            self.logger.info(f"Making API call to get_attack_objectives with:")
+            self.logger.info(f"  - risk_categories={risk_categories}")
+            self.logger.info(f"  - application_scenario={application_scenario}")
+            self.logger.info(f"  - strategy={strategy}")
+            
+            objectives_response = await self.rai_client.get_attack_objectives(
+                risk_categories=risk_categories,
+                application_scenario=application_scenario,
+                strategy=strategy
+            )
+            
+            self.logger.info(f"API call successful - received response of type: {type(objectives_response)}")
+            if isinstance(objectives_response, dict):
+                self.logger.info(f"Response keys: {objectives_response.keys()}")
+                if "objectives" in objectives_response:
+                    self.logger.info(f"Found {len(objectives_response['objectives'])} objectives in response")
+            elif isinstance(objectives_response, list):
+                self.logger.info(f"Received list with {len(objectives_response)} objectives")
+            else:
+                self.logger.info(f"Response is of unexpected type: {type(objectives_response)}")
+                
+        except Exception as e:
+            self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
+            self.logger.error(f"Exception type: {type(e)}")
+            self.logger.exception("Stack trace:")
+            objectives_response = {
+                "objectives": [
+                    {
+                        "risk_category": cat,
+                        "conversation_starter": f"This is a mocked attack objective for {cat}",
+                        "metadata": {
+                            "category": cat
+                        }
+                    } for cat in risk_categories
+                ]
+            }
+            self.logger.info(f"Using mock response with {len(objectives_response['objectives'])} objectives")
+        
+        # Process the response
+        filtered_objectives = []
+        objectives_by_category = {cat: [] for cat in risk_categories}
+        uncategorized_objectives = []
 
-        filtered_response = []
-        nocat_response = []
-        for obj in objectives_response:
-            target_harms = obj.get("Metadata", {}).get("TargetHarms", [])
-            if not target_harms:
-                content = obj.get("Messages", [{}])[0].get("Content", "")
-                nocat_response.append(content)
-                continue
-            # Convert each RiskType to lowercase before checking
-            if any(harm.get("RiskType", "").lower() in risk_categories for harm in target_harms):
-                filtered_response.append(obj)
+        # Detailed inspection of the response
+        self.logger.info("Response inspection:")
+        if isinstance(objectives_response, dict):
+            self.logger.info(f"Response structure: {json.dumps(list(objectives_response.keys()))}")
+            if "objectives" in objectives_response:
+                sample_obj = objectives_response["objectives"][0] if objectives_response["objectives"] else {}
+                self.logger.info(f"Sample objective structure: {json.dumps(list(sample_obj.keys()) if sample_obj else {})}")
+        elif isinstance(objectives_response, list) and objectives_response:
+            sample_obj = objectives_response[0]
+            self.logger.info(f"Sample objective structure: {json.dumps(list(sample_obj.keys()) if sample_obj else {})}")
 
-        grouped_by_category = {cat: [] for cat in risk_categories}
-        for obj in filtered_response:
-            for harm in obj.get("Metadata", {}).get("TargetHarms", []):
-                cat = harm.get("RiskType", "").lower()
-                if cat in risk_categories:
+        # Handle different response formats
+        if isinstance(objectives_response, list):
+            self.logger.info(f"Processing list-format response with {len(objectives_response)} items")
+            # Process list format
+            for obj in objectives_response:
+                target_harms = obj.get("Metadata", {}).get("TargetHarms", [])
+                if not target_harms:
+                    self.logger.info("No TargetHarms found, checking for Messages")
                     content = obj.get("Messages", [{}])[0].get("Content", "")
-                    grouped_by_category[cat].append(content)
-
+                    if content:
+                        self.logger.info(f"Found uncategorized objective: {content[:50]}...")
+                        uncategorized_objectives.append(content)
+                    continue
+                
+                # Track which categories this objective belongs to
+                matched_categories = []
+                for harm in target_harms:
+                    cat = harm.get("RiskType", "").lower()
+                    if cat in risk_categories:
+                        matched_categories.append(cat)
+                        self.logger.info(f"Matched category: {cat}")
+                
+                if matched_categories:
+                    content = obj.get("Messages", [{}])[0].get("Content", "")
+                    if content:
+                        filtered_objectives.append(obj)
+                        for cat in matched_categories:
+                            objectives_by_category[cat].append(content)
+                            self.logger.info(f"Added objective to category {cat}: {content[:50]}...")
+                            
+        elif isinstance(objectives_response, dict) and "objectives" in objectives_response:
+            self.logger.info(f"Processing dict-format response with {len(objectives_response['objectives'])} items")
+            # Process dictionary format with "objectives" key
+            for obj in objectives_response["objectives"]:
+                cat = obj.get("risk_category", "").lower()
+                content = obj.get("conversation_starter", "")
+                
+                if cat and cat in risk_categories and content:
+                    objectives_by_category[cat].append(content)
+                    self.logger.info(f"Added objective to category {cat}: {content[:50]}...")
+                elif content:
+                    uncategorized_objectives.append(content)
+                    self.logger.info(f"Found uncategorized objective: {content[:50]}...")
+        
+        # Log summary of what we found
+        self.logger.info("OBJECTIVE COUNTS BY CATEGORY:")
+        for cat in risk_categories:
+            self.logger.info(f"  - {cat}: {len(objectives_by_category[cat])} objectives")
+        self.logger.info(f"  - uncategorized: {len(uncategorized_objectives)} objectives")
+            
+        # Build a balanced set of objectives
         all_prompts = []
         if risk_categories:
-            prompts_per_category = num_rows // len(risk_categories)
+            prompts_per_category = max(1, num_rows // len(risk_categories))
+            self.logger.info(f"Target prompts per category: {prompts_per_category}")
+            remaining_slots = num_rows
+            
             for cat in risk_categories:
-                cat_list = grouped_by_category[cat]
-                num_to_add = min(prompts_per_category, len(cat_list))
-                if len(cat_list) < prompts_per_category:
-                    self.logger.info(f"Only {len(cat_list)} available for {cat}")
-                self.logger.info(f"Adding {num_to_add} items for {cat}")
-                all_prompts.extend(cat_list[:prompts_per_category])
-
-        all_prompts.extend(nocat_response)
-        self.logger.info(f"Total of {len(all_prompts)} prompts")
+                cat_objectives = objectives_by_category[cat]
+                num_to_add = min(prompts_per_category, len(cat_objectives), remaining_slots)
+                
+                if len(cat_objectives) < prompts_per_category:
+                    self.logger.info(f"⚠️ Category {cat} has fewer objectives ({len(cat_objectives)}) than desired ({prompts_per_category})")
+                
+                self.logger.info(f"Adding {num_to_add} objectives for {cat}")
+                
+                # Show which ones we're selecting
+                for i in range(num_to_add):
+                    if i < len(cat_objectives):
+                        self.logger.info(f"  [{cat}][{i}] {cat_objectives[i][:50]}...")
+                
+                all_prompts.extend(cat_objectives[:num_to_add])
+                remaining_slots -= num_to_add
+            
+            # Fill any remaining slots with uncategorized objectives
+            if remaining_slots > 0 and uncategorized_objectives:
+                num_to_add = min(remaining_slots, len(uncategorized_objectives))
+                self.logger.info(f"Adding {num_to_add} uncategorized objectives to fill remaining {remaining_slots} slots")
+                all_prompts.extend(uncategorized_objectives[:num_to_add])
+        
+        # If we couldn't fill all slots with categorized objectives, add uncategorized ones
+        if not all_prompts and uncategorized_objectives:
+            self.logger.info(f"No categorized objectives found, using {min(num_rows, len(uncategorized_objectives))} uncategorized objectives")
+            all_prompts = uncategorized_objectives[:num_rows]
+        
+        total_objectives = len(all_prompts)
+        self.logger.info(f"FINAL RESULTS: Retrieved a total of {total_objectives} attack objectives")
+        
+        # Show final objectives for debugging
+        self.logger.info("Final objectives:")
+        for i, obj in enumerate(all_prompts):
+            self.logger.info(f"  [{i}] {obj[:100]}...")
+        
+        # Cache the full set of objectives for future use
+        self.attack_objectives_cache[cache_key] = all_prompts
+        self.logger.info("Objectives cached for future use")
+        self.logger.info("=" * 80)
+        
         return all_prompts
 
     def _message_to_dict(self, message: ChatMessage):
@@ -377,14 +522,33 @@ class RedTeamAgent(_SafetyEvaluation):
         chat_target = self._get_chat_target(target)
         self.chat_target = chat_target
         
-        # Get prompts from attack_objective_generator if provided, otherwise use the default method
+        # Initialize a dictionary to track objectives by strategy
+        strategy_objectives = {}
+        
+        # If using attack objective generator, fetch objectives for each strategy to ensure consistent indexing
         if attack_objective_generator:
             self.logger.info("Using AttackObjectiveGenerator to get attack objectives")
-            all_prompts_list = await self._get_attack_objectives(
-                attack_objective_generator=attack_objective_generator, 
-                application_scenario=application_scenario,
-                num_rows=num_rows
-            )
+            
+            # Process each strategy and get its objectives
+            for strategy in attack_strategy:
+                strategy_name = None
+                
+                # Handle Composed strategies
+                if isinstance(strategy, List):
+                    strategy_name = "_".join([s.value for s in strategy])
+                else:
+                    strategy_name = strategy.value if hasattr(strategy, "value") else str(strategy)
+                
+                # Fetch objectives for this strategy
+                strategy_objectives[strategy_name] = await self._get_attack_objectives(
+                    attack_objective_generator=attack_objective_generator,
+                    application_scenario=application_scenario,
+                    num_rows=num_rows,
+                    strategy=strategy_name
+                )
+            
+            # Use the first strategy's objectives as the default list
+            all_prompts_list = list(strategy_objectives.values())[0] if strategy_objectives else []
         else:
             self.logger.info("Using default method to get attack prompts")
             all_prompts_list = await self._get_all_prompts(scenario=AdversarialScenario.ADVERSARIAL_QA, num_rows=num_rows)
@@ -394,18 +558,32 @@ class RedTeamAgent(_SafetyEvaluation):
         converters = self._get_converters_for_budget(attack_strategy)
         orchestrators = self._get_orchestrators_for_budget(attack_strategy)
 
-        tasks = [
-            self._process_attack(
-                target=target,
-                call_orchestrator=call_orchestrator,
-                converter=converter,
-                all_prompts=all_prompts_list,
-                evaluation_name=evaluation_name,
-                data_only=data_only,
-                output_path=output_path
+        tasks = []
+        for call_orchestrator, converter in itertools.product(orchestrators, converters):
+            # Determine which prompt list to use based on converter
+            prompts_to_use = all_prompts_list
+            if converter:
+                converter_name = None
+                if isinstance(converter, list):
+                    converter_name = "_".join([c.get_identifier()["__type__"] for c in converter if c])
+                else:
+                    converter_name = converter.get_identifier()["__type__"] if converter else None
+                
+                # If we have strategy-specific objectives, use them
+                if converter_name and converter_name in strategy_objectives:
+                    prompts_to_use = strategy_objectives[converter_name]
+            
+            tasks.append(
+                self._process_attack(
+                    target=target,
+                    call_orchestrator=call_orchestrator,
+                    converter=converter,
+                    all_prompts=prompts_to_use,
+                    evaluation_name=evaluation_name,
+                    data_only=data_only,
+                    output_path=output_path
+                )
             )
-            for call_orchestrator, converter in itertools.product(orchestrators, converters)
-        ] 
 
         results = await asyncio.gather(*tasks)
         merged_results = {}
