@@ -204,7 +204,7 @@ def _deserialize_datetime(attr: typing.Union[str, datetime]) -> datetime:
     test_utc = date_obj.utctimetuple()
     if test_utc.tm_year > 9999 or test_utc.tm_year < 1:
         raise OverflowError("Hit max or min date")
-    return date_obj
+    return typing.cast(datetime, date_obj)
 
 
 def _deserialize_datetime_rfc7231(attr: typing.Union[str, datetime]) -> datetime:
@@ -258,7 +258,7 @@ def _deserialize_time(attr: typing.Union[str, time]) -> time:
     """
     if isinstance(attr, time):
         return attr
-    return isodate.parse_time(attr)
+    return typing.cast(time, isodate.parse_time(attr))
 
 
 def _deserialize_bytes(attr):
@@ -1182,7 +1182,7 @@ def _get_wrapped_element(
         _get_element(v, exclude_readonly, meta, wrapped_element)
     else:
         wrapped_element.text = _get_primitive_type_value(v)
-    return wrapped_element
+    return typing.cast(ET.Element, wrapped_element)
 
 
 def _get_primitive_type_value(v) -> str:
