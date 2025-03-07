@@ -45,8 +45,6 @@ class Stream(Iterator[ReturnType_co]):
     :paramtype decoder: ~corehttp.streaming.decoders.StreamDecoder
     :keyword deserialization_callback: A callback that takes JSON and returns a deserialized object.
     :paramtype deserialization_callback: Callable[[Any], ReturnType]
-    :keyword terminal_event: A terminal event that indicates the end of the stream.
-    :paramtype terminal_event: Optional[str]
     """
 
     def __init__(
@@ -55,12 +53,10 @@ class Stream(Iterator[ReturnType_co]):
         response: HttpResponse,
         decoder: StreamDecoder[DecodedType],
         deserialization_callback: Callable[[DecodedType], ReturnType_co],
-        terminal_event: Optional[str] = None,
     ) -> None:
         self._response = response
         self._decoder = decoder
         self._deserialization_callback = deserialization_callback
-        self._terminal_event = terminal_event
         self._iterator = self._iter_results()
 
     def __next__(self) -> ReturnType_co:
@@ -71,8 +67,6 @@ class Stream(Iterator[ReturnType_co]):
 
     def _iter_results(self) -> Iterator[ReturnType_co]:
         for event in self._decoder.iter_events(self._response.iter_bytes()):
-            if event == self._terminal_event:
-                break
 
             result = self._deserialization_callback(event)
             yield result
@@ -101,8 +95,6 @@ class AsyncStream(AsyncIterator[ReturnType_co]):
     :paramtype decoder: ~corehttp.streaming.decoders.AsyncStreamDecoder
     :keyword deserialization_callback: A callback that takes JSON and returns a deserialized object.
     :paramtype deserialization_callback: Callable[[Any], ReturnType]
-    :keyword terminal_event: A terminal event that indicates the end of the stream.
-    :paramtype terminal_event: Optional[str]
     """
 
     def __init__(
@@ -111,12 +103,10 @@ class AsyncStream(AsyncIterator[ReturnType_co]):
         response: AsyncHttpResponse,
         decoder: AsyncStreamDecoder[DecodedType],
         deserialization_callback: Callable[[DecodedType], ReturnType_co],
-        terminal_event: Optional[str] = None,
     ) -> None:
         self._response = response
         self._decoder = decoder
         self._deserialization_callback = deserialization_callback
-        self._terminal_event = terminal_event
         self._iterator = self._iter_results()
 
     async def __anext__(self) -> ReturnType_co:
@@ -128,8 +118,6 @@ class AsyncStream(AsyncIterator[ReturnType_co]):
 
     async def _iter_results(self) -> AsyncIterator[ReturnType_co]:
         async for event in self._decoder.aiter_events(self._response.iter_bytes()):
-            if event == self._terminal_event:
-                break
 
             result = self._deserialization_callback(event)
             yield result

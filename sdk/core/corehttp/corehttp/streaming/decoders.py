@@ -26,11 +26,12 @@
 
 import codecs
 import json
-from typing import Iterator, AsyncIterator, Protocol, Any, Mapping, TypeVar
+from typing import Iterator, AsyncIterator, Protocol, Any, Dict
 
-from typing_extensions import runtime_checkable
+from typing_extensions import runtime_checkable, TypeVar
 
 DecodedType_co = TypeVar("DecodedType_co", covariant=True)
+JSON = TypeVar("JSON", default=Dict[str, Any])
 
 
 @runtime_checkable
@@ -121,32 +122,32 @@ async def aiter_lines(iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[str]:
             yield line
 
 
-class JSONLDecoder(StreamDecoder[Mapping[str, Any]]):
+class JSONLDecoder(StreamDecoder[JSON]):
     """Decoder for JSON Lines (JSONL) format. https://jsonlines.org/"""
 
-    def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[Mapping[str, Any]]:
+    def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[JSON]:
         """Iterate over JSONL events from a byte iterator.
 
         :param iter_bytes: An iterator of byte chunks.
         :type iter_bytes: Iterator[bytes]
-        :rtype: Iterator[Mapping[str, Any]]
-        :return: An iterator of JSON objects.
+        :rtype: Iterator[JSON]
+        :return: An iterator of JSON values.
         """
 
         yield from (json.loads(line) for line in iter_lines(iter_bytes))
 
 
-class AsyncJSONLDecoder(AsyncStreamDecoder[Mapping[str, Any]]):
+class AsyncJSONLDecoder(AsyncStreamDecoder[JSON]):
     """Asynchronous decoder for JSON Lines (JSONL) format. https://jsonlines.org/"""
 
     # pylint: disable=invalid-overridden-method
-    async def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[Mapping[str, Any]]:
+    async def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[JSON]:
         """Asynchronously iterate over JSONL events from a byte iterator.
 
         :param iter_bytes: An asynchronous iterator of byte chunks.
         :type iter_bytes: AsyncIterator[bytes]
-        :rtype: AsyncIterator[Mapping[str, Any]]
-        :return: An asynchronous iterator of JSON objects.
+        :rtype: AsyncIterator[JSON]
+        :return: An asynchronous iterator of JSON values.
         """
 
         async for line in aiter_lines(iter_bytes):
