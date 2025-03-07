@@ -4,6 +4,7 @@
 ### Features Added
   - Adding parent job support for command job.
   - Adding multiple docker argument support for command job.
+  - spark version upgrade from 3.3 to 3.4
 
 ### Bugs Fixed
   - #37464 - Allowing to update a component in register with anonymousEnvironment environment.
