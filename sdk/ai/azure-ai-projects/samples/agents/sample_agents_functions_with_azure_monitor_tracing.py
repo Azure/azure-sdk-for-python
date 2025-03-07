@@ -84,6 +84,7 @@ functions = FunctionTool(functions=user_functions)
 
 with tracer.start_as_current_span(scenario):
     with project_client:
+        project_client.telemetry.enable()
         # Create an agent and run user's request with function calls
         agent = project_client.agents.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -103,7 +104,7 @@ with tracer.start_as_current_span(scenario):
         )
         print(f"Created message, ID: {message.id}")
 
-        run = project_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+        run = project_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
         print(f"Created run, ID: {run.id}")
 
         while run.status in ["queued", "in_progress", "requires_action"]:
