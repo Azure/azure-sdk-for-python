@@ -63,6 +63,7 @@ _REMOTE_DEPENDENCY_ENVELOPE_NAME = "Microsoft.ApplicationInsights.RemoteDependen
 # Feature constants
 _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE"
 _AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
+_MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 
 # Statsbeat
 

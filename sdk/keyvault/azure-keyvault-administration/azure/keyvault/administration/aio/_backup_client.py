@@ -110,14 +110,13 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
                 ) from ex
 
             pipeline_response = await self._client.full_backup_status(
-                vault_base_url=self._vault_url, job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response
+                job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response
             )
             if "azure-asyncoperation" not in pipeline_response.http_response.headers:
                 pipeline_response.http_response.headers["azure-asyncoperation"] = status_url
             status_response = base64.b64encode(pickle.dumps(pipeline_response)).decode("ascii")
 
         return await self._client.begin_full_backup(
-            vault_base_url=self._vault_url,
             azure_storage_blob_container_uri=sas_parameter,
             cls=KeyVaultBackupResult._from_generated,  # pylint: disable=protected-access
             continuation_token=status_response,
@@ -215,7 +214,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
                 ) from ex
 
             pipeline_response = await self._client.restore_status(
-                vault_base_url=self._vault_url, job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response
+                job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response
             )
             if "azure-asyncoperation" not in pipeline_response.http_response.headers:
                 pipeline_response.http_response.headers["azure-asyncoperation"] = status_url
@@ -241,7 +240,6 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             )
 
         return await client_method(
-            vault_base_url=self._vault_url,
             restore_blob_details=restore_details,
             cls=lambda *_: None,  # poller.result() returns None
             continuation_token=status_response,

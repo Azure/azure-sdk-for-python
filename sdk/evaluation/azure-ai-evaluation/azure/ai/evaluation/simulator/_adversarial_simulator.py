@@ -220,33 +220,54 @@ class AdversarialSimulator:
             if randomization_seed is not None:
                 random.seed(randomization_seed)
             random.shuffle(templates)
-        parameter_lists = [t.template_parameters for t in templates]
-        zipped_parameters = list(zip(*parameter_lists))
-        for param_group in zipped_parameters:
-            for template, parameter in zip(templates, param_group):
-                if _jailbreak_type == "upia":
-                    parameter = self._add_jailbreak_parameter(parameter, random.choice(jailbreak_dataset))
-                tasks.append(
-                    asyncio.create_task(
-                        self._simulate_async(
-                            target=target,
-                            template=template,
-                            parameters=parameter,
-                            max_conversation_turns=max_conversation_turns,
-                            api_call_retry_limit=api_call_retry_limit,
-                            api_call_retry_sleep_sec=api_call_retry_sleep_sec,
-                            api_call_delay_sec=api_call_delay_sec,
-                            language=language,
-                            semaphore=semaphore,
-                            scenario=scenario,
-                            simulation_id=simulation_id,
-                        )
+
+        # Prepare task parameters based on scenario - but use a single append call for all scenarios
+        tasks = []
+        template_parameter_pairs = []
+        
+        if scenario == AdversarialScenario.ADVERSARIAL_CONVERSATION:
+            # For ADVERSARIAL_CONVERSATION, flatten the parameters
+            for i, template in enumerate(templates):
+                if not template.template_parameters:
+                    continue
+                for parameter in template.template_parameters:
+                    template_parameter_pairs.append((template, parameter))
+        else:
+            # Use original logic for other scenarios - zip parameters
+            parameter_lists = [t.template_parameters for t in templates]
+            zipped_parameters = list(zip(*parameter_lists))
+            
+            for param_group in zipped_parameters:
+                for template, parameter in zip(templates, param_group):
+                    template_parameter_pairs.append((template, parameter))
+
+        # Limit to max_simulation_results if needed
+        if len(template_parameter_pairs) > max_simulation_results:
+            template_parameter_pairs = template_parameter_pairs[:max_simulation_results]
+        
+        # Single task append loop for all scenarios
+        for template, parameter in template_parameter_pairs:
+            if _jailbreak_type == "upia":
+                parameter = self._add_jailbreak_parameter(parameter, random.choice(jailbreak_dataset))
+            
+            tasks.append(
+                asyncio.create_task(
+                    self._simulate_async(
+                        target=target,
+                        template=template,
+                        parameters=parameter,
+                        max_conversation_turns=max_conversation_turns,
+                        api_call_retry_limit=api_call_retry_limit,
+                        api_call_retry_sleep_sec=api_call_retry_sleep_sec,
+                        api_call_delay_sec=api_call_delay_sec,
+                        language=language,
+                        semaphore=semaphore,
+                        scenario=scenario,
+                        simulation_id=simulation_id,
                     )
                 )
-                if len(tasks) >= max_simulation_results:
-                    break
-            if len(tasks) >= max_simulation_results:
-                break
+            )
+
         for task in asyncio.as_completed(tasks):
             sim_results.append(await task)
             progress_bar.update(1)

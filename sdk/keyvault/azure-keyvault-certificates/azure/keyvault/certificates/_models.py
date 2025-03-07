@@ -8,13 +8,13 @@ from typing import Any, Dict, Optional, Union, List
 
 from ._generated import models
 from ._shared import parse_key_vault_id
-from ._enums import(
+from ._enums import (
     CertificatePolicyAction,
     KeyUsageType,
     KeyCurveName,
     KeyType,
     CertificateContentType,
-    WellKnownIssuerNames
+    WellKnownIssuerNames,
 )
 
 
@@ -98,11 +98,11 @@ class CertificateOperationError(object):
         return f"CertificateOperationError({self.code}, {self.message}, {self.inner_error})"[:1024]
 
     @classmethod
-    def _from_error_bundle(cls, error_bundle: models.Error) -> "CertificateOperationError":
+    def _from_error_bundle(cls, error_bundle: models.KeyVaultErrorError) -> "CertificateOperationError":
         return cls(
             code=error_bundle.code,  # type: ignore
             message=error_bundle.message,  # type: ignore
-            inner_error=cls._from_error_bundle(error_bundle.inner_error)  # type: ignore
+            inner_error=cls._from_error_bundle(error_bundle.inner_error),  # type: ignore
         )
 
     @property
@@ -148,7 +148,13 @@ class CertificateProperties(object):
 
     @classmethod
     def _from_certificate_item(
-        cls, certificate_item: Union[models.CertificateItem, models.CertificateBundle]
+        cls,
+        certificate_item: Union[
+            models.CertificateItem,
+            models.CertificateBundle,
+            models.DeletedCertificateItem,
+            models.DeletedCertificateBundle,
+        ],
     ) -> "CertificateProperties":
         return cls(
             attributes=certificate_item.attributes,
@@ -506,8 +512,13 @@ class CertificateOperation(object):
             cancellation_requested=certificate_operation_bundle.cancellation_requested,
             status=certificate_operation_bundle.status,
             status_details=certificate_operation_bundle.status_details,
-            error=(CertificateOperationError._from_error_bundle(certificate_operation_bundle.error)  # pylint: disable=protected-access
-                   if certificate_operation_bundle.error else None),
+            error=(
+                CertificateOperationError._from_error_bundle(  # pylint: disable=protected-access
+                    certificate_operation_bundle.error
+                )
+                if certificate_operation_bundle.error
+                else None
+            ),
             target=certificate_operation_bundle.target,
             request_id=certificate_operation_bundle.request_id,
         )
@@ -721,15 +732,13 @@ class CertificatePolicy(object):
         else:
             issuer_parameters = None
 
-        if (
-            self.enabled is not None
-            or self.created_on is not None
-            or self.updated_on is not None
-        ):
+        if self.enabled is not None or self.created_on is not None or self.updated_on is not None:
             attributes = models.CertificateAttributes(
-                enabled=self.enabled,
-                created=self.created_on,
-                updated=self.updated_on,
+                {
+                    "enabled": self.enabled,
+                    "created": self.created_on,
+                    "updated": self.updated_on,
+                }
             )
         else:
             attributes = None
@@ -826,9 +835,7 @@ class CertificatePolicy(object):
             lifetime_actions = None
         x509_certificate_properties = certificate_policy_bundle.x509_certificate_properties
         if x509_certificate_properties and x509_certificate_properties.key_usage:
-            key_usage: Optional[List[KeyUsageType]] = [
-                KeyUsageType(k) for k in x509_certificate_properties.key_usage
-            ]
+            key_usage: Optional[List[KeyUsageType]] = [KeyUsageType(k) for k in x509_certificate_properties.key_usage]
         else:
             key_usage = None
         key_properties = certificate_policy_bundle.key_properties
@@ -853,8 +860,8 @@ class CertificatePolicy(object):
             key_usage=key_usage,
             content_type=(
                 CertificateContentType(certificate_policy_bundle.secret_properties.content_type)
-                if certificate_policy_bundle.secret_properties and
-                certificate_policy_bundle.secret_properties.content_type
+                if certificate_policy_bundle.secret_properties
+                and certificate_policy_bundle.secret_properties.content_type
                 else None
             ),
             attributes=certificate_policy_bundle.attributes,
@@ -1070,9 +1077,7 @@ class CertificateContact(object):
     :type phone: str or None
     """
 
-    def __init__(
-        self, email: Optional[str] = None, name: Optional[str] = None, phone: Optional[str] = None
-    ) -> None:
+    def __init__(self, email: Optional[str] = None, name: Optional[str] = None, phone: Optional[str] = None) -> None:
         self._email = email
         self._name = name
         self._phone = phone
@@ -1196,9 +1201,7 @@ class CertificateIssuer(object):
     @classmethod
     def _from_issuer_bundle(cls, issuer_bundle: models.IssuerBundle) -> "CertificateIssuer":
         admin_contacts = []
-        admin_details = (
-            issuer_bundle.organization_details.admin_details if issuer_bundle.organization_details else None
-        )
+        admin_details = issuer_bundle.organization_details.admin_details if issuer_bundle.organization_details else None
         if admin_details:
             # pylint:disable=protected-access
             for admin_detail in admin_details:
