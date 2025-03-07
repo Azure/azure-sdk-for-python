@@ -11,6 +11,8 @@
         "azure.ai.unified.autogen.models.AgentThreadCreationOptions": "Azure.AI.Unified.Agents.AgentThreadCreationOptions",
         "azure.ai.unified.autogen.models.ApiKeyCredential": "Azure.AI.Unified.ApiKeyCredential",
         "azure.ai.unified.autogen.models.AssetBase": "Azure.AI.Unified.AssetBase",
+        "azure.ai.unified.autogen.models.Index": "Azure.AI.Unified.Index",
+        "azure.ai.unified.autogen.models.AzureAISearchIndex": "Azure.AI.Unified.AzureAISearchIndex",
         "azure.ai.unified.autogen.models.AzureAISearchResource": "Azure.AI.Unified.Agents.AzureAISearchResource",
         "azure.ai.unified.autogen.models.ToolDefinition": "Azure.AI.Unified.Agents.ToolDefinition",
         "azure.ai.unified.autogen.models.AzureAISearchToolDefinition": "Azure.AI.Unified.Agents.AzureAISearchToolDefinition",
@@ -55,7 +57,6 @@
         "azure.ai.unified.autogen.models.InputData": "Azure.AI.Unified.InputData",
         "azure.ai.unified.autogen.models.Dataset": "Azure.AI.Unified.Dataset",
         "azure.ai.unified.autogen.models.DatasetVersion": "Azure.AI.Unified.DatasetVersion",
-        "azure.ai.unified.autogen.models.EmbeddingConfiguration": "Azure.AI.Unified.EmbeddingConfiguration",
         "azure.ai.unified.autogen.models.EmbeddingItem": "Azure.AI.Unified.EmbeddingItem",
         "azure.ai.unified.autogen.models.EmbeddingsOptions": "Azure.AI.Unified.EmbeddingsOptions",
         "azure.ai.unified.autogen.models.EmbeddingsResult": "Azure.AI.Unified.EmbeddingsResult",
@@ -76,9 +77,8 @@
         "azure.ai.unified.autogen.models.ImageEmbeddingInput": "Azure.AI.Unified.ImageEmbeddingInput",
         "azure.ai.unified.autogen.models.ImageEmbeddingsOptions": "Azure.AI.Unified.ImageEmbeddingsOptions",
         "azure.ai.unified.autogen.models.IncompleteRunDetails": "Azure.AI.Unified.Agents.IncompleteRunDetails",
-        "azure.ai.unified.autogen.models.Index": "Azure.AI.Unified.Index",
-        "azure.ai.unified.autogen.models.IndexConfiguration": "Azure.AI.Unified.IndexConfiguration",
         "azure.ai.unified.autogen.models.IndexResource": "Azure.AI.Unified.Agents.IndexResource",
+        "azure.ai.unified.autogen.models.ManagedAzureAISearchIndex": "Azure.AI.Unified.ManagedAzureAISearchIndex",
         "azure.ai.unified.autogen.models.MessageAttachment": "Azure.AI.Unified.Agents.MessageAttachment",
         "azure.ai.unified.autogen.models.MessageContent": "Azure.AI.Unified.Agents.MessageContent",
         "azure.ai.unified.autogen.models.MessageImageFileContent": "Azure.AI.Unified.Agents.MessageImageFileContent",
@@ -280,8 +280,10 @@
         "azure.ai.unified.autogen.UnifiedClient.models.get_chat_completions": "Azure.AI.Unified.Models.getChatCompletions",
         "azure.ai.unified.autogen.UnifiedClient.models.get_embeddings": "Azure.AI.Unified.Models.getEmbeddings",
         "azure.ai.unified.autogen.UnifiedClient.models.get_image_embeddings": "Azure.AI.Unified.Models.getImageEmbeddings",
+        "azure.ai.unified.autogen.UnifiedClient.indexes.list_latest_indexes": "Azure.AI.Unified.Indexes.listLatestIndexes",
         "azure.ai.unified.autogen.UnifiedClient.indexes.get": "Azure.AI.Unified.Indexes.get",
-        "azure.ai.unified.autogen.UnifiedClient.indexes.create_or_update": "Azure.AI.Unified.Indexes.createOrUpdate",
-        "azure.ai.unified.autogen.UnifiedClient.indexes.list": "Azure.AI.Unified.Indexes.list"
+        "azure.ai.unified.autogen.UnifiedClient.indexes.create_index": "Azure.AI.Unified.Indexes.createIndex",
+        "azure.ai.unified.autogen.UnifiedClient.indexes.list_index_versions": "Azure.AI.Unified.Indexes.listIndexVersions",
+        "azure.ai.unified.autogen.UnifiedClient.indexes.delete_version": "Azure.AI.Unified.Indexes.deleteVersion"
     }
 }

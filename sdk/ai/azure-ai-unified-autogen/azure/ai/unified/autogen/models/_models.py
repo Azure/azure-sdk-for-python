@@ -17,6 +17,7 @@ from ._enums import (
     ChatRole,
     CredentialType,
     DatasetType,
+    IndexType,
     OpenApiAuthType,
     PendingUploadType,
     RunStepType,
@@ -543,6 +544,117 @@ class AssetBase(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class Index(AssetBase):
+    """Index resource Definition.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureAISearchIndex, ManagedAzureAISearchIndex
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar stage: Asset stage.
+    :vartype stage: str
+    :ivar id: A unique identifier for the asset, assetId probably?.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar version: The version of the resource.
+    :vartype version: str
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar system_data: System data of the resource.
+    :vartype system_data: ~azure.ai.unified.autogen.models.SystemData
+    :ivar index_type: Type of index. Required. Known values are: "AzureSearch",
+     "CosmosDBNoSqlVectorStore", and "ManagedAzureSearch".
+    :vartype index_type: str or ~azure.ai.unified.autogen.models.IndexType
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    index_type: str = rest_discriminator(name="indexType", visibility=["read", "create", "update", "delete", "query"])
+    """Type of index. Required. Known values are: \"AzureSearch\", \"CosmosDBNoSqlVectorStore\", and
+     \"ManagedAzureSearch\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index_type: str,
+        stage: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureAISearchIndex(Index, discriminator="AzureSearch"):
+    """Azure AI Search Index Definition.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar stage: Asset stage.
+    :vartype stage: str
+    :ivar id: A unique identifier for the asset, assetId probably?.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar version: The version of the resource.
+    :vartype version: str
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar system_data: System data of the resource.
+    :vartype system_data: ~azure.ai.unified.autogen.models.SystemData
+    :ivar index_type: Type of index. Required. Azure search
+    :vartype index_type: str or ~azure.ai.unified.autogen.models.AZURE_SEARCH
+    :ivar connection_id: Connection id to Azure AI Search. Required.
+    :vartype connection_id: str
+    :ivar index_name: Name of index in Azure AI Search resource to attach. Required.
+    :vartype index_name: str
+    """
+
+    index_type: Literal[IndexType.AZURE_SEARCH] = rest_discriminator(name="indexType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Type of index. Required. Azure search"""
+    connection_id: str = rest_field(name="connectionId", visibility=["read", "create", "update", "delete", "query"])
+    """Connection id to Azure AI Search. Required."""
+    index_name: str = rest_field(name="indexName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of index in Azure AI Search resource to attach. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+        index_name: str,
+        stage: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, index_type=IndexType.AZURE_SEARCH, **kwargs)
 
 
 class AzureAISearchResource(_model_base.Model):
@@ -2357,7 +2469,7 @@ class Connection(_model_base.Model):
     :ivar credentials: Credential used to connect to the external resource. Required.
     :vartype credentials: ~azure.ai.unified.autogen.models.BaseCredential
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "AzureBlob", "CognitiveSearch", and "ApiKey".
+     "AzureBlob", "CognitiveSearch", "CosmosDB", and "ApiKey".
     :vartype category: str or ~azure.ai.unified.autogen.models.ConnectionCategory
     :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
@@ -2371,7 +2483,7 @@ class Connection(_model_base.Model):
     """Credential used to connect to the external resource. Required."""
     category: Union[str, "_models.ConnectionCategory"] = rest_field(visibility=["read"])
     """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"AzureBlob\",
-     \"CognitiveSearch\", and \"ApiKey\"."""
+     \"CognitiveSearch\", \"CosmosDB\", and \"ApiKey\"."""
     target: str = rest_field(visibility=["read"])
     """The connection URL to be used for this service. Required."""
 
@@ -2489,45 +2601,6 @@ class DatasetVersion(AssetBase):
         stage: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class EmbeddingConfiguration(_model_base.Model):
-    """Embedding configuration class.
-
-
-    :ivar connection_id: Connection id to embedding model. Required.
-    :vartype connection_id: str
-    :ivar deployment_name: Deployment name of embedding model. Required.
-    :vartype deployment_name: str
-    :ivar embedding_field: Embedding field. Required.
-    :vartype embedding_field: str
-    """
-
-    connection_id: str = rest_field(name="connectionId", visibility=["read", "create", "update", "delete", "query"])
-    """Connection id to embedding model. Required."""
-    deployment_name: str = rest_field(name="deploymentName", visibility=["read", "create", "update", "delete", "query"])
-    """Deployment name of embedding model. Required."""
-    embedding_field: str = rest_field(name="embeddingField", visibility=["read", "create", "update", "delete", "query"])
-    """Embedding field. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        connection_id: str,
-        deployment_name: str,
-        embedding_field: str,
     ) -> None: ...
 
     @overload
@@ -3438,138 +3511,6 @@ class IncompleteRunDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Index(_model_base.Model):
-    """Index resource Definition.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
-    :ivar id: Fully qualified resource Id:
-     azureml://workspace/{workspaceName}/indexes/{name}/versions/{version} of the index. Required.
-    :vartype id: str
-    :ivar stage: Update stage to 'Archive' to archive the asset. Default is Development, which
-     means the asset is under development.
-    :vartype stage: str
-    :ivar description: Description information of the asset.
-    :vartype description: str
-    :ivar system_data: Metadata containing createdBy and modifiedBy information.
-    :vartype system_data: ~azure.ai.unified.autogen.models.SystemData
-    :ivar tags: Asset's tags. Unlike properties, tags are fully mutable.
-    :vartype tags: dict[str, str]
-    :ivar properties: Asset's properties. Unlike tags, properties are add-only. Once added, a
-     property cannot be removed.
-    :vartype properties: dict[str, str]
-    :ivar index_configuration: Index configuration. Required.
-    :vartype index_configuration: ~azure.ai.unified.autogen.models.IndexConfiguration
-    :ivar embedding_configuration: Embedding configuration. Required.
-    :vartype embedding_configuration: ~azure.ai.unified.autogen.models.EmbeddingConfiguration
-    :ivar index_type: Type of index. Required. Known values are: "AzureSearch", "CosmosDB", and
-     "ManagedAzureSearch".
-    :vartype index_type: str or ~azure.ai.unified.autogen.models.IndexType
-    """
-
-    id: str = rest_field(visibility=["read"])
-    """Fully qualified resource Id:
-     azureml://workspace/{workspaceName}/indexes/{name}/versions/{version} of the index. Required."""
-    stage: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Update stage to 'Archive' to archive the asset. Default is Development, which means the asset
-     is under development."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Description information of the asset."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Metadata containing createdBy and modifiedBy information."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Asset's tags. Unlike properties, tags are fully mutable."""
-    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Asset's properties. Unlike tags, properties are add-only. Once added, a property cannot be
-     removed."""
-    index_configuration: "_models.IndexConfiguration" = rest_field(
-        name="indexConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Index configuration. Required."""
-    embedding_configuration: "_models.EmbeddingConfiguration" = rest_field(
-        name="embeddingConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Embedding configuration. Required."""
-    index_type: Union[str, "_models.IndexType"] = rest_field(
-        name="indexType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Type of index. Required. Known values are: \"AzureSearch\", \"CosmosDB\", and
-     \"ManagedAzureSearch\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        index_configuration: "_models.IndexConfiguration",
-        embedding_configuration: "_models.EmbeddingConfiguration",
-        index_type: Union[str, "_models.IndexType"],
-        stage: Optional[str] = None,
-        description: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional[Dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class IndexConfiguration(_model_base.Model):
-    """Index configuration class.
-
-
-    :ivar connection_id: Connection id of indexing service. Required.
-    :vartype connection_id: str
-    :ivar database_name: Name of database. Required.
-    :vartype database_name: str
-    :ivar container_name: Name of container. Required.
-    :vartype container_name: str
-    :ivar index_name: Name of index. Required.
-    :vartype index_name: str
-    :ivar vector_store_id: Vector store id. Required.
-    :vartype vector_store_id: str
-    """
-
-    connection_id: str = rest_field(name="connectionId", visibility=["read", "create", "update", "delete", "query"])
-    """Connection id of indexing service. Required."""
-    database_name: str = rest_field(name="databaseName", visibility=["read", "create", "update", "delete", "query"])
-    """Name of database. Required."""
-    container_name: str = rest_field(name="containerName", visibility=["read", "create", "update", "delete", "query"])
-    """Name of container. Required."""
-    index_name: str = rest_field(name="indexName", visibility=["read", "create", "update", "delete", "query"])
-    """Name of index. Required."""
-    vector_store_id: str = rest_field(name="vectorStoreId", visibility=["read", "create", "update", "delete", "query"])
-    """Vector store id. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        connection_id: str,
-        database_name: str,
-        container_name: str,
-        index_name: str,
-        vector_store_id: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class IndexResource(_model_base.Model):
     """A Index resource.
 
@@ -3603,6 +3544,58 @@ class IndexResource(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
+    """Managed Azure AI Search Index Definition.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar stage: Asset stage.
+    :vartype stage: str
+    :ivar id: A unique identifier for the asset, assetId probably?.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar version: The version of the resource.
+    :vartype version: str
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar system_data: System data of the resource.
+    :vartype system_data: ~azure.ai.unified.autogen.models.SystemData
+    :ivar index_type: Type of index. Required. Managed Azure Search
+    :vartype index_type: str or ~azure.ai.unified.autogen.models.MANAGED_AZURE_SEARCH
+    :ivar vector_store_id: Vector store id of managed index. Required.
+    :vartype vector_store_id: str
+    """
+
+    index_type: Literal[IndexType.MANAGED_AZURE_SEARCH] = rest_discriminator(name="indexType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Type of index. Required. Managed Azure Search"""
+    vector_store_id: str = rest_field(name="vectorStoreId", visibility=["read", "create", "update", "delete", "query"])
+    """Vector store id of managed index. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        vector_store_id: str,
+        stage: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, index_type=IndexType.MANAGED_AZURE_SEARCH, **kwargs)
 
 
 class MessageAttachment(_model_base.Model):

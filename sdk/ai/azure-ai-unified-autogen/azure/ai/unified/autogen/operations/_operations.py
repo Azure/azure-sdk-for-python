@@ -1261,7 +1261,7 @@ def build_connections_get_with_credentials_request(  # pylint: disable=name-too-
 
 def build_connections_list_request(
     *,
-    connection_category: Optional[str] = None,
+    connection_category: Optional[Union[str, _models.ConnectionCategory]] = None,
     top: Optional[int] = None,
     skip: Optional[int] = None,
     maxpagesize: Optional[int] = None,
@@ -1678,6 +1678,34 @@ def build_models_get_image_embeddings_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_indexes_list_latest_indexes_request(  # pylint: disable=name-too-long
+    *,
+    continuation_token_parameter: Optional[str] = None,
+    list_view_type: Optional[Union[str, _models.ListViewType]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/indexes"
+
+    # Construct parameters
+    if continuation_token_parameter is not None:
+        _params["$continuationToken"] = _SERIALIZER.query(
+            "continuation_token_parameter", continuation_token_parameter, "str"
+        )
+    if list_view_type is not None:
+        _params["listViewType"] = _SERIALIZER.query("list_view_type", list_view_type, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_indexes_get_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1703,7 +1731,7 @@ def build_indexes_get_request(name: str, version: str, **kwargs: Any) -> HttpReq
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_create_or_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_indexes_create_index_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1712,10 +1740,9 @@ def build_indexes_create_or_update_request(name: str, version: str, **kwargs: An
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/indexes/{name}/versions/{version}"
+    _url = "/indexes/{name}:create"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1728,10 +1755,10 @@ def build_indexes_create_or_update_request(name: str, version: str, **kwargs: An
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_list_request(
+def build_indexes_list_index_versions_request(  # pylint: disable=name-too-long
     name: str,
     *,
     list_view_type: str,
@@ -1777,6 +1804,19 @@ def build_indexes_list_request(
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_indexes_delete_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+    # Construct URL
+    _url = "/indexes/{name}/versions/{version}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    return HttpRequest(method="DELETE", url=_url, **kwargs)
 
 
 class AgentsOperations:  # pylint: disable=too-many-public-methods
@@ -6727,16 +6767,16 @@ class ConnectionsOperations:
     def list(
         self,
         *,
-        connection_category: Optional[str] = None,
+        connection_category: Optional[Union[str, _models.ConnectionCategory]] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs: Any
     ) -> Iterable["_models.Connection"]:
         """List all connections in the project.
 
-        :keyword connection_category: Specific type of connection to return in list. Default value is
-         None.
-        :paramtype connection_category: str
+        :keyword connection_category: Specific type of connection to return in list. Known values are:
+         "AzureOpenAI", "AzureBlob", "CognitiveSearch", "CosmosDB", and "ApiKey". Default value is None.
+        :paramtype connection_category: str or ~azure.ai.unified.autogen.models.ConnectionCategory
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
@@ -8505,6 +8545,101 @@ class IndexesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    def list_latest_indexes(
+        self,
+        *,
+        continuation_token_parameter: Optional[str] = None,
+        list_view_type: Optional[Union[str, _models.ListViewType]] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.DatasetVersion"]:
+        """List latest version of each dataset in a project.
+
+        :keyword continuation_token_parameter: Continuation token for pagination. This is the nextLink
+         from the previous response. Default value is None.
+        :paramtype continuation_token_parameter: str
+        :keyword list_view_type: View type for including/excluding (for example) archived entities.
+         Known values are: "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
+        :paramtype list_view_type: str or ~azure.ai.unified.autogen.models.ListViewType
+        :return: An iterator like instance of DatasetVersion
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.unified.autogen.models.DatasetVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.DatasetVersion]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_indexes_list_latest_indexes_request(
+                    continuation_token_parameter=continuation_token_parameter,
+                    list_view_type=list_view_type,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.DatasetVersion], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
     def get(self, name: str, version: str, **kwargs: Any) -> _models.Index:
         """Get a specific version of an Index.
 
@@ -8568,15 +8703,13 @@ class IndexesOperations:
         return deserialized  # type: ignore
 
     @overload
-    def create_or_update(
-        self, name: str, version: str, body: _models.Index, *, content_type: str = "application/json", **kwargs: Any
+    def create_index(
+        self, name: str, body: _models.Index, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
         """Creates or updates a IndexVersion.
 
         :param name: Name of the index. Required.
         :type name: str
-        :param version: Version of the index. Required.
-        :type version: str
         :param body: Properties of an Index Version. Required.
         :type body: ~azure.ai.unified.autogen.models.Index
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -8588,15 +8721,13 @@ class IndexesOperations:
         """
 
     @overload
-    def create_or_update(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    def create_index(
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
         """Creates or updates a IndexVersion.
 
         :param name: Name of the index. Required.
         :type name: str
-        :param version: Version of the index. Required.
-        :type version: str
         :param body: Properties of an Index Version. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -8608,15 +8739,13 @@ class IndexesOperations:
         """
 
     @overload
-    def create_or_update(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    def create_index(
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Index:
         """Creates or updates a IndexVersion.
 
         :param name: Name of the index. Required.
         :type name: str
-        :param version: Version of the index. Required.
-        :type version: str
         :param body: Properties of an Index Version. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -8628,15 +8757,11 @@ class IndexesOperations:
         """
 
     @distributed_trace
-    def create_or_update(
-        self, name: str, version: str, body: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.Index:
+    def create_index(self, name: str, body: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any) -> _models.Index:
         """Creates or updates a IndexVersion.
 
         :param name: Name of the index. Required.
         :type name: str
-        :param version: Version of the index. Required.
-        :type version: str
         :param body: Properties of an Index Version. Is one of the following types: Index, JSON,
          IO[bytes] Required.
         :type body: ~azure.ai.unified.autogen.models.Index or JSON or IO[bytes]
@@ -8665,9 +8790,8 @@ class IndexesOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_indexes_create_or_update_request(
+        _request = build_indexes_create_index_request(
             name=name,
-            version=version,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -8706,7 +8830,7 @@ class IndexesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(
+    def list_index_versions(
         self,
         name: str,
         *,
@@ -8759,7 +8883,7 @@ class IndexesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_indexes_list_request(
+                _request = build_indexes_list_index_versions_request(
                     name=name,
                     list_view_type=list_view_type,
                     order_by=order_by,
@@ -8824,3 +8948,55 @@ class IndexesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def delete_version(  # pylint: disable=inconsistent-return-statements
+        self, name: str, version: str, **kwargs: Any
+    ) -> None:
+        """Delete version.
+
+        :param name: Container name. Required.
+        :type name: str
+        :param version: Version identifier. Required.
+        :type version: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_indexes_delete_version_request(
+            name=name,
+            version=version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore

@@ -137,6 +137,8 @@ class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure Blob Storage"""
     AZURE_AI_SEARCH = "CognitiveSearch"
     """Azure AI Search"""
+    COSMOS_DB = "CosmosDB"
+    """CosmosDB"""
     API_KEY = "ApiKey"
     """Generic connection that uses API Key authentication"""
 
@@ -276,7 +278,7 @@ class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AZURE_SEARCH = "AzureSearch"
     """Azure search"""
-    COSMOS_DB = "CosmosDB"
+    COSMOS_DB = "CosmosDBNoSqlVectorStore"
     """CosmosDB"""
     MANAGED_AZURE_SEARCH = "ManagedAzureSearch"
     """Managed Azure Search"""

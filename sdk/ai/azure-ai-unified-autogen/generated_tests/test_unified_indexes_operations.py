@@ -14,6 +14,15 @@ from testpreparer import UnifiedClientTestBase, UnifiedPreparer
 class TestUnifiedIndexesOperations(UnifiedClientTestBase):
     @UnifiedPreparer()
     @recorded_by_proxy
+    def test_indexes_list_latest_indexes(self, unified_endpoint):
+        client = self.create_client(endpoint=unified_endpoint)
+        response = client.indexes.list_latest_indexes()
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @UnifiedPreparer()
+    @recorded_by_proxy
     def test_indexes_get(self, unified_endpoint):
         client = self.create_client(endpoint=unified_endpoint)
         response = client.indexes.get(
@@ -26,24 +35,17 @@ class TestUnifiedIndexesOperations(UnifiedClientTestBase):
 
     @UnifiedPreparer()
     @recorded_by_proxy
-    def test_indexes_create_or_update(self, unified_endpoint):
+    def test_indexes_create_index(self, unified_endpoint):
         client = self.create_client(endpoint=unified_endpoint)
-        response = client.indexes.create_or_update(
+        response = client.indexes.create_index(
             name="str",
-            version="str",
             body={
-                "embeddingConfiguration": {"connectionId": "str", "deploymentName": "str", "embeddingField": "str"},
-                "id": "str",
-                "indexConfiguration": {
-                    "connectionId": "str",
-                    "containerName": "str",
-                    "databaseName": "str",
-                    "indexName": "str",
-                    "vectorStoreId": "str",
-                },
-                "indexType": "str",
+                "connectionId": "str",
+                "indexName": "str",
+                "indexType": "AzureSearch",
                 "description": "str",
-                "properties": {"str": "str"},
+                "id": "str",
+                "name": "str",
                 "stage": "str",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -52,6 +54,7 @@ class TestUnifiedIndexesOperations(UnifiedClientTestBase):
                     "lastModifiedAt": "2020-02-20 00:00:00",
                 },
                 "tags": {"str": "str"},
+                "version": "str",
             },
         )
 
@@ -60,12 +63,24 @@ class TestUnifiedIndexesOperations(UnifiedClientTestBase):
 
     @UnifiedPreparer()
     @recorded_by_proxy
-    def test_indexes_list(self, unified_endpoint):
+    def test_indexes_list_index_versions(self, unified_endpoint):
         client = self.create_client(endpoint=unified_endpoint)
-        response = client.indexes.list(
+        response = client.indexes.list_index_versions(
             name="str",
             list_view_type="str",
         )
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @UnifiedPreparer()
+    @recorded_by_proxy
+    def test_indexes_delete_version(self, unified_endpoint):
+        client = self.create_client(endpoint=unified_endpoint)
+        response = client.indexes.delete_version(
+            name="str",
+            version="str",
+        )
+
         # please add some check logic here by yourself
         # ...
