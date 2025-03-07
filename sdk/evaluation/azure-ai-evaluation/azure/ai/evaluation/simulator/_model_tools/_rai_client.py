@@ -222,6 +222,9 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         :rtype: Any
         """
         # Create query parameters for the request
+        if application_scenario:
+            raise NotImplementedError("Application scenario is not supported yet")
+        
         params = {
             "api-version": "2022-11-01-preview",
             "riskTypes": ",".join(risk_categories),
@@ -235,6 +238,18 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         try:
             # Make the request using the existing get method
             result = await self.get(self.attack_objectives_endpoint)
+            # from collections import defaultdict
+            # counts_by_risk = defaultdict(int)
+            # for item in result:
+            #     target_harms = item.get("Metadata", {}).get("TargetHarms", [])
+            #     if not target_harms:
+            #         # No risk type specified
+            #         counts_by_risk["empty"] += 1
+            #     else:
+            #         for harm in target_harms:
+            #             # Use "empty" if the risk type field is missing
+            #             risk_type = harm.get("RiskType", "") or "empty"
+            #             counts_by_risk[risk_type] += 1
             return result
         except Exception:
             # If the API fails or isn't implemented yet, return a mock response
