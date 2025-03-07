@@ -302,16 +302,6 @@ variables:
 |`AZURE_CLIENT_CERTIFICATE_PASSWORD`|password of the certificate file, if any|
 |`AZURE_CLIENT_SEND_CERTIFICATE_CHAIN`|If `True`, the credential sends the public certificate chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults to False. There's a [known limitation](https://github.com/Azure/azure-sdk-for-python/issues/13349) that async SNI authentication isn't supported.|
 
-### Username and password
-
-> **Warning**: Username and password authentication doesn't support multifactor authentication (MFA) and is **deprecated**. For more details, see [Planning for mandatory MFA](https://aka.ms/azsdk/identity/mfa).
-
-|Variable name|Value
-|-|-
-|`AZURE_CLIENT_ID`|ID of a Microsoft Entra application
-|`AZURE_USERNAME`|a username (usually an email address)
-|`AZURE_PASSWORD`|that user's password
-
 Configuration is attempted in the preceding order. For example, if values for a client secret and certificate are both present, the client secret is used.
 
 ## Continuous Access Evaluation
