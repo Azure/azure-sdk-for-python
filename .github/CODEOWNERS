@@ -172,6 +172,8 @@
 
 # AzureSdkOwners: @mccoyp
 # ServiceLabel: %KeyVault
+# ServiceOwners:                                                     @cheathamb36 @chen-karen @lgonsoulin
+
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @mccoyp
 
