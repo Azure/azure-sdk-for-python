@@ -202,6 +202,13 @@ class PoolPreparer(AzureMgmtPreparer):
                         node_agent_sku_id="batch.node.ubuntu 18.04",
                     )
                 )
+            inboundpool_config = models.InboundNatPool(
+                name="ruleName",
+                protocol=models.InboundEndpointProtocol.Tcp,
+                backend_port=3389,
+                frontend_port_range_start=15000,
+                frontend_port_range_end=15100,
+            )
             parameters = models.Pool(
                 display_name="test_pool",
                 vm_size=vm_size,
@@ -209,6 +216,9 @@ class PoolPreparer(AzureMgmtPreparer):
                 deployment_configuration=deployment,
                 scale_settings=models.ScaleSettings(
                     fixed_scale=models.FixedScaleSettings(target_dedicated_nodes=self.size)
+                ),
+                network_configuration=models.NetworkConfiguration(
+                    endpoint_configuration=models.PoolEndpointConfiguration(inbound_nat_pools=[inboundpool_config])
                 ),
             )
 
