@@ -170,8 +170,9 @@
 # PRLabel: %Cognitive - Health Insights
 /sdk/healthinsights/                                                 @tomsft @koen-mertens
 
-# AzureSdkOwners: @mccoyp
 # ServiceLabel: %KeyVault
+# AzureSdkOwners: @mccoyp
+# ServiceOwners:                                                     @cheathamb36 @chen-karen @lgonsoulin
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @mccoyp
 
