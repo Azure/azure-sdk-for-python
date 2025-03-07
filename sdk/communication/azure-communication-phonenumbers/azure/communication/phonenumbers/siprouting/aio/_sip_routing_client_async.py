@@ -59,7 +59,7 @@ class SipRoutingClient(object):
         self._authentication_policy = get_authentication_policy(endpoint, credential, is_async=True)
 
         self._rest_service = SIPRoutingService(
-            self._endpoint, authentication_policy=self._authentication_policy, sdk_moniker=SDK_MONIKER, **kwargs
+            self._endpoint, credential= credential, authentication_policy=self._authentication_policy, sdk_moniker=SDK_MONIKER, **kwargs
         )
 
     @classmethod
@@ -240,58 +240,6 @@ class SipRoutingClient(object):
             for x in routes
         ]
         await self._rest_service.sip_routing.update(body=SipConfiguration(routes=routes_internal), **kwargs)
-
-    @overload
-    async def test_routes_with_number_async(
-        self,
-        sip_configuration: Optional[SipConfiguration] = None,
-        *,
-        target_phone_number: str,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ):
-        """Gets the list of routes matching the target phone number, ordered by priority.
-
-        Gets the list of routes matching the target phone number, ordered by priority.
-
-        :param sip_configuration: Sip configuration object to test with targetPhoneNumber. Default
-         value is None.
-        :type sip_configuration: ~azure.communication.phonenumbers.siprouting.models.SipConfiguration
-        :keyword target_phone_number: Phone number to test routing patterns against. Required.
-        :paramtype target_phone_number: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RoutesForNumber
-        :rtype: ~azure.communication.phonenumbers.siprouting.models.RoutesForNumber
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def test_routes_with_number_async(
-        self,
-        sip_configuration: Optional[IO[bytes]] = None,
-        *,
-        target_phone_number: str,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ):
-        """Gets the list of routes matching the target phone number, ordered by priority.
-
-        Gets the list of routes matching the target phone number, ordered by priority.
-
-        :param sip_configuration: Sip configuration object to test with targetPhoneNumber. Default
-         value is None.
-        :type sip_configuration: IO[bytes]
-        :keyword target_phone_number: Phone number to test routing patterns against. Required.
-        :paramtype target_phone_number: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RoutesForNumber
-        :rtype: ~azure.communication.phonenumbers.siprouting.models.RoutesForNumber
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
     @distributed_trace_async
     async def test_routes_with_number_async(
