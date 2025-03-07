@@ -568,7 +568,7 @@ agent = project_client.agents.create_agent(
     model=os.environ["MODEL_DEPLOYMENT_NAME"],
     name="my-assistant",
     instructions="You are a helpful assistant",
-    toolset=azure_function_tool.definitions,
+    tools=azure_function_tool.definitions,
 )
 ```
 <!-- END SNIPPET -->
