@@ -19,6 +19,8 @@ from azure.ai.evaluation._constants import (
 
 from ..._user_agent import USER_AGENT
 from .._utils import set_event_loop_policy
+from .batch_clients import BatchClient
+from ._run_submitter_client import RunSubmitterClient
 from .code_client import CodeClient
 from .proxy_client import ProxyClient
 
@@ -33,7 +35,7 @@ class EvalRunContext:
     ]
     """
 
-    def __init__(self, client: Union[CodeClient, ProxyClient]) -> None:
+    def __init__(self, client: BatchClient) -> None:
         self.client = client
         self._is_batch_timeout_set_by_system = False
         self._is_otel_timeout_set_by_system = False
@@ -62,6 +64,9 @@ class EvalRunContext:
                 self._is_otel_timeout_set_by_system = True
 
             # For addressing the issue of asyncio event loop closed on Windows
+            set_event_loop_policy()
+
+        if isinstance(self.client, RunSubmitterClient):
             set_event_loop_policy()
 
     def __exit__(
