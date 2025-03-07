@@ -13,8 +13,8 @@ DESCRIPTION:
 USAGE:
     python datalake_samples_directory.py
     Set the environment variables with your own values before running the sample:
-    1) STORAGE_ACCOUNT_NAME - the storage account name
-    2) STORAGE_ACCOUNT_KEY - the storage account key
+    1) DATALAKE_STORAGE_ACCOUNT_NAME - the storage account name
+    2) DATALAKE_STORAGE_ACCOUNT_KEY - the storage account key
 """
 
 import os
@@ -85,8 +85,8 @@ def create_child_files(directory_client, num_child_files):
 
 
 def run():
-    account_name = os.getenv('STORAGE_ACCOUNT_NAME', "")
-    account_key = os.getenv('STORAGE_ACCOUNT_KEY', "")
+    account_name = os.getenv('DATALAKE_STORAGE_ACCOUNT_NAME', "")
+    account_key = os.getenv('DATALAKE_STORAGE_ACCOUNT_KEY', "")
 
     # set up the service client with the credentials from the environment variables
     service_client = DataLakeServiceClient(account_url="{}://{}.dfs.core.windows.net".format(
@@ -95,7 +95,7 @@ def run():
     ), credential=account_key)
 
     # generate a random name for testing purpose
-    fs_name = "testfs{}".format(random.randint(1, 1000))
+    fs_name = "dicretorytestfs{}".format(random.randint(1, 1000))
     print("Generating a test filesystem named '{}'.".format(fs_name))
 
     # create the filesystem

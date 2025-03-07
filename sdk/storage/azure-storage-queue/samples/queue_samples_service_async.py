@@ -17,7 +17,7 @@ USAGE:
     python queue_samples_service_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
 
@@ -28,7 +28,7 @@ import sys
 
 class QueueServiceSamplesAsync(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
     async def queue_service_properties_async(self):
         if self.connection_string is None:
@@ -87,7 +87,7 @@ class QueueServiceSamplesAsync(object):
 
         async with queue_service:
             # [START async_qsc_create_queue]
-            await queue_service.create_queue("myqueue1")
+            await queue_service.create_queue("asyncmyqueue1")
             # [END async_qsc_create_queue]
 
             try:
@@ -105,7 +105,7 @@ class QueueServiceSamplesAsync(object):
 
             finally:
                 # [START async_qsc_delete_queue]
-                await queue_service.delete_queue("myqueue1")
+                await queue_service.delete_queue("asyncmyqueue1")
                 # [END async_qsc_delete_queue]
 
     async def get_queue_client_async(self):
@@ -119,7 +119,7 @@ class QueueServiceSamplesAsync(object):
 
         # [START async_get_queue_client]
         # Get the queue client to interact with a specific queue
-        queue = queue_service.get_queue_client(queue="myqueue2")
+        queue = queue_service.get_queue_client(queue="asyncmyqueue2")
         # [END async_get_queue_client]
 
 

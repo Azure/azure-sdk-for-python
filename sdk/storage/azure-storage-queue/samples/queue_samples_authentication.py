@@ -19,10 +19,10 @@ USAGE:
     python queue_samples_authentication.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
-    2) AZURE_STORAGE_ACCOUNT_URL - the queue service account URL
-    3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
-    4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
+    1) STORAGE_CONNECTION_STRING - the connection string to your storage account
+    2) STORAGE_ACCOUNT_QUEUE_URL - the queue service account URL
+    3) STORAGE_ACCOUNT_NAME - the name of the storage account
+    4) STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
 
@@ -33,11 +33,10 @@ import sys
 
 class QueueAuthSamples(object):
 
-    connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
-
-    account_url = os.getenv("AZURE_STORAGE_ACCOUNT_URL")
-    account_name = os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
-    access_key = os.getenv("AZURE_STORAGE_ACCESS_KEY")
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
+    account_url = os.getenv("STORAGE_ACCOUNT_QUEUE_URL")
+    account_name = os.getenv("STORAGE_ACCOUNT_NAME")
+    access_key = os.getenv("STORAGE_ACCOUNT_KEY")
 
     def authentication_by_connection_string(self):
         if self.connection_string is None:
@@ -79,7 +78,6 @@ class QueueAuthSamples(object):
         # Get a token credential for authentication
         from azure.identity import DefaultAzureCredential
         token_credential = DefaultAzureCredential()
-
         # Instantiate a QueueServiceClient using a token credential
         from azure.storage.queue import QueueServiceClient
         queue_service = QueueServiceClient(account_url=self.account_url, credential=token_credential)
