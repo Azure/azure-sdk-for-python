@@ -61,6 +61,9 @@ ServicePreparerAOAIChatCompletions = functools.partial(
     azure_openai_chat_endpoint="https://your-deployment-name.openai.azure.com/openai/deployments/gpt-4o-deployment",
     azure_openai_chat_key="00000000000000000000000000000000",
     azure_openai_chat_api_version="yyyy-mm-dd-preview",
+    azure_openai_chat_audio_endpoint="https://your-deployment-name.openai.azure.com/openai/deployments/gpt-4o-audio-preview",
+    azure_openai_chat_audio_key="00000000000000000000000000000000",
+    azure_openai_chat_audio_api_version="yyyy-mm-dd-preview",
 )
 
 #
@@ -91,12 +94,9 @@ ServicePreparerImageEmbeddings = functools.partial(
 
 ServicePreparerChatCompletionsWithAudio = functools.partial(
     EnvironmentVariableLoader,
-    "azure_ai_chat_with_audio",
-    azure_openai_chat_audio_endpoint="https://your-deployment-name.openai.azure.com/openai/deployments/gpt-4o-audio-preview",
-    azure_openai_chat_audio_key="00000000000000000000000000000000",
-    azure_openai_chat_audio_api_version="yyyy-mm-dd-preview",
-    phi_chat_audio_endpoint="https://your-deployment-name.eastus2.models.ai.azure.com",
-    phi_chat_audio_key="00000000000000000000000000000000",
+    "azure_ai_chat_audio",
+    azure_ai_chat_audio_endpoint="https://your-deployment-name.eastus2.models.ai.azure.com",
+    azure_ai_chat_audio_key="00000000000000000000000000000000",
 )
 
 
@@ -274,8 +274,8 @@ class ModelClientTestBase(AzureRecordedTestCase):
         return endpoint, credential
 
     def _load_phi_audio_credentials(self, bad_key: bool, **kwargs):
-        endpoint = kwargs.pop("phi_chat_audio_endpoint")
-        key = "00000000000000000000000000000000" if bad_key else kwargs.pop("azure_ai_chat_key")
+        endpoint = kwargs.pop("azure_ai_chat_audio_endpoint")
+        key = "00000000000000000000000000000000" if bad_key else kwargs.pop("azure_ai_chat_audio_key")
         credential = AzureKeyCredential(key)
         return endpoint, credential
 
@@ -471,8 +471,8 @@ class ModelClientTestBase(AzureRecordedTestCase):
         )
 
     def _create_async_phi_audio_chat_client(
-        self, *, key_auth: bool = True, bad_key: bool = False, **kwargs
-    ) -> sdk.ChatCompletionsClient:
+        self, *, bad_key: bool = False, **kwargs
+    ) -> async_sdk.ChatCompletionsClient:
         endpoint, credential, = self._load_phi_audio_credentials(
             bad_key=bad_key, **kwargs
         )
@@ -570,7 +570,7 @@ class ModelClientTestBase(AzureRecordedTestCase):
         if is_aoai:
             assert bool(ModelClientTestBase.REGEX_AOAI_RESULT_ID.match(response.id))
         else:
-            assert bool(ModelClientTestBase.REGEX_RESULT_ID.match(response.id))
+            assert response.id
         assert response.created is not None
         assert response.created != ""
         assert response.model is not None

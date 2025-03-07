@@ -560,9 +560,7 @@ class TestChatCompletionsClient(ModelClientTestBase):
         )
         client.close()
 
-    # We use AOAI endpoint here because at the moment there is no MaaS model that supports
-    # input audio.
-    @ServicePreparerChatCompletionsWithAudio()
+    @ServicePreparerAOAIChatCompletions()
     @recorded_by_proxy
     def test_chat_completions_with_audio_data_input(self, **kwargs):
         client = self._create_aoai_audio_chat_client(**kwargs)
@@ -600,7 +598,8 @@ class TestChatCompletionsClient(ModelClientTestBase):
         # Construct the full path to the image file
         script_dir = os.path.dirname(os.path.abspath(__file__))
         audio_url = \
-            "https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba-online-audio-converter.com_-1.wav"
+            "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/refs/tags/azure-ai-inference_1.0.0b9/" + \
+            "sdk/ai/azure-ai-inference/samples/hello_how_are_you.mp3"
 
         response = client.complete(
             messages=[
@@ -609,14 +608,14 @@ class TestChatCompletionsClient(ModelClientTestBase):
                 ),
                 sdk.models.UserMessage(
                     content=[
-                        sdk.models.TextContentItem(text="Please describe this audio clip."),
-                        sdk.models.AudioUrlContentItem(audio_url=sdk.models.InputUrl.load(url=audio_url)),
+                        sdk.models.TextContentItem(text="Please translate this audio snippet to spanish."),
+                        sdk.models.AudioUrlContentItem(audio_url=sdk.models.InputAudioUrl(url=audio_url)),
                     ],
                 ),
             ],
         )
         self._print_chat_completions_result(response)
-        self._validate_chat_completions_result(response, ["Hola", "cómo", "estás"], is_aoai=True)
+        self._validate_chat_completions_result(response, ["Hola", "cómo", "estás"], is_aoai=False)
         client.close()
 
     # **********************************************************************************
