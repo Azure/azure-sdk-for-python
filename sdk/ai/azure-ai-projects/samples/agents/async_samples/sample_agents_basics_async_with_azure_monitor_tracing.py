@@ -44,12 +44,12 @@ async def main() -> None:
 
         # Enable Azure Monitor tracing
         application_insights_connection_string = await project_client.telemetry.get_connection_string()
-        configure_azure_monitor(connection_string=application_insights_connection_string)
         if not application_insights_connection_string:
             print("Application Insights was not enabled for this project.")
             print("Enable it via the 'Tracing' tab in your AI Foundry project page.")
             exit()
         configure_azure_monitor(connection_string=application_insights_connection_string)
+        project_client.telemetry.enable()
 
         async with project_client:
             agent = await project_client.agents.create_agent(

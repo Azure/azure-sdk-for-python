@@ -84,6 +84,7 @@ functions = FunctionTool(functions=user_functions)
 
 with tracer.start_as_current_span(scenario):
     with project_client:
+        project_client.telemetry.enable()
         # Create an agent and run user's request with function calls
         agent = project_client.agents.create_agent(
             model=os.environ["MODEL_DEPLOYMENT_NAME"],
