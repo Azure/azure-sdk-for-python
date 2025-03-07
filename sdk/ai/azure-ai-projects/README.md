@@ -73,7 +73,7 @@ To report an issue with the client library, or request additional features, plea
   - [Reporting issues](#reporting-issues)
 - [Next steps](#next-steps)
 - [Contributing](#contributing)
-- <!-- PIPY LONG DESCRIPTION END -->
+<!-- PIPY LONG DESCRIPTION END -->
 ## Getting started
 
 ### Prerequisite
