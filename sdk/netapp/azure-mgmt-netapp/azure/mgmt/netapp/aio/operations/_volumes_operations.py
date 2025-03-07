@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -64,7 +64,7 @@ from ...operations._volumes_operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -113,7 +113,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.VolumeList] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -198,7 +198,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.netapp.models.Volume
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -252,7 +252,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Union[_models.Volume, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -478,7 +478,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Union[_models.VolumePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -703,7 +703,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         force_delete: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -832,7 +832,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     async def _populate_availability_zone_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -965,7 +965,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Union[_models.VolumeRevert, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1177,7 +1177,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     async def _reset_cifs_password_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1302,7 +1302,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Optional[Union[_models.BreakFileLocksRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1529,7 +1529,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Union[_models.GetGroupIdListForLDAPUserRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1761,7 +1761,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Optional[Union[_models.BreakReplicationRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1982,7 +1982,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Union[_models.ReestablishReplicationRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2215,7 +2215,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.mgmt.netapp.models.ReplicationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2287,7 +2287,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ListReplications] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2355,7 +2355,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     async def _resync_replication_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2474,7 +2474,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     async def _delete_replication_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2599,7 +2599,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Union[_models.AuthorizeRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2811,7 +2811,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     async def _re_initialize_replication_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2935,7 +2935,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Union[_models.PeerClusterForVolumeMigrationRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3161,7 +3161,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     async def _authorize_external_replication_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3289,7 +3289,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     async def _finalize_external_replication_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3411,7 +3411,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     async def _perform_replication_transfer_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3538,7 +3538,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Union[_models.PoolChangeRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3756,7 +3756,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         body: Optional[Union[_models.RelocateVolumeRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3969,7 +3969,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     async def _finalize_relocation_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4085,7 +4085,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
     async def _revert_relocation_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

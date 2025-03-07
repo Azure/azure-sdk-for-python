@@ -39,7 +39,7 @@ class CosmosHttpResponseError(HttpResponseError):
         :param str message: Error message.
         """
         self.headers = response.headers if response else {}
-        self.sub_status = None
+        self.sub_status = kwargs.pop('sub_status', None)
         self.http_error_message = message
         status = status_code or (int(response.status_code) if response else 0)
 

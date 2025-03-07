@@ -99,7 +99,7 @@ class SearchIndexerSkillset(Model):
         self.e_tag = e_tag
         self.encryption_key = encryption_key
 
-    def _to_generated(self):
+    def _to_generated(self) -> _SearchIndexerSkillset:
         generated_skills = []
         for skill in self.skills:
             if hasattr(skill, "_to_generated"):
@@ -111,7 +111,7 @@ class SearchIndexerSkillset(Model):
         # pylint:disable=protected-access
         encryption_key_patched = None if encryption_key is None else encryption_key._to_generated()
         return _SearchIndexerSkillset(
-            name=getattr(self, "name", None),
+            name=getattr(self, "name", ""),
             description=getattr(self, "description", None),
             skills=generated_skills,
             cognitive_services_account=getattr(self, "cognitive_services_account", None),
@@ -157,7 +157,7 @@ class SearchIndexerSkillset(Model):
         :param str data: A JSON str using RestAPI structure.
         :returns: A SearchIndexerSkillset instance
         :rtype: SearchIndexerSkillset
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         try:
             obj_dict = json.loads(data)
@@ -184,7 +184,7 @@ class SearchIndexerSkillset(Model):
         :param dict data: A dict using RestAPI structure
         :returns: A SearchIndexerSkillset instance
         :rtype: SearchIndexerSkillset
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         try:
             obj = _SearchIndexerSkillset(data)
@@ -228,7 +228,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
      that can be consumed as an input by another skill.
     :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :ivar categories: A list of entity categories that should be extracted.
-    :vartype categories: list[str or ~azure.search.documents.indexes.models.EntityCategory]
+    :vartype categories: list[str] or list[~azure.search.documents.indexes.models.EntityCategory]
     :ivar default_language_code: A value indicating which language code to use. Default is en.
      Possible values include: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de",
      "el", "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", "tr".
@@ -488,7 +488,7 @@ class AnalyzeTextOptions(Model):
         :param str data: A str using RestAPI structure. JSON by default.
         :returns: An AnalyzeTextOptions instance
         :rtype: AnalyzeTextOptions
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         try:
             obj_dict = json.loads(data)
@@ -513,7 +513,7 @@ class AnalyzeTextOptions(Model):
         :param dict data: A dict using RestAPI structure
         :returns: An AnalyzeTextOptions instance
         :rtype: AnalyzeTextOptions
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         try:
             obj = AnalyzeRequest(data)
@@ -546,7 +546,7 @@ class CustomAnalyzer(LexicalAnalyzer):
     :ivar token_filters: A list of token filters used to filter out or modify the tokens generated
      by a tokenizer. For example, you can specify a lowercase filter that converts all characters to
      lowercase. The filters are run in the order in which they are listed.
-    :vartype token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
+    :vartype token_filters: list[str] or list[~azure.search.documents.indexes.models.TokenFilterName]
     :ivar char_filters: A list of character filters used to prepare input text before it is
      processed by the tokenizer. For instance, they can replace certain characters or symbols. The
      filters are run in the order in which they are listed.
@@ -808,7 +808,7 @@ class SearchResourceEncryptionKey(Model):
 
         :param str data: A JSON str using RestAPI structure.
         :returns: A SearchResourceEncryptionKey instance
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         try:
             obj_dict = json.loads(data)
@@ -835,7 +835,7 @@ class SearchResourceEncryptionKey(Model):
         :param dict data: A dict using RestAPI structure
         :returns: A SearchResourceEncryptionKey instance
         :rtype: SearchResourceEncryptionKey
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         try:
             obj = _SearchResourceEncryptionKey(data)
@@ -927,7 +927,7 @@ class SynonymMap(Model):
         :param str data: A JSON str using RestAPI structure.
         :returns: A SynonymMap instance
         :rtype: SynonymMap
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         try:
             obj_dict = json.loads(data)
@@ -952,7 +952,7 @@ class SynonymMap(Model):
         :param dict data: A dict using RestAPI structure
         :returns: A SynonymMap instance
         :rtype: SynonymMap
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         try:
             obj = _SynonymMap(data)
@@ -1054,7 +1054,7 @@ class SearchIndexerDataSourceConnection(Model):
         if search_indexer_data_source is None:
             return None
         connection_string = (
-            search_indexer_data_source.credentials.connection_string if search_indexer_data_source.credentials else None
+            search_indexer_data_source.credentials.connection_string if search_indexer_data_source.credentials else ""
         )
         return cls(
             name=search_indexer_data_source.name,
@@ -1091,7 +1091,7 @@ class SearchIndexerDataSourceConnection(Model):
         :param str data: A JSON str using RestAPI structure.
         :returns: A SearchIndexerDataSourceConnection instance
         :rtype: SearchIndexerDataSourceConnection
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         try:
             obj_dict = json.loads(data)
@@ -1116,7 +1116,7 @@ class SearchIndexerDataSourceConnection(Model):
         :param dict data: A dict using RestAPI structure
         :returns: A SearchIndexerDataSourceConnection instance
         :rtype: SearchIndexerDataSourceConnection
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         try:
             obj_dict = json.loads(data)
@@ -1318,7 +1318,7 @@ class SearchIndexer(Model):  # pylint: disable=too-many-instance-attributes
         :param str data: A JSON str using RestAPI structure.
         :returns: A SearchIndexer instance
         :rtype: SearchIndexer
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         try:
             obj_dict = json.loads(data)

@@ -41,7 +41,7 @@ class OwnershipManager:  # pylint:disable=too-many-instance-attributes
         self.cached_parition_ids: List[str] = []
         self.owned_partitions: Iterable[Dict[str, Any]] = []
         self.eventhub_client = eventhub_client
-        self.fully_qualified_namespace = eventhub_client._address.hostname  # pylint: disable=protected-access
+        self.fully_qualified_namespace = eventhub_client._address.hostname
         self.eventhub_name = eventhub_client.eventhub_name
         self.consumer_group = consumer_group
         self.owner_id = owner_id

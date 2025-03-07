@@ -24,10 +24,12 @@ from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
 connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
 client = SipRoutingClient.from_connection_string(connection_string)
 
+
 async def delete_sip_trunk_sample():
     trunk_fqdn = os.getenv("COMMUNICATION_SAMPLES_TRUNK_FQDN")
     async with client:
         await client.delete_trunk(trunk_fqdn)
+
 
 if __name__ == "__main__":
     asyncio.run(delete_sip_trunk_sample())

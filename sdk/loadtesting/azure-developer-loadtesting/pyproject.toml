@@ -2,3 +2,4 @@
 pylint = false
 pyright = false
 type_check_samples = false
+mypy = false

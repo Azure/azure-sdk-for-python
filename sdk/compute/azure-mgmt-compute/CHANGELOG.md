@@ -1,5 +1,52 @@
 # Release History
 
+## 34.0.0 (2025-01-20)
+
+### Features Added
+
+  - Model CloudServiceVaultCertificate has a new parameter is_bootstrap_certificate
+
+### Breaking Changes
+
+  - Removed subfolders of some unused Api-Versions for smaller package size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+  - Model Gallery no longer has parameter identity
+  - Model GalleryImage no longer has parameter allow_update_image
+  - Model GalleryImageFeature no longer has parameter starts_at_version
+  - Model GalleryImageUpdate no longer has parameter allow_update_image
+  - Model GalleryImageVersion no longer has parameter restore
+  - Model GalleryImageVersion no longer has parameter validations_profile
+  - Model GalleryImageVersionSafetyProfile no longer has parameter block_deletion_before_end_of_life
+  - Model GalleryImageVersionUpdate no longer has parameter restore
+  - Model GalleryImageVersionUpdate no longer has parameter validations_profile
+  - Model GalleryList no longer has parameter security_profile
+  - Model GalleryUpdate no longer has parameter identity
+  - Model TargetRegion no longer has parameter additional_replica_sets
+  - Model UserArtifactSettings no longer has parameter script_behavior_after_reboot
+  - Removed operation group GalleryInVMAccessControlProfileVersionsOperations
+  - Removed operation group GalleryInVMAccessControlProfilesOperations
+  - Removed operation group SoftDeletedResourceOperation
+
+## 33.1.0 (2024-12-16)
+
+### Features Added
+
+  - Added operation group GalleryInVMAccessControlProfileVersionsOperations
+  - Added operation group GalleryInVMAccessControlProfilesOperations
+  - Added operation group SoftDeletedResourceOperations
+  - Model Gallery has a new parameter identity
+  - Model GalleryImage has a new parameter allow_update_image
+  - Model GalleryImageFeature has a new parameter starts_at_version
+  - Model GalleryImageUpdate has a new parameter allow_update_image
+  - Model GalleryImageVersion has a new parameter restore
+  - Model GalleryImageVersion has a new parameter validations_profile
+  - Model GalleryImageVersionSafetyProfile has a new parameter block_deletion_before_end_of_life
+  - Model GalleryImageVersionUpdate has a new parameter restore
+  - Model GalleryImageVersionUpdate has a new parameter validations_profile
+  - Model GalleryList has a new parameter security_profile
+  - Model GalleryUpdate has a new parameter identity
+  - Model TargetRegion has a new parameter additional_replica_sets
+  - Model UserArtifactSettings has a new parameter script_behavior_after_reboot
+
 ## 33.0.0 (2024-08-20)
 
 ### Features Added

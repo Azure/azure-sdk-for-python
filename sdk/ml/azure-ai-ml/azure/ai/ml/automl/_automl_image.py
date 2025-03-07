@@ -80,7 +80,7 @@ def image_classification(
     :keyword primary_metric: The metric that Automated Machine Learning will optimize for model selection.
             Automated Machine Learning collects more metrics than it can optimize.
             For more information on how metrics are calculated, see
-            https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
+            https://learn.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
 
             Acceptable values: accuracy, AUC_weighted, norm_macro_recall, average_precision_score_weighted,
             and precision_score_weighted
@@ -140,7 +140,7 @@ def image_classification_multilabel(
     :keyword primary_metric: The metric that Automated Machine Learning will optimize for model selection.
             Automated Machine Learning collects more metrics than it can optimize.
             For more information on how metrics are calculated, see
-            https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
+            https://learn.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
 
             Acceptable values: accuracy, AUC_weighted, norm_macro_recall, average_precision_score_weighted,
             precision_score_weighted, and Iou
@@ -200,7 +200,7 @@ def image_object_detection(
     :keyword primary_metric: The metric that Automated Machine Learning will optimize for model selection.
             Automated Machine Learning collects more metrics than it can optimize.
             For more information on how metrics are calculated, see
-            https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
+            https://learn.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
 
             Acceptable values: MeanAveragePrecision
             Defaults to MeanAveragePrecision.
@@ -259,7 +259,7 @@ def image_instance_segmentation(
     :keyword primary_metric: The metric that Automated Machine Learning will optimize for model selection.
             Automated Machine Learning collects more metrics than it can optimize.
             For more information on how metrics are calculated, see
-            https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
+            https://learn.microsoft.com/azure/machine-learning/how-to-configure-auto-train#primary-metric.
 
             Acceptable values: MeanAveragePrecision
             Defaults to MeanAveragePrecision.

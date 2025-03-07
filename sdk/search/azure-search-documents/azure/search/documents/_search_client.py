@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import cast, List, Any, Union, Dict, Optional
+from typing import cast, List, Any, Union, Dict, Optional, MutableMapping
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.credentials import AzureKeyCredential, TokenCredential
@@ -97,6 +97,7 @@ class SearchClient(HeadersMixin):
 
     def close(self) -> None:
         """Close the session.
+
         :return: None
         :rtype: None
         """
@@ -691,7 +692,7 @@ class SearchClient(HeadersMixin):
         :return: List of IndexingResult
         :rtype:  list[IndexingResult]
 
-        :raises ~azure.search.documents.RequestEntityTooLargeError
+        :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
         """
         return self._index_documents_actions(actions=batch.actions, **kwargs)
 

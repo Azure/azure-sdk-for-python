@@ -37,7 +37,7 @@ class TestEvalRunContext:
             print(f"mock_recover_openai_api.call_count: {mock_recover_openai_api.call_count}")
             pass
 
-        mock_append_user_agent.assert_called_once_with(USER_AGENT)
+            mock_append_user_agent.assert_called_once_with(USER_AGENT)
 
     def test_with_pfclient(self, mocker, pf_client_mock):
         mock_append_user_agent = mocker.patch(
@@ -46,7 +46,7 @@ class TestEvalRunContext:
         mock_inject_openai_api = mocker.patch("promptflow.tracing._integrations._openai_injector.inject_openai_api")
         mock_recover_openai_api = mocker.patch("promptflow.tracing._integrations._openai_injector.recover_openai_api")
 
-        with EvalRunContext(code_client_mock):
+        with EvalRunContext(pf_client_mock):
             mock_append_user_agent.assert_not_called()
             mock_inject_openai_api.assert_not_called()
             pass

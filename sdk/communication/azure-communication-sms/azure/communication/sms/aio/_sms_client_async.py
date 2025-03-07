@@ -32,33 +32,31 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
     :param Union[AsyncTokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
     """
+
     def __init__(
-            self,
-            endpoint: str,
-            credential: Union[AsyncTokenCredential, AzureKeyCredential],
-            **kwargs: Any,
-        ) -> None:
+        self,
+        endpoint: str,
+        credential: Union[AsyncTokenCredential, AzureKeyCredential],
+        **kwargs: Any,
+    ) -> None:
         try:
-            if not endpoint.lower().startswith('http'):
+            if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
         except AttributeError as e:
             raise ValueError("Account URL must be a string.") from e
 
         if not credential:
-            raise ValueError(
-                "invalid credential from connection string.")
+            raise ValueError("invalid credential from connection string.")
 
         self._endpoint = endpoint
         self._authentication_policy = get_authentication_policy(endpoint, credential, decode_url=True, is_async=True)
 
         self._sms_service_client = AzureCommunicationSMSService(
-            self._endpoint,
-            authentication_policy=self._authentication_policy,
-            sdk_moniker=SDK_MONIKER,
-            **kwargs)
+            self._endpoint, authentication_policy=self._authentication_policy, sdk_moniker=SDK_MONIKER, **kwargs
+        )
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> 'SmsClient':
+    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "SmsClient":
         """Create SmsClient from a Connection String.
 
         :param str conn_str:
@@ -76,7 +74,7 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
                 :caption: Creating the SmsClient from a connection string.
         """
         endpoint, access_key = parse_connection_str(conn_str)
-        return cls(endpoint, access_key, **kwargs)
+        return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
     @distributed_trace_async
     async def send(
@@ -87,7 +85,7 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
         *,
         enable_delivery_report: bool = False,
         tag: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[SmsSendResult]:
         """Sends SMSs to phone numbers.
 
@@ -105,38 +103,37 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
         if isinstance(to, str):
             to = [to]
 
-        sms_send_options = SmsSendOptions(
-            enable_delivery_report=enable_delivery_report,
-            tag=tag
-        )
+        sms_send_options = SmsSendOptions(enable_delivery_report=enable_delivery_report, tag=tag)
 
         request = SendMessageRequest(
             from_property=from_,
             sms_recipients=[
                 SmsRecipient(
-                    to=p,
-                    repeatability_request_id=str(uuid4()),
-                    repeatability_first_sent=get_current_utc_time()
-                ) for p in to
+                    to=p, repeatability_request_id=str(uuid4()), repeatability_first_sent=get_current_utc_time()
+                )
+                for p in to
             ],
             message=message,
             sms_send_options=sms_send_options,
-            **kwargs)
+            **kwargs,
+        )
 
-        return await self._sms_service_client.sms.send(
+        response = await self._sms_service_client.sms.send(
             request,
-            cls=lambda pr, r, e: [
-                SmsSendResult(
-                    to=item.to,
-                    message_id=item.message_id,
-                    http_status_code=item.http_status_code,
-                    successful=item.successful,
-                    error_message=item.error_message
-                ) for item in r.value
-            ],
-            **kwargs)
+            **kwargs
+        )
 
-    async def __aenter__(self) -> 'SmsClient':
+        return [
+            SmsSendResult(
+                to=item.to,
+                message_id=item.message_id,
+                http_status_code=item.http_status_code,
+                successful=item.successful,
+                error_message=item.error_message
+            ) for item in response.value
+        ]
+
+    async def __aenter__(self) -> "SmsClient":
         await self._sms_service_client.__aenter__()
         return self
 

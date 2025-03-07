@@ -21,7 +21,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create(self, resource_group):
+    async def test_restore_points_begin_create(self, resource_group):
         response = await (
             await self.client.restore_points.begin_create(
                 resource_group_name=resource_group.name,
@@ -195,7 +195,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_restore_points_begin_delete(self, resource_group):
         response = await (
             await self.client.restore_points.begin_delete(
                 resource_group_name=resource_group.name,
@@ -210,7 +210,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_restore_points_get(self, resource_group):
         response = await self.client.restore_points.get(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",

@@ -67,24 +67,29 @@ class BlobCheckpointStore(CheckpointStore):
     """
 
     def __init__(
-            self,
-            blob_account_url: str,
-            container_name: str,
-            credential: Optional[Union["AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,
-            api_version: str = '2019-07-07',
-            **kwargs: Any
+        self,
+        blob_account_url: str,
+        container_name: str,
+        credential: Optional[Union["AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,
+        *,
+        api_version: str = "2019-07-07",
+        secondary_hostname: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         self._container_client = kwargs.pop("container_client", None)
         if not self._container_client:
-            api_version = kwargs.pop("api_version", None)
-            if api_version:
-                headers = kwargs.get("headers")
-                if headers:
-                    headers["x-ms-version"] = api_version
-                else:
-                    kwargs["headers"] = {"x-ms-version": api_version}
+            headers = kwargs.get("headers")
+            if headers:
+                headers["x-ms-version"] = api_version
+            else:
+                kwargs["headers"] = {"x-ms-version": api_version}
             self._container_client = ContainerClient(
-                blob_account_url, container_name, credential=credential, **kwargs
+                blob_account_url,
+                container_name,
+                credential=credential,
+                api_version=api_version,
+                secondary_hostname=secondary_hostname,
+                **kwargs
             )
         self._cached_blob_clients = defaultdict()  # type: Dict[str, BlobClient]
 
@@ -94,6 +99,9 @@ class BlobCheckpointStore(CheckpointStore):
         conn_str: str,
         container_name: str,
         credential: Optional[Union["AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,
+        *,
+        api_version: str = "2019-07-07",
+        secondary_hostname: Optional[str] = None,
         **kwargs: Any
     ) -> "BlobCheckpointStore":
         """Create BlobCheckpointStore from a storage connection string.
@@ -117,11 +125,20 @@ class BlobCheckpointStore(CheckpointStore):
         :rtype: ~azure.eventhub.extensions.checkpointstoreblob.BlobCheckpointStore
         """
 
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
-        if 'secondary_hostname' not in kwargs:
-            kwargs['secondary_hostname'] = secondary
+        account_url, secondary, credential = parse_connection_str(  # type: ignore[assignment]
+            conn_str, credential, "blob"
+        )  # type: ignore[arg-type]
+        if not secondary_hostname:
+            secondary_hostname = secondary
 
-        return cls(account_url, container_name, credential=credential, **kwargs)
+        return cls(
+            account_url,
+            container_name,
+            credential=credential,
+            api_version=api_version,
+            secondary_hostname=secondary_hostname,
+            **kwargs
+        )
 
     def __enter__(self) -> "BlobCheckpointStore":
         self._container_client.__enter__()
@@ -151,7 +168,7 @@ class BlobCheckpointStore(CheckpointStore):
         )
         blob_name = blob_name.lower()
         blob_client = self._get_blob_client(blob_name)
-        metadata = {'ownerid': ownership['owner_id']}
+        metadata = {"ownerid": ownership["owner_id"]}
         try:
             uploaded_blob_properties = blob_client.set_blob_metadata(metadata, **kwargs)
         except ResourceNotFoundError:
@@ -160,9 +177,7 @@ class BlobCheckpointStore(CheckpointStore):
                 data=UPLOAD_DATA, overwrite=True, metadata=metadata, **kwargs
             )
         ownership["etag"] = uploaded_blob_properties["etag"]
-        ownership["last_modified_time"] = _to_timestamp(
-            uploaded_blob_properties["last_modified"]
-        )
+        ownership["last_modified_time"] = _to_timestamp(uploaded_blob_properties["last_modified"])
 
     def _claim_one_partition(self, ownership, **kwargs):
         updated_ownership = copy.deepcopy(ownership)
@@ -196,11 +211,7 @@ class BlobCheckpointStore(CheckpointStore):
             return updated_ownership  # Keep the ownership if an unexpected error happens
 
     def list_ownership(
-        self,
-        fully_qualified_namespace: str,
-        eventhub_name: str,
-        consumer_group: str,
-        **kwargs: Any
+        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str, **kwargs: Any
     ) -> Iterable[Dict[str, Any]]:
         """Retrieves a complete ownership list from the storage blob.
 
@@ -224,9 +235,7 @@ class BlobCheckpointStore(CheckpointStore):
         :rtype: iterable[dict[str, any]]
         """
         try:
-            blob_prefix = "{}/{}/{}/ownership/".format(
-                fully_qualified_namespace, eventhub_name, consumer_group
-            )
+            blob_prefix = "{}/{}/{}/ownership/".format(fully_qualified_namespace, eventhub_name, consumer_group)
             blobs = self._container_client.list_blobs(
                 name_starts_with=blob_prefix.lower(), include=["metadata"], **kwargs
             )
@@ -243,7 +252,7 @@ class BlobCheckpointStore(CheckpointStore):
                 }
                 result.append(ownership)
             return result
-        except Exception as error:  # pylint:disable=broad-except
+        except Exception as error:
             logger.warning(
                 "An exception occurred during list_ownership for "
                 "namespace %r eventhub %r consumer group %r. "
@@ -255,11 +264,7 @@ class BlobCheckpointStore(CheckpointStore):
             )
             raise
 
-    def claim_ownership(
-        self,
-        ownership_list: Iterable[Dict[str, Any]],
-        **kwargs: Any
-    ) -> Iterable[Dict[str, Any]]:
+    def claim_ownership(self, ownership_list: Iterable[Dict[str, Any]], **kwargs: Any) -> Iterable[Dict[str, Any]]:
         """Tries to claim ownership for a list of specified partitions.
 
         :param iterable[dict[str, any]] ownership_list: Iterable of dictionaries containing all the ownerships to claim.
@@ -323,9 +328,7 @@ class BlobCheckpointStore(CheckpointStore):
             blob_client.set_blob_metadata(metadata, **kwargs)
         except ResourceNotFoundError:
             logger.info("Upload checkpoint blob %r because it hasn't existed in the container yet.", blob_name)
-            blob_client.upload_blob(
-                data=UPLOAD_DATA, overwrite=True, metadata=metadata, **kwargs
-            )
+            blob_client.upload_blob(data=UPLOAD_DATA, overwrite=True, metadata=metadata, **kwargs)
 
     def list_checkpoints(
         self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str, **kwargs: Any
@@ -349,12 +352,8 @@ class BlobCheckpointStore(CheckpointStore):
                 - `offset` (str): The offset of the :class:`EventData<azure.eventhub.EventData>`.
         :rtype: iterable[dict[str,any]]
         """
-        blob_prefix = "{}/{}/{}/checkpoint/".format(
-            fully_qualified_namespace, eventhub_name, consumer_group
-        )
-        blobs = self._container_client.list_blobs(
-            name_starts_with=blob_prefix.lower(), include=["metadata"], **kwargs
-        )
+        blob_prefix = "{}/{}/{}/checkpoint/".format(fully_qualified_namespace, eventhub_name, consumer_group)
+        blobs = self._container_client.list_blobs(name_starts_with=blob_prefix.lower(), include=["metadata"], **kwargs)
         result = []
         for b in blobs:
             metadata = b.metadata

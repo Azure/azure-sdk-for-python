@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-# pylint:disable=too-many-lines
 import threading
 import time
 import logging
@@ -55,7 +54,6 @@ from ._servicebus_session import ServiceBusSession
 
 if TYPE_CHECKING:
     try:
-        # pylint:disable=unused-import
         from uamqp import ReceiveClient as uamqp_ReceiveClientSync, Message as uamqp_Message
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
     except ImportError:
@@ -74,7 +72,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-many-instance-attributes
+class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many-instance-attributes
     """The ServiceBusReceiver class defines a high level interface for
     receiving messages from the Azure Service Bus Queue or Topic Subscription.
 
@@ -255,7 +253,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
     next = __next__  # for python2.7
 
     @classmethod
-    def _from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusReceiver":
+    def _from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusReceiver": # pylint: disable=docstring-keyword-should-match-keyword-only
         """Create a ServiceBusReceiver from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
@@ -563,7 +561,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
 
     def close(self) -> None:
         super(ServiceBusReceiver, self).close()
-        self._message_iter = None  # pylint: disable=attribute-defined-outside-init
+        self._message_iter = None
 
     def _get_streaming_message_iter(self, max_wait_time: Optional[float] = None) -> Iterator[ServiceBusReceivedMessage]:
         """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
@@ -771,7 +769,11 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         if not sequence_number:
-            sequence_number = self._last_received_sequenced_number or 1
+            sequence_number = (
+                self._last_received_sequenced_number + 1
+                if self._last_received_sequenced_number
+                else 1
+            )
         if int(max_message_count) < 0:
             raise ValueError("max_message_count must be 1 or greater.")
 
@@ -909,7 +911,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin):  # pylint: disable=too-man
         timeout: Optional[float] = None,
         **kwargs: Any,
     ) -> datetime.datetime:
-        # pylint: disable=protected-access,no-member
+        # pylint: disable=protected-access
         """Renew the message lock.
 
         This will maintain the lock on the message to ensure it is not returned to the queue

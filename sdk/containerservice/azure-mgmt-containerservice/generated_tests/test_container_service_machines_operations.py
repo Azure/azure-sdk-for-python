@@ -20,12 +20,12 @@ class TestContainerServiceMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_machines_list(self, resource_group):
         response = self.client.machines.list(
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,13 +33,13 @@ class TestContainerServiceMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_machines_get(self, resource_group):
         response = self.client.machines.get(
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
             machine_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself

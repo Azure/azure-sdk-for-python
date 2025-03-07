@@ -21,11 +21,11 @@ class TestNetworkManagementLoadBalancerOutboundRulesOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_load_balancer_outbound_rules_list(self, resource_group):
         response = self.client.load_balancer_outbound_rules.list(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestNetworkManagementLoadBalancerOutboundRulesOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_load_balancer_outbound_rules_get(self, resource_group):
         response = await self.client.load_balancer_outbound_rules.get(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             outbound_rule_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself

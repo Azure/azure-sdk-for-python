@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=anomalous-backslash-in-string
 from datetime import timedelta, datetime
 from typing import Any, cast, Optional, Tuple, Union, Sequence
 
@@ -19,6 +18,7 @@ from .._generated.metrics.aio._client import MonitorMetricsClient
 from .._models import MetricsQueryResult, MetricDefinition, MetricNamespace
 from ._helpers_async import get_authentication_policy
 from .._helpers import construct_iso8601
+from .._version import SDK_MONIKER
 
 
 class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-keyword
@@ -56,7 +56,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         authentication_policy = kwargs.pop("authentication_policy", None) or get_authentication_policy(
             credential, audience
         )
-
+        kwargs.setdefault("sdk_moniker", SDK_MONIKER)
         self._client = MonitorMetricsClient(
             credential=credential, endpoint=self._endpoint, authentication_policy=authentication_policy, **kwargs
         )

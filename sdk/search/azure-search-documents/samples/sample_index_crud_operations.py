@@ -81,7 +81,6 @@ def update_index():
         SimpleField(name="hotelName", type=SearchFieldDataType.String, searchable=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
         SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
-        SearchableField(name="hotelName", type=SearchFieldDataType.String),
         ComplexField(
             name="address",
             fields=[

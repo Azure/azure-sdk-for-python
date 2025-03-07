@@ -25,6 +25,7 @@ from azure.maps.search import BoundaryResultType
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 async def get_polygon_async():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search.aio import MapsSearchClient
@@ -38,7 +39,7 @@ async def get_polygon_async():
                 resolution=Resolution.SMALL,
             )
 
-            if not result.get('geometry', False):
+            if not result.get("geometry", False):
                 print("No geometry found")
                 return
 
@@ -48,5 +49,6 @@ async def get_polygon_async():
                 print(f"Error Code: {exception.error.code}")
                 print(f"Message: {exception.error.message}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(get_polygon_async())

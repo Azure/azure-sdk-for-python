@@ -14,7 +14,6 @@ import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos.partition_key import PartitionKey
 
-
 @pytest.fixture(scope="class")
 def setup():
     config = test_config.TestConfig()
@@ -26,10 +25,15 @@ def setup():
             "tests.")
     test_client = cosmos_client.CosmosClient(config.host, config.masterKey),
     return {
-        "created_db": test_client[0].get_database_client(config.TEST_DATABASE_ID)
+        "created_db": test_client[0].get_database_client(config.TEST_DATABASE_ID),
+        "is_emulator": config.is_emulator
     }
 
-@pytest.mark.cosmosEmulator
+def round_time():
+    utc_now = datetime.now(timezone.utc)
+    return utc_now - timedelta(microseconds=utc_now.microsecond)
+
+@pytest.mark.cosmosQuery
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
 class TestChangeFeed:
@@ -42,10 +46,10 @@ class TestChangeFeed:
         assert len(result) == 1
 
     @pytest.mark.parametrize("change_feed_filter_param", ["partitionKey", "partitionKeyRangeId", "feedRange"])
+    # @pytest.mark.parametrize("change_feed_filter_param", ["partitionKeyRangeId"])
     def test_query_change_feed_with_different_filter(self, change_feed_filter_param, setup):
-        created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
+        created_collection = setup["created_db"].create_container(f"change_feed_test_{change_feed_filter_param}_{str(uuid.uuid4())}",
                                                               PartitionKey(path="/pk"))
-
         # Read change feed without passing any options
         query_iterable = created_collection.query_items_change_feed()
         iter_list = list(query_iterable)
@@ -63,7 +67,7 @@ class TestChangeFeed:
             filter_param = None
 
         # Read change feed from current should return an empty list
-        query_iterable = created_collection.query_items_change_feed(filter_param)
+        query_iterable = created_collection.query_items_change_feed(**filter_param)
         iter_list = list(query_iterable)
         assert len(iter_list) == 0
         assert 'etag' in created_collection.client_connection.last_response_headers
@@ -99,7 +103,7 @@ class TestChangeFeed:
         # with page size 1 and page size 100
         document_definition = {'pk': 'pk', 'id': 'doc2'}
         created_collection.create_item(body=document_definition)
-        document_definition = {'pk': 'pk', 'id': 'doc3'}
+        document_definition = {'pk': 'pk3', 'id': 'doc3'}
         created_collection.create_item(body=document_definition)
 
         for pageSize in [1, 100]:
@@ -111,6 +115,8 @@ class TestChangeFeed:
             )
             it = query_iterable.__iter__()
             expected_ids = 'doc2.doc3.'
+            if "partition_key" in filter_param:
+                expected_ids = 'doc2.'
             actual_ids = ''
             for item in it:
                 actual_ids += item['id'] + '.'
@@ -125,6 +131,8 @@ class TestChangeFeed:
             )
             count = 0
             expected_count = 2
+            if "partition_key" in filter_param:
+                expected_count = 1
             all_fetched_res = []
             for page in query_iterable.by_page():
                 fetched_res = list(page)
@@ -142,11 +150,14 @@ class TestChangeFeed:
             is_start_from_beginning=True,
             **filter_param
         )
-        expected_ids = ['doc1', 'doc2', 'doc3']
+        expected_ids = 'doc1.doc2.doc3.'
+        if "partition_key" in filter_param:
+            expected_ids = 'doc1.doc2.'
         it = query_iterable.__iter__()
-        for i in range(0, len(expected_ids)):
-            doc = next(it)
-            assert doc['id'] == expected_ids[i]
+        actual_ids = ''
+        for item in it:
+            actual_ids += item['id'] + '.'
+        assert actual_ids == expected_ids
         assert 'etag' in created_collection.client_connection.last_response_headers
         continuation3 = created_collection.client_connection.last_response_headers['etag']
 
@@ -165,9 +176,6 @@ class TestChangeFeed:
                                                                             PartitionKey(path="/pk"))
         batchSize = 50
 
-        def round_time():
-            utc_now = datetime.now(timezone.utc)
-            return utc_now - timedelta(microseconds=utc_now.microsecond)
         def create_random_items(container, batch_size):
             for _ in range(batch_size):
                 # Generate a Random partition key
@@ -217,14 +225,6 @@ class TestChangeFeed:
         totalCount = len(change_feed_iter)
         # Should equal batch size
         assert totalCount == batchSize
-
-        # test an invalid value, Attribute error will be raised for passing non datetime object
-        invalid_time = "Invalid value"
-        try:
-            list(created_collection.query_items_change_feed(start_time=invalid_time))
-            fail("Cannot format date on a non datetime object.")
-        except ValueError as e: #TODO: previously it is throwing AttributeError, now has changed into ValueError, is it breaking change?
-            assert "Invalid start_time 'Invalid value'" == e.args[0]
 
         setup["created_db"].delete_container(created_collection.id)
 

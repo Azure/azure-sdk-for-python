@@ -20,9 +20,9 @@ class TestWebSiteManagementKubeEnvironmentsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_kube_environments_list_by_subscription(self, resource_group):
         response = self.client.kube_environments.list_by_subscription(
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestWebSiteManagementKubeEnvironmentsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_kube_environments_list_by_resource_group(self, resource_group):
         response = self.client.kube_environments.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,11 +41,11 @@ class TestWebSiteManagementKubeEnvironmentsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_kube_environments_get(self, resource_group):
         response = self.client.kube_environments.get(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestWebSiteManagementKubeEnvironmentsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_kube_environments_begin_create_or_update(self, resource_group):
         response = self.client.kube_environments.begin_create_or_update(
             resource_group_name=resource_group.name,
             name="str",
@@ -94,7 +94,7 @@ class TestWebSiteManagementKubeEnvironmentsOperations(AzureMgmtRecordedTestCase)
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -102,11 +102,11 @@ class TestWebSiteManagementKubeEnvironmentsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_kube_environments_begin_delete(self, resource_group):
         response = self.client.kube_environments.begin_delete(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -114,7 +114,7 @@ class TestWebSiteManagementKubeEnvironmentsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_kube_environments_update(self, resource_group):
         response = self.client.kube_environments.update(
             resource_group_name=resource_group.name,
             name="str",
@@ -151,7 +151,7 @@ class TestWebSiteManagementKubeEnvironmentsOperations(AzureMgmtRecordedTestCase)
                 "staticIp": "str",
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself

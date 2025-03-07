@@ -95,7 +95,9 @@ def mock_workspace_operation(
 
 @pytest.fixture
 def mock_runs_operation(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
+    mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2022_10_01: Mock,
 ) -> RunOperations:
     yield RunOperations(
         operation_scope=mock_workspace_scope,
@@ -110,7 +112,9 @@ def mock_job_operation(
     mock_operation_config: OperationConfig,
     mock_aml_services_2023_02_01_preview: Mock,
     mock_aml_services_2024_01_01_preview: Mock,
+    mock_aml_services_2024_10_01_preview: Mock,
     mock_aml_services_2023_08_01_preview: Mock,
+    mock_aml_services_2025_01_01_preview: Mock,
     mock_aml_services_run_history: Mock,
     mock_machinelearning_client: Mock,
     mock_code_operation: Mock,
@@ -129,6 +133,8 @@ def mock_job_operation(
         operation_config=mock_operation_config,
         service_client_02_2023_preview=mock_aml_services_2023_02_01_preview,
         service_client_01_2024_preview=mock_aml_services_2024_01_01_preview,
+        service_client_10_2024_preview=mock_aml_services_2024_10_01_preview,
+        service_client_01_2025_preview=mock_aml_services_2025_01_01_preview,
         service_client_run_history=mock_aml_services_run_history,
         all_operations=mock_machinelearning_client._operation_container,
         credential=Mock(spec_set=DefaultAzureCredential),
@@ -230,12 +236,13 @@ class TestJobOperations:
                 token=jwt.encode({"aud": aml_resource_id}, key="utf-8"), expires_on=1234
             )
             mock_job_operation.create_or_update(job=job)
-            mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
+            mock_job_operation.service_client_01_2025_preview.jobs.create_or_update.assert_called_once()
             mock_job_operation._credential.get_token.assert_called_once_with(azure_ml_scopes[0])
 
         with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
             mock_get_token.return_value = AccessToken(
-                token=jwt.encode({"aud": "https://management.azure.com"}, key="utf-8"), expires_on=1234
+                token=jwt.encode({"aud": "https://management.azure.com"}, key="utf-8"),
+                expires_on=1234,
             )
             with pytest.raises(Exception):
                 mock_job_operation.create_or_update(job=job)

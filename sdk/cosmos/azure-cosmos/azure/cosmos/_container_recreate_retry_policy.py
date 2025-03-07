@@ -121,7 +121,7 @@ class ContainerRecreateRetryPolicy:
     async def _extract_partition_key_async(self, client: Optional[Any],
                                            container_cache: Optional[Dict[str, Any]],
                                            body: str) -> Optional[Union[str, List, Dict]]:
-        partition_key_definition = container_cache["partitionKey"] if container_cache else None
+        partition_key_definition: Optional[Dict[str, Any]] = container_cache["partitionKey"] if container_cache else None # pylint: disable=line-too-long
         body_dict = self.__str_to_dict(body)
         new_partition_key: Optional[Union[str, List, Dict]] = None
         if body_dict:
@@ -133,7 +133,7 @@ class ContainerRecreateRetryPolicy:
             elif isinstance(options["partitionKey"], _Empty):
                 new_partition_key = []
             # else serialize using json dumps method which apart from regular values will serialize None into null
-            elif partition_key_definition["kind"] == "MultiHash":
+            elif partition_key_definition and partition_key_definition["kind"] == "MultiHash":
                 new_partition_key = json.dumps(options["partitionKey"], separators=(',', ':'))
             else:
                 new_partition_key = json.dumps([options["partitionKey"]])

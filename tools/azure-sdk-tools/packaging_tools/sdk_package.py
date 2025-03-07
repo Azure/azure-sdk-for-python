@@ -5,8 +5,11 @@ import logging
 import os
 from pathlib import Path
 from subprocess import check_call
+from typing import Any
+import multiprocessing
+from functools import partial
 
-from .package_utils import create_package, change_log_generate, extract_breaking_change
+from .package_utils import create_package, change_log_generate, extract_breaking_change, get_version_info
 
 logging.basicConfig(
     stream=sys.stdout,
@@ -14,6 +17,11 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %X",
 )
 _LOGGER = logging.getLogger(__name__)
+
+
+def execute_func_with_timeout(func, timeout: int = 900) -> Any:
+    """Execute function with timeout"""
+    return multiprocessing.Pool(processes=1).apply_async(func).get(timeout)
 
 
 def main(generate_input, generate_output):
@@ -27,15 +35,20 @@ def main(generate_input, generate_output):
         package_name = package["packageName"]
         prefolder = package["path"][0]
         # Changelog
-        last_version = ["first release"]
+        last_version, last_stable_release = get_version_info(package_name, package["tagIsStable"])
+        change_log_func = partial(
+            change_log_generate,
+            package_name,
+            last_version,
+            package["tagIsStable"],
+            last_stable_release=last_stable_release,
+            prefolder=prefolder,
+            is_multiapi=package["isMultiapi"],
+        )
         try:
-            md_output = change_log_generate(
-                package_name,
-                last_version,
-                package["tagIsStable"],
-                prefolder=prefolder,
-                is_multiapi=package["isMultiapi"],
-            )
+            md_output = execute_func_with_timeout(change_log_func)
+        except multiprocessing.TimeoutError:
+            md_output = "change log generation was timeout!!!"
         except:
             md_output = "change log generation failed!!!"
         package["changelog"] = {
@@ -43,7 +56,7 @@ def main(generate_input, generate_output):
             "hasBreakingChange": "Breaking Changes" in md_output,
             "breakingChangeItems": extract_breaking_change(md_output),
         }
-        package["version"] = last_version[-1]
+        package["version"] = last_version
 
         _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
         # Built package
@@ -73,7 +86,7 @@ def main(generate_input, generate_output):
                 if "_python.json" in file and package_name in file:
                     package["apiViewArtifact"] = str(Path(package_path, file))
         except Exception as e:
-            _LOGGER.info(f"Fail to generate ApiView token file for {package_name}: {e}")
+            _LOGGER.debug(f"Fail to generate ApiView token file for {package_name}: {e}")
         # Installation package
         package["installInstructions"] = {
             "full": "You can install the use using pip install of the artifacts.",
@@ -88,6 +101,10 @@ def main(generate_input, generate_output):
 
     with open(generate_output, "w") as writer:
         json.dump(result, writer)
+
+    _LOGGER.info(
+        f"Congratulations! Succeed to build package for {[p['packageName'] for p in result['packages']]}. And you shall be able to see the generated code when running 'git status'."
+    )
 
 
 def generate_main():

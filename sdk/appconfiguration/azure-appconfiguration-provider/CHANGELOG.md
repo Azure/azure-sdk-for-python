@@ -1,10 +1,42 @@
 # Release History
 
-## 2.0.0b2 (2024-09-12)
+## 2.0.1 (2025-02-27)
 
 ### Bugs Fixed
 
-* Fixing ETag to be "ETag" instead of "etag" in feature flag telemetry.
+* Updates the failure to load from a config store from a debug level log to a warning level log.
+* Fixes an issue where the stack trace from the azure sdk wasn't being logged on startup.
+
+### Other Changes
+
+* Bumped minimum dependency on `azure-core` to `>=1.30.0`
+* Bumped minimum dependency on `azure-appconfiguration` to `>=1.6.1`
+
+## 2.0.0 (2025-01-06)
+
+### Features Added
+
+* Added support for load balancing between replicas.
+* Added support for adding telemetry information to feature flags.
+
+## 2.0.0b3 (2024-11-13)
+
+### Breaking Changes
+
+* Allocation Id value changed so other providers can match the value.
+
+## 2.0.0b2 (2024-10-11)
+
+### Feature Added
+
+* Added AllocationId to the feature flag telemetry metadata when the feature flag has telemetry enabled.
+
+### Bugs Fixed
+
+* Fixed a number of cases where snake case was used instead of pascal case for feature flag telemetry.
+  * etag -> ETag
+  * feature_flag_reference -> FeatureFlagReference
+  * feature_flag_id -> FeatureFlagId
 
 ## 2.0.0b1 (2024-09-11)
 

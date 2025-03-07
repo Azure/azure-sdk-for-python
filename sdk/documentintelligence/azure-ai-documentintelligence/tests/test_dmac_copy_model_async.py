@@ -32,7 +32,7 @@ class TestCopyModelAsync(AsyncDocumentIntelligenceTest):
         client = kwargs.pop("client")
         with pytest.raises(ValueError) as e:
             async with client:
-                await client.begin_copy_model_to(model_id=None, copy_to_request={})
+                await client.begin_copy_model_to(model_id=None, body={})
         assert "No value for given attribute" in str(e.value)
 
     @DocumentIntelligencePreparer()
@@ -42,7 +42,7 @@ class TestCopyModelAsync(AsyncDocumentIntelligenceTest):
         client = kwargs.pop("client")
         with pytest.raises(ResourceNotFoundError):
             async with client:
-                await client.begin_copy_model_to(model_id="", copy_to_request={})
+                await client.begin_copy_model_to(model_id="", body={})
 
     @skip_flaky_test
     @DocumentIntelligencePreparer()
@@ -66,7 +66,7 @@ class TestCopyModelAsync(AsyncDocumentIntelligenceTest):
             copy_auth = await client.authorize_model_copy(
                 AuthorizeCopyRequest(model_id=recorded_variables.get("model_id_copy"), tags={"testkey": "testvalue"})
             )
-            poller = await client.begin_copy_model_to(model.model_id, copy_to_request=copy_auth)
+            poller = await client.begin_copy_model_to(model.model_id, body=copy_auth)
             copy = await poller.result()
 
             assert copy.api_version == model.api_version

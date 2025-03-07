@@ -21,12 +21,12 @@ class TestCosmosDBManagementPercentileOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_metrics(self, resource_group):
+    async def test_percentile_list_metrics(self, resource_group):
         response = self.client.percentile.list_metrics(
             resource_group_name=resource_group.name,
             account_name="str",
             filter="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -299,7 +299,7 @@ class Environment(Asset, LocalizableMixin):
         }
 
     def _to_dict(self) -> Dict:
-        res: dict = EnvironmentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        res: dict = EnvironmentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 
     def validate(self) -> None:

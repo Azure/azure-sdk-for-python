@@ -11,7 +11,7 @@ from azure.keyvault.certificates import CertificatePolicy, CertificateContentTyp
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://learn.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
@@ -76,9 +76,7 @@ async def run_sample():
     # After one year, the bank account is still active, and we have decided to update the tags.
     print("\n.. Update a certificate by name")
     tags = {"a": "b"}
-    updated_certificate = await client.update_certificate_properties(
-        certificate_name=bank_certificate.name, tags=tags
-    )
+    updated_certificate = await client.update_certificate_properties(certificate_name=bank_certificate.name, tags=tags)
     assert updated_certificate.properties
     print(
         f"Certificate with name '{bank_certificate.name}' was updated on date "

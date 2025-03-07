@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,no-value-for-parameter,disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype,ungrouped-imports,line-too-long,too-many-statements
+# pylint: disable=protected-access,disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype,line-too-long,too-many-statements
 
 import re
 from contextlib import contextmanager
@@ -50,8 +50,9 @@ from azure.ai.ml._utils._registry_utils import (
     get_storage_details_for_registry_assets,
 )
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
-from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder, _is_evaluator
+from azure.ai.ml._utils.utils import _is_evaluator, resolve_short_datastore_url, validate_ml_flow_folder
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, REGISTRY_URI_FORMAT, AzureMLResourceType
+from azure.ai.ml.entities import AzureDataLakeGen2Datastore
 from azure.ai.ml.entities._assets import Environment, Model, ModelPackage
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
@@ -108,7 +109,7 @@ class ModelOperations(_ScopeDependentOperations):
         **kwargs,
     ):
         super(ModelOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._model_versions_operation = service_client.model_versions
         self._model_container_operation = service_client.model_containers
         self._service_client = service_client
@@ -271,7 +272,7 @@ class ModelOperations(_ScopeDependentOperations):
                 if not result and self._registry_name:
                     result = self._get(name=str(model.name), version=model.version)
 
-            except Exception as e:  # pylint: disable=W0718
+            except Exception as e:
                 # service side raises an exception if we attempt to update an existing asset's path
                 if str(e) == ASSET_PATH_ERROR:
                     raise AssetPathException(
@@ -415,9 +416,24 @@ class ModelOperations(_ScopeDependentOperations):
                     else:
                         raise e
 
-            container = ds.container_name
-            datastore_type = ds.type
+            if isinstance(ds, AzureDataLakeGen2Datastore):
+                container = ds.filesystem
+                try:
+                    from azure.identity import ClientSecretCredential
 
+                    token_credential = ClientSecretCredential(
+                        tenant_id=ds.credentials["tenant_id"],
+                        client_id=ds.credentials["client_id"],
+                        client_secret=ds.credentials["client_secret"],
+                        authority=ds.credentials["authority_url"],
+                    )
+                    credential = token_credential
+                except (KeyError, TypeError):
+                    pass
+
+            else:
+                container = ds.container_name
+            datastore_type = ds.type
             storage_client = get_storage_client(
                 credential=credential,
                 container_name=container,
@@ -439,7 +455,7 @@ class ModelOperations(_ScopeDependentOperations):
         version: Optional[str] = None,
         label: Optional[str] = None,
         **kwargs: Any,
-    ) -> None:  # pylint:disable=unused-argument
+    ) -> None:
         """Archive a model asset.
 
         :param name: Name of model asset.
@@ -475,7 +491,7 @@ class ModelOperations(_ScopeDependentOperations):
         version: Optional[str] = None,
         label: Optional[str] = None,
         **kwargs: Any,
-    ) -> None:  # pylint:disable=unused-argument
+    ) -> None:
         """Restore an archived model asset.
 
         :param name: Name of model asset.

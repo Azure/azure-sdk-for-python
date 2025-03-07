@@ -21,9 +21,9 @@ class TestContainerServiceSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_snapshots_list(self, resource_group):
         response = self.client.snapshots.list(
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestContainerServiceSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_snapshots_list_by_resource_group(self, resource_group):
         response = self.client.snapshots.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestContainerServiceSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_snapshots_get(self, resource_group):
         response = await self.client.snapshots.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestContainerServiceSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_snapshots_create_or_update(self, resource_group):
         response = await self.client.snapshots.create_or_update(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -81,7 +81,7 @@ class TestContainerServiceSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "vmSize": "str",
             },
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -89,12 +89,12 @@ class TestContainerServiceSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update_tags(self, resource_group):
+    async def test_snapshots_update_tags(self, resource_group):
         response = await self.client.snapshots.update_tags(
             resource_group_name=resource_group.name,
             resource_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -102,11 +102,11 @@ class TestContainerServiceSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_snapshots_delete(self, resource_group):
         response = await self.client.snapshots.delete(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-09-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself

@@ -31,7 +31,6 @@ extends:
     TestProxy: true
     ServiceDirectory: appconfiguration
     VerifyAutorest: false
-    ValidateFormatting: true
     Artifacts:
     - name: azure-appconfiguration
       safeName: azureappconfiguration

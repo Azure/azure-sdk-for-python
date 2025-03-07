@@ -21,10 +21,10 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_check_availability(self, resource_group):
+    async def test_domains_check_availability(self, resource_group):
         response = await self.client.domains.check_availability(
             identifier={"name": "str"},
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -32,9 +32,9 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_domains_list(self, resource_group):
         response = self.client.domains.list(
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,9 +42,9 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_control_center_sso_request(self, resource_group):
+    async def test_domains_get_control_center_sso_request(self, resource_group):
         response = await self.client.domains.get_control_center_sso_request(
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -52,10 +52,10 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_recommendations(self, resource_group):
+    async def test_domains_list_recommendations(self, resource_group):
         response = self.client.domains.list_recommendations(
             parameters={"keywords": "str", "maxDomainRecommendations": 0},
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -63,10 +63,10 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_domains_list_by_resource_group(self, resource_group):
         response = self.client.domains.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -74,11 +74,11 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_domains_get(self, resource_group):
         response = await self.client.domains.get(
             resource_group_name=resource_group.name,
             domain_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_domains_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.domains.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -196,7 +196,7 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
                     "targetDnsType": "str",
                     "type": "str",
                 },
-                api_version="2023-12-01",
+                api_version="2024-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -205,11 +205,11 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_domains_delete(self, resource_group):
         response = await self.client.domains.delete(
             resource_group_name=resource_group.name,
             domain_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -217,7 +217,7 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_domains_update(self, resource_group):
         response = await self.client.domains.update(
             resource_group_name=resource_group.name,
             domain_name="str",
@@ -324,7 +324,7 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
                 "targetDnsType": "str",
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -332,11 +332,11 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_ownership_identifiers(self, resource_group):
+    async def test_domains_list_ownership_identifiers(self, resource_group):
         response = self.client.domains.list_ownership_identifiers(
             resource_group_name=resource_group.name,
             domain_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -344,12 +344,12 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_ownership_identifier(self, resource_group):
+    async def test_domains_get_ownership_identifier(self, resource_group):
         response = await self.client.domains.get_ownership_identifier(
             resource_group_name=resource_group.name,
             domain_name="str",
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -357,7 +357,7 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update_ownership_identifier(self, resource_group):
+    async def test_domains_create_or_update_ownership_identifier(self, resource_group):
         response = await self.client.domains.create_or_update_ownership_identifier(
             resource_group_name=resource_group.name,
             domain_name="str",
@@ -369,7 +369,7 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
                 "ownershipId": "str",
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -377,12 +377,12 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete_ownership_identifier(self, resource_group):
+    async def test_domains_delete_ownership_identifier(self, resource_group):
         response = await self.client.domains.delete_ownership_identifier(
             resource_group_name=resource_group.name,
             domain_name="str",
             name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -390,7 +390,7 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update_ownership_identifier(self, resource_group):
+    async def test_domains_update_ownership_identifier(self, resource_group):
         response = await self.client.domains.update_ownership_identifier(
             resource_group_name=resource_group.name,
             domain_name="str",
@@ -402,7 +402,7 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
                 "ownershipId": "str",
                 "type": "str",
             },
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -410,11 +410,11 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_renew(self, resource_group):
+    async def test_domains_renew(self, resource_group):
         response = await self.client.domains.renew(
             resource_group_name=resource_group.name,
             domain_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself
@@ -422,11 +422,11 @@ class TestWebSiteManagementDomainsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_transfer_out(self, resource_group):
+    async def test_domains_transfer_out(self, resource_group):
         response = await self.client.domains.transfer_out(
             resource_group_name=resource_group.name,
             domain_name="str",
-            api_version="2023-12-01",
+            api_version="2024-04-01",
         )
 
         # please add some check logic here by yourself

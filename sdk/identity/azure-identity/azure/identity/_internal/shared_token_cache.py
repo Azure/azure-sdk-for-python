@@ -88,7 +88,7 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
         authority: Optional[str] = None,
         tenant_id: Optional[str] = None,
         **kwargs: Any
-    ) -> None:  # pylint:disable=unused-argument
+    ) -> None:
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         environment = urlparse(self._authority).netloc
         self._environment_aliases = KNOWN_ALIASES.get(environment) or frozenset((environment,))
@@ -246,7 +246,7 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
                     return AccessTokenInfo(
                         token["secret"], expires_on, token_type=token.get("token_type", "Bearer"), refresh_on=refresh_on
                     )
-        except Exception as ex:  # pylint:disable=broad-except
+        except Exception as ex:
             message = "Error accessing cached data: {}".format(ex)
             raise CredentialUnavailableError(message=message) from ex
 
@@ -262,7 +262,7 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
                 msal.TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account["home_account_id"]}
             )
             return [token["secret"] for token in cache_entries if "secret" in token]
-        except Exception as ex:  # pylint:disable=broad-except
+        except Exception as ex:
             message = "Error accessing cached data: {}".format(ex)
             raise CredentialUnavailableError(message=message) from ex
 

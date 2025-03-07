@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------  # pylint: disable=file-needs-copyright-header
+# -------------------------------------------------------------------------  # pylint: disable=file-needs-copyright-header,useless-suppression
 # This is a fork of the transport.py which was originally written by Barry Pederson and
 # maintained by the Celery project: https://github.com/celery/py-amqp.
 #
@@ -31,9 +31,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
 # -------------------------------------------------------------------------
-
-
-from __future__ import absolute_import, unicode_literals
 
 import errno
 import re
@@ -96,7 +93,7 @@ _UNAVAIL = {errno.EAGAIN, errno.EINTR, errno.ENOENT, errno.EWOULDBLOCK}
 AMQP_PORT = 5672
 AMQPS_PORT = 5671
 AMQP_FRAME = memoryview(b"AMQP")
-EMPTY_BUFFER = bytes()
+EMPTY_BUFFER = b""
 SIGNED_INT_MAX = 0x7FFFFFFF
 
 # Match things like: [fe80::1]:5432, from RFC 2732
@@ -193,7 +190,11 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             # are we already connected?
             if self.connected:
                 return
-            self._connect(self.host, self.port, self.connect_timeout)
+            self.sock = socket.create_connection((self.host, self.port), self.connect_timeout)
+            try:
+                set_cloexec(self.sock, True)
+            except NotImplementedError:
+                pass
             self._init_socket(
                 self.socket_settings,
                 self.socket_timeout,
@@ -260,56 +261,6 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             if non_bocking_timeout != prev:
                 sock.settimeout(prev)
 
-    def _connect(self, host, port, timeout):
-        e = None
-
-        # Below we are trying to avoid additional DNS requests for AAAA if A
-        # succeeds. This helps a lot in case when a hostname has an IPv4 entry
-        # in /etc/hosts but not IPv6. Without the (arguably somewhat twisted)
-        # logic below, getaddrinfo would attempt to resolve the hostname for
-        # both IP versions, which would make the resolver talk to configured
-        # DNS servers. If those servers are for some reason not available
-        # during resolution attempt (either because of system misconfiguration,
-        # or network connectivity problem), resolution process locks the
-        # _connect call for extended time.
-        addr_types = (socket.AF_INET, socket.AF_INET6)
-        addr_types_num = len(addr_types)
-        for n, family in enumerate(addr_types):
-            # first, resolve the address for a single address family
-            try:
-                entries = socket.getaddrinfo(host, port, family, socket.SOCK_STREAM, SOL_TCP)
-                entries_num = len(entries)
-            except socket.gaierror as exc:
-                # we may have depleted all our options
-                if n + 1 >= addr_types_num:
-                    # if getaddrinfo succeeded before for another address
-                    # family, reraise the previous socket.error since it's more
-                    # relevant to users
-                    raise e if e is not None else socket.error("failed to resolve broker hostname") from exc
-                continue  # pragma: no cover
-
-            # now that we have address(es) for the hostname, connect to broker
-            for i, res in enumerate(entries):
-                af, socktype, proto, _, sa = res
-                try:
-                    self.sock = socket.socket(af, socktype, proto)
-                    try:
-                        set_cloexec(self.sock, True)
-                    except NotImplementedError:
-                        pass
-                    self.sock.settimeout(timeout)
-                    self.sock.connect(sa)
-                except socket.error as ex:
-                    e = ex
-                    if self.sock is not None:
-                        self.sock.close()
-                        self.sock = None
-                    # we may have depleted all our options
-                    if i + 1 >= entries_num and n + 1 >= addr_types_num:
-                        raise
-                else:
-                    # hurray, we established connection
-                    return
 
     def _init_socket(self, socket_settings, socket_timeout):
         self.sock.settimeout(None)  # set socket back to blocking mode
@@ -491,9 +442,13 @@ class SSLTransport(_AbstractTransport):
 
     def __init__(self, host, *, port=AMQPS_PORT, socket_timeout=None, ssl_opts=None, **kwargs):
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else {}
-        self.sslopts["server_hostname"] = host
+        self._custom_endpoint = kwargs.get("custom_endpoint")
+        self._custom_port = kwargs.get("custom_port")
+        self.sslopts["server_hostname"] = self._custom_endpoint or host
         self._read_buffer = BytesIO()
-        super(SSLTransport, self).__init__(host, port=port, socket_timeout=socket_timeout, **kwargs)
+        super(SSLTransport, self).__init__(
+            self._custom_endpoint or host, port=self._custom_port or port, socket_timeout=socket_timeout, **kwargs
+        )
 
     def _setup_transport(self):
         """Wrap the socket in an SSL object."""
@@ -745,7 +700,7 @@ class WebSocketTransport(_AbstractTransport):
             self.close()
             raise
 
-    def _read(self, n, initial=False, buffer=None, _errnos=None):  # pylint: disable=unused-argument
+    def _read(self, n, initial=False, buffer=None, _errnos=None):
         """Read exactly n bytes from the peer.
 
         :param int n: The number of bytes to read.

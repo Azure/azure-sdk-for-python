@@ -25,6 +25,7 @@ from azure.maps.search import BoundaryResultType
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 def get_polygon():
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
@@ -32,12 +33,12 @@ def get_polygon():
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
     try:
         result = maps_search_client.get_polygon(
-          coordinates=[-122.204141, 47.61256],
-          result_type=BoundaryResultType.LOCALITY,
-          resolution=Resolution.SMALL,
+            coordinates=[-122.204141, 47.61256],
+            result_type=BoundaryResultType.LOCALITY,
+            resolution=Resolution.SMALL,
         )
 
-        if not result.get('geometry', False):
+        if not result.get("geometry", False):
             print("No geometry found")
             return
 
@@ -47,5 +48,6 @@ def get_polygon():
             print(f"Error Code: {exception.error.code}")
             print(f"Message: {exception.error.message}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     get_polygon()

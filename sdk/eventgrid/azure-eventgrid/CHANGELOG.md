@@ -1,6 +1,6 @@
 # Release History
 
-## 4.20.1 (Unreleased)
+## 4.21.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.21.0 (2024-11-19)
+
+### Features Added
+
+- Added new enum values to `SystemEventNames` related to Azure Resource Notifications.
 
 ## 4.20.0 (2024-06-12)
 
@@ -218,7 +224,7 @@ This version and all future versions will require Python 3.8+.
 
   **Breaking Changes**
   - `azure.eventgrid.models` namespace along with all the models in it are now removed.:
-      - JSON documentation on the events is available here: https://docs.microsoft.com/azure/event-grid/system-topics
+      - JSON documentation on the events is available here: https://learn.microsoft.com/azure/event-grid/system-topics
       - `azure.eventgrid.SystemEventNames` provides the list of available events name for easy switching.
   - `azure.eventgrid.event_grid_client.EventGridClient` is now removed in favor of `azure.eventgrid.EventGridPublisherClient`.
   - `azure.eventgrid.event_grid_client.EventGridClientConfiguration` is now removed.

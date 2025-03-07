@@ -20,7 +20,7 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperations(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_virtual_machine_scale_set_vm_extensions_begin_create_or_update(self, resource_group):
         response = self.client.virtual_machine_scale_set_vm_extensions.begin_create_or_update(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -74,7 +74,7 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperations(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_virtual_machine_scale_set_vm_extensions_begin_update(self, resource_group):
         response = self.client.virtual_machine_scale_set_vm_extensions.begin_update(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -102,7 +102,7 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperations(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_virtual_machine_scale_set_vm_extensions_begin_delete(self, resource_group):
         response = self.client.virtual_machine_scale_set_vm_extensions.begin_delete(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -116,7 +116,7 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperations(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_virtual_machine_scale_set_vm_extensions_get(self, resource_group):
         response = self.client.virtual_machine_scale_set_vm_extensions.get(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
@@ -130,7 +130,7 @@ class TestComputeManagementVirtualMachineScaleSetVMExtensionsOperations(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_virtual_machine_scale_set_vm_extensions_list(self, resource_group):
         response = self.client.virtual_machine_scale_set_vm_extensions.list(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",

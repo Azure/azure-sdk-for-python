@@ -21,6 +21,7 @@ import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 def get_map_attribution():
     # [START get_map_attribution]
     from azure.core.credentials import AzureKeyCredential
@@ -40,5 +41,5 @@ def get_map_attribution():
     # [END get_map_attribution]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     get_map_attribution()

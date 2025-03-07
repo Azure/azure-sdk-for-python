@@ -21,12 +21,12 @@ class TestNetworkManagementVirtualNetworkGatewayNatRulesOperationsAsync(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_virtual_network_gateway_nat_rules_get(self, resource_group):
         response = await self.client.virtual_network_gateway_nat_rules.get(
             resource_group_name=resource_group.name,
             virtual_network_gateway_name="str",
             nat_rule_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetworkManagementVirtualNetworkGatewayNatRulesOperationsAsync(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_virtual_network_gateway_nat_rules_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.virtual_network_gateway_nat_rules.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -51,7 +51,7 @@ class TestNetworkManagementVirtualNetworkGatewayNatRulesOperationsAsync(AzureMgm
                     "provisioningState": "str",
                     "type": "str",
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -60,13 +60,13 @@ class TestNetworkManagementVirtualNetworkGatewayNatRulesOperationsAsync(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_virtual_network_gateway_nat_rules_begin_delete(self, resource_group):
         response = await (
             await self.client.virtual_network_gateway_nat_rules.begin_delete(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
                 nat_rule_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -75,11 +75,11 @@ class TestNetworkManagementVirtualNetworkGatewayNatRulesOperationsAsync(AzureMgm
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_virtual_network_gateway(self, resource_group):
+    async def test_virtual_network_gateway_nat_rules_list_by_virtual_network_gateway(self, resource_group):
         response = self.client.virtual_network_gateway_nat_rules.list_by_virtual_network_gateway(
             resource_group_name=resource_group.name,
             virtual_network_gateway_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

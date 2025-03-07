@@ -22,7 +22,7 @@ class TestHybridComputeManagementOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_list(self, resource_group):
         response = self.client.operations.list(
-            api_version="2024-07-10",
+            api_version="2024-07-31-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

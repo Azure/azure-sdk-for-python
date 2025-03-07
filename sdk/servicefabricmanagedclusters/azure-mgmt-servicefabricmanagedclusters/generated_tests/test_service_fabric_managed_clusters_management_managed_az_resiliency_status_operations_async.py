@@ -21,11 +21,11 @@ class TestServiceFabricManagedClustersManagementManagedAzResiliencyStatusOperati
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_managed_az_resiliency_status_get(self, resource_group):
         response = await self.client.managed_az_resiliency_status.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-09-01-preview",
         )
 
         # please add some check logic here by yourself

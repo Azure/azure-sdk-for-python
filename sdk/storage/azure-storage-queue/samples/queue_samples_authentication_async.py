@@ -110,8 +110,8 @@ class QueueAuthSamplesAsync(object):
         from azure.storage.queue import generate_account_sas, ResourceTypes, AccountSasPermissions
 
         sas_token = generate_account_sas(
-            queue_service.account_name,
-            queue_service.credential.account_key,
+            self.account_name,
+            self.access_key,
             resource_types=ResourceTypes(service=True),
             permission=AccountSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)

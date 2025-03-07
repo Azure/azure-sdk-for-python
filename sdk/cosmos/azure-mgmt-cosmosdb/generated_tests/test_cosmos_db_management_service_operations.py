@@ -20,11 +20,11 @@ class TestCosmosDBManagementServiceOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_service_list(self, resource_group):
         response = self.client.service.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,13 +32,13 @@ class TestCosmosDBManagementServiceOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create(self, resource_group):
+    def test_service_begin_create(self, resource_group):
         response = self.client.service.begin_create(
             resource_group_name=resource_group.name,
             account_name="str",
             service_name="str",
             create_update_parameters={"properties": "service_resource_create_update_properties"},
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -46,12 +46,12 @@ class TestCosmosDBManagementServiceOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_service_get(self, resource_group):
         response = self.client.service.get(
             resource_group_name=resource_group.name,
             account_name="str",
             service_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -59,12 +59,12 @@ class TestCosmosDBManagementServiceOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_service_begin_delete(self, resource_group):
         response = self.client.service.begin_delete(
             resource_group_name=resource_group.name,
             account_name="str",
             service_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

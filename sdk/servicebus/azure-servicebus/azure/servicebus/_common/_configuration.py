@@ -41,6 +41,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.auto_reconnect = kwargs.get("auto_reconnect", True)
         self.keep_alive = kwargs.get("keep_alive", 30)
         self.timeout: float = kwargs.get("timeout", 60)
+        self.use_tls = kwargs.get("use_tls", True)
         default_socket_timeout = 0.2
 
         if self.http_proxy or self.transport_type.value == TransportType.AmqpOverWebsocket.value:
@@ -59,7 +60,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
             if self.custom_endpoint_address.find("//") == -1:
                 self.custom_endpoint_address = "sb://" + self.custom_endpoint_address
             endpoint = urlparse(self.custom_endpoint_address)
-            self.transport_type = TransportType.AmqpOverWebsocket
+            self.transport_type = kwargs.get("transport_type") or TransportType.AmqpOverWebsocket
             self.custom_endpoint_hostname = endpoint.hostname
             if amqp_transport.KIND == "pyamqp":
                 self.custom_endpoint_address += "/$servicebus/websocket"

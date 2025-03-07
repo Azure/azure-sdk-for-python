@@ -5,8 +5,8 @@
 # --------------------------------------------------------------------------
 from datetime import date, datetime
 from typing import Optional, Union
+from urllib.parse import quote
 
-from ._deserialize import url_quote
 from ._models import AccountSasPermissions, ResourceTypes, SASProtocol
 from ._common_conversion import (
     _sign_string,
@@ -270,4 +270,4 @@ class _SharedAccessHelper(object):
         )
 
     def get_token(self) -> str:
-        return "&".join([f"{n}={url_quote(v)}" for n, v in self.query_dict.items() if v is not None])
+        return "&".join([f"{n}={quote(v)}" for n, v in self.query_dict.items() if v is not None])

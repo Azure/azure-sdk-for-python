@@ -20,7 +20,7 @@ class TestComputeManagementProximityPlacementGroupsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_proximity_placement_groups_create_or_update(self, resource_group):
         response = self.client.proximity_placement_groups.create_or_update(
             resource_group_name=resource_group.name,
             proximity_placement_group_name="str",
@@ -85,7 +85,7 @@ class TestComputeManagementProximityPlacementGroupsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_proximity_placement_groups_update(self, resource_group):
         response = self.client.proximity_placement_groups.update(
             resource_group_name=resource_group.name,
             proximity_placement_group_name="str",
@@ -98,7 +98,7 @@ class TestComputeManagementProximityPlacementGroupsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_proximity_placement_groups_delete(self, resource_group):
         response = self.client.proximity_placement_groups.delete(
             resource_group_name=resource_group.name,
             proximity_placement_group_name="str",
@@ -110,7 +110,7 @@ class TestComputeManagementProximityPlacementGroupsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_proximity_placement_groups_get(self, resource_group):
         response = self.client.proximity_placement_groups.get(
             resource_group_name=resource_group.name,
             proximity_placement_group_name="str",
@@ -122,7 +122,7 @@ class TestComputeManagementProximityPlacementGroupsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_proximity_placement_groups_list_by_subscription(self, resource_group):
         response = self.client.proximity_placement_groups.list_by_subscription(
             api_version="2024-07-01",
         )
@@ -132,7 +132,7 @@ class TestComputeManagementProximityPlacementGroupsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_proximity_placement_groups_list_by_resource_group(self, resource_group):
         response = self.client.proximity_placement_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2024-07-01",

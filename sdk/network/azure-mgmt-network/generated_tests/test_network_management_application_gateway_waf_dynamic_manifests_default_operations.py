@@ -20,10 +20,10 @@ class TestNetworkManagementApplicationGatewayWafDynamicManifestsDefaultOperation
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_application_gateway_waf_dynamic_manifests_default_get(self, resource_group):
         response = self.client.application_gateway_waf_dynamic_manifests_default.get(
             location="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself

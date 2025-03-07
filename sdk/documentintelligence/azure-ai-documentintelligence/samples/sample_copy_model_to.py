@@ -58,7 +58,7 @@ def sample_copy_model_to(custom_model_id):
 
     poller = source_client.begin_copy_model_to(
         model_id=source_model_id,
-        copy_to_request=target_auth,
+        body=target_auth,
     )
     copied_over_model: DocumentModelDetails = poller.result()
 

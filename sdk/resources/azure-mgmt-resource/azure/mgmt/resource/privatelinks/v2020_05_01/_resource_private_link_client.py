@@ -21,11 +21,10 @@ from ._configuration import ResourcePrivateLinkClientConfiguration
 from .operations import PrivateLinkAssociationOperations, ResourceManagementPrivateLinkOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class ResourcePrivateLinkClient:  # pylint: disable=client-accepts-api-version-keyword
+class ResourcePrivateLinkClient:
     """Provides operations for managing private link resources.
 
     :ivar private_link_association: PrivateLinkAssociationOperations operations

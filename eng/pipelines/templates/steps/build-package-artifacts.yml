@@ -20,6 +20,9 @@ parameters:
   - name: BuildTargetingString
     type: string
     default: '*'
+  - name: ExcludePaths
+    type: object
+    default: []
 
 steps:
   - task: UsePythonVersion@0
@@ -53,63 +56,23 @@ steps:
       }
     displayName: Set Component Governance Path
 
+  # Create package properties file before updating the version to daily dev build
+  # This is required to set the package version in info file before it's updated.
+  - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      ExcludePaths: ${{ parameters.ExcludePaths }}
+
   # set dev build calls SavePackageProperties with dev version if necessary. this will never happen in a PR build
   # however, it will set the variable SetDevVersion as appropriate for normal nightly runs
   - template: set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
-  # now we need to call Save-Package-Properties so that we can filter on it
-  - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), eq(parameters.ServiceDirectory, 'auto')) }}:
-    - pwsh: |
-        mkdir -p $(Build.ArtifactStagingDirectory)/diff
-      displayName: Create PR Diff Folder
-
-    - pwsh: |
-        $location = Join-Path "$(Build.ArtifactStagingDirectory)" "diff"
-
-        Write-Host "./eng/common/scripts/Generate-PR-Diff.ps1 -TargetPath `"$(Build.SourcesDirectory)`" -ArtifactPath `"$location`""
-        ./eng/common/scripts/Generate-PR-Diff.ps1 -TargetPath "$(Build.SourcesDirectory)" -ArtifactPath "$location"
-      displayName: Generate PR Diff
-
-    - pwsh: |
-        Write-Host "We freshly generated the PR diff, and this is what it sees!"
-        Get-ChildItem -R -Force $(Build.ArtifactStagingDirectory)/diff | % { $_.FullName }
-        cat $(Build.ArtifactStagingDirectory)/diff/diff.json
-      displayName: Dump PR Diff
-
-    - task: Powershell@2
-      inputs:
-        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
-        arguments: >
-          -PrDiff $(Build.ArtifactStagingDirectory)/diff/diff.json
-          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
-        pwsh: true
-        workingDirectory: $(Pipeline.Workspace)
-      displayName: Save package properties filtered for PR
-
-  - ${{ else }}:
-    - task: Powershell@2
-      condition: and(succeeded(), eq(variables['SetDevVersion'],'true'))
-      inputs:
-        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
-        arguments: >
-          -ServiceDirectory ${{parameters.ServiceDirectory}}
-          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
-          -AddDevVersion
-        pwsh: true
-        workingDirectory: $(Pipeline.Workspace)
-        displayName: Save package properties with dev version
-    - task: Powershell@2
-      condition: and(succeeded(), ne(variables['SetDevVersion'],'true'))
-      inputs:
-        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
-        arguments: >
-          -ServiceDirectory ${{parameters.ServiceDirectory}}
-          -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
-        pwsh: true
-        workingDirectory: $(Pipeline.Workspace)
-        displayName: Save package properties for service
+  - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      ExcludePaths: ${{ parameters.ExcludePaths }}
 
   - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
     parameters:
@@ -132,21 +95,13 @@ steps:
       $(VENV_ACTIVATION_SCRIPT)
       which python
       python -m pip install --force -r eng/ci_tools.txt
+      if ($env:AGENT_OS -eq "Linux") {
+        Write-Host "Installing release reqs"
+        python -m pip install -r eng/release_requirements.txt
+      }
       python -m pip freeze --all
     displayName: 'Prep Environment'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
-
-  - task: Powershell@2
-    inputs:
-      filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
-      arguments: >
-        -ServiceDirectory ${{parameters.ServiceDirectory}}
-        -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
-        -AddDevVersion
-      pwsh: true
-      workingDirectory: $(Pipeline.Workspace)
-    displayName: Update package properties with dev version
-    condition: and(succeeded(), eq(variables['SetDevVersion'],'true'), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - script: |
       sudo apt-get update
@@ -165,8 +120,8 @@ steps:
     env:
       CIBW_BUILD_VERBOSITY: 3
 
-  - script: |
-      python -m pip install -r eng/release_requirements.txt
+  - pwsh: |
+      $(VENV_ACTIVATION_SCRIPT)
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
       twine check $(Build.ArtifactStagingDirectory)/**/*.tar.gz
     displayName: 'Verify Readme'
@@ -182,6 +137,19 @@ steps:
         | Remove-Item -Force -Recurse
     displayName: Clean up repo
     condition: and(succeeded(), ne(variables['ENABLE_EXTENSION_BUILD'], 'true'), ne('${{ parameters.ArtifactSuffix }}', 'linux'))
+
+  # we need to only publish this if running on linux. we only need one for all stages
+  - pwsh: |
+      New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)/release_artifact"
+      Copy-Item -Path "$(Build.SourcesDirectory)/eng/release_requirements.txt" -Destination "$(Build.ArtifactStagingDirectory)/release_artifact/release_requirements.txt"
+    displayName: 'Assemble Static Files for Release Stage'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+
+  - ${{ if eq(parameters.ArtifactSuffix, 'linux') }}:
+    - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+      parameters:
+        ArtifactPath: '$(Build.ArtifactStagingDirectory)/release_artifact'
+        ArtifactName: 'release_artifact'
 
   - ${{ if eq(parameters.ArtifactSuffix, '') }}:
     - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml

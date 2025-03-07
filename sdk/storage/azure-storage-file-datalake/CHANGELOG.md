@@ -1,8 +1,24 @@
 # Release History
 
-## 12.18.0 (Unreleased)
+## 12.19.0 (Unreleased)
 
 ### Features Added
+
+## 12.19.0b1 (2025-02-11)
+
+### Features Added
+- Added support for service version 2025-05-05.
+
+## 12.18.1 (2025-01-22)
+
+### Bugs Fixed
+- Fixed an issue where custom transports may encounter `AttributeError` on certain requests.
+- Fixed request handler to handle `None` value for `expires_on` keyword to `set_file_expiry` API.
+
+## 12.18.0 (2024-11-13)
+
+### Features Added
+- Stable release of features from 12.18.0b1
 
 ## 12.18.0b1 (2024-10-10)
 

@@ -74,6 +74,17 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :vartype databases: azure.mgmt.mysqlflexibleservers.operations.DatabasesOperations
     :ivar firewall_rules: FirewallRulesOperations operations
     :vartype firewall_rules: azure.mgmt.mysqlflexibleservers.operations.FirewallRulesOperations
+    :ivar servers: ServersOperations operations
+    :vartype servers: azure.mgmt.mysqlflexibleservers.operations.ServersOperations
+    :ivar replicas: ReplicasOperations operations
+    :vartype replicas: azure.mgmt.mysqlflexibleservers.operations.ReplicasOperations
+    :ivar servers_migration: ServersMigrationOperations operations
+    :vartype servers_migration:
+     azure.mgmt.mysqlflexibleservers.operations.ServersMigrationOperations
+    :ivar advanced_threat_protection_settings: AdvancedThreatProtectionSettingsOperations
+     operations
+    :vartype advanced_threat_protection_settings:
+     azure.mgmt.mysqlflexibleservers.operations.AdvancedThreatProtectionSettingsOperations
     :ivar log_files: LogFilesOperations operations
     :vartype log_files: azure.mgmt.mysqlflexibleservers.operations.LogFilesOperations
     :ivar location_based_capabilities: LocationBasedCapabilitiesOperations operations
@@ -105,17 +116,6 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :vartype operations: azure.mgmt.mysqlflexibleservers.operations.Operations
     :ivar maintenances: MaintenancesOperations operations
     :vartype maintenances: azure.mgmt.mysqlflexibleservers.operations.MaintenancesOperations
-    :ivar servers: ServersOperations operations
-    :vartype servers: azure.mgmt.mysqlflexibleservers.operations.ServersOperations
-    :ivar replicas: ReplicasOperations operations
-    :vartype replicas: azure.mgmt.mysqlflexibleservers.operations.ReplicasOperations
-    :ivar servers_migration: ServersMigrationOperations operations
-    :vartype servers_migration:
-     azure.mgmt.mysqlflexibleservers.operations.ServersMigrationOperations
-    :ivar advanced_threat_protection_settings: AdvancedThreatProtectionSettingsOperations
-     operations
-    :vartype advanced_threat_protection_settings:
-     azure.mgmt.mysqlflexibleservers.operations.AdvancedThreatProtectionSettingsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -176,6 +176,14 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         self.configurations = ConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.servers_migration = ServersMigrationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.advanced_threat_protection_settings = AdvancedThreatProtectionSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.log_files = LogFilesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.location_based_capabilities = LocationBasedCapabilitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -203,14 +211,6 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.maintenances = MaintenancesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.servers_migration = ServersMigrationOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.advanced_threat_protection_settings = AdvancedThreatProtectionSettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

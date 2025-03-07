@@ -11,8 +11,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 # pylint: disable=unused-import,ungrouped-imports, R0904, C0302
 from typing import Union, Any, MutableMapping, List, Optional
 
-from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from azure.core.credentials import AzureKeyCredential, AzureSasCredential, TokenCredential
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AzureSasCredentialPolicy
 from ._client import MapsSearchClient as MapsSearchClientGenerated
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
@@ -28,18 +28,19 @@ def patch_sdk():
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
 
+
 def _authentication_policy(credential):
     authentication_policy = None
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if isinstance(credential, AzureKeyCredential):
-        authentication_policy = AzureKeyCredentialPolicy(
-            name="subscription-key", credential=credential
-        )
+        authentication_policy = AzureKeyCredentialPolicy(name="subscription-key", credential=credential)
+    elif isinstance(credential, AzureSasCredential):
+        authentication_policy = AzureSasCredentialPolicy(credential)
     elif credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
             "Unsupported credential: {}. Use an instance of AzureKeyCredential "
-            "or a token credential from azure.identity".format(type(credential))
+            "or AzureSasCredential or a token credential from azure.identity".format(type(credential))
         )
     return authentication_policy
 
@@ -49,7 +50,7 @@ class MapsSearchClient(MapsSearchClientGenerated):
 
     def __init__(
         self,
-        credential: Union[AzureKeyCredential, TokenCredential],
+        credential: Union[AzureKeyCredential, AzureSasCredential, TokenCredential],
         *,
         endpoint: str = "https://atlas.microsoft.com",
         client_id: Optional[str] = None,

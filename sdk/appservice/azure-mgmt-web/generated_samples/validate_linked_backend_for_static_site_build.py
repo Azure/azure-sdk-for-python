@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.web import WebSiteManagementClient
@@ -46,6 +44,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-12-01/examples/ValidateLinkedBackendForStaticSiteBuild.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-04-01/examples/ValidateLinkedBackendForStaticSiteBuild.json
 if __name__ == "__main__":
     main()

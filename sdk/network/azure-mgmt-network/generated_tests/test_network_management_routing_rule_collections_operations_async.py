@@ -21,12 +21,12 @@ class TestNetworkManagementRoutingRuleCollectionsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_routing_rule_collections_list(self, resource_group):
         response = self.client.routing_rule_collections.list(
             resource_group_name=resource_group.name,
             network_manager_name="str",
             configuration_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,13 +34,13 @@ class TestNetworkManagementRoutingRuleCollectionsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_routing_rule_collections_get(self, resource_group):
         response = await self.client.routing_rule_collections.get(
             resource_group_name=resource_group.name,
             network_manager_name="str",
             configuration_name="str",
             rule_collection_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -48,7 +48,7 @@ class TestNetworkManagementRoutingRuleCollectionsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_routing_rule_collections_create_or_update(self, resource_group):
         response = await self.client.routing_rule_collections.create_or_update(
             resource_group_name=resource_group.name,
             network_manager_name="str",
@@ -73,7 +73,7 @@ class TestNetworkManagementRoutingRuleCollectionsOperationsAsync(AzureMgmtRecord
                 },
                 "type": "str",
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -81,14 +81,14 @@ class TestNetworkManagementRoutingRuleCollectionsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_routing_rule_collections_begin_delete(self, resource_group):
         response = await (
             await self.client.routing_rule_collections.begin_delete(
                 resource_group_name=resource_group.name,
                 network_manager_name="str",
                 configuration_name="str",
                 rule_collection_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

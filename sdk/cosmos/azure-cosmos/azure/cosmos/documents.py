@@ -22,7 +22,8 @@
 """Classes and enums for documents in the Azure Cosmos database service.
 """
 
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import List, Optional, TYPE_CHECKING, Union, Dict, Any
+
 from typing_extensions import Literal, TypedDict
 
 from ._retry_options import RetryOptions
@@ -74,12 +75,12 @@ class DatabaseAccount:  # pylint: disable=too-many-instance-attributes
         self.ReservedDocumentStorageInMB: int = 0
         self.ProvisionedDocumentStorageInMB: int = 0
         self.ConsistencyPolicy: Optional[UserConsistencyPolicy] = None
-        self._WritableLocations: List[str] = []
-        self._ReadableLocations: List[str] = []
+        self._WritableLocations: List[dict] = []
+        self._ReadableLocations: List[dict] = []
         self._EnableMultipleWritableLocations = False
 
     @property
-    def WritableLocations(self) -> List[str]:
+    def WritableLocations(self) -> List[Dict[Any, Any]]:
         """The list of writable locations for a geo-replicated database account.
         :returns: List of writable locations for the database account.
         :rtype: List[str]
@@ -87,7 +88,7 @@ class DatabaseAccount:  # pylint: disable=too-many-instance-attributes
         return self._WritableLocations
 
     @property
-    def ReadableLocations(self) -> List[str]:
+    def ReadableLocations(self) -> List[Dict[Any, Any]]:
         """The list of readable locations for a geo-replicated database account.
         :returns: List of readable locations for the database account.
         :rtype: List[str]
@@ -328,10 +329,18 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         Indicates whether service should be instructed to skip sending response payloads
     """
 
-    __defaultRequestTimeout: int = 60  # seconds
+    __defaultRequestTimeout: int = 5  # seconds
+    __defaultDBAConnectionTimeout: int = 3  # seconds
+    __defaultReadTimeout: int = 65  # seconds
+    __defaultDBAReadTimeout: int = 3 # seconds
+    __defaultMaxBackoff: int = 1 # seconds
 
     def __init__(self) -> None:
         self.RequestTimeout: int = self.__defaultRequestTimeout
+        self.DBAConnectionTimeout: int = self.__defaultDBAConnectionTimeout
+        self.ReadTimeout: int = self.__defaultReadTimeout
+        self.DBAReadTimeout: int = self.__defaultDBAReadTimeout
+        self.MaxBackoff: int = self.__defaultMaxBackoff
         self.ConnectionMode: int = ConnectionMode.Gateway
         self.SSLConfiguration: Optional[SSLConfiguration] = None
         self.ProxyConfiguration: Optional[ProxyConfiguration] = None
@@ -373,7 +382,8 @@ class _OperationType:
             _OperationType.Replace,
             _OperationType.Upsert,
             _OperationType.Update,
-            _OperationType.Batch
+            _OperationType.Batch,
+            _OperationType.Patch
         )
 
     @staticmethod
@@ -385,20 +395,8 @@ class _OperationType:
             _OperationType.HeadFeed,
             _OperationType.Query,
             _OperationType.SqlQuery,
+            _OperationType.QueryPlan
         )
-
-    @staticmethod
-    def IsFeedOperation(operationType: str) -> bool:
-        return operationType in (
-            _OperationType.Create,
-            _OperationType.Upsert,
-            _OperationType.ReadFeed,
-            _OperationType.Query,
-            _OperationType.SqlQuery,
-            _OperationType.QueryPlan,
-            _OperationType.HeadFeed,
-        )
-
 
 class _QueryFeature:
     NoneQuery: Literal["NoneQuery"] = "NoneQuery"
@@ -412,6 +410,8 @@ class _QueryFeature:
     OrderBy: Literal["OrderBy"] = "OrderBy"
     Top: Literal["Top"] = "Top"
     NonStreamingOrderBy: Literal["NonStreamingOrderBy"] = "NonStreamingOrderBy"
+    HybridSearch: Literal["HybridSearch"] = "HybridSearch"
+    CountIf: Literal["CountIf"] = "CountIf"
 
 
 class _DistinctType:

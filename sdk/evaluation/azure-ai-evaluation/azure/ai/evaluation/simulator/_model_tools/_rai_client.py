@@ -4,6 +4,7 @@
 import os
 from typing import Any
 from urllib.parse import urljoin, urlparse
+import base64
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client, get_http_client
@@ -57,6 +58,7 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         # add a "/" at the end of the url
         self.api_url = self.api_url.rstrip("/") + "/"
         self.parameter_json_endpoint = urljoin(self.api_url, "simulation/template/parameters")
+        self.parameter_image_endpoint = urljoin(self.api_url, "simulation/template/parameters/image")
         self.jailbreaks_json_endpoint = urljoin(self.api_url, "simulation/jailbreak")
         self.simulation_submit_endpoint = urljoin(self.api_url, "simulation/chat/completions/submit")
         self.xpia_jailbreaks_json_endpoint = urljoin(self.api_url, "simulation/jailbreak/xpia")
@@ -154,6 +156,44 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
 
         if response.status_code == 200:
             return response.json()
+
+        msg = (
+            "Azure safety evaluation service is not available in your current region, "
+            + "please go to https://aka.ms/azureaistudiosafetyeval to see which regions are supported"
+        )
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.RAI_CLIENT,
+            category=ErrorCategory.UNKNOWN,
+            blame=ErrorBlame.USER_ERROR,
+        )
+
+    async def get_image_data(self, path: str) -> Any:
+        """Make a GET Image request to the given url
+
+        :param path: The url of the image
+        :type path: str
+        :raises EvaluationException: If the Azure safety evaluation service is not available in the current region
+        :return: The response
+        :rtype: Any
+        """
+        token = self.token_manager.get_token()
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+            "User-Agent": USER_AGENT,
+        }
+
+        session = self._create_async_client()
+        params = {"path": path}
+        async with session:
+            response = await session.get(
+                url=self.parameter_image_endpoint, params=params, headers=headers
+            )  # pylint: disable=unexpected-keyword-arg
+
+        if response.status_code == 200:
+            return base64.b64encode(response.content).decode("utf-8")
 
         msg = (
             "Azure safety evaluation service is not available in your current region, "

@@ -22,6 +22,7 @@ import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 def get_copyright_caption():
     # [START get_copyright_caption]
     from azure.core.credentials import AzureKeyCredential
@@ -36,5 +37,5 @@ def get_copyright_caption():
     # [END get_copyright_caption]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     get_copyright_caption()

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from __future__ import unicode_literals, annotations
+from __future__ import annotations
 
 import uuid
 import logging
@@ -264,7 +264,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                     links = [link] if link else []
 
             self._unsent_events = [wrapper_event_data._message]  # pylint: disable=protected-access
-            with send_context_manager(self._client, links=links):  # pylint: disable=protected-access
+            with send_context_manager(self._client, links=links):
                 self._send_event_data_with_retry(timeout=timeout)
 
     def close(self) -> None:

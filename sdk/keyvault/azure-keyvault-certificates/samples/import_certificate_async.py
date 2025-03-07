@@ -10,7 +10,7 @@ from azure.keyvault.certificates.aio import CertificateClient
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://learn.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
@@ -30,6 +30,7 @@ from azure.keyvault.certificates.aio import CertificateClient
 # 2. Import an existing PEM-formatted certificate (import_certificate)
 #
 # ----------------------------------------------------------------------------------------------------------
+
 
 async def run_sample():
     # Instantiate a certificate client that will be used to call the service.
@@ -64,6 +65,7 @@ async def run_sample():
 
     await credential.close()
     await client.close()
+
 
 if __name__ == "__main__":
     asyncio.run(run_sample())

@@ -70,13 +70,13 @@ def sample_manage_models():
                         )
     # [END build_model]
 
-    # [START get_resource_info]
-    account_details = document_intelligence_admin_client.get_resource_info()
+    # [START get_resource_details]
+    account_details = document_intelligence_admin_client.get_resource_details()
     print(
         f"Our resource has {account_details.custom_document_models.count} custom models, "
         f"and we can have at most {account_details.custom_document_models.limit} custom models"
     )
-    # [END get_resource_info]
+    # [END get_resource_details]
 
     # [START list_models]
     # Next, we get a paged list of all of our custom models

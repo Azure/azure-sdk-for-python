@@ -14,14 +14,11 @@ from ._chat_thread_client import ChatThreadClient
 from ._shared.user_credential import CommunicationTokenCredential
 from ._generated import AzureCommunicationChatService
 from ._generated.models import CreateChatThreadRequest
-from ._models import (
-    ChatThreadProperties,
-    CreateChatThreadResult
-)
-from ._utils import ( # pylint: disable=unused-import
+from ._models import ChatThreadProperties, CreateChatThreadResult
+from ._utils import (  # pylint: disable=unused-import
     _to_utc_datetime,
     return_response,
-    CommunicationErrorResponseConverter
+    CommunicationErrorResponseConverter,
 )
 from ._version import SDK_MONIKER
 
@@ -31,7 +28,7 @@ if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
 
 
-class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
+class ChatClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Chat gateway.
 
     This client provides operations to create chat thread, delete chat thread,
@@ -53,22 +50,22 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
     """
 
     def __init__(
-            self,
-            endpoint,  # type: str
-            credential,  # type: CommunicationTokenCredential
-            **kwargs  # type: Any
+        self,
+        endpoint,  # type: str
+        credential,  # type: CommunicationTokenCredential
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         if not credential:
             raise ValueError("credential can not be None")
 
         try:
-            if not endpoint.lower().startswith('http'):
+            if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Host URL must be a string") # pylint:disable=raise-missing-from
+            raise ValueError("Host URL must be a string")  # pylint:disable=raise-missing-from
 
-        parsed_url = urlparse(endpoint.rstrip('/'))
+        parsed_url = urlparse(endpoint.rstrip("/"))
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(endpoint))
 
@@ -84,7 +81,8 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
 
     @distributed_trace
     def get_chat_thread_client(
-        self, thread_id, # type: str
+        self,
+        thread_id,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> ChatThreadClient
@@ -109,16 +107,12 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         if not thread_id:
             raise ValueError("thread_id cannot be None.")
 
-        return ChatThreadClient(
-            endpoint=self._endpoint,
-            credential=self._credential,
-            thread_id=thread_id,
-            **kwargs
-        )
+        return ChatThreadClient(endpoint=self._endpoint, credential=self._credential, thread_id=thread_id, **kwargs)
 
     @distributed_trace
     def create_chat_thread(
-        self, topic,  # type: str
+        self,
+        topic,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> CreateChatThreadResult
@@ -151,11 +145,11 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         if not topic:
             raise ValueError("topic cannot be None.")
 
-        idempotency_token = kwargs.pop('idempotency_token', None)
+        idempotency_token = kwargs.pop("idempotency_token", None)
         if idempotency_token is None:
             idempotency_token = str(uuid4())
 
-        thread_participants = kwargs.pop('thread_participants', None)
+        thread_participants = kwargs.pop("thread_participants", None)
         participants = []
         if thread_participants is not None:
             participants = [m._to_generated() for m in thread_participants]  # pylint:disable=protected-access
@@ -163,33 +157,25 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         create_thread_request = CreateChatThreadRequest(topic=topic, participants=participants)
 
         create_chat_thread_result = self._client.chat.create_chat_thread(
-            create_chat_thread_request=create_thread_request,
-            repeatability_request_id=idempotency_token,
-            **kwargs)
+            create_chat_thread_request=create_thread_request, repeatability_request_id=idempotency_token, **kwargs
+        )
 
         errors = None
-        if hasattr(create_chat_thread_result, 'invalid_participants'):
+        if hasattr(create_chat_thread_result, "invalid_participants"):
             errors = CommunicationErrorResponseConverter.convert(
-                participants=thread_participants or [],
-                chat_errors=create_chat_thread_result.invalid_participants
+                participants=thread_participants or [], chat_errors=create_chat_thread_result.invalid_participants
             )
 
-        chat_thread_properties = ChatThreadProperties._from_generated( # pylint:disable=protected-access
-            create_chat_thread_result.chat_thread)
-
-        create_chat_thread_result = CreateChatThreadResult(
-            chat_thread=chat_thread_properties,
-            errors=errors
+        chat_thread_properties = ChatThreadProperties._from_generated(  # pylint:disable=protected-access
+            create_chat_thread_result.chat_thread
         )
+
+        create_chat_thread_result = CreateChatThreadResult(chat_thread=chat_thread_properties, errors=errors)
 
         return create_chat_thread_result
 
-
     @distributed_trace
-    def list_chat_threads(
-        self,
-        **kwargs
-    ):
+    def list_chat_threads(self, **kwargs):
         # type: (...) -> ItemPaged[ChatThreadItem]
         """Gets the list of chat threads of a user.
 
@@ -211,10 +197,7 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         results_per_page = kwargs.pop("results_per_page", None)
         start_time = kwargs.pop("start_time", None)
 
-        return self._client.chat.list_chat_threads(
-            max_page_size=results_per_page,
-            start_time=start_time,
-            **kwargs)
+        return self._client.chat.list_chat_threads(max_page_size=results_per_page, start_time=start_time, **kwargs)
 
     @distributed_trace
     def delete_chat_thread(

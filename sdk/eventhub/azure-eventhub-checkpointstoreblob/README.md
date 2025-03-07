@@ -8,9 +8,9 @@ Please note that this is a sync library, for async version of the Azure EventHub
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub-checkpointstoreblob/)
 | [Package (PyPi)](https://pypi.org/project/azure-eventhub-checkpointstoreblob)
 | [Package (Conda)](https://anaconda.org/microsoft/azure-eventhub/)
-| [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/latest/azure.eventhub.html#azure.eventhub.CheckpointStore)
-| [Azure Eventhubs documentation](https://docs.microsoft.com/azure/event-hubs/)
-| [Azure Storage documentation](https://docs.microsoft.com/azure/storage/)
+| [API reference documentation](https://azuresdkdocs.z19.web.core.windows.net/python/azure-eventhub/latest/azure.eventhub.html#azure.eventhub.CheckpointStore)
+| [Azure Eventhubs documentation](https://learn.microsoft.com/azure/event-hubs/)
+| [Azure Storage documentation](https://learn.microsoft.com/azure/storage/)
 
 ## _Disclaimer_
 
@@ -20,12 +20,12 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 ### Prerequisites
 
-- Python 3.7 or later.
+- Python 3.8 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Event Hubs, you'll need a subscription. If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://azure.microsoft.com/).
 
-- **Event Hubs namespace with an Event Hub:** To interact with Azure Event Hubs, you'll also need to have a namespace and Event Hub  available.  If you are not familiar with creating Azure resources, you may wish to follow the step-by-step guide for [creating an Event Hub using the Azure portal](https://docs.microsoft.com/azure/event-hubs/event-hubs-create).  There, you can also find detailed instructions for using the Azure CLI, Azure PowerShell, or Azure Resource Manager (ARM) templates to create an Event Hub.
+- **Event Hubs namespace with an Event Hub:** To interact with Azure Event Hubs, you'll also need to have a namespace and Event Hub  available.  If you are not familiar with creating Azure resources, you may wish to follow the step-by-step guide for [creating an Event Hub using the Azure portal](https://learn.microsoft.com/azure/event-hubs/event-hubs-create).  There, you can also find detailed instructions for using the Azure CLI, Azure PowerShell, or Azure Resource Manager (ARM) templates to create an Event Hub.
 
-- **Azure Storage Account:** You'll need to have an Azure Storage Account and create a Azure Blob Storage Block Container to store the checkpoint data with blobs. You may follow the guide [creating an Azure Block Blob Storage Account](https://docs.microsoft.com/azure/storage/blobs/storage-blob-create-account-block-blob).
+- **Azure Storage Account:** You'll need to have an Azure Storage Account and create a Azure Blob Storage Block Container to store the checkpoint data with blobs. You may follow the guide [creating an Azure Block Blob Storage Account](https://learn.microsoft.com/azure/storage/blobs/storage-blob-create-account-block-blob).
 
 ### Install the package
 
@@ -134,7 +134,7 @@ Get started with our [EventHubs Checkpoint Store samples](https://github.com/Azu
 
 ### Documentation
 
-Reference documentation is available [here](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/latest/azure.eventhub.html#azure.eventhub.CheckpointStore).
+Reference documentation is available [here](https://azuresdkdocs.z19.web.core.windows.net/python/azure-eventhub/latest/azure.eventhub.html#azure.eventhub.CheckpointStore).
 
 ### Provide Feedback
 
@@ -149,4 +149,4 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhub-checkpointstoreblob/README.png)
+

@@ -26,7 +26,6 @@ class TestHybridComputeManagementMachinesOperations(AzureMgmtRecordedTestCase):
         )
         result = [r for r in response]
         assert result == []
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
@@ -34,4 +33,3 @@ class TestHybridComputeManagementMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.machines.list_by_subscription()
         result = [r for r in response]
         assert response
-        

@@ -51,9 +51,7 @@ class MapsRenderClient(RenderOperations):  # pylint: disable=client-accepts-api-
         endpoint: str = "https://atlas.microsoft.com",
         **kwargs: Any
     ) -> None:
-        self._config = MapsRenderClientConfiguration(
-            credential=credential, client_id=client_id, **kwargs
-        )
+        self._config = MapsRenderClientConfiguration(credential=credential, client_id=client_id, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -78,10 +76,7 @@ class MapsRenderClient(RenderOperations):  # pylint: disable=client-accepts-api-
         self._serialize.client_side_validation = False
 
         super().__init__(
-            client=self._client,
-            config=self._config,
-            serializer=self._serialize,
-            deserializer=self._deserialize
+            client=self._client, config=self._config, serializer=self._serialize, deserializer=self._deserialize
         )
 
     def send_request(

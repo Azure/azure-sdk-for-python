@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -16,10 +16,9 @@ from ... import _serialization
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
@@ -415,7 +414,7 @@ class ApiDefinitionInfo(_serialization.Model):
         self.url = url
 
 
-class ApiKVReference(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class ApiKVReference(ProxyOnlyResource):
     """Description of site key vault references.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1093,7 +1092,7 @@ class Resource(_serialization.Model):
         self.tags = tags
 
 
-class AppServiceCertificateOrder(Resource):  # pylint: disable=too-many-instance-attributes
+class AppServiceCertificateOrder(Resource):
     """SSL certificate purchase order.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1309,7 +1308,7 @@ class AppServiceCertificateOrderCollection(_serialization.Model):
         self.next_link = None
 
 
-class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class AppServiceCertificateOrderPatchResource(ProxyOnlyResource):
     """ARM resource for a certificate order that is purchased through Azure.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1620,7 +1619,7 @@ class AppServiceCertificateResource(Resource):
         self.provisioning_state = None
 
 
-class AppServiceEnvironment(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class AppServiceEnvironment(_serialization.Model):
     """Description of an App Service Environment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1831,7 +1830,7 @@ class AppServiceEnvironmentCollection(_serialization.Model):
         self.next_link = None
 
 
-class AppServiceEnvironmentPatchResource(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class AppServiceEnvironmentPatchResource(ProxyOnlyResource):
     """ARM resource for a app service environment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2027,7 +2026,7 @@ class AppServiceEnvironmentPatchResource(ProxyOnlyResource):  # pylint: disable=
         self.upgrade_availability = None
 
 
-class AppServiceEnvironmentResource(Resource):  # pylint: disable=too-many-instance-attributes
+class AppServiceEnvironmentResource(Resource):
     """App Service Environment ARM resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2324,7 +2323,7 @@ class AppserviceGithubTokenRequest(_serialization.Model):
         self.state = state
 
 
-class AppServicePlan(Resource):  # pylint: disable=too-many-instance-attributes
+class AppServicePlan(Resource):
     """App Service plan.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2607,7 +2606,7 @@ class AppServicePlanCollection(_serialization.Model):
         self.next_link = None
 
 
-class AppServicePlanPatchResource(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class AppServicePlanPatchResource(ProxyOnlyResource):
     """ARM resource for a app service plan.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2973,7 +2972,7 @@ class ArmPlan(_serialization.Model):
         self.version = version
 
 
-class AseV3NetworkingConfiguration(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class AseV3NetworkingConfiguration(ProxyOnlyResource):
     """Full view of networking configuration for an ASE.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3897,7 +3896,7 @@ class AzureTableStorageApplicationLogsConfig(_serialization.Model):
         self.sas_url = sas_url
 
 
-class BackupItem(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class BackupItem(ProxyOnlyResource):
     """Backup description.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4195,7 +4194,7 @@ class BackupSchedule(_serialization.Model):
         self.last_execution_time = None
 
 
-class BillingMeter(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class BillingMeter(ProxyOnlyResource):
     """App Service billing entity that contains information about meter which the Azure billing system
     utilizes to charge users for services.
 
@@ -4375,7 +4374,7 @@ class Capability(_serialization.Model):
         self.reason = reason
 
 
-class Certificate(Resource):  # pylint: disable=too-many-instance-attributes
+class Certificate(Resource):
     """SSL certificate for an app.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4766,7 +4765,7 @@ class CertificateOrderContact(_serialization.Model):
         self.phone = phone
 
 
-class CertificatePatchResource(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class CertificatePatchResource(ProxyOnlyResource):
     """ARM resource for a certificate.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4969,7 +4968,7 @@ class ClientRegistration(_serialization.Model):
         self.client_secret_setting_name = client_secret_setting_name
 
 
-class CloningInfo(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class CloningInfo(_serialization.Model):
     """Information needed for cloning operation.
 
     All required parameters must be populated in order to send to server.
@@ -5443,7 +5442,7 @@ class Container(_serialization.Model):
         self.resources = resources
 
 
-class ContainerApp(Resource):  # pylint: disable=too-many-instance-attributes
+class ContainerApp(Resource):
     """Container App.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6094,7 +6093,7 @@ class ContentLink(_serialization.Model):
         self.metadata = None
 
 
-class ContinuousWebJob(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class ContinuousWebJob(ProxyOnlyResource):
     """Continuous Web Job Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6333,7 +6332,7 @@ class CorsSettings(_serialization.Model):
         self.support_credentials = support_credentials
 
 
-class CsmDeploymentStatus(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class CsmDeploymentStatus(ProxyOnlyResource):
     """Deployment status response payload.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6936,7 +6935,7 @@ class CustomDnsSuffixConfiguration(ProxyOnlyResource):
         self.key_vault_reference_identity = key_vault_reference_identity
 
 
-class CustomHostnameAnalysisResult(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class CustomHostnameAnalysisResult(ProxyOnlyResource):
     """Custom domain analysis.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8008,7 +8007,7 @@ class DeletedAppRestoreRequest(ProxyOnlyResource):
         self.use_dr_secondary = use_dr_secondary
 
 
-class DeletedSite(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class DeletedSite(ProxyOnlyResource):
     """A deleted app.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8117,7 +8116,7 @@ class DeletedWebAppCollection(_serialization.Model):
         self.next_link = None
 
 
-class Deployment(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class Deployment(ProxyOnlyResource):
     """User credentials used for publishing activity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8902,7 +8901,7 @@ class DiagnosticDetectorCollection(_serialization.Model):
         self.next_link = None
 
 
-class DiagnosticDetectorResponse(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class DiagnosticDetectorResponse(ProxyOnlyResource):
     """Class representing Response from Diagnostic Detectors.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9178,7 +9177,7 @@ class Dimension(_serialization.Model):
         self.to_be_exported_for_shoebox = to_be_exported_for_shoebox
 
 
-class Domain(Resource):  # pylint: disable=too-many-instance-attributes
+class Domain(Resource):
     """Information about a domain.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9559,7 +9558,7 @@ class DomainOwnershipIdentifierCollection(_serialization.Model):
         self.next_link = None
 
 
-class DomainPatchResource(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class DomainPatchResource(ProxyOnlyResource):
     """ARM resource for a domain.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10708,7 +10707,7 @@ class FunctionAppRuntimes(_serialization.Model):
         self.windows_runtime_settings = None
 
 
-class FunctionAppRuntimeSettings(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class FunctionAppRuntimeSettings(_serialization.Model):
     """Function App runtime settings.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10904,7 +10903,7 @@ class FunctionAppStackCollection(_serialization.Model):
         self.next_link = None
 
 
-class FunctionEnvelope(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class FunctionEnvelope(ProxyOnlyResource):
     """Function information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11803,7 +11802,7 @@ class HostName(_serialization.Model):
         self.host_name_type = host_name_type
 
 
-class HostNameBinding(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class HostNameBinding(ProxyOnlyResource):
     """A hostname binding object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12134,7 +12133,7 @@ class HttpSettingsRoutes(_serialization.Model):
         self.api_prefix = api_prefix
 
 
-class HybridConnection(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class HybridConnection(ProxyOnlyResource):
     """Hybrid Connection contract. This is used to configure a Hybrid Connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12714,7 +12713,7 @@ class IpAddressRange(_serialization.Model):
         self.address_range = address_range
 
 
-class IpSecurityRestriction(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class IpSecurityRestriction(_serialization.Model):
     """IP security restriction on an app.
 
     :ivar ip_address: IP address the security restriction is valid for.
@@ -12977,7 +12976,7 @@ class KeyValuePairStringObject(_serialization.Model):
         self.value = None
 
 
-class KubeEnvironment(Resource):  # pylint: disable=too-many-instance-attributes
+class KubeEnvironment(Resource):
     """A Kubernetes cluster specialized for web workloads by Azure App Service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -13158,7 +13157,7 @@ class KubeEnvironmentCollection(_serialization.Model):
         self.next_link = None
 
 
-class KubeEnvironmentPatchResource(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class KubeEnvironmentPatchResource(ProxyOnlyResource):
     """ARM resource for a KubeEnvironment when patching.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -13713,7 +13712,7 @@ class MetricAvailability(_serialization.Model):
         self.blob_duration = blob_duration
 
 
-class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class MetricSpecification(_serialization.Model):
     """Definition of a single resource metric.
 
     :ivar name:
@@ -13959,7 +13958,7 @@ class MigrateMySqlStatus(ProxyOnlyResource):
         self.local_my_sql_enabled = None
 
 
-class MSDeploy(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class MSDeploy(ProxyOnlyResource):
     """MSDeploy ARM PUT information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -14787,7 +14786,7 @@ class OperationResultProperties(_serialization.Model):
         self.error = error
 
 
-class OperationResult(OperationResultProperties):  # pylint: disable=too-many-instance-attributes
+class OperationResult(OperationResultProperties):
     """The operation result definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -15134,7 +15133,7 @@ class PerfMonSet(_serialization.Model):
         self.values = values
 
 
-class PremierAddOn(Resource):  # pylint: disable=too-many-instance-attributes
+class PremierAddOn(Resource):
     """Premier add-on.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -15225,7 +15224,7 @@ class PremierAddOn(Resource):  # pylint: disable=too-many-instance-attributes
         self.marketplace_offer = marketplace_offer
 
 
-class PremierAddOnOffer(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class PremierAddOnOffer(ProxyOnlyResource):
     """Premier add-on offer.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -15826,7 +15825,7 @@ class PrivateLinkResourcesWrapper(_serialization.Model):
         self.value = value
 
 
-class ProcessInfo(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class ProcessInfo(ProxyOnlyResource):
     """Process Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -16150,7 +16149,7 @@ class ProcessInfoCollection(_serialization.Model):
         self.next_link = None
 
 
-class ProcessModuleInfo(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class ProcessModuleInfo(ProxyOnlyResource):
     """Process Module Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -16301,7 +16300,7 @@ class ProcessModuleInfoCollection(_serialization.Model):
         self.next_link = None
 
 
-class ProcessThreadInfo(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class ProcessThreadInfo(ProxyOnlyResource):
     """Process Thread Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -16875,7 +16874,7 @@ class RampUpRule(_serialization.Model):
         self.name = name
 
 
-class Recommendation(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class Recommendation(ProxyOnlyResource):
     """Represents a recommendation result generated by the recommendation engine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -17124,7 +17123,7 @@ class RecommendationCollection(_serialization.Model):
         self.next_link = None
 
 
-class RecommendationRule(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class RecommendationRule(ProxyOnlyResource):
     """Represents a recommendation rule that the recommendation engine can perform.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -17482,7 +17481,7 @@ class ReissueCertificateOrderRequest(ProxyOnlyResource):
         self.is_private_key_external = is_private_key_external
 
 
-class RelayServiceConnectionEntity(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class RelayServiceConnectionEntity(ProxyOnlyResource):
     """Hybrid Connection for an App Service app.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -18513,9 +18512,7 @@ class Response(_serialization.Model):
         self.body_link = body_link
 
 
-class ResponseMessageEnvelopeRemotePrivateEndpointConnection(
-    _serialization.Model
-):  # pylint: disable=too-many-instance-attributes,name-too-long
+class ResponseMessageEnvelopeRemotePrivateEndpointConnection(_serialization.Model):  # pylint: disable=name-too-long
     """Message envelope that contains the common Azure resource manager properties and the resource
     provider specific content.
 
@@ -18646,7 +18643,7 @@ class ResponseMetaData(_serialization.Model):
         self.data_source = data_source
 
 
-class RestoreRequest(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class RestoreRequest(ProxyOnlyResource):
     """Description of a restore request.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -18844,7 +18841,7 @@ class RetryHistory(_serialization.Model):
         self.error = error
 
 
-class Revision(Resource):  # pylint: disable=too-many-instance-attributes
+class Revision(Resource):
     """Container App Revision.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -19276,7 +19273,7 @@ class ServiceSpecification(_serialization.Model):
         self.log_specifications = log_specifications
 
 
-class Site(Resource):  # pylint: disable=too-many-instance-attributes
+class Site(Resource):
     """A web app, a mobile app backend, or an API app.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -19709,7 +19706,7 @@ class Site(Resource):  # pylint: disable=too-many-instance-attributes
         self.managed_environment_id = managed_environment_id
 
 
-class SiteAuthSettings(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class SiteAuthSettings(ProxyOnlyResource):
     """Configuration settings for the Azure App Service Authentication / Authorization feature.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -20374,7 +20371,7 @@ class SiteCloneabilityCriterion(_serialization.Model):
         self.description = description
 
 
-class SiteConfig(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class SiteConfig(_serialization.Model):
     """Configuration of an App Service app.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -21020,7 +21017,7 @@ class SiteConfigPropertiesDictionary(_serialization.Model):
         self.power_shell_version = None
 
 
-class SiteConfigResource(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class SiteConfigResource(ProxyOnlyResource):
     """Web app configuration ARM resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -21769,7 +21766,7 @@ class SiteConfigurationSnapshotInfoCollection(_serialization.Model):
         self.next_link = None
 
 
-class SiteExtensionInfo(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class SiteExtensionInfo(ProxyOnlyResource):
     """Site Extension Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -22139,7 +22136,7 @@ class SiteMachineKey(_serialization.Model):
         self.decryption_key = decryption_key
 
 
-class SitePatchResource(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class SitePatchResource(ProxyOnlyResource):
     """ARM resource for a site.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -22630,7 +22627,7 @@ class SiteSealRequest(_serialization.Model):
         self.locale = locale
 
 
-class SiteSourceControl(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class SiteSourceControl(ProxyOnlyResource):
     """Source control configuration for an app.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -23028,7 +23025,7 @@ class SlotConfigNamesResource(ProxyOnlyResource):
         self.azure_storage_config_names = azure_storage_config_names
 
 
-class SlotDifference(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class SlotDifference(ProxyOnlyResource):
     """A setting difference between two deployment slots of an app.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -23757,7 +23754,7 @@ class StackMinorVersion(_serialization.Model):
         self.is_remote_debugging_enabled = is_remote_debugging_enabled
 
 
-class StampCapacity(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class StampCapacity(_serialization.Model):
     """Stamp capacity information.
 
     :ivar name: Name of the stamp.
@@ -23900,7 +23897,7 @@ class StampCapacityCollection(_serialization.Model):
         self.next_link = None
 
 
-class StaticSiteARMResource(Resource):  # pylint: disable=too-many-instance-attributes
+class StaticSiteARMResource(Resource):
     """Static Site ARM resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -24220,7 +24217,7 @@ class StaticSiteBasicAuthPropertiesCollection(_serialization.Model):
         self.next_link = None
 
 
-class StaticSiteBuildARMResource(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class StaticSiteBuildARMResource(ProxyOnlyResource):
     """Static Site Build ARM resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -24855,7 +24852,7 @@ class StaticSiteLinkedBackendsCollection(_serialization.Model):
         self.next_link = None
 
 
-class StaticSitePatchResource(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class StaticSitePatchResource(ProxyOnlyResource):
     """ARM resource for a static site when patching.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -26571,7 +26568,7 @@ class TriggeredJobHistoryCollection(_serialization.Model):
         self.next_link = None
 
 
-class TriggeredJobRun(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class TriggeredJobRun(_serialization.Model):
     """Triggered Web Job Run Information.
 
     :ivar web_job_id: Job ID.
@@ -26666,7 +26663,7 @@ class TriggeredJobRun(_serialization.Model):  # pylint: disable=too-many-instanc
         self.trigger = trigger
 
 
-class TriggeredWebJob(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class TriggeredWebJob(ProxyOnlyResource):
     """Triggered Web Job Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -26898,7 +26895,7 @@ class TwitterRegistration(_serialization.Model):
         self.consumer_secret_setting_name = consumer_secret_setting_name
 
 
-class Usage(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class Usage(ProxyOnlyResource):
     """Usage of the quota resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -27112,7 +27109,7 @@ class UserAssignedIdentity(_serialization.Model):
         self.client_id = None
 
 
-class ValidateRequest(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class ValidateRequest(_serialization.Model):
     """Resource validation request content.
 
     All required parameters must be populated in order to send to server.
@@ -27626,7 +27623,7 @@ class VnetInfo(_serialization.Model):
         self.is_swift = is_swift
 
 
-class VnetInfoResource(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class VnetInfoResource(ProxyOnlyResource):
     """Virtual Network information ARM resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -28332,7 +28329,7 @@ class WebAppStackCollection(_serialization.Model):
         self.next_link = None
 
 
-class WebJob(ProxyOnlyResource):  # pylint: disable=too-many-instance-attributes
+class WebJob(ProxyOnlyResource):
     """Web Job Information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -28717,7 +28714,7 @@ class WorkerPoolResource(ProxyOnlyResource):
         self.instance_names = None
 
 
-class Workflow(WorkflowResource):  # pylint: disable=too-many-instance-attributes
+class Workflow(WorkflowResource):
     """The workflow type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -29232,7 +29229,7 @@ class WorkflowOutputParameter(WorkflowParameter):
         self.error = None
 
 
-class WorkflowRun(SubResource):  # pylint: disable=too-many-instance-attributes
+class WorkflowRun(SubResource):
     """The workflow run.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -29328,7 +29325,7 @@ class WorkflowRun(SubResource):  # pylint: disable=too-many-instance-attributes
         self.response = None
 
 
-class WorkflowRunAction(SubResource):  # pylint: disable=too-many-instance-attributes
+class WorkflowRunAction(SubResource):
     """The workflow run action.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -29482,7 +29479,7 @@ class WorkflowRunActionListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class WorkflowRunActionRepetitionDefinition(WorkflowResource):  # pylint: disable=too-many-instance-attributes
+class WorkflowRunActionRepetitionDefinition(WorkflowResource):
     """The workflow run action repetition definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -29659,7 +29656,7 @@ class WorkflowRunActionRepetitionDefinitionCollection(_serialization.Model):  # 
         self.value = value
 
 
-class WorkflowRunActionRepetitionProperties(OperationResult):  # pylint: disable=too-many-instance-attributes
+class WorkflowRunActionRepetitionProperties(OperationResult):
     """The workflow run action repetition properties definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -29827,7 +29824,7 @@ class WorkflowRunListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class WorkflowRunTrigger(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class WorkflowRunTrigger(_serialization.Model):
     """The workflow run trigger.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -29959,7 +29956,7 @@ class WorkflowSku(_serialization.Model):
         self.plan = plan
 
 
-class WorkflowTrigger(SubResource):  # pylint: disable=too-many-instance-attributes
+class WorkflowTrigger(SubResource):
     """The workflow trigger.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -30124,7 +30121,7 @@ class WorkflowTriggerFilter(_serialization.Model):
         self.state = state
 
 
-class WorkflowTriggerHistory(SubResource):  # pylint: disable=too-many-instance-attributes
+class WorkflowTriggerHistory(SubResource):
     """The workflow trigger history.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -30419,7 +30416,7 @@ class WorkflowTriggerRecurrence(_serialization.Model):
         self.schedule = schedule
 
 
-class WorkflowVersion(WorkflowResource):  # pylint: disable=too-many-instance-attributes
+class WorkflowVersion(WorkflowResource):
     """The workflow version.
 
     Variables are only populated by the server, and will be ignored when sending a request.

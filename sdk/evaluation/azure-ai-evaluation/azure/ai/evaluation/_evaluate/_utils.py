@@ -7,12 +7,11 @@ import os
 import re
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, NamedTuple, Optional, Tuple, Union
+from typing import Any, Dict, NamedTuple, Optional, Union, cast
 import uuid
 import base64
 
 import pandas as pd
-from promptflow.client import PFClient
 from promptflow.entities import Run
 
 from azure.ai.evaluation._constants import (
@@ -21,9 +20,10 @@ from azure.ai.evaluation._constants import (
     EvaluationRunProperties,
     Prefixes,
 )
-from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation._version import VERSION
+from azure.ai.evaluation._azure._clients import LiteMLClient
 
 LOGGER = logging.getLogger(__name__)
 
@@ -46,6 +46,8 @@ def is_none(value) -> bool:
 def extract_workspace_triad_from_trace_provider(  # pylint: disable=name-too-long
     trace_provider: str,
 ) -> AzureMLWorkspace:
+    from promptflow._cli._utils import get_workspace_triad_from_local
+
     match = re.match(AZURE_WORKSPACE_REGEX_FORMAT, trace_provider)
     if not match or len(match.groups()) != 5:
         raise EvaluationException(
@@ -59,28 +61,25 @@ def extract_workspace_triad_from_trace_provider(  # pylint: disable=name-too-lon
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.UNKNOWN,
         )
+
     subscription_id = match.group(1)
     resource_group_name = match.group(3)
     workspace_name = match.group(5)
-    return AzureMLWorkspace(subscription_id, resource_group_name, workspace_name)
+
+    # In theory this if statement should never evaluate to True, but we'll keep it here just in case
+    # for backwards compatibility with what the original code that depended on promptflow-azure did
+    if not (subscription_id and resource_group_name and workspace_name):
+        local = get_workspace_triad_from_local()
+        subscription_id = subscription_id or local.subscription_id or os.getenv("AZUREML_ARM_SUBSCRIPTION")
+        resource_group_name = resource_group_name or local.resource_group_name or os.getenv("AZUREML_ARM_RESOURCEGROUP")
+        workspace_name = workspace_name or local.workspace_name or os.getenv("AZUREML_ARM_WORKSPACE_NAME")
+
+    return AzureMLWorkspace(subscription_id or "", resource_group_name or "", workspace_name or "")
 
 
 def load_jsonl(path):
     with open(path, "r", encoding=DefaultOpenEncoding.READ) as f:
         return [json.loads(line) for line in f.readlines()]
-
-
-def _azure_pf_client_and_triad(trace_destination) -> Tuple[PFClient, AzureMLWorkspace]:
-    from promptflow.azure._cli._utils import _get_azure_pf_client
-
-    ws_triad = extract_workspace_triad_from_trace_provider(trace_destination)
-    azure_pf_client = _get_azure_pf_client(
-        subscription_id=ws_triad.subscription_id,
-        resource_group=ws_triad.resource_group_name,
-        workspace_name=ws_triad.workspace_name,
-    )
-
-    return azure_pf_client, ws_triad
 
 
 def _store_multimodal_content(messages, tmpdir: str):
@@ -92,23 +91,40 @@ def _store_multimodal_content(messages, tmpdir: str):
     for message in messages:
         if isinstance(message.get("content", []), list):
             for content in message.get("content", []):
-                if content.get("type") == "image_url":
-                    image_url = content.get("image_url")
-                    if image_url and "url" in image_url and image_url["url"].startswith("data:image/jpg;base64,"):
-                        # Extract the base64 string
-                        base64image = image_url["url"].replace("data:image/jpg;base64,", "")
+                process_message_content(content, images_folder_path)
 
-                        # Generate a unique filename
-                        image_file_name = f"{str(uuid.uuid4())}.jpg"
-                        image_url["url"] = f"images/{image_file_name}"  # Replace the base64 URL with the file path
 
-                        # Decode the base64 string to binary image data
-                        image_data_binary = base64.b64decode(base64image)
+def process_message_content(content, images_folder_path):
+    if content.get("type", "") == "image_url":
+        image_url = content.get("image_url")
 
-                        # Write the binary image data to the file
-                        image_file_path = os.path.join(images_folder_path, image_file_name)
-                        with open(image_file_path, "wb") as f:
-                            f.write(image_data_binary)
+        if not image_url or "url" not in image_url:
+            return None
+
+        url = image_url["url"]
+        if not url.startswith("data:image/"):
+            return None
+
+        match = re.search("data:image/([^;]+);", url)
+        if not match:
+            return None
+
+        ext = match.group(1)
+        # Extract the base64 string
+        base64image = image_url["url"].replace(f"data:image/{ext};base64,", "")
+
+        # Generate a unique filename
+        image_file_name = f"{str(uuid.uuid4())}.{ext}"
+        image_url["url"] = f"images/{image_file_name}"  # Replace the base64 URL with the file path
+
+        # Decode the base64 string to binary image data
+        image_data_binary = base64.b64decode(base64image)
+
+        # Write the binary image data to the file
+        image_file_path = os.path.join(images_folder_path, image_file_name)
+        with open(image_file_path, "wb") as f:
+            f.write(image_data_binary)
+    return None
 
 
 def _log_metrics_and_instance_results(
@@ -117,24 +133,34 @@ def _log_metrics_and_instance_results(
     trace_destination: Optional[str],
     run: Run,
     evaluation_name: Optional[str],
+    **kwargs,
 ) -> Optional[str]:
+    from azure.ai.evaluation._evaluate._eval_run import EvalRun
+
     if trace_destination is None:
         LOGGER.debug("Skip uploading evaluation results to AI Studio since no trace destination was provided.")
         return None
 
-    azure_pf_client, ws_triad = _azure_pf_client_and_triad(trace_destination)
-    tracking_uri = azure_pf_client.ml_client.workspaces.get(ws_triad.workspace_name).mlflow_tracking_uri
+    ws_triad = extract_workspace_triad_from_trace_provider(trace_destination)
+    management_client = LiteMLClient(
+        subscription_id=ws_triad.subscription_id,
+        resource_group=ws_triad.resource_group_name,
+        logger=LOGGER,
+        credential=kwargs.get("credential"),
+        # let the client automatically determine the credentials to use
+    )
+    tracking_uri = management_client.workspace_get_info(ws_triad.workspace_name).ml_flow_tracking_uri
 
     # Adding line_number as index column this is needed by UI to form link to individual instance run
     instance_results["line_number"] = instance_results.index.values
 
     with EvalRun(
         run_name=run.name if run is not None else evaluation_name,
-        tracking_uri=tracking_uri,
+        tracking_uri=cast(str, tracking_uri),
         subscription_id=ws_triad.subscription_id,
         group_name=ws_triad.resource_group_name,
         workspace_name=ws_triad.workspace_name,
-        ml_client=azure_pf_client.ml_client,
+        management_client=management_client,
         promptflow_run=run,
     ) as ev_run:
         artifact_name = EvalRun.EVALUATION_ARTIFACT
@@ -165,7 +191,14 @@ def _log_metrics_and_instance_results(
                     properties={
                         EvaluationRunProperties.RUN_TYPE: "eval_run",
                         EvaluationRunProperties.EVALUATION_RUN: "promptflow.BatchRun",
+                        EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
                         "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
+                    }
+                )
+            else:
+                ev_run.write_properties_to_run_history(
+                    properties={
+                        EvaluationRunProperties.EVALUATION_SDK: f"azure-ai-evaluation:{VERSION}",
                     }
                 )
 
@@ -295,3 +328,30 @@ def set_event_loop_policy() -> None:
         # Reference: https://stackoverflow.com/questions/45600579/asyncio-event-loop-is-closed-when-getting-loop
         # On Windows seems to be a problem with EventLoopPolicy, use this snippet to work around it
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())  # type: ignore[attr-defined]
+
+
+class JSONLDataFileLoader:
+    def __init__(self, filename: Union[os.PathLike, str]):
+        self.filename = filename
+
+    def load(self) -> pd.DataFrame:
+        return pd.read_json(self.filename, lines=True)
+
+
+class CSVDataFileLoader:
+    def __init__(self, filename: Union[os.PathLike, str]):
+        self.filename = filename
+
+    def load(self) -> pd.DataFrame:
+        return pd.read_csv(self.filename)
+
+
+class DataLoaderFactory:
+    @staticmethod
+    def get_loader(filename: Union[os.PathLike, str]) -> Union[JSONLDataFileLoader, CSVDataFileLoader]:
+        filename_str = str(filename).lower()
+        if filename_str.endswith(".csv"):
+            return CSVDataFileLoader(filename)
+
+        # fallback to JSONL to maintain backward compatibility
+        return JSONLDataFileLoader(filename)

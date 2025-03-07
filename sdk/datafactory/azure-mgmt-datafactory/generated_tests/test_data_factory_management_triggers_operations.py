@@ -20,7 +20,7 @@ class TestDataFactoryManagementTriggersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_factory(self, resource_group):
+    def test_triggers_list_by_factory(self, resource_group):
         response = self.client.triggers.list_by_factory(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -32,7 +32,7 @@ class TestDataFactoryManagementTriggersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_query_by_factory(self, resource_group):
+    def test_triggers_query_by_factory(self, resource_group):
         response = self.client.triggers.query_by_factory(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -45,7 +45,7 @@ class TestDataFactoryManagementTriggersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_triggers_create_or_update(self, resource_group):
         response = self.client.triggers.create_or_update(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -59,7 +59,7 @@ class TestDataFactoryManagementTriggersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_triggers_get(self, resource_group):
         response = self.client.triggers.get(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -72,7 +72,7 @@ class TestDataFactoryManagementTriggersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_triggers_delete(self, resource_group):
         response = self.client.triggers.delete(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -85,7 +85,7 @@ class TestDataFactoryManagementTriggersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_subscribe_to_events(self, resource_group):
+    def test_triggers_begin_subscribe_to_events(self, resource_group):
         response = self.client.triggers.begin_subscribe_to_events(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -98,7 +98,7 @@ class TestDataFactoryManagementTriggersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_event_subscription_status(self, resource_group):
+    def test_triggers_get_event_subscription_status(self, resource_group):
         response = self.client.triggers.get_event_subscription_status(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -111,7 +111,7 @@ class TestDataFactoryManagementTriggersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_unsubscribe_from_events(self, resource_group):
+    def test_triggers_begin_unsubscribe_from_events(self, resource_group):
         response = self.client.triggers.begin_unsubscribe_from_events(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -124,7 +124,7 @@ class TestDataFactoryManagementTriggersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_start(self, resource_group):
+    def test_triggers_begin_start(self, resource_group):
         response = self.client.triggers.begin_start(
             resource_group_name=resource_group.name,
             factory_name="str",
@@ -137,7 +137,7 @@ class TestDataFactoryManagementTriggersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_stop(self, resource_group):
+    def test_triggers_begin_stop(self, resource_group):
         response = self.client.triggers.begin_stop(
             resource_group_name=resource_group.name,
             factory_name="str",

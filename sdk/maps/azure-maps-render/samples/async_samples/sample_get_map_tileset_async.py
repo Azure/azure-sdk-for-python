@@ -20,6 +20,7 @@ import os
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
+
 async def get_map_tileset_async():
     # [START get_map_tileset_async]
     from azure.core.credentials import AzureKeyCredential
@@ -36,5 +37,5 @@ async def get_map_tileset_async():
     # [END get_map_tileset_async]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(get_map_tileset_async())

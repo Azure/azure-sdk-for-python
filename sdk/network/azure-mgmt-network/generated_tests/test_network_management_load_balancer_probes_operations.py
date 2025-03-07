@@ -20,11 +20,11 @@ class TestNetworkManagementLoadBalancerProbesOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_load_balancer_probes_list(self, resource_group):
         response = self.client.load_balancer_probes.list(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestNetworkManagementLoadBalancerProbesOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_load_balancer_probes_get(self, resource_group):
         response = self.client.load_balancer_probes.get(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             probe_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself

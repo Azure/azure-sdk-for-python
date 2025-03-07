@@ -23,11 +23,10 @@ import os
 from azure.communication.phonenumbers.aio import PhoneNumbersClient
 from azure.communication.phonenumbers import PhoneNumberCapabilityType
 
-connection_str = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
-phone_number_to_update = os.getenv(
-    "AZURE_PHONE_NUMBER" # e.g. "+15551234567"
-) 
+connection_str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+phone_number_to_update = os.getenv("AZURE_PHONE_NUMBER")  # e.g. "+15551234567"
 phone_numbers_client = PhoneNumbersClient.from_connection_string(connection_str)
+
 
 async def update_phone_number_capabilities():
     async with phone_numbers_client:
@@ -35,10 +34,11 @@ async def update_phone_number_capabilities():
             phone_number_to_update,
             PhoneNumberCapabilityType.INBOUND_OUTBOUND,
             PhoneNumberCapabilityType.INBOUND,
-            polling = True
+            polling=True,
         )
         await poller.result()
-    print('Status of the operation: ' + poller.status())
+    print("Status of the operation: " + poller.status())
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(update_phone_number_capabilities())

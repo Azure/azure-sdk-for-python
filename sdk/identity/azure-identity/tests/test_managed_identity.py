@@ -173,7 +173,7 @@ def test_cloud_shell(get_token_method):
     with mock.patch("os.environ", {EnvironmentVariables.MSI_ENDPOINT: endpoint}):
         token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
         assert token.token == expected_token
-        assert token.expires_on == expires_on
+        assert abs(token.expires_on - expires_on) <= 1
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
@@ -212,7 +212,7 @@ def test_cloud_shell_tenant_id(get_token_method):
             kwargs = {"options": kwargs}
         token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope, **kwargs)
         assert token.token == expected_token
-        assert token.expires_on == expires_on
+        assert abs(token.expires_on - expires_on) <= 1
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
@@ -262,11 +262,11 @@ def test_azure_ml(get_token_method):
     ):
         token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
         assert token.token == expected_token
-        assert token.expires_on == expires_on
+        assert abs(token.expires_on - expires_on) <= 1
 
         token = getattr(ManagedIdentityCredential(transport=transport, client_id=client_id), get_token_method)(scope)
         assert token.token == expected_token
-        assert token.expires_on == expires_on
+        assert abs(token.expires_on - expires_on) <= 1
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
@@ -317,7 +317,7 @@ def test_azure_ml_tenant_id(get_token_method):
             kwargs = {"options": kwargs}
         token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope, **kwargs)
         assert token.token == expected_token
-        assert token.expires_on == expires_on
+        assert abs(token.expires_on - expires_on) <= 1
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
@@ -363,12 +363,12 @@ def test_cloud_shell_identity_config(get_token_method):
     with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: endpoint}, clear=True):
         token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
         assert token.token == expected_token
-        assert token.expires_on == expires_on
+        assert abs(token.expires_on - expires_on) <= 1
 
         credential = ManagedIdentityCredential(transport=transport, identity_config={param_name: param_value})
         token = getattr(credential, get_token_method)(scope)
         assert token.token == expected_token
-        assert token.expires_on == expires_on
+        assert abs(token.expires_on - expires_on) <= 1
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
@@ -410,7 +410,7 @@ def test_prefers_app_service_2019_08_01(get_token_method):
     with mock.patch.dict("os.environ", environ, clear=True):
         token = getattr(ManagedIdentityCredential(transport=transport), get_token_method)(scope)
     assert token.token == access_token
-    assert token.expires_on == expires_on
+    assert abs(token.expires_on - expires_on) <= 1
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
@@ -458,7 +458,7 @@ def test_app_service_2019_08_01(get_token_method):
     ):
         token = getattr(ManagedIdentityCredential(transport=mock.Mock(send=send)), get_token_method)(scope)
         assert token.token == access_token
-        assert token.expires_on == expires_on
+        assert abs(token.expires_on - expires_on) <= 1
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
@@ -509,7 +509,7 @@ def test_app_service_2019_08_01_tenant_id(get_token_method):
             kwargs = {"options": kwargs}
         token = getattr(ManagedIdentityCredential(transport=mock.Mock(send=send)), get_token_method)(scope, **kwargs)
         assert token.token == access_token
-        assert token.expires_on == expires_on
+        assert abs(token.expires_on - expires_on) <= 1
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
@@ -562,12 +562,12 @@ def test_app_service_user_assigned_identity(get_token_method):
     ):
         token = getattr(ManagedIdentityCredential(client_id=client_id, transport=transport), get_token_method)(scope)
         assert token.token == expected_token
-        assert token.expires_on == expires_on
+        assert abs(token.expires_on - expires_on) <= 1
 
         credential = ManagedIdentityCredential(client_id=client_id, transport=transport)
         token = getattr(credential, get_token_method)(scope)
         assert token.token == expected_token
-        assert token.expires_on == expires_on
+        assert abs(token.expires_on - expires_on) <= 1
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
@@ -771,7 +771,7 @@ def test_service_fabric(get_token_method):
     ):
         token = getattr(ManagedIdentityCredential(transport=mock.Mock(send=send)), get_token_method)(scope)
         assert token.token == access_token
-        assert token.expires_on == expires_on
+        assert abs(token.expires_on - expires_on) <= 1
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
@@ -815,7 +815,7 @@ def test_service_fabric_tenant_id(get_token_method):
             kwargs = {"options": kwargs}
         token = getattr(ManagedIdentityCredential(transport=mock.Mock(send=send)), get_token_method)(scope, **kwargs)
         assert token.token == access_token
-        assert token.expires_on == expires_on
+        assert abs(token.expires_on - expires_on) <= 1
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)

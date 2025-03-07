@@ -27,7 +27,6 @@ class TestIoTOperationsMgmtInstanceOperationsAsync(AzureMgmtRecordedTestCase):
         )
         result = [r async for r in response]
         assert result == []
-        
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
@@ -35,4 +34,3 @@ class TestIoTOperationsMgmtInstanceOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.instance.list_by_subscription()
         result = [r async for r in response]
         assert response
-        

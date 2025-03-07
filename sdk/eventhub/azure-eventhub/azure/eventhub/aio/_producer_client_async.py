@@ -109,6 +109,7 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
     :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
      the Event Hubs service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
+     Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
      The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: Optional[str]
@@ -296,7 +297,7 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
         timeout: Optional[float] = None,
         partition_id: Optional[str] = None,
         partition_key: Optional[str] = None,
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ):
         set_event_partition_key(event, partition_key, self._amqp_transport)
         timeout_time = time.time() + timeout if timeout else None
@@ -314,7 +315,7 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
                 self._producers[p_id] = None
 
     async def _get_max_message_size(self) -> None:
-        # pylint: disable=protected-access,line-too-long
+        # pylint: disable=protected-access
         async with self._lock:
             if not self._max_message_size_on_link:
                 await cast(EventHubProducer, self._producers[ALL_PARTITIONS])._open_with_retry()
@@ -471,6 +472,7 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
         :keyword custom_endpoint_address: The custom endpoint address to use for establishing a connection to
          the Event Hubs service, allowing network requests to be routed through any application gateways or
          other paths needed for the host environment. Default is None.
+         Unless specified otherwise, default transport type is TransportType.AmqpOverWebsockets.
          The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
          If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
         :paramtype custom_endpoint_address: Optional[str]
@@ -529,7 +531,7 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
         timeout: Optional[float] = None,
         partition_id: Optional[str] = None,
         partition_key: Optional[str] = None,
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         """
         Sends an event data.

@@ -21,7 +21,7 @@ class TestCosmosDBManagementDataTransferJobsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create(self, resource_group):
+    async def test_data_transfer_jobs_create(self, resource_group):
         response = await self.client.data_transfer_jobs.create(
             resource_group_name=resource_group.name,
             account_name="str",
@@ -44,7 +44,7 @@ class TestCosmosDBManagementDataTransferJobsOperationsAsync(AzureMgmtRecordedTes
                 "name": "str",
                 "type": "str",
             },
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -52,12 +52,12 @@ class TestCosmosDBManagementDataTransferJobsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_data_transfer_jobs_get(self, resource_group):
         response = await self.client.data_transfer_jobs.get(
             resource_group_name=resource_group.name,
             account_name="str",
             job_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -65,12 +65,12 @@ class TestCosmosDBManagementDataTransferJobsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_pause(self, resource_group):
+    async def test_data_transfer_jobs_pause(self, resource_group):
         response = await self.client.data_transfer_jobs.pause(
             resource_group_name=resource_group.name,
             account_name="str",
             job_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -78,12 +78,12 @@ class TestCosmosDBManagementDataTransferJobsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_resume(self, resource_group):
+    async def test_data_transfer_jobs_resume(self, resource_group):
         response = await self.client.data_transfer_jobs.resume(
             resource_group_name=resource_group.name,
             account_name="str",
             job_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -91,12 +91,12 @@ class TestCosmosDBManagementDataTransferJobsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_cancel(self, resource_group):
+    async def test_data_transfer_jobs_cancel(self, resource_group):
         response = await self.client.data_transfer_jobs.cancel(
             resource_group_name=resource_group.name,
             account_name="str",
             job_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -104,12 +104,12 @@ class TestCosmosDBManagementDataTransferJobsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_complete(self, resource_group):
+    async def test_data_transfer_jobs_complete(self, resource_group):
         response = await self.client.data_transfer_jobs.complete(
             resource_group_name=resource_group.name,
             account_name="str",
             job_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -117,11 +117,11 @@ class TestCosmosDBManagementDataTransferJobsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_database_account(self, resource_group):
+    async def test_data_transfer_jobs_list_by_database_account(self, resource_group):
         response = self.client.data_transfer_jobs.list_by_database_account(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-09-01-preview",
+            api_version="2024-12-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

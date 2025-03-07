@@ -170,7 +170,7 @@ def get_running_async_lock() -> AsyncContextManager:
 
     :return: An instance of the running async library's Lock class.
     :rtype: AsyncContextManager
-    :raises: RuntimeError if the current context is not running under an async library.
+    :raises RuntimeError: if the current context is not running under an async library.
     """
 
     try:

@@ -290,7 +290,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert len(items) == 1
         assert items[0].key == KEY
         assert items[0].label == LABEL
-        self.tear_down()
+        await self.tear_down()
 
     @app_config_decorator_async
     @recorded_by_proxy_async

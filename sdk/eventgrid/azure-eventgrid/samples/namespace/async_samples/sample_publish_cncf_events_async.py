@@ -34,7 +34,11 @@ async def publish():
         await client.send(
             [
                 CloudEvent(
-                    attributes={"type": "cloudevent", "source": "/cncf/cloud/event/1.0", "subject": "testing-cncf-event"},
+                    attributes={
+                        "type": "cloudevent",
+                        "source": "/cncf/cloud/event/1.0",
+                        "subject": "testing-cncf-event",
+                    },
                     data=b"This is a cncf cloud event.",
                 )
             ]

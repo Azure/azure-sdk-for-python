@@ -6,6 +6,7 @@
 
 import logging
 from datetime import datetime
+from uuid import uuid4
 from typing import Any, Optional, Union
 
 from ..utils import utc_now, utc_from_timestamp
@@ -72,7 +73,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
     ) -> None:
         message = Message(  # type: ignore # TODO: missing positional args header, etc.
             value=token,
-            properties=Properties(message_id=self._mgmt_link.next_message_id),  # type: ignore
+            properties=Properties(message_id=uuid4()),  # type: ignore
             application_properties={
                 CBS_NAME: audience,
                 CBS_OPERATION: CBS_PUT_TOKEN,
@@ -87,7 +88,6 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
             operation=CBS_PUT_TOKEN,
             type=token_type,
         )
-        self._mgmt_link.next_message_id += 1
 
     async def _on_amqp_management_open_complete(self, management_open_result: ManagementOpenResult) -> None:
         if self.state in (CbsState.CLOSED, CbsState.ERROR):
@@ -226,7 +226,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
         if self._token and token_type:
             await self._put_token(self._token, token_type, self._auth.audience, utc_from_timestamp(self._expires_on))
 
-    async def handle_token(self) -> bool:  # pylint: disable=inconsistent-return-statements
+    async def handle_token(self) -> bool:
         if not await self._cbs_link_ready():
             return False
         await self._update_status()

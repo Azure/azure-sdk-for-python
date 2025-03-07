@@ -11,6 +11,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from render_preparer import MapsRenderPreparer
 from azure.maps.render import TilesetID
 
+
 class TestMapsRenderClient(AzureRecordedTestCase):
     def setup_method(self, method):
         self.client = MapsRenderClient(
@@ -23,14 +24,11 @@ class TestMapsRenderClient(AzureRecordedTestCase):
     async def test_get_map_tile(self):
         async with self.client:
             result = await self.client.get_map_tile(
-                tileset_id=TilesetID.MICROSOFT_BASE,
-                z=6,
-                x=9,
-                y=22,
-                tile_size="512"
+                tileset_id=TilesetID.MICROSOFT_BASE, z=6, x=9, y=22, tile_size="512"
             )
 
             import types
+
             assert isinstance(result, types.AsyncGeneratorType)
 
     @MapsRenderPreparer()
@@ -38,7 +36,9 @@ class TestMapsRenderClient(AzureRecordedTestCase):
     async def test_get_map_tileset(self):
         async with self.client:
             result = await self.client.get_map_tileset(tileset_id=TilesetID.MICROSOFT_BASE)
-            assert result.get("name", False) and (result["name"] == "microsoft.base" or result["name"] == "microsoft.core.vector")
+            assert result.get("name", False) and (
+                result["name"] == "microsoft.base" or result["name"] == "microsoft.core.vector"
+            )
             assert len(result.get("tiles", [])) > 0
 
     @MapsRenderPreparer()

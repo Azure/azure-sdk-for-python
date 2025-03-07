@@ -112,6 +112,8 @@ This is the most useful skip, but the following skip variables are also supporte
   - Omit checking that a package's dependencies are on PyPI before releasing.
 - `Skip.KeywordCheck`
   - Omit checking that a package's keywords are correctly formulated before releasing.
+- `Skip.Black`
+  - Omit checking `black` in the `analyze` job.
 
 ## The pyproject.toml
 
@@ -135,6 +137,18 @@ sphinx = false
 ```
 
 If a package does not yet have a `pyproject.toml`, creating one with just the section `[tool.azure-sdk-build]` will do no harm to the release of the package in question.
+
+### Coverage Enforcement
+
+This repository supports enforcement of an absolute coverage % per package. Set:
+
+```
+[tool.azure-sdk-build]
+absolute_cov = true
+absolute_cov_percent = 75.00
+```
+
+After it is implemented, the `relative_cov` key will enable the prevention of **negative** code coverage contributions.
 
 ## Environment variables important to CI
 
@@ -172,7 +186,7 @@ You can enable test logging in a pipeline by setting the queue time variable `PY
 
 `PYTEST_LOG_LEVEL=INFO`
 
-This also works locally with tox by setting the `PYTEST_LOG_LEVEL` environment variable. 
+This also works locally with tox by setting the `PYTEST_LOG_LEVEL` environment variable.
 
 Note that if you want DEBUG level logging with sensitive information unredacted in the test logs, then you still must pass `logging_enable=True` into the client(s) being used in tests.
 
@@ -237,23 +251,23 @@ fail if docstring are invalid, helping to ensure the resulting documentation wil
 
 #### Opt-in to formatting validation
 
-Make the following change to your projects `ci.yml`:
+Ensure that `black = true` is present within your `pyproject.toml`:
 
 ```yml
-extends:
-    template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
-    parameters:
-        ...
-        ValidateFormatting: true
-        ...
+[tool.azure-sdk-build]
+...other checks enabled/disabled
+black = true
+...other checks enabled/disabled
 ```
+
+to opt into the black invocation.
 
 #### Running locally
 
 1. Go to package root directory.
-2. Execute command: `tox run -e black -c ../../../eng/tox/tox.ini -- .`
+2. Execute command: `tox run -e black -c ../../../eng/tox/tox.ini --root . -- .`
 
-**Tip**: You can provide any arguments that `black` accepts after the `--`. Example: `tox run -e black -c ../../../eng/tox/tox.ini -- path/to/file.py`
+**Tip**: You can provide any arguments that `black` accepts after the `--`. Example: `tox run -e black -c ../../../eng/tox/tox.ini --root . -- path/to/file.py`
 
 ### Change log verification
 

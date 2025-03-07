@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from ... import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -160,7 +159,7 @@ class CommunityGallery(PirCommunityGalleryResource):
     """
 
 
-class CommunityGalleryImage(PirCommunityGalleryResource):  # pylint: disable=too-many-instance-attributes
+class CommunityGalleryImage(PirCommunityGalleryResource):
     """Specifies information about the gallery image definition that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -174,9 +173,9 @@ class CommunityGalleryImage(PirCommunityGalleryResource):  # pylint: disable=too
     :ivar unique_id: The unique id of this community gallery.
     :vartype unique_id: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
-     disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows" and "Linux".
+     disk when creating a VM from a managed image. :code:`<br>`\\ :code:`<br>` Possible values are:
+     :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known values
+     are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
      under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized" and
@@ -256,9 +255,9 @@ class CommunityGalleryImage(PirCommunityGalleryResource):  # pylint: disable=too
         :keyword unique_id: The unique id of this community gallery.
         :paramtype unique_id: str
         :keyword os_type: This property allows you to specify the type of the OS that is included in
-         the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows" and "Linux".
+         the disk when creating a VM from a managed image. :code:`<br>`\\ :code:`<br>` Possible values
+         are: :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known
+         values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
          created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized"
@@ -714,7 +713,7 @@ class Resource(_serialization.Model):
         self.tags = tags
 
 
-class Gallery(Resource):  # pylint: disable=too-many-instance-attributes
+class Gallery(Resource):
     """Specifies information about the Shared Image Gallery that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -807,7 +806,7 @@ class Gallery(Resource):  # pylint: disable=too-many-instance-attributes
         self.sharing_status = None
 
 
-class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attributes
+class GalleryApplication(Resource):
     """Specifies information about the gallery Application Definition that you want to create or
     update.
 
@@ -838,9 +837,9 @@ class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attribu
      property can be used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar supported_os_type: This property allows you to specify the supported type of the OS that
-     application is built for. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows" and "Linux".
+     application is built for. :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\
+     :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known values are: "Windows" and
+     "Linux".
     :vartype supported_os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     """
 
@@ -896,9 +895,9 @@ class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attribu
          property can be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword supported_os_type: This property allows you to specify the supported type of the OS
-         that application is built for. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows" and "Linux".
+         that application is built for. :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\
+         :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known values are: "Windows" and
+         "Linux".
         :paramtype supported_os_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         """
@@ -1014,9 +1013,9 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
      property can be used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar supported_os_type: This property allows you to specify the supported type of the OS that
-     application is built for. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows" and "Linux".
+     application is built for. :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\
+     :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known values are: "Windows" and
+     "Linux".
     :vartype supported_os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     """
 
@@ -1067,9 +1066,9 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
          property can be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword supported_os_type: This property allows you to specify the supported type of the OS
-         that application is built for. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows" and "Linux".
+         that application is built for. :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\
+         :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known values are: "Windows" and
+         "Linux".
         :paramtype supported_os_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         """
@@ -1290,9 +1289,7 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
         self.target_extended_locations = target_extended_locations
 
 
-class GalleryApplicationVersionPublishingProfile(
-    GalleryArtifactPublishingProfileBase
-):  # pylint: disable=too-many-instance-attributes,name-too-long
+class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfileBase):  # pylint: disable=name-too-long
     """The publishing profile of a gallery image version.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1712,7 +1709,7 @@ class GalleryIdentifier(_serialization.Model):
         self.unique_name = None
 
 
-class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
+class GalleryImage(Resource):
     """Specifies information about the gallery image definition that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1739,9 +1736,9 @@ class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar release_note_uri: The release note uri.
     :vartype release_note_uri: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
-     disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows" and "Linux".
+     disk when creating a VM from a managed image. :code:`<br>`\\ :code:`<br>` Possible values are:
+     :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known values
+     are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
      under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized" and
@@ -1841,9 +1838,9 @@ class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
         :keyword release_note_uri: The release note uri.
         :paramtype release_note_uri: str
         :keyword os_type: This property allows you to specify the type of the OS that is included in
-         the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows" and "Linux".
+         the disk when creating a VM from a managed image. :code:`<br>`\\ :code:`<br>` Possible values
+         are: :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known
+         values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
          created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized"
@@ -1989,7 +1986,7 @@ class GalleryImageList(_serialization.Model):
         self.next_link = next_link
 
 
-class GalleryImageUpdate(UpdateResourceDefinition):  # pylint: disable=too-many-instance-attributes
+class GalleryImageUpdate(UpdateResourceDefinition):
     """Specifies information about the gallery image definition that you want to update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2012,9 +2009,9 @@ class GalleryImageUpdate(UpdateResourceDefinition):  # pylint: disable=too-many-
     :ivar release_note_uri: The release note uri.
     :vartype release_note_uri: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
-     disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows" and "Linux".
+     disk when creating a VM from a managed image. :code:`<br>`\\ :code:`<br>` Possible values are:
+     :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known values
+     are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
      under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized" and
@@ -2109,9 +2106,9 @@ class GalleryImageUpdate(UpdateResourceDefinition):  # pylint: disable=too-many-
         :keyword release_note_uri: The release note uri.
         :paramtype release_note_uri: str
         :keyword os_type: This property allows you to specify the type of the OS that is included in
-         the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows" and "Linux".
+         the disk when creating a VM from a managed image. :code:`<br>`\\ :code:`<br>` Possible values
+         are: :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known
+         values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
          created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized"
@@ -3145,7 +3142,7 @@ class SharedGalleryDataDiskImage(SharedGalleryDiskImage):
         self.lun = lun
 
 
-class SharedGalleryImage(PirSharedGalleryResource):  # pylint: disable=too-many-instance-attributes
+class SharedGalleryImage(PirSharedGalleryResource):
     """Specifies information about the gallery image definition that you want to create or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3157,9 +3154,9 @@ class SharedGalleryImage(PirSharedGalleryResource):  # pylint: disable=too-many-
     :ivar unique_id: The unique id of this shared gallery.
     :vartype unique_id: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
-     disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-     :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-     "Windows" and "Linux".
+     disk when creating a VM from a managed image. :code:`<br>`\\ :code:`<br>` Possible values are:
+     :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known values
+     are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
     :ivar os_state: This property allows the user to specify whether the virtual machines created
      under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized" and
@@ -3229,9 +3226,9 @@ class SharedGalleryImage(PirSharedGalleryResource):  # pylint: disable=too-many-
         :keyword unique_id: The unique id of this shared gallery.
         :paramtype unique_id: str
         :keyword os_type: This property allows you to specify the type of the OS that is included in
-         the disk when creating a VM from a managed image. :code:`<br>`:code:`<br>` Possible values are:
-         :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**. Known values are:
-         "Windows" and "Linux".
+         the disk when creating a VM from a managed image. :code:`<br>`\\ :code:`<br>` Possible values
+         are: :code:`<br>`\\ :code:`<br>` **Windows** :code:`<br>`\\ :code:`<br>` **Linux**. Known
+         values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.compute.v2022_01_03.models.OperatingSystemTypes
         :keyword os_state: This property allows the user to specify whether the virtual machines
          created under this image are 'Generalized' or 'Specialized'. Known values are: "Generalized"
@@ -3504,9 +3501,9 @@ class SharingProfile(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar permissions: This property allows you to specify the permission of sharing gallery.
-     :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Private**
-     :code:`<br>`:code:`<br>` **Groups** :code:`<br>`:code:`<br>` **Community**. Known values are:
-     "Private", "Groups", and "Community".
+     :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **Private**
+     :code:`<br>`\\ :code:`<br>` **Groups** :code:`<br>`\\ :code:`<br>` **Community**. Known values
+     are: "Private", "Groups", and "Community".
     :vartype permissions: str or
      ~azure.mgmt.compute.v2022_01_03.models.GallerySharingPermissionTypes
     :ivar groups: A list of sharing profile groups.
@@ -3535,9 +3532,9 @@ class SharingProfile(_serialization.Model):
     ) -> None:
         """
         :keyword permissions: This property allows you to specify the permission of sharing gallery.
-         :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Private**
-         :code:`<br>`:code:`<br>` **Groups** :code:`<br>`:code:`<br>` **Community**. Known values are:
-         "Private", "Groups", and "Community".
+         :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **Private**
+         :code:`<br>`\\ :code:`<br>` **Groups** :code:`<br>`\\ :code:`<br>` **Community**. Known values
+         are: "Private", "Groups", and "Community".
         :paramtype permissions: str or
          ~azure.mgmt.compute.v2022_01_03.models.GallerySharingPermissionTypes
         :keyword community_gallery_info: Information of community gallery if current gallery is shared
@@ -3553,9 +3550,9 @@ class SharingProfile(_serialization.Model):
 class SharingProfileGroup(_serialization.Model):
     """Group of the gallery sharing profile.
 
-    :ivar type: This property allows you to specify the type of sharing group.
-     :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Subscriptions**
-     :code:`<br>`:code:`<br>` **AADTenants**. Known values are: "Subscriptions" and "AADTenants".
+    :ivar type: This property allows you to specify the type of sharing group. :code:`<br>`\\
+     :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **Subscriptions** :code:`<br>`\\
+     :code:`<br>` **AADTenants**. Known values are: "Subscriptions" and "AADTenants".
     :vartype type: str or ~azure.mgmt.compute.v2022_01_03.models.SharingProfileGroupTypes
     :ivar ids: A list of subscription/tenant ids the gallery is aimed to be shared to.
     :vartype ids: list[str]
@@ -3574,9 +3571,9 @@ class SharingProfileGroup(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword type: This property allows you to specify the type of sharing group.
-         :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Subscriptions**
-         :code:`<br>`:code:`<br>` **AADTenants**. Known values are: "Subscriptions" and "AADTenants".
+        :keyword type: This property allows you to specify the type of sharing group. :code:`<br>`\\
+         :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **Subscriptions** :code:`<br>`\\
+         :code:`<br>` **AADTenants**. Known values are: "Subscriptions" and "AADTenants".
         :paramtype type: str or ~azure.mgmt.compute.v2022_01_03.models.SharingProfileGroupTypes
         :keyword ids: A list of subscription/tenant ids the gallery is aimed to be shared to.
         :paramtype ids: list[str]
@@ -3623,9 +3620,9 @@ class SharingUpdate(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar operation_type: This property allows you to specify the operation type of gallery sharing
-     update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Add**
-     :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**. Required. Known values
-     are: "Add", "Remove", "Reset", and "EnableCommunity".
+     update. :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>` **Add**
+     :code:`<br>`\\ :code:`<br>` **Remove** :code:`<br>`\\ :code:`<br>` **Reset**. Required. Known
+     values are: "Add", "Remove", "Reset", and "EnableCommunity".
     :vartype operation_type: str or
      ~azure.mgmt.compute.v2022_01_03.models.SharingUpdateOperationTypes
     :ivar groups: A list of sharing profile groups.
@@ -3650,9 +3647,9 @@ class SharingUpdate(_serialization.Model):
     ) -> None:
         """
         :keyword operation_type: This property allows you to specify the operation type of gallery
-         sharing update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Add**
-         :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**. Required. Known values
-         are: "Add", "Remove", "Reset", and "EnableCommunity".
+         sharing update. :code:`<br>`\\ :code:`<br>` Possible values are: :code:`<br>`\\ :code:`<br>`
+         **Add** :code:`<br>`\\ :code:`<br>` **Remove** :code:`<br>`\\ :code:`<br>` **Reset**. Required.
+         Known values are: "Add", "Remove", "Reset", and "EnableCommunity".
         :paramtype operation_type: str or
          ~azure.mgmt.compute.v2022_01_03.models.SharingUpdateOperationTypes
         :keyword groups: A list of sharing profile groups.

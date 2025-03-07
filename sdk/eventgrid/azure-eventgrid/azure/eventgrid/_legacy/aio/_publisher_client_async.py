@@ -65,7 +65,7 @@ SendType = Union[
 ListEventType = Union[List[CloudEvent], List[EventGridEvent], List[Dict]]
 
 
-class EventGridPublisherClient:  # pylint: disable=client-accepts-api-version-keyword
+class EventGridPublisherClient:
     """Asynchronous EventGridPublisherClient publishes events to an EventGrid topic or domain.
     It can be used to publish either an EventGridEvent, a CloudEvent or a Custom Schema.
 
@@ -134,7 +134,7 @@ class EventGridPublisherClient:  # pylint: disable=client-accepts-api-version-ke
         return policies
 
     @distributed_trace_async
-    async def send(self, events: SendType, *, channel_name: Optional[str] = None, **kwargs: Any) -> None:
+    async def send(self, events: SendType, *, channel_name: Optional[str] = None, **kwargs: Any) -> None: # pylint:disable=docstring-keyword-should-match-keyword-only
         """Sends events to a topic or a domain specified during the client initialization.
 
         A single instance or a list of dictionaries, CloudEvents or EventGridEvents are accepted.
@@ -199,7 +199,7 @@ class EventGridPublisherClient:  # pylint: disable=client-accepts-api-version-ke
         :keyword channel_name: Optional. Used to specify the name of event channel when publishing to partner
         :paramtype channel_name: str or None
          namespaces with partner topic. For more details, visit
-         https://docs.microsoft.com/azure/event-grid/partner-events-overview
+         https://learn.microsoft.com/azure/event-grid/partner-events-overview
         :rtype: None
         """
         if not isinstance(events, list):
@@ -207,7 +207,7 @@ class EventGridPublisherClient:  # pylint: disable=client-accepts-api-version-ke
         content_type = kwargs.pop("content_type", "application/json; charset=utf-8")
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
-                events = [_cloud_event_to_generated(e, **kwargs) for e in events]  # pylint: disable=protected-access
+                events = [_cloud_event_to_generated(e, **kwargs) for e in events]
             except AttributeError:
                 ## this is either a dictionary or a CNCF cloud event
                 events = [_from_cncf_events(e) for e in events]
@@ -215,7 +215,7 @@ class EventGridPublisherClient:  # pylint: disable=client-accepts-api-version-ke
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event_format(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
-        response = await self._client.send_request(  # pylint: disable=protected-access
+        response = await self._client.send_request(
             _build_request(
                 self._endpoint, content_type, events, channel_name=channel_name, api_version=self._api_version
             ),

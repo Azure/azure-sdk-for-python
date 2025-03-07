@@ -18,7 +18,6 @@ from typing import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=ungrouped-imports
     from .._common import EventData
     from .._consumer import EventHubConsumer
     from ..aio._consumer_async import EventHubConsumer as EventHubConsumerAsync

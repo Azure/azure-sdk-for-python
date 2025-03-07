@@ -21,13 +21,13 @@ class TestComputeManagementCloudServicesUpdateDomainOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_walk_update_domain(self, resource_group):
+    async def test_cloud_services_update_domain_begin_walk_update_domain(self, resource_group):
         response = await (
             await self.client.cloud_services_update_domain.begin_walk_update_domain(
                 resource_group_name=resource_group.name,
                 cloud_service_name="str",
                 update_domain=0,
-                api_version="2020-10-01-preview",
+                api_version="2024-11-04",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -36,12 +36,12 @@ class TestComputeManagementCloudServicesUpdateDomainOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_update_domain(self, resource_group):
+    async def test_cloud_services_update_domain_get_update_domain(self, resource_group):
         response = await self.client.cloud_services_update_domain.get_update_domain(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
             update_domain=0,
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         )
 
         # please add some check logic here by yourself
@@ -49,11 +49,11 @@ class TestComputeManagementCloudServicesUpdateDomainOperationsAsync(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_update_domains(self, resource_group):
+    async def test_cloud_services_update_domain_list_update_domains(self, resource_group):
         response = self.client.cloud_services_update_domain.list_update_domains(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2020-10-01-preview",
+            api_version="2024-11-04",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

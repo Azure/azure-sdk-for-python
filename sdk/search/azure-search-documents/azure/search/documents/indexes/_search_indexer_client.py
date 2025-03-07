@@ -73,6 +73,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     def close(self) -> None:
         """Close the session.
+
         :return: None
         :rtype: None
         """
@@ -306,7 +307,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             keys or ids in this payload will be queued to be re-ingested. The default is false.
         :paramtype overwrite: bool
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If there is an error in the REST request.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         kwargs["keys_or_ids"] = keys_or_ids
@@ -374,6 +375,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         **kwargs: Any
     ) -> SearchIndexerDataSourceConnection:
         """Creates a new data source connection or updates a data source connection if it already exists.
+
         :param data_source_connection: The definition of the data source connection to create or update.
         :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
@@ -519,7 +521,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :return: List of SearchIndexerSkillsets
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
 
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If there is an error in the REST request.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:
@@ -537,7 +539,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         :return: List of SearchIndexerSkillset names
         :rtype: list[str]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If there is an error in the REST request.
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -553,7 +555,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type name: str
         :return: The retrieved SearchIndexerSkillset
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
-        :raises: ~azure.core.exceptions.ResourceNotFoundError
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the skillset cannot be found.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.skillsets_operations.get(name, **kwargs)
@@ -602,7 +604,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         _validate_skillset(skillset)
         skillset_gen = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
 
-        result = self._client.skillsets_operations.create(skillset_gen, **kwargs)
+        result = self._client.skillsets.create(skillset_gen, **kwargs)  # type: ignore
         return cast(SearchIndexerSkillset, SearchIndexerSkillset._from_generated(result))
 
     @distributed_trace
@@ -638,7 +640,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         result = self._client.skillsets_operations.create_or_update(
             skillset_name=skillset.name,
-            skillset=skillset_gen,
+            skillset=skillset_gen,  # type: ignore
             prefer="return=representation",
             etag=skillset.e_tag,
             match_condition=match_condition,
@@ -658,7 +660,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type skill_names: List[str]
         :return: None, or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError: If there is an error in the REST request.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         try:

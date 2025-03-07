@@ -38,7 +38,6 @@ def test_discovery_omit_build():
     assert [os.path.basename(result) for result in results] == [
         "azure-core",
         "azure-core-experimental",
-        "azure-core-tracing-opencensus",
         "azure-core-tracing-opentelemetry",
         "azure-mgmt-core",
         "corehttp",
@@ -59,7 +58,6 @@ def test_discovery_omit_regression():
     assert [os.path.basename(result) for result in results] == [
         "azure-core",
         "azure-core-experimental",
-        "azure-core-tracing-opencensus",
         "azure-core-tracing-opentelemetry",
         "corehttp",
     ]
@@ -96,7 +94,6 @@ def test_discovery_honors_override():
         "azure-common",
         "azure-core",
         "azure-core-experimental",
-        "azure-core-tracing-opencensus",
         "azure-core-tracing-opentelemetry",
         "azure-mgmt-core",
     ]

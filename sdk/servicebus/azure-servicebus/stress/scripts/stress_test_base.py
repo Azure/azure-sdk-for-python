@@ -96,6 +96,7 @@ class StressTestRunner:
         process_monitor=None,
         logging_level=logging.ERROR,
         transport_type=False,
+        rotating_logs=True,
     ):
         self.senders = senders
         self.receivers = receivers
@@ -113,12 +114,13 @@ class StressTestRunner:
         self.send_session_id = send_session_id
         self.azure_monitor_metric = azure_monitor_metric or AbstractMonitorMetric("fake_test_name")
         self.logging_level = logging_level
+        self.rotating_logs = rotating_logs
         logfile_name = LOGFILE_NAME
         if transport_type:
             logfile_name += "_ws.log"
         else:
             logfile_name += ".log"
-        self.logger = get_logger(logfile_name, "stress_test", self.logging_level)
+        self.logger = get_logger(logfile_name, "stress_test", self.logging_level, rotating_logs=self.rotating_logs)
         self.process_monitor = process_monitor or ProcessMonitor(
             "monitor_{}".format(logfile_name),
             "test_stress_queues",
@@ -349,6 +351,7 @@ class StressTestRunnerAsync(StressTestRunner):
         process_monitor=None,
         logging_level=logging.ERROR,
         transport_type=False,
+        rotating_logs=True,
     ):
         super(StressTestRunnerAsync, self).__init__(
             senders,
@@ -369,6 +372,7 @@ class StressTestRunnerAsync(StressTestRunner):
             process_monitor=process_monitor,
             logging_level=logging_level,
             transport_type=transport_type,
+            rotating_logs=rotating_logs,
         )
 
     async def _send_async(self, sender, end_time):

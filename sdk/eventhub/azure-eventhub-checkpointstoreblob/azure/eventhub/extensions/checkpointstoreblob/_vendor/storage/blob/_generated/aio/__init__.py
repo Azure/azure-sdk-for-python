@@ -7,4 +7,17 @@
 # --------------------------------------------------------------------------
 
 from ._azure_blob_storage import AzureBlobStorage
-__all__ = ['AzureBlobStorage']
+
+try:
+    from ._patch import __all__ as _patch_all # type: ignore[attr-defined]
+    from ._patch import *  # pylint: disable=unused-wildcard-import
+except ImportError:
+    _patch_all = []
+from ._patch import patch_sdk as _patch_sdk
+
+__all__ = [
+    "AzureBlobStorage",
+]
+__all__.extend([p for p in _patch_all if p not in __all__])
+
+_patch_sdk()

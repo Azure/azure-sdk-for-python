@@ -22,24 +22,32 @@ def log_get_token(fn):
         try:
             token = fn(*args, **kwargs)
             _LOGGER.log(
-                logging.DEBUG if within_credential_chain.get() else logging.INFO, "%s succeeded", fn.__qualname__
+                logging.DEBUG if within_credential_chain.get() else logging.INFO,
+                "%s succeeded",
+                fn.__qualname__,
             )
             if _LOGGER.isEnabledFor(logging.DEBUG):
                 try:
-                    base64_meta_data = token.token.split(".")[1].encode("utf-8") + b"=="
-                    json_bytes = base64.decodebytes(base64_meta_data)
+                    base64_meta_data = token.token.split(".")[1]
+                    padding_needed = -len(base64_meta_data) % 4
+                    if padding_needed:
+                        base64_meta_data += "=" * padding_needed
+                    json_bytes = base64.urlsafe_b64decode(base64_meta_data)
                     json_string = json_bytes.decode("utf-8")
                     json_dict = json.loads(json_string)
                     upn = json_dict.get("upn", "unavailableUpn")
+                    appid = json_dict.get("appid", "<unavailable>")
+                    tid = json_dict.get("tid", "<unavailable>")
+                    oid = json_dict.get("oid", "<unavailable>")
                     log_string = (
-                        "[Authenticated account] Client ID: {}. Tenant ID: {}. User Principal Name: {}. "
-                        "Object ID (user): {}".format(json_dict["appid"], json_dict["tid"], upn, json_dict["oid"])
+                        f"[Authenticated account] Client ID: {appid}. "
+                        f"Tenant ID: {tid}. User Principal Name: {upn}. Object ID (user): {oid}"
                     )
                     _LOGGER.debug(log_string)
                 except Exception as ex:  # pylint: disable=broad-except
                     _LOGGER.debug("Failed to log the account information: %s", ex, exc_info=True)
             return token
-        except Exception as ex:  # pylint: disable=broad-except
+        except Exception as ex:
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.WARNING,
                 "%s failed: %s",
@@ -67,7 +75,7 @@ def wrap_exceptions(fn):
             return fn(*args, **kwargs)
         except ClientAuthenticationError:
             raise
-        except Exception as ex:  # pylint:disable=broad-except
+        except Exception as ex:
             auth_error = ClientAuthenticationError(message="Authentication failed: {}".format(ex))
             raise auth_error from ex
 

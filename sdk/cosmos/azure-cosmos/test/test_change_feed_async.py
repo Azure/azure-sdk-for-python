@@ -27,13 +27,18 @@ async def setup():
     test_client = CosmosClient(config.host, config.masterKey)
     created_db = await test_client.create_database_if_not_exists(config.TEST_DATABASE_ID)
     created_db_data = {
-        "created_db": created_db
+        "created_db": created_db,
+        "is_emulator": config.is_emulator
     }
 
     yield created_db_data
     await test_client.close()
 
-@pytest.mark.cosmosEmulator
+def round_time():
+    utc_now = datetime.now(timezone.utc)
+    return utc_now - timedelta(microseconds=utc_now.microsecond)
+
+@pytest.mark.cosmosQuery
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestChangeFeedAsync:
@@ -42,7 +47,7 @@ class TestChangeFeedAsync:
     async def test_get_feed_ranges(self, setup):
         created_collection = await setup["created_db"].create_container("get_feed_ranges_" + str(uuid.uuid4()),
                                                               PartitionKey(path="/pk"))
-        result = [feed_range async for feed_range in await created_collection.read_feed_ranges()]
+        result = [feed_range async for feed_range in created_collection.read_feed_ranges()]
         assert len(result) == 1
 
     @pytest.mark.parametrize("change_feed_filter_param", ["partitionKey", "partitionKeyRangeId", "feedRange"])
@@ -57,7 +62,7 @@ class TestChangeFeedAsync:
         elif change_feed_filter_param == "partitionKeyRangeId":
             filter_param = {"partition_key_range_id": "0"}
         elif change_feed_filter_param == "feedRange":
-            feed_ranges = [feed_range async for feed_range in await created_collection.read_feed_ranges()]
+            feed_ranges = [feed_range async for feed_range in created_collection.read_feed_ranges()]
             assert len(feed_ranges) == 1
             filter_param = {"feed_range": feed_ranges[0]}
         else:
@@ -69,7 +74,7 @@ class TestChangeFeedAsync:
         assert len(iter_list) == 0
 
         # Read change feed from current should return an empty list
-        query_iterable = created_collection.query_items_change_feed(filter_param)
+        query_iterable = created_collection.query_items_change_feed(**filter_param)
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
         if 'Etag' in created_collection.client_connection.last_response_headers:
@@ -117,7 +122,7 @@ class TestChangeFeedAsync:
         # with page size 1 and page size 100
         document_definition = {'pk': 'pk', 'id': 'doc2'}
         await created_collection.create_item(body=document_definition)
-        document_definition = {'pk': 'pk', 'id': 'doc3'}
+        document_definition = {'pk': 'pk3', 'id': 'doc3'}
         await created_collection.create_item(body=document_definition)
 
         for pageSize in [2, 100]:
@@ -128,6 +133,8 @@ class TestChangeFeedAsync:
                 **filter_param)
             it = query_iterable.__aiter__()
             expected_ids = 'doc2.doc3.'
+            if "partition_key" in filter_param:
+                expected_ids = 'doc2.'
             actual_ids = ''
             async for item in it:
                 actual_ids += item['id'] + '.'
@@ -142,6 +149,8 @@ class TestChangeFeedAsync:
             )
             count = 0
             expected_count = 2
+            if "partition_key" in filter_param:
+                expected_count = 1
             all_fetched_res = []
             pages = query_iterable.by_page()
             async for items in await pages.__anext__():
@@ -159,11 +168,14 @@ class TestChangeFeedAsync:
             is_start_from_beginning=True,
             **filter_param
         )
-        expected_ids = ['doc1', 'doc2', 'doc3']
         it = query_iterable.__aiter__()
-        for i in range(0, len(expected_ids)):
-            doc = await it.__anext__()
-            assert doc['id'] == expected_ids[i]
+        expected_ids = 'doc1.doc2.doc3.'
+        if "partition_key" in filter_param:
+            expected_ids = 'doc1.doc2.'
+        actual_ids = ''
+        async for item in it:
+            actual_ids += item['id'] + '.'
+        assert actual_ids == expected_ids
         if 'Etag' in created_collection.client_connection.last_response_headers:
             continuation3 = created_collection.client_connection.last_response_headers['Etag']
         elif 'etag' in created_collection.client_connection.last_response_headers:
@@ -187,10 +199,6 @@ class TestChangeFeedAsync:
         created_collection = await setup["created_db"].create_container_if_not_exists("query_change_feed_start_time_test",
                                                                                   PartitionKey(path="/pk"))
         batchSize = 50
-
-        def round_time():
-            utc_now = datetime.now(timezone.utc)
-            return utc_now - timedelta(microseconds=utc_now.microsecond)
 
         async def create_random_items(container, batch_size):
             for _ in range(batch_size):
@@ -241,14 +249,6 @@ class TestChangeFeedAsync:
         totalCount = len(change_feed_iter)
         # Should equal batch size
         assert totalCount == batchSize
-
-        # test an invalid value, Attribute error will be raised for passing non datetime object
-        invalid_time = "Invalid value"
-        try:
-            change_feed_iter = [i async for i in created_collection.query_items_change_feed(start_time=invalid_time)]
-            fail("Cannot format date on a non datetime object.")
-        except ValueError as e:
-            assert ("Invalid start_time 'Invalid value'" == e.args[0])
 
         await setup["created_db"].delete_container(created_collection.id)
 

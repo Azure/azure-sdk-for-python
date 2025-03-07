@@ -1,17 +1,28 @@
 from .__openai_patcher import TestProxyConfig, TestProxyHttpxClientBase  # isort: split
-from . import __pf_service_isolation  # isort: split  # noqa: F401
 
+import os
 import json
 import multiprocessing
 import time
+from datetime import datetime, timedelta
+import jwt
+from logging import Logger
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Final, Optional
 from unittest.mock import patch
 
 import pytest
 from ci_tools.variables import in_ci
-from devtools_testutils import add_body_key_sanitizer, add_general_regex_sanitizer, add_header_regex_sanitizer, is_live
+from devtools_testutils import (
+    add_body_key_sanitizer,
+    add_general_regex_sanitizer,
+    add_header_regex_sanitizer,
+    is_live,
+    remove_batch_sanitizers,
+    add_batch_sanitizers,
+    Sanitizer,
+)
 from devtools_testutils.config import PROXY_URL
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import get_recording_id
@@ -24,28 +35,33 @@ from pytest_mock import MockerFixture
 
 from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._common.utils import ensure_nltk_data_downloaded
+from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.core.credentials import TokenCredential
-
-# Import of optional packages
-AZURE_INSTALLED = True
-try:
-    import jwt
-
-    from azure.ai.ml._ml_client import MLClient
-except ImportError:
-    AZURE_INSTALLED = False
 
 PROMPTFLOW_ROOT = Path(__file__, "..", "..", "..").resolve()
 CONNECTION_FILE = (PROMPTFLOW_ROOT / "azure-ai-evaluation" / "connections.json").resolve()
 RECORDINGS_TEST_CONFIGS_ROOT = Path(PROMPTFLOW_ROOT / "azure-ai-evaluation/tests/test_configs").resolve()
+ZERO_GUID: Final[str] = "00000000-0000-0000-0000-000000000000"
+
+
+def pytest_configure(config):
+    # register Azure test markers to reduce spurious warnings on test runs
+    config.addinivalue_line("markers", "azuretest: mark test as an Azure test.")
+    config.addinivalue_line("markers", "localtest: mark test as a local test.")
+    config.addinivalue_line("markers", "unittest: mark test as a unit test.")
+    config.addinivalue_line("markers", "performance_test: mark test as a performance test.")
+
+    # suppress deprecation warnings for now
+    config.addinivalue_line("filterwarnings", "ignore::DeprecationWarning")
 
 
 class SanitizedValues:
-    SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
+    SUBSCRIPTION_ID = ZERO_GUID
     RESOURCE_GROUP_NAME = "00000"
     WORKSPACE_NAME = "00000"
-    TENANT_ID = "00000000-0000-0000-0000-000000000000"
-    USER_OBJECT_ID = "00000000-0000-0000-0000-000000000000"
+    TENANT_ID = ZERO_GUID
+    USER_OBJECT_ID = ZERO_GUID
+    IMAGE_NAME = "00000000.png"
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -94,6 +110,9 @@ def add_sanitizers(
         add_general_regex_sanitizer(
             regex=r"/workspaces/([-\w\._\(\)]+)", value=mock_project_scope["project_name"], group_for_replace="1"
         )
+        add_general_regex_sanitizer(
+            regex=r"image_understanding/([-\w\._\(\)/]+)", value=mock_project_scope["image_name"], group_for_replace="1"
+        )
 
     def openai_stainless_default_headers():
         """Sanitize the default headers added by the stainless SDK generator to every request.
@@ -123,8 +142,8 @@ def add_sanitizers(
 
     def azure_ai_generative_sanitizer():
         """Sanitize header values from azure-ai-generative"""
-        add_header_regex_sanitizer(key="X-CV", regex="^.*$", value="00000000-0000-0000-0000-000000000000")
-        add_body_key_sanitizer(json_path="$.headers.X-CV", value="00000000-0000-0000-0000-000000000000")
+        add_header_regex_sanitizer(key="X-CV", regex="^.*$", value=ZERO_GUID)
+        add_body_key_sanitizer(json_path="$.headers.X-CV", value=ZERO_GUID)
 
     def live_connection_file_values():
         """Sanitize the live values from connections.json"""
@@ -150,12 +169,44 @@ def add_sanitizers(
             replacement='"root_run_id": "azure_ai_evaluation_evaluators_common_base_eval_asyncevaluatorbase_SANITIZED"',
         )
 
+    def evalutation_run_sanitizer() -> None:
+        # By default, the test proxy will sanitize all "key" values in a JSON body to "Sanitized". Unfortunately,
+        # when retrieving the datastore secrets, the key that comes back needs to be a valid Base64 encoded string.
+        # So we disable this default rule, and add a replacement rule to santize to MA== (which is "0")
+        remove_batch_sanitizers(["AZSDK3447"])
+        add_body_key_sanitizer(json_path="$.key", value="MA==")
+
+        # Sanitize the start_time, timestamp, and end_time to a fixed value in recordings
+        convert = lambda dt: str(int(dt.timestamp() * 1000))
+        start = datetime(2024, 11, 1, 0, 0, 0)
+        mid = start + timedelta(seconds=10)
+        end = start + timedelta(minutes=1)
+        add_body_key_sanitizer(json_path="$..start_time", value=convert(start))
+        add_body_key_sanitizer(json_path="$..timestamp", value=convert(mid))
+        add_body_key_sanitizer(json_path="$..end_time", value=convert(end))
+
+        # Since we use a santizied configuration when in playback mode, force the dataPath.dataStoreName in the
+        # register request in the eval run
+        add_body_key_sanitizer(json_path="$.dataPath.dataStoreName", value="Sanitized")
+
+        # In the eval run history, sanitize additional values such as the upn (which contains the user's email)
+        add_body_key_sanitizer(json_path="$..userObjectId", value=ZERO_GUID)
+        add_body_key_sanitizer(json_path="$..userPuId", value="0000000000000000")
+        add_body_key_sanitizer(json_path="$..userIss", value="https://sts.windows.net/" + ZERO_GUID)
+        add_body_key_sanitizer(json_path="$..userTenantId", value=ZERO_GUID)
+        add_body_key_sanitizer(json_path="$..upn", value="Sanitized")
+
+        # remove the stainless retry header and read timeout since it is causing some unnecessary mismatches in recordings
+        add_batch_sanitizers({Sanitizer.REMOVE_HEADER: [{"headers": "x-stainless-retry-count"}]})
+        add_batch_sanitizers({Sanitizer.REMOVE_HEADER: [{"headers": "x-stainless-read-timeout"}]})
+
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
     openai_stainless_default_headers()
     azure_ai_generative_sanitizer()
     live_connection_file_values()
     promptflow_root_run_id_sanitizer()
+    evalutation_run_sanitizer()
 
 
 @pytest.fixture
@@ -288,6 +339,7 @@ def mock_project_scope() -> Dict[str, str]:
         "subscription_id": f"{SanitizedValues.SUBSCRIPTION_ID}",
         "resource_group_name": f"{SanitizedValues.RESOURCE_GROUP_NAME}",
         "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
+        "image_name": f"{SanitizedValues.IMAGE_NAME}",
     }
 
 
@@ -342,6 +394,22 @@ def project_scope(request, dev_connections: Dict[str, Any]) -> dict:
 
 
 @pytest.fixture
+def datastore_project_scopes(connection_file, project_scope, mock_project_scope):
+    conn_name = "azure_ai_entra_id_project_scope"
+    if not is_live():
+        entra_id = mock_project_scope
+    else:
+        entra_id = connection_file.get(conn_name)
+        if not entra_id:
+            raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
+
+    return {
+        "sas": project_scope,
+        "none": entra_id,
+    }
+
+
+@pytest.fixture
 def mock_trace_destination_to_cloud(project_scope: dict):
     """Mock trace destination to cloud."""
 
@@ -366,17 +434,14 @@ def mock_validate_trace_destination():
 
 
 @pytest.fixture
-def azure_ml_client(project_scope: Dict):
-    """The fixture, returning MLClient"""
-    if AZURE_INSTALLED:
-        return MLClient(
-            subscription_id=project_scope["subscription_id"],
-            resource_group_name=project_scope["resource_group_name"],
-            workspace_name=project_scope["project_name"],
-            credential=get_cred(),
-        )
-    else:
-        return None
+def azure_ml_client(project_scope: dict, azure_cred: TokenCredential) -> LiteMLClient:
+    """The fixture, returning LiteMLClient."""
+    return LiteMLClient(
+        subscription_id=project_scope["subscription_id"],
+        resource_group=project_scope["resource_group_name"],
+        logger=Logger("azure_ml_client"),
+        credential=azure_cred,
+    )
 
 
 @pytest.fixture
@@ -467,8 +532,6 @@ def azure_cred() -> TokenCredential:
 
 @pytest.fixture(scope=package_scope_in_live_mode())
 def user_object_id() -> str:
-    if not AZURE_INSTALLED:
-        return ""
     if not is_live():
         return SanitizedValues.USER_OBJECT_ID
     credential = get_cred()
@@ -479,8 +542,6 @@ def user_object_id() -> str:
 
 @pytest.fixture(scope=package_scope_in_live_mode())
 def tenant_id() -> str:
-    if not AZURE_INSTALLED:
-        return ""
     if not is_live():
         return SanitizedValues.TENANT_ID
     credential = get_cred()
@@ -539,3 +600,10 @@ def pytest_sessionfinish() -> None:
         stop_service()
 
     stop_promptflow_service()
+
+@pytest.fixture
+def run_from_temp_dir(tmp_path):
+    original_cwd = os.getcwd()
+    os.chdir(tmp_path)
+    yield
+    os.chdir(original_cwd)

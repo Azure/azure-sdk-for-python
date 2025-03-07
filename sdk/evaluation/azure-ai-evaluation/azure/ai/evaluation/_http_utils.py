@@ -448,19 +448,21 @@ class AsyncHttpPipeline(AsyncPipeline):
         return cast(Self, await super().__aenter__())
 
 
-def get_http_client() -> HttpPipeline:
+def get_http_client(**kwargs: Any) -> HttpPipeline:
     """Get an HttpPipeline configured with common policies.
 
     :returns: An HttpPipeline with a set of applied policies:
     :rtype: HttpPipeline
     """
-    return HttpPipeline(user_agent_policy=UserAgentPolicy(base_user_agent=USER_AGENT))
+    kwargs.setdefault("user_agent_policy", UserAgentPolicy(base_user_agent=USER_AGENT))
+    return HttpPipeline(**kwargs)
 
 
-def get_async_http_client() -> AsyncHttpPipeline:
+def get_async_http_client(**kwargs: Any) -> AsyncHttpPipeline:
     """Get an AsyncHttpPipeline configured with common policies.
 
     :returns: An AsyncHttpPipeline with a set of applied policies:
     :rtype: AsyncHttpPipeline
     """
-    return AsyncHttpPipeline(user_agent_policy=UserAgentPolicy(base_user_agent=USER_AGENT))
+    kwargs.setdefault("user_agent_policy", UserAgentPolicy(base_user_agent=USER_AGENT))
+    return AsyncHttpPipeline(**kwargs)

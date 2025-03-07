@@ -21,7 +21,7 @@ class TestComputeManagementDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_dedicated_hosts_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.dedicated_hosts.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -65,7 +65,7 @@ class TestComputeManagementDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_dedicated_hosts_begin_update(self, resource_group):
         response = await (
             await self.client.dedicated_hosts.begin_update(
                 resource_group_name=resource_group.name,
@@ -105,7 +105,7 @@ class TestComputeManagementDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_dedicated_hosts_begin_delete(self, resource_group):
         response = await (
             await self.client.dedicated_hosts.begin_delete(
                 resource_group_name=resource_group.name,
@@ -120,7 +120,7 @@ class TestComputeManagementDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_dedicated_hosts_get(self, resource_group):
         response = await self.client.dedicated_hosts.get(
             resource_group_name=resource_group.name,
             host_group_name="str",
@@ -133,7 +133,7 @@ class TestComputeManagementDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_host_group(self, resource_group):
+    async def test_dedicated_hosts_list_by_host_group(self, resource_group):
         response = self.client.dedicated_hosts.list_by_host_group(
             resource_group_name=resource_group.name,
             host_group_name="str",
@@ -145,7 +145,7 @@ class TestComputeManagementDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_restart(self, resource_group):
+    async def test_dedicated_hosts_begin_restart(self, resource_group):
         response = await (
             await self.client.dedicated_hosts.begin_restart(
                 resource_group_name=resource_group.name,
@@ -160,7 +160,7 @@ class TestComputeManagementDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_redeploy(self, resource_group):
+    async def test_dedicated_hosts_begin_redeploy(self, resource_group):
         response = await (
             await self.client.dedicated_hosts.begin_redeploy(
                 resource_group_name=resource_group.name,
@@ -175,7 +175,7 @@ class TestComputeManagementDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_available_sizes(self, resource_group):
+    async def test_dedicated_hosts_list_available_sizes(self, resource_group):
         response = self.client.dedicated_hosts.list_available_sizes(
             resource_group_name=resource_group.name,
             host_group_name="str",

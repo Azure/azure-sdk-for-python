@@ -1,14 +1,9 @@
 # Release History
 
-## 1.2.2 (Unreleased)
+## 1.2.2 (2025-02-28)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added support for SocketIO when generating client access token
 
 ## 1.2.1 (2024-08-13)
 

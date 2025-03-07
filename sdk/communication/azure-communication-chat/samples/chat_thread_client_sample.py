@@ -28,10 +28,8 @@ import os
 
 class ChatThreadClientSamples(object):
     from azure.communication.identity import CommunicationIdentityClient
-    from azure.communication.chat import (
-        ChatClient,
-        CommunicationTokenCredential
-    )
+    from azure.communication.chat import ChatClient, CommunicationTokenCredential
+
     connection_string = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", None)
     if not connection_string:
         raise ValueError("Set COMMUNICATION_SAMPLES_CONNECTION_STRING env before run this sample.")
@@ -61,19 +59,16 @@ class ChatThreadClientSamples(object):
             ChatClient,
             ChatParticipant,
             CommunicationUserIdentifier,
-            CommunicationTokenCredential
+            CommunicationTokenCredential,
         )
+
         # retrieve `token` using CommunicationIdentityClient.get_token method
         # set `endpoint` to ACS service endpoint
         # create `user` using CommunicationIdentityClient.create_user method for new users;
         # else for existing users set `user` = CommunicationUserIdentifier(some_user_id)
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         topic = "test topic"
-        participants = [ChatParticipant(
-            identifier=user,
-            display_name='name',
-            share_history_time=datetime.utcnow()
-        )]
+        participants = [ChatParticipant(identifier=user, display_name="name", share_history_time=datetime.utcnow())]
         create_chat_thread_result = chat_client.create_chat_thread(topic, thread_participants=participants)
         chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
         # [END create_chat_thread_client]
@@ -91,11 +86,15 @@ class ChatThreadClientSamples(object):
         chat_client = ChatClient(endpoint, CommunicationTokenCredential(token))
         chat_thread_client = chat_client.get_chat_thread_client(thread_id)
         chat_thread_properties = chat_thread_client.get_properties()
-        print('Expected Thread Id: ', thread_id, ' Actual Value: ', chat_thread_properties.id)
+        print("Expected Thread Id: ", thread_id, " Actual Value: ", chat_thread_properties.id)
         # [END get_thread]
 
-        print("get_chat_thread_properties succeeded, thread id: " + chat_thread.id + ", thread topic: " + chat_thread.topic)
-
+        print(
+            "get_chat_thread_properties succeeded, thread id: "
+            + chat_thread.id
+            + ", thread topic: "
+            + chat_thread.topic
+        )
 
     def update_topic(self):
         thread_id = self._thread_id
@@ -127,15 +126,16 @@ class ChatThreadClientSamples(object):
 
         # Scenario 1: Send message without specifying chat_message_type
         send_message_result = chat_thread_client.send_message(
-            "Hello! My name is Fred Flinstone",
-            sender_display_name="Fred Flinstone")
+            "Hello! My name is Fred Flinstone", sender_display_name="Fred Flinstone"
+        )
         send_message_result_id = send_message_result.id
 
         # Scenario 2: Send message specifying chat_message_type
         send_message_result_w_type = chat_thread_client.send_message(
             "Hello! My name is Wilma Flinstone",
             sender_display_name="Wilma Flinstone",
-            chat_message_type=ChatMessageType.TEXT) # equivalent to setting chat_message_type='text'
+            chat_message_type=ChatMessageType.TEXT,
+        )  # equivalent to setting chat_message_type='text'
         send_message_result_w_type_id = send_message_result_w_type.id
         # Verify message content
         print("First Message:", chat_thread_client.get_message(send_message_result_id).content.message)
@@ -160,8 +160,7 @@ class ChatThreadClientSamples(object):
         print("Message received: ChatMessage: content=", chat_message.content.message, ", id=", chat_message.id)
         # [END get_message]
 
-        print("get_message succeeded, message id:", chat_message.id, \
-            "content: ", chat_message.content.message)
+        print("get_message succeeded, message id:", chat_message.id, "content: ", chat_message.content.message)
 
     def list_messages(self):
         thread_id = self._thread_id
@@ -272,7 +271,6 @@ class ChatThreadClientSamples(object):
         # [END list_participants]
         print("list_participants succeeded")
 
-
     def add_participants_w_check(self):
         # initially remove already added user
         thread_id = self._thread_id
@@ -297,10 +295,7 @@ class ChatThreadClientSamples(object):
 
         # create `user` using CommunicationIdentityClient.create_user method for new users;
         # else for existing users set `user` = CommunicationUserIdentifier(some_user_id)
-        new_participant = ChatParticipant(
-            identifier=user,
-            display_name='name',
-            share_history_time=datetime.utcnow())
+        new_participant = ChatParticipant(identifier=user, display_name="name", share_history_time=datetime.utcnow())
 
         # create list containing one or more participants
         thread_participants = [new_participant]
@@ -312,8 +307,6 @@ class ChatThreadClientSamples(object):
             chat_thread_client.add_participants(retry)
         # [END add_participants]
         print("add_participants_w_check succeeded")
-
-
 
     def remove_participant(self):
         thread_id = self._thread_id
@@ -332,14 +325,12 @@ class ChatThreadClientSamples(object):
 
         # add user1 and user2 to chat thread
         participant1 = ChatParticipant(
-                identifier=user1,
-                display_name='Fred Flinstone',
-                share_history_time=datetime.utcnow())
+            identifier=user1, display_name="Fred Flinstone", share_history_time=datetime.utcnow()
+        )
 
         participant2 = ChatParticipant(
-            identifier=user2,
-            display_name='Wilma Flinstone',
-            share_history_time=datetime.utcnow())
+            identifier=user2, display_name="Wilma Flinstone", share_history_time=datetime.utcnow()
+        )
 
         thread_participants = [participant1, participant2]
         chat_thread_client.add_participants(thread_participants)
@@ -351,14 +342,16 @@ class ChatThreadClientSamples(object):
         for chat_thread_participant_page in chat_thread_participants.by_page():
             for chat_thread_participant in chat_thread_participant_page:
                 print("ChatParticipant: ", chat_thread_participant)
-                if chat_thread_participant.identifier.properties['id'] == user1.properties['id']:
+                if chat_thread_participant.identifier.properties["id"] == user1.properties["id"]:
                     print("Found Fred!")
                     chat_thread_client.remove_participant(chat_thread_participant.identifier)
                     print("Fred has been removed from the thread...")
                     break
 
         # Option 2: Directly remove Wilma Flinstone
-        unique_identifier = user2.properties['id'] # in real scenario the identifier would need to be retrieved from elsewhere
+        unique_identifier = user2.properties[
+            "id"
+        ]  # in real scenario the identifier would need to be retrieved from elsewhere
         chat_thread_client.remove_participant(CommunicationUserIdentifier(unique_identifier))
         print("Wilma has been removed from the thread...")
         # [END remove_participant]
@@ -386,7 +379,8 @@ class ChatThreadClientSamples(object):
         self.identity_client.delete_user(self.user)
         self.identity_client.delete_user(self.new_user)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     sample = ChatThreadClientSamples()
     sample.create_chat_thread_client()
     sample.update_topic()

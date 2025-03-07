@@ -309,7 +309,7 @@ class SearchField(Model):
 
         :param str data: A JSON str using RestAPI structure.
         :returns: A SearchField instance
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         try:
             obj_dict = json.loads(data)
@@ -334,7 +334,7 @@ class SearchField(Model):
         :param dict data: A dict using RestAPI structure
         :returns: A SearchField instance
         :rtype: SearchField
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         try:
             obj = _SearchField(data)
@@ -576,8 +576,7 @@ def ComplexField(
     fields: Optional[List[SearchField]] = None,
     **kw  # pylint:disable=unused-argument
 ) -> SearchField:
-    """Configure a Complex or Complex collection field for an Azure Search
-    Index
+    """Configure a Complex or Complex collection field for an Azure Search Index
 
     :keyword name: Required. The name of the field, which must be unique within the fields collection
         of the index or parent field.
@@ -785,7 +784,7 @@ class SearchIndex(Model):
         :param str data: A JSON str using RestAPI structure.
         :returns: A SearchIndex instance
         :rtype: SearchIndex
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         try:
             obj_dict = json.loads(data)
@@ -812,7 +811,7 @@ class SearchIndex(Model):
         :param dict data: A dict using RestAPI structure
         :returns: A SearchIndex instance
         :rtype: SearchIndex
-        :raises: DeserializationError if something went wrong
+        :raises DeserializationError: if something went wrong
         """
         try:
             obj = _SearchIndex(data)

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -32,6 +33,16 @@ class AddressPrefixType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     IP_PREFIX = "IPPrefix"
     SERVICE_TAG = "ServiceTag"
+    NETWORK_GROUP = "NetworkGroup"
+
+
+class AddressSpaceAggregationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Option indicating the update behavior of a resource's address prefixes referenced within a
+    network manager configuration.
+    """
+
+    NONE = "None"
+    MANUAL = "Manual"
 
 
 class AdminRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -781,6 +792,49 @@ class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EDGE_ZONE = "EdgeZone"
 
 
+class FailoverConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current status of the connection."""
+
+    CONNECTED = "Connected"
+    DISCONNECTED = "Disconnected"
+
+
+class FailoverTestStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current status of the test."""
+
+    NOT_STARTED = "NotStarted"
+    STARTING = "Starting"
+    RUNNING = "Running"
+    START_FAILED = "StartFailed"
+    STOPPING = "Stopping"
+    COMPLETED = "Completed"
+    STOP_FAILED = "StopFailed"
+    INVALID = "Invalid"
+    EXPIRED = "Expired"
+
+
+class FailoverTestStatusForSingleTest(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current status of the test."""
+
+    NOT_STARTED = "NotStarted"
+    STARTING = "Starting"
+    RUNNING = "Running"
+    START_FAILED = "StartFailed"
+    STOPPING = "Stopping"
+    COMPLETED = "Completed"
+    STOP_FAILED = "StopFailed"
+    INVALID = "Invalid"
+    EXPIRED = "Expired"
+
+
+class FailoverTestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of failover test."""
+
+    SINGLE_SITE_FAILOVER = "SingleSiteFailover"
+    MULTI_SITE_FAILOVER = "MultiSiteFailover"
+    ALL = "All"
+
+
 class FirewallPolicyFilterRuleCollectionActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The action type of a rule."""
 
@@ -797,7 +851,7 @@ class FirewallPolicyIDPSQuerySortOrder(str, Enum, metaclass=CaseInsensitiveEnumM
 
 class FirewallPolicyIDPSSignatureDirection(int, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes in which direction signature is being enforced: 0 - OutBound, 1 - InBound, 2 - Any, 3
-    - Internal, 4 - InternalOutbound.
+    - Internal, 4 - InternalOutbound, 5 - InternalInbound.
     """
 
     ZERO = 0
@@ -805,6 +859,7 @@ class FirewallPolicyIDPSSignatureDirection(int, Enum, metaclass=CaseInsensitiveE
     TWO = 2
     THREE = 3
     FOUR = 4
+    FIVE = 5
 
 
 class FirewallPolicyIDPSSignatureMode(int, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1069,6 +1124,13 @@ class IpsecIntegrity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GCMAES256 = "GCMAES256"
 
 
+class IpType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enumeration to indicate the IP type."""
+
+    I_PV4 = "IPv4"
+    I_PV6 = "IPv6"
+
+
 class IPVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IP address version."""
 
@@ -1210,6 +1272,15 @@ class NetworkOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IN_PROGRESS = "InProgress"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
+
+
+class NetworkProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Network Protocol."""
+
+    ANY = "Any"
+    TCP = "TCP"
+    UDP = "UDP"
+    ICMP = "ICMP"
 
 
 class NextHopType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1422,12 +1493,14 @@ class ProtocolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current provisioning state."""
+    """Provisioning states of a resource."""
 
+    FAILED = "Failed"
     SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    CREATING = "Creating"
     UPDATING = "Updating"
     DELETING = "Deleting"
-    FAILED = "Failed"
 
 
 class PublicIpAddressDnsSettingsDomainNameLabelScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):

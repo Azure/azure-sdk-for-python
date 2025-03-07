@@ -31,7 +31,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
-from azure.ai.ml._restclient.v2024_01_01_preview.models import JobType as RestJobType_20240101
+from azure.ai.ml._restclient.v2024_10_01_preview.models import JobType as RestJobType_20241001Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -160,7 +160,7 @@ class JobOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ) -> None:
         super(JobOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
 
         self._operation_2023_02_preview = service_client_02_2023_preview.jobs
         self._service_client = service_client_02_2023_preview
@@ -175,11 +175,11 @@ class JobOperations(_ScopeDependentOperations):
         self._api_base_url: Optional[str] = None
         self._container = "azureml"
         self._credential = credential
-        self._orchestrators = OperationOrchestrator(
-            self._all_operations, self._operation_scope, self._operation_config
-        )  # pylint: disable=line-too-long
+        self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
 
         self.service_client_01_2024_preview = kwargs.pop("service_client_01_2024_preview", None)
+        self.service_client_10_2024_preview = kwargs.pop("service_client_10_2024_preview", None)
+        self.service_client_01_2025_preview = kwargs.pop("service_client_01_2025_preview", None)
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -207,7 +207,8 @@ class JobOperations(_ScopeDependentOperations):
         return cast(
             VirtualClusterOperations,
             self._all_operations.get_operation(  # type: ignore[misc]
-                AzureMLResourceType.VIRTUALCLUSTER, lambda x: isinstance(x, VirtualClusterOperations)
+                AzureMLResourceType.VIRTUALCLUSTER,
+                lambda x: isinstance(x, VirtualClusterOperations),
             ),
         )
 
@@ -387,7 +388,11 @@ class JobOperations(_ScopeDependentOperations):
         """
 
         service_instances_dict = self._runs_operations._operation.get_run_service_instances(
-            self._subscription_id, self._operation_scope.resource_group_name, self._workspace_name, name, node_index
+            self._subscription_id,
+            self._operation_scope.resource_group_name,
+            self._workspace_name,
+            name,
+            node_index,
         )
         if not service_instances_dict.instances:
             return None
@@ -513,7 +518,12 @@ class JobOperations(_ScopeDependentOperations):
 
     @monitor_with_telemetry_mixin(ops_logger, "Job.Validate", ActivityType.INTERNALCALL)
     def _validate(
-        self, job: Job, *, raise_on_failure: bool = False, **kwargs: Any  # pylint:disable=unused-argument
+        self,
+        job: Job,
+        *,
+        raise_on_failure: bool = False,
+        # pylint:disable=unused-argument
+        **kwargs: Any,
     ) -> ValidationResult:
         """Implementation of validate.
 
@@ -662,7 +672,7 @@ class JobOperations(_ScopeDependentOperations):
 
             # Create all dependent resources
             self._resolve_arm_id_or_upload_dependencies(job)
-        except (ValidationException, ValidationError) as ex:  # pylint: disable=W0718
+        except (ValidationException, ValidationError) as ex:
             log_and_raise_error(ex)
 
         git_props = get_git_properties()
@@ -714,22 +724,22 @@ class JobOperations(_ScopeDependentOperations):
             if snapshot_id is not None:
                 job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-            result = self._create_or_update_with_latest_version_api(rest_job_resource=job_object, **kwargs)
+            result = self._create_or_update_with_different_version_api(rest_job_resource=job_object, **kwargs)
 
         return self._resolve_azureml_id(Job._from_rest_object(result))
 
-    def _create_or_update_with_different_version_api(  # pylint: disable=name-too-long
-        self, rest_job_resource: JobBase, **kwargs: Any
-    ) -> JobBase:
+    def _create_or_update_with_different_version_api(self, rest_job_resource: JobBase, **kwargs: Any) -> JobBase:
         service_client_operation = self._operation_2023_02_preview
-        if rest_job_resource.properties.job_type == RestJobType_20240101.FINE_TUNING:
-            service_client_operation = self.service_client_01_2024_preview.jobs
+        if rest_job_resource.properties.job_type == RestJobType_20241001Preview.FINE_TUNING:
+            service_client_operation = self.service_client_10_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
             service_client_operation = self.service_client_01_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.AUTO_ML:
             service_client_operation = self.service_client_01_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.SWEEP:
             service_client_operation = self.service_client_01_2024_preview.jobs
+        if rest_job_resource.properties.job_type == RestJobType.COMMAND:
+            service_client_operation = self.service_client_01_2025_preview.jobs
 
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,
@@ -741,9 +751,7 @@ class JobOperations(_ScopeDependentOperations):
 
         return result
 
-    def _create_or_update_with_latest_version_api(  # pylint: disable=name-too-long
-        self, rest_job_resource: JobBase, **kwargs: Any
-    ) -> JobBase:
+    def _create_or_update_with_latest_version_api(self, rest_job_resource: JobBase, **kwargs: Any) -> JobBase:
         service_client_operation = self.service_client_01_2024_preview.jobs
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,
@@ -831,7 +839,10 @@ class JobOperations(_ScopeDependentOperations):
             raise PipelineChildJobError(job_id=job_object.id)
 
         self._stream_logs_until_completion(
-            self._runs_operations, job_object, self._datastore_operations, requests_pipeline=self._requests_pipeline
+            self._runs_operations,
+            job_object,
+            self._datastore_operations,
+            requests_pipeline=self._requests_pipeline,
         )
 
     @distributed_trace
@@ -876,7 +887,11 @@ class JobOperations(_ScopeDependentOperations):
         ):
             reused_job_name = job_details.properties[PipelineConstants.REUSED_JOB_ID]
             reused_job_detail = self.get(reused_job_name)
-            module_logger.info("job %s reuses previous job %s, download from the reused job.", name, reused_job_name)
+            module_logger.info(
+                "job %s reuses previous job %s, download from the reused job.",
+                name,
+                reused_job_name,
+            )
             name, job_details = reused_job_name, reused_job_detail
         job_status = job_details.status
         if job_status not in RunHistoryConstants.TERMINAL_STATUSES:
@@ -901,7 +916,10 @@ class JobOperations(_ScopeDependentOperations):
 
         def log_missing_uri(what: str) -> None:
             module_logger.debug(
-                'Could not download %s for job "%s" (job status: %s)', what, job_details.name, job_details.status
+                'Could not download %s for job "%s" (job status: %s)',
+                what,
+                job_details.name,
+                job_details.status,
             )
 
         if isinstance(job_details, SweepJob):
@@ -1042,12 +1060,27 @@ class JobOperations(_ScopeDependentOperations):
         return uri
 
     def _get_job(self, name: str) -> JobBase:
-        return self.service_client_01_2024_preview.jobs.get(
+        job = self.service_client_01_2024_preview.jobs.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
             **self._kwargs,
         )
+
+        if (
+            hasattr(job, "properties")
+            and job.properties
+            and hasattr(job.properties, "job_type")
+            and job.properties.job_type == RestJobType_20241001Preview.FINE_TUNING
+        ):
+            return self.service_client_10_2024_preview.jobs.get(
+                id=name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._kwargs,
+            )
+
+        return job
 
     # Upgrade api from 2023-04-01-preview to 2024-01-01-preview for pipeline job
     # We can remove this function once `_get_job` function has also been upgraded to the same version with pipeline
@@ -1068,7 +1101,8 @@ class JobOperations(_ScopeDependentOperations):
         )
         all_urls = json.loads(
             download_text_from_url(
-                discovery_url, create_requests_pipeline_with_retry(requests_pipeline=self._requests_pipeline)
+                discovery_url,
+                create_requests_pipeline_with_retry(requests_pipeline=self._requests_pipeline),
             )
         )
         return all_urls[url_key]

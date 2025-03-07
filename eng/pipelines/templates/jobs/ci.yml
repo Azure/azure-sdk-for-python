@@ -8,6 +8,9 @@ parameters:
   - name: TestPipeline
     type: boolean
     default: false
+  - name: ExcludePaths
+    type: object
+    default: []
   - name: BeforePublishSteps
     type: object
     default: []
@@ -28,7 +31,7 @@ parameters:
     default: 60
   - name: ToxEnvParallel
     type: string
-    default: '--tenvparallel'
+    default: 'all'
   - name: InjectedPackages
     type: string
     default: ''
@@ -47,9 +50,6 @@ parameters:
     type: object
     default: []
   - name: VerifyAutorest
-    type: boolean
-    default: false
-  - name: ValidateFormatting
     type: boolean
     default: false
   - name: UnsupportedToxEnvironments
@@ -80,6 +80,7 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: linux
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ExcludePaths: ${{parameters.ExcludePaths}}
 
   - job: 'Build_Windows'
     timeoutInMinutes: 90
@@ -98,6 +99,7 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: windows
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ExcludePaths: ${{parameters.ExcludePaths}}
 
   - job: 'Build_MacOS'
     timeoutInMinutes: 90
@@ -116,6 +118,7 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: mac
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ExcludePaths: ${{parameters.ExcludePaths}}
 
   - job: 'Build_Extended'
     displayName: Build Extended
@@ -229,7 +232,6 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
-        ValidateFormatting: ${{ parameters.ValidateFormatting }}
         GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
   - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
@@ -244,20 +246,28 @@ jobs:
       MatrixConfigs: ${{ parameters.MatrixConfigs }}
       MatrixFilters: ${{ parameters.MatrixFilters }}
       MatrixReplace: ${{ parameters.MatrixReplace }}
-      PreGenerationSteps:
-
-        - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
-
-        - task: Powershell@2
-          inputs:
-            pwsh: true
-            filePath: eng/scripts/distribute-packages-to-matrix.ps1
-            arguments: >-
-              -PackageInfoFolder "$(Build.ArtifactStagingDirectory)/PackageInfo"
-              -PlatformMatrix "${{ parameters.MatrixConfigs[0].Path }}"
-          displayName: 'Distribute Packages to Matrix'
-          condition: and(eq(variables['Build.Reason'], 'PullRequest'), eq('${{ parameters.ServiceDirectory }}','auto'))
-
+      ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
+        SparseCheckoutPaths:
+          - "**/setup.py"
+          - "**/pyproject.toml"
+          - "tools/"
+          - "**/ci*.yml"
+          - "**/_version.py"
+          - "**/version.py"
+          - "**/README.md"
+          - "**/CHANGELOG.md"
+          - "**/*matrix*.json"
+        EnablePRGeneration: true
+        PRMatrixSetting: "TargetingString"
+        PRJobBatchSize: 5
+        PreGenerationSteps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.12'
+          - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
+            parameters:
+              ServiceDirectory: ${{parameters.ServiceDirectory}}
+              ExcludePaths: ${{parameters.ExcludePaths}}
       CloudConfig:
         Cloud: Public
       AdditionalParameters:

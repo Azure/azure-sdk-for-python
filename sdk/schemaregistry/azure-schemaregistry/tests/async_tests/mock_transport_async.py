@@ -26,17 +26,10 @@
 
 from azure.core.pipeline.transport import AsyncHttpTransport
 
+
 class AsyncMockResponse:
     def __init__(
-        self,
-        schema_id,
-        schema_name,
-        schema_group_name,
-        schema_version,
-        content_type,
-        *,
-        content=b"",
-        status_code=200
+        self, schema_id, schema_name, schema_group_name, schema_version, content_type, *, content=b"", status_code=200
     ) -> None:
         self._schema_id = schema_id
         self._schema_name = schema_name
@@ -65,13 +58,13 @@ class AsyncMockResponse:
     @property
     def content(self):
         return self._content
-    
+
     def iter_bytes(self):
         pass
 
     def raise_for_status(self):
         pass
-    
+
     async def read(self):
         pass
 
@@ -81,22 +74,23 @@ class AsyncMockResponse:
     def reason(self):
         pass
 
+
 class AsyncMockTransport(AsyncHttpTransport):
-        def __init__(self, response):
-            self._response = response
+    def __init__(self, response):
+        self._response = response
 
-        async def __aenter__(self):
-            return self
+    async def __aenter__(self):
+        return self
 
-        async def __aexit__(self, *args):
-            pass
+    async def __aexit__(self, *args):
+        pass
 
-        async def open(self):
-            pass
+    async def open(self):
+        pass
 
-        async def close(self):
-            pass
+    async def close(self):
+        pass
 
-        async def send(self, request, **kwargs):
-            response = self._response
-            return response
+    async def send(self, request, **kwargs):
+        response = self._response
+        return response

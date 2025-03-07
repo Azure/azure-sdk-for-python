@@ -1,5 +1,35 @@
 # Release History
 
+## 11.6.0b10 (2025-03-11)
+
+### Features Added
+
+- Added `SearchIndexClient.list_index_stats_summary`.
+- Added `SearchIndexerCache.id`.
+- Added new model `azure.search.documents.indexes.models.IndexStatisticsSummary`.
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 11.5.0.
+> Only code written against a beta version such as 11.6.0b9 may be affected.
+- Renamed `azure.search.documents.indexes.models.AIStudioModelCatalogName` to `azure.search.documents.indexes.models.AIFoundryModelCatalogName`.
+
+### Other Changes
+
+- Updated the API version to "2025-03-01-preview"
+
+## 11.6.0b9 (2025-01-14)
+
+### Bugs Fixed
+
+- Exposed `@search.document_debug_info` in the search results.
+
+## 11.6.0b8 (2024-11-21)
+
+### Features Added
+
+- Added `get_debug_info` in Search results.
+
 ## 11.6.0b7 (2024-11-18)
 
 ### Features Added
@@ -31,6 +61,12 @@
 
 - Updated the API version to "2024-1-01-preview"
 
+11.5.2 (2024-10-31)
+
+### Bugs Fixed
+
+- Fixed the issue that encryptionKey was lost during serialization. #37521
+
 ## 11.6.0b6 (2024-10-08)
 
 ### Bugs Fixed
@@ -51,6 +87,11 @@
 ### Other Changes
 
 - Updated the API version to "2024-09-01-preview"
+
+### Breaking changes
+
+> These changes do not impact the API of stable versions such as 11.5.0.
+> Only code written against a beta version such as 11.6.0b4 may be affected.
 - Below models were renamed
   - `azure.search.documents.indexes.models.SearchIndexerIndexProjections` -> `azure.search.documents.indexes.models.SearchIndexerIndexProjection`
   - `azure.search.documents.indexes.models.LineEnding` -> `azure.search.documents.indexes.models.OrcLineEnding`
@@ -395,7 +436,7 @@
 
 ### Features Added
 
-- Support for [`AzureMachineLearningSkill`](https://docs.microsoft.com/azure/search/cognitive-search-aml-skill). The AML skill allows you to extend AI enrichment with a custom [Azure Machine Learning](https://docs.microsoft.com/azure/machine-learning/overview-what-is-azure-machine-learning) (AML) model. Once an AML model is [trained and deployed](https://docs.microsoft.com/azure/machine-learning/concept-azure-machine-learning-architecture#workspace), an AML skill integrates it into AI enrichment.
+- Support for [`AzureMachineLearningSkill`](https://learn.microsoft.com/azure/search/cognitive-search-aml-skill). The AML skill allows you to extend AI enrichment with a custom [Azure Machine Learning](https://learn.microsoft.com/azure/machine-learning/overview-what-is-azure-machine-learning) (AML) model. Once an AML model is [trained and deployed](https://learn.microsoft.com/azure/machine-learning/concept-azure-machine-learning-architecture#workspace), an AML skill integrates it into AI enrichment.
 
 ### Other Changes
 

@@ -21,7 +21,7 @@ class TestNetworkManagementExpressRouteConnectionsOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_express_route_connections_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.express_route_connections.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -52,7 +52,7 @@ class TestNetworkManagementExpressRouteConnectionsOperationsAsync(AzureMgmtRecor
                     },
                     "routingWeight": 0,
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -61,12 +61,12 @@ class TestNetworkManagementExpressRouteConnectionsOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_express_route_connections_get(self, resource_group):
         response = await self.client.express_route_connections.get(
             resource_group_name=resource_group.name,
             express_route_gateway_name="str",
             connection_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -74,13 +74,13 @@ class TestNetworkManagementExpressRouteConnectionsOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_express_route_connections_begin_delete(self, resource_group):
         response = await (
             await self.client.express_route_connections.begin_delete(
                 resource_group_name=resource_group.name,
                 express_route_gateway_name="str",
                 connection_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -89,11 +89,11 @@ class TestNetworkManagementExpressRouteConnectionsOperationsAsync(AzureMgmtRecor
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_express_route_connections_list(self, resource_group):
         response = await self.client.express_route_connections.list(
             resource_group_name=resource_group.name,
             express_route_gateway_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself

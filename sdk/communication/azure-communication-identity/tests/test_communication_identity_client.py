@@ -37,9 +37,7 @@ class TestClient(ACSIdentityTestCase):
             credential = FakeTokenCredential()
         else:
             credential = get_credential()
-        return CommunicationIdentityClient(
-            self.endpoint, credential, http_logging_policy=get_http_logging_policy()
-        )
+        return CommunicationIdentityClient(self.endpoint, credential, http_logging_policy=get_http_logging_policy())
 
     @recorded_by_proxy
     def test_create_user_from_token_credential(self):
@@ -67,14 +65,10 @@ class TestClient(ACSIdentityTestCase):
         assert user.properties.get("id") is not None
         assert token_response.token is not None
 
-    @pytest.mark.parametrize(
-        "_, value", [("min_valid_hours", 1), ("max_valid_hours", 24)]
-    )
+    @pytest.mark.parametrize("_, value", [("min_valid_hours", 1), ("max_valid_hours", 24)])
     @ArgumentPasser()
     @recorded_by_proxy
-    def test_create_user_and_token_with_valid_custom_expirations_new(
-        self, _, valid_hours
-    ):
+    def test_create_user_and_token_with_valid_custom_expirations_new(self, _, valid_hours):
         identity_client = self.create_client_from_connection_string()
         token_expires_in = timedelta(hours=valid_hours)
         user, token_response = identity_client.create_user_and_token(
@@ -84,18 +78,12 @@ class TestClient(ACSIdentityTestCase):
         assert token_response.token is not None
 
         if is_live():
-            assert is_token_expiration_within_allowed_deviation(
-                token_expires_in, token_response.expires_on
-            )
+            assert is_token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on)
 
-    @pytest.mark.parametrize(
-        "_, value", [("min_invalid_mins", 59), ("max_invalid_mins", 1441)]
-    )
+    @pytest.mark.parametrize("_, value", [("min_invalid_mins", 59), ("max_invalid_mins", 1441)])
     @ArgumentPasser()
     @recorded_by_proxy
-    def test_create_user_and_token_with_invalid_custom_expirations(
-        self, _, invalid_mins
-    ):
+    def test_create_user_and_token_with_invalid_custom_expirations(self, _, invalid_mins):
         identity_client = self.create_client_from_connection_string()
         token_expires_in = timedelta(minutes=invalid_mins)
 
@@ -127,16 +115,12 @@ class TestClient(ACSIdentityTestCase):
         identity_client = self.create_client_from_connection_string()
         user = identity_client.create_user()
 
-        token_response = identity_client.get_token(
-            user, scopes=[CommunicationTokenScope.CHAT]
-        )
+        token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
 
         assert user.properties.get("id") is not None
         assert token_response.token is not None
 
-    @pytest.mark.parametrize(
-        "_, value", [("min_valid_hours", 1), ("max_valid_hours", 24)]
-    )
+    @pytest.mark.parametrize("_, value", [("min_valid_hours", 1), ("max_valid_hours", 24)])
     @ArgumentPasser()
     @recorded_by_proxy
     def test_get_token_with_valid_custom_expirations(self, _, valid_hours):
@@ -153,13 +137,9 @@ class TestClient(ACSIdentityTestCase):
         assert user.properties.get("id") is not None
         assert token_response.token is not None
         if is_live():
-            assert is_token_expiration_within_allowed_deviation(
-                token_expires_in, token_response.expires_on
-            )
+            assert is_token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on)
 
-    @pytest.mark.parametrize(
-        "_, value", [("min_invalid_mins", 59), ("max_invalid_mins", 1441)]
-    )
+    @pytest.mark.parametrize("_, value", [("min_invalid_mins", 59), ("max_invalid_mins", 1441)])
     @ArgumentPasser()
     @recorded_by_proxy
     def test_get_token_with_invalid_custom_expirations(self, _, invalid_mins):
@@ -183,9 +163,7 @@ class TestClient(ACSIdentityTestCase):
         identity_client = self.create_client_from_token_credential()
         user = identity_client.create_user()
 
-        token_response = identity_client.get_token(
-            user, scopes=[CommunicationTokenScope.CHAT]
-        )
+        token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
         identity_client.revoke_tokens(user)
 
         assert user.properties.get("id") is not None
@@ -196,9 +174,7 @@ class TestClient(ACSIdentityTestCase):
         identity_client = self.create_client_from_connection_string()
         user = identity_client.create_user()
 
-        token_response = identity_client.get_token(
-            user, scopes=[CommunicationTokenScope.CHAT]
-        )
+        token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
         identity_client.revoke_tokens(user)
 
         assert user.properties.get("id") is not None
@@ -270,9 +246,7 @@ class TestClient(ACSIdentityTestCase):
             return
         identity_client = self.create_client_from_token_credential()
         aad_token, user_object_id = self.generate_teams_user_aad_token()
-        token_response = identity_client.get_token_for_teams_user(
-            aad_token, self.m365_client_id, user_object_id
-        )
+        token_response = identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, user_object_id)
         assert token_response.token is not None
 
     @recorded_by_proxy
@@ -281,14 +255,10 @@ class TestClient(ACSIdentityTestCase):
             return
         identity_client = self.create_client_from_connection_string()
         aad_token, user_object_id = self.generate_teams_user_aad_token()
-        token_response = identity_client.get_token_for_teams_user(
-            aad_token, self.m365_client_id, user_object_id
-        )
+        token_response = identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, user_object_id)
         assert token_response.token is not None
 
-    @pytest.mark.parametrize(
-        "_, value", [("empty_token", ""), ("invalid_token", "invalid")]
-    )
+    @pytest.mark.parametrize("_, value", [("empty_token", ""), ("invalid_token", "invalid")])
     @ArgumentPasser()
     @recorded_by_proxy
     def test_get_token_for_teams_user_with_invalid_token(self, _, invalid_token):
@@ -296,9 +266,7 @@ class TestClient(ACSIdentityTestCase):
             return
         identity_client = self.create_client_from_connection_string()
         with pytest.raises(Exception) as ex:
-            identity_client.get_token_for_teams_user(
-                invalid_token, self.m365_client_id, ""
-            )
+            identity_client.get_token_for_teams_user(invalid_token, self.m365_client_id, "")
         assert str(ex.value.status_code) == "401"
         assert ex.value.message is not None
 
@@ -309,15 +277,11 @@ class TestClient(ACSIdentityTestCase):
         identity_client = self.create_client_from_connection_string()
         _, user_object_id = self.generate_teams_user_aad_token()
         with pytest.raises(Exception) as ex:
-            identity_client.get_token_for_teams_user(
-                self.expired_teams_token, self.m365_client_id, user_object_id
-            )
+            identity_client.get_token_for_teams_user(self.expired_teams_token, self.m365_client_id, user_object_id)
         assert str(ex.value.status_code) == "401"
         assert ex.value.message is not None
 
-    @pytest.mark.parametrize(
-        "_, value", [("empty_client_id", ""), ("invalid_client_id", "invalid")]
-    )
+    @pytest.mark.parametrize("_, value", [("empty_client_id", ""), ("invalid_client_id", "invalid")])
     @ArgumentPasser()
     @recorded_by_proxy
     def test_get_token_for_teams_user_with_invalid_client_id(self, _, invalid_client):
@@ -326,9 +290,7 @@ class TestClient(ACSIdentityTestCase):
         identity_client = self.create_client_from_connection_string()
         aad_token, user_object_id = self.generate_teams_user_aad_token()
         with pytest.raises(Exception) as ex:
-            identity_client.get_token_for_teams_user(
-                aad_token, invalid_client, user_object_id
-            )
+            identity_client.get_token_for_teams_user(aad_token, invalid_client, user_object_id)
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
@@ -339,9 +301,7 @@ class TestClient(ACSIdentityTestCase):
         identity_client = self.create_client_from_connection_string()
         aad_token, user_object_id = self.generate_teams_user_aad_token()
         with pytest.raises(Exception) as ex:
-            identity_client.get_token_for_teams_user(
-                aad_token, user_object_id, user_object_id
-            )
+            identity_client.get_token_for_teams_user(aad_token, user_object_id, user_object_id)
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
@@ -351,17 +311,13 @@ class TestClient(ACSIdentityTestCase):
     )
     @ArgumentPasser()
     @recorded_by_proxy
-    def test_get_token_for_teams_user_with_invalid_user_object_id(
-        self, _, invalid_user_object
-    ):
+    def test_get_token_for_teams_user_with_invalid_user_object_id(self, _, invalid_user_object):
         if self.skip_get_token_for_teams_user_test():
             return
         identity_client = self.create_client_from_connection_string()
         aad_token, _ = self.generate_teams_user_aad_token()
         with pytest.raises(Exception) as ex:
-            identity_client.get_token_for_teams_user(
-                aad_token, self.m365_client_id, invalid_user_object
-            )
+            identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, invalid_user_object)
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
@@ -372,8 +328,6 @@ class TestClient(ACSIdentityTestCase):
         identity_client = self.create_client_from_connection_string()
         aad_token, _ = self.generate_teams_user_aad_token()
         with pytest.raises(Exception) as ex:
-            identity_client.get_token_for_teams_user(
-                aad_token, self.m365_client_id, self.m365_client_id
-            )
+            identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, self.m365_client_id)
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None

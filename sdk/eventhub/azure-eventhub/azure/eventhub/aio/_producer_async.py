@@ -29,7 +29,7 @@ from ._async_utils import get_dict_with_loop_if_needed
 
 if TYPE_CHECKING:
     try:
-        from uamqp import (  # pylint: disable=unused-import
+        from uamqp import (
             constants,
             SendClientAsync as uamqp_SendClientAsync,
         )

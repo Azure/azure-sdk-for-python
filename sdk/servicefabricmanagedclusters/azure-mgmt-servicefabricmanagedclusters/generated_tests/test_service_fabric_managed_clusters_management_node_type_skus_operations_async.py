@@ -21,12 +21,12 @@ class TestServiceFabricManagedClustersManagementNodeTypeSkusOperationsAsync(Azur
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_node_type_skus_list(self, resource_group):
         response = self.client.node_type_skus.list(
             resource_group_name=resource_group.name,
             cluster_name="str",
             node_type_name="str",
-            api_version="2024-06-01-preview",
+            api_version="2024-09-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

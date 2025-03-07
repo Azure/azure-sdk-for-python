@@ -46,7 +46,7 @@ class ComputeOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ) -> None:
         super(ComputeOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._operation = service_client.compute
         self._operation2024 = service_client_2024.compute
         self._workspace_operations = service_client.workspaces
@@ -424,7 +424,7 @@ class ComputeOperations(_ScopeDependentOperations):
     @distributed_trace
     @monitor_with_activity(ops_logger, "Compute.enablesso", ActivityType.PUBLICAPI)
     @experimental
-    def enable_sso(self, *, name: str, enable_sso: bool = True) -> None:
+    def enable_sso(self, *, name: str, enable_sso: bool = True, **kwargs: Any) -> None:
         """enable sso for a compute instance.
 
         :keyword name: Name of the compute instance.
@@ -439,6 +439,7 @@ class ComputeOperations(_ScopeDependentOperations):
             self._workspace_name,
             name,
             parameters=SsoSetting(enable_sso=enable_sso),
+            **kwargs,
         )
 
     def _get_workspace_location(self) -> str:

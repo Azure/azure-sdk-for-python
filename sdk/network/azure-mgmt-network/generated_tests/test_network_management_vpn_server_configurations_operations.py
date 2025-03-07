@@ -20,11 +20,11 @@ class TestNetworkManagementVpnServerConfigurationsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_vpn_server_configurations_get(self, resource_group):
         response = self.client.vpn_server_configurations.get(
             resource_group_name=resource_group.name,
             vpn_server_configuration_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -32,7 +32,7 @@ class TestNetworkManagementVpnServerConfigurationsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_vpn_server_configurations_begin_create_or_update(self, resource_group):
         response = self.client.vpn_server_configurations.begin_create_or_update(
             resource_group_name=resource_group.name,
             vpn_server_configuration_name="str",
@@ -102,7 +102,12 @@ class TestNetworkManagementVpnServerConfigurationsOperations(AzureMgmtRecordedTe
                                         },
                                     },
                                 },
-                                "vpnClientAddressPool": {"addressPrefixes": ["str"]},
+                                "vpnClientAddressPool": {
+                                    "addressPrefixes": ["str"],
+                                    "ipamPoolPrefixAllocations": [
+                                        {"allocatedAddressPrefixes": ["str"], "id": "str", "numberOfIpAddresses": "str"}
+                                    ],
+                                },
                             }
                         ],
                         "provisioningState": "str",
@@ -144,7 +149,7 @@ class TestNetworkManagementVpnServerConfigurationsOperations(AzureMgmtRecordedTe
                 "vpnClientRootCertificates": [{"name": "str", "publicCertData": "str"}],
                 "vpnProtocols": ["str"],
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -152,12 +157,12 @@ class TestNetworkManagementVpnServerConfigurationsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update_tags(self, resource_group):
+    def test_vpn_server_configurations_update_tags(self, resource_group):
         response = self.client.vpn_server_configurations.update_tags(
             resource_group_name=resource_group.name,
             vpn_server_configuration_name="str",
             vpn_server_configuration_parameters={"tags": {"str": "str"}},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -165,11 +170,11 @@ class TestNetworkManagementVpnServerConfigurationsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_vpn_server_configurations_begin_delete(self, resource_group):
         response = self.client.vpn_server_configurations.begin_delete(
             resource_group_name=resource_group.name,
             vpn_server_configuration_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -177,10 +182,10 @@ class TestNetworkManagementVpnServerConfigurationsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_vpn_server_configurations_list_by_resource_group(self, resource_group):
         response = self.client.vpn_server_configurations.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -188,9 +193,9 @@ class TestNetworkManagementVpnServerConfigurationsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_vpn_server_configurations_list(self, resource_group):
         response = self.client.vpn_server_configurations.list(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

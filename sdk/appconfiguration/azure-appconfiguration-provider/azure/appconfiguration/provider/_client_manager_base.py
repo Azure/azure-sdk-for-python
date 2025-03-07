@@ -3,12 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import time
 import random
 import hashlib
 import base64
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, Mapping, Any, Optional
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     FeatureFlagConfigurationSetting,
 )
@@ -20,10 +19,17 @@ from ._constants import (
     PERCENTAGE_FILTER_KEY,
     TIME_WINDOW_FILTER_KEY,
     TARGETING_FILTER_KEY,
+    TELEMETRY_KEY,
+    METADATA_KEY,
+    ETAG_KEY,
+    FEATURE_FLAG_REFERENCE_KEY,
+    FEATURE_FLAG_ID_KEY,
 )
 
 FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL = 3600  # 1 hour in seconds
 MINIMAL_CLIENT_REFRESH_INTERVAL = 30  # 30 seconds
+
+JSON = Mapping[str, Any]
 
 
 @dataclass
@@ -36,9 +42,27 @@ class _ConfigurationClientWrapperBase:
         if label and not label.isspace():
             basic_value += f"{label}"
         feature_flag_id_hash_bytes = hashlib.sha256(basic_value.encode()).digest()
-        encoded_flag = base64.b64encode(feature_flag_id_hash_bytes)
-        encoded_flag = encoded_flag.replace(b"+", b"-").replace(b"/", b"_")
+        encoded_flag = base64.urlsafe_b64encode(feature_flag_id_hash_bytes)
         return encoded_flag[: encoded_flag.find(b"=")]
+
+    def _feature_flag_telemetry(
+        self, endpoint: str, feature_flag: FeatureFlagConfigurationSetting, feature_flag_value: Dict
+    ):
+        if TELEMETRY_KEY in feature_flag_value:
+            if METADATA_KEY not in feature_flag_value[TELEMETRY_KEY]:
+                feature_flag_value[TELEMETRY_KEY][METADATA_KEY] = {}
+            feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ETAG_KEY] = feature_flag.etag
+
+            if not endpoint.endswith("/"):
+                endpoint += "/"
+            feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
+            if feature_flag.label and not feature_flag.label.isspace():
+                feature_flag_reference += f"?label={feature_flag.label}"
+            if feature_flag_value[TELEMETRY_KEY].get("enabled"):
+                feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
+                feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(
+                    feature_flag.key, feature_flag.label
+                )
 
     def _feature_flag_appconfig_telemetry(
         self, feature_flag: FeatureFlagConfigurationSetting, filters_used: Dict[str, bool]
@@ -65,28 +89,20 @@ class ConfigurationClientManagerBase:  # pylint:disable=too-many-instance-attrib
         replica_discovery_enabled,
         min_backoff_sec,
         max_backoff_sec,
+        _load_balancing_enabled: bool,
         **kwargs,
     ):
-        self._replica_clients: List[_ConfigurationClientWrapperBase] = []
+        self._last_active_client_name = ""
         self._original_endpoint = endpoint
         self._user_agent = user_agent
         self._retry_total = retry_total
         self._retry_backoff_max = retry_backoff_max
         self._replica_discovery_enabled = replica_discovery_enabled
-        self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
+        self._next_update_time: Optional[float] = None
         self._args = dict(kwargs)
         self._min_backoff_sec = min_backoff_sec
         self._max_backoff_sec = max_backoff_sec
-
-    def get_active_clients(self):
-        active_clients = []
-        for client in self._replica_clients:
-            if client.is_active():
-                active_clients.append(client)
-        return active_clients
-
-    def get_client_count(self) -> int:
-        return len(self._replica_clients)
+        self._load_balancing_enabled = _load_balancing_enabled
 
     def _calculate_backoff(self, attempts: int) -> float:
         max_attempts = 63
@@ -106,11 +122,3 @@ class ConfigurationClientManagerBase:  # pylint:disable=too-many-instance-attrib
         return min_backoff_milliseconds + (
             random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)  # nosec
         )
-
-    def __eq__(self, other):
-        if len(self._replica_clients) != len(other._replica_clients):
-            return False
-        for i in range(len(self._replica_clients)):  # pylint:disable=consider-using-enumerate
-            if self._replica_clients[i] != other._replica_clients[i]:
-                return False
-        return True

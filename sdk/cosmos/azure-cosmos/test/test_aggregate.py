@@ -1,8 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-from __future__ import print_function
-
 import os
 import unittest
 import uuid
@@ -29,7 +27,7 @@ class _config:
     sum = 0
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosQuery
 class TestAggregateQuery(unittest.TestCase):
     client: cosmos_client.CosmosClient = None
 

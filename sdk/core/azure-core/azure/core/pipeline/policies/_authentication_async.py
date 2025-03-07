@@ -61,7 +61,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
 
         :param request: The pipeline request object to be modified.
         :type request: ~azure.core.pipeline.PipelineRequest
-        :raises: :class:`~azure.core.exceptions.ServiceRequestError`
+        :raises ~azure.core.exceptions.ServiceRequestError: If the request fails.
         """
         _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
 
@@ -139,7 +139,6 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :returns: a bool indicating whether the policy should send the request
         :rtype: bool
         """
-        # pylint:disable=unused-argument
         headers = response.http_response.headers
         error = get_challenge_parameter(headers, "Bearer", "error")
         if error == "insufficient_claims":

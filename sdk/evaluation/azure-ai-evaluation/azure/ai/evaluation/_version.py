@@ -1,5 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# represents upcoming version
 
-VERSION = "1.0.0b6"
+VERSION = "1.4.0"

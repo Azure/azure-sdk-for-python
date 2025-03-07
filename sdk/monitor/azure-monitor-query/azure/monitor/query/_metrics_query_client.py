@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=anomalous-backslash-in-string
 from datetime import timedelta, datetime
 from typing import Any, cast, Optional, Tuple, Union, Sequence
 
@@ -16,6 +15,7 @@ from ._generated._serialization import Serializer
 from ._generated.metrics._client import MonitorMetricsClient
 from ._models import MetricsQueryResult, MetricDefinition, MetricNamespace
 from ._helpers import get_authentication_policy, construct_iso8601
+from ._version import SDK_MONIKER
 
 
 class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-keyword
@@ -58,7 +58,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         authentication_policy = kwargs.pop("authentication_policy", None) or get_authentication_policy(
             credential, audience
         )
-
+        kwargs.setdefault("sdk_moniker", SDK_MONIKER)
         self._client = MonitorMetricsClient(
             credential=credential, endpoint=self._endpoint, authentication_policy=authentication_policy, **kwargs
         )
@@ -240,8 +240,8 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         return self._client.close()
 
     def __enter__(self) -> "MetricsQueryClient":
-        self._client.__enter__()  # pylint:disable=no-member
+        self._client.__enter__()
         return self
 
     def __exit__(self, *args: Any) -> None:
-        self._client.__exit__(*args)  # pylint:disable=no-member
+        self._client.__exit__(*args)

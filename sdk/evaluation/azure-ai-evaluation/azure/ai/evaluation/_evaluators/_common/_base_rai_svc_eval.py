@@ -11,9 +11,11 @@ from azure.ai.evaluation._common.constants import (
     Tasks,
     _InternalAnnotationTasks,
 )
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
+from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service, evaluate_with_rai_service_multimodal
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._common.utils import validate_conversation
+from azure.ai.evaluation._constants import _AggregationType
 from azure.core.credentials import TokenCredential
 
 from . import EvaluatorBase
@@ -34,6 +36,10 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         aggregated. Per-turn results are still be available in the output via the "evaluation_per_turn" key
         when this occurs. Default is False, resulting full conversation evaluation and aggregation.
     :type eval_last_turn: bool
+    :param conversation_aggregation_type: The type of aggregation to perform on the per-turn results of a conversation
+        to produce a single result.
+        Default is ~azure.ai.evaluation._AggregationType.MEAN.
+    :type conversation_aggregation_type: ~azure.ai.evaluation._AggregationType
     """
 
     @override
@@ -43,8 +49,9 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         azure_ai_project: dict,
         credential: TokenCredential,
         eval_last_turn: bool = False,
+        conversation_aggregation_type: _AggregationType = _AggregationType.MEAN,
     ):
-        super().__init__(eval_last_turn=eval_last_turn)
+        super().__init__(eval_last_turn=eval_last_turn, conversation_aggregation_type=conversation_aggregation_type)
         self._eval_metric = eval_metric
         self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential
@@ -81,6 +88,36 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         :return: The evaluation result.
         :rtype: Dict
         """
+        if "query" in eval_input and "response" in eval_input:
+            return await self._evaluate_query_response(eval_input)
+
+        conversation = eval_input.get("conversation", None)
+        return await self._evaluate_conversation(conversation)
+
+    async def _evaluate_conversation(self, conversation: Dict) -> Dict[str, T]:
+        """
+        Evaluates content according to this evaluator's metric.
+        :keyword conversation: The conversation contains list of messages to be evaluated.
+            Each message should have "role" and "content" keys.
+
+        :param conversation: The conversation to evaluate.
+        :type conversation: ~azure.ai.evaluation.Conversation
+        :return: The evaluation score computation based on the Content Safety metric (self.metric).
+        :rtype: Dict[str, Union[float, str]]
+        """
+        # validate inputs
+        validate_conversation(conversation)
+        messages = conversation["messages"]
+        # Run score computation based on supplied metric.
+        result = await evaluate_with_rai_service_multimodal(
+            messages=messages,
+            metric_name=self._eval_metric,
+            project_scope=self._azure_ai_project,
+            credential=self._credential,
+        )
+        return result
+
+    async def _evaluate_query_response(self, eval_input: Dict) -> Dict[str, T]:
         query = eval_input.get("query", None)
         response = eval_input.get("response", None)
         if query is None or response is None:
@@ -111,6 +148,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             project_scope=self._azure_ai_project,
             credential=self._credential,
             annotation_task=self._get_task(),
+            evaluator_name=self.__class__.__name__,
         )
 
     def _get_task(self):

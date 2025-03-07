@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from __future__ import print_function
-
 import time
 
 import pytest
@@ -43,9 +41,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         cert_name = self.get_resource_name("cert-name")
 
         # [START create_certificate]
-        from azure.keyvault.certificates import (CertificateContentType,
-                                                 CertificatePolicy,
-                                                 WellKnownIssuerNames)
+        from azure.keyvault.certificates import CertificateContentType, CertificatePolicy, WellKnownIssuerNames
 
         # specify the certificate policy
         cert_policy = CertificatePolicy(

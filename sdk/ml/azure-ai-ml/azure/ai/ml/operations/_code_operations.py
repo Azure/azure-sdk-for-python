@@ -82,7 +82,7 @@ class CodeOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(CodeOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._service_client = service_client
         self._version_operation = service_client.code_versions
         self._container_operation = service_client.code_containers

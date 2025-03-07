@@ -17,6 +17,7 @@ from .._helpers import construct_iso8601, order_results, process_error, process_
 from .._models import LogsQueryResult, LogsBatchQuery, LogsQueryPartialResult
 from ._helpers_async import get_authentication_policy
 from .._exceptions import LogsQueryError
+from .._version import SDK_MONIKER
 
 JSON = MutableMapping[str, Any]
 
@@ -63,6 +64,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
         audience = kwargs.pop("audience", f"{parsed_endpoint.scheme}://{parsed_endpoint.netloc}")
         self._endpoint = endpoint
         auth_policy = kwargs.pop("authentication_policy", None)
+        kwargs.setdefault("sdk_moniker", SDK_MONIKER)
         self._client = MonitorQueryClient(
             credential=credential,
             authentication_policy=auth_policy or get_authentication_policy(credential, audience),
@@ -128,7 +130,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
 
         generated_response: JSON = {}
         try:
-            generated_response = await self._query_op.execute(  # pylint: disable=protected-access
+            generated_response = await self._query_op.execute(
                 workspace_id=workspace_id, body=body, prefer=prefer, **kwargs
             )
         except HttpResponseError as err:
@@ -249,7 +251,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
 
         generated_response: JSON = {}
         try:
-            generated_response = await self._query_op.resource_execute(  # pylint: disable=protected-access
+            generated_response = await self._query_op.resource_execute(
                 resource_id=resource_id, body=body, prefer=prefer, **kwargs
             )
         except HttpResponseError as err:

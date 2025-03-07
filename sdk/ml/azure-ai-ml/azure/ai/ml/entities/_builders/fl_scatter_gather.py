@@ -94,7 +94,6 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
     ) -> None:
         # auto-create X_to_Y_argument_map values if allowed and needed.
         if create_default_mappings_if_needed:
-            # pylint: disable=line-too-long
             (
                 silo_to_aggregation_argument_map,
                 aggregation_to_silo_argument_map,
@@ -141,7 +140,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         # set output to final aggregation step's output
         self._outputs = self.scatter_gather_graph.outputs
         super(FLScatterGather, self).__init__(
-            type=JobType.COMPONENT,  # pylint: disable=redefined-builtin
+            type=JobType.COMPONENT,
             component=None,
             inputs=None,
             outputs=self.scatter_gather_graph.outputs,
@@ -270,7 +269,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
             do_while(
                 body=scatter_gather_body,  # type: ignore[arg-type]
-                mapping=do_while_mapping,
+                mapping=do_while_mapping,  # pylint: disable=possibly-used-before-assignment
                 max_iteration_count=self.max_iterations,
             )
             res_scatter: PipelineJob = scatter_gather_body.outputs  # type: ignore[assignment]
@@ -874,7 +873,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
     def _create_schema_for_validation(cls, context: Any) -> PathAwareSchema:
         return FLScatterGatherSchema(context=context)
 
-    def _to_rest_object(self, **kwargs: Any) -> dict:  # pylint: disable=unused-argument
+    def _to_rest_object(self, **kwargs: Any) -> dict:
         """Convert self to a rest object for remote call.
 
         :return: The rest object

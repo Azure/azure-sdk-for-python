@@ -13,7 +13,6 @@ from azure.core.pipeline import policies
 from .._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -25,7 +24,7 @@ class DataMapClientConfiguration:  # pylint: disable=too-many-instance-attribute
 
     :param endpoint: Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
+    :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Known values are "2023-09-01"
      and None. Default value is "2023-09-01". Note that overriding this default value may result in

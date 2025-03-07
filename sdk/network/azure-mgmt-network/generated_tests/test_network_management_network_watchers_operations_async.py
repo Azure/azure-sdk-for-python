@@ -21,7 +21,7 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_network_watchers_create_or_update(self, resource_group):
         response = await self.client.network_watchers.create_or_update(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
@@ -34,7 +34,7 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_network_watchers_get(self, resource_group):
         response = await self.client.network_watchers.get(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -54,12 +54,12 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_network_watchers_begin_delete(self, resource_group):
         response = await (
             await self.client.network_watchers.begin_delete(
                 resource_group_name=resource_group.name,
                 network_watcher_name="str",
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -68,12 +68,12 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update_tags(self, resource_group):
+    async def test_network_watchers_update_tags(self, resource_group):
         response = await self.client.network_watchers.update_tags(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -81,10 +81,10 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_network_watchers_list(self, resource_group):
         response = self.client.network_watchers.list(
             resource_group_name=resource_group.name,
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -92,9 +92,9 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_all(self, resource_group):
+    async def test_network_watchers_list_all(self, resource_group):
         response = self.client.network_watchers.list_all(
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -102,7 +102,7 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_topology(self, resource_group):
+    async def test_network_watchers_get_topology(self, resource_group):
         response = await self.client.network_watchers.get_topology(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
@@ -111,7 +111,7 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
                 "targetSubnet": {"id": "str"},
                 "targetVirtualNetwork": {"id": "str"},
             },
-            api_version="2024-03-01",
+            api_version="2024-05-01",
         )
 
         # please add some check logic here by yourself
@@ -119,7 +119,7 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_verify_ip_flow(self, resource_group):
+    async def test_network_watchers_begin_verify_ip_flow(self, resource_group):
         response = await (
             await self.client.network_watchers.begin_verify_ip_flow(
                 resource_group_name=resource_group.name,
@@ -134,7 +134,7 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
                     "targetResourceId": "str",
                     "targetNicResourceId": "str",
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -143,7 +143,7 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_get_next_hop(self, resource_group):
+    async def test_network_watchers_begin_get_next_hop(self, resource_group):
         response = await (
             await self.client.network_watchers.begin_get_next_hop(
                 resource_group_name=resource_group.name,
@@ -154,7 +154,7 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
                     "targetResourceId": "str",
                     "targetNicResourceId": "str",
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -163,13 +163,13 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_get_vm_security_rules(self, resource_group):
+    async def test_network_watchers_begin_get_vm_security_rules(self, resource_group):
         response = await (
             await self.client.network_watchers.begin_get_vm_security_rules(
                 resource_group_name=resource_group.name,
                 network_watcher_name="str",
                 parameters={"targetResourceId": "str"},
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -178,13 +178,13 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_get_troubleshooting(self, resource_group):
+    async def test_network_watchers_begin_get_troubleshooting(self, resource_group):
         response = await (
             await self.client.network_watchers.begin_get_troubleshooting(
                 resource_group_name=resource_group.name,
                 network_watcher_name="str",
                 parameters={"storageId": "str", "storagePath": "str", "targetResourceId": "str"},
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -193,13 +193,13 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_get_troubleshooting_result(self, resource_group):
+    async def test_network_watchers_begin_get_troubleshooting_result(self, resource_group):
         response = await (
             await self.client.network_watchers.begin_get_troubleshooting_result(
                 resource_group_name=resource_group.name,
                 network_watcher_name="str",
                 parameters={"targetResourceId": "str"},
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -208,7 +208,7 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_set_flow_log_configuration(self, resource_group):
+    async def test_network_watchers_begin_set_flow_log_configuration(self, resource_group):
         response = await (
             await self.client.network_watchers.begin_set_flow_log_configuration(
                 resource_group_name=resource_group.name,
@@ -236,7 +236,7 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
                     },
                     "retentionPolicy": {"days": 0, "enabled": False},
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -245,13 +245,13 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_get_flow_log_status(self, resource_group):
+    async def test_network_watchers_begin_get_flow_log_status(self, resource_group):
         response = await (
             await self.client.network_watchers.begin_get_flow_log_status(
                 resource_group_name=resource_group.name,
                 network_watcher_name="str",
                 parameters={"targetResourceId": "str"},
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -260,7 +260,7 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_check_connectivity(self, resource_group):
+    async def test_network_watchers_begin_check_connectivity(self, resource_group):
         response = await (
             await self.client.network_watchers.begin_check_connectivity(
                 resource_group_name=resource_group.name,
@@ -278,7 +278,7 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
                         }
                     },
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -287,7 +287,7 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_get_azure_reachability_report(self, resource_group):
+    async def test_network_watchers_begin_get_azure_reachability_report(self, resource_group):
         response = await (
             await self.client.network_watchers.begin_get_azure_reachability_report(
                 resource_group_name=resource_group.name,
@@ -299,7 +299,7 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
                     "azureLocations": ["str"],
                     "providers": ["str"],
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -308,13 +308,13 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_list_available_providers(self, resource_group):
+    async def test_network_watchers_begin_list_available_providers(self, resource_group):
         response = await (
             await self.client.network_watchers.begin_list_available_providers(
                 resource_group_name=resource_group.name,
                 network_watcher_name="str",
                 parameters={"azureLocations": ["str"], "city": "str", "country": "str", "state": "str"},
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -323,7 +323,7 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_get_network_configuration_diagnostic(self, resource_group):
+    async def test_network_watchers_begin_get_network_configuration_diagnostic(self, resource_group):
         response = await (
             await self.client.network_watchers.begin_get_network_configuration_diagnostic(
                 resource_group_name=resource_group.name,
@@ -341,7 +341,7 @@ class TestNetworkManagementNetworkWatchersOperationsAsync(AzureMgmtRecordedTestC
                     "targetResourceId": "str",
                     "verbosityLevel": "str",
                 },
-                api_version="2024-03-01",
+                api_version="2024-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

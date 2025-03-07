@@ -20,6 +20,7 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
+
 def patch_sdk():
     """Do not remove from this file.
 
@@ -27,6 +28,7 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
 
 class WeatherOperations(WeatherOperationsGenerated):
     def get_tropical_storm_search(
@@ -78,9 +80,5 @@ class WeatherOperations(WeatherOperationsGenerated):
                 }
         """
         return super().search_tropical_storm(
-            format=format,
-            year=year,
-            basin_id=basin_id,
-            government_storm_id=government_storm_id,
-            **kwargs
+            format=format, year=year, basin_id=basin_id, government_storm_id=government_storm_id, **kwargs
         )

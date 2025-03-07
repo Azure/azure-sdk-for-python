@@ -20,7 +20,7 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create(self, resource_group):
+    def test_restore_points_begin_create(self, resource_group):
         response = self.client.restore_points.begin_create(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
@@ -189,7 +189,7 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_restore_points_begin_delete(self, resource_group):
         response = self.client.restore_points.begin_delete(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
@@ -202,7 +202,7 @@ class TestComputeManagementRestorePointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_restore_points_get(self, resource_group):
         response = self.client.restore_points.get(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",

@@ -6,47 +6,46 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, Literal
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 VERSION = "unknown"
 
-class AzureBlobStorageConfiguration(Configuration):
+
+class AzureBlobStorageConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for AzureBlobStorage.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param url: The URL of the service account, container, or blob that is the targe of the desired operation.
+    :param url: The URL of the service account, container, or blob that is the target of the
+     desired operation. Required.
     :type url: str
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2025-01-05". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
     """
 
-    def __init__(
-        self,
-        url: str,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, url: str, **kwargs: Any) -> None:
+        version: Literal["2025-01-05"] = kwargs.pop("version", "2025-01-05")
+
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
-        super(AzureBlobStorageConfiguration, self).__init__(**kwargs)
 
         self.url = url
-        self.version = "2020-04-08"
-        kwargs.setdefault('sdk_moniker', 'azureblobstorage/{}'.format(VERSION))
+        self.version = version
+        kwargs.setdefault("sdk_moniker", "azureblobstorage/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
-    def _configure(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.AsyncRetryPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.AsyncRedirectPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
+    def _configure(self, **kwargs: Any) -> None:
+        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get("authentication_policy")
