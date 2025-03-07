@@ -57,9 +57,10 @@ def sample_chat_completions_with_audio_url():
         print("No specific model target will not be set.")
         model_deployment = None
 
-    audio_url = \
-        "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/refs/tags/azure-ai-inference_1.0.0b9/" + \
-        "sdk/ai/azure-ai-inference/samples/hello_how_are_you.mp3"
+    audio_url = (
+        "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/refs/tags/azure-ai-inference_1.0.0b9/"
+        + "sdk/ai/azure-ai-inference/samples/hello_how_are_you.mp3"
+    )
 
     client = ChatCompletionsClient(
         endpoint=endpoint,
@@ -72,9 +73,7 @@ def sample_chat_completions_with_audio_url():
             UserMessage(
                 [
                     TextContentItem(text="Please translate this audio snippet to spanish."),
-                    AudioUrlContentItem(
-                        audio_url=InputAudioUrl(url=audio_url)
-                    ),
+                    AudioUrlContentItem(audio_url=InputAudioUrl(url=audio_url)),
                 ],
             ),
         ],

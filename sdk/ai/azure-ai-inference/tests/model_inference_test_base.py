@@ -279,7 +279,6 @@ class ModelClientTestBase(AzureRecordedTestCase):
         credential = AzureKeyCredential(key)
         return endpoint, credential
 
-
     # **********************************************************************************
     #
     #     HELPER METHODS TO CREATE CLIENTS USING THE SDK's load_client() FUNCTION
@@ -458,12 +457,11 @@ class ModelClientTestBase(AzureRecordedTestCase):
         credential = AzureKeyCredential(key)
         return sdk.EmbeddingsClient(endpoint=endpoint, credential=credential, logging_enable=LOGGING_ENABLED)
 
-    def _create_phi_audio_chat_client(
-        self, *, bad_key: bool = False, **kwargs
-    ) -> sdk.ChatCompletionsClient:
-        endpoint, credential, = self._load_phi_audio_credentials(
-            bad_key=bad_key, **kwargs
-        )
+    def _create_phi_audio_chat_client(self, *, bad_key: bool = False, **kwargs) -> sdk.ChatCompletionsClient:
+        (
+            endpoint,
+            credential,
+        ) = self._load_phi_audio_credentials(bad_key=bad_key, **kwargs)
         return sdk.ChatCompletionsClient(
             endpoint=endpoint,
             credential=credential,
@@ -473,9 +471,10 @@ class ModelClientTestBase(AzureRecordedTestCase):
     def _create_async_phi_audio_chat_client(
         self, *, bad_key: bool = False, **kwargs
     ) -> async_sdk.ChatCompletionsClient:
-        endpoint, credential, = self._load_phi_audio_credentials(
-            bad_key=bad_key, **kwargs
-        )
+        (
+            endpoint,
+            credential,
+        ) = self._load_phi_audio_credentials(bad_key=bad_key, **kwargs)
         return async_sdk.ChatCompletionsClient(
             endpoint=endpoint,
             credential=credential,
