@@ -103,7 +103,7 @@
     "sdk/eventhub/azure-eventhub-checkpointstoreblob/azure/eventhub/extensions/checkpointstoreblob/_vendor/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/azure/eventhub/extensions/checkpointstoreblobaio/_vendor/**",
     "sdk/storage/azure-storage-extensions/**",
-    "sdk/projects/azure-projects/test/test_infra/**",
+    "sdk/projects/azure-projects/tests/test_infra/**",
     "sdk/projects/azure-projects/azure/projects/resources/**/types.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_utils/_virtual_cluster_utils/_restclient/**",
@@ -639,10 +639,11 @@
     {
       "filename": "sdk/projects/azure-projects/tests/**/*.py",
       "words": [
+        "tofile",
         "rgtest",
         "rgexists",
-        "kvtest",
         "rgtag",
+        "kvtest",
         "testb",
         "sclient",
         "aclient"
@@ -657,9 +658,7 @@
         "aifoundry",
         "GZRS",
         "RAGZRS",
-        "nfsv",
-        "tofile"
-
+        "nfsv"
       ]
     },
     {
