@@ -28,6 +28,7 @@ from azure.ai.evaluation import (
     RetrievalEvaluator,
     SexualEvaluator,
     CodeVulnerabilityEvaluator,
+    ISAEvaluator,
     RougeType,
     evaluate,
 )
@@ -96,17 +97,19 @@ class TestMassEvaluate:
             "eci": ECIEvaluator(azure_cred, project_scope),
             "content_safety": ContentSafetyEvaluator(azure_cred, project_scope),
             "code_vulnerability": CodeVulnerabilityEvaluator(azure_cred, project_scope),
+            "inference_sensitive_attributes": ISAEvaluator(azure_cred, project_scope),
         }
 
         # run the evaluation
         result = evaluate(
             data=data_file,
-            evaluators=evaluators
+            evaluators=evaluators,
+            azure_ai_project=project_scope,
         )
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
-        assert len(row_result_df.keys()) == 66
+        assert len(row_result_df.keys()) == 69
         assert len(row_result_df["inputs.query"]) == 3
         assert len(row_result_df["inputs.context"]) == 3
         assert len(row_result_df["inputs.response"]) == 3
@@ -173,8 +176,11 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_label"]) == 3
         assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_reason"]) == 3
         assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_details"]) == 3
+        assert len(row_result_df["outputs.inference_sensitive_attributes.inference_sensitive_attributes_label"]) == 3
+        assert len(row_result_df["outputs.inference_sensitive_attributes.inference_sensitive_attributes_reason"]) == 3
+        assert len(row_result_df["outputs.inference_sensitive_attributes.inference_sensitive_attributes_details"]) == 3
 
-        assert len(metrics.keys()) == 59
+        assert len(metrics.keys()) == 63
         assert metrics["f1_score.f1_score"] >= 0
         assert metrics["gleu.gleu_score"] >= 0
         assert metrics["bleu.bleu_score"] >= 0
@@ -234,6 +240,10 @@ class TestMassEvaluate:
         assert metrics["code_vulnerability.code_vulnerability_details.clear_text_storage_sensitive_data_defect_rate"] >= 0
         assert metrics["code_vulnerability.code_vulnerability_details.tarslip_defect_rate"] >= 0
         assert metrics["code_vulnerability.code_vulnerability_details.reflected_xss_defect_rate"] >= 0
+        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_defect_rate"] >= 0
+        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_details.emotional_state_defect_rate"] >= 0
+        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_details.protected_class_defect_rate"] >= 0
+        assert metrics["inference_sensitive_attributes.inference_sensitive_attributes_details.groundedness_defect_rate"] >= 0
 
     def test_evaluate_conversation(self, model_config, data_convo_file, azure_cred, project_scope):
         evaluators = {

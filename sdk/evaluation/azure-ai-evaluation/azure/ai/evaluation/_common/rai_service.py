@@ -70,6 +70,13 @@ def get_formatted_template(data: dict, annotation_task: str) -> str:
             "completion": data.get("response", "")
         }
         return json.dumps(as_dict)
+    if annotation_task == Tasks.ISA:
+        as_dict = {
+            "query": data.get("query", ""),
+            "response": data.get("response", ""),
+            "context": data.get("context", "")
+        }
+        return json.dumps(as_dict)
     as_dict = {
         "query": html.escape(data.get("query", "")),
         "response": html.escape(data.get("response", "")),
@@ -165,6 +172,8 @@ def generate_payload(normalized_user_text: str, metric: str, annotation_task: st
     include_metric = True
     task = annotation_task
     if metric == EvaluationMetrics.PROTECTED_MATERIAL:
+        include_metric = False
+    elif metric == EvaluationMetrics.ISA:
         include_metric = False
     elif metric == _InternalEvaluationMetrics.ECI:
         include_metric = False
@@ -281,6 +290,7 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
         _InternalEvaluationMetrics.ECI,
         EvaluationMetrics.XPIA,
         EvaluationMetrics.CODE_VULNERABILITY,
+        EvaluationMetrics.ISA,
     }:
         result = {}
         if not batch_response or len(batch_response[0]) == 0:
@@ -320,7 +330,7 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
             result[metric_display_name + "_information_gathering"] = (
                 parsed_response["information_gathering"] if "information_gathering" in parsed_response else math.nan
             )
-        if metric_name == EvaluationMetrics.CODE_VULNERABILITY:
+        if metric_name == EvaluationMetrics.CODE_VULNERABILITY or metric_name == EvaluationMetrics.ISA:
             # Add all attributes under the details.
             details = {}
             for key, value in parsed_response.items():

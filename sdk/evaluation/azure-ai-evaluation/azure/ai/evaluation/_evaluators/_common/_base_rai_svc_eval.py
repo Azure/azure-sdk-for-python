@@ -170,4 +170,6 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             return Tasks.PROTECTED_MATERIAL
         if self._eval_metric == EvaluationMetrics.CODE_VULNERABILITY:
             return Tasks.CODE_VULNERABILITY
-        return Tasks.CONTENT_HARM
+        if self._eval_metric == EvaluationMetrics.ISA:
+            return Tasks.ISA
+        return Tasks.ISA
