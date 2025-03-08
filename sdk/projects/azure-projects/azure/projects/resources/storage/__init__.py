@@ -223,7 +223,7 @@ _DEFAULT_STORAGE_ACCOUNT: "StorageAccountResource" = {
     "kind": "StorageV2",
     "sku": {"name": "Standard_GRS"},
     "properties": {"accessTier": "Hot", "allowCrossTenantReplication": False, "allowSharedKeyAccess": False},
-    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"].format(): {}}},
+    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 
 

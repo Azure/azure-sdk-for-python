@@ -19,12 +19,16 @@ def resolve_value(value: Any) -> str:
 
 
 def resolve_key(key: Any) -> str:
-    try:
-        return key.value
-    except AttributeError:
+    if isinstance(key, str):
         if key.isidentifier():
             return key
         return f"'{key}'"
+    try:
+        resolved = f"'{key.format()}'"
+        return resolved
+    except AttributeError:
+        pass
+    raise TypeError(f"Unexpected key type: {key}")
 
 
 def clean_name(name: str) -> str:

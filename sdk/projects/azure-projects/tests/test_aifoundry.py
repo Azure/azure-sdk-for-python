@@ -15,7 +15,7 @@ from azure.projects import Parameter, field, AzureInfrastructure, export, AzureA
 
 TEST_SUB = str(uuid4())
 RG = ResourceSymbol("resourcegroup")
-IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"].format(): {}}}
+IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}}
 
 
 def test_aifoundry_export(export_dir):

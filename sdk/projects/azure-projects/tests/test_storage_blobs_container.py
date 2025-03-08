@@ -13,7 +13,7 @@ from azure.projects import Parameter, AzureInfrastructure, export, field, AzureA
 
 TEST_SUB = "6e441d6a-23ce-4450-a4a6-78f8d4f45ce9"
 RG = ResourceSymbol("resourcegroup")
-IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"].format(): {}}}
+IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}}
 
 
 def _get_outputs(suffix="", parent="", rg=None):

@@ -143,7 +143,7 @@ _DEFAULT_SEARCH_SERVICE: "SearchServiceResource" = {
     },
     "location": GLOBAL_PARAMS["location"],
     "tags": GLOBAL_PARAMS["azdTags"],
-    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"].format(): {}}},
+    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 _DEFAULT_SEARCH_SERVICE_EXTENSIONS: ExtensionResources = {
     "managed_identity_roles": [

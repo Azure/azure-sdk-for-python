@@ -27,7 +27,7 @@ resource searchservice 'Microsoft.Search/searchServices@2024-06-01-Preview' = {
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
-      '${managedIdentityId}': {}
+      '${userassignedidentity.id}': {}
     }
   }
 }

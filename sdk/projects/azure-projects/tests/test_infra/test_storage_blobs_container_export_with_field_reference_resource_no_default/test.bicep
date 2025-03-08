@@ -30,7 +30,7 @@ resource storageaccount_teststorage 'Microsoft.Storage/storageAccounts@2023-05-0
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
-      '${managedIdentityId}': {}
+      '${userassignedidentity.id}': {}
     }
   }
 }

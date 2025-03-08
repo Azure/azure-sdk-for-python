@@ -17,7 +17,7 @@ from azure.search.documents.indexes.aio import SearchIndexClient as AsyncSearchI
 
 TEST_SUB = str(uuid4())
 RG = ResourceSymbol("resourcegroup")
-IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"].format(): {}}}
+IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}}
 
 
 def _get_outputs(suffix="", rg=None):

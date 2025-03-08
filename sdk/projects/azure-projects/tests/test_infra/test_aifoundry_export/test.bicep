@@ -35,7 +35,7 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
-      '${managedIdentityId}': {}
+      '${userassignedidentity.id}': {}
     }
   }
 }
@@ -59,7 +59,7 @@ resource searchservice 'Microsoft.Search/searchServices@2024-06-01-Preview' = {
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
-      '${managedIdentityId}': {}
+      '${userassignedidentity.id}': {}
     }
   }
 }
@@ -86,7 +86,7 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
-      '${managedIdentityId}': {}
+      '${userassignedidentity.id}': {}
     }
   }
 }
@@ -130,6 +130,7 @@ output AZURE_KEYVAULT_ENDPOINT string = vault.properties.vaultUri
 resource hub_workspace 'Microsoft.MachineLearningServices/workspaces@2024-04-01-preview' = {
   kind: 'Hub'
   properties: {
+    primaryUserAssignedIdentity: userassignedidentity.id
     publicNetworkAccess: 'Enabled'
     enableDataIsolation: true
     v1LegacyMode: false
@@ -137,7 +138,6 @@ resource hub_workspace 'Microsoft.MachineLearningServices/workspaces@2024-04-01-
     managedNetwork: {
       isolationMode: 'Disabled'
     }
-    primaryUserAssignedIdentity: userassignedidentity.id
     workspaceHubConfig: {
       defaultWorkspaceResourceGroup: resourceGroup().id
     }
@@ -154,7 +154,7 @@ resource hub_workspace 'Microsoft.MachineLearningServices/workspaces@2024-04-01-
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
-      '${managedIdentityId}': {}
+      '${userassignedidentity.id}': {}
     }
   }
 }
@@ -205,11 +205,11 @@ resource connection_hfpudimwwntoylmqeene 'Microsoft.MachineLearningServices/work
 resource project_workspace 'Microsoft.MachineLearningServices/workspaces@2024-04-01-preview' = {
   kind: 'Project'
   properties: {
+    primaryUserAssignedIdentity: userassignedidentity.id
     publicNetworkAccess: 'Enabled'
     enableDataIsolation: true
     v1LegacyMode: false
     hbiWorkspace: false
-    primaryUserAssignedIdentity: userassignedidentity.id
     workspaceHubConfig: {
       defaultWorkspaceResourceGroup: resourceGroup().id
     }
@@ -225,7 +225,7 @@ resource project_workspace 'Microsoft.MachineLearningServices/workspaces@2024-04
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
-      '${managedIdentityId}': {}
+      '${userassignedidentity.id}': {}
     }
   }
 }

@@ -151,10 +151,10 @@ _DEFAULT_ML_WORKSPACE: "MachineLearningWorkspaceResource" = {
     "name": GLOBAL_PARAMS["defaultName"],
     "location": GLOBAL_PARAMS["location"],
     "tags": GLOBAL_PARAMS["azdTags"],
-    #'properties': {
-    #    'primaryUserAssignedIdentity': GLOBAL_PARAMS['managedIdentityId'],
-    # },
-    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"].format(): {}}},
+    "properties": {
+        "primaryUserAssignedIdentity": GLOBAL_PARAMS["managedIdentityId"],
+    },
+    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 _DEFAULT_ML_WORKSPACE_EXTENSIONS: ExtensionResources = {"managed_identity_roles": [], "user_roles": []}
 
@@ -263,8 +263,6 @@ class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
         if "properties" in current_properties and current_properties["kind"] in ["Project", "Hub"]:
             # TODO: Fix this recursive call problem....
             # We only want to run this on the first call, not subsequent ones.
-            if not current_properties["properties"].get("primaryUserAssignedIdentity"):
-                current_properties["properties"]["primaryUserAssignedIdentity"] = parameters["managedIdentityId"]
             if not current_properties["properties"].get("workspaceHubConfig"):
                 current_properties["properties"]["workspaceHubConfig"] = {}
             if not current_properties["properties"]["workspaceHubConfig"].get("defaultWorkspaceResourceGroup"):
@@ -325,8 +323,7 @@ _DEFAULT_AI_HUB: "MachineLearningWorkspaceResource" = {
     "location": GLOBAL_PARAMS["location"],
     "tags": GLOBAL_PARAMS["azdTags"],
     "properties": {
-        # TODO: This doesn't work, but it should...
-        #'primaryUserAssignedIdentity': GLOBAL_PARAMS['managedIdentityId'],
+        "primaryUserAssignedIdentity": GLOBAL_PARAMS["managedIdentityId"],
         "publicNetworkAccess": "Enabled",
         "enableDataIsolation": True,
         "v1LegacyMode": False,
@@ -337,7 +334,7 @@ _DEFAULT_AI_HUB: "MachineLearningWorkspaceResource" = {
         "name": "Basic",
         "tier": "Basic",
     },
-    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"].format(): {}}},
+    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 _DEFAULT_AI_HUB_EXTENSIONS: ExtensionResources = {"managed_identity_roles": [], "user_roles": []}
 
@@ -410,7 +407,7 @@ _DEFAULT_AI_PROJECT: "MachineLearningWorkspaceResource" = {
     "location": GLOBAL_PARAMS["location"],
     "tags": GLOBAL_PARAMS["azdTags"],
     "properties": {
-        #'primaryUserAssignedIdentity': GLOBAL_PARAMS['managedIdentityId'],  # TODO direct global references are broken
+        "primaryUserAssignedIdentity": GLOBAL_PARAMS["managedIdentityId"],
         "publicNetworkAccess": "Enabled",
         "enableDataIsolation": True,
         "v1LegacyMode": False,
@@ -420,7 +417,7 @@ _DEFAULT_AI_PROJECT: "MachineLearningWorkspaceResource" = {
         "name": "Basic",
         "tier": "Basic",
     },
-    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"].format(): {}}},
+    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 _DEFAULT_AI_PROJECT_EXTENSIONS: ExtensionResources = {
     "managed_identity_roles": ["Contributor"],

@@ -51,6 +51,7 @@ _MANAGED_IDENTITY_ID = Parameter(
     default="",
     type="string",
 )
+# TODO: The ManagedIdentity parameters are a bit wonky. Need to test more thoroughly.
 _MANAGED_IDENTITY_PRINCIPAL_ID = Parameter(
     "managedIdentityPrincipalId",
     description="Principal ID of the managed identity to assign application roles",

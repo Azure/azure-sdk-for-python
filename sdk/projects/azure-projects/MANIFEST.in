@@ -1,6 +1,8 @@
 include _meta.json
 include *.md
 include azure/__init__.py
-recursive-include tests *.py *.yaml *.json *.bicep
+include tests/test_infra/test_*/*.bicep
+include tests/test_infra/test_*/*.json
+recursive-include tests *.py *.yaml
 recursive-include samples *.py
 include azure/projects/py.typed

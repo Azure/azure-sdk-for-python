@@ -11,7 +11,7 @@ from azure.projects import Parameter, field, AzureInfrastructure, export, AzureA
 
 TEST_SUB = str(uuid4())
 RG = ResourceSymbol("resourcegroup")
-IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"].format(): {}}}
+IDENTITY = {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}}
 RESOURCE_FROM_CLIENT_ANNOTATION["EmptyClient"] = ResourceIdentifiers.ai_services
 
 

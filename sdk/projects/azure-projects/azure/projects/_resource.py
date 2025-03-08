@@ -401,10 +401,19 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
 
         new_props = {}
         for key, value in properties.items():
+            if isinstance(key, Parameter) and key.name:
+                if key.name in parameters:
+                    key = parameters[key.name]
+                else:
+                    parameters[key.name] = value
+
             if component and isinstance(value, ComponentField):
                 new_props[key] = value.get(component)
             elif isinstance(value, Parameter) and value.name:
-                parameters[value.name] = value
+                if value.name in parameters:
+                    value = parameters[value.name]
+                else:
+                    parameters[value.name] = value
                 new_props[key] = value
             elif isinstance(value, list):
                 resolved_items = []
@@ -412,7 +421,10 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
                     if component and isinstance(item, ComponentField):
                         resolved_items.append(item.get(component))
                     elif isinstance(item, Parameter) and item.name:
-                        parameters[item.name] = item
+                        if item.name in parameters:
+                            item = parameters[item.name]
+                        else:
+                            parameters[item.name] = item
                         resolved_items.append(item)
                     else:
                         try:
@@ -445,7 +457,7 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
             else:
                 field.properties[key] = value
         # TODO: This is making a copy of the properties, very slow...
-        self._resolve_properties(field.properties, parameters)
+        field.properties.update(self._resolve_properties(field.properties, parameters))
         if "managed_identity_roles" not in field.extensions:
             field.extensions["managed_identity_roles"] = self.DEFAULT_EXTENSIONS.get("managed_identity_roles", [])
         if "user_roles" not in field.extensions:

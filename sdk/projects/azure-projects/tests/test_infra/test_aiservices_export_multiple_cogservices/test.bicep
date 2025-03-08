@@ -49,7 +49,7 @@ resource aiservices_account 'Microsoft.CognitiveServices/accounts@2024-10-01' = 
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
-      '${managedIdentityId}': {}
+      '${userassignedidentity.id}': {}
     }
   }
 }

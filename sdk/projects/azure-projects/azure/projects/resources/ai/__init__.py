@@ -464,7 +464,7 @@ _DEFAULT_AI_SERVICES: "CognitiveServicesAccountResource" = {
         "customSubDomainName": GLOBAL_PARAMS["defaultName"].format("{}-aiservices"),
         "networkAcls": {"defaultAction": "Allow", "virtualNetworkRules": [], "ipRules": []},
     },
-    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"].format(): {}}},
+    "identity": {"type": "UserAssigned", "userAssignedIdentities": {GLOBAL_PARAMS["managedIdentityId"]: {}}},
 }
 _DEFAULT_AI_SERVICES_EXTENSIONS: ExtensionResources = {
     "managed_identity_roles": [
