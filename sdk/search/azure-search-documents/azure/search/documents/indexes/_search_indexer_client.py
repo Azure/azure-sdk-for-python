@@ -9,16 +9,13 @@ from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
 
-from ._generated import SearchServiceClient as _SearchServiceClient
-from ._generated.models import (
+from .._generated import SearchClient as _SearchServiceClient
+from .._generated.models import (
     SkillNames,
     SearchIndexerStatus,
     DocumentKeysOrIds,
 )
-from ._utils import (
-    get_access_conditions,
-    normalize_endpoint,
-)
+from ._utils import normalize_endpoint
 from .models import (
     SearchIndexer,
     SearchIndexerSkillset,
@@ -28,7 +25,7 @@ from .models import (
 )
 from .._api_versions import DEFAULT_VERSION
 from .._headers_mixin import HeadersMixin
-from .._utils import get_authentication_policy
+from .._utils import DEFAULT_AUDIENCE
 from .._version import SDK_MONIKER
 
 
@@ -53,21 +50,19 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         self._endpoint = normalize_endpoint(endpoint)
         self._credential = credential
         audience = kwargs.pop("audience", None)
-        if isinstance(credential, AzureKeyCredential):
-            self._aad = False
-            self._client = _SearchServiceClient(
-                endpoint=endpoint, sdk_moniker=SDK_MONIKER, api_version=self._api_version, **kwargs
-            )
-        else:
-            self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience)
-            self._client = _SearchServiceClient(
-                endpoint=endpoint,
-                authentication_policy=authentication_policy,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
+        if not audience:
+            audience = DEFAULT_AUDIENCE
+        scope = audience.rstrip("/") + "/.default"
+        credential_scopes = [scope]
+        self._aad = not isinstance(credential, AzureKeyCredential)
+        self._client = _SearchServiceClient(
+            endpoint=endpoint,
+            credential=credential,
+            sdk_moniker=SDK_MONIKER,
+            api_version=self._api_version,
+            credential_scopes=credential_scopes,
+            **kwargs
+        )
 
     def __enter__(self) -> "SearchIndexerClient":
         self._client.__enter__()
@@ -132,15 +127,14 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(indexer, match_condition)
-        kwargs.update(access_condition)
         name = indexer.name
         patched_indexer = indexer._to_generated()  # pylint:disable=protected-access
         result = self._client.indexers.create_or_update(
             indexer_name=name,
             indexer=patched_indexer,
             prefer="return=representation",
-            error_map=error_map,
+            etag=indexer.e_tag,
+            match_condition=match_condition,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
             **kwargs
@@ -245,13 +239,15 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Delete a SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(indexer, match_condition)
-        kwargs.update(access_condition)
+        if isinstance(indexer, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
+        etag = None
         try:
             name = indexer.name  # type: ignore
+            etag = indexer.e_tag  # type: ignore
         except AttributeError:
             name = indexer
-        self._client.indexers.delete(name, error_map=error_map, **kwargs)
+        self._client.indexers.delete(name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace
     def run_indexer(self, name: str, **kwargs: Any) -> None:
@@ -391,15 +387,14 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(data_source_connection, match_condition)
-        kwargs.update(access_condition)
         name = data_source_connection.name
         packed_data_source = data_source_connection._to_generated()  # pylint:disable=protected-access
         result = self._client.data_sources.create_or_update(
             data_source_name=name,
             data_source=packed_data_source,
             prefer="return=representation",
-            error_map=error_map,
+            etag=data_source_connection.e_tag,
+            match_condition=match_condition,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             **kwargs
         )
@@ -502,13 +497,15 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Delete a SearchIndexerDataSourceConnection
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(data_source_connection, match_condition)
-        kwargs.update(access_condition)
+        if isinstance(data_source_connection, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
+        etag = None
         try:
             name = data_source_connection.name  # type: ignore
+            etag = data_source_connection.e_tag  # type: ignore
         except AttributeError:
             name = data_source_connection
-        self._client.data_sources.delete(data_source_name=name, error_map=error_map, **kwargs)
+        self._client.data_sources.delete(data_source_name=name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace
     def get_skillsets(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> List[SearchIndexerSkillset]:
@@ -581,13 +578,15 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :paramtype match_condition: ~azure.core.MatchConditions
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(skillset, match_condition)
-        kwargs.update(access_condition)
+        if isinstance(skillset, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
+        etag = None
         try:
             name = skillset.name  # type: ignore
+            etag = skillset.e_tag  # type: ignore
         except AttributeError:
             name = skillset
-        self._client.skillsets.delete(name, error_map=error_map, **kwargs)
+        self._client.skillsets.delete(name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace
     def create_skillset(self, skillset: SearchIndexerSkillset, **kwargs: Any) -> SearchIndexerSkillset:
@@ -634,8 +633,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(skillset, match_condition)
-        kwargs.update(access_condition)
         _validate_skillset(skillset)
         skillset_gen = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
 
@@ -643,7 +640,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             skillset_name=skillset.name,
             skillset=skillset_gen,  # type: ignore
             prefer="return=representation",
-            error_map=error_map,
+            etag=skillset.e_tag,
+            match_condition=match_condition,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
             **kwargs

@@ -92,7 +92,7 @@ class TestSearchBatchingClientAsync:
         async def mock_fail_index_documents(actions, timeout=86400):
             if len(actions) > 0:
                 result = IndexingResult()
-                result.key = actions[0].additional_properties.get("id")
+                result.key = actions[0].get("id")
                 result.status_code = 400
                 result.succeeded = False
                 self.uploaded = self.uploaded + len(actions) - 1
@@ -113,7 +113,7 @@ class TestSearchBatchingClientAsync:
         async def mock_fail_index_documents(actions, timeout=86400):
             if len(actions) > 0:
                 result = IndexingResult()
-                result.key = actions[0].additional_properties.get("id")
+                result.key = actions[0].get("id")
                 result.status_code = 400
                 result.succeeded = False
                 self.uploaded = self.uploaded + len(actions) - 1
@@ -136,7 +136,7 @@ class TestSearchBatchingClientAsync:
         async def mock_successful_index_documents(actions, timeout=86400):
             if len(actions) > 0:
                 result = IndexingResult()
-                result.key = actions[0].additional_properties.get("id")
+                result.key = actions[0].get("id")
                 result.status_code = 200
                 result.succeeded = True
                 return [result]

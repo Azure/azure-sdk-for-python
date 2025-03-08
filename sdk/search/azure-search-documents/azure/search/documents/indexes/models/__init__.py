@@ -32,8 +32,7 @@ from ._index import (
     SearchIndex,
 )
 from . import _edm
-from ..._generated.models import SuggestOptions
-from .._generated.models import (
+from ..._generated.models import (
     SearchAlias,
     AIServicesAccountIdentity,
     AIServicesAccountKey,
@@ -87,7 +86,7 @@ from .._generated.models import (
     DocumentExtractionSkill,
     DocumentIntelligenceLayoutSkill,
     DocumentKeysOrIds,
-    EdgeNGramTokenFilter,
+    EdgeNGramTokenFilterV2 as EdgeNGramTokenFilter,
     EdgeNGramTokenizer,
     EdgeNGramTokenFilterSide,
     ElisionTokenFilter,
@@ -134,7 +133,7 @@ from .._generated.models import (
     LimitTokenFilter,
     IndexStatisticsSummary,
     LuceneStandardAnalyzer,
-    LuceneStandardTokenizer,
+    LuceneStandardTokenizerV2 as LuceneStandardTokenizer,
     MagnitudeScoringFunction,
     MagnitudeScoringParameters,
     MarkdownHeaderDepth,
@@ -146,7 +145,7 @@ from .._generated.models import (
     MicrosoftStemmingTokenizerLanguage,
     MicrosoftTokenizerLanguage,
     NativeBlobSoftDeleteDeletionDetectionPolicy,
-    NGramTokenFilter,
+    NGramTokenFilterV2 as NGramTokenFilter,
     NGramTokenizer,
     OcrLineEnding,
     OcrSkill,
@@ -330,7 +329,7 @@ __all__ = (
     "DocumentExtractionSkill",
     "DocumentIntelligenceLayoutSkill",
     "DocumentKeysOrIds",
-    "EdgeNGramTokenFilter",
+    "EdgeNGramTokenFilter",  # pylint: disable=naming-mismatch
     "EdgeNGramTokenizer",
     "ElisionTokenFilter",
     "EdgeNGramTokenFilterSide",
@@ -379,7 +378,7 @@ __all__ = (
     "LimitTokenFilter",
     "IndexStatisticsSummary",
     "LuceneStandardAnalyzer",
-    "LuceneStandardTokenizer",
+    "LuceneStandardTokenizer",  # pylint: disable=naming-mismatch
     "MagnitudeScoringFunction",
     "MagnitudeScoringParameters",
     "MarkdownHeaderDepth",
@@ -391,7 +390,7 @@ __all__ = (
     "MicrosoftStemmingTokenizerLanguage",
     "MicrosoftTokenizerLanguage",
     "NativeBlobSoftDeleteDeletionDetectionPolicy",
-    "NGramTokenFilter",
+    "NGramTokenFilter",  # pylint: disable=naming-mismatch
     "NGramTokenizer",
     "OcrLineEnding",
     "OcrSkill",
@@ -475,7 +474,6 @@ __all__ = (
     "StopAnalyzer",
     "StopwordsList",
     "StopwordsTokenFilter",
-    "SuggestOptions",
     "SynonymMap",
     "SynonymTokenFilter",
     "TagScoringFunction",

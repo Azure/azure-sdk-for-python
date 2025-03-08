@@ -12,13 +12,10 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 
 from .._api_versions import DEFAULT_VERSION
-from ._generated import SearchServiceClient as _SearchServiceClient
-from ._utils import (
-    get_access_conditions,
-    normalize_endpoint,
-)
+from .._generated import SearchClient as _SearchServiceClient
+from ._utils import normalize_endpoint
 from .._headers_mixin import HeadersMixin
-from .._utils import get_authentication_policy
+from .._utils import DEFAULT_AUDIENCE
 from .._version import SDK_MONIKER
 from .._search_client import SearchClient
 from .models import (
@@ -52,21 +49,19 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         self._endpoint = normalize_endpoint(endpoint)
         self._credential = credential
         self._audience = kwargs.pop("audience", None)
-        if isinstance(credential, AzureKeyCredential):
-            self._aad = False
-            self._client = _SearchServiceClient(
-                endpoint=endpoint, sdk_moniker=SDK_MONIKER, api_version=self._api_version, **kwargs
-            )
-        else:
-            self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=self._audience)
-            self._client = _SearchServiceClient(
-                endpoint=endpoint,
-                authentication_policy=authentication_policy,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
+        if not self._audience:
+            self._audience = DEFAULT_AUDIENCE
+        scope = self._audience.rstrip("/") + "/.default"
+        credential_scopes = [scope]
+        self._aad = not isinstance(credential, AzureKeyCredential)
+        self._client = _SearchServiceClient(
+            endpoint=endpoint,
+            credential=credential,
+            sdk_moniker=SDK_MONIKER,
+            api_version=self._api_version,
+            credential_scopes=credential_scopes,
+            **kwargs
+        )
 
     def __enter__(self):
         self._client.__enter__()
@@ -172,7 +167,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexes.get_statistics(index_name, **kwargs)
-        return result.as_dict()
+        return result
 
     @distributed_trace
     def delete_index(
@@ -201,13 +196,15 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
                 :caption: Delete an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(index, match_condition)
-        kwargs.update(access_condition)
+        if isinstance(index, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
+        etag = None
         try:
             index_name = index.name  # type: ignore
+            etag = index.e_tag  # type: ignore
         except AttributeError:
             index_name = index
-        self._client.indexes.delete(index_name=index_name, error_map=error_map, **kwargs)
+        self._client.indexes.delete(index_name=index_name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace
     def create_index(self, index: SearchIndex, **kwargs: Any) -> SearchIndex:
@@ -272,15 +269,14 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
                 :caption: Update an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(index, match_condition)
-        kwargs.update(access_condition)
         patched_index = index._to_generated()  # pylint:disable=protected-access
         result = self._client.indexes.create_or_update(
             index_name=index.name,
             index=patched_index,
             allow_index_downtime=allow_index_downtime,
             prefer="return=representation",
-            error_map=error_map,
+            etag=index.e_tag,
+            match_condition=match_condition,
             **kwargs
         )
         return cast(SearchIndex, SearchIndex._from_generated(result))  # pylint:disable=protected-access
@@ -308,9 +304,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexes.analyze(
-            index_name=index_name,
-            request=analyze_request._to_analyze_request(),  # pylint:disable=protected-access
-            **kwargs
+            index_name=index_name, request=analyze_request._to_generated(), **kwargs  # pylint:disable=protected-access
         )
         return result
 
@@ -410,13 +404,15 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(synonym_map, match_condition)
-        kwargs.update(access_condition)
+        if isinstance(synonym_map, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
+        etag = None
         try:
             name = synonym_map.name  # type: ignore
+            etag = synonym_map.e_tag  # type: ignore
         except AttributeError:
             name = synonym_map
-        self._client.synonym_maps.delete(synonym_map_name=name, error_map=error_map, **kwargs)
+        self._client.synonym_maps.delete(synonym_map_name=name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace
     def create_synonym_map(self, synonym_map: SynonymMap, **kwargs: Any) -> SynonymMap:
@@ -462,14 +458,13 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(synonym_map, match_condition)
-        kwargs.update(access_condition)
         patched_synonym_map = synonym_map._to_generated()  # pylint:disable=protected-access
         result = self._client.synonym_maps.create_or_update(
             synonym_map_name=synonym_map.name,
             synonym_map=patched_synonym_map,
             prefer="return=representation",
-            error_map=error_map,
+            etag=synonym_map.e_tag,
+            match_condition=match_condition,
             **kwargs
         )
         return cast(SynonymMap, SynonymMap._from_generated(result))  # pylint:disable=protected-access
@@ -483,7 +478,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.get_service_statistics(**kwargs)
-        return result.as_dict()
+        return result
 
     @distributed_trace
     def list_index_stats_summary(self, **kwargs: Any) -> ItemPaged[IndexStatisticsSummary]:
@@ -541,7 +536,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.aliases.get(name, **kwargs)
-        return result
+        return cast(SearchAlias, result)
 
     @distributed_trace
     def delete_alias(
@@ -570,13 +565,15 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
                 :caption: Deleting an alias.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(alias, match_condition)
-        kwargs.update(access_condition)
+        if isinstance(alias, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
+        etag = None
         try:
             alias_name = alias.name  # type: ignore
+            etag = alias.e_tag  # type: ignore
         except AttributeError:
             alias_name = alias
-        self._client.aliases.delete(alias_name=alias_name, error_map=error_map, **kwargs)
+        self._client.aliases.delete(alias_name=alias_name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace
     def create_alias(self, alias: SearchAlias, **kwargs: Any) -> SearchAlias:
@@ -599,7 +596,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.aliases.create(alias, **kwargs)
-        return result  # pylint:disable=protected-access
+        return cast(SearchAlias, result)
 
     @distributed_trace
     def create_or_update_alias(
@@ -630,12 +627,15 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
                 :caption: Updating an alias.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(alias, match_condition)
-        kwargs.update(access_condition)
         result = self._client.aliases.create_or_update(
-            alias_name=alias.name, alias=alias, prefer="return=representation", error_map=error_map, **kwargs
+            alias_name=alias.name,
+            alias=alias,
+            prefer="return=representation",
+            etag=alias.e_tag,
+            match_condition=match_condition,
+            **kwargs
         )
-        return result  # pylint:disable=protected-access
+        return cast(SearchAlias, result)
 
     @distributed_trace
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> HttpResponse:
@@ -648,4 +648,4 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :rtype: ~azure.core.rest.HttpResponse
         """
         request.headers = self._merge_client_headers(request.headers)
-        return self._client._send_request(request, stream=stream, **kwargs)  # pylint:disable=protected-access
+        return self._client.send_request(request, stream=stream, **kwargs)  # pylint:disable=protected-access

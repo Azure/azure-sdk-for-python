@@ -68,9 +68,6 @@ class TestSearchQuery:
         query = SearchQuery()
         assert repr(query) == "<SearchQuery [None]>"
 
-        query = SearchQuery(search_text="foo bar", suggester_name="sg")
-        assert repr(query) == "<SearchQuery [foo bar]>"
-
         query = SearchQuery(search_text="aaaaabbbbb" * 200)
         assert len(repr(query)) == 1024
 
