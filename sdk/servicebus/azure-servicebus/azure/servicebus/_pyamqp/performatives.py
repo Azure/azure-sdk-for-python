@@ -31,6 +31,7 @@ OpenFrame = namedtuple(
         "properties",
     ],
 )
+OpenFrame.__new__.__defaults__ = (None, None, 4294967295, 65535, None, None, None, None, None, None)  # type: ignore
 OpenFrame._code = 0x00000010  # type: ignore # pylint:disable=protected-access
 OpenFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("container_id", AMQPTypes.string, True, None, False),
@@ -120,6 +121,7 @@ BeginFrame = namedtuple(
         "properties",
     ],
 )
+BeginFrame.__new__.__defaults__ = (None, None, None, None, 4294967295, None, None, None)  # type: ignore
 BeginFrame._code = 0x00000011  # type: ignore # pylint:disable=protected-access
 BeginFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("remote_channel", AMQPTypes.ushort, False, None, False),
@@ -188,6 +190,7 @@ AttachFrame = namedtuple(
         "properties",
     ],
 )
+AttachFrame.__new__.__defaults__ = (None, None, None, 2, 0, None, None, None, False, None, None, None, None, None)  # type: ignore
 AttachFrame._code = 0x00000012  # type: ignore # pylint:disable=protected-access
 AttachFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("name", AMQPTypes.string, True, None, False),
@@ -286,7 +289,7 @@ FlowFrame = namedtuple(
         "properties",
     ],
 )
-FlowFrame.__new__.__defaults__ = (None, None, None, None, None, None, None)  # type: ignore
+FlowFrame.__new__.__defaults__ = (None, None, None, None, None, None, None, None, False, False, None)  # type: ignore
 FlowFrame._code = 0x00000013  # type: ignore # pylint:disable=protected-access
 FlowFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("next_incoming_id", AMQPTypes.uint, False, None, False),
@@ -447,6 +450,7 @@ if _CAN_ADD_DOCSTRING:
 
 
 DispositionFrame = namedtuple("DispositionFrame", ["role", "first", "last", "settled", "state", "batchable"])
+DispositionFrame.__new__.__defaults__ = (None, None, None, False, None, False)  # type: ignore
 DispositionFrame._code = 0x00000015  # type: ignore # pylint:disable=protected-access
 DispositionFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("role", AMQPTypes.boolean, True, None, False),
@@ -489,6 +493,7 @@ if _CAN_ADD_DOCSTRING:
     """
 
 DetachFrame = namedtuple("DetachFrame", ["handle", "closed", "error"])
+DetachFrame.__new__.__defaults__ = (None, False, None)  # type: ignore
 DetachFrame._code = 0x00000016  # type: ignore # pylint:disable=protected-access
 DetachFrame._definition = (  # type: ignore # pylint:disable=protected-access
     FIELD("handle", AMQPTypes.uint, True, None, False),
@@ -511,6 +516,7 @@ if _CAN_ADD_DOCSTRING:
 
 
 EndFrame = namedtuple("EndFrame", ["error"])
+EndFrame.__new__.__defaults__ = (None,)  # type: ignore
 EndFrame._code = 0x00000017  # type: ignore # pylint:disable=protected-access
 EndFrame._definition = (FIELD("error", ObjDefinition.error, False, None, False),)  # type: ignore # pylint:disable=protected-access
 if _CAN_ADD_DOCSTRING:
@@ -526,6 +532,7 @@ if _CAN_ADD_DOCSTRING:
 
 
 CloseFrame = namedtuple("CloseFrame", ["error"])
+CloseFrame.__new__.__defaults__ = (None,)  # type: ignore
 CloseFrame._code = 0x00000018  # type: ignore # pylint:disable=protected-access
 CloseFrame._definition = (FIELD("error", ObjDefinition.error, False, None, False),)  # type: ignore # pylint:disable=protected-access
 if _CAN_ADD_DOCSTRING:

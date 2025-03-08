@@ -54,11 +54,32 @@ class ReceiverLink(Link):
         self._outgoing_flow()
 
     def _incoming_transfer(self, frame):
+        """Process incoming Transfer frame to handle message transfer.
+
+        The incoming frame format is::
+
+            - frame[0]: handle (int)
+            - frame[1]: delivery_id (Optional[int])
+            - frame[2]: delivery_tag (Optional[bytes])
+            - frame[3]: message_format (Optional[int])
+            - frame[4]: settled (Optional[bool])
+            - frame[5]: more (Optional[bool])
+            - frame[6]: rcv_settle_mode (Optional[int])
+            - frame[7]: state (Optional[Union[Received, Accepted, Rejected, Released, Modified]])
+            - frame[8]: resume (Optional[bool])
+            - frame[9]: aborted (Optional[bool])
+            - frame[10]: batchable (Optional[bool])
+            - frame[11]: payload (bytes)
+
+        :param frame: The incoming Transfer frame.
+        :type frame: TransferFrame
+        """
         if self.network_trace:
             _LOGGER.debug("<- %r", TransferFrame(payload=b"***", *frame[:-1]), extra=self.network_trace_params)
 
         # If more is false --> this is the last frame of the message
-        if not frame[5]:
+        more = len(frame) > 5 and frame[5]
+        if not more:
             self.current_link_credit -= 1
             self.total_link_credit -= 1
             self.delivery_count += 1
@@ -67,15 +88,18 @@ class ReceiverLink(Link):
             self._first_frame = frame
         if not self.received_delivery_id and not self._received_payload:
             pass  # TODO: delivery error
-        if self._received_payload or frame[5]:  # more
+        if self._received_payload or more:  # more
             self._received_payload.extend(frame[11])
-        if not frame[5]:
+        if not more:
             self._received_delivery_tags.add(self._first_frame[2])
             if self._received_payload:
                 message = decode_payload(memoryview(self._received_payload))
                 self._received_payload = bytearray()
             else:
-                message = decode_payload(frame[11])
+                try:
+                    message = decode_payload(frame[11])
+                except IndexError:
+                    message = decode_payload(b"")
             delivery_state = self._process_incoming_message(self._first_frame, message)
 
             if not frame[4] and delivery_state:  # settled
