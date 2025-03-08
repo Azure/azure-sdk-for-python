@@ -86,8 +86,8 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
             else:
                 # Tables kwargs have already been popped.
                 parent = StorageAccount(name=account, **kwargs)  # type: ignore[misc]
-            for key in StorageAccountKwargs.__annotations__:
-                kwargs.pop(key, None)  # type: ignore[misc]  # Not using string literal key.
+                for key in StorageAccountKwargs.__annotations__:
+                    kwargs.pop(key, None)  # type: ignore[misc]  # Not using string literal key.
 
         super().__init__(
             cast(Dict[str, Any], properties),

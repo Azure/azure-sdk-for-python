@@ -54,6 +54,15 @@ resource container_foo 'Microsoft.Storage/storageAccounts/blobServices/container
   properties: {
     defaultEncryptionScope: 'test'
     denyEncryptionScopeOverride: true
+    enableNfsV3AllSquash: true
+    enableNfsV3RootSquash: true
+    immutableStorageWithVersioning: {
+      enabled: true
+    }
+    metadata: {
+      foo: 'bar'
+    }
+    publicAccess: false
   }
   name: 'foo'
 }

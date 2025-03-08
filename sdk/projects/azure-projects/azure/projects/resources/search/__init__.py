@@ -17,7 +17,6 @@ from typing import (
     Union,
     Optional,
     cast,
-    overload,
 )
 from typing_extensions import TypeVar, Unpack, TypedDict
 
@@ -30,7 +29,6 @@ from ..._resource import _ClientResource, ResourceReference, ExtensionResources
 
 if TYPE_CHECKING:
     from .types import SearchServiceResource, SearchNetworkRuleSet
-    from azure.search.documents import SearchClient
     from azure.search.documents.indexes import SearchIndexClient
 
 
@@ -39,30 +37,30 @@ class SearchServiceKwargs(TypedDict, total=False):
     """Defines the options for how the data plane API of a Search service authenticates requests. Must remain an
     empty object {} if 'disableLocalAuth' is set to true.
     """
-    cmk_enforcement: Literal["Disabled", "Enabled", "Unspecified"]
+    cmk_enforcement: Union[Literal["Disabled", "Enabled", "Unspecified"], Parameter]
     """Describes a policy that determines how resources within the search service are to be encrypted with Customer
     Managed Keys.
     """
     # diagnostic_settings: List['DiagnosticSetting']
     # """The diagnostic settings of the service."""
-    disable_local_auth: bool
+    disable_local_auth: Union[bool, Parameter]
     """When set to true, calls to the search service will not be permitted to utilize API keys for authentication.
     This cannot be set to true if 'authOptions' are defined.
     """
-    hosting_mode: Literal["default", "highDensity"]
+    hosting_mode: Union[Literal["default", "highDensity"], Parameter]
     """Applicable only for the standard3 SKU. You can set this property to enable up to 3 high density partitions that
     allow up to 1000 indexes, which is much higher than the maximum indexes allowed for any other SKU. For the
     standard3 SKU, the value is either 'default' or 'highDensity'. For all other SKUs, this value must be 'default'.
     """
-    location: str
+    location: Union[str, Parameter]
     """Location for all Resources."""
     # lock: 'Lock'
     # """The lock settings for all Resources in the solution."""
     managed_identities: "ManagedIdentity"
     """The managed identity definition for this resource."""
-    network_acls: "SearchNetworkRuleSet"
+    network_acls: Union["SearchNetworkRuleSet", Parameter]
     """Network specific rules that determine how the Azure Cognitive Search service may be reached."""
-    partition_count: int
+    partition_count: Union[int, Parameter]
     """The number of partitions in the search service; if specified, it can be 1, 2, 3, 4, 6, or 12. Values greater
     than 1 are only valid for standard SKUs. For 'standard3' services with hostingMode set to 'highDensity', the
     allowed values are between 1 and 3.
@@ -71,12 +69,12 @@ class SearchServiceKwargs(TypedDict, total=False):
     # """Configuration details for private endpoints. For security reasons, it is recommended to use private endpoints
     # whenever possible.
     # """
-    public_network_access: Literal["Disabled", "Enabled"]
+    public_network_access: Union[Literal["Disabled", "Enabled"], Parameter]
     """This value can be set to 'Enabled' to avoid breaking changes on existing customer resources and templates. If
     set to 'Disabled', traffic over public interface is not allowed, and private endpoint connections would be the
     exclusive access method.
     """
-    replica_count: int
+    replica_count: Union[int, Parameter]
     """The number of replicas in the search service. If specified, it must be a value between 1 and 12 inclusive for
     standard SKUs or between 1 and 3 inclusive for basic SKU.
     """
@@ -120,15 +118,18 @@ class SearchServiceKwargs(TypedDict, total=False):
         ],
     ]
     """Array of Role assignments to create for user principal ID"""
-    semantic_search: Literal["disabled", "free", "standard"]
+    semantic_search: Union[Literal["disabled", "free", "standard"], Parameter]
     """Sets options that control the availability of semantic search. This configuration is only possible for certain
     search SKUs in certain locations.
     """
     # shared_private_link_resources: List['SharedPrivateLinkResource']
     # """The sharedPrivateLinkResources to create as part of the search Service."""
-    sku: Literal["basic", "free", "standard", "standard2", "standard3", "storage_optimized_l1", "storage_optimized_l2"]
+    sku: Union[
+        Literal["basic", "free", "standard", "standard2", "standard3", "storage_optimized_l1", "storage_optimized_l2"],
+        Parameter,
+    ]
     """Defines the SKU of an Azure Cognitive Search Service, which determines price tier and capacity limits."""
-    tags: Dict[str, str]
+    tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Tags to help categorize the resource in the Azure portal."""
 
 
@@ -155,10 +156,10 @@ _DEFAULT_SEARCH_SERVICE_EXTENSIONS: ExtensionResources = {
 
 
 class SearchService(_ClientResource[SearchServiceResourceType]):
-    DEFAULTS: "SearchServiceResource" = _DEFAULT_SEARCH_SERVICE
+    DEFAULTS: "SearchServiceResource" = _DEFAULT_SEARCH_SERVICE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_SEARCH_SERVICE_EXTENSIONS
     properties: SearchServiceResourceType
-    parent: None
+    parent: None  # type: ignore[reportIncompatibleVariableOverride]
 
     def __init__(
         self,
@@ -235,56 +236,22 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
         )
         return outputs
 
-    @overload
-    def get_client(
-        self,
-        *,
-        transport: Any = None,
-        credential: Any = None,
-        api_version: Optional[str] = None,
-        audience: Optional[str] = None,
-        config_store: Optional[Mapping[str, Any]] = None,
-        use_async: Optional[bool] = None,
-        **client_options,
-    ) -> "SearchIndexClient": ...
-    @overload
-    def get_client(
-        self,
-        *,
-        transport: Any = None,
-        credential: Any = None,
-        api_version: Optional[str] = None,
-        audience: Optional[str] = None,
-        config_store: Optional[Mapping[str, Any]] = None,
-        use_async: Optional[bool] = None,
-        index_name: str,
-        **client_options,
-    ) -> "SearchClient": ...
-    @overload
-    def get_client(
-        self,
-        cls: Callable[..., ClientType],
-        /,
-        *,
-        transport: Any = None,
-        credential: Any = None,
-        api_version: Optional[str] = None,
-        audience: Optional[str] = None,
-        config_store: Optional[Mapping[str, Any]] = None,
-        use_async: Optional[bool] = None,
-        **client_options,
-    ) -> ClientType: ...
     def get_client(
         self,
         cls: Optional[Callable[..., ClientType]] = None,
         /,
         *,
+        transport: Any = None,
+        credential: Any = None,
+        api_version: Optional[str] = None,
+        audience: Optional[str] = None,
+        config_store: Optional[Mapping[str, Any]] = None,
         use_async: Optional[bool] = None,
-        **kwargs,
+        **client_options,
     ) -> ClientType:
         if cls is None:
             if use_async:
-                if kwargs.get("index_name"):
+                if client_options.get("index_name"):
                     from azure.search.documents.aio import SearchClient as AsyncSearchClient
 
                     cls = AsyncSearchClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
@@ -293,7 +260,7 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
 
                     cls = AsyncSearchIndexClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
             else:
-                if kwargs.get("index_name"):
+                if client_options.get("index_name"):
                     from azure.search.documents import SearchClient as SyncSearchClient
 
                     cls = SyncSearchClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
@@ -302,4 +269,13 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
 
                     cls = SyncSearchIndexClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
                 use_async = False
-        return super().get_client(cast(Callable[..., ClientType], cls), use_async=use_async, **kwargs)
+        return super().get_client(
+            cast(Callable[..., ClientType], cls),
+            transport=transport,
+            credential=credential,
+            api_version=api_version,
+            audience=audience,
+            config_store=config_store,
+            use_async=use_async,
+            **client_options,
+        )

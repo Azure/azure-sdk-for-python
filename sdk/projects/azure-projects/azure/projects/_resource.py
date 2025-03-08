@@ -214,7 +214,7 @@ class Resource(Generic[ResourcePropertiesType]):  # pylint: disable=too-many-ins
         cls,
         *,
         name: Optional[Union[str, Parameter]] = None,
-        resource_group: Optional[Union[str, Parameter, "ResourceGroup"]] = None,
+        resource_group: Optional[Union[str, Parameter, "ResourceGroup[ResourceReference]"]] = None,
         subscription: Optional[Union[str, Parameter]] = None,
         parent: Optional[Resource] = None,
     ) -> Self[ResourceReference]:

@@ -210,10 +210,43 @@ def test_storage_export_existing(export_dir):
 
 
 def test_storage_export_with_properties(export_dir):
+    with pytest.raises(ValueError):
+        StorageAccount(custom_domain_use_subdomain_name=True)
+    with pytest.raises(ValueError):
+        StorageAccount({"properties": {"customDomain": Parameter("custom")}}, custom_domain_use_subdomain_name=False)
+    StorageAccount(custom_domain_name="foo", custom_domain_use_subdomain_name=True)
+
     class Infra(AzureInfrastructure):
         r: StorageAccount = field(
             default=StorageAccount(
-                enable_hierarchical_namespace=True, allow_blob_public_access=True, sku="Premium_LRS", location="westus"
+                {"properties": {}},
+                access_tier="Cool",
+                enable_hierarchical_namespace=True,
+                allow_blob_public_access=True,
+                allow_cross_tenant_replication=True,
+                allowed_copy_scope="PrivateLink",
+                allow_shared_key_access=False,
+                custom_domain_name="foo",
+                custom_domain_use_subdomain_name=True,
+                default_to_oauth_authentication=True,
+                dns_endpoint_type="AzureDnsZone",
+                enable_nfs_v3=True,
+                enable_sftp=True,
+                is_local_user_enabled=False,
+                kind="BlobStorage",
+                managed_identities={"systemAssigned": True, "userAssignedResourceIds": ["identity"]},
+                minimum_tls_version="TLS1_3",
+                network_acls={
+                    "bypass": "Metrics",
+                    "defaultAction": "Deny",
+                    "resourceAccessRules": [{"resourceId": "foo"}],
+                },
+                public_network_access="Enabled",
+                sas_expiration_period="30",
+                supports_https_traffic_only=True,
+                sku="Premium_LRS",
+                location="westus",
+                tags={"foo": "bar"},
             )
         )
 

@@ -17,7 +17,13 @@ from ..resourcegroup import ResourceGroup
 from ..._parameters import GLOBAL_PARAMS
 
 if TYPE_CHECKING:
-    from .types import StorageAccountResource, StorageNetworkRuleSet, AzureFilesIdentityBasedAuthentication
+    from .types import (
+        StorageAccountResource,
+        StorageNetworkRuleSet,
+        AzureFilesIdentityBasedAuthentication,
+        StorageEncryption,
+        CustomDomain,
+    )
 
 
 class StorageAccountKwargs(TypedDict, total=False):
@@ -36,14 +42,14 @@ class StorageAccountKwargs(TypedDict, total=False):
     """
     allow_cross_tenant_replication: Union[bool, Parameter]
     """Allow or disallow cross AAD tenant object replication."""
-    allowed_copy_scope: Union[Literal["", "AAD", "PrivateLink"], Parameter]
+    allowed_copy_scope: Union[Literal["AAD", "PrivateLink"], Parameter]
     """Restrict copy to and from Storage Accounts within an AAD tenant or with Private Links to the same VNet."""
     allow_shared_key_access: Union[bool, Parameter]
     """Indicates whether the storage account permits requests to be authorized with the account access key via Shared
     Key. If false, then all requests, including shared access signatures, must be authorized with Azure Active
     Directory (Azure AD). The default value is null, which is equivalent to true.
     """
-    azure_files_identity_auth: "AzureFilesIdentityBasedAuthentication"
+    azure_files_identity_auth: Union["AzureFilesIdentityBasedAuthentication", Parameter]
     """Provides the identity based authentication settings for Azure Files."""
     custom_domain_name: Union[str, Parameter]
     """Sets the custom domain name assigned to the storage account. Name is the CNAME source."""
@@ -57,7 +63,7 @@ class StorageAccountKwargs(TypedDict, total=False):
     # TODO: support diagnostics
     # diagnostic_settings: List['DiagnosticSetting']
     # """The diagnostic settings of the service."""
-    dns_endpoint_type: Union[Literal["", "AzureDnsZone", "Standard"], Parameter]
+    dns_endpoint_type: Union[Literal["AzureDnsZone", "Standard"], Parameter]
     """Allows you to specify the type of endpoint. Set this to AzureDNSZone to create a large number of accounts in a
     single subscription, which creates accounts in an Azure DNS Zone and the endpoint URL will have an alphanumeric
     DNS Zone identifier.
@@ -70,7 +76,7 @@ class StorageAccountKwargs(TypedDict, total=False):
     """
     # enable_telemetry: Union[bool, Parameter]
     # """Enable/Disable usage telemetry for module."""
-    encryption: Union["Encryption", Parameter]
+    encryption: Union["StorageEncryption", Parameter]
     """Encryption settings to be used for server-side encryption for the storage account."""
     is_local_user_enabled: Union[bool, Parameter]
     """Enables local users feature, if set to true."""
@@ -106,7 +112,7 @@ class StorageAccountKwargs(TypedDict, total=False):
     # """Configuration details for private endpoints. For security reasons, it is recommended to use private
     # endpoints whenever possible.
     # """
-    public_network_access: Union[Literal["", "Disabled", "Enabled"], Parameter]
+    public_network_access: Union[Literal["Disabled", "Enabled", "SecuredByPerimeter"], Parameter]
     """Whether or not public network access is allowed for this resource. For security reasons it should be disabled.
     If not specified, it will be disabled by default if private endpoints are set and networkAcls are not set.
     """
@@ -222,9 +228,9 @@ _DEFAULT_STORAGE_ACCOUNT: "StorageAccountResource" = {
 
 
 class StorageAccount(Resource[StorageAccountResourceType]):
-    DEFAULTS: "StorageAccountResource" = _DEFAULT_STORAGE_ACCOUNT
+    DEFAULTS: "StorageAccountResource" = _DEFAULT_STORAGE_ACCOUNT  # type: ignore[assignment]
     properties: StorageAccountResourceType
-    parent: None
+    parent: None  # type: ignore[reportIncompatibleVariableOverride]
 
     def __init__(  # pylint: disable=too-many-branches,too-many-statements
         self,
@@ -259,13 +265,17 @@ class StorageAccount(Resource[StorageAccountResourceType]):
             if "allow_shared_key_access" in kwargs:
                 properties["properties"]["allowSharedKeyAccess"] = kwargs.pop("allow_shared_key_access")
             if "custom_domain_name" in kwargs:
-                custom_domain = properties["properties"].get("customDomain", {})
-                custom_domain["name"] = kwargs.pop("custom_domain_name")
-                properties["properties"]["customDomain"] = custom_domain
+                properties["properties"]["customDomain"] = {"name": kwargs.pop("custom_domain_name")}
             if "custom_domain_use_subdomain_name" in kwargs:
-                custom_domain = properties["properties"].get("customDomain", {})
-                custom_domain["useSubDomainName"] = kwargs.pop("custom_domain_use_subdomain_name")
-                properties["properties"]["customDomain"] = custom_domain
+                try:
+                    # This wont work if "customDomain" is a Parameter, so catch the TypeError
+                    properties["properties"]["customDomain"]["useSubDomainName"] = kwargs.pop(  # type: ignore[index]
+                        "custom_domain_use_subdomain_name"
+                    )
+                except (KeyError, TypeError) as e:
+                    raise ValueError(
+                        "Cannot set 'custom_domain_use_subdomain_name' if 'custom_domain_name' not present."
+                    ) from e
             if "default_to_oauth_authentication" in kwargs:
                 properties["properties"]["defaultToOAuthAuthentication"] = kwargs.pop("default_to_oauth_authentication")
             if "dns_endpoint_type" in kwargs:
@@ -289,12 +299,12 @@ class StorageAccount(Resource[StorageAccountResourceType]):
             if "public_network_access" in kwargs:
                 properties["properties"]["publicNetworkAccess"] = kwargs.pop("public_network_access")
             if "sas_expiration_period" in kwargs:
-                properties["properties"]["sasPolicy"] = {}
-                properties["properties"]["sasPolicy"]["sasExpirationPeriod"] = kwargs.pop("sas_expiration_period")
-                properties["properties"]["sasPolicy"]["expirationAction"] = "Block"
+                properties["properties"]["sasPolicy"] = {
+                    "sasExpirationPeriod": kwargs.pop("sas_expiration_period"),
+                    "expirationAction": "Block",
+                }
             if "sku" in kwargs:
-                properties["sku"] = properties.get("sku", {})
-                properties["sku"]["name"] = kwargs.pop("sku")
+                properties["sku"] = {"name": kwargs.pop("sku")}
             if "supports_https_traffic_only" in kwargs:
                 properties["properties"]["supportsHttpsTrafficOnly"] = kwargs.pop("supports_https_traffic_only")
             if "tags" in kwargs:

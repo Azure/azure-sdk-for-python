@@ -272,7 +272,9 @@ def test_storage_blobs_container_export(export_dir):
 
 def test_storage_blobs_container_export_existing(export_dir):
     class TestInfra(AzureInfrastructure):
-        r: BlobContainer = field(default=BlobContainer.reference(name="test", account="storagetest"))
+        r: BlobContainer = field(
+            default=BlobContainer.reference(name="test", account=BlobStorage.reference(account="storagetest"))
+        )
 
     infra = TestInfra(resource_group=ResourceGroup.reference(name="rgtest"), identity=None)
     export(infra, output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
@@ -291,7 +293,16 @@ def test_storage_blobs_container_export_existing_new_rg(export_dir):
 def test_storage_blobs_container_export_with_properties(export_dir):
     class TestInfra(AzureInfrastructure):
         r: BlobContainer = field(
-            default=BlobContainer(name="foo", default_encryption_scope="test", deny_encryption_scope_override=True)
+            default=BlobContainer(
+                {"properties": {}, "name": "foo"},
+                default_encryption_scope="test",
+                deny_encryption_scope_override=True,
+                enable_nfsv3_all_squash=True,
+                enable_nfsv3_root_squash=True,
+                immutable_storage_with_versioning_enabled=True,
+                metadata={"foo": "bar"},
+                public_access=False,
+            )
         )
 
     export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
@@ -362,6 +373,8 @@ def test_storage_blobs_container_client():
     client = r.get_client(ContainerClient)
     assert isinstance(client, ContainerClient)
     client = r.get_client(AsyncContainerClient)
+    assert isinstance(client, AsyncContainerClient)
+    client = r.get_client(AsyncContainerClient, use_async=False)
     assert isinstance(client, AsyncContainerClient)
 
 

@@ -16,25 +16,53 @@ resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 
 resource storageaccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   properties: {
-    accessTier: 'Hot'
-    allowCrossTenantReplication: false
+    accessTier: 'Cool'
+    allowCrossTenantReplication: true
     allowSharedKeyAccess: false
     isHnsEnabled: true
     allowBlobPublicAccess: true
+    allowedCopyScope: 'PrivateLink'
+    customDomain: {
+      name: 'foo'
+      useSubDomainName: true
+    }
+    defaultToOAuthAuthentication: true
+    dnsEndpointType: 'AzureDnsZone'
+    isNfsV3Enabled: true
+    isSftpEnabled: true
+    isLocalUserEnabled: false
+    minimumTlsVersion: 'TLS1_3'
+    networkAcls: {
+      bypass: 'Metrics'
+      defaultAction: 'Deny'
+      resourceAccessRules: [
+        {
+          resourceId: 'foo'
+        }
+      ]
+    }
+    publicNetworkAccess: 'Enabled'
+    sasPolicy: {
+      sasExpirationPeriod: '30'
+      expirationAction: 'Block'
+    }
+    supportsHttpsTrafficOnly: true
   }
+  kind: 'BlobStorage'
   location: 'westus'
+  identity: {
+    type: 'SystemAssigned,UserAssigned'
+    userAssignedIdentities: {
+      identity: {}
+    }
+  }
   sku: {
     name: 'Premium_LRS'
   }
-  name: defaultName
-  tags: azdTags
-  kind: 'StorageV2'
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${managedIdentityId}': {}
-    }
+  tags: {
+    foo: 'bar'
   }
+  name: defaultName
 }
 
 output AZURE_STORAGE_ID string = storageaccount.id

@@ -223,8 +223,11 @@ def test_storage_blobs_export(export_dir):
 
 
 def test_storage_blobs_export_existing(export_dir):
+    with pytest.raises(ValueError):
+        BlobStorage.reference(account=StorageAccount(), resource_group="foo")
+
     class TestInfra(AzureInfrastructure):
-        r: BlobStorage = field(default=BlobStorage.reference(account="storagetest"))
+        r: BlobStorage = field(default=BlobStorage.reference(account=StorageAccount.reference(name="storagetest")))
 
     infra = TestInfra(resource_group=ResourceGroup.reference(name="rgtest"), identity=None)
     export(infra, output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
@@ -239,10 +242,17 @@ def test_storage_blobs_export_existing_new_rg(export_dir):
 
 
 def test_storage_blobs_export_with_properties(export_dir):
+    with pytest.raises(TypeError):
+        BlobStorage(account=StorageAccount(), location="westus", sku="Premium_LRS")
+
     class TestInfra(AzureInfrastructure):
         r: BlobStorage = field(
             default=BlobStorage(
-                is_versioning_enabled=True, automatic_snapshot_policy_enabled=True, sku="Premium_LRS", location="westus"
+                {"properties": {}},
+                account=StorageAccount(),
+                is_versioning_enabled=True,
+                cors_rules=[{"allowedMethods": ["GET", "HEAD"], "maxAgeInSeconds": 5}],
+                automatic_snapshot_policy_enabled=True,
             )
         )
 

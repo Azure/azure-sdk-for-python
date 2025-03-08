@@ -24,10 +24,16 @@ resource vault 'Microsoft.KeyVault/vaults@2024-12-01-preview' = {
     tenantId: tenantId
     accessPolicies: []
     enableRbacAuthorization: true
+    networkAcls: {
+      bypass: 'AzureServices'
+      defaultAction: 'Deny'
+    }
   }
   location: 'westus'
+  tags: {
+    foo: 'bar'
+  }
   name: defaultName
-  tags: azdTags
 }
 
 output AZURE_KEYVAULT_ID string = vault.id

@@ -20,13 +20,13 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
     allowCrossTenantReplication: false
     allowSharedKeyAccess: false
   }
-  location: 'westus'
-  sku: {
-    name: 'Premium_LRS'
-  }
   name: defaultName
+  location: location
   tags: azdTags
   kind: 'StorageV2'
+  sku: {
+    name: 'Standard_GRS'
+  }
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {

@@ -228,7 +228,17 @@ def test_search_export_existing(export_dir):
 
 def test_search_export_with_properties(export_dir):
     class TestInfra(AzureInfrastructure):
-        r: SearchService = field(default=SearchService(sku="free", location="westus", public_network_access="Disabled"))
+        r: SearchService = field(
+            default=SearchService(
+                {"properties": {}},
+                sku="free",
+                location="westus",
+                public_network_access="Disabled",
+                managed_identities={"systemAssigned": True, "userAssignedResourceIds": ["identity"]},
+                network_acls={"bypass": "AzureServices", "ipRules": [{"value": "rule"}]},
+                tags={"foo": "bar"},
+            )
+        )
 
     export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
 

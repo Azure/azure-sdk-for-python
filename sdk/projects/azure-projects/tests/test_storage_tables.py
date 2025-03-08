@@ -223,8 +223,11 @@ def test_storage_tables_export(export_dir):
 
 
 def test_storage_tables_export_existing(export_dir):
+    with pytest.raises(ValueError):
+        TableStorage.reference(account=StorageAccount(), resource_group="foo")
+
     class TestInfra(AzureInfrastructure):
-        r: TableStorage = field(default=TableStorage.reference(account="storagetest"))
+        r: TableStorage = field(default=TableStorage.reference(account=StorageAccount.reference(name="storagetest")))
 
     infra = TestInfra(resource_group=ResourceGroup.reference(name="rgtest"), identity=None)
     export(infra, output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
@@ -239,9 +242,14 @@ def test_storage_tables_export_existing_new_rg(export_dir):
 
 
 def test_storage_tables_export_with_properties(export_dir):
+    with pytest.raises(TypeError):
+        TableStorage(account=StorageAccount(), location="westus", sku="Premium_LRS")
+
     class Infra(AzureInfrastructure):
         r: TableStorage = field(
-            default=TableStorage(cors_rules=[{"allowedMethods": ["GET", "HEAD"]}], sku="Premium_LRS", location="westus")
+            default=TableStorage(
+                {"properties": {}}, account=StorageAccount(), cors_rules=[{"allowedMethods": ["GET", "HEAD"]}]
+            )
         )
 
     export(Infra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")

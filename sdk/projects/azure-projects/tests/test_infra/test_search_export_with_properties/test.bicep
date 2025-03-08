@@ -17,19 +17,29 @@ resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 resource searchservice 'Microsoft.Search/searchServices@2024-06-01-Preview' = {
   properties: {
     publicNetworkAccess: 'Disabled'
+    networkRuleSet: {
+      bypass: 'AzureServices'
+      ipRules: [
+        {
+          value: 'rule'
+        }
+      ]
+    }
   }
   location: 'westus'
+  identity: {
+    type: 'SystemAssigned,UserAssigned'
+    userAssignedIdentities: {
+      identity: {}
+    }
+  }
   sku: {
     name: 'free'
   }
-  name: defaultName
-  tags: azdTags
-  identity: {
-    type: 'UserAssigned'
-    userAssignedIdentities: {
-      '${managedIdentityId}': {}
-    }
+  tags: {
+    foo: 'bar'
   }
+  name: defaultName
 }
 
 output AZURE_SEARCH_ID string = searchservice.id

@@ -15,6 +15,7 @@ from typing import (
     Mapping,
     Union,
     Optional,
+    cast,
 )
 from typing_extensions import TypeVar, Unpack, TypedDict
 
@@ -30,7 +31,7 @@ if TYPE_CHECKING:
 
 
 class KeyVaultKwargs(TypedDict, total=False):
-    access_policies: Union[List[Union["AccessPolicy", Parameter]], Parameter]
+    access_policies: Union[List[Union["AccessPolicy", Parameter]], Parameter]  # type: ignore[name-defined]  # TODO
     """All access policies to create."""
     create_mode: Union[Literal["default", "recover"], Parameter]
     """The vault's create mode to indicate whether the vault need to be recovered or not. - recover or default."""
@@ -52,7 +53,7 @@ class KeyVaultKwargs(TypedDict, total=False):
     """Specifies if the azure platform has access to the vault for enabling disk encryption scenarios."""
     enable_vault_for_template_deployment: Union[bool, Parameter]
     """Specifies if the vault is enabled for a template deployment."""
-    location: Union[bool, Parameter]
+    location: Union[str, Parameter]
     """Location for all resources."""
     # lock: 'Lock'
     # """The lock settings of the service."""
@@ -62,7 +63,7 @@ class KeyVaultKwargs(TypedDict, total=False):
     # """Configuration details for private endpoints. For security reasons, it is recommended to use private endpoints
     # whenever possible.
     # """
-    public_network_access: Literal["", "Disabled", "Enabled"]
+    public_network_access: Union[Literal["", "Disabled", "Enabled"], Parameter]
     """Whether or not public network access is allowed for this resource. For security reasons it should be disabled.
     If not specified, it will be disabled by default if private endpoints are set and networkAcls are not set.
     """
@@ -139,10 +140,10 @@ _DEFAULT_KEY_VAULT_EXTENSIONS: ExtensionResources = {
 
 
 class KeyVault(_ClientResource[KeyVaultResourceType]):
-    DEFAULTS: "KeyVaultResource" = _DEFAULT_KEY_VAULT
+    DEFAULTS: "KeyVaultResource" = _DEFAULT_KEY_VAULT  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_KEY_VAULT_EXTENSIONS
     properties: KeyVaultResourceType
-    parent: None
+    parent: None  # type: ignore[reportIncompatibleVariableOverride]
 
     def __init__(
         self,
@@ -151,8 +152,9 @@ class KeyVault(_ClientResource[KeyVaultResourceType]):
         name: Optional[str] = None,
         **kwargs: Unpack[KeyVaultKwargs],
     ) -> None:
-        existing = kwargs.pop("existing", False)
-        extensions: ExtensionResources = defaultdict(list)
+        # 'existing' is passed by the reference classmethod.
+        existing = kwargs.pop("existing", False)  # type: ignore[typeddict-item]
+        extensions: ExtensionResources = defaultdict(list)  # type: ignore  # Doesn't like the default dict.
         if "roles" in kwargs:
             extensions["managed_identity_roles"] = kwargs.pop("roles")
         if "user_roles" in kwargs:
@@ -175,7 +177,7 @@ class KeyVault(_ClientResource[KeyVaultResourceType]):
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
         super().__init__(
-            properties,
+            cast(Dict[str, Any], properties),
             extensions=extensions,
             existing=existing,
             identifier=ResourceIdentifiers.keyvault,
@@ -194,16 +196,17 @@ class KeyVault(_ClientResource[KeyVaultResourceType]):
         return VERSION
 
     @classmethod
-    def reference(
+    def reference(  # type: ignore[override]  # Parameter subset and renames
         cls,
         *,
         name: Union[str, Parameter],
         resource_group: Optional[Union[str, Parameter, ResourceGroup[ResourceReference]]] = None,
     ) -> "KeyVault[ResourceReference]":
-        return super().reference(
+        existing = super().reference(
             name=name,
             resource_group=resource_group,
         )
+        return cast(KeyVault[ResourceReference], existing)
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
         return f"https://{self._settings['name'](config_store=config_store)}.vault.azure.net/"

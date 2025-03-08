@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, Literal, Type, TYPE_CHECKING
+from typing import Dict, Type, TYPE_CHECKING
 from enum import Enum
 
 if TYPE_CHECKING:

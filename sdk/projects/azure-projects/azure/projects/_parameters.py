@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing_extensions import NotRequired, TypedDict
+from typing_extensions import TypedDict
 
 from ._bicep.expressions import Parameter, UniqueString, Subscription, Variable
 
@@ -77,9 +77,9 @@ class GlobalParamsType(TypedDict):
     principalId: Parameter
     tenantId: Parameter
     azdTags: Parameter
-    managedIdentityId: NotRequired[Parameter]
-    managedIdentityPrincipalId: NotRequired[Parameter]
-    managedIdentityClientId: NotRequired[Parameter]
+    managedIdentityId: Parameter
+    managedIdentityPrincipalId: Parameter
+    managedIdentityClientId: Parameter
 
 
 GLOBAL_PARAMS: GlobalParamsType = {

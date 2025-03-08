@@ -225,7 +225,16 @@ def test_keyvault_export_existing(export_dir):
 
 def test_keyvault_export_with_properties(export_dir):
     class TestInfra(AzureInfrastructure):
-        r: KeyVault = field(default=KeyVault(sku="premium", location="westus", public_network_access="Disabled"))
+        r: KeyVault = field(
+            default=KeyVault(
+                {"properties": {}},
+                sku="premium",
+                location="westus",
+                public_network_access="Disabled",
+                network_acls={"bypass": "AzureServices", "defaultAction": "Deny"},
+                tags={"foo": "bar"},
+            )
+        )
 
     export(TestInfra(), output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
 

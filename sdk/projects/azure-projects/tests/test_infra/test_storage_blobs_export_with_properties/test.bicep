@@ -20,13 +20,13 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
     allowCrossTenantReplication: false
     allowSharedKeyAccess: false
   }
-  location: 'westus'
-  sku: {
-    name: 'Premium_LRS'
-  }
   name: defaultName
+  location: location
   tags: azdTags
   kind: 'StorageV2'
+  sku: {
+    name: 'Standard_GRS'
+  }
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
@@ -44,6 +44,17 @@ resource blobservice 'Microsoft.Storage/storageAccounts/blobServices@2024-01-01'
   parent: storageaccount
   properties: {
     automaticSnapshotPolicyEnabled: true
+    cors: {
+      corsRules: [
+        {
+          allowedMethods: [
+            'GET'
+            'HEAD'
+          ]
+          maxAgeInSeconds: 5
+        }
+      ]
+    }
     isVersioningEnabled: true
   }
   name: 'default'
