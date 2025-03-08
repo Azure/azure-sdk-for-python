@@ -290,7 +290,7 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
         except RuntimeError:
             audience = "https://cognitiveservices.azure.com"
 
-        # This is the default ChatCompletions inference cient.
+        # This is the default ChatCompletions inference client.
         if cls is None:
             if use_async:
                 from azure.ai.inference.aio import ChatCompletionsClient as AsyncChatCompletionsClient
@@ -470,7 +470,7 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
         except RuntimeError:
             audience = "https://cognitiveservices.azure.com"
 
-        # This is the default EmbeddingsClient inference cient.
+        # This is the default EmbeddingsClient inference client.
         if cls is None:
             if use_async:
                 from azure.ai.inference.aio import EmbeddingsClient as AsyncEmbeddingsClient

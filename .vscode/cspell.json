@@ -103,6 +103,8 @@
     "sdk/eventhub/azure-eventhub-checkpointstoreblob/azure/eventhub/extensions/checkpointstoreblob/_vendor/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/azure/eventhub/extensions/checkpointstoreblobaio/_vendor/**",
     "sdk/storage/azure-storage-extensions/**",
+    "sdk/projects/azure-projects/test/test_infra/**",
+    "sdk/projects/azure-projects/azure/projects/resources/**/types.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_utils/_virtual_cluster_utils/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
@@ -632,6 +634,32 @@
       "filename": "sdk/identity/azure-identity-broker/tests/*.py",
       "words": [
         "signin"
+      ]
+    },
+    {
+      "filename": "sdk/projects/azure-projects/tests/**/*.py",
+      "words": [
+        "rgtest",
+        "rgexists",
+        "kvtest",
+        "rgtag",
+        "testb",
+        "sclient",
+        "aclient"
+      ]
+    },
+    {
+      "filename": "sdk/projects/azure-projects/**/*.py",
+      "words": [
+        "azproj",
+        "azprojects",
+        "aiservices",
+        "aifoundry",
+        "GZRS",
+        "RAGZRS",
+        "nfsv",
+        "tofile"
+
       ]
     },
     {
@@ -1373,7 +1401,7 @@
         "cómo",
         "estás",
         "logprobs",
-        "conver",
+        "conver"
       ]
     },
     {
@@ -1398,7 +1426,7 @@
         "fmeasure",
         "upia",
         "xpia",
-        "expirable",
+        "expirable"
       ]
     },
     {

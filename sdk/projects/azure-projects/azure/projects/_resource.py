@@ -56,10 +56,10 @@ def _load_dev_environment(name: Optional[str] = None, label: Optional[str] = Non
     elif name:
         env_path = name
     else:
-        scriptname = os.path.splitext(os.path.basename(inspect.stack()[-1][0].f_code.co_filename))[0]
-        scriptenv = os.path.join(azd_dir, scriptname, ".env")
-        if os.path.isdir(azd_dir) and os.path.isfile(scriptenv):
-            env_path = scriptenv
+        script_name = os.path.splitext(os.path.basename(inspect.stack()[-1][0].f_code.co_filename))[0]
+        script_env = os.path.join(azd_dir, script_name, ".env")
+        if os.path.isdir(azd_dir) and os.path.isfile(script_env):
+            env_path = script_env
         else:
             env_path = ".env"
     values = dotenv_values(env_path)

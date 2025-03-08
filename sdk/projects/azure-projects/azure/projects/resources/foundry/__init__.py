@@ -43,7 +43,7 @@ if TYPE_CHECKING:
 
 class MachineLearningWorkspaceKwargs(TypedDict, total=False):
     friendly_name: Union[str, Parameter]
-    """Fiendly name of the workspace."""
+    """Friendly name of the workspace."""
     sku: Literal["Basic", "Free", "Premium", "Standard"]
     """Specifies the SKU, also referred as 'edition' of the Azure Machine Learning workspace."""
     application_insights: str
@@ -490,7 +490,7 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
             if not current_properties["properties"].get("hubResourceId"):
                 hub = self._find_last_resource_match(fields, resource=ResourceIdentifiers.ai_hub)
                 if not hub:
-                    raise ValueError("Cannot create AI Project without assiciated AI Hub.")
+                    raise ValueError("Cannot create AI Project without associated AI Hub.")
                 current_properties["properties"]["hubResourceId"] = hub.symbol.id
         return output_config
 

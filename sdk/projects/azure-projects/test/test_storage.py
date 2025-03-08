@@ -205,7 +205,7 @@ def test_storage_export_existing(export_dir):
     class Infra(AzureInfrastructure):
         r: StorageAccount = field(default=StorageAccount.reference(name="storagetest"))
 
-    infra = Infra(resource_group=ResourceGroup.reference(name="testrg"), identity=None)
+    infra = Infra(resource_group=ResourceGroup.reference(name="rgtest"), identity=None)
     export(infra, output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
 
 

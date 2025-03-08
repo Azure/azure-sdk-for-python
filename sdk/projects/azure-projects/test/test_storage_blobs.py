@@ -226,13 +226,13 @@ def test_storage_blobs_export_existing(export_dir):
     class TestInfra(AzureInfrastructure):
         r: BlobStorage = field(default=BlobStorage.reference(account="storagetest"))
 
-    infra = TestInfra(resource_group=ResourceGroup.reference(name="testrg"), identity=None)
+    infra = TestInfra(resource_group=ResourceGroup.reference(name="rgtest"), identity=None)
     export(infra, output_dir=export_dir[0], infra_dir=export_dir[2], name="test")
 
 
 def test_storage_blobs_export_existing_new_rg(export_dir):
     class TestInfra(AzureInfrastructure):
-        r: BlobStorage = field(default=BlobStorage.reference(account="storagetest", resource_group="testrg"))
+        r: BlobStorage = field(default=BlobStorage.reference(account="storagetest", resource_group="rgtest"))
 
     infra = TestInfra(identity=None)
     export(infra, output_dir=export_dir[0], infra_dir=export_dir[2], name="test")

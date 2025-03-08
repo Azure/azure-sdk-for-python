@@ -36,13 +36,13 @@ param managedIdentityPrincipalId string = ''
 @sys.description('Client ID of the managed identity to assign application roles')
 param managedIdentityClientId string = ''
 
-resource resourcegroup_testrg 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
-  name: 'testrg'
+resource resourcegroup_rgtest 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
+  name: 'rgtest'
 }
 
 module test_module 'test.bicep' = {
   name: '${deployment().name}_test'
-  scope: resourcegroup_testrg
+  scope: resourcegroup_rgtest
   params: {
     location: location
     environmentName: environmentName

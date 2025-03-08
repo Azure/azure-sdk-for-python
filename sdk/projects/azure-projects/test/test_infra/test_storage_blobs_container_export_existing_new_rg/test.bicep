@@ -9,19 +9,19 @@ param managedIdentityId string
 param managedIdentityPrincipalId string
 param managedIdentityClientId string
 
-resource resourcegroup_testrg 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
-  name: 'testrg'
+resource resourcegroup_rgtest 'Microsoft.Resources/resourceGroups@2021-04-01' existing = {
+  name: 'rgtest'
   scope: subscription()
 }
 
 resource storageaccount_storagetest 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
   name: 'storagetest'
-  scope: resourcegroup_testrg
+  scope: resourcegroup_rgtest
 }
 
 output AZURE_STORAGE_ID_STORAGETEST string = storageaccount_storagetest.id
 output AZURE_STORAGE_NAME_STORAGETEST string = storageaccount_storagetest.name
-output AZURE_STORAGE_RESOURCE_GROUP_STORAGETEST string = 'testrg'
+output AZURE_STORAGE_RESOURCE_GROUP_STORAGETEST string = 'rgtest'
 
 
 resource blobservice_storagetest 'Microsoft.Storage/storageAccounts/blobServices@2024-01-01' existing = {
@@ -39,7 +39,7 @@ resource container_storagetest_test 'Microsoft.Storage/storageAccounts/blobServi
 
 output AZURE_BLOB_CONTAINER_ID_STORAGETEST_TEST string = container_storagetest_test.id
 output AZURE_BLOB_CONTAINER_NAME_STORAGETEST_TEST string = container_storagetest_test.name
-output AZURE_BLOB_CONTAINER_RESOURCE_GROUP_STORAGETEST_TEST string = 'testrg'
+output AZURE_BLOB_CONTAINER_RESOURCE_GROUP_STORAGETEST_TEST string = 'rgtest'
 output AZURE_BLOB_CONTAINER_ENDPOINT_STORAGETEST_TEST string = '${storageaccount_storagetest.properties.primaryEndpoints.blob}${container_storagetest_test.name}'
 
 

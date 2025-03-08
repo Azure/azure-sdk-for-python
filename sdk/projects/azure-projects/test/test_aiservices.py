@@ -311,13 +311,13 @@ def test_aiservices_client():
     r = AIServices.reference(name="test", resource_group="test")
     assert r._settings["name"]() == "test"
     r._settings["api_version"].set_value("v1.0")
-    r._settings["audience"].set_value("noone")
+    r._settings["audience"].set_value("nobody")
     client = r.get_client(EmptyClient, test_attr="test", foo="bar")
     assert client.endpoint == "https://test.openai.azure.com/"
     assert client.credential
     assert client.test_attr == "test"
     assert client.api_version == "v1.0"
-    assert client.audience == "noone"
+    assert client.audience == "nobody"
     assert client.foo == "bar"
 
 
