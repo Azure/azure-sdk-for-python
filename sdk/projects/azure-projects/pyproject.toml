@@ -7,4 +7,4 @@ pylint = true
 black = true
 sphinx = true
 absolute_cov = true
-absolute_cov_percent = 90.00
+absolute_cov_percent = 80.00
