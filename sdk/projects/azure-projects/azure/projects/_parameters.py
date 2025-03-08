@@ -4,14 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TypedDict
-from typing_extensions import NotRequired
+from typing_extensions import NotRequired, TypedDict
 
 from ._bicep.expressions import Parameter, UniqueString, Subscription, Variable
 
 
 LOCATION = Parameter(
-    "location", description="Primary location for all resources", min_length=1, env_var="AZURE_LOCATION"
+    "location", description="Primary location for all resources", min_length=1, env_var="AZURE_LOCATION", type="string"
 )
 ENV_NAME = Parameter(
     "environmentName",
@@ -19,17 +18,20 @@ ENV_NAME = Parameter(
     min_length=1,
     max_length=64,
     env_var="AZURE_ENV_NAME",
+    type="string",
 )
-NAME_PREFIX = Parameter("defaultNamePrefix", default="azproj")
+NAME_PREFIX = Parameter("defaultNamePrefix", default="azproj", type="string")
 DEFAULT_NAME = Parameter(
     "defaultName",
     default=NAME_PREFIX.format() + UniqueString(Subscription().subscription_id, ENV_NAME, LOCATION).format(),
+    type="string",
 )
 # TODO: Rename to something like "UserPrincipal"?
 LOCAL_PRINCIPAL = Parameter(
     "principalId",
     description="ID of the user or app to assign application roles",
     env_var="AZURE_PRINCIPAL_ID",
+    type="string",
 )
 AZD_TAGS = Variable(
     "azdTags", value={"azd-env-name": ENV_NAME}, description="Tags to apply to all resources in AZD environment."
@@ -40,12 +42,14 @@ TENANT_ID = Parameter(
     default=Subscription().tenant_id,
     secure=True,
     env_var="AZURE_TENANT_ID",
+    type="string",
 )
-_MANAGED_IDENTITY_ID: Parameter = Parameter(
+_MANAGED_IDENTITY_ID = Parameter(
     "managedIdentityId",
     description="ID of the managed identity to assign application roles",
     env_var="AZURE_MANAGED_IDENTITY_ID",
     default="",
+    type="string",
 )
 _MANAGED_IDENTITY_PRINCIPAL_ID = Parameter(
     "managedIdentityPrincipalId",
@@ -53,6 +57,7 @@ _MANAGED_IDENTITY_PRINCIPAL_ID = Parameter(
     env_var="AZURE_MANAGED_IDENTITY_PRINCIPAL_ID",
     secure=True,
     default="",
+    type="string",
 )
 _MANAGED_IDENTITY_CLIENT_ID = Parameter(
     "managedIdentityClientId",
@@ -60,6 +65,7 @@ _MANAGED_IDENTITY_CLIENT_ID = Parameter(
     env_var="AZURE_MANAGED_IDENTITY_CLIENT_ID",
     secure=True,
     default="",
+    type="string",
 )
 
 

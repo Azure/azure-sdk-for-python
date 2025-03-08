@@ -10,6 +10,9 @@
         },
         "principalId": {
             "value": "${AZURE_PRINCIPAL_ID}"
+        },
+        "tenantId": {
+            "value": "${AZURE_TENANT_ID}"
         }
     }
 }

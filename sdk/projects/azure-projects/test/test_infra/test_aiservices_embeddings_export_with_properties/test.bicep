@@ -5,9 +5,6 @@ param defaultName string
 param principalId string
 param tenantId string
 param azdTags object
-var managedIdentityId = userassignedidentity.id
-var managedIdentityPrincipalId = userassignedidentity.properties.principalId
-var managedIdentityClientId = userassignedidentity.properties.clientId
 
 resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
   location: location
@@ -69,13 +66,13 @@ output AZURE_AI_EMBEDDINGS_NAME string = embeddings_deployment.name
 output AZURE_AI_EMBEDDINGS_RESOURCE_GROUP string = resourceGroup().name
 output AZURE_AI_EMBEDDINGS_MODEL_NAME string = embeddings_deployment.properties.model.name
 output AZURE_AI_EMBEDDINGS_MODEL_VERSION string = embeddings_deployment.properties.model.version
-output AZURE_AI_EMBEDDINGS_ENDPOINT string = '${aiservices_account.properties.endpoint}openai/deployments/${embeddings_deployment.name}/embeddings'
+output AZURE_AI_EMBEDDINGS_ENDPOINT string = '${aiservices_account.properties.endpoint}openai/deployments/${embeddings_deployment.name}'
 
 
 resource roleassignment_prmcdnytekaxfpxlctiu 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services OpenAI Contributor')
   properties: {
-    principalId: managedIdentityPrincipalId
+    principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',
@@ -91,7 +88,7 @@ resource roleassignment_prmcdnytekaxfpxlctiu 'Microsoft.Authorization/roleAssign
 resource roleassignment_eueecqmosdtphyvvcakz 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services Contributor')
   properties: {
-    principalId: managedIdentityPrincipalId
+    principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',
@@ -107,7 +104,7 @@ resource roleassignment_eueecqmosdtphyvvcakz 'Microsoft.Authorization/roleAssign
 resource roleassignment_iixyucpvhqitrkqrnbqa 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services OpenAI User')
   properties: {
-    principalId: managedIdentityPrincipalId
+    principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',
@@ -123,7 +120,7 @@ resource roleassignment_iixyucpvhqitrkqrnbqa 'Microsoft.Authorization/roleAssign
 resource roleassignment_olhkahcaximxljdwfqux 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftCognitiveServicesaccounts', '${defaultName}-aiservices', 'ServicePrincipal', 'Cognitive Services User')
   properties: {
-    principalId: managedIdentityPrincipalId
+    principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',

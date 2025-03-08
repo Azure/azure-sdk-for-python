@@ -62,9 +62,9 @@ class StoredPrioritizedSetting(PrioritizedSetting[ValidInputType, ValueType]):
             return value.default
         raise RuntimeError(f"No value for parameter {value.name} found in config store.")
 
-    def _raw_value(
+    def _raw_value(  # pylint: disable=too-many-return-statements
         self, value: Optional[ValidInputType] = None, *, config_store
-    ) -> ValidInputType:  # pylint: disable=too-many-return-statements
+    ) -> ValidInputType:
         # 5. immediate values
         if value is not None:
             if isinstance(value, Parameter):

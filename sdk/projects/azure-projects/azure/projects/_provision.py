@@ -23,9 +23,10 @@ from ._version import VERSION
 from ._component import AzureInfrastructure
 from ._parameters import GLOBAL_PARAMS
 from ._bicep.utils import resolve_value, serialize_dict
-from ._bicep.expressions import Output, Parameter, ResourceSymbol
+from ._bicep.expressions import MISSING, Output, Parameter, ResourceSymbol
 from ._resource import FieldType, Resource, FieldsType, _load_dev_environment
 from .resources._extension import add_extensions
+from .resources import ResourceIdentifiers
 
 
 _BICEP_PARAMS = {
@@ -161,7 +162,6 @@ def export(
         component=deployment,
         component_resources=_get_component_resources(deployment),
         component_fields=fields,
-        module_name=deployment_name,
     )
     for field in fields.values():
         if field.add_defaults:
@@ -176,7 +176,8 @@ def export(
     with open(bicep_main, "w", encoding="utf-8") as main:
         main.write("targetScope = 'subscription'\n\n")
         for parameter in parameters.values():
-            main.write(parameter.__bicep__(config_store.get(parameter.name)))
+            if parameter.name and not isinstance(parameter, Output):
+                main.write(parameter.__bicep__(config_store.get(parameter.name, MISSING)))
         _write_resources(
             bicep=main,
             fields=list(fields.values()),
@@ -191,7 +192,7 @@ def export(
     params_content = dict(_BICEP_PARAMS)
     params_content["parameters"] = {}
     for parameter in parameters.values():
-        if isinstance(parameter, Parameter):
+        if parameter.name and parameter.env_var:
             params_content["parameters"].update(parameter.__obj__())
     with open(main_parameters, "w", encoding="utf-8") as params_json:
         json.dump(params_content, params_json, indent=4)
@@ -204,13 +205,10 @@ def _parse_module(
     component: AzureInfrastructure,
     component_resources: Dict[str, Union[Resource, AzureInfrastructure]],
     component_fields: FieldsType,
-    module_name: str,
 ) -> FieldsType:
     for resource in component_resources.values():
         if isinstance(resource, Resource):
-            resource.__bicep__(
-                component_fields, parameters=parameters, infra_component=component, module_name=module_name
-            )
+            resource.__bicep__(component_fields, parameters=parameters, infra_component=component)
         else:
             _parse_module(
                 parameters=parameters,
@@ -218,7 +216,6 @@ def _parse_module(
                 component=resource,
                 component_resources=_get_component_resources(resource),
                 component_fields=component_fields,
-                module_name=module_name,
             )
 
 
@@ -233,7 +230,7 @@ def _write_resources(  # pylint: disable=too-many-statements
 ) -> None:
     all_outputs = []
     for index, field in enumerate(fields):
-        if field.resource == "Microsoft.Resources/resourceGroups":
+        if field.identifier == ResourceIdentifiers.resource_group:
             if field.existing:
                 bicep.write(f"resource {field.symbol.value} '{field.resource}@{field.version}' existing = {{\n")
                 bicep.write(f"  name: {resolve_value(field.properties['name'])}\n")
@@ -259,16 +256,16 @@ def _write_resources(  # pylint: disable=too-many-statements
                 bicep.write(f"  scope: {field.symbol.value}\n")
                 bicep.write("  params: {\n")
                 for parameter in parameters.values():
-                    bicep.write(f"    {parameter.value}: {parameter.value}\n")
+                    if parameter.name and not isinstance(parameter, Output):
+                        bicep.write(f"    {parameter.name}: {parameter.value}\n")
                 bicep.write("  }\n")
                 bicep.write("}\n")
                 bicep_module = os.path.join(infra_dir, f"{deployment_name}.bicep")
                 with open(bicep_module, "w", encoding="utf-8") as module:
                     for parameter in parameters.values():
-                        module.write(f"param {parameter.name} {parameter.type}\n")
-                    for parameter in parameters.values():
-                        if not isinstance(parameter, Output):
-                            module.write(parameter.__bicep__())
+                        if parameter.name and not isinstance(parameter, Output):
+                            # TODO: This will default to type "string" which may not be true.
+                            module.write(f"param {parameter.name} {parameter.type}\n")
 
                     module.write("\n")
                     outputs = _write_resources(

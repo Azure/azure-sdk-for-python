@@ -42,9 +42,9 @@ class ResourceIdentifiers(Enum):
     ai_embeddings_deployment: Literal["ai:deployment:embeddings"] = "ai:deployment:embeddings"
     ai_connection: Literal["ai:connection"] = "ai:connection"
 
-    def resource(
+    def resource(  # pylint: disable=too-many-branches,too-many-statements,too-many-return-statements
         self,
-    ) -> Type["Resource"]:  # pylint: disable=too-many-branches,too-many-statements,too-many-return-statements
+    ) -> Type["Resource"]:
         if self == self.resource_group:
             from .resourcegroup import ResourceGroup
 

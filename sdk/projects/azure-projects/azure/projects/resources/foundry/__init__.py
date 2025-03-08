@@ -6,34 +6,29 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
+import inspect
 from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
     Dict,
-    Generator,
     List,
     Literal,
     Mapping,
-    TypedDict,
     Union,
     Optional,
 )
-from typing_extensions import TypeVar, Unpack
-
-from azure.core.credentials import SupportsTokenInfo
-from azure.core.credentials_async import AsyncSupportsTokenInfo
+from typing_extensions import TypeVar, Unpack, TypedDict
 
 from ..resourcegroup import ResourceGroup
 from .._identifiers import ResourceIdentifiers
 from .._extension import ManagedIdentity, convert_managed_identities, RoleAssignment
 from ..._parameters import GLOBAL_PARAMS
 from ..._setting import StoredPrioritizedSetting
-from ..._bicep.expressions import Guid, Expression, ResourceSymbol, Parameter, ResourceGroup, Output
+from ..._bicep.expressions import Guid, ResourceSymbol, Parameter, ResourceGroup, Output
 from ..._resource import (
     Resource,
     FieldsType,
-    FieldType,
     ResourceReference,
     ExtensionResources,
     _build_envs,
@@ -167,8 +162,8 @@ _DEFAULT_ML_WORKSPACE_EXTENSIONS: ExtensionResources = {"managed_identity_roles"
 class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
     DEFAULTS: "MachineLearningWorkspaceResource" = _DEFAULT_ML_WORKSPACE
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_ML_WORKSPACE_EXTENSIONS
-    resource: Literal["Microsoft.MachineLearningServices/workspaces"]
     properties: MachineLearningWorkspaceResourceType
+    parent: None
 
     def __init__(
         self,
@@ -225,68 +220,25 @@ class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
         name: Union[str, Parameter],
         resource_group: Optional[Union[str, Parameter, ResourceGroup]] = None,
     ) -> "MLWorkspace[ResourceReference]":
-        from .types import RESOURCE, VERSION
-
-        resource = f"{RESOURCE}@{VERSION}"
         return super().reference(
-            resource=resource,
             name=name,
             resource_group=resource_group,
         )
 
     @property
-    def resource(self) -> str:
-        if self._resource:
-            return self._resource
-        from .types import RESOURCE
-
-        self._resource = RESOURCE
-        return self._resource
+    def resource(self) -> Literal["Microsoft.MachineLearningServices/workspaces"]:
+        return "Microsoft.MachineLearningServices/workspaces"
 
     @property
     def version(self) -> str:
-        if self._version:
-            return self._version
         from .types import VERSION
 
-        self._version = VERSION
-        return self._version
+        return VERSION
 
     def _build_symbol(self) -> ResourceSymbol:
         symbol = super()._build_symbol()
         symbol._value = f"{self.properties['kind'].lower()}_" + symbol._value  # pylint: disable=protected-access
         return symbol
-
-    def _find_all_resource_match(
-        self,
-        fields: FieldsType,
-        *,
-        resource: Optional[str] = None,
-        resource_group: Optional[ResourceSymbol] = None,
-        name: Optional[Union[str, Expression]] = None,
-        parent: Optional[ResourceSymbol] = None,
-    ) -> Generator[FieldType, None, None]:
-        check_resource = resource or self.resource
-        for field in (f for f in reversed(list(fields.values())) if f.resource == check_resource):
-            if not resource and field.properties["kind"] != self.properties["kind"]:
-                continue
-            if name and resource_group:
-                if field.properties.get("name") == name and field.resource_group == resource_group:
-                    yield field
-            elif name and parent:
-                if field.properties.get("name") == name and field.properties["parent"] == parent:
-                    yield field
-            elif resource_group:
-                if field.resource_group == resource_group:
-                    yield field
-            elif parent:
-                if field.properties["parent"] == parent:
-                    yield field
-            elif name:
-                if field.properties.get("name") == name:
-                    yield field
-            else:
-                yield field
 
     def _merge_properties(
         self,
@@ -320,11 +272,12 @@ class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
                     "defaultWorkspaceResourceGroup"
                 ] = ResourceGroup().id
 
-            for searchservices in self._find_all_resource_match(fields, resource="Microsoft.Search/searchServices"):
+            for searchservices in self._find_all_resource_match(fields, resource=ResourceIdentifiers.search):
                 search_connection = AIConnection(
                     {
+                        # We have to do this to prevent infinit recursion on calling self.parent.__bicep__()
                         "parent": symbol
-                    },  # We have to do this to prevent infinit recursion on calling self.parent.__bicep__()
+                    },
                     parent=self,
                     category="CognitiveSearch",
                     target=searchservices.outputs["endpoint"],
@@ -341,17 +294,14 @@ class MLWorkspace(Resource[MachineLearningWorkspaceResourceType]):
                     },
                 )
                 search_connection.__bicep__(fields, parameters=parameters)
-            for aiservices in self._find_all_resource_match(fields, resource="Microsoft.CognitiveServices/accounts"):
-                # TODO: This doesn't work if it's an existing resource reference
-                # Add identifier to resource
-                # Need to know the kind, because
-                # if aiservices.properties.get('kind') not in ['AIServices']:  # 'OpenAI'?
-                #     continue
+            # TODO: Support "OpenaI" cognitive services once it supports AAD.
+            for aiservices in self._find_all_resource_match(fields, resource=ResourceIdentifiers.ai_services):
+
                 # TODO: This will actually fail if there's more than one.... should more than one even be supported?
                 ai_connection = AIConnection(
                     {"parent": symbol},
                     parent=self,
-                    category="AIServices",  # 'OpenAI
+                    category="AIServices",
                     target=aiservices.outputs["endpoint"],
                     name=Guid(
                         aiservices.properties.get("name", parameters["defaultName"]),
@@ -375,6 +325,7 @@ _DEFAULT_AI_HUB: "MachineLearningWorkspaceResource" = {
     "location": GLOBAL_PARAMS["location"],
     "tags": GLOBAL_PARAMS["azdTags"],
     "properties": {
+        # TODO: This doesn't work, but it should...
         #'primaryUserAssignedIdentity': GLOBAL_PARAMS['managedIdentityId'],
         "publicNetworkAccess": "Enabled",
         "enableDataIsolation": True,
@@ -437,18 +388,16 @@ class AIHub(MLWorkspace[MachineLearningWorkspaceResourceType]):
             # TODO: Fix this recursive call problem....
             # We only want to run this on the first call, not subsequent ones.
             if not current_properties["properties"].get("storageAccount"):
-                storage = self._find_last_resource_match(fields, resource="Microsoft.Storage/storageAccounts")
+                storage = self._find_last_resource_match(fields, resource=ResourceIdentifiers.storage_account)
                 if not storage:
-                    blob_storage = self._find_last_resource_match(
-                        fields, resource="Microsoft.Storage/storageAccounts/blobServices"
-                    )
+                    blob_storage = self._find_last_resource_match(fields, resource=ResourceIdentifiers.blob_storage)
                     if not blob_storage:
                         raise ValueError("Cannot create AI Hub without associated Storage account.")
                     current_properties["properties"]["storageAccount"] = blob_storage.properties["parent"].id
                 else:
                     current_properties["properties"]["storageAccount"] = storage.symbol.id
             if not current_properties["properties"].get("keyVault"):
-                vault = self._find_last_resource_match(fields, resource="Microsoft.KeyVault/vaults")
+                vault = self._find_last_resource_match(fields, resource=ResourceIdentifiers.keyvault)
                 if not vault:
                     raise ValueError("Cannot create an AI Hub without associated KeyVault account.")
                 current_properties["properties"]["keyVault"] = vault.symbol.id
@@ -539,77 +488,48 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
             # TODO: Fix this recursive call problem....
             # We only want to run this on the first call, not subsequent ones.
             if not current_properties["properties"].get("hubResourceId"):
-                hub: Optional[FieldType] = None
-                for workspace in self._find_all_resource_match(
-                    fields, resource="Microsoft.MachineLearningServices/workspaces"
-                ):
-                    if workspace.properties["kind"] == "Hub":
-                        hub = workspace
-                        break
+                hub = self._find_last_resource_match(fields, resource=ResourceIdentifiers.ai_hub)
                 if not hub:
                     raise ValueError("Cannot create AI Project without assiciated AI Hub.")
                 current_properties["properties"]["hubResourceId"] = hub.symbol.id
         return output_config
 
-    def _build_credential(
-        self, use_async: bool, *, config_store: Mapping[str, Any]
-    ) -> Union[SupportsTokenInfo, AsyncSupportsTokenInfo]:
-        # TODO
-        value = self._settings["credential"](config_store=config_store)
-        try:
-            value = value.lower()
-            if value == "default":
-                if use_async:
-                    from azure.identity.aio import DefaultAzureCredential
-                else:
-                    from azure.identity import DefaultAzureCredential
-                credential = DefaultAzureCredential()
-                # self._settings['credential'].set_value(credential)
+    def _build_credential(self, cls: Callable[..., ClientType], *, use_async: Optional[bool], credential: Any) -> Any:
+        # TODO: This needs work - how to close the credential.
+        if credential:
+            try:
+                return credential()
+            except TypeError:
                 return credential
-            if value == "managedidentity":
-                if use_async:
-                    from azure.identity.aio import ManagedIdentityCredential
-                else:
-                    from azure.identity import ManagedIdentityCredential
-                credential = ManagedIdentityCredential()
-                # self._settings['credential'].set_value(credential)
-                return credential
-        except AttributeError:
-            pass
-        try:
-            constructed_value = value()  # pylint: disable=not-callable
-            # self._settings['credential'].set_value(constructed_value)
-            return constructed_value
-        except TypeError:
-            if isinstance(value, (SupportsTokenInfo, AsyncSupportsTokenInfo)):
-                # self._settings['credential'].set_value(value)
-                return value
-        raise ValueError(f"Cannot convert {value} to credential type.")
+        if use_async is None:
+            try:
+                use_async = inspect.iscoroutinefunction(getattr(cls, "close"))
+            except AttributeError:
+                raise TypeError(
+                    f"Cannot determine whether cls type '{cls.__name__}' is async or not. "
+                    "Please specify 'use_async' keyword argument."
+                ) from None
+        if use_async:
+            from azure.identity.aio import DefaultAzureCredential
+
+            return DefaultAzureCredential()
+        from azure.identity import DefaultAzureCredential
+
+        return DefaultAzureCredential()
 
     def get_client(
         self,
-        cls: Optional[Callable[..., ClientType]] = None,
+        cls: Callable[..., ClientType],
+        /,
         *,
         transport: Any = None,
+        credential: Any = None,
         config_store: Optional[Mapping[str, Any]] = None,
-        env_name: Optional[str] = None,
         use_async: Optional[bool] = None,
         **client_options,
     ) -> ClientType:
-        if env_name:
-            if config_store:
-                raise ValueError("Cannot specify both 'config_store' and 'env_name'.")
-            config_store = _load_dev_environment(env_name)
-        elif config_store is None:
+        if config_store is None:
             config_store = _load_dev_environment()
-
-        if hasattr(cls, "from_resource"):
-            return cls.from_resource(self, config_store, transport=transport, **client_options)
-        if hasattr(cls, "_from_resource"):
-            return cls._from_resource(
-                self, config_store, transport=transport, **client_options
-            )  # pylint: disable=protected-access
-
         if cls is None:
             if use_async:
                 from azure.ai.projects.aio import AIProjectClient  # pylint: disable=no-name-in-module,import-error
@@ -620,10 +540,13 @@ class AIProject(MLWorkspace[MachineLearningWorkspaceResourceType]):
 
                 cls = AIProjectClient
                 use_async = False
+        if transport:
+            client_options["transport"] = transport
         return cls(
             endpoint=self._settings["endpoint"](config_store=config_store).rstrip("/discovery/").lstrip("https://"),
             subscription_id=self._settings["subscription"](config_store=config_store),
             resource_group_name=self._settings["resource_group"](config_store=config_store),
             project_name=self._settings["name"](config_store=config_store),
-            credential=self._build_credential(use_async, config_store=config_store),
+            credential=self._build_credential(cls, use_async=use_async, credential=credential),
+            **client_options,
         )

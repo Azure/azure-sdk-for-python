@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Literal, Any, TypedDict, Union, TYPE_CHECKING
-from typing_extensions import Required
+from typing import Dict, List, Literal, Any, Union, TYPE_CHECKING
+from typing_extensions import Required, TypedDict
 
 from .roles import RoleAssignment as RoleResource, BUILT_IN_ROLES
 from ..._bicep.expressions import Parameter, ResourceSymbol, Expression, Guid

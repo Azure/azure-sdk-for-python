@@ -283,8 +283,7 @@ def test_search_client():
 
     assert r._settings["name"]() == "test"
     r._settings["api_version"].set_value("v1.0")
-    r._settings["client_options"].set_value({"verify_challenge_resource": "True"})
-    client = r.get_client(api_version="1234")
+    client = r.get_client(api_version="1234", verify_challenge_resource=True)
     assert isinstance(client, SearchIndexClient)
     assert client._client._config.endpoint == "https://test.search.windows.net/"
     assert client._client._config.api_version == "1234"

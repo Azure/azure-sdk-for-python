@@ -6,8 +6,8 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Dict, Literal, Mapping, Tuple, TypedDict, Union, Optional, Any
-from typing_extensions import TypeVar, Unpack
+from typing import TYPE_CHECKING, Dict, Literal, Mapping, Tuple, Union, Optional, Any, cast
+from typing_extensions import TypeVar, Unpack, TypedDict
 
 from .._identifiers import ResourceIdentifiers
 from ..._parameters import GLOBAL_PARAMS
@@ -35,13 +35,13 @@ class ResourceGroupKwargs(TypedDict, total=False):
     """Tags of the Resource Group."""
 
 
-ResourceGroupResourceType = TypeVar("ResourceGroupResourceType", bound=Dict[str, Any], default="ResourceGroupResource")
+ResourceGroupResourceType = TypeVar("ResourceGroupResourceType", default="ResourceGroupResource")
 
 
 class ResourceGroup(Resource[ResourceGroupResourceType]):
     DEFAULTS: "ResourceGroupResource" = _DEFAULT_RESOURCE_GROUP
-    resource: Literal["Microsoft.Resources/resourceGroups"]
     properties: ResourceGroupResourceType
+    parent: None
 
     def __init__(
         self,
@@ -50,8 +50,9 @@ class ResourceGroup(Resource[ResourceGroupResourceType]):
         name: Optional[Union[str, Parameter]] = None,
         **kwargs: Unpack["ResourceGroupKwargs"],
     ) -> None:
-        extensions: ExtensionResources = defaultdict(list)
-        existing = kwargs.pop("existing", False)
+        extensions: ExtensionResources = defaultdict(list)  # type: ignore  # Doesn't like the default dict.
+        # 'existing' is passed by the reference classmethod.
+        existing = kwargs.pop("existing", False)  # type: ignore[typeddict-item]
         if not existing:
             properties = properties or {}
             if name:
@@ -61,7 +62,7 @@ class ResourceGroup(Resource[ResourceGroupResourceType]):
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
         super().__init__(
-            properties,
+            cast(Dict[str, Any], properties),
             extensions=extensions,
             service_prefix=["resource_group"],
             existing=existing,
@@ -70,39 +71,28 @@ class ResourceGroup(Resource[ResourceGroupResourceType]):
         )
 
     @classmethod
-    def reference(
+    def reference(  # type: ignore[override]  # Parameter subset and renames
         cls,
         *,
         name: Union[str, Parameter],
         subscription: Optional[Union[str, Parameter]] = None,
     ) -> "ResourceGroup[ResourceReference]":
-        from .types import RESOURCE, VERSION
-
-        resource = f"{RESOURCE}@{VERSION}"
-        existing = super().reference(resource=resource, name=name, subscription=subscription)
-        return existing
+        existing = super().reference(name=name, subscription=subscription)
+        return cast(ResourceGroup[ResourceReference], existing)
 
     @property
-    def resource(self) -> str:
-        if self._resource:
-            return self._resource
-        from .types import RESOURCE
-
-        self._resource = RESOURCE
-        return self._resource
+    def resource(self) -> Literal["Microsoft.Resources/resourceGroups"]:
+        return "Microsoft.Resources/resourceGroups"
 
     @property
     def version(self) -> str:
-        if self._version:
-            return self._version
         from .types import VERSION
 
-        self._version = VERSION
-        return self._version
+        return VERSION
 
     def _build_resource_id(self, *, config_store: Mapping[str, Any]) -> str:
         prefix = f"/subscriptions/{self._settings['subscription'](config_store=config_store)}/providers/"
-        return prefix + f"{self._resource}/{self._settings['name'](config_store=config_store)}"
+        return prefix + f"{self.resource}/{self._settings['name'](config_store=config_store)}"
 
     def __bicep__(  # pylint: disable=unused-argument
         self,
@@ -113,13 +103,6 @@ class ResourceGroup(Resource[ResourceGroupResourceType]):
         **kwargs,
     ) -> Tuple[ResourceSymbol, ...]:
         properties = self._resolve_resource(parameters, infra_component)
-        if self._suffix is None:
-            # TODO: We're doing this delayed because if it's a ComponentField, it would
-            # fail if we do it in the constructor (before __set_name__ is called).
-            self._suffix = self._build_suffix(properties.get("name"))
-            for resource_setting in self._settings.values():
-                resource_setting.suffix = self._suffix
-
         if self._existing:
             ref_properties = {"name": properties["name"]}
             if properties.get("subscription"):
@@ -127,6 +110,7 @@ class ResourceGroup(Resource[ResourceGroupResourceType]):
             symbol = self._build_symbol()
             field = FieldType(
                 resource=self.resource,
+                identifier=self.identifier,
                 properties=ref_properties,
                 symbol=symbol,
                 outputs={},
@@ -149,6 +133,7 @@ class ResourceGroup(Resource[ResourceGroupResourceType]):
             symbol = self._build_symbol()
             field = FieldType(
                 resource=self.resource,
+                identifier=self.identifier,
                 properties=params,
                 symbol=symbol,
                 outputs={},

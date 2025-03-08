@@ -5,12 +5,12 @@
 # --------------------------------------------------------------------------
 # pylint: disable=line-too-long
 
-from typing import TypedDict, Literal, Dict, Union
+from typing import Literal, Dict, Union
+from typing_extensions import TypedDict
 
 from ....._bicep.expressions import Parameter
 
 
-RESOURCE = "Microsoft.Storage/storageAccounts/blobServices/containers"
 VERSION = "2022-09-01"
 
 
@@ -41,5 +41,5 @@ class ContainerProperties(TypedDict, total=False):
 class ContainerResource(TypedDict, total=False):
     name: Union[str, Parameter]
     """The resource name."""
-    properties: Union[ContainerProperties, Parameter]
+    properties: ContainerProperties
     """The properties of a container."""

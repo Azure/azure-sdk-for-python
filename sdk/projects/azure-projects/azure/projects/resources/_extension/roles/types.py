@@ -5,12 +5,12 @@
 # --------------------------------------------------------------------------
 # pylint: disable=line-too-long
 
-from typing import Literal, TypedDict, Union
-from typing_extensions import Required
+from typing import Literal, Union
+from typing_extensions import Required, TypedDict
 
 from ...._bicep.expressions import Parameter, ResourceSymbol, Output
 
-RESOURCE = "Microsoft.Authorization/roleAssignments"
+
 VERSION = "2022-04-01"
 
 
@@ -32,9 +32,9 @@ class RoleAssignmentProperties(TypedDict, total=False):
 
 
 class RoleAssignmentResource(TypedDict, total=False):
-    name: Required[Union[str, Parameter]]
+    name: Union[str, Parameter]
     """The resource name"""
-    properties: Required[RoleAssignmentProperties]
+    properties: RoleAssignmentProperties
     """Role assignment properties."""
     scope: ResourceSymbol
     """Use when creating a resource at a scope that is different than the deployment scope."""

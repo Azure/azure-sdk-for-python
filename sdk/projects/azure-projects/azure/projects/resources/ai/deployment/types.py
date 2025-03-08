@@ -5,13 +5,12 @@
 # --------------------------------------------------------------------------
 # pylint: disable=line-too-long
 
-from typing import TypedDict, Literal, Dict, Union
-from typing_extensions import Required
+from typing import Literal, Dict, Union
+from typing_extensions import Required, TypedDict
 
 from ...._bicep.expressions import Parameter
 
 
-RESOURCE = "Microsoft.CognitiveServices/accounts/deployments"
 VERSION = "2024-10-01"
 
 

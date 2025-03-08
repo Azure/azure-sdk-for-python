@@ -35,8 +35,8 @@ def _get_outputs(suffix="", parent="", rg=None):
                 Output("", "properties.endpoint", ResourceSymbol(f"aiservices_account{parent}")).format(
                     "{}openai/deployments/"
                 )
-                + outputs["name"].format()
-                + "/embeddings",
+                + outputs["name"].format(),
+                # + "/embeddings",
             ),
             "model_name": Output(
                 f"AZURE_AI_EMBEDDINGS_MODEL_NAME{suffix.upper()}",
@@ -362,7 +362,7 @@ def test_aiservices_embeddings_app():
 
     app = TestApp(client=r)
     assert isinstance(app.client, EmbeddingsClient)
-    assert app.client._config.endpoint == "https://test.openai.azure.com/openai/deployments/test/embeddings"
+    assert app.client._config.endpoint == "https://test.openai.azure.com/openai/deployments/test"  # /embeddings"
     assert app.client._config.credential
 
     app = TestApp(client="test")

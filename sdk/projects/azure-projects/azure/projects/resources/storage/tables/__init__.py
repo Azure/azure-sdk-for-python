@@ -6,7 +6,19 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Mapping, Tuple, Union, Optional, Any
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Dict,
+    List,
+    Literal,
+    Mapping,
+    Tuple,
+    Union,
+    Optional,
+    Any,
+    cast,
+)
 from typing_extensions import TypeVar, Unpack
 
 from ..._identifiers import ResourceIdentifiers
@@ -20,7 +32,7 @@ if TYPE_CHECKING:
     from azure.data.tables import TableServiceClient
 
 
-class TableStorageKwargs(StorageAccountKwargs):
+class TableStorageKwargs(StorageAccountKwargs, total=False):
     cors_rules: Union[List[Union["TablesCorsRule", Parameter]], Parameter]
     """Specifies CORS rules for the Table service. You can include up to five CorsRule elements in the request.
     If no CorsRule elements are included in the request body, all CORS rules will be deleted, and CORS will be
@@ -38,10 +50,10 @@ ClientType = TypeVar("ClientType", default="TableServiceClient")
 
 
 class TableStorage(_ClientResource[TableServiceResourceType]):
-    DEFAULTS: "TableServiceResource" = _DEFAULT_TABLE_SERVICE
+    DEFAULTS: "TableServiceResource" = _DEFAULT_TABLE_SERVICE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_TABLE_SERVICE_EXTENSIONS
-    resource: Literal["Microsoft.Storage/storageAccounts/tableServices"]
     properties: TableServiceResourceType
+    parent: StorageAccount  # type: ignore[reportIncompatibleVariableOverride]
 
     def __init__(
         self,
@@ -50,8 +62,9 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
         account: Optional[Union[str, StorageAccount, Parameter]] = None,
         **kwargs: Unpack["TableStorageKwargs"],
     ) -> None:
-        existing = kwargs.pop("existing", False)
-        extensions: ExtensionResources = defaultdict(list)
+        # 'existing' is passed by the reference classmethod.
+        existing = kwargs.pop("existing", False)  # type: ignore[typeddict-item]
+        extensions: ExtensionResources = defaultdict(list)  # type: ignore  # Doesn't like the default dict.
         if "roles" in kwargs:
             extensions["managed_identity_roles"] = kwargs.pop("roles")
         if "user_roles" in kwargs:
@@ -61,19 +74,23 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
             if "properties" not in properties:
                 properties["properties"] = {}
             if "cors_rules" in kwargs:
-                properties["properties"]["cors"] = {}
-                properties["properties"]["cors"]["corsRules"] = kwargs.pop("cors_rules")
+                properties["properties"]["cors"] = {"corsRules": kwargs.pop("cors_rules")}
 
-        parent = kwargs.pop("parent", None)
         if account and "parent" in kwargs:
             raise ValueError("Cannot specify both 'account' and 'parent'.")
+        # 'parent' is passed by the reference classmethod.
+        parent = kwargs.pop("parent", None)  # type: ignore[typeddict-item]
         if not parent:
-            parent = account if isinstance(account, StorageAccount) else StorageAccount(name=account, **kwargs)
-            for key in StorageAccountKwargs.__optional_keys__:
-                kwargs.pop(key, None)
+            if isinstance(account, StorageAccount):
+                parent = account
+            else:
+                # Tables kwargs have already been popped.
+                parent = StorageAccount(name=account, **kwargs)  # type: ignore[misc]
+            for key in StorageAccountKwargs.__annotations__:
+                kwargs.pop(key, None)  # type: ignore[misc]  # Not using string literal key.
 
         super().__init__(
-            properties,
+            cast(Dict[str, Any], properties),
             extensions=extensions,
             existing=existing,
             parent=parent,
@@ -84,33 +101,23 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
         )
 
     @property
-    def resource(self) -> str:
-        if self._resource:
-            return self._resource
-        from .types import RESOURCE
-
-        self._resource = RESOURCE
-        return self._resource
+    def resource(self) -> Literal["Microsoft.Storage/storageAccounts/tableServices"]:
+        return "Microsoft.Storage/storageAccounts/tableServices"
 
     @property
     def version(self) -> str:
-        if self._version:
-            return self._version
         from .types import VERSION
 
-        self._version = VERSION
-        return self._version
+        return VERSION
 
     @classmethod
-    def reference(
+    def reference(  # type: ignore[override]  # Parameter subset and renames
         cls,
         *,
-        account: Union[str, Parameter, StorageAccount],
-        resource_group: Optional[Union[str, Parameter, ResourceGroup]] = None,
+        account: Union[str, Parameter, StorageAccount[ResourceReference]],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup[ResourceReference]]] = None,
     ) -> "TableStorage[ResourceReference]":
-        from .types import RESOURCE, VERSION
-
-        resource = f"{RESOURCE}@{VERSION}"
+        parent: Optional[StorageAccount[ResourceReference]] = None
         if isinstance(account, (str, Parameter)):
             parent = StorageAccount.reference(
                 name=account,
@@ -120,12 +127,9 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
             raise ValueError("Cannot provide a 'StorageAccount' instance with 'resource_group' value.")
         else:
             parent = account
-        existing = super().reference(
-            resource=resource,
-            parent=parent,
-        )
+        existing = super().reference(parent=parent)
         existing._settings["name"].set_value("default")  # pylint: disable=protected-access
-        return existing
+        return cast(TableStorage[ResourceReference], existing)
 
     def __repr__(self) -> str:
         name = f'\'{self.parent.properties["name"]}\'' if "name" in self.parent.properties else "<default>"
@@ -134,12 +138,14 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
         return f"https://{self.parent._settings['name'](config_store=config_store)}.table.core.windows.net/"  # pylint: disable=protected-access
 
-    def _outputs(self, *, parents: Tuple[ResourceSymbol, ...], **kwargs) -> Dict[str, Output]:
+    def _outputs(  # type: ignore[override]  # Parameter subset
+        self, *, parents: Tuple[ResourceSymbol, ...], **kwargs
+    ) -> Dict[str, Output]:
         return {
             "endpoint": Output(
-                f"AZURE_TABLES_ENDPOINT{self.parent._suffix}",
+                f"AZURE_TABLES_ENDPOINT{self.parent._suffix}",  # pylint: disable=protected-access
                 "properties.primaryEndpoints.table",
-                parents[0],  # pylint: disable=protected-access
+                parents[0],
             )
         }
 
@@ -149,29 +155,29 @@ class TableStorage(_ClientResource[TableServiceResourceType]):
         /,
         *,
         transport: Any = None,
+        credential: Any = None,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
-        env_name: Optional[str] = None,
         use_async: Optional[bool] = None,
         **client_options,
     ) -> ClientType:
         if cls is None:
             if use_async:
-                from azure.data.tables.aio import TableServiceClient
+                from azure.data.tables.aio import TableServiceClient as AsyncTableServiceClient
 
-                cls = TableServiceClient
+                cls = AsyncTableServiceClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
             else:
-                from azure.data.tables import TableServiceClient
+                from azure.data.tables import TableServiceClient as SyncTableServiceClient
 
-                cls = TableServiceClient
+                cls = SyncTableServiceClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
                 use_async = False
         return super().get_client(
-            cls,
+            cast(Callable[..., ClientType], cls),
             transport=transport,
+            credential=credential,
             api_version=api_version,
             audience=audience,
             config_store=config_store,
-            env_name=env_name,
             **client_options,
         )

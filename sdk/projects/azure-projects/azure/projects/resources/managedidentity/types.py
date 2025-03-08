@@ -4,11 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TypedDict, Dict, Union
+from typing import Dict, Union
+from typing_extensions import TypedDict
 
 from ..._bicep.expressions import Parameter
 
-RESOURCE = "Microsoft.ManagedIdentity/userAssignedIdentities"
+
 VERSION = "2023-07-31-preview"
 
 

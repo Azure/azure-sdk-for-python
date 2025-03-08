@@ -5,13 +5,12 @@
 # --------------------------------------------------------------------------
 # pylint: disable=line-too-long
 
-from typing import Dict, TypedDict, Literal, List, Union
-from typing_extensions import Required
+from typing import Dict, Literal, List, Union
+from typing_extensions import Required, TypedDict
 
 from ..._bicep.expressions import Parameter
 
 
-RESOURCE = "Microsoft.Search/searchServices"
 VERSION = "2024-06-01-Preview"
 
 
@@ -62,7 +61,7 @@ class SearchServiceResource(TypedDict, total=False):
     """The geo-location where the resource lives."""
     name: Union[str, Parameter]
     """The resource name."""
-    properties: "SearchServiceProperties"
+    properties: "SearchServiceProperties"  # type: ignore[name-defined]  # TODO
     """Properties of Cognitive Services account."""
     sku: Union[SearchSku, Parameter]
     """The SKU of the search service, which determines price tier and capacity limits. This property is required when

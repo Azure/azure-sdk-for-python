@@ -5,9 +5,6 @@ param defaultName string
 param principalId string
 param tenantId string
 param azdTags object
-var managedIdentityId = userassignedidentity.id
-var managedIdentityPrincipalId = userassignedidentity.properties.principalId
-var managedIdentityClientId = userassignedidentity.properties.clientId
 
 resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
   location: location
@@ -68,7 +65,7 @@ output AZURE_SEARCH_ENDPOINT_FOO string = 'https://${searchservice_foo.name}.sea
 resource roleassignment_npmrnriktxggevypexnt 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftSearchsearchServices', defaultName, 'ServicePrincipal', 'Search Index Data Contributor')
   properties: {
-    principalId: managedIdentityPrincipalId
+    principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',
@@ -84,7 +81,7 @@ resource roleassignment_npmrnriktxggevypexnt 'Microsoft.Authorization/roleAssign
 resource roleassignment_tcntafhtedyooituoovj 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftSearchsearchServices', defaultName, 'ServicePrincipal', 'Search Index Data Reader')
   properties: {
-    principalId: managedIdentityPrincipalId
+    principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',
@@ -100,7 +97,7 @@ resource roleassignment_tcntafhtedyooituoovj 'Microsoft.Authorization/roleAssign
 resource roleassignment_zcwvdaahcvxqfctejcey 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftSearchsearchServices', defaultName, 'ServicePrincipal', 'Search Service Contributor')
   properties: {
-    principalId: managedIdentityPrincipalId
+    principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',
@@ -164,7 +161,7 @@ resource roleassignment_hanzilafpyksoxhwmdrt 'Microsoft.Authorization/roleAssign
 resource roleassignment_mxgmmizmpulnyntadibv 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftSearchsearchServices', 'foo', 'ServicePrincipal', 'Search Index Data Contributor')
   properties: {
-    principalId: managedIdentityPrincipalId
+    principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',
@@ -180,7 +177,7 @@ resource roleassignment_mxgmmizmpulnyntadibv 'Microsoft.Authorization/roleAssign
 resource roleassignment_cmoalsgpakrmozzivrgv 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftSearchsearchServices', 'foo', 'ServicePrincipal', 'Search Index Data Reader')
   properties: {
-    principalId: managedIdentityPrincipalId
+    principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',
@@ -196,7 +193,7 @@ resource roleassignment_cmoalsgpakrmozzivrgv 'Microsoft.Authorization/roleAssign
 resource roleassignment_jxrnyevpinvbfokxezae 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftSearchsearchServices', 'foo', 'ServicePrincipal', 'Search Service Contributor')
   properties: {
-    principalId: managedIdentityPrincipalId
+    principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',

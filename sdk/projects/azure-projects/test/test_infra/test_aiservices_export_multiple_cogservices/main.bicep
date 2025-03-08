@@ -16,6 +16,7 @@ param defaultName string = '${defaultNamePrefix}${uniqueString(subscription().su
 @sys.description('ID of the user or app to assign application roles')
 param principalId string
 
+@sys.secure()
 @sys.description('The Azure Active Directory tenant ID.')
 param tenantId string = subscription().tenantId
 

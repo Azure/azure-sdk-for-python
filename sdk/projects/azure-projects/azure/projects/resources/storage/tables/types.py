@@ -5,13 +5,12 @@
 # --------------------------------------------------------------------------
 # pylint: disable=line-too-long
 
-from typing import TypedDict, Literal, List, Union
-from typing_extensions import Required
+from typing import Literal, List, Union
+from typing_extensions import Required, TypedDict
 
 from ...._bicep.expressions import Parameter
 
 
-RESOURCE = "Microsoft.Storage/storageAccounts/tableServices"
 VERSION = "2024-01-01"
 
 
@@ -51,5 +50,5 @@ class TableServiceProperties(TypedDict, total=False):
 class TableServiceResource(TypedDict, total=False):
     name: Union[Literal["default"], Parameter]
     """The resource name."""
-    properties: Union[TableServiceProperties, Parameter]
+    properties: TableServiceProperties
     """The properties of a storage account's Table service."""

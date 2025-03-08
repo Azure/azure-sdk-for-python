@@ -13,15 +13,13 @@ from typing import (
     List,
     Literal,
     Mapping,
-    TypedDict,
     Union,
     Optional,
 )
-from typing_extensions import TypeVar, Unpack
+from typing_extensions import TypeVar, Unpack, TypedDict
 
 from ..resourcegroup import ResourceGroup
 from .._identifiers import ResourceIdentifiers
-from ..._component import ComponentField
 from .._extension import RoleAssignment
 from ..._parameters import GLOBAL_PARAMS
 from ..._bicep.expressions import Output, ResourceSymbol, Parameter
@@ -143,8 +141,8 @@ _DEFAULT_KEY_VAULT_EXTENSIONS: ExtensionResources = {
 class KeyVault(_ClientResource[KeyVaultResourceType]):
     DEFAULTS: "KeyVaultResource" = _DEFAULT_KEY_VAULT
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_KEY_VAULT_EXTENSIONS
-    resource: Literal["Microsoft.KeyVault/vaults"]
     properties: KeyVaultResourceType
+    parent: None
 
     def __init__(
         self,
@@ -186,35 +184,23 @@ class KeyVault(_ClientResource[KeyVaultResourceType]):
         )
 
     @property
-    def resource(self) -> str:
-        if self._resource:
-            return self._resource
-        from .types import RESOURCE
-
-        self._resource = RESOURCE
-        return self._resource
+    def resource(self) -> Literal["Microsoft.KeyVault/vaults"]:
+        return "Microsoft.KeyVault/vaults"
 
     @property
     def version(self) -> str:
-        if self._version:
-            return self._version
         from .types import VERSION
 
-        self._version = VERSION
-        return self._version
+        return VERSION
 
     @classmethod
     def reference(
         cls,
         *,
-        name: Union[str, Parameter, ComponentField],
-        resource_group: Optional[Union[str, Parameter, ResourceGroup]] = None,
+        name: Union[str, Parameter],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup[ResourceReference]]] = None,
     ) -> "KeyVault[ResourceReference]":
-        from .types import RESOURCE, VERSION
-
-        resource = f"{RESOURCE}@{VERSION}"
         return super().reference(
-            resource=resource,
             name=name,
             resource_group=resource_group,
         )
@@ -224,7 +210,5 @@ class KeyVault(_ClientResource[KeyVaultResourceType]):
 
     def _outputs(self, *, symbol: ResourceSymbol, **kwargs) -> Dict[str, Output]:
         outputs = super()._outputs(symbol=symbol, **kwargs)
-        outputs["endpoint"] = Output(
-            f"AZURE_{self._prefixes[0].upper()}_ENDPOINT{self._suffix}", "properties.vaultUri", symbol
-        )
+        outputs["endpoint"] = Output(f"AZURE_KEYVAULT_ENDPOINT{self._suffix}", "properties.vaultUri", symbol)
         return outputs

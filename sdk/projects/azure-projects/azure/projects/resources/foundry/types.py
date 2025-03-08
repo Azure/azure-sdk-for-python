@@ -5,13 +5,12 @@
 # --------------------------------------------------------------------------
 # pylint: disable=line-too-long
 
-from typing import TypedDict, Literal, Dict, Union
-from typing_extensions import Required
+from typing import Literal, Dict, Union
+from typing_extensions import Required, TypedDict
 
 from ..._bicep.expressions import Parameter
 
 
-RESOURCE = "Microsoft.MachineLearningServices/workspaces"
 VERSION = "2024-04-01-preview"
 
 
@@ -31,9 +30,9 @@ class MachineLearningWorkspaceResource(TypedDict, total=False):
     """The geo-location where the resource lives."""
     name: Union[str, Parameter]
     """The resource name."""
-    properties: Union["WorkspaceProperties", Parameter]
+    properties: "WorkspaceProperties"  # type: ignore[name-defined]  # TODO
     """Additional attributes of the entity."""
-    sku: Union["Sku", Parameter]
+    sku: Union["Sku", Parameter]  # type: ignore[name-defined]  # TODO
     """This field is required to be implemented by the RP because AML is supporting more than one tier."""
     tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Dictionary of tag names and values."""

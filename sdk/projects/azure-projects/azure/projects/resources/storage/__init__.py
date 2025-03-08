@@ -6,8 +6,8 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Dict, List, Literal, TypedDict, Union, Optional
-from typing_extensions import TypeVar, Unpack
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Union, Optional, cast
+from typing_extensions import TypeVar, Unpack, TypedDict
 
 from .._identifiers import ResourceIdentifiers
 from ..._resource import Resource, ExtensionResources, ResourceReference
@@ -223,8 +223,8 @@ _DEFAULT_STORAGE_ACCOUNT: "StorageAccountResource" = {
 
 class StorageAccount(Resource[StorageAccountResourceType]):
     DEFAULTS: "StorageAccountResource" = _DEFAULT_STORAGE_ACCOUNT
-    resource: Literal["Microsoft.Storage/storageAccounts"]
     properties: StorageAccountResourceType
+    parent: None
 
     def __init__(  # pylint: disable=too-many-branches,too-many-statements
         self,
@@ -233,8 +233,9 @@ class StorageAccount(Resource[StorageAccountResourceType]):
         name: Optional[Union[str, Parameter]] = None,
         **kwargs: Unpack[StorageAccountKwargs],
     ) -> None:
-        existing = kwargs.pop("existing", False)
-        extensions: ExtensionResources = defaultdict(list)
+        # 'existing' is passed by the reference classmethod.
+        existing = kwargs.pop("existing", False)  # type: ignore[typeddict-item]
+        extensions: ExtensionResources = defaultdict(list)  # type: ignore  # Doesn't like the default dict.
         if "roles" in kwargs:
             extensions["managed_identity_roles"] = kwargs.pop("roles")
         if "user_roles" in kwargs:
@@ -300,7 +301,7 @@ class StorageAccount(Resource[StorageAccountResourceType]):
                 properties["tags"] = kwargs.pop("tags")
 
         super().__init__(
-            properties,
+            cast(Dict[str, Any], properties),
             extensions=extensions,
             service_prefix=["storage"],
             existing=existing,
@@ -309,31 +310,21 @@ class StorageAccount(Resource[StorageAccountResourceType]):
         )
 
     @property
-    def resource(self) -> str:
-        if self._resource:
-            return self._resource
-        from .types import RESOURCE
-
-        self._resource = RESOURCE
-        return self._resource
+    def resource(self) -> Literal["Microsoft.Storage/storageAccounts"]:
+        return "Microsoft.Storage/storageAccounts"
 
     @property
     def version(self) -> str:
-        if self._version:
-            return self._version
         from .types import VERSION
 
-        self._version = VERSION
-        return self._version
+        return VERSION
 
     @classmethod
-    def reference(
+    def reference(  # type: ignore[override]  # Parameter subset and renames
         cls,
         *,
-        name: str,
-        resource_group: Optional[Union[str, "ResourceGroup"]] = None,
+        name: Union[str, Parameter],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup[ResourceReference]]] = None,
     ) -> "StorageAccount[ResourceReference]":
-        from .types import RESOURCE, VERSION
-
-        resource = f"{RESOURCE}@{VERSION}"
-        return super().reference(resource=resource, name=name, resource_group=resource_group)
+        existing = super().reference(name=name, resource_group=resource_group)
+        return cast(StorageAccount[ResourceReference], existing)

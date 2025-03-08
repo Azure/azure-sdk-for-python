@@ -29,6 +29,6 @@ output AZURE_AI_EMBEDDINGS_NAME_AITEST_AITEST string = embeddings_deployment_ait
 output AZURE_AI_EMBEDDINGS_RESOURCE_GROUP_AITEST_AITEST string = resourceGroup().name
 output AZURE_AI_EMBEDDINGS_MODEL_NAME_AITEST_AITEST string = embeddings_deployment_aitest_aitest.properties.model.name
 output AZURE_AI_EMBEDDINGS_MODEL_VERSION_AITEST_AITEST string = embeddings_deployment_aitest_aitest.properties.model.version
-output AZURE_AI_EMBEDDINGS_ENDPOINT_AITEST_AITEST string = '${aiservices_account_aitest.properties.endpoint}openai/deployments/${embeddings_deployment_aitest_aitest.name}/embeddings'
+output AZURE_AI_EMBEDDINGS_ENDPOINT_AITEST_AITEST string = '${aiservices_account_aitest.properties.endpoint}openai/deployments/${embeddings_deployment_aitest_aitest.name}'
 
 

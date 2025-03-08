@@ -5,9 +5,6 @@ param defaultName string
 param principalId string
 param tenantId string
 param azdTags object
-var managedIdentityId = userassignedidentity.id
-var managedIdentityPrincipalId = userassignedidentity.properties.principalId
-var managedIdentityClientId = userassignedidentity.properties.clientId
 
 resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
   location: location
@@ -52,22 +49,22 @@ resource blobservice 'Microsoft.Storage/storageAccounts/blobServices@2024-01-01'
 output AZURE_BLOBS_ENDPOINT string = storageaccount.properties.primaryEndpoints.blob
 
 
-resource container_foo 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-09-01' = {
+resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-09-01' = {
   parent: blobservice
   properties: {}
   name: 'foo'
 }
 
-output AZURE_BLOB_CONTAINER_ID_FOO string = container_foo.id
-output AZURE_BLOB_CONTAINER_NAME_FOO string = container_foo.name
-output AZURE_BLOB_CONTAINER_RESOURCE_GROUP_FOO string = resourceGroup().name
-output AZURE_BLOB_CONTAINER_ENDPOINT_FOO string = '${storageaccount.properties.primaryEndpoints.blob}${container_foo.name}'
+output AZURE_BLOB_CONTAINER_ID string = container.id
+output AZURE_BLOB_CONTAINER_NAME string = container.name
+output AZURE_BLOB_CONTAINER_RESOURCE_GROUP string = resourceGroup().name
+output AZURE_BLOB_CONTAINER_ENDPOINT string = '${storageaccount.properties.primaryEndpoints.blob}${container.name}'
 
 
 resource roleassignment_bopldzzxbodmidnqjpaj 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftStoragestorageAccountsblobServices', 'default', 'ServicePrincipal', 'Storage Blob Data Contributor')
   properties: {
-    principalId: managedIdentityPrincipalId
+    principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',

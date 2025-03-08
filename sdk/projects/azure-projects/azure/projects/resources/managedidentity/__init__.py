@@ -6,12 +6,12 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Literal, TypedDict, Union, Optional, Dict
-from typing_extensions import TypeVar, Unpack
+from typing import TYPE_CHECKING, Any, Literal, Union, Optional, Dict, cast
+from typing_extensions import TypeVar, Unpack, TypedDict
 
 from .._identifiers import ResourceIdentifiers
 from ...resources.resourcegroup import ResourceGroup
-from ..._bicep.expressions import Output, ResourceSymbol, Parameter, Variable
+from ..._bicep.expressions import Output, ResourceSymbol, Parameter
 from ..._parameters import GLOBAL_PARAMS
 from ..._resource import Resource, ResourceReference, ExtensionResources
 
@@ -38,8 +38,8 @@ _DEFAULT_USER_ASSIGNED_IDENTITY: "UserAssignedIdentityResource" = {
 
 class UserAssignedIdentity(Resource[UserAssignedIdentityResourceType]):
     DEFAULTS: "UserAssignedIdentityResource" = _DEFAULT_USER_ASSIGNED_IDENTITY
-    resource: Literal["Microsoft.ManagedIdentity/userAssignedIdentities"]
     properties: UserAssignedIdentityResourceType
+    parent: None
 
     def __init__(
         self,
@@ -48,8 +48,9 @@ class UserAssignedIdentity(Resource[UserAssignedIdentityResourceType]):
         name: Optional[Union[str, Parameter]] = None,
         **kwargs: Unpack["UserAssignedIdentityKwargs"],
     ) -> None:
-        extensions: ExtensionResources = defaultdict(list)
-        existing = kwargs.pop("existing", False)
+        extensions: ExtensionResources = defaultdict(list)  # type: ignore  # Doesn't like the default dict.
+        # 'existing' is passed by the reference classmethod.
+        existing = kwargs.pop("existing", False)  # type: ignore[typeddict-item]
         if not existing:
             properties = properties or {}
             if name:
@@ -59,7 +60,7 @@ class UserAssignedIdentity(Resource[UserAssignedIdentityResourceType]):
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
         super().__init__(
-            properties,
+            cast(Dict[str, Any], properties),
             extensions=extensions,
             service_prefix=["identity"],
             existing=existing,
@@ -68,43 +69,28 @@ class UserAssignedIdentity(Resource[UserAssignedIdentityResourceType]):
         )
 
     @property
-    def resource(self) -> str:
-        if self._resource:
-            return self._resource
-        from .types import RESOURCE
-
-        self._resource = RESOURCE
-        return self._resource
+    def resource(self) -> Literal["Microsoft.ManagedIdentity/userAssignedIdentities"]:
+        return "Microsoft.ManagedIdentity/userAssignedIdentities"
 
     @property
     def version(self) -> str:
-        if self._version:
-            return self._version
         from .types import VERSION
 
-        self._version = VERSION
-        return self._version
+        return VERSION
 
     @classmethod
-    def reference(
+    def reference(  # type: ignore[override]  # Parameter subset and renames
         cls,
         *,
-        name: str,
-        resource_group: Optional[Union[str, "ResourceGroup"]] = None,
+        name: Union[str, Parameter],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup[ResourceReference]]] = None,
     ) -> "UserAssignedIdentity[ResourceReference]":
-        from .types import RESOURCE, VERSION
+        existing = super().reference(name=name, resource_group=resource_group)
+        return cast(UserAssignedIdentity[ResourceReference], existing)
 
-        resource = f"{RESOURCE}@{VERSION}"
-        return super().reference(resource=resource, name=name, resource_group=resource_group)
-
-    def _symbol(self) -> ResourceSymbol:
-        resource_ref = self.resource.split("/")[-1].lower()
-        if resource_ref.endswith("ies"):
-            resource_ref = resource_ref.rstrip("ies") + "y"
-        else:
-            resource_ref = resource_ref.rstrip("s")
-        symbol = f"{resource_ref}{self._suffix.lower()}" if self._suffix else resource_ref
-        return ResourceSymbol(symbol, principal_id=True)
+    def _build_symbol(self):
+        symbol = super()._build_symbol()
+        return ResourceSymbol(symbol._value, principal_id=True)  # pylint: disable=protected-access
 
     def _outputs(self, symbol, **kwargs) -> Dict[str, Output]:  # pylint: disable=unused-argument
         # TODO: This results in duplicate outputs if there's multiple identities.
@@ -112,16 +98,10 @@ class UserAssignedIdentity(Resource[UserAssignedIdentityResourceType]):
         # return {'client_id': Output("AZURE_CLIENT_ID", "properties.clientId", symbol)}
         return {}
 
-    def __bicep__(self, fields, *, parameters, infra_component=None, module_name, **kwargs):
-        symbols = super().__bicep__(
-            fields, parameters=parameters, infra_component=infra_component, module_name=module_name, **kwargs
-        )
+    def __bicep__(self, fields, *, parameters, infra_component=None, **kwargs):
+        symbols = super().__bicep__(fields, parameters=parameters, infra_component=infra_component, **kwargs)
         # TODO: This will get overwritten with subsequence managed identities....
-        parameters["managedIdentityId"] = Variable("managedIdentityId", Output(None, "id", symbols[0]))
-        parameters["managedIdentityPrincipalId"] = Variable(
-            "managedIdentityPrincipalId", Output(None, "properties.principalId", symbols[0])
-        )
-        parameters["managedIdentityClientId"] = Variable(
-            "managedIdentityClientId", Output(None, "properties.clientId", symbols[0])
-        )
+        parameters["managedIdentityId"] = Output(None, "id", symbols[0])
+        parameters["managedIdentityPrincipalId"] = Output(None, "properties.principalId", symbols[0])
+        parameters["managedIdentityClientId"] = Output(None, "properties.clientId", symbols[0])
         return symbols

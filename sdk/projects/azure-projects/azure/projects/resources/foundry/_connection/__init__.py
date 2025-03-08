@@ -11,11 +11,10 @@ from typing import (
     Dict,
     List,
     Literal,
-    TypedDict,
     Union,
     Optional,
 )
-from typing_extensions import TypeVar, Unpack
+from typing_extensions import TypeVar, Unpack, TypedDict
 
 from ..._identifiers import ResourceIdentifiers
 from ...._bicep.utils import generate_name
@@ -155,7 +154,6 @@ ConnectionResourceType = TypeVar("ConnectionResourceType", default="ConnectionRe
 
 class AIConnection(Resource[ConnectionResourceType]):
     DEFAULTS: "ConnectionResource" = _DEFAULT_CONNECTION
-    resource: Literal["Microsoft.MachineLearningServices/workspaces/connections"]
     properties: ConnectionResourceType
     parent: Union["AIHub", "AIProject"]
 
@@ -164,14 +162,14 @@ class AIConnection(Resource[ConnectionResourceType]):
         properties: Optional["ConnectionResource"] = None,
         /,
         name: Optional[str] = None,
-        parent: Optional[Union[str, "AIHub"]] = None,
+        *,
+        parent: Union["AIProject", "AIHub"],
         **kwargs: Unpack[ConnectionKwargs],
     ) -> None:
         from .. import AIHub
 
         existing = kwargs.pop("existing", False)
         extensions: ExtensionResources = defaultdict(list)
-        parent = parent if isinstance(parent, AIHub) else AIHub(name=parent)
         properties = properties or {}
         if "properties" not in properties:
             properties["properties"] = {}
@@ -195,22 +193,14 @@ class AIConnection(Resource[ConnectionResourceType]):
         )
 
     @property
-    def resource(self) -> str:
-        if self._resource:
-            return self._resource
-        from .types import RESOURCE
-
-        self._resource = RESOURCE
-        return self._resource
+    def resource(self) -> Literal["Microsoft.MachineLearningServices/workspaces/connections"]:
+        return "Microsoft.MachineLearningServices/workspaces/connections"
 
     @property
     def version(self) -> str:
-        if self._version:
-            return self._version
         from .types import VERSION
 
-        self._version = VERSION
-        return self._version
+        return VERSION
 
     def _build_suffix(self, value: Optional[Union[str, Parameter]]) -> str:
         try:

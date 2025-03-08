@@ -4,9 +4,6 @@ param defaultNamePrefix string
 param defaultName string
 param tenantId string
 param azdTags object
-var managedIdentityId = userassignedidentity.id
-var managedIdentityPrincipalId = userassignedidentity.properties.principalId
-var managedIdentityClientId = userassignedidentity.properties.clientId
 
 resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
   location: location
@@ -54,7 +51,7 @@ output AZURE_TABLES_ENDPOINT string = storageaccount.properties.primaryEndpoints
 resource roleassignment_bamjaqdlyzrfpoiipogx 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftStoragestorageAccountstableServices', 'default', 'ServicePrincipal', 'Storage Table Data Owner')
   properties: {
-    principalId: managedIdentityPrincipalId
+    principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: 'Storage Table Data Owner'
   }

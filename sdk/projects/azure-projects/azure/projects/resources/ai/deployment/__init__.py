@@ -13,12 +13,11 @@ from typing import (
     Literal,
     Mapping,
     Tuple,
-    TypedDict,
     Union,
     Optional,
     Any,
 )
-from typing_extensions import TypeVar, Unpack
+from typing_extensions import TypeVar, Unpack, TypedDict
 
 from ..._identifiers import ResourceIdentifiers
 from ...resourcegroup import ResourceGroup
@@ -30,6 +29,7 @@ from ...._resource import (
     ResourceReference,
     _ClientResource,
     _build_envs,
+    _load_dev_environment,
 )
 
 from .. import AIServices
@@ -66,7 +66,6 @@ AIDeploymentResourceType = TypeVar("AIDeploymentResourceType", default="Deployme
 class AIDeployment(_ClientResource[AIDeploymentResourceType]):
     DEFAULTS: "DeploymentResource" = _DEFAULT_DEPLOYMENT
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_AI_DEPLOYMENT_EXTENSIONS
-    resource: Literal["Microsoft.CognitiveServices/accounts/deployments"]
     properties: AIDeploymentResourceType
     parent: AIServices
 
@@ -125,22 +124,14 @@ class AIDeployment(_ClientResource[AIDeploymentResourceType]):
         )
 
     @property
-    def resource(self) -> str:
-        if self._resource:
-            return self._resource
-        from .types import RESOURCE
-
-        self._resource = RESOURCE
-        return self._resource
+    def resource(self) -> Literal["Microsoft.CognitiveServices/accounts/deployments"]:
+        return "Microsoft.CognitiveServices/accounts/deployments"
 
     @property
     def version(self) -> str:
-        if self._version:
-            return self._version
         from .types import VERSION
 
-        self._version = VERSION
-        return self._version
+        return VERSION
 
     @classmethod
     def reference(
@@ -150,9 +141,6 @@ class AIDeployment(_ClientResource[AIDeploymentResourceType]):
         account: Union[str, Parameter, AIServices],
         resource_group: Optional[Union[str, Parameter, "ResourceGroup"]] = None,
     ) -> "AIDeployment[ResourceReference]":
-        from .types import RESOURCE, VERSION
-
-        resource = f"{RESOURCE}@{VERSION}"
         if isinstance(account, (str, Parameter)):
             parent = AIServices.reference(
                 name=account,
@@ -160,13 +148,13 @@ class AIDeployment(_ClientResource[AIDeploymentResourceType]):
             )
         else:
             parent = account
-        return super().reference(resource=resource, name=name, parent=parent)
+        return super().reference(name=name, parent=parent)
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
         return (
-            f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"
+            f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"  # pylint: disable=protected-access
             + f"deployments/{self._settings['name'](config_store=config_store)}"
-        )  # pylint: disable=protected-access
+        )
 
     def _outputs(
         self,
@@ -243,9 +231,9 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
         return (
-            f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"
-            + f"deployments/{self._settings['name'](config_store=config_store)}/chat/completions"
-        )  # pylint: disable=protected-access
+            f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"  # pylint: disable=protected-access
+            + f"deployments/{self._settings['name'](config_store=config_store)}"  # /chat/completions"
+        )
 
     def _build_symbol(self) -> ResourceSymbol:
         symbol = super()._build_symbol()
@@ -272,44 +260,62 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
         )
         return outputs
 
-    # TODO: Add use_async and config_store
-    def get_client(
+    def get_client(  # pylint: disable=too-many-statements
         self,
-        cls: Optional[Callable[..., ChatClientType]] = None,
+        cls: Callable[..., ChatClientType] = None,
         /,
         *,
         transport: Any = None,
+        credential: Any = None,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
-        env_name: Optional[str] = None,
+        use_async: Optional[bool] = None,
         **client_options,
     ) -> ChatClientType:
-        if cls is None:
-            from azure.ai.inference import ChatCompletionsClient
+        if config_store is None:
+            config_store = _load_dev_environment()
 
-            cls = ChatCompletionsClient
-        api_version = api_version or self._settings["api_version"](config_store=config_store)
+        endpoint: str = self._settings["endpoint"](config_store=config_store)
+        # TODO: AI endpoints!!!
+        endpoint = endpoint.replace("cognitiveservices.azure.com", "openai.azure.com")
+        client_kwargs = {}
+        client_kwargs.update(client_options)
         try:
-            audience = audience or self._settings["audience"](config_store=config_store)
+            client_kwargs["api_version"] = self._settings["api_version"](api_version, config_store=config_store)
         except RuntimeError:
-            audience = ["https://cognitiveservices.azure.com/.default"]  # "https://cognitiveservices.azure.com"
+            pass
+        try:
+            audience = self._settings["audience"](audience, config_store=config_store)
+        except RuntimeError:
+            audience = "https://cognitiveservices.azure.com"
+
+        # This is the default ChatCompletions inference cient.
+        if cls is None:
+            if use_async:
+                from azure.ai.inference.aio import ChatCompletionsClient as AsyncChatCompletionsClient
+
+                cls = AsyncChatCompletionsClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
+            else:
+                from azure.ai.inference import ChatCompletionsClient as SyncChatCompletionsClient
+
+                cls = SyncChatCompletionsClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
+                use_async = False
+
+        # These are the synchronous OpenAI clients.
+        # TODO: Find a better way to identify them than just the class name.
         if cls.__name__ in ["AzureOpenAI", "Chat", "Completions"]:
             from openai import AzureOpenAI
             from azure.identity import get_bearer_token_provider
 
-            credential = self._build_credential(False, config_store=config_store)
+            credential = self._build_credential(cls, use_async=False, credential=credential)
             token_provider = get_bearer_token_provider(credential, f"{audience}/.default")
-            kwargs = {}
-            kwargs.update(self._settings["client_options"](config_store=config_store))
-            kwargs.update(client_options)
             client = AzureOpenAI(
-                api_version=api_version,
-                azure_endpoint=self._settings["endpoint"](config_store=config_store),
+                azure_endpoint=endpoint,
                 azure_ad_token_provider=token_provider,
                 azure_deployment=self._settings["name"](config_store=config_store),
-                http_client=kwargs.pop("http_client", transport),
-                **kwargs,
+                http_client=client_kwargs.pop("http_client", transport),
+                **client_kwargs,
             )
             if cls.__name__ == "Chat":
                 client = client.chat
@@ -317,22 +323,20 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
                 client = client.chat.completions
             client.__resource_settings__ = self
             return client
+
+        # These are the asynchronous OpenAI clients.
         if cls.__name__ in ["AsyncAzureOpenAI", "AsyncChat", "AsyncCompletions"]:
             from openai import AsyncAzureOpenAI
             from azure.identity.aio import get_bearer_token_provider
 
-            credential = self._build_credential(True, config_store=config_store)
+            credential = self._build_credential(cls, use_async=True, credential=credential)
             token_provider = get_bearer_token_provider(credential, f"{audience}/.default")
-            kwargs = {}
-            kwargs.update(self._settings["client_options"](config_store=config_store))
-            kwargs.update(client_options)
             client = AsyncAzureOpenAI(
-                api_version=api_version,
-                azure_endpoint=self._settings["endpoint"](config_store=config_store),
+                azure_endpoint=endpoint,
                 azure_ad_token_provider=token_provider,
                 azure_deployment=self._settings["name"](config_store=config_store),
-                http_client=kwargs.pop("http_client", transport),
-                **kwargs,
+                http_client=client_kwargs.pop("http_client", transport),
+                **client_kwargs,
             )
             if cls.__name__ == "AsyncChat":
                 client = client.chat
@@ -341,15 +345,18 @@ class AIChat(AIDeployment[AIDeploymentResourceType]):
             client.__resource_settings__ = self
             return client
 
-        return super().get_client(
-            cls,
-            transport=transport,
-            api_version=api_version,
-            audience=audience,
-            config_store=config_store,
-            env_name=env_name,
-            **client_options,
-        )
+        if cls.__name__ == "ChatCompletionsClient":
+            # TODO: Remove this once the inference constructor has been fixed to use 'audience'.
+            client_kwargs["credential_scopes"] = [f"{audience}/.default"]
+        else:
+            client_kwargs["audience"] = audience
+        client_kwargs["credential"] = self._build_credential(cls, use_async=use_async, credential=credential)
+        if transport is not None:
+            client_kwargs["transport"] = transport
+        client = cls(endpoint, **client_kwargs)
+        client.__resource_settings__ = self
+        # TODO: Store kwargs and credential?
+        return client
 
 
 _DEFAULT_AI_TEXT_EMBEDDINGS: "DeploymentResource" = {
@@ -404,9 +411,9 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
         return (
-            f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"
-            + f"deployments/{self._settings['name'](config_store=config_store)}/embeddings"
-        )  # pylint: disable=protected-access
+            f"https://{self.parent._settings['name'](config_store=config_store)}.openai.azure.com/openai/"  # pylint: disable=protected-access
+            + f"deployments/{self._settings['name'](config_store=config_store)}"  # /embeddings"
+        )
 
     def _build_symbol(self) -> ResourceSymbol:
         symbol = super()._build_symbol()
@@ -428,83 +435,101 @@ class AIEmbeddings(AIDeployment[AIDeploymentResourceType]):
         )
         outputs["endpoint"] = Output(
             f"AZURE_AI_EMBEDDINGS_ENDPOINT{self._suffix}",
-            Output("", "properties.endpoint", parents[0]).format("{}openai/deployments/")
-            + outputs["name"].format()
-            + "/embeddings",
+            Output("", "properties.endpoint", parents[0]).format("{}openai/deployments/") + outputs["name"].format(),
+            # + "/embeddings",
         )
         return outputs
 
-    # TODO: Add use_async and config_store
     def get_client(
         self,
-        cls: Optional[Callable[..., EmbeddingsClientType]] = None,
+        cls: Callable[..., EmbeddingsClientType] = None,
         /,
         *,
         transport: Any = None,
+        credential: Any = None,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
-        env_name: Optional[str] = None,
+        use_async: Optional[bool] = None,
         **client_options,
     ) -> EmbeddingsClientType:
-        if cls is None:
-            from azure.ai.inference import EmbeddingsClient
+        if config_store is None:
+            config_store = _load_dev_environment()
 
-            cls = EmbeddingsClient
-        api_version = api_version or self._settings["api_version"](config_store=config_store)
+        endpoint: str = self._settings["endpoint"](config_store=config_store)
+        # TODO: AI endpoints!!!
+        endpoint = endpoint.replace("cognitiveservices.azure.com", "openai.azure.com")
+        client_kwargs = {}
+        client_kwargs.update(client_options)
         try:
-            audience = audience or self._settings["audience"](config_store=config_store)
+            client_kwargs["api_version"] = self._settings["api_version"](api_version, config_store=config_store)
+        except RuntimeError:
+            pass
+        try:
+            audience = self._settings["audience"](audience, config_store=config_store)
         except RuntimeError:
             audience = "https://cognitiveservices.azure.com"
+
+        # This is the default EmbeddingsClient inference cient.
+        if cls is None:
+            if use_async:
+                from azure.ai.inference.aio import EmbeddingsClient as AsyncEmbeddingsClient
+
+                cls = AsyncEmbeddingsClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
+            else:
+                from azure.ai.inference import EmbeddingsClient as SyncEmbeddingsClient
+
+                cls = SyncEmbeddingsClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
+                use_async = False
+
+        # These are the synchronous OpenAI clients.
+        # TODO: Find a better way to identify them than just the class name.
         if cls.__name__ in ["AzureOpenAI", "Embeddings"]:
             from openai import AzureOpenAI
             from azure.identity import get_bearer_token_provider
 
-            credential = self._build_credential(False, config_store=config_store)
+            credential = self._build_credential(cls, use_async=False, credential=credential)
             token_provider = get_bearer_token_provider(credential, f"{audience}/.default")
-            kwargs = {}
-            kwargs.update(self._settings["client_options"](config_store=config_store))
-            kwargs.update(client_options)
             client = AzureOpenAI(
-                api_version=api_version,
-                azure_endpoint=self._settings["endpoint"](config_store=config_store),
+                azure_endpoint=endpoint,
                 azure_ad_token_provider=token_provider,
                 azure_deployment=self._settings["name"](config_store=config_store),
-                http_client=kwargs.pop("http_client", transport),
-                **kwargs,
+                http_client=client_kwargs.pop("http_client", transport),
+                **client_kwargs,
             )
             if cls.__name__ == "Embeddings":
                 client = client.embeddings
             client.__resource_settings__ = self
             return client
+
+        # These are the asynchronous OpenAI clients.
         if cls.__name__ in ["AsyncAzureOpenAI", "AsyncEmbeddings"]:
             from openai import AsyncAzureOpenAI
             from azure.identity.aio import get_bearer_token_provider
 
-            credential = self._build_credential(True, config_store=config_store)
+            credential = self._build_credential(cls, use_async=True, credential=credential)
             token_provider = get_bearer_token_provider(credential, f"{audience}/.default")
-            kwargs = {}
-            kwargs.update(self._settings["client_options"](config_store=config_store))
-            kwargs.update(client_options)
             client = AsyncAzureOpenAI(
-                api_version=api_version,
-                azure_endpoint=self._settings["endpoint"](config_store=config_store),
+                azure_endpoint=endpoint,
                 azure_ad_token_provider=token_provider,
                 azure_deployment=self._settings["name"](config_store=config_store),
-                http_client=kwargs.pop("http_client", transport),
-                **kwargs,
+                http_client=client_kwargs.pop("http_client", transport),
+                **client_kwargs,
             )
             if cls.__name__ == "AsyncEmbeddings":
                 client = client.embeddings
             client.__resource_settings__ = self
             return client
 
-        return super().get_client(
-            cls,
-            transport=transport,
-            api_version=api_version,
-            audience=audience,
-            config_store=config_store,
-            env_name=env_name,
-            **client_options,
-        )
+        if cls.__name__ == "EmbeddingsClient":
+            # TODO: Remove this once the inference constructor has been fixed to use 'audience'.
+            client_kwargs["credential_scopes"] = [f"{audience}/.default"]
+        else:
+            client_kwargs["audience"] = audience
+        client_kwargs["credential"] = self._build_credential(cls, use_async=use_async, credential=credential)
+        if transport is not None:
+            client_kwargs["transport"] = transport
+        client = cls(endpoint, **client_kwargs)
+        client.__resource_settings__ = self
+        # TODO: Store kwargs and credential?
+        return client

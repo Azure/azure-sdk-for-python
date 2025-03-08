@@ -14,16 +14,15 @@ from typing import (
     List,
     Literal,
     Mapping,
-    TypedDict,
     Union,
     Optional,
+    cast,
     overload,
 )
-from typing_extensions import TypeVar, Unpack
+from typing_extensions import TypeVar, Unpack, TypedDict
 
 from ..resourcegroup import ResourceGroup
 from .._identifiers import ResourceIdentifiers
-from ..._component import ComponentField
 from .._extension import convert_managed_identities, ManagedIdentity, RoleAssignment
 from ..._parameters import GLOBAL_PARAMS
 from ..._bicep.expressions import Output, ResourceSymbol, Parameter
@@ -36,7 +35,7 @@ if TYPE_CHECKING:
 
 
 class SearchServiceKwargs(TypedDict, total=False):
-    auth_options: "AuthOption"
+    auth_options: "AuthOption"  # type: ignore[name-defined]  # TODO
     """Defines the options for how the data plane API of a Search service authenticates requests. Must remain an
     empty object {} if 'disableLocalAuth' is set to true.
     """
@@ -129,7 +128,7 @@ class SearchServiceKwargs(TypedDict, total=False):
     # """The sharedPrivateLinkResources to create as part of the search Service."""
     sku: Literal["basic", "free", "standard", "standard2", "standard3", "storage_optimized_l1", "storage_optimized_l2"]
     """Defines the SKU of an Azure Cognitive Search Service, which determines price tier and capacity limits."""
-    tags: Dict[str, object]
+    tags: Dict[str, str]
     """Tags to help categorize the resource in the Azure portal."""
 
 
@@ -158,8 +157,8 @@ _DEFAULT_SEARCH_SERVICE_EXTENSIONS: ExtensionResources = {
 class SearchService(_ClientResource[SearchServiceResourceType]):
     DEFAULTS: "SearchServiceResource" = _DEFAULT_SEARCH_SERVICE
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_SEARCH_SERVICE_EXTENSIONS
-    resource: Literal["Microsoft.Search/searchServices"]
     properties: SearchServiceResourceType
+    parent: None
 
     def __init__(
         self,
@@ -168,8 +167,9 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
         name: Optional[Union[str, Parameter]] = None,
         **kwargs: Unpack[SearchServiceKwargs],
     ) -> None:
-        existing = kwargs.pop("existing", False)
-        extensions: ExtensionResources = defaultdict(list)
+        # 'existing' is passed by the reference classmethod.
+        existing = kwargs.pop("existing", False)  # type: ignore[typeddict-item]
+        extensions: ExtensionResources = defaultdict(list)  # type: ignore  # Doesn't like the default dict.
         if "roles" in kwargs:
             extensions["managed_identity_roles"] = kwargs.pop("roles")
         if "user_roles" in kwargs:
@@ -190,12 +190,11 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
             if "public_network_access" in kwargs:
                 properties["properties"]["publicNetworkAccess"] = kwargs.pop("public_network_access")
             if "sku" in kwargs:
-                properties["sku"] = properties.get("sku", {})
-                properties["sku"]["name"] = kwargs.pop("sku")
+                properties["sku"] = {"name": kwargs.pop("sku")}
             if "tags" in kwargs:
                 properties["tags"] = kwargs.pop("tags")
         super().__init__(
-            properties,
+            cast(Dict[str, Any], properties),
             extensions=extensions,
             existing=existing,
             identifier=ResourceIdentifiers.search,
@@ -204,43 +203,32 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
         )
 
     @property
-    def resource(self) -> str:
-        if self._resource:
-            return self._resource
-        from .types import RESOURCE
-
-        self._resource = RESOURCE
-        return self._resource
+    def resource(self) -> Literal["Microsoft.Search/searchServices"]:
+        return "Microsoft.Search/searchServices"
 
     @property
     def version(self) -> str:
-        if self._version:
-            return self._version
         from .types import VERSION
 
-        self._version = VERSION
-        return self._version
+        return VERSION
 
     @classmethod
-    def reference(
+    def reference(  # type: ignore[override]  # Parameter subset and renames
         cls,
         *,
-        name: Union[str, Parameter, ComponentField],
-        resource_group: Optional[Union[str, Parameter, ResourceGroup]] = None,
+        name: Union[str, Parameter],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup[ResourceReference]]] = None,
     ) -> "SearchService[ResourceReference]":
-        from .types import RESOURCE, VERSION
-
-        resource = f"{RESOURCE}@{VERSION}"
-        return super().reference(
-            resource=resource,
+        existing = super().reference(
             name=name,
             resource_group=resource_group,
         )
+        return cast(SearchService[ResourceReference], existing)
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
         return f"https://{self._settings['name'](config_store=config_store)}.search.windows.net/"
 
-    def _outputs(self, *, symbol: ResourceSymbol, **kwargs) -> Dict[str, Output]:
+    def _outputs(self, *, symbol: ResourceSymbol, **kwargs) -> Dict[str, Output]:  # type: ignore[override]
         outputs = super()._outputs(symbol=symbol, **kwargs)
         outputs["endpoint"] = Output(
             f"AZURE_SEARCH_ENDPOINT{self._suffix}", Output("", "name", symbol).format("https://{}.search.windows.net/")
@@ -252,10 +240,10 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
         self,
         *,
         transport: Any = None,
+        credential: Any = None,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
-        env_name: Optional[str] = None,
         use_async: Optional[bool] = None,
         **client_options,
     ) -> "SearchIndexClient": ...
@@ -264,10 +252,10 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
         self,
         *,
         transport: Any = None,
+        credential: Any = None,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
-        env_name: Optional[str] = None,
         use_async: Optional[bool] = None,
         index_name: str,
         **client_options,
@@ -279,10 +267,10 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
         /,
         *,
         transport: Any = None,
+        credential: Any = None,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
-        env_name: Optional[str] = None,
         use_async: Optional[bool] = None,
         **client_options,
     ) -> ClientType: ...
@@ -297,21 +285,21 @@ class SearchService(_ClientResource[SearchServiceResourceType]):
         if cls is None:
             if use_async:
                 if kwargs.get("index_name"):
-                    from azure.search.documents.aio import SearchClient
+                    from azure.search.documents.aio import SearchClient as AsyncSearchClient
 
-                    cls = SearchClient
+                    cls = AsyncSearchClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
                 else:
-                    from azure.search.documents.indexes.aio import SearchIndexClient
+                    from azure.search.documents.indexes.aio import SearchIndexClient as AsyncSearchIndexClient
 
-                    cls = SearchIndexClient
+                    cls = AsyncSearchIndexClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
             else:
                 if kwargs.get("index_name"):
-                    from azure.search.documents import SearchClient
+                    from azure.search.documents import SearchClient as SyncSearchClient
 
-                    cls = SearchClient
+                    cls = SyncSearchClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
                 else:
-                    from azure.search.documents.indexes import SearchIndexClient
+                    from azure.search.documents.indexes import SearchIndexClient as SyncSearchIndexClient
 
-                    cls = SearchIndexClient
+                    cls = SyncSearchIndexClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
                 use_async = False
-        return super().get_client(cls, use_async=use_async, **kwargs)
+        return super().get_client(cast(Callable[..., ClientType], cls), use_async=use_async, **kwargs)

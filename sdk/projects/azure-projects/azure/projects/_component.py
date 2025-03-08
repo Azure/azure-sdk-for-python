@@ -79,12 +79,16 @@ class ComponentField(Parameter):
             raise ValueError("ComponentField not used in component class.")
         return f"{self._owner.__name__}.{self._name}"
 
+    @property
+    def value(self) -> str:
+        return ""
+
     def __repr__(self) -> str:
         if self.default is not MISSING:
-            return f"ComponentField(default={repr(self.default)})"
+            return f"Field(default={repr(self.default)})"
         if self._factory is not MISSING:
-            return f"ComponentField(default={self._factory.__name__}(**kwargs))"
-        return "ComponentField()"
+            return f"Field(default={self._factory.__name__}(**kwargs))"
+        return "Field()"
 
     def __set_name__(self, owner: Type, name: str) -> None:
         self._owner = owner

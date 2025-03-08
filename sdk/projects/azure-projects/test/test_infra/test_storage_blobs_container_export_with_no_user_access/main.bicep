@@ -13,6 +13,7 @@ param defaultNamePrefix string = 'azproj'
 
 param defaultName string = '${defaultNamePrefix}${uniqueString(subscription().subscriptionId, environmentName, location)}'
 
+@sys.secure()
 @sys.description('The Azure Active Directory tenant ID.')
 param tenantId string = subscription().tenantId
 

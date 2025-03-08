@@ -80,11 +80,11 @@ def test_expression_parameter():
     param = exp.Parameter("test", max_length=10, min_length=1)
     assert param.__bicep__() == "@sys.maxLength(10)\n@sys.minLength(1)\nparam test string\n\n"
 
-    param = exp.Parameter("test", type=int, min_value=1, max_value=100)
+    param = exp.Parameter("test", type="int", min_value=1, max_value=100)
     assert param.__bicep__() == "@sys.maxValue(100)\n@sys.minValue(1)\nparam test int\n\n"
 
-    param = exp.Parameter("test", varname="TEST_ENV_NAME")
+    param = exp.Parameter("test", env_var="TEST_ENV_NAME")
     assert param.__obj__() == {"test": {"value": "${TEST_ENV_NAME}"}}
 
-    param = exp.Parameter("test", varname="TEST_ENV_NAME", default="foo")
-    assert param.__obj__() == {"test": {"value": "${TEST_ENV_NAME=foo}"}}
+    param = exp.Parameter("test", env_var="TEST_ENV_NAME", default="foo")
+    assert param.__obj__() == {"test": {"value": "${TEST_ENV_NAME}"}}

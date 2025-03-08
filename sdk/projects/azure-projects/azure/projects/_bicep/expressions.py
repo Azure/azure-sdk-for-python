@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import json
-from typing import Dict, Iterable, List, Mapping, Optional, Any, Union
+from typing import Dict, Iterable, List, Literal, Mapping, Optional, Any, Union
 from enum import Enum
 
 from .utils import resolve_value, serialize
@@ -144,6 +144,7 @@ class Parameter(Expression):
         *,
         default: Any = MISSING,
         secure: bool = False,
+        type: Optional[Literal["string", "int", "boolean", "array", "object"]] = None,
         description: Optional[str] = None,
         env_var: Optional[str] = None,
         allowed: Optional[List[int]] = None,
@@ -155,6 +156,7 @@ class Parameter(Expression):
         super().__init__(name)
         self.env_var = env_var
         self.default = default
+        self._type = type
         self._secure = secure
         self._description = description
         self._allowed = allowed
@@ -171,7 +173,13 @@ class Parameter(Expression):
     def value(self) -> str:
         return self._value
 
+    @property
+    def type(self) -> str:
+        return self._get_type(self.default)
+
     def _get_type(self, value: Any) -> str:
+        if self._type:
+            return self._type
         if value is MISSING or isinstance(value, str):
             return "string"
         if value in [True, False]:
@@ -218,17 +226,17 @@ class Parameter(Expression):
         # TODO: What happens with when value=None? What's the correct bicep?
         if value is not MISSING:
             declaration += " = "
-            declaration += serialize(default or self.default)
+            declaration += serialize(value)
         declaration += "\n\n"
         return declaration
 
     def __obj__(self) -> Dict[str, Dict[str, str]]:
         if self.env_var:
-            if self.default not in (None, MISSING, ""):
-                # TODO: Is this correct formatting for different default types? Objects?
-                value = f"${{{self.env_var}={self.default}}}"
-            else:
-                value = f"${{{self.env_var}}}"
+            # if self.default not in (None, MISSING, ""):
+            #     # TODO: Is this correct formatting for different default types? Objects?
+            #     value = f"${{{self.env_var}={self.default}}}"
+            # else:
+            value = f"${{{self.env_var}}}"
             return {self.name: {"value": value}}
         if self.default is not MISSING:
             return {self.name: {"value": self.default}}
@@ -272,7 +280,7 @@ class Output(Parameter):
     ) -> None:
         self.symbol = symbol
         self._path = value
-        super().__init__(name=name, description=description)
+        super().__init__(name=name, description=description, type="string")
 
     def __repr__(self) -> str:
         return f"output({self.value})"

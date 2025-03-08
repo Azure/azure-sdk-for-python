@@ -7,6 +7,9 @@
         },
         "environmentName": {
             "value": "${AZURE_ENV_NAME}"
+        },
+        "tenantId": {
+            "value": "${AZURE_TENANT_ID}"
         }
     }
 }

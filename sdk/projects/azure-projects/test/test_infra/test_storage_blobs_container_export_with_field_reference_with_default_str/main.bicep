@@ -16,6 +16,7 @@ param defaultName string = '${defaultNamePrefix}${uniqueString(subscription().su
 @sys.description('ID of the user or app to assign application roles')
 param principalId string
 
+@sys.secure()
 @sys.description('The Azure Active Directory tenant ID.')
 param tenantId string = subscription().tenantId
 
@@ -47,9 +48,9 @@ output AZURE_STORAGE_ID string = test_module.outputs.AZURE_STORAGE_ID
 output AZURE_STORAGE_NAME string = test_module.outputs.AZURE_STORAGE_NAME
 output AZURE_STORAGE_RESOURCE_GROUP string = test_module.outputs.AZURE_STORAGE_RESOURCE_GROUP
 output AZURE_BLOBS_ENDPOINT string = test_module.outputs.AZURE_BLOBS_ENDPOINT
-output AZURE_BLOB_CONTAINER_ID_FOO string = test_module.outputs.AZURE_BLOB_CONTAINER_ID_FOO
-output AZURE_BLOB_CONTAINER_NAME_FOO string = test_module.outputs.AZURE_BLOB_CONTAINER_NAME_FOO
-output AZURE_BLOB_CONTAINER_RESOURCE_GROUP_FOO string = test_module.outputs.AZURE_BLOB_CONTAINER_RESOURCE_GROUP_FOO
-output AZURE_BLOB_CONTAINER_ENDPOINT_FOO string = test_module.outputs.AZURE_BLOB_CONTAINER_ENDPOINT_FOO
+output AZURE_BLOB_CONTAINER_ID string = test_module.outputs.AZURE_BLOB_CONTAINER_ID
+output AZURE_BLOB_CONTAINER_NAME string = test_module.outputs.AZURE_BLOB_CONTAINER_NAME
+output AZURE_BLOB_CONTAINER_RESOURCE_GROUP string = test_module.outputs.AZURE_BLOB_CONTAINER_RESOURCE_GROUP
+output AZURE_BLOB_CONTAINER_ENDPOINT string = test_module.outputs.AZURE_BLOB_CONTAINER_ENDPOINT
 
 

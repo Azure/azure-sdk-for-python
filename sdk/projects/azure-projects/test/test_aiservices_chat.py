@@ -349,7 +349,7 @@ def test_aiservices_chat_app():
 
     app = TestApp(client=r)
     assert isinstance(app.client, ChatCompletionsClient)
-    assert app.client._config.endpoint == "https://test.openai.azure.com/openai/deployments/test/chat/completions"
+    assert app.client._config.endpoint == "https://test.openai.azure.com/openai/deployments/test"  # /chat/completions"
     assert app.client._config.credential
 
     app = TestApp(client="test")

@@ -5,13 +5,12 @@
 # --------------------------------------------------------------------------
 # pylint: disable=line-too-long
 
-from typing import Dict, TypedDict, Literal, List, Union
-from typing_extensions import Required
+from typing import Dict, Literal, List, Union
+from typing_extensions import Required, TypedDict
 
 from ..._bicep.expressions import Parameter
 
 
-RESOURCE = "Microsoft.KeyVault/vaults"
 VERSION = "2024-12-01-preview"
 
 
@@ -52,7 +51,7 @@ class KeyVaultResource(TypedDict, total=False):
     """The geo-location where the resource lives."""
     name: Union[str, Parameter]
     """The resource name."""
-    properties: "VaultProperties"
+    properties: "VaultProperties"  # type: ignore[name-defined]  # TODO
     """Properties of Cognitive Services account."""
     tags: Union[Dict[str, Union[str, Parameter]], Parameter]
     """Dictionary of tag names and values."""

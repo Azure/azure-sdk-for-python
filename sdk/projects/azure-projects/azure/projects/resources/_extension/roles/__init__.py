@@ -23,37 +23,28 @@ RoleAssignmentResourceType = TypeVar("RoleAssignmentResourceType", default="Role
 
 class RoleAssignment(Resource[RoleAssignmentResourceType]):
     DEFAULTS: "RoleAssignmentResource" = _DEFAULT_ROLE_ASSIGNMENT
-    resource: Literal["Microsoft.Authorization/roleAssignments"]
     properties: RoleAssignmentResourceType
+    parent: None
 
     def __init__(self, properties: "RoleAssignmentResource", /, **kwargs) -> None:
         super().__init__(properties, identifier=ResourceIdentifiers.role_assignment, **kwargs)
 
     @property
     def resource(self) -> Literal["Microsoft.Authorization/roleAssignments"]:
-        if self._resource:
-            return self._resource
-        from .types import RESOURCE
-
-        self._resource = RESOURCE
-        return self._resource
+        return "Microsoft.Authorization/roleAssignments"
 
     @property
     def version(self) -> str:
-        if self._version:
-            return self._version
         from .types import VERSION
 
-        self._version = VERSION
-        return self._version
+        return VERSION
 
     @classmethod
     def reference(
         cls,
-        resource: str,
         *,
         name: str,
-        resource_group: Optional[Union[str, "ResourceGroup"]] = None,
+        resource_group: Optional[Union[str, "ResourceGroup[ResourceReference]"]] = None,
         subscription: Optional[str] = None,
         parent: Optional[Resource] = None,
     ) -> "RoleAssignment[ResourceReference]":

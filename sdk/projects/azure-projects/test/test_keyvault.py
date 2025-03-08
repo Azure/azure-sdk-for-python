@@ -282,8 +282,7 @@ def test_keyvault_client():
 
     assert r._settings["name"]() == "test"
     r._settings["api_version"].set_value("v1.0")
-    r._settings["client_options"].set_value({"verify_challenge_resource": "True"})
-    client = r.get_client(SecretClient, api_version="1234")
+    client = r.get_client(SecretClient, api_version="1234", verify_challenge_resource=True)
     assert client.vault_url == "https://test.vault.azure.net"
     assert client.api_version == "1234"
 

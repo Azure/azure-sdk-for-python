@@ -6,7 +6,7 @@
 # pylint: disable=arguments-differ
 
 from collections import defaultdict
-from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Mapping, Tuple, Union, Optional, Any
+from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Mapping, Tuple, Union, Optional, Any, cast
 from typing_extensions import TypeVar, Unpack
 
 from ...._component import ComponentField
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from azure.storage.blob import BlobServiceClient
 
 
-class BlobStorageKwargs(StorageAccountKwargs):
+class BlobStorageKwargs(StorageAccountKwargs, total=False):
     automatic_snapshot_policy_enabled: Union[bool, Parameter]
     """Automatic Snapshot is enabled if set to true."""
     change_feed_enabled: bool
@@ -83,10 +83,10 @@ ClientType = TypeVar("ClientType", default="BlobServiceClient")
 
 
 class BlobStorage(_ClientResource[BlobServiceResourceType]):
-    DEFAULTS: "BlobServiceResource" = _DEFAULT_BLOB_SERVICE
+    DEFAULTS: "BlobServiceResource" = _DEFAULT_BLOB_SERVICE  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_BLOB_SERVICE_EXTENSIONS
-    resource: Literal["Microsoft.Storage/storageAccounts/blobServices"]
     properties: BlobServiceResourceType
+    parent: StorageAccount  # type: ignore[reportIncompatibleVariableOverride]
 
     def __init__(
         self,
@@ -95,8 +95,9 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
         account: Optional[Union[str, Parameter, ComponentField, StorageAccount]] = None,
         **kwargs: Unpack["BlobStorageKwargs"],
     ) -> None:
-        existing = kwargs.pop("existing", False)
-        extensions: ExtensionResources = defaultdict(list)
+        # 'existing' is passed by the reference classmethod.
+        existing = kwargs.pop("existing", False)  # type: ignore[typeddict-item]
+        extensions: ExtensionResources = defaultdict(list)  # type: ignore  # Doesn't like the default dict.
         if "roles" in kwargs:
             extensions["managed_identity_roles"] = kwargs.pop("roles")
         if "user_roles" in kwargs:
@@ -125,8 +126,7 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
             #     'container_delete_retention_policy_enabled'
             # )
             if "cors_rules" in kwargs:
-                properties["properties"]["cors"] = {}
-                properties["properties"]["cors"]["corsRules"] = kwargs.pop("cors_rules")
+                properties["properties"]["cors"] = {"corsRules": kwargs.pop("cors_rules")}
             # if 'default_service_version' in kwargs:
             #     properties['defaultServiceVersion'] = kwargs.pop('default_service_version')
             # if 'delete_retention_policy_allow_permanent_delete' in kwargs:
@@ -150,15 +150,20 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
             # if 'restore_policy_enabled' in kwargs:
             #     blob_service_params['restorePolicyEnabled'] = kwargs.pop('restore_policy_enabled')
 
-        parent = kwargs.pop("parent", None)
         if account and "parent" in kwargs:
             raise ValueError("Cannot specify both 'account' and 'parent'.")
+        # 'parent' is passed by the reference classmethod.
+        parent = kwargs.pop("parent", None)  # type: ignore[typeddict-item]
         if not parent:
-            parent = account if isinstance(account, StorageAccount) else StorageAccount(name=account, **kwargs)
-            for key in StorageAccountKwargs.__optional_keys__:
-                kwargs.pop(key, None)
+            if isinstance(account, StorageAccount):
+                parent = account
+            else:
+                # Blobs kwargs have already been popped.
+                parent = StorageAccount(name=account, **kwargs)  # type: ignore[misc]
+            for key in StorageAccountKwargs.__annotations__:
+                kwargs.pop(key, None)  # type: ignore[misc]  # Not using string literal key.
         super().__init__(
-            properties,
+            cast(Dict[str, Any], properties),
             extensions=extensions,
             existing=existing,
             parent=parent,
@@ -169,33 +174,23 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
         )
 
     @property
-    def resource(self) -> str:
-        if self._resource:
-            return self._resource
-        from .types import RESOURCE
-
-        self._resource = RESOURCE
-        return self._resource
+    def resource(self) -> Literal["Microsoft.Storage/storageAccounts/blobServices"]:
+        return "Microsoft.Storage/storageAccounts/blobServices"
 
     @property
     def version(self) -> str:
-        if self._version:
-            return self._version
         from .types import VERSION
 
-        self._version = VERSION
-        return self._version
+        return VERSION
 
     @classmethod
-    def reference(
+    def reference(  # type: ignore[override]  # Parameter subset and renames
         cls,
         *,
-        account: Union[str, Parameter, StorageAccount, ComponentField],
-        resource_group: Optional[Union[str, Parameter, ResourceGroup]] = None,
+        account: Union[str, Parameter, StorageAccount[ResourceReference]],
+        resource_group: Optional[Union[str, Parameter, ResourceGroup[ResourceReference]]] = None,
     ) -> "BlobStorage[ResourceReference]":
-        from .types import RESOURCE, VERSION
-
-        resource = f"{RESOURCE}@{VERSION}"
+        parent: Optional[StorageAccount[ResourceReference]] = None
         if isinstance(account, (str, Parameter)):
             parent = StorageAccount.reference(
                 name=account,
@@ -205,12 +200,9 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
             raise ValueError("Cannot provide a 'StorageAccount' instance with 'resource_group' value.")
         else:
             parent = account
-        existing = super().reference(
-            resource=resource,
-            parent=parent,
-        )
+        existing = super().reference(parent=parent)
         existing._settings["name"].set_value("default")  # pylint: disable=protected-access
-        return existing
+        return cast(BlobStorage[ResourceReference], existing)
 
     def __repr__(self) -> str:
         name = f'\'{self.parent.properties["name"]}\'' if "name" in self.parent.properties else "<default>"
@@ -219,12 +211,14 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
         return f"https://{self.parent._settings['name'](config_store=config_store)}.blob.core.windows.net/"  # pylint: disable=protected-access
 
-    def _outputs(self, *, parents: Tuple[ResourceSymbol, ...], **kwargs) -> Dict[str, Output]:
+    def _outputs(  # type: ignore[override]  # Parameter subset
+        self, *, parents: Tuple[ResourceSymbol, ...], **kwargs
+    ) -> Dict[str, Output]:
         return {
             "endpoint": Output(
-                f"AZURE_BLOBS_ENDPOINT{self.parent._suffix}",
+                f"AZURE_BLOBS_ENDPOINT{self.parent._suffix}",  # pylint: disable=protected-access
                 "properties.primaryEndpoints.blob",
-                parents[0],  # pylint: disable=protected-access
+                parents[0],
             )
         }
 
@@ -234,29 +228,29 @@ class BlobStorage(_ClientResource[BlobServiceResourceType]):
         /,
         *,
         transport: Any = None,
+        credential: Any = None,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
-        env_name: Optional[str] = None,
         use_async: Optional[bool] = None,
         **client_options,
     ) -> ClientType:
         if cls is None:
             if use_async:
-                from azure.storage.blob.aio import BlobServiceClient
+                from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient
 
-                cls = BlobServiceClient
+                cls = AsyncBlobServiceClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
             else:
-                from azure.storage.blob import BlobServiceClient
+                from azure.storage.blob import BlobServiceClient as SyncBlobServiceClient
 
-                cls = BlobServiceClient
+                cls = SyncBlobServiceClient  # type: ignore[assignment]  # TODO: Not sure why it doesn't like this
                 use_async = False
         return super().get_client(
-            cls,
+            cast(Callable[..., ClientType], cls),
             transport=transport,
+            credential=credential,
             api_version=api_version,
             audience=audience,
             config_store=config_store,
-            env_name=env_name,
             **client_options,
         )

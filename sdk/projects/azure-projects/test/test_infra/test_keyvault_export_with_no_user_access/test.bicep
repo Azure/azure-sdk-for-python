@@ -4,9 +4,6 @@ param defaultNamePrefix string
 param defaultName string
 param tenantId string
 param azdTags object
-var managedIdentityId = userassignedidentity.id
-var managedIdentityPrincipalId = userassignedidentity.properties.principalId
-var managedIdentityClientId = userassignedidentity.properties.clientId
 
 resource userassignedidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
   location: location
@@ -41,7 +38,7 @@ output AZURE_KEYVAULT_ENDPOINT string = vault.properties.vaultUri
 resource roleassignment_qgdjhyhljucznkoutsgj 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid('MicrosoftKeyVaultvaults', defaultName, 'ServicePrincipal', 'Key Vault Administrator')
   properties: {
-    principalId: managedIdentityPrincipalId
+    principalId: userassignedidentity.properties.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',

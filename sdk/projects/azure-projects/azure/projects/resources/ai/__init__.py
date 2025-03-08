@@ -14,11 +14,10 @@ from typing import (
     List,
     Literal,
     Mapping,
-    TypedDict,
     Union,
     Optional,
 )
-from typing_extensions import TypeVar, Unpack
+from typing_extensions import TypeVar, Unpack, TypedDict
 
 from ..resourcegroup import ResourceGroup
 from .._identifiers import ResourceIdentifiers
@@ -169,8 +168,8 @@ _DEFAULT_COGNITIVE_SERVICES_EXTENSIONS: ExtensionResources = {"managed_identity_
 class CognitiveServicesAccount(_ClientResource[CognitiveServicesAccountResourceType]):
     DEFAULTS: "CognitiveServicesAccountResource" = _DEFAULT_COGNITIVE_SERVICES
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_COGNITIVE_SERVICES_EXTENSIONS
-    resource: Literal["Microsoft.CognitiveServices/accounts"]
     properties: CognitiveServicesAccountResourceType
+    parent: None
 
     def __init__(
         self,
@@ -214,7 +213,7 @@ class CognitiveServicesAccount(_ClientResource[CognitiveServicesAccountResourceT
         properties = properties or {}
         properties["kind"] = kind
         if "roles" in kwargs:
-            extensions["managed_identity_roles"] = kwargs.pop("roles")
+            extensions["managed_identity_roles"] = kwargs.pop("roles")  # type:ignore[misc] Popping from TypedDict
         if "user_roles" in kwargs:
             extensions["user_roles"] = kwargs.pop("user_roles")
         if not existing:
@@ -269,32 +268,20 @@ class CognitiveServicesAccount(_ClientResource[CognitiveServicesAccountResourceT
         name: Union[str, Parameter],
         resource_group: Optional[Union[str, Parameter, ResourceGroup]] = None,
     ) -> "CognitiveServicesAccount[ResourceReference]":
-        from .types import RESOURCE, VERSION
-
-        resource = f"{RESOURCE}@{VERSION}"
         return super().reference(
-            resource=resource,
             name=name,
             resource_group=resource_group,
         )
 
     @property
-    def resource(self) -> str:
-        if self._resource:
-            return self._resource
-        from .types import RESOURCE
-
-        self._resource = RESOURCE
-        return self._resource
+    def resource(self) -> Literal["Microsoft.CognitiveServices/accounts"]:
+        return "Microsoft.CognitiveServices/accounts"
 
     @property
     def version(self) -> str:
-        if self._version:
-            return self._version
         from .types import VERSION
 
-        self._version = VERSION
-        return self._version
+        return VERSION
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:  # pylint: disable=unused-argument
         raise RuntimeError("No deterministic endpoint.")

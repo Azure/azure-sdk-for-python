@@ -15,12 +15,12 @@ from typing import (
     Literal,
     Mapping,
     Tuple,
-    TypedDict,
     Union,
     Optional,
     Any,
+    cast,
 )
-from typing_extensions import TypeVar, Unpack
+from typing_extensions import TypeVar, Unpack, TypedDict
 
 from ....._component import ComponentField
 from ....._parameters import GLOBAL_PARAMS
@@ -55,7 +55,7 @@ class ContainerKwargs(TypedDict, total=False):
     The property is immutable and can only be set to true at the container creation time. Existing containers must
     undergo a migration process.
     """
-    metadata: Dict[str, object]
+    metadata: Dict[str, str]
     """A name-value pair to associate with the container as metadata."""
     public_access: Literal["Blob", "Container", "None"]
     """Specifies whether data in the container may be accessed publicly and the level of access."""
@@ -118,10 +118,10 @@ ClientType = TypeVar("ClientType", default="ContainerClient")
 
 
 class BlobContainer(_ClientResource[ContainerResourceType]):
-    DEFAULTS: "ContainerResource" = _DEFAULT_CONTAINER
+    DEFAULTS: "ContainerResource" = _DEFAULT_CONTAINER  # type: ignore[assignment]
     DEFAULT_EXTENSIONS: ExtensionResources = _DEFAULT_CONTAINER_EXTENSIONS
-    resource: Literal["Microsoft.Storage/storageAccounts/blobServices/containers"]
     properties: ContainerResourceType
+    parent: BlobStorage  # type: ignore[reportIncompatibleVariableOverride]
 
     def __init__(
         self,
@@ -131,13 +131,18 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
         account: Optional[Union[str, Parameter, BlobStorage, ComponentField]] = None,
         **kwargs: Unpack["ContainerKwargs"],
     ) -> None:
-        existing = kwargs.pop("existing", False)
-        extensions: ExtensionResources = defaultdict(list)
+        # 'existing' is passed by the reference classmethod.
+        existing = kwargs.pop("existing", False)  # type: ignore[typeddict-item]
+        extensions: ExtensionResources = defaultdict(list)  # type: ignore  # Doesn't like the default dict.
         if "roles" in kwargs:
             extensions["managed_identity_roles"] = kwargs.pop("roles")
         if "user_roles" in kwargs:
             extensions["user_roles"] = kwargs.pop("user_roles")
-        parent = account if isinstance(account, BlobStorage) else kwargs.pop("parent", BlobStorage(account=account))
+        if isinstance(account, BlobStorage):
+            parent = account
+        else:
+            # 'parent' is passed by the reference classmethod.
+            parent = kwargs.pop("parent", BlobStorage(account=account))  # type: ignore[typeddict-item]
         if not existing:
             properties = properties or {}
             if "properties" not in properties:
@@ -153,17 +158,16 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
             if "enable_nfsv3_root_squash" in kwargs:
                 properties["properties"]["enableNfsV3RootSquash"] = kwargs.pop("enable_nfsv3_root_squash")
             if "immutable_storage_with_versioning_enabled" in kwargs:
-                properties["properties"]["immutableStorageWithVersioning"] = {}
-                properties["properties"]["immutableStorageWithVersioning"]["enabled"] = kwargs.pop(
-                    "immutable_storage_with_versioning_enabled"
-                )
+                properties["properties"]["immutableStorageWithVersioning"] = {
+                    "enabled": kwargs.pop("immutable_storage_with_versioning_enabled")
+                }
             if "metadata" in kwargs:
                 properties["properties"]["metadata"] = kwargs.pop("metadata")
             if "public_access" in kwargs:
                 properties["properties"]["publicAccess"] = kwargs.pop("public_access")
 
         super().__init__(
-            properties,
+            cast(Dict[str, Any], properties),
             extensions=extensions,
             existing=existing,
             parent=parent,
@@ -174,34 +178,24 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
         )
 
     @property
-    def resource(self) -> str:
-        if self._resource:
-            return self._resource
-        from .types import RESOURCE
-
-        self._resource = RESOURCE
-        return self._resource
+    def resource(self) -> Literal["Microsoft.Storage/storageAccounts/blobServices/containers"]:
+        return "Microsoft.Storage/storageAccounts/blobServices/containers"
 
     @property
     def version(self) -> str:
-        if self._version:
-            return self._version
         from .types import VERSION
 
-        self._version = VERSION
-        return self._version
+        return VERSION
 
     @classmethod
-    def reference(
+    def reference(  # type: ignore[override]  # Parameter subset and renames
         cls,
         *,
         name: Union[str, Parameter],
-        account: Optional[Union[str, Parameter, BlobStorage]] = None,
-        resource_group: Optional[Union[str, Parameter, "ResourceGroup"]] = None,
+        account: Optional[Union[str, Parameter, BlobStorage[ResourceReference]]] = None,
+        resource_group: Optional[Union[str, Parameter, "ResourceGroup[ResourceReference]"]] = None,
     ) -> "BlobContainer[ResourceReference]":
-        from .types import RESOURCE, VERSION
-
-        resource = f"{RESOURCE}@{VERSION}"
+        parent: Optional[BlobStorage[ResourceReference]] = None
         if isinstance(account, (str, Parameter)):
             parent = BlobStorage.reference(
                 account=account,
@@ -209,16 +203,17 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
             )
         else:
             parent = account
-
-        return super().reference(resource=resource, name=name, parent=parent)
+        existing = super().reference(name=name, parent=parent)
+        return cast(BlobContainer[ResourceReference], existing)
 
     def _build_endpoint(self, *, config_store: Mapping[str, Any]) -> str:
+        name = self.parent.parent._settings["name"]  # pylint: disable=protected-access
         return (
-            f"https://{self.parent.parent._settings['name'](config_store=config_store)}.blob.core.windows.net"
+            f"https://{name(config_store=config_store)}.blob.core.windows.net"
             + f"/{self._settings['name'](config_store=config_store)}"
-        )  # pylint: disable=protected-access
+        )
 
-    def _outputs(
+    def _outputs(  # type: ignore[override]  # Parameter subset
         self,
         *,
         symbol: ResourceSymbol,
@@ -239,34 +234,35 @@ class BlobContainer(_ClientResource[ContainerResourceType]):
         /,
         *,
         transport: Any = None,
+        credential: Any = None,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
         config_store: Optional[Mapping[str, Any]] = None,
-        env_name: Optional[str] = None,
         use_async: Optional[bool] = None,
         **client_options,
     ) -> ClientType:
         if cls is None:
             if use_async:
-                from azure.storage.blob.aio import ContainerClient
+                from azure.storage.blob.aio import ContainerClient as AsyncContainerClient
 
-                cls = ContainerClient.from_container_url
+                cls = AsyncContainerClient.from_container_url  # type: ignore[assignment]
             else:
-                from azure.storage.blob import ContainerClient
+                from azure.storage.blob import ContainerClient as SyncContainerClient
 
-                cls = ContainerClient.from_container_url
+                cls = SyncContainerClient.from_container_url  # type: ignore[assignment]
                 use_async = False
-        elif cls.__name__ == "ContainerClient":
+        elif cls.__name__ == "ContainerClient" and hasattr(cls, "from_container_url"):
             if use_async is None:
                 use_async = inspect.iscoroutinefunction(getattr(cls, "close"))
-            cls = cls.from_container_url
+            # We know the attribute is present.
+            cls = cls.from_container_url  # type: ignore[reportFunctionMemberAccess]
         return super().get_client(
-            cls,
+            cast(Callable[..., ClientType], cls),
             transport=transport,
+            credential=credential,
             api_version=api_version,
             audience=audience,
             config_store=config_store,
-            env_name=env_name,
             use_async=use_async,
             **client_options,
         )

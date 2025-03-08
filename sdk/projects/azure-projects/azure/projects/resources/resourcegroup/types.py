@@ -4,11 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import TypedDict, Dict, Union
+from typing import Dict, Union
+from typing_extensions import TypedDict
 
 from ..._bicep.expressions import Parameter
 
-RESOURCE = "Microsoft.Resources/resourceGroups"
+
 VERSION = "2021-04-01"
 
 

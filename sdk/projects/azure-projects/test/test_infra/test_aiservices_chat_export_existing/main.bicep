@@ -16,6 +16,7 @@ param defaultName string = '${defaultNamePrefix}${uniqueString(subscription().su
 @sys.description('ID of the user or app to assign application roles')
 param principalId string
 
+@sys.secure()
 @sys.description('The Azure Active Directory tenant ID.')
 param tenantId string = subscription().tenantId
 
@@ -27,9 +28,11 @@ var azdTags = {
 @sys.description('ID of the managed identity to assign application roles')
 param managedIdentityId string = ''
 
+@sys.secure()
 @sys.description('Principal ID of the managed identity to assign application roles')
 param managedIdentityPrincipalId string = ''
 
+@sys.secure()
 @sys.description('Client ID of the managed identity to assign application roles')
 param managedIdentityClientId string = ''
 
