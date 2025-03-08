@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import cast, List, Any, Union, Dict, Optional, MutableMapping
+from typing import cast, List, Any, Union, Dict, Optional
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.credentials import AzureKeyCredential, TokenCredential
@@ -481,9 +481,7 @@ class SearchClient(HeadersMixin):
             query.order_by(order_by)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         request = cast(SuggestRequest, query.request)
-        response = self._client.documents.suggest_post(
-            index_name=self._index_name, suggest_request=request, **kwargs
-        )
+        response = self._client.documents.suggest_post(index_name=self._index_name, suggest_request=request, **kwargs)
         assert response.results is not None  # Hint for mypy
         results = response.results
         return results

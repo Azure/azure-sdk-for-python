@@ -103,6 +103,7 @@ def _ensure_response(f):
 
 class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
     """An iterator of search results."""
+
     def __init__(self, client, index_name, initial_query, kwargs, continuation_token=None) -> None:
         super(AsyncSearchPageIterator, self).__init__(
             get_next=self._get_next_cb,

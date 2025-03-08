@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import cast, List, Union, Any, Optional, Dict, MutableMapping
+from typing import cast, List, Union, Any, Optional, Dict
 
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.credentials import AzureKeyCredential

@@ -329,7 +329,7 @@ __all__ = (
     "DocumentExtractionSkill",
     "DocumentIntelligenceLayoutSkill",
     "DocumentKeysOrIds",
-    "EdgeNGramTokenFilter",
+    "EdgeNGramTokenFilter",  # pylint: disable=naming-mismatch
     "EdgeNGramTokenizer",
     "ElisionTokenFilter",
     "EdgeNGramTokenFilterSide",
@@ -378,7 +378,7 @@ __all__ = (
     "LimitTokenFilter",
     "IndexStatisticsSummary",
     "LuceneStandardAnalyzer",
-    "LuceneStandardTokenizer",
+    "LuceneStandardTokenizer",  # pylint: disable=naming-mismatch
     "MagnitudeScoringFunction",
     "MagnitudeScoringParameters",
     "MarkdownHeaderDepth",
@@ -390,7 +390,7 @@ __all__ = (
     "MicrosoftStemmingTokenizerLanguage",
     "MicrosoftTokenizerLanguage",
     "NativeBlobSoftDeleteDeletionDetectionPolicy",
-    "NGramTokenFilter",
+    "NGramTokenFilter",  # pylint: disable=naming-mismatch
     "NGramTokenizer",
     "OcrLineEnding",
     "OcrSkill",

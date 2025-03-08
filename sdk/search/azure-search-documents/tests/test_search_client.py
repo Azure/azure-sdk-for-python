@@ -181,9 +181,7 @@ class TestSearchClient:
         result.get_count()
         assert not result._first_page_iterator_instance.continuation_token
 
-    @mock.patch(
-        "azure.search.documents._generated.operations._operations.DocumentsOperations.autocomplete_post"
-    )
+    @mock.patch("azure.search.documents._generated.operations._operations.DocumentsOperations.autocomplete_post")
     def test_autocomplete_query_argument(self, mock_autocomplete_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL)
         result = client.autocomplete(search_text="search text", suggester_name="sg")
@@ -243,9 +241,7 @@ class TestSearchClient:
         assert mock_suggest_post.call_args[1]["headers"] == client._headers
         assert mock_suggest_post.call_args[1]["suggest_request"].search_text == "search text"
 
-    @mock.patch(
-        "azure.search.documents._generated.operations._operations.DocumentsOperations.autocomplete_post"
-    )
+    @mock.patch("azure.search.documents._generated.operations._operations.DocumentsOperations.autocomplete_post")
     def test_autocomplete_query_argument_v2020_06_30(self, mock_autocomplete_post):
         client = SearchClient("endpoint", "index name", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
         result = client.autocomplete(search_text="search text", suggester_name="sg")

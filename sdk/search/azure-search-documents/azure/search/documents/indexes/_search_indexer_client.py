@@ -505,9 +505,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             etag = data_source_connection.e_tag  # type: ignore
         except AttributeError:
             name = data_source_connection
-        self._client.data_sources.delete(
-            data_source_name=name, etag=etag, match_condition=match_condition, **kwargs
-        )
+        self._client.data_sources.delete(data_source_name=name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace
     def get_skillsets(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> List[SearchIndexerSkillset]:

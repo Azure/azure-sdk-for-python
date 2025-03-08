@@ -113,9 +113,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         if select:
             kwargs["select"] = ",".join(select)
         # pylint:disable=protected-access
-        indexes = self._client.indexes.list(
-            cls=lambda objs: [SearchIndex._from_generated(x) for x in objs], **kwargs
-        )
+        indexes = self._client.indexes.list(cls=lambda objs: [SearchIndex._from_generated(x) for x in objs], **kwargs)
         return cast(ItemPaged[SearchIndex], indexes)
 
     @distributed_trace
@@ -206,9 +204,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             etag = index.e_tag  # type: ignore
         except AttributeError:
             index_name = index
-        self._client.indexes.delete(
-            index_name=index_name, etag=etag, match_condition=match_condition, **kwargs
-        )
+        self._client.indexes.delete(index_name=index_name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace
     def create_index(self, index: SearchIndex, **kwargs: Any) -> SearchIndex:
@@ -416,9 +412,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             etag = synonym_map.e_tag  # type: ignore
         except AttributeError:
             name = synonym_map
-        self._client.synonym_maps.delete(
-            synonym_map_name=name, etag=etag, match_condition=match_condition, **kwargs
-        )
+        self._client.synonym_maps.delete(synonym_map_name=name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace
     def create_synonym_map(self, synonym_map: SynonymMap, **kwargs: Any) -> SynonymMap:
@@ -579,9 +573,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             etag = alias.e_tag  # type: ignore
         except AttributeError:
             alias_name = alias
-        self._client.aliases.delete(
-            alias_name=alias_name, etag=etag, match_condition=match_condition, **kwargs
-        )
+        self._client.aliases.delete(alias_name=alias_name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace
     def create_alias(self, alias: SearchAlias, **kwargs: Any) -> SearchAlias:

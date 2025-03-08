@@ -112,9 +112,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         if select:
             kwargs["select"] = ",".join(select)
         # pylint:disable=protected-access
-        indexes = self._client.indexes.list(
-            cls=lambda objs: [SearchIndex._from_generated(x) for x in objs], **kwargs
-        )
+        indexes = self._client.indexes.list(cls=lambda objs: [SearchIndex._from_generated(x) for x in objs], **kwargs)
         return cast(AsyncItemPaged[SearchIndex], indexes)
 
     @distributed_trace
@@ -203,9 +201,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             etag = index.e_tag  # type: ignore
         except AttributeError:
             index_name = index
-        await self._client.indexes.delete(
-            index_name=index_name, etag=etag, match_condition=match_condition, **kwargs
-        )
+        await self._client.indexes.delete(index_name=index_name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace_async
     async def create_index(self, index: SearchIndex, **kwargs: Any) -> SearchIndex:
@@ -574,9 +570,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             etag = alias.e_tag  # type: ignore
         except AttributeError:
             alias_name = alias
-        await self._client.aliases.delete(
-            alias_name=alias_name, etag=etag, match_condition=match_condition, **kwargs
-        )
+        await self._client.aliases.delete(alias_name=alias_name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace_async
     async def create_alias(self, alias: SearchAlias, **kwargs: Any) -> SearchAlias:
