@@ -50,16 +50,16 @@ _LAST_UNSUPPRESSED_SPAN = "LAST_UNSUPPRESSED_SPAN"
 _ERROR_SPAN_ATTRIBUTE = "error.type"
 
 
-class SuppressionContextManager(ContextManager):
+class _SuppressionContextManager(ContextManager):
     def __init__(self, span: "OpenTelemetrySpan"):
         self._span = span
-        self._context_token = None
+        self._context_token: Optional[object] = None
         self._current_ctxt_manager: Optional[ContextManager[Span]] = None
 
     def __enter__(self) -> Any:
         ctx = context.get_current()
         if not isinstance(self._span.span_instance, NonRecordingSpan):
-            if self._span.kind == SpanKind.INTERNAL or self._span.kind == SpanKind.CLIENT:
+            if self._span.kind in (SpanKind.INTERNAL, SpanKind.CLIENT):
                 # Suppress INTERNAL spans within this context.
                 ctx = context.set_value(_SUPPRESSED_SPAN_FLAG, True, ctx)
 
@@ -71,7 +71,6 @@ class SuppressionContextManager(ContextManager):
 
         return self
 
-
     def __exit__(self, exc_type, exc_value, traceback):
         if self._context_token:
             context.detach(self._context_token)
@@ -79,6 +78,7 @@ class SuppressionContextManager(ContextManager):
 
         if exc_value:
             raise exc_value
+
 
 class OpenTelemetrySpan(HttpSpanMixin, object):
     """OpenTelemetry plugin for Azure client libraries.
@@ -106,7 +106,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     ) -> None:
         self._context_token = None
         self._context: Optional[Context] = None
-        self._current_ctxt_manager: Optional[SuppressionContextManager] = None
+        self._current_ctxt_manager: Optional[_SuppressionContextManager] = None
 
         # TODO: Once we have additional supported versions, we should add a way to specify the version.
         self._schema_version = OpenTelemetrySchema.get_latest_version()
@@ -273,7 +273,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             )
 
     def __enter__(self) -> "OpenTelemetrySpan":
-        self._current_ctxt_manager=SuppressionContextManager(self)
+        self._current_ctxt_manager = _SuppressionContextManager(self)
         self._current_ctxt_manager.__enter__()
         return self
 
@@ -410,7 +410,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         if isinstance(span, Span):
             return trace.use_span(span, end_on_exit=False)
 
-        return SuppressionContextManager(span)
+        return _SuppressionContextManager(span)
 
     @classmethod
     def set_current_span(cls, span: Span) -> None:  # pylint: disable=docstring-missing-return,docstring-missing-rtype
