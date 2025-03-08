@@ -21,9 +21,9 @@ class TestDataBoxManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_jobs_list(self, resource_group):
         response = self.client.jobs.list(
-            api_version="2022-12-01",
+            api_version="2025-02-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,12 +31,12 @@ class TestDataBoxManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_mark_devices_shipped(self, resource_group):
+    async def test_jobs_mark_devices_shipped(self, resource_group):
         response = await self.client.jobs.mark_devices_shipped(
             job_name="str",
             resource_group_name=resource_group.name,
             mark_devices_shipped_request={"deliverToDcPackageDetails": {"carrierName": "str", "trackingId": "str"}},
-            api_version="2022-12-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -44,10 +44,10 @@ class TestDataBoxManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_jobs_list_by_resource_group(self, resource_group):
         response = self.client.jobs.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2022-12-01",
+            api_version="2025-02-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -55,11 +55,11 @@ class TestDataBoxManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_jobs_get(self, resource_group):
         response = await self.client.jobs.get(
             resource_group_name=resource_group.name,
             job_name="str",
-            api_version="2022-12-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -67,16 +67,18 @@ class TestDataBoxManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create(self, resource_group):
+    async def test_jobs_begin_create(self, resource_group):
         response = await (
             await self.client.jobs.begin_create(
                 resource_group_name=resource_group.name,
                 job_name="str",
                 job_resource={
                     "location": "str",
-                    "sku": {"name": "str", "displayName": "str", "family": "str"},
+                    "sku": {"name": "str", "displayName": "str", "family": "str", "model": "str"},
                     "transferType": "str",
+                    "allDevicesLost": bool,
                     "cancellationReason": "str",
+                    "delayedStage": "str",
                     "deliveryInfo": {"scheduledDateTime": "2020-02-20 00:00:00"},
                     "deliveryType": "NonScheduled",
                     "details": "job_details",
@@ -115,7 +117,7 @@ class TestDataBoxManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2022-12-01",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -124,12 +126,12 @@ class TestDataBoxManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_jobs_begin_delete(self, resource_group):
         response = await (
             await self.client.jobs.begin_delete(
                 resource_group_name=resource_group.name,
                 job_name="str",
-                api_version="2022-12-01",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -138,7 +140,7 @@ class TestDataBoxManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_jobs_begin_update(self, resource_group):
         response = await (
             await self.client.jobs.begin_update(
                 resource_group_name=resource_group.name,
@@ -217,7 +219,7 @@ class TestDataBoxManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "tags": {"str": "str"},
                 },
-                api_version="2022-12-01",
+                api_version="2025-02-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -226,7 +228,7 @@ class TestDataBoxManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_book_shipment_pick_up(self, resource_group):
+    async def test_jobs_book_shipment_pick_up(self, resource_group):
         response = await self.client.jobs.book_shipment_pick_up(
             resource_group_name=resource_group.name,
             job_name="str",
@@ -235,7 +237,7 @@ class TestDataBoxManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
                 "shipmentLocation": "str",
                 "startTime": "2020-02-20 00:00:00",
             },
-            api_version="2022-12-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -243,12 +245,12 @@ class TestDataBoxManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_cancel(self, resource_group):
+    async def test_jobs_cancel(self, resource_group):
         response = await self.client.jobs.cancel(
             resource_group_name=resource_group.name,
             job_name="str",
             cancellation_reason={"reason": "str"},
-            api_version="2022-12-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -256,11 +258,11 @@ class TestDataBoxManagementJobsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_credentials(self, resource_group):
+    async def test_jobs_list_credentials(self, resource_group):
         response = self.client.jobs.list_credentials(
             resource_group_name=resource_group.name,
             job_name="str",
-            api_version="2022-12-01",
+            api_version="2025-02-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

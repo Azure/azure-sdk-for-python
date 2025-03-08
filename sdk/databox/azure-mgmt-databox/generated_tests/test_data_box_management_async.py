@@ -26,7 +26,7 @@ class TestDataBoxManagementAsync(AzureMgmtRecordedTestCase):
             job_name="str",
             resource_group_name=resource_group.name,
             mitigate_job_request={"customerResolutionCode": "str", "serialNumberCustomerResolutionMap": {"str": "str"}},
-            api_version="2022-12-01",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
