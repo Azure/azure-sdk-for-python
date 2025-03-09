@@ -1,0 +1,10 @@
+[tool.azure-sdk-build]
+mypy = true
+type_check_samples = true
+verifytypes = true
+pyright = true
+pylint = true
+black = true
+sphinx = true
+absolute_cov = true
+absolute_cov_percent = 80.00

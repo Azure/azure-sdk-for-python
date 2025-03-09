@@ -1,0 +1,10 @@
+trigger: none
+
+extends:
+    template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      BuildTargetingString: azure-projects
+      ServiceDirectory: projects
+      TestTimeoutInMinutes: 180
+      MatrixReplace:
+        - TestSamples=.*/true

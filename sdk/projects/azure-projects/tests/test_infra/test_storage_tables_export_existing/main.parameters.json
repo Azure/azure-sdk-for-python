@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "${AZURE_LOCATION}"
+        },
+        "environmentName": {
+            "value": "${AZURE_ENV_NAME}"
+        },
+        "principalId": {
+            "value": "${AZURE_PRINCIPAL_ID}"
+        },
+        "tenantId": {
+            "value": "${AZURE_TENANT_ID}"
+        },
+        "managedIdentityId": {
+            "value": "${AZURE_MANAGED_IDENTITY_ID}"
+        },
+        "managedIdentityPrincipalId": {
+            "value": "${AZURE_MANAGED_IDENTITY_PRINCIPAL_ID}"
+        },
+        "managedIdentityClientId": {
+            "value": "${AZURE_MANAGED_IDENTITY_CLIENT_ID}"
+        }
+    }
+}
